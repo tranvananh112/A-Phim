@@ -231,9 +231,9 @@ async function performSearch() {
             data = await movieAPI.getMoviesByCountry(currentFilters.country, currentPage);
             resultsTitle.textContent = 'Phim theo quốc gia';
         } else {
-            // Load all movies from multiple sources
-            console.log('Loading all movies from multiple sources');
-            data = await movieAPI.getMoviesFromMultipleSources(currentPage);
+            // Load all movies - use simple getMovieList instead
+            console.log('Loading all movies');
+            data = await movieAPI.getMovieList(currentPage);
             resultsTitle.textContent = 'Khám phá - Tất cả phim';
         }
 
@@ -241,9 +241,11 @@ async function performSearch() {
 
         if (data && data.status === 'success' && data.data) {
             let movies = data.data.items || [];
+            console.log('Movies array:', movies.length, 'items');
 
             // Apply client-side filters
             movies = applyClientFilters(movies);
+            console.log('After filters:', movies.length, 'items');
 
             if (movies.length > 0) {
                 renderResults(movies);
@@ -252,9 +254,11 @@ async function performSearch() {
                 // Render pagination - pass the whole data object
                 renderPagination(data.data);
             } else {
+                console.warn('No movies after filtering');
                 showNoResults();
             }
         } else {
+            console.error('Invalid data structure:', data);
             showNoResults();
         }
     } catch (error) {
