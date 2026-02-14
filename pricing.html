@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html class="dark" lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Gói Thành Viên - CineStream</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2f20d",
+                        "background-dark": "#222210",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="bg-background-dark text-white font-display min-h-screen flex flex-col">
+    <nav class="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-md border-b border-white/10">
+        <div class="container mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2 group">
+                <div
+                    class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-105 transition-transform">
+                    <span class="material-icons text-black text-2xl">play_arrow</span>
+                </div>
+                <span class="text-2xl font-bold tracking-tight">
+                    <span class="text-white">A</span> <span class="text-primary">Phim</span>
+                </span>
+            </a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden lg:flex items-center gap-6">
+                <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
+                    href="index.html">Trang chủ</a>
+
+                <!-- Phim Dropdown -->
+                <div class="relative group">
+                    <button
+                        class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide flex items-center gap-1">
+                        Phim
+                        <span class="material-icons text-sm">expand_more</span>
+                    </button>
+                    <div
+                        class="absolute top-full left-0 mt-2 w-48 bg-black/95 backdrop-blur-md border border-white/10 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                        <a href="search.html?type=series"
+                            class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-colors">
+                            📺 Phim Bộ
+                        </a>
+                        <a href="search.html?type=single"
+                            class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-colors">
+                            🎬 Phim Lẻ
+                        </a>
+                        <a href="phim-viet-nam.html"
+                            class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-colors">
+                            🇻🇳 Phim Việt Nam
+                        </a>
+                    </div>
+                </div>
+
+                <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
+                    href="categories.html">Thể Loại</a>
+                <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
+                    href="search.html">Khám phá</a>
+                <a class="text-primary font-bold transition-colors text-sm uppercase tracking-wide"
+                    href="pricing.html">Gói cước</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <a href="search.html" class="text-gray-300 hover:text-primary transition-colors">
+                    <span class="material-icons">search</span>
+                </a>
+                <a href="login.html"
+                    class="px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary/90 transition-colors">Đăng
+                    nhập</a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobileMenuBtn" class="lg:hidden text-white">
+                <span class="material-icons">menu</span>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="lg:hidden hidden bg-black/95 backdrop-blur-md border-t border-white/10">
+            <div class="container mx-auto px-6 py-4">
+                <a href="index.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
+                    🏠 Trang chủ
+                </a>
+                <div class="py-3">
+                    <div class="text-gray-400 text-sm font-bold mb-2">PHIM</div>
+                    <a href="search.html?type=series"
+                        class="block py-2 pl-4 text-gray-300 hover:text-primary transition-colors">
+                        📺 Phim Bộ
+                    </a>
+                    <a href="search.html?type=single"
+                        class="block py-2 pl-4 text-gray-300 hover:text-primary transition-colors">
+                        🎬 Phim Lẻ
+                    </a>
+                    <a href="phim-viet-nam.html"
+                        class="block py-2 pl-4 text-gray-300 hover:text-primary transition-colors">
+                        🇻🇳 Phim Việt Nam
+                    </a>
+                </div>
+                <a href="categories.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
+                    🎭 Thể Loại
+                </a>
+                <a href="search.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
+                    🔍 Khám phá
+                </a>
+                <a href="pricing.html" class="block py-3 text-primary font-bold transition-colors">
+                    💎 Gói cước
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+    </script>
+
+    <main class="flex-grow pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full relative">
+        <div
+            class="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[128px] pointer-events-none -z-10">
+        </div>
+
+        <div class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Nâng Cấp Trải Nghiệm Điện Ảnh</h1>
+            <p class="text-gray-400 max-w-2xl mx-auto text-lg">
+                Chọn gói thành viên phù hợp để mở khóa kho phim 4K không giới hạn và xem phim không quảng cáo ngay hôm
+                nay.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+            <!-- Free Plan -->
+            <div
+                class="relative group rounded-2xl border border-white/10 bg-white/5 p-8 transition-transform duration-300 hover:-translate-y-2">
+                <div class="mb-6">
+                    <h3 class="text-xl font-medium text-gray-400 mb-2">Miễn Phí</h3>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-4xl font-bold">0</span>
+                        <span class="text-xl font-medium text-gray-500">đ</span>
+                        <span class="text-sm text-gray-500">/tháng</span>
+                    </div>
+                </div>
+                <ul class="space-y-4 mb-8 text-sm text-gray-300">
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-gray-400 text-lg">check_circle</span>
+                        <span>Truy cập kho phim giới hạn</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-gray-400 text-lg">check_circle</span>
+                        <span>Chất lượng SD (480p)</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-gray-400 text-lg">check_circle</span>
+                        <span>Xem trên 1 thiết bị</span>
+                    </li>
+                </ul>
+                <button
+                    class="w-full py-3 rounded-lg border border-white/20 font-medium hover:bg-white/10 transition-colors">
+                    Đang sử dụng
+                </button>
+            </div>
+
+            <!-- Premium Plan -->
+            <div
+                class="relative group rounded-2xl border-2 border-primary bg-primary/5 p-8 transform md:-translate-y-4 shadow-xl shadow-primary/10">
+                <div
+                    class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-primary text-black px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">
+                    Phổ biến nhất
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xl font-medium text-primary mb-2">Cao Cấp</h3>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-4xl font-bold">69.000</span>
+                        <span class="text-xl font-medium text-gray-500">đ</span>
+                        <span class="text-sm text-gray-500">/tháng</span>
+                    </div>
+                    <p class="text-xs text-primary mt-2">Dùng thử miễn phí 7 ngày</p>
+                </div>
+                <ul class="space-y-4 mb-8 text-sm text-white font-medium">
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-primary text-lg">check_circle</span>
+                        <span>Truy cập toàn bộ kho phim</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-primary text-lg">check_circle</span>
+                        <span>Chất lượng Full HD & 4K</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-primary text-lg">check_circle</span>
+                        <span>Không quảng cáo</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-primary text-lg">check_circle</span>
+                        <span>Xem trên 2 thiết bị</span>
+                    </li>
+                </ul>
+                <button
+                    class="w-full py-3 rounded-lg bg-primary text-black font-bold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
+                    Chọn Gói Cao Cấp
+                </button>
+            </div>
+
+            <!-- Family Plan -->
+            <div
+                class="relative group rounded-2xl border border-white/10 bg-white/5 p-8 transition-transform duration-300 hover:-translate-y-2">
+                <div
+                    class="absolute top-4 right-4 bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-bold">
+                    Tiết kiệm 20%
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xl font-medium text-white mb-2">Gia Đình</h3>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-4xl font-bold">699.000</span>
+                        <span class="text-xl font-medium text-gray-500">đ</span>
+                        <span class="text-sm text-gray-500">/năm</span>
+                    </div>
+                </div>
+                <ul class="space-y-4 mb-8 text-sm text-gray-300">
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-primary text-lg">check_circle</span>
+                        <span>Tất cả quyền lợi Cao Cấp</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-primary text-lg">check_circle</span>
+                        <span>Xem trên 4 thiết bị cùng lúc</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-primary text-lg">check_circle</span>
+                        <span>Tải xuống xem offline</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-primary text-lg">check_circle</span>
+                        <span>Hồ sơ trẻ em an toàn</span>
+                    </li>
+                </ul>
+                <button
+                    class="w-full py-3 rounded-lg border border-white/20 font-medium hover:bg-white/10 hover:text-primary hover:border-primary transition-all">
+                    Chọn Gói Gia Đình
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-t border-gray-800 py-8 text-center text-sm text-gray-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>© 2023 CineStream Vietnam. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

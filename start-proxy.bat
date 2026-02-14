@@ -1,0 +1,3 @@
+@echo off
+echo Starting Video Proxy Server...
+node proxy-server.js

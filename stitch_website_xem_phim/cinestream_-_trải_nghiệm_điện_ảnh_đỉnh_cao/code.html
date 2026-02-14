@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html class="dark" lang="vi">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>CineStream - Trải nghiệm điện ảnh đỉnh cao</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2f20d",
+                        "primary-dim": "#b3b30a", 
+                        "primary-red": "#ec1313", // Kept for Stranger Things theme compatibility
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#1a1a0c", 
+                        "surface-dark": "#2a2a18",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "vietnam": ["Be Vietnam Pro", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                    animation: {
+                        shimmer: 'shimmer 1.5s infinite',
+                    },
+                    keyframes: {
+                        shimmer: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(100%)' },
+                        }
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        /* Global Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a1a0c; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f2f20d; 
+        }
+        
+        /* Utility Classes */
+        .backdrop-blur-custom {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .backdrop-gradient {
+            background: linear-gradient(to top, #141414 10%, rgba(20, 20, 20, 0.8) 50%, rgba(20, 20, 20, 0.4) 100%);
+        }
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #f2f20d;
+            cursor: pointer;
+            margin-top: -6px; 
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #4b5563;
+            border-radius: 2px;
+        }
+    </style>
+    <!-- React Dependencies -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/history@5/umd/history.development.js"></script>
+    <script src="https://unpkg.com/react-router@6.3.0/umd/react-router.development.js"></script>
+    <script src="https://unpkg.com/react-router-dom@6.3.0/umd/react-router-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 font-display min-h-screen">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { createRoot } = ReactDOM;
+        const { MemoryRouter, Routes, Route, Link, useNavigate, useLocation } = ReactRouterDOM;
+
+        // --- Shared Components ---
+
+        const NavLink = ({ to, children, active }) => {
+            const baseClass = "text-sm font-medium transition-colors uppercase tracking-wide px-3 py-2";
+            const activeClass = "text-primary font-bold border-b-2 border-primary";
+            const inactiveClass = "text-gray-400 hover:text-white";
+            
+            return (
+                <Link to={to} className={`${baseClass} ${active ? activeClass : inactiveClass}`}>
+                    {children}
+                </Link>
+            );
+        };
+
+        const Logo = ({ className }) => (
+            <Link to="/" className={`flex items-center gap-2 group cursor-pointer ${className}`}>
+                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-105 transition-transform">
+                    <span className="material-icons-round text-black text-2xl">play_arrow</span>
+                </div>
+                <span className="text-2xl font-bold tracking-tight text-white">Cine<span className="text-primary">Stream</span></span>
+            </Link>
+        );
+
+        // --- Screens ---
+
+        // 1. Auth Screen (Login/Register)
+        const AuthScreen = () => {
+            const navigate = useNavigate();
+
+            const handleLogin = (e) => {
+                e.preventDefault();
+                navigate('/details'); // Navigate after login mock
+            };
+
+            return (
+                <div className="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-white min-h-screen flex flex-col relative overflow-x-hidden">
+                    <div className="fixed inset-0 z-0">
+                        <img alt="Cinematic dark movie theater abstract background" className="w-full h-full object-cover opacity-60" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjormGaPlX4dzs_tmfvdLr0dkQ2dhqfOhUNavpDiFsw_Wghtv0i_sQ5sLnMJy9WUkMQOrvf1Qz_YOx3NlSlmAIChNOmfofanFKE40blqUBWxH1AIamk5b0gDcmokRIylvRu-ZrbDAJfrhXbXNqC5z0CTSILs00ip_kd8tAuMQErZu-zQ_58vhSyfKbMyX8RBiKadySrNRyBU3hxALEvzlRzgWF3V3QxjfsgbCbmd4PUac40zCo9gJSMd5e7H5P7ZspvLsqQKdzOxw"/>
+                        <div className="absolute inset-0 bg-background-dark/80 backdrop-blur-sm"></div>
+                        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-background-dark via-transparent to-primary/10"></div>
+                    </div>
+                    
+                    <div className="relative z-10 flex-grow flex items-center justify-center w-full px-4 py-12">
+                        <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-0 bg-surface-dark border border-white/10 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-custom">
+                            <div className="hidden md:block relative h-full min-h-[600px] overflow-hidden">
+                                <img alt="Movie Poster Art" className="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD65sD37T8pGDYEaQEIhb2ZJcbeSkPrlvTYonVopY0Qp2Qxy08c3-79U7jApiexu5ikr_Y4LFD-tGchXmp0Wx3TgOT2DtO6MaCdYqpkAqPhsPNQOXL6b76GfMhN0iDKolzvOgeEbsZY2F1bfx4uvoQPH5OYpgTyKwuExnuC7XyjhxVE5E0Jw7LbZloOdOi5s72Lb7YLY0A60wcmz5xMSp79VaY2kyDWsl7NVJYSnWqF5mWEtzCBdLbAX7VZe1DTRil18HtZuswSZag"/>
+                                <div className="absolute inset-0 bg-gradient-to-t from-surface-dark via-surface-dark/40 to-transparent opacity-90"></div>
+                                <div className="absolute bottom-0 left-0 p-8 z-10">
+                                    <h3 className="text-3xl font-bold text-white mb-2 leading-tight">Khám phá thế giới điện ảnh vô tận.</h3>
+                                    <p className="text-gray-300 text-sm mb-4">Hàng ngàn bộ phim bom tấn và series độc quyền đang chờ đón bạn.</p>
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex -space-x-2">
+                                            <div className="w-8 h-8 rounded-full border-2 border-surface-dark bg-gray-600"></div>
+                                            <div className="w-8 h-8 rounded-full border-2 border-surface-dark bg-gray-500"></div>
+                                            <div className="w-8 h-8 rounded-full border-2 border-surface-dark bg-gray-400"></div>
+                                        </div>
+                                        <span className="text-xs text-gray-400">+10k người đang xem</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="p-8 md:p-12 flex flex-col justify-center w-full">
+                                <div className="md:hidden text-center mb-8">
+                                    <h1 className="text-2xl font-bold tracking-tighter text-white flex items-center justify-center gap-2">
+                                        <span className="material-icons-outlined text-primary text-3xl">movie_filter</span>
+                                        CineStream
+                                    </h1>
+                                </div>
+                                <div className="flex border-b border-white/10 mb-8">
+                                    <button className="flex-1 py-3 text-center font-medium text-primary border-b-2 border-primary bg-white/5 transition-colors">Đăng nhập</button>
+                                    <button className="flex-1 py-3 text-center font-medium text-gray-400 hover:text-white transition-colors">Đăng ký</button>
+                                </div>
+                                <div className="mb-6">
+                                    <h2 className="text-2xl font-bold text-white mb-2">Chào mừng trở lại!</h2>
+                                    <p className="text-gray-400 text-sm">Nhập thông tin tài khoản của bạn để tiếp tục.</p>
+                                </div>
+                                <form className="space-y-5" onSubmit={handleLogin}>
+                                    <div className="space-y-1.5">
+                                        <label className="block text-sm font-medium text-gray-300" htmlFor="email">Email hoặc số điện thoại</label>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span className="material-icons-outlined text-gray-500 text-xl">person_outline</span>
+                                            </div>
+                                            <input className="block w-full pl-10 pr-3 py-3 bg-background-dark/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-white placeholder-gray-500 sm:text-sm transition-all" id="email" placeholder="name@example.com" type="text"/>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className="block text-sm font-medium text-gray-300" htmlFor="password">Mật khẩu</label>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span className="material-icons-outlined text-gray-500 text-xl">lock_outline</span>
+                                            </div>
+                                            <input className="block w-full pl-10 pr-10 py-3 bg-background-dark/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-white placeholder-gray-500 sm:text-sm transition-all" id="password" placeholder="••••••••" type="password"/>
+                                            <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer hover:text-white text-gray-500 transition-colors">
+                                                <span className="material-icons-outlined text-xl">visibility_off</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center">
+                                            <input className="h-4 w-4 text-primary focus:ring-primary border-gray-600 rounded bg-background-dark/50" id="remember-me" name="remember-me" type="checkbox"/>
+                                            <label className="ml-2 block text-sm text-gray-400" htmlFor="remember-me">Ghi nhớ</label>
+                                        </div>
+                                        <a className="text-sm font-medium text-primary hover:text-primary/80 transition-colors" href="#">Quên mật khẩu?</a>
+                                    </div>
+                                    <button className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-background-dark bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:ring-offset-surface-dark transition-all transform active:scale-[0.98]" type="submit">
+                                        ĐĂNG NHẬP
+                                    </button>
+                                </form>
+                                <div className="mt-8 text-center">
+                                    <p class="text-sm text-gray-400">
+                                        Chưa có tài khoản? 
+                                        <a className="font-medium text-primary hover:underline ml-1" href="#">Đăng ký ngay</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="absolute bottom-4 left-0 w-full text-center space-y-2 pointer-events-none md:pointer-events-auto">
+                            <p className="text-xs text-gray-600">© 2023 CineStream. All rights reserved.</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // 2. Details Screen (Stranger Things)
+        const DetailsScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div className="bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-100 font-vietnam min-h-screen selection:bg-primary-red selection:text-white">
+                    <nav className="fixed top-0 w-full z-50 bg-gradient-to-b from-black/90 to-transparent dark:from-black/90 transition-all duration-300">
+                        <div className="container mx-auto px-6 h-20 flex items-center justify-between">
+                            <Link to="/" className="flex items-center gap-2 group">
+                                <div className="w-10 h-10 bg-primary-red rounded-lg flex items-center justify-center shadow-lg shadow-primary-red/30 group-hover:scale-105 transition-transform">
+                                    <span className="material-icons-round text-white text-2xl">play_arrow</span>
+                                </div>
+                                <span className="text-2xl font-bold tracking-tight text-white">Cine<span className="text-primary-red">Stream</span></span>
+                            </Link>
+                            <div className="hidden lg:flex items-center gap-8 bg-black/20 backdrop-blur-md px-6 py-2 rounded-full border border-white/5">
+                                <Link to="/details" className="text-primary-red font-bold transition-colors text-sm uppercase tracking-wide border-b-2 border-primary-red pb-0.5">Phim bộ</Link>
+                                <Link to="/watch/dune" className="text-gray-300 hover:text-white font-medium transition-colors text-sm uppercase tracking-wide">Phim lẻ</Link>
+                                <Link to="/subscribe" className="text-gray-300 hover:text-white font-medium transition-colors text-sm uppercase tracking-wide">Gói cước</Link>
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <button className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/20 hover:border-primary-red transition-colors">
+                                    <img alt="User Avatar" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfTdKx_R3xmt_LaqmSkut9IQOIgKuEJJf-gIXSAMcHkwvLwxzueYeoLmBBF5-c8vLh1W_tXRi0YfjZc0LV-44FdbyKXi4cTlftix8pUceCEMif5u23vtNE6KkmErKCFyBxq5VADiufAmn3lLTUR02HejBMyb8qtIUy9oEDAkCdWbpo3t4X0I2jt-AXPr00cWGMERJUUFiFVevyO3kfd6ukyqJygt9Z0OsrYyXrOWshmU3EfNGl-ec43VQAjLzP8wqPi7quDvGlZdk"/>
+                                </button>
+                            </div>
+                        </div>
+                    </nav>
+                    <main className="relative pt-0 min-h-screen pb-20">
+                        <div className="absolute top-0 left-0 w-full h-[100vh] z-0 overflow-hidden">
+                            <div className="relative w-full h-full">
+                                <img alt="Cinematic movie scene background" className="w-full h-full object-cover opacity-60 dark:opacity-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTY6MpV6hlKE1unr6px1oDYgkvLpwm4hmvEKOOl3spK8_ckbCpn6auHFUM-fyW-I_lBZz9pzl7Aj6dXbroCojgFcE3jZHvkF4eSQH5HFIev6eBmR3bTqFVYZRvYqY_TtVSm25djo17o_ObMqMvnO7fLCMLpUixBjobB7sCyphOZGIcQ7mY1pRpuydENvQnecpXNLFSw2Gh64gPdL1AsOXnnwu40GR6nc0hjghLb9VNwFXJFkG7Na_JBqJYUGRK_60urAK0XjeYTxU"/>
+                                <div className="absolute inset-0 backdrop-gradient"></div>
+                                <div className="absolute inset-0 bg-background-dark/20 backdrop-blur-[1px]"></div>
+                            </div>
+                        </div>
+                        <div className="container mx-auto px-6 relative z-10 pt-32">
+                            <div className="flex items-center gap-2 text-sm text-gray-400 mb-8 font-medium">
+                                <Link to="/" className="hover:text-white transition-colors">Trang chủ</Link>
+                                <span className="material-icons-round text-base">chevron_right</span>
+                                <span className="text-white font-semibold">Stranger Things: Mùa 4</span>
+                            </div>
+                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+                                <div className="lg:col-span-4 xl:col-span-3 flex flex-col gap-6">
+                                    <div className="relative aspect-[2/3] rounded-xl overflow-hidden shadow-2xl shadow-black/50 group border border-white/5">
+                                        <img alt="Movie poster artwork" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMJEE1vf2Pzn-GMmhpY7g6O1Nwn54rZc7ypSTigrMVed3VzjNO2SMowN9HmarmF0n0zDQ03g4lu17uPeeco2l-d9-Gunv-PLhsVSuqnXRzlmiy5VShI73PxauyVGt9q6YnsE0dT_jIrU6aoGEUgmXnlyi3gC93uoMCyBsHD2eVqHrMBp-xcgnBZmW7WQ66GK6N5G-Kt3_QIvhBuRQTD8BQJrYekV_N1CLuBcIUOZinIQIO5frqkO81Je7XoYGu3dvb9VMZbpAdJXQ"/>
+                                        <div className="absolute top-4 left-4 bg-primary-red/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded shadow-lg uppercase tracking-wider">Full HD</div>
+                                    </div>
+                                </div>
+                                <div className="lg:col-span-8 xl:col-span-9 flex flex-col justify-end pb-4">
+                                    <h1 className="text-4xl lg:text-7xl font-extrabold text-white mb-4 leading-tight text-shadow tracking-tight">
+                                        Stranger Things: <br/>
+                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-red to-red-400">Thế giới ngược (Mùa 4)</span>
+                                    </h1>
+                                    <div className="flex flex-wrap items-center gap-4 mb-8 text-sm md:text-base">
+                                        <span className="flex items-center gap-1 text-yellow-400 font-bold bg-yellow-400/10 px-3 py-1 rounded-full border border-yellow-400/20 backdrop-blur-sm">
+                                            <span className="material-icons-round text-lg">star</span>
+                                            8.7/10
+                                        </span>
+                                        <span className="text-gray-500">•</span>
+                                        <span className="text-gray-300 font-medium">2022</span>
+                                        <span className="text-gray-500">•</span>
+                                        <span className="text-gray-300 font-medium">45-60 phút/tập</span>
+                                    </div>
+                                    <div className="flex flex-wrap items-center gap-4 mb-10">
+                                        <button className="group relative px-8 py-4 bg-primary-red text-white font-bold rounded-full shadow-lg shadow-primary-red/40 hover:shadow-primary-red/60 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                                            <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
+                                            <div className="flex items-center gap-3 relative z-10">
+                                                <span className="material-icons-round text-3xl">play_arrow</span>
+                                                <span className="text-lg tracking-wide">XEM NGAY</span>
+                                            </div>
+                                        </button>
+                                        <button className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full backdrop-blur-md border border-white/10 hover:border-white/30 transition-all duration-300 flex items-center gap-3">
+                                            <span className="material-icons-round">videocam</span>
+                                            <span>Xem Trailer</span>
+                                        </button>
+                                    </div>
+                                    <div className="mb-10 max-w-4xl">
+                                        <h3 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
+                                            <span className="w-1 h-6 bg-primary-red rounded-full"></span>
+                                            Nội dung phim
+                                        </h3>
+                                        <p className="text-gray-300 leading-relaxed text-lg font-light">
+                                            Sau khi sống sót qua trận chiến ở Starcourt Mall, nhóm bạn trẻ Hawkins bị chia cắt lần đầu tiên. Một mối đe dọa siêu nhiên mới và kinh hoàng nổi lên, mang đến một bí ẩn rùng rợn, nếu được giải mã, cuối cùng có thể chấm dứt nỗi kinh hoàng của Thế giới ngược (Upside Down).
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="mt-16 lg:mt-24">
+                                <div className="flex flex-wrap items-center justify-between mb-8 gap-4">
+                                    <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+                                        <span className="w-1.5 h-8 bg-primary-red rounded-full block shadow-[0_0_10px_rgba(236,19,19,0.5)]"></span>
+                                        Có thể bạn sẽ thích
+                                    </h2>
+                                    <Link to="/watch/dune" className="text-primary-red text-sm font-semibold hover:text-white transition-colors flex items-center gap-1 group">
+                                        Xem Dune <span className="material-icons-round text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                    </Link>
+                                </div>
+                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                                    <Link to="/watch/dune" className="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary-red/50 transition-all duration-300">
+                                        <div className="aspect-[2/3] w-full overflow-hidden relative">
+                                            <img alt="Dune" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAC7QDf6qKofNs5w5M7upn-OijPJM5AetmqBVyP5LzF0cc_JHo2etySWIdZiHSDdygD_0-zozkqZPWbrtTQg8uhTv_OhCykR31uYzYA6cQ7zOgHQYvvIIqQZg0EEtUx_uJSyNQ0PwNsQ3AcVCk9fWLBwmOAgfTx0x-Zhqt-5ZcNfEmhDIB1OsPFKZcSBVv2BNPx-CzuXoTZ3sfhBUQM28Ip3-MMay0PunwN5aUt6vLxKKeSGLgQ_fftVQKo_jcqvenVgtKEFDShllY"/>
+                                            <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded border border-white/10">4K</div>
+                                        </div>
+                                        <div className="p-4">
+                                            <h3 className="text-white font-semibold truncate group-hover:text-primary-red transition-colors">Dune: Hành Tinh Cát</h3>
+                                            <div className="flex items-center justify-between mt-2 text-xs text-gray-400">
+                                                <span>2021</span>
+                                                <span className="flex items-center gap-1 text-yellow-500 font-bold bg-yellow-500/10 px-1.5 py-0.5 rounded"><span className="material-icons-round text-[10px]">star</span> 8.5</span>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            );
+        };
+
+        // 3. Watch/Player Screen (Dune)
+        const WatchScreen = () => {
+            return (
+                <div className="bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 font-display min-h-screen flex flex-col">
+                    <nav className="sticky top-0 z-50 bg-[#15150a]/95 backdrop-blur-md border-b border-white/5">
+                        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex items-center justify-between h-20">
+                                <div className="flex items-center gap-12">
+                                    <Logo />
+                                    <div className="hidden lg:flex items-center bg-white/5 rounded-full p-1 border border-white/10">
+                                        <NavLink to="/details">Phim bộ</NavLink>
+                                        <Link to="/watch/dune" className="px-5 py-2 rounded-full text-sm font-semibold text-black bg-primary transition-all shadow-[0_0_15px_rgba(242,242,13,0.3)]">Phim lẻ</Link>
+                                        <NavLink to="/subscribe">Gói cước</NavLink>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-5">
+                                    <div className="flex items-center gap-3 border-l border-white/10 pl-5">
+                                        <button className="hidden sm:flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full pl-1 pr-3 py-1 transition-all group">
+                                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-orange-500 p-[2px]">
+                                                <img alt="User" className="rounded-full w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9zQQ3JNhyAZYmFomeFQ1DBirzUnSdEkgGG9yn8jtSVOg2ZCBZM0oKJB5gIEnLXx9uJwEKPQ6Wx-f2Dmy6U195K8VifMNmkru3POrBYazj5_hbTtfnaQqSEcb-o6pmZcEpBDYPEryIRy_cU6x2elx8ZC7SWB0wnDPyfHLngVRtgctz8e46ygSezfDtGlZjacvdhrdGzr2EkjidYsQ3D382Hg0cFksT02YlShJb2LnhH8LcHxkda5sQsnJyI59_9WnAPXvDijWc4Nk"/>
+                                            </div>
+                                            <span className="text-sm font-semibold text-gray-200 group-hover:text-white">Minh Tuấn</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+                    <main className="flex-grow max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                            <div className="lg:col-span-9 flex flex-col gap-6">
+                                <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl group border border-gray-800">
+                                    <img alt="Cinematic desert landscape scene from a movie" className="w-full h-full object-cover opacity-60" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAC7QDf6qKofNs5w5M7upn-OijPJM5AetmqBVyP5LzF0cc_JHo2etySWIdZiHSDdygD_0-zozkqZPWbrtTQg8uhTv_OhCykR31uYzYA6cQ7zOgHQYvvIIqQZg0EEtUx_uJSyNQ0PwNsQ3AcVCk9fWLBwmOAgfTx0x-Zhqt-5ZcNfEmhDIB1OsPFKZcSBVv2BNPx-CzuXoTZ3sfhBUQM28Ip3-MMay0PunwN5aUt6vLxKKeSGLgQ_fftVQKo_jcqvenVgtKEFDShllY"/>
+                                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                        <button className="w-20 h-20 bg-primary/90 text-black rounded-full flex items-center justify-center transform scale-0 group-hover:scale-100 transition-transform duration-300 pointer-events-auto hover:bg-white hover:text-primary">
+                                            <span className="material-icons-round text-5xl ml-2">play_arrow</span>
+                                        </button>
+                                    </div>
+                                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent px-4 pb-4 pt-12 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        <div className="relative w-full h-1 bg-gray-600 rounded-full mb-4 cursor-pointer group/progress">
+                                            <div className="absolute h-full bg-primary w-[35%] rounded-full relative">
+                                                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-primary rounded-full scale-0 group-hover/progress:scale-150 transition-transform shadow-lg"></div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center justify-between text-white">
+                                            <div className="flex items-center gap-4">
+                                                <button className="hover:text-primary transition-colors"><span className="material-icons-round text-3xl">pause</span></button>
+                                                <span className="text-xs font-medium font-mono text-gray-300 ml-2">45:20 / 2:35:00</span>
+                                            </div>
+                                            <div className="flex items-center gap-4">
+                                                <button className="flex items-center gap-1 text-xs font-bold bg-white/10 hover:bg-primary hover:text-black px-2 py-1 rounded transition-colors">
+                                                    <span className="material-icons-outlined text-sm">subtitles</span> VIE
+                                                </button>
+                                                <button className="hover:text-primary transition-colors"><span className="material-icons-round">fullscreen</span></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+                                    <div>
+                                        <h1 className="text-3xl md:text-4xl font-bold mb-2 text-white">Dune: Hành Tinh Cát (2021)</h1>
+                                        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400">
+                                            <span className="flex items-center text-primary font-bold"><span className="material-icons-round text-base mr-1">star</span> 8.5</span>
+                                            <span>2021</span>
+                                            <span className="border border-gray-700 px-2 py-0.5 rounded text-xs uppercase">PG-13</span>
+                                            <span>2h 35m</span>
+                                            <span className="text-gray-500">|</span>
+                                            <span>Khoa học viễn tưởng, Phiêu lưu</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-3">
+                                        <button className="flex items-center gap-2 bg-surface-dark hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors border border-gray-700">
+                                            <span className="material-icons-outlined text-lg">share</span> Chia sẻ
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="mt-4">
+                                    <div className="flex border-b border-gray-800 mb-6">
+                                        <button className="px-6 py-3 text-primary border-b-2 border-primary font-bold">Bình luận (124)</button>
+                                        <button className="px-6 py-3 text-gray-400 hover:text-white font-medium">Thông tin phim</button>
+                                    </div>
+                                    <div className="space-y-6">
+                                        <div className="flex gap-4 group">
+                                            <div className="flex-shrink-0">
+                                                <img alt="Minh Tuan" className="w-10 h-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClY0MQr1Sfgk19yYNM2n8jlsOAWo_dRggYO-x_zErcUwpGqW2cwhdcu2eexJetyVybiwnLnygI7ogUvCjx2zLjbcC3Bln3dbM0M5JO3W7KOpEgQouhi724MZS2orCKrloAqzofuj_wzCe4JFBWc8qnzA7a5q7xeWWmo5ia1gfr924lUy6pTxTc4-aBO-8IpgbEuyZ-6Nk-bkMF46tIu4L2gltZ2ageDUudF8rF-VkuzEBzMBzyEwxEh9h2o8CXp44k5R1FkeYsUaY"/>
+                                            </div>
+                                            <div className="flex-grow">
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <h4 className="font-bold text-white group-hover:text-primary transition-colors">Minh Tuấn</h4>
+                                                    <span className="text-xs text-gray-500">2 giờ trước</span>
+                                                </div>
+                                                <p className="text-gray-300 text-sm leading-relaxed">Phim quá đỉnh, hình ảnh và âm thanh không chê vào đâu được.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <aside className="lg:col-span-3 space-y-8">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="font-bold text-lg text-white border-l-4 border-primary pl-3">Có thể bạn sẽ thích</h3>
+                                </div>
+                                <div className="space-y-4">
+                                    <Link to="/details" className="group flex gap-3 p-2 rounded-lg hover:bg-surface-dark transition-colors">
+                                        <div className="relative w-24 aspect-[2/3] flex-shrink-0 rounded-md overflow-hidden">
+                                            <img alt="Blade Runner 2049 poster thumbnail" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5fDutyLsHbwN6ZODwhqzNTFbSw0Y4bgNod9x5Mb-mDwNSVjAeVCuSsIKiSveZqpaMKcyxVir019UTE7ZaMDwSSr5ZRVYzvJZm9SXRbpc70tbMKuZo0y8om9kmaY2_HEi6PucB8lBXZEFZQ6IDT3bZ9osJMlqo1-p0DNCr6zgoAyALh8fYiud9JycPMmdtfoa5tVd4GsrwKdYtEy0xJNcoPhYDoQldkg8k4iw6IK9YhU_etvhLAb1-e3Z_hfvzIck2OePJZTfv8XY"/>
+                                        </div>
+                                        <div className="flex flex-col justify-center">
+                                            <h4 className="font-bold text-sm text-gray-200 group-hover:text-primary line-clamp-2 mb-1">Blade Runner 2049</h4>
+                                            <span className="text-xs text-gray-500 mb-2">2017</span>
+                                        </div>
+                                    </Link>
+                                </div>
+                            </aside>
+                        </div>
+                    </main>
+                </div>
+            );
+        };
+
+        // 4. Subscribe Screen
+        const SubscribeScreen = () => {
+            return (
+                <div className="bg-background-light dark:bg-background-dark text-gray-900 dark:text-white font-display min-h-screen flex flex-col">
+                    <nav className="w-full py-4 px-8 flex justify-between items-center z-50 fixed top-0 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-gray-200 dark:border-white/10">
+                        <Logo />
+                        <div className="hidden md:flex items-center gap-10 text-sm font-semibold text-gray-400">
+                            <Link to="/details" className="hover:text-primary transition-colors duration-300">Phim bộ</Link>
+                            <Link to="/watch/dune" className="hover:text-primary transition-colors duration-300">Phim lẻ</Link>
+                            <Link to="/subscribe" className="text-white relative after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-full after:h-0.5 after:bg-primary after:shadow-[0_0_10px_rgba(242,242,13,0.5)]">Gói cước</Link>
+                        </div>
+                        <div className="flex items-center gap-6">
+                            <div className="flex items-center gap-3 pl-6 border-l border-gray-700">
+                                <div className="text-right hidden sm:block">
+                                    <p className="text-sm font-bold text-white">Minh Tuấn</p>
+                                    <p className="text-xs text-primary">Thành viên mới</p>
+                                </div>
+                                <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-white/10 overflow-hidden relative border-2 border-transparent hover:border-primary transition-all cursor-pointer">
+                                    <img alt="User Avatar" className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0_hoc4CMGPhaHhZe7_XQ785bcDfch-4_ul99ZXxFybswUONtXzjA9R8icB8Y0_UrlBX5MOhlot601fLVsFNgnvIwHdg2xFcaJ9W4Wmoch7ppmvq0yYBndBCyCWSRedUbbEFot5tflrgtYlRvElge92dRzZEBlx9zB21lf_nJIjIxsWRBIdO2_RBUYiCpP7U7zHix7E8FNP6aI_Z8AlA05PlYQURjgvpLUBpombxYcLY90HQ3Frw8_N-_sw7gZ0vKzLxQK4w9uFcg"/>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+                    <main className="flex-grow pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full relative">
+                        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[128px] pointer-events-none -z-10"></div>
+                        <div className="text-center mb-16">
+                            <h1 className="text-4xl md:text-5xl font-bold mb-4">Nâng Cấp Trải Nghiệm Điện Ảnh</h1>
+                            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">Chọn gói thành viên phù hợp để mở khóa kho phim 4K không giới hạn.</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+                            <div className="relative group rounded-2xl border-2 border-primary bg-primary/5 dark:bg-[#2a2a15] p-8 transform md:-translate-y-4 shadow-xl shadow-primary/10">
+                                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-primary text-black px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">Phổ biến nhất</div>
+                                <div className="mb-6">
+                                    <h3 className="text-xl font-medium text-primary mb-2">Cao Cấp</h3>
+                                    <div className="flex items-baseline gap-1">
+                                        <span className="text-4xl font-bold">69.000</span>
+                                        <span className="text-xl font-medium text-gray-500">đ</span>
+                                        <span className="text-sm text-gray-500">/tháng</span>
+                                    </div>
+                                    <p className="text-xs text-primary mt-2">Dùng thử miễn phí 7 ngày</p>
+                                </div>
+                                <ul className="space-y-4 mb-8 text-sm text-gray-800 dark:text-white font-medium">
+                                    <li className="flex items-center gap-3"><span className="material-icons text-primary text-lg">check_circle</span><span>Truy cập toàn bộ kho phim</span></li>
+                                    <li className="flex items-center gap-3"><span className="material-icons text-primary text-lg">check_circle</span><span>Chất lượng Full HD & 4K</span></li>
+                                    <li className="flex items-center gap-3"><span className="material-icons text-primary text-lg">check_circle</span><span>Không quảng cáo</span></li>
+                                </ul>
+                                <button className="w-full py-3 rounded-lg bg-primary text-black font-bold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">Chọn Gói Cao Cấp</button>
+                            </div>
+                        </div>
+                        <div className="mt-12 max-w-4xl mx-auto glass-panel rounded-2xl p-8 relative overflow-hidden">
+                            <h2 className="text-2xl font-bold mb-8 flex items-center gap-3"><span className="material-icons text-primary">lock</span>Thanh Toán An Toàn</h2>
+                            <div className="pt-6 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                                <div>
+                                    <p className="text-sm text-gray-400">Tổng thanh toán:</p>
+                                    <p className="text-3xl font-bold text-white">69.000đ</p>
+                                </div>
+                                <button className="w-full sm:w-auto px-8 py-4 rounded-lg bg-primary text-black font-bold text-lg hover:bg-yellow-400 hover:scale-105 transition-all shadow-[0_0_20px_rgba(242,242,13,0.3)] flex items-center justify-center gap-2">
+                                    <span className="material-icons text-xl">lock</span> Thanh Toán Ngay
+                                </button>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            );
+        };
+
+        // --- App Wrapper ---
+        const App = () => {
+            return (
+                <MemoryRouter>
+                    <Routes>
+                        <Route path="/" element={<AuthScreen />} />
+                        <Route path="/details" element={<DetailsScreen />} />
+                        <Route path="/watch/dune" element={<WatchScreen />} />
+                        <Route path="/subscribe" element={<SubscribeScreen />} />
+                    </Routes>
+                </MemoryRouter>
+            );
+        };
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

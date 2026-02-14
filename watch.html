@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html class="dark" lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Xem phim - CineStream</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2f20d",
+                        "background-dark": "#1a1a0c",
+                        "surface-dark": "#2a2a18",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="bg-background-dark text-gray-100 font-display min-h-screen flex flex-col">
+    <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/10">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="index.html" class="flex items-center gap-2 group">
+                    <div
+                        class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-105 transition-transform">
+                        <span class="material-icons-round text-black text-2xl">play_arrow</span>
+                    </div>
+                    <span class="text-2xl font-bold tracking-tight">
+                        <span class="text-white">A</span> <span class="text-primary">Phim</span>
+                    </span>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden lg:flex items-center gap-6">
+                    <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
+                        href="index.html">Trang chủ</a>
+
+                    <!-- Phim Dropdown -->
+                    <div class="relative group">
+                        <button
+                            class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide flex items-center gap-1">
+                            Phim
+                            <span class="material-icons-round text-sm">expand_more</span>
+                        </button>
+                        <div
+                            class="absolute top-full left-0 mt-2 w-48 bg-black/95 backdrop-blur-md border border-white/10 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                            <a href="phim-viet-nam.html"
+                                class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-colors">
+                                🇻🇳 Phim Việt Nam
+                            </a>
+                        </div>
+                    </div>
+
+                    <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
+                        href="categories.html">Thể Loại</a>
+                    <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
+                        href="search.html">Khám phá</a>
+                    <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
+                        href="pricing.html">Gói cước</a>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <a href="search.html" class="text-gray-300 hover:text-primary transition-colors">
+                        <span class="material-icons-round">search</span>
+                    </a>
+                    <a href="login.html"
+                        class="px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors">Đăng
+                        nhập</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="lg:hidden text-white">
+                    <span class="material-icons-round">menu</span>
+                </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="lg:hidden hidden bg-black/95 backdrop-blur-md border-t border-white/10">
+                <div class="container mx-auto px-6 py-4">
+                    <a href="index.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
+                        🏠 Trang chủ
+                    </a>
+                    <div class="py-3">
+                        <div class="text-gray-400 text-sm font-bold mb-2">PHIM</div>
+                        <a href="search.html?type=series"
+                            class="block py-2 pl-4 text-gray-300 hover:text-primary transition-colors">
+                            📺 Phim Bộ
+                        </a>
+                        <a href="search.html?type=single"
+                            class="block py-2 pl-4 text-gray-300 hover:text-primary transition-colors">
+                            🎬 Phim Lẻ
+                        </a>
+                        <a href="phim-viet-nam.html"
+                            class="block py-2 pl-4 text-gray-300 hover:text-primary transition-colors">
+                            🇻🇳 Phim Việt Nam
+                        </a>
+                    </div>
+                    <a href="categories.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
+                        🎭 Thể Loại
+                    </a>
+                    <a href="search.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
+                        🔍 Khám phá
+                    </a>
+                    <a href="pricing.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
+                        💎 Gói cước
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+    </script>
+
+    <main class="flex-grow max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="lg:col-span-9 flex flex-col gap-6">
+                <!-- Video Player -->
+                <div
+                    class="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl group border border-gray-800">
+                    <img alt="Video thumbnail" class="w-full h-full object-cover opacity-60"
+                        src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1200" />
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <button
+                            class="w-20 h-20 bg-primary/90 text-black rounded-full flex items-center justify-center transform scale-100 group-hover:scale-110 transition-transform duration-300 hover:bg-white hover:text-primary">
+                            <span class="material-icons-round text-5xl ml-2">play_arrow</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Movie Info -->
+                <div class="flex flex-col md:flex-row justify-between items-start gap-4">
+                    <div>
+                        <h1 class="text-3xl md:text-4xl font-bold mb-2 text-white">Dune: Hành Tinh Cát (2021)</h1>
+                        <div class="flex flex-wrap items-center gap-4 text-sm text-gray-400">
+                            <span class="flex items-center text-primary font-bold"><span
+                                    class="material-icons-round text-base mr-1">star</span> 8.5</span>
+                            <span>2021</span>
+                            <span class="border border-gray-700 px-2 py-0.5 rounded text-xs uppercase">PG-13</span>
+                            <span>2h 35m</span>
+                            <span class="text-gray-500">|</span>
+                            <span>Khoa học viễn tưởng, Phiêu lưu</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <button
+                            class="flex items-center gap-2 bg-surface-dark hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors border border-gray-700">
+                            <span class="material-icons-outlined text-lg">share</span> Chia sẻ
+                        </button>
+                        <button
+                            class="flex items-center gap-2 bg-surface-dark hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors border border-gray-700">
+                            <span class="material-icons-outlined text-lg">bookmark_add</span> Lưu phim
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Episodes -->
+                <div class="bg-surface-dark/50 border border-gray-800 rounded-xl p-6">
+                    <h3 class="text-xl font-bold flex items-center gap-2 mb-4">
+                        <span class="w-1 h-6 bg-primary rounded-full"></span>
+                        Danh sách tập
+                    </h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                        <button
+                            class="bg-primary text-black font-bold py-3 rounded-lg border border-primary hover:brightness-110 shadow-[0_0_15px_rgba(242,242,13,0.3)]">Tập
+                            1</button>
+                        <button
+                            class="bg-black/40 hover:bg-gray-700 hover:text-primary text-gray-300 font-medium py-3 rounded-lg border border-gray-700 transition-colors">Tập
+                            2</button>
+                        <button
+                            class="bg-black/40 hover:bg-gray-700 hover:text-primary text-gray-300 font-medium py-3 rounded-lg border border-gray-700 transition-colors">Tập
+                            3</button>
+                        <button
+                            class="bg-black/40 hover:bg-gray-700 hover:text-primary text-gray-300 font-medium py-3 rounded-lg border border-gray-700 transition-colors">Tập
+                            4</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="lg:col-span-3 space-y-8">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-lg text-white border-l-4 border-primary pl-3">Có thể bạn sẽ thích</h3>
+                </div>
+                <div class="space-y-4">
+                    <a class="group flex gap-3 p-2 rounded-lg hover:bg-surface-dark transition-colors" href="#">
+                        <div class="relative w-24 aspect-[2/3] flex-shrink-0 rounded-md overflow-hidden">
+                            <div class="w-full h-full bg-gray-800"></div>
+                            <span
+                                class="absolute top-1 left-1 bg-primary text-black text-[10px] font-bold px-1.5 rounded">HD</span>
+                        </div>
+                        <div class="flex flex-col justify-center">
+                            <h4 class="font-bold text-sm text-gray-200 group-hover:text-primary line-clamp-2 mb-1">Blade
+                                Runner 2049</h4>
+                            <span class="text-xs text-gray-500 mb-2">2017</span>
+                            <div class="flex items-center text-xs text-yellow-500 gap-1">
+                                <span class="material-icons-round text-[14px]">star</span>
+                                <span class="text-gray-300">8.0</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <footer class="mt-auto border-t border-gray-800 bg-[#12120a] py-8">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-gray-500 text-sm">© 2023 CineStream. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/user.js"></script>
+    <script src="js/rating.js"></script>
+    <script src="js/watch.js"></script>
+</body>
+
+</html>

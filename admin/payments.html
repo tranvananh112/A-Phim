@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html class="dark" lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Quản lý Thanh toán - CineStream Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-dark": "#101922",
+                        "surface-dark": "#182430",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="bg-background-dark text-slate-200 font-display antialiased min-h-screen flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-surface-dark border-r border-gray-800 flex-shrink-0 fixed h-full z-20 flex flex-col">
+        <div class="h-16 flex items-center px-6 border-b border-gray-800">
+            <div class="flex items-center gap-2 text-primary font-bold text-xl">
+                <span class="material-symbols-outlined text-3xl">movie_filter</span>
+                <span>CineStream</span>
+            </div>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+            <a class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:bg-primary/10 hover:text-primary rounded-lg transition-colors"
+                href="dashboard.html">
+                <span class="material-symbols-outlined text-[20px]">dashboard</span>
+                <span class="font-medium">Tổng quan</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:bg-primary/10 hover:text-primary rounded-lg transition-colors"
+                href="movies.html">
+                <span class="material-symbols-outlined text-[20px]">movie</span>
+                <span class="font-medium">Quản lý phim</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:bg-primary/10 hover:text-primary rounded-lg transition-colors"
+                href="users.html">
+                <span class="material-symbols-outlined text-[20px]">people</span>
+                <span class="font-medium">Người dùng</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2 bg-primary/10 text-primary rounded-lg" href="payments.html">
+                <span class="material-symbols-outlined text-[20px]">payments</span>
+                <span class="font-medium">Thanh toán</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="lg:pl-64 flex-1 flex flex-col min-h-screen">
+        <header
+            class="h-16 bg-surface-dark border-b border-gray-800 flex items-center justify-between px-6 sticky top-0 z-10">
+            <h1 class="text-xl font-semibold text-white">Quản lý Thanh toán & Doanh thu</h1>
+            <button
+                class="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-primary/20">
+                <span class="material-icons text-lg">download</span>
+                <span>Xuất báo cáo</span>
+            </button>
+        </header>
+
+        <div class="p-6 space-y-6">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-surface-dark p-5 rounded-xl border border-gray-800 shadow-sm">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-slate-400">Tổng doanh thu (Tháng)</p>
+                            <h3 class="text-2xl font-bold text-white mt-1">1.25 Tỷ VNĐ</h3>
+                        </div>
+                        <div class="p-2 bg-green-500/10 rounded-lg">
+                            <span class="material-icons text-green-500">trending_up</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm">
+                        <span class="text-green-500 flex items-center font-medium">
+                            <span class="material-icons text-sm mr-1">arrow_upward</span> 12.5%
+                        </span>
+                        <span class="text-slate-400 ml-2">so với tháng trước</span>
+                    </div>
+                </div>
+
+                <div class="bg-surface-dark p-5 rounded-xl border border-gray-800 shadow-sm">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-slate-400">Giao dịch thành công</p>
+                            <h3 class="text-2xl font-bold text-white mt-1">4,320</h3>
+                        </div>
+                        <div class="p-2 bg-primary/10 rounded-lg">
+                            <span class="material-icons text-primary">check_circle</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm">
+                        <span class="text-white font-medium">98.2%</span>
+                        <span class="text-slate-400 ml-2">tỷ lệ hoàn thành</span>
+                    </div>
+                </div>
+
+                <div class="bg-surface-dark p-5 rounded-xl border border-gray-800 shadow-sm">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-slate-400">Gói đăng ký mới</p>
+                            <h3 class="text-2xl font-bold text-white mt-1">856</h3>
+                        </div>
+                        <div class="p-2 bg-purple-500/10 rounded-lg">
+                            <span class="material-icons text-purple-500">card_membership</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm">
+                        <span class="text-green-500 flex items-center font-medium">
+                            <span class="material-icons text-sm mr-1">arrow_upward</span> 5.2%
+                        </span>
+                        <span class="text-slate-400 ml-2">so với tuần trước</span>
+                    </div>
+                </div>
+
+                <div class="bg-surface-dark p-5 rounded-xl border border-gray-800 shadow-sm">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-slate-400">Yêu cầu hoàn tiền</p>
+                            <h3 class="text-2xl font-bold text-white mt-1">12</h3>
+                        </div>
+                        <div class="p-2 bg-red-500/10 rounded-lg">
+                            <span class="material-icons text-red-500">assignment_return</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm">
+                        <span class="text-red-500 flex items-center font-medium">
+                            <span class="material-icons text-sm mr-1">arrow_downward</span> -2%
+                        </span>
+                        <span class="text-slate-400 ml-2">cần xử lý ngay</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Table -->
+            <div class="bg-surface-dark rounded-xl border border-gray-800 shadow-sm overflow-hidden">
+                <div class="p-5 border-b border-gray-800 flex items-center justify-between">
+                    <h2 class="text-lg font-bold text-white">Lịch sử giao dịch</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr
+                                class="bg-background-dark/50 text-slate-400 text-xs uppercase font-semibold border-b border-gray-800">
+                                <th class="p-4">Mã giao dịch</th>
+                                <th class="p-4">Người dùng</th>
+                                <th class="p-4">Gói dịch vụ</th>
+                                <th class="p-4 text-right">Số tiền</th>
+                                <th class="p-4 text-center">Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-800 text-sm">
+                            <tr class="hover:bg-primary/5 transition-colors">
+                                <td class="p-4 font-mono text-slate-400">#TRX-88291</td>
+                                <td class="p-4">
+                                    <div class="flex items-center gap-3">
+                                        <div
+                                            class="h-8 w-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-xs">
+                                            NV
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-white">Nguyễn Văn A</div>
+                                            <div class="text-xs text-slate-500">user@example.com</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="p-4">
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                                        Premium 1 Năm
+                                    </span>
+                                </td>
+                                <td class="p-4 text-right font-medium text-white">2.400.000 đ</td>
+                                <td class="p-4 text-center">
+                                    <span
+                                        class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/10 text-green-400">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Thành công
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <a href="dashboard.html"
+                    class="inline-flex items-center gap-2 text-primary hover:text-white transition-colors">
+                    <span class="material-icons">arrow_back</span>
+                    <span>Quay lại Dashboard</span>
+                </a>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,236 @@
+// Admin Dashboard Script
+document.addEventListener('DOMContentLoaded', function () {
+    loadDashboardStats();
+    loadRevenueChart();
+    loadViewsChart();
+    loadRecentActivities();
+});
+
+// Load dashboard statistics
+function loadDashboardStats() {
+    // Get all users
+    const allUsers = JSON.parse(localStorage.getItem('cinestream_all_users') || '[]');
+    const totalUsers = allUsers.length;
+    const premiumUsers = allUsers.filter(u => u.subscription !== 'FREE').length;
+
+    // Get all movies from API (cached)
+    const cachedMovies = JSON.parse(localStorage.getItem('cinestream_cached_movies') || '[]');
+    const totalMovies = cachedMovies.length;
+
+    // Get total views (simulated)
+    const totalViews = allUsers.reduce((sum, user) => {
+        const history = JSON.parse(localStorage.getItem(STORAGE_KEYS.WATCH_HISTORY) || '[]');
+        return sum + history.length;
+    }, 0);
+
+    // Calculate revenue
+    const payments = JSON.parse(localStorage.getItem('cinestream_payment_history') || '[]');
+    const totalRevenue = payments.reduce((sum, p) => sum + (p.amount || 0), 0);
+    const monthlyRevenue = payments
+        .filter(p => {
+            const date = new Date(p.createdAt);
+            const now = new Date();
+            return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+        })
+        .reduce((sum, p) => sum + (p.amount || 0), 0);
+
+    // Update UI
+    updateStatCard('totalUsers', totalUsers, '+12%');
+    updateStatCard('totalMovies', totalMovies, '+8%');
+    updateStatCard('totalViews', formatNumber(totalViews * 1000), '+23%');
+    updateStatCard('totalRevenue', formatCurrency(monthlyRevenue), '+15%');
+}
+
+// Update stat card
+function updateStatCard(id, value, change) {
+    const element = document.getElementById(id);
+    if (element) {
+        element.textContent = value;
+    }
+
+    const changeElement = document.getElementById(id + 'Change');
+    if (changeElement) {
+        changeElement.textContent = change;
+    }
+}
+
+// Load revenue chart
+function loadRevenueChart() {
+    const ctx = document.getElementById('revenueChart');
+    if (!ctx) return;
+
+    // Simulated data
+    const data = {
+        labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+        datasets: [{
+            label: 'Doanh thu (triệu đồng)',
+            data: [45, 52, 48, 65, 72, 68, 85, 92, 88, 95, 102, 110],
+            borderColor: ADMIN_CONFIG.CHART_COLORS.primary,
+            backgroundColor: ADMIN_CONFIG.CHART_COLORS.primary + '20',
+            tension: 0.4,
+            fill: true
+        }]
+    };
+
+    // Simple chart rendering (you can use Chart.js for better charts)
+    renderSimpleLineChart(ctx, data);
+}
+
+// Load views chart
+function loadViewsChart() {
+    const ctx = document.getElementById('viewsChart');
+    if (!ctx) return;
+
+    // Simulated data
+    const data = {
+        labels: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
+        datasets: [{
+            label: 'Lượt xem',
+            data: [12500, 15200, 14800, 16500, 18200, 17800, 19500],
+            borderColor: ADMIN_CONFIG.CHART_COLORS.success,
+            backgroundColor: ADMIN_CONFIG.CHART_COLORS.success + '20',
+            tension: 0.4,
+            fill: true
+        }]
+    };
+
+    renderSimpleLineChart(ctx, data);
+}
+
+// Simple line chart renderer
+function renderSimpleLineChart(canvas, data) {
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    const padding = 40;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+
+    // Get max value
+    const maxValue = Math.max(...data.datasets[0].data);
+    const minValue = Math.min(...data.datasets[0].data);
+    const range = maxValue - minValue;
+
+    // Draw grid
+    ctx.strokeStyle = '#e5e7eb';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 5; i++) {
+        const y = padding + (height - padding * 2) * i / 5;
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(width - padding, y);
+        ctx.stroke();
+    }
+
+    // Draw line
+    ctx.strokeStyle = data.datasets[0].borderColor;
+    ctx.fillStyle = data.datasets[0].backgroundColor;
+    ctx.lineWidth = 2;
+
+    const points = data.datasets[0].data.map((value, index) => {
+        const x = padding + (width - padding * 2) * index / (data.datasets[0].data.length - 1);
+        const y = height - padding - ((value - minValue) / range) * (height - padding * 2);
+        return { x, y };
+    });
+
+    // Fill area
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, height - padding);
+    points.forEach(point => ctx.lineTo(point.x, point.y));
+    ctx.lineTo(points[points.length - 1].x, height - padding);
+    ctx.closePath();
+    ctx.fill();
+
+    // Draw line
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    points.forEach(point => ctx.lineTo(point.x, point.y));
+    ctx.stroke();
+
+    // Draw points
+    ctx.fillStyle = data.datasets[0].borderColor;
+    points.forEach(point => {
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+    });
+
+    // Draw labels
+    ctx.fillStyle = '#6b7280';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    data.labels.forEach((label, index) => {
+        const x = padding + (width - padding * 2) * index / (data.labels.length - 1);
+        ctx.fillText(label, x, height - padding + 20);
+    });
+}
+
+// Load recent activities
+function loadRecentActivities() {
+    const container = document.getElementById('recentActivities');
+    if (!container) return;
+
+    // Get recent data
+    const users = JSON.parse(localStorage.getItem('cinestream_all_users') || '[]');
+    const payments = JSON.parse(localStorage.getItem('cinestream_payment_history') || '[]');
+    const comments = JSON.parse(localStorage.getItem('cinestream_comments') || '{}');
+
+    const activities = [];
+
+    // Add recent users
+    users.slice(-5).forEach(user => {
+        activities.push({
+            type: 'user',
+            icon: 'person_add',
+            color: 'text-blue-500',
+            message: `Người dùng mới: ${user.name}`,
+            time: new Date(user.createdAt).toLocaleString('vi-VN')
+        });
+    });
+
+    // Add recent payments
+    payments.slice(-5).forEach(payment => {
+        activities.push({
+            type: 'payment',
+            icon: 'payments',
+            color: 'text-green-500',
+            message: `Thanh toán: ${formatCurrency(payment.amount)}`,
+            time: new Date(payment.createdAt).toLocaleString('vi-VN')
+        });
+    });
+
+    // Sort by time
+    activities.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+    // Render
+    container.innerHTML = activities.slice(0, 10).map(activity => `
+        <div class="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                <span class="material-icons-round ${activity.color} text-lg">${activity.icon}</span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm text-gray-900">${activity.message}</p>
+                <p class="text-xs text-gray-500 mt-1">${activity.time}</p>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Format number
+function formatNumber(num) {
+    if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + 'M';
+    } else if (num >= 1000) {
+        return (num / 1000).toFixed(1) + 'K';
+    }
+    return num.toString();
+}
+
+// Format currency
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND'
+    }).format(amount);
+}

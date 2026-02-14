@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Filter API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #2a2a2a;
+            border-radius: 8px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #f2f20d;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        pre {
+            background: #000;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            max-height: 400px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Test Filter APIs</h1>
+
+    <div class="test-section">
+        <h2>1. Test API Thể loại</h2>
+        <button onclick="testCategories()">Test /the-loai</button>
+        <button onclick="testCategorySlug()">Test /the-loai/hanh-dong</button>
+        <pre id="categoriesResult">Chưa test...</pre>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Test API Quốc gia</h2>
+        <button onclick="testCountries()">Test /quoc-gia</button>
+        <button onclick="testCountrySlug()">Test /quoc-gia/viet-nam</button>
+        <pre id="countriesResult">Chưa test...</pre>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Test API Năm phát hành</h2>
+        <button onclick="testYears()">Test /nam-phat-hanh</button>
+        <button onclick="testYearSlug()">Test /nam-phat-hanh/2024</button>
+        <pre id="yearsResult">Chưa test...</pre>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Test API Danh sách</h2>
+        <button onclick="testList()">Test /danh-sach/phim-moi-cap-nhat</button>
+        <pre id="listResult">Chưa test...</pre>
+    </div>
+
+    <script>
+        const API_BASE = 'https://ophim1.com/v1/api';
+
+        async function fetchAPI(endpoint) {
+            const url = `${API_BASE}${endpoint}`;
+            console.log('Fetching:', url);
+
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'accept': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                console.log('Response:', data);
+                return data;
+            } catch (error) {
+                console.error('Error:', error);
+                return { error: error.message };
+            }
+        }
+
+        async function testCategories() {
+            const result = document.getElementById('categoriesResult');
+            result.textContent = 'Loading...';
+            const data = await fetchAPI('/the-loai');
+            result.textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function testCategorySlug() {
+            const result = document.getElementById('categoriesResult');
+            result.textContent = 'Loading...';
+            const data = await fetchAPI('/the-loai/hanh-dong');
+            result.textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function testCountries() {
+            const result = document.getElementById('countriesResult');
+            result.textContent = 'Loading...';
+            const data = await fetchAPI('/quoc-gia');
+            result.textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function testCountrySlug() {
+            const result = document.getElementById('countriesResult');
+            result.textContent = 'Loading multiple countries...\n\n';
+
+            // Test multiple countries
+            const countries = ['viet-nam', 'han-quoc', 'trung-quoc', 'nhat-ban', 'thai-lan', 'au-my'];
+
+            for (const country of countries) {
+                const data = await fetchAPI(`/quoc-gia/${country}?page=1&limit=1`);
+                result.textContent += `\n=== ${country} ===\n`;
+                result.textContent += `Status: ${data.status}\n`;
+                result.textContent += `Has items: ${data.data?.items ? 'Yes (' + data.data.items.length + ')' : 'No'}\n`;
+                result.textContent += `Title: ${data.data?.titlePage || 'N/A'}\n`;
+            }
+        }
+
+        async function testYears() {
+            const result = document.getElementById('yearsResult');
+            result.textContent = 'Loading...';
+            const data = await fetchAPI('/nam-phat-hanh');
+            result.textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function testYearSlug() {
+            const result = document.getElementById('yearsResult');
+            result.textContent = 'Loading...';
+            const data = await fetchAPI('/nam-phat-hanh/2024');
+            result.textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function testList() {
+            const result = document.getElementById('listResult');
+            result.textContent = 'Loading...';
+            const data = await fetchAPI('/danh-sach/phim-moi-cap-nhat');
+            result.textContent = JSON.stringify(data, null, 2);
+        }
+
+        // Auto test on load
+        window.onload = async () => {
+            console.log('=== Testing Categories API ===');
+            await testCategories();
+
+            setTimeout(async () => {
+                console.log('=== Testing Countries API ===');
+                await testCountries();
+            }, 1000);
+        };
+    </script>
+</body>
+
+</html>

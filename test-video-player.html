@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Video Player</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        video {
+            width: 100%;
+            max-width: 800px;
+            background: #000;
+            border-radius: 8px;
+        }
+
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            background: #2a2a2a;
+        }
+
+        .success {
+            color: #0f0;
+        }
+
+        .error {
+            color: #f00;
+        }
+
+        .info {
+            color: #0ff;
+        }
+
+        button {
+            background: #f2f20d;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #d4d40b;
+        }
+
+        .movie-info {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🎬 Test Video Player - HLS.js</h1>
+
+    <div class="movie-info">
+        <h2>Ngày Xưa Có Một Chuyện Tình (2024)</h2>
+        <p><strong>Chất lượng:</strong> HD - Lồng Tiếng</p>
+        <p><strong>Thời lượng:</strong> 135 Phút</p>
+    </div>
+
+    <div>
+        <button onclick="loadMovie()">Load Movie from API</button>
+        <button onclick="testDirectStream()">Test Direct Stream</button>
+        <button onclick="testAlternativeStream()">Test Alternative Stream</button>
+    </div>
+
+    <div id="status" class="status">
+        <p class="info">Click "Load Movie from API" để tải phim</p>
+    </div>
+
+    <video id="videoPlayer" controls
+        poster="https://img.ophim.live/uploads/movies/ngay-xua-co-mot-chuyen-tinh-thumb.jpg">
+        Trình duyệt của bạn không hỗ trợ video.
+    </video>
+
+    <div id="videoInfo" class="status" style="margin-top: 20px;"></div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        const video = document.getElementById('videoPlayer');
+        const status = document.getElementById('status');
+        const videoInfo = document.getElementById('videoInfo');
+        let hls = null;
+
+        // Test stream URLs
+        const testStreams = {
+            original: 'https://vip.opstream13.com/20251205/21005_1facae63/index.m3u8',
+            // Add alternative streams if needed
+        };
+
+        async function loadMovie() {
+            status.innerHTML = '<p class="info">⏳ Đang tải thông tin phim từ API...</p>';
+
+            try {
+                const data = await movieAPI.getMovieDetail('ngay-xua-co-mot-chuyen-tinh');
+                console.log('Movie data:', data);
+
+                if (data && data.status === 'success' && data.data && data.data.item) {
+                    const movie = data.data.item;
+                    const episode = movie.episodes?.[0]?.server_data?.[0];
+
+                    if (episode && episode.link_m3u8) {
+                        status.innerHTML = `
+                            <p class="success">✅ Đã tải thông tin phim</p>
+                            <p><strong>Tên:</strong> ${movie.name}</p>
+                            <p><strong>Episode:</strong> ${episode.name}</p>
+                            <p><strong>Stream URL:</strong> ${episode.link_m3u8}</p>
+                        `;
+
+                        playVideo(episode.link_m3u8);
+                    } else {
+                        status.innerHTML = '<p class="error">❌ Không tìm thấy link stream</p>';
+                    }
+                } else {
+                    status.innerHTML = '<p class="error">❌ Không thể tải thông tin phim</p>';
+                }
+            } catch (error) {
+                status.innerHTML = `<p class="error">❌ Lỗi: ${error.message}</p>`;
+                console.error(error);
+            }
+        }
+
+        function testDirectStream() {
+            status.innerHTML = '<p class="info">⏳ Testing direct stream URL...</p>';
+            playVideo(testStreams.original);
+        }
+
+        function testAlternativeStream() {
+            status.innerHTML = '<p class="info">⏳ Testing alternative stream...</p>';
+            // Add alternative stream URL here
+            alert('Chưa có stream thay thế. Vui lòng dùng Load Movie from API');
+        }
+
+        function playVideo(streamUrl) {
+            console.log('Playing video:', streamUrl);
+
+            videoInfo.innerHTML = `
+                <p><strong>Stream URL:</strong> ${streamUrl}</p>
+                <p><strong>HLS.js version:</strong> ${Hls.version}</p>
+                <p><strong>HLS supported:</strong> ${Hls.isSupported() ? 'Yes' : 'No'}</p>
+            `;
+
+            // Destroy previous HLS instance
+            if (hls) {
+                hls.destroy();
+            }
+
+            if (Hls.isSupported()) {
+                hls = new Hls({
+                    debug: true,
+                    enableWorker: true,
+                    lowLatencyMode: false,
+                    backBufferLength: 90
+                });
+
+                hls.loadSource(streamUrl);
+                hls.attachMedia(video);
+
+                hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                    console.log('✅ Manifest parsed successfully');
+                    status.innerHTML = '<p class="success">✅ Video đã sẵn sàng! Click play để xem.</p>';
+                    videoInfo.innerHTML += '<p class="success">✅ Manifest loaded</p>';
+                });
+
+                hls.on(Hls.Events.ERROR, function (event, data) {
+                    console.error('HLS Error:', data);
+
+                    if (data.fatal) {
+                        switch (data.type) {
+                            case Hls.ErrorTypes.NETWORK_ERROR:
+                                status.innerHTML = '<p class="error">❌ Lỗi mạng. Đang thử kết nối lại...</p>';
+                                hls.startLoad();
+                                break;
+                            case Hls.ErrorTypes.MEDIA_ERROR:
+                                status.innerHTML = '<p class="error">❌ Lỗi media. Đang thử khôi phục...</p>';
+                                hls.recoverMediaError();
+                                break;
+                            default:
+                                status.innerHTML = `<p class="error">❌ Lỗi không thể khôi phục: ${data.type}</p>`;
+                                videoInfo.innerHTML += `<p class="error">Error details: ${JSON.stringify(data, null, 2)}</p>`;
+                                hls.destroy();
+                                break;
+                        }
+                    }
+                });
+
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                // Native HLS support (Safari)
+                video.src = streamUrl;
+                status.innerHTML = '<p class="success">✅ Sử dụng HLS native (Safari)</p>';
+            } else {
+                status.innerHTML = '<p class="error">❌ Trình duyệt không hỗ trợ HLS</p>';
+            }
+
+            // Video events
+            video.addEventListener('loadedmetadata', () => {
+                console.log('✅ Video metadata loaded');
+                console.log('Duration:', video.duration, 'seconds');
+                videoInfo.innerHTML += `<p class="success">✅ Duration: ${Math.floor(video.duration / 60)} phút</p>`;
+            });
+
+            video.addEventListener('canplay', () => {
+                console.log('✅ Video can play');
+            });
+
+            video.addEventListener('playing', () => {
+                status.innerHTML = '<p class="success">▶️ Đang phát video...</p>';
+            });
+
+            video.addEventListener('error', (e) => {
+                console.error('Video error:', e);
+                status.innerHTML = `<p class="error">❌ Video error: ${video.error?.message || 'Unknown'}</p>`;
+            });
+        }
+
+        // Auto load on page load
+        window.onload = () => {
+            console.log('Page loaded, HLS.js ready');
+        };
+    </script>
+</body>
+
+</html>

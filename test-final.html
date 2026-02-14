@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Final Test - Movies Loading</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-white p-8">
+    <h1 class="text-3xl font-bold mb-6">🎬 Test Loading Movies</h1>
+
+    <div class="mb-6">
+        <button onclick="testAPI()" class="bg-yellow-500 text-black px-6 py-3 rounded-lg font-bold hover:bg-yellow-400">
+            Test API
+        </button>
+        <button onclick="testWithMovieAPI()"
+            class="bg-blue-500 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-400 ml-4">
+            Test with movieAPI
+        </button>
+    </div>
+
+    <div id="status" class="mb-6 p-4 bg-gray-800 rounded-lg"></div>
+    <div id="movies" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        const status = document.getElementById('status');
+        const moviesContainer = document.getElementById('movies');
+
+        async function testAPI() {
+            status.innerHTML = '<p class="text-yellow-400">⏳ Testing direct API call...</p>';
+            moviesContainer.innerHTML = '';
+
+            try {
+                console.log('Calling:', API_CONFIG.BACKEND_URL + '/movies?page=1');
+                const response = await fetch(API_CONFIG.BACKEND_URL + '/movies?page=1');
+                const data = await response.json();
+
+                console.log('Response:', data);
+
+                if (data.status === 'success' && data.data && data.data.items) {
+                    const movies = data.data.items;
+                    status.innerHTML = `<p class="text-green-400">✅ Success! Found ${movies.length} movies</p>`;
+
+                    moviesContainer.innerHTML = movies.map(m => `
+                        <div class="bg-gray-800 rounded-lg overflow-hidden">
+                            <img src="https://img.ophim.live/uploads/movies/${m.thumb_url}" 
+                                 alt="${m.name}"
+                                 class="w-full h-48 object-cover"
+                                 onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
+                            <div class="p-2">
+                                <h3 class="font-bold text-sm truncate">${m.name}</h3>
+                                <p class="text-xs text-gray-400">${m.year || 'N/A'}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    status.innerHTML = `<p class="text-red-400">❌ Invalid response structure</p><pre class="text-xs mt-2">${JSON.stringify(data, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                status.innerHTML = `<p class="text-red-400">❌ Error: ${error.message}</p>`;
+                console.error(error);
+            }
+        }
+
+        async function testWithMovieAPI() {
+            status.innerHTML = '<p class="text-yellow-400">⏳ Testing movieAPI service...</p>';
+            moviesContainer.innerHTML = '';
+
+            try {
+                console.log('Using movieAPI.getMovieList(1)');
+                console.log('Config:', { USE_BACKEND: API_CONFIG.USE_BACKEND, BACKEND_URL: API_CONFIG.BACKEND_URL });
+
+                const data = await movieAPI.getMovieList(1);
+                console.log('MovieAPI Response:', data);
+
+                if (data && data.status === 'success' && data.data && data.data.items) {
+                    const movies = data.data.items;
+                    status.innerHTML = `<p class="text-green-400">✅ MovieAPI Success! Found ${movies.length} movies</p>`;
+
+                    moviesContainer.innerHTML = movies.map(m => `
+                        <div class="bg-gray-800 rounded-lg overflow-hidden">
+                            <img src="${movieAPI.getImageURL(m.thumb_url)}" 
+                                 alt="${m.name}"
+                                 class="w-full h-48 object-cover"
+                                 onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
+                            <div class="p-2">
+                                <h3 class="font-bold text-sm truncate">${m.name}</h3>
+                                <p class="text-xs text-gray-400">${m.year || 'N/A'} • ${m.quality || 'HD'}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    status.innerHTML = `<p class="text-red-400">❌ Invalid response</p><pre class="text-xs mt-2">${JSON.stringify(data, null, 2).substring(0, 500)}</pre>`;
+                }
+            } catch (error) {
+                status.innerHTML = `<p class="text-red-400">❌ Error: ${error.message}</p>`;
+                console.error(error);
+            }
+        }
+
+        // Auto test on load
+        testWithMovieAPI();
+    </script>
+</body>
+
+</html>

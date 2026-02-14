@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo - Ngày Xưa Có Một Chuyện Tình</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body class="p-8">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">🎬 Ngày Xưa Có Một Chuyện Tình (2024)</h1>
+
+        <!-- Video Player -->
+        <div class="bg-black rounded-lg overflow-hidden mb-6">
+            <video id="videoPlayer" class="w-full aspect-video" controls
+                poster="https://img.ophim.live/uploads/movies/ngay-xua-co-mot-chuyen-tinh-thumb.jpg">
+                Trình duyệt của bạn không hỗ trợ video.
+            </video>
+        </div>
+
+        <!-- Movie Info -->
+        <div class="bg-gray-800 rounded-lg p-6 mb-6">
+            <h2 class="text-2xl font-bold mb-4">Thông tin phim</h2>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+                <div><span class="text-gray-400">Tên gốc:</span> Once Upon A Love Story</div>
+                <div><span class="text-gray-400">Năm:</span> 2024</div>
+                <div><span class="text-gray-400">Thời lượng:</span> 135 Phút</div>
+                <div><span class="text-gray-400">Chất lượng:</span> HD - Lồng Tiếng</div>
+                <div><span class="text-gray-400">Thể loại:</span> Tình Cảm</div>
+                <div><span class="text-gray-400">Quốc gia:</span> Việt Nam</div>
+            </div>
+            <div class="mt-4">
+                <span class="text-gray-400">Đạo diễn:</span> Trinh Dinh Le Minh
+            </div>
+            <div class="mt-2">
+                <span class="text-gray-400">Diễn viên:</span> Ngọc Xuân, Lương Anh Vũ, Đỗ Nhật Hoàng, Hạo Khang, Rima
+                Thanh Vy
+            </div>
+            <div class="mt-4">
+                <p class="text-gray-300">
+                    Ngày Xưa Có Một Chuyện Tình xoay quanh câu chuyện tình bạn, tình yêu giữa hai chàng trai và một cô
+                    gái từ thuở ấu thơ cho đến khi trưởng thành, phải đối mặt với những thử thách của số phận. Trải dài
+                    trong 4 giai đoạn từ năm 1987 - 2000, ba người bạn cùng tuổi - Vinh, Miền, Phúc đã cùng yêu, cùng bỡ
+                    ngỡ bước vào đời, va vấp và vượt qua.
+                </p>
+            </div>
+        </div>
+
+        <!-- Status -->
+        <div id="status" class="bg-blue-900 text-blue-200 rounded-lg p-4 mb-4">
+            Đang tải video...
+        </div>
+
+        <!-- Links -->
+        <div class="bg-gray-800 rounded-lg p-6">
+            <h3 class="text-xl font-bold mb-4">Xem trên website chính:</h3>
+            <div class="space-y-2">
+                <a href="movie-detail.html?slug=ngay-xua-co-mot-chuyen-tinh"
+                    class="block bg-yellow-500 text-black font-bold py-3 px-6 rounded-lg hover:bg-yellow-400 text-center">
+                    📄 Xem Chi Tiết Phim
+                </a>
+                <a href="watch.html?slug=ngay-xua-co-mot-chuyen-tinh&episode=full"
+                    class="block bg-red-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-red-500 text-center">
+                    ▶️ Xem Phim Trên Trang Watch
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const videoUrl = 'https://vip.opstream13.com/20251205/21005_1facae63/index.m3u8';
+        const video = document.getElementById('videoPlayer');
+        const status = document.getElementById('status');
+
+        function updateStatus(message, type = 'info') {
+            const colors = {
+                info: 'bg-blue-900 text-blue-200',
+                success: 'bg-green-900 text-green-200',
+                error: 'bg-red-900 text-red-200'
+            };
+            status.className = `rounded-lg p-4 mb-4 ${colors[type]}`;
+            status.textContent = message;
+        }
+
+        // Check if HLS is supported
+        if (Hls.isSupported()) {
+            updateStatus('✅ Trình duyệt hỗ trợ HLS. Đang tải video...', 'info');
+
+            const hls = new Hls({
+                debug: false,
+                enableWorker: true,
+                lowLatencyMode: true,
+                backBufferLength: 90
+            });
+
+            hls.loadSource(videoUrl);
+            hls.attachMedia(video);
+
+            hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                updateStatus('✅ Video đã sẵn sàng! Click play để xem.', 'success');
+                console.log('✅ HLS manifest loaded successfully');
+            });
+
+            hls.on(Hls.Events.ERROR, function (event, data) {
+                console.error('HLS Error:', data);
+                if (data.fatal) {
+                    switch (data.type) {
+                        case Hls.ErrorTypes.NETWORK_ERROR:
+                            updateStatus('❌ Lỗi mạng. Đang thử kết nối lại...', 'error');
+                            hls.startLoad();
+                            break;
+                        case Hls.ErrorTypes.MEDIA_ERROR:
+                            updateStatus('❌ Lỗi media. Đang thử khôi phục...', 'error');
+                            hls.recoverMediaError();
+                            break;
+                        default:
+                            updateStatus('❌ Lỗi không thể khôi phục: ' + data.type, 'error');
+                            hls.destroy();
+                            break;
+                    }
+                }
+            });
+
+            // Video events
+            video.addEventListener('loadedmetadata', () => {
+                console.log('✅ Video metadata loaded');
+                console.log('Duration:', video.duration, 'seconds');
+            });
+
+            video.addEventListener('canplay', () => {
+                console.log('✅ Video can play');
+            });
+
+            video.addEventListener('playing', () => {
+                updateStatus('▶️ Đang phát video...', 'success');
+            });
+
+            video.addEventListener('pause', () => {
+                updateStatus('⏸️ Video đã tạm dừng', 'info');
+            });
+
+            video.addEventListener('ended', () => {
+                updateStatus('✅ Video đã kết thúc', 'success');
+            });
+
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            // Native HLS support (Safari)
+            updateStatus('✅ Sử dụng HLS native. Đang tải video...', 'info');
+            video.src = videoUrl;
+
+            video.addEventListener('loadedmetadata', () => {
+                updateStatus('✅ Video đã sẵn sàng! Click play để xem.', 'success');
+            });
+        } else {
+            updateStatus('❌ Trình duyệt không hỗ trợ HLS. Vui lòng dùng Chrome, Firefox hoặc Safari.', 'error');
+        }
+
+        // Log video info
+        console.log('🎬 Movie: Ngày Xưa Có Một Chuyện Tình');
+        console.log('🔗 Stream URL:', videoUrl);
+        console.log('📺 HLS.js version:', Hls.version);
+    </script>
+</body>
+
+</html>

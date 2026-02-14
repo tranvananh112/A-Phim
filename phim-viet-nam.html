@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phim Việt Nam - CineStream</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2f20d",
+                        "background-dark": "#1a1a0c",
+                        "surface-dark": "#2a2a18",
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-background-dark text-white">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-md border-b border-white/10">
+        <div class="container mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2 group">
+                <div
+                    class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-105 transition-transform">
+                    <span class="material-icons-round text-black text-2xl">play_arrow</span>
+                </div>
+                <span class="text-2xl font-bold tracking-tight text-white">Cine<span
+                        class="text-primary">Stream</span></span>
+            </a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden lg:flex items-center gap-6">
+                <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
+                    href="index.html">Trang chủ</a>
+
+                <!-- Phim Dropdown -->
+                <div class="relative group">
+                    <button
+                        class="text-primary font-bold transition-colors text-sm uppercase tracking-wide flex items-center gap-1">
+                        Phim
+                        <span class="material-icons-round text-sm">expand_more</span>
+                    </button>
+                    <div
+                        class="absolute top-full left-0 mt-2 w-48 bg-black/95 backdrop-blur-md border border-white/10 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                        <a href="search.html?type=series"
+                            class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-colors">
+                            📺 Phim Bộ
+                        </a>
+                        <a href="search.html?type=single"
+                            class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-colors">
+                            🎬 Phim Lẻ
+                        </a>
+                        <a href="phim-viet-nam.html"
+                            class="block px-4 py-3 text-primary font-bold hover:bg-white/5 transition-colors">
+                            🇻🇳 Phim Việt Nam
+                        </a>
+                    </div>
+                </div>
+
+                <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
+                    href="categories.html">Thể Loại</a>
+                <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
+                    href="search.html">Khám phá</a>
+                <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
+                    href="pricing.html">Gói cước</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <a href="search.html" class="text-gray-300 hover:text-primary transition-colors">
+                    <span class="material-icons-round">search</span>
+                </a>
+                <a href="login.html"
+                    class="px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors">Đăng
+                    nhập</a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobileMenuBtn" class="lg:hidden text-white">
+                <span class="material-icons-round">menu</span>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="lg:hidden hidden bg-black/95 backdrop-blur-md border-t border-white/10">
+            <div class="container mx-auto px-6 py-4">
+                <a href="index.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
+                    🏠 Trang chủ
+                </a>
+                <div class="py-3">
+                    <div class="text-gray-400 text-sm font-bold mb-2">PHIM</div>
+                    <a href="search.html?type=series"
+                        class="block py-2 pl-4 text-gray-300 hover:text-primary transition-colors">
+                        📺 Phim Bộ
+                    </a>
+                    <a href="search.html?type=single"
+                        class="block py-2 pl-4 text-gray-300 hover:text-primary transition-colors">
+                        🎬 Phim Lẻ
+                    </a>
+                    <a href="phim-viet-nam.html" class="block py-2 pl-4 text-primary font-bold transition-colors">
+                        🇻🇳 Phim Việt Nam
+                    </a>
+                </div>
+                <a href="categories.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
+                    🎭 Thể Loại
+                </a>
+                <a href="search.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
+                    🔍 Khám phá
+                </a>
+                <a href="pricing.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
+                    💎 Gói cước
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+    </script>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 pt-32 pb-20">
+        <!-- Header -->
+        <div class="mb-12">
+            <div class="flex items-center gap-4 mb-4">
+                <span class="text-6xl">🇻🇳</span>
+                <div>
+                    <h1 class="text-4xl md:text-5xl font-bold">Phim Việt Nam</h1>
+                    <p class="text-gray-400 text-lg mt-2">Điện ảnh Việt - Tự hào dân tộc</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Featured Movie -->
+        <div class="mb-12 bg-gradient-to-r from-red-900/20 to-yellow-900/20 rounded-2xl p-8 border border-red-500/20">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="material-icons-round text-primary text-3xl">star</span>
+                <h2 class="text-2xl font-bold">Phim Nổi Bật</h2>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="aspect-video rounded-xl overflow-hidden">
+                    <img src="https://img.ophim.live/uploads/movies/ngay-xua-co-mot-chuyen-tinh-thumb.jpg"
+                        alt="Ngày Xưa Có Một Chuyện Tình" class="w-full h-full object-cover">
+                </div>
+                <div class="flex flex-col justify-center">
+                    <h3 class="text-3xl font-bold mb-4">Ngày Xưa Có Một Chuyện Tình</h3>
+                    <p class="text-gray-300 mb-4">Câu chuyện tình bạn, tình yêu giữa hai chàng trai và một cô gái từ
+                        thuở ấu thơ cho đến khi trưởng thành, trải dài trong 4 giai đoạn từ năm 1987 - 2000.</p>
+                    <div class="flex flex-wrap gap-3 mb-6">
+                        <span class="px-3 py-1 bg-primary/20 text-primary rounded-full text-sm">HD</span>
+                        <span class="px-3 py-1 bg-red-500/20 text-red-400 rounded-full text-sm">Lồng Tiếng</span>
+                        <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm">2024</span>
+                        <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm">135 phút</span>
+                    </div>
+                    <div class="flex gap-4">
+                        <a href="xem-phim-demo.html"
+                            class="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2">
+                            <span class="material-icons-round">play_arrow</span>
+                            Xem ngay
+                        </a>
+                        <a href="movie-detail.html?slug=ngay-xua-co-mot-chuyen-tinh"
+                            class="px-6 py-3 bg-white/10 text-white font-bold rounded-lg hover:bg-white/20 transition-colors">
+                            Chi tiết
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="loading" class="text-center py-20">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4"></div>
+            <p class="text-gray-400">Đang tải phim Việt Nam...</p>
+        </div>
+
+        <!-- Movies Grid -->
+        <div id="moviesGrid" class="hidden">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold">Tất cả phim Việt Nam</h2>
+                <span id="movieCount" class="text-gray-400"></span>
+            </div>
+            <div id="moviesList" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                <!-- Movies will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Error -->
+        <div id="error" class="hidden text-center py-20">
+            <span class="material-icons-round text-6xl text-red-400 mb-4">error_outline</span>
+            <p class="text-red-400 text-lg">Không thể tải danh sách phim</p>
+        </div>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        const loading = document.getElementById('loading');
+        const moviesGrid = document.getElementById('moviesGrid');
+        const moviesList = document.getElementById('moviesList');
+        const movieCount = document.getElementById('movieCount');
+        const error = document.getElementById('error');
+
+        let currentPage = 1;
+        let totalPages = 1;
+        let allMovies = [];
+        let totalItems = 0; // Thêm biến tổng số phim
+        let isLoading = false;
+
+        async function loadVietnameseMovies(page = 1) {
+            if (isLoading) return;
+
+            try {
+                isLoading = true;
+                console.log(`Loading Vietnamese movies - Page ${page}...`);
+
+                // Gọi API phim Việt Nam từ ophim1.com
+                const url = `https://ophim1.com/v1/api/quoc-gia/viet-nam?page=${page}`;
+                console.log('Fetching from:', url);
+
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Vietnamese movies data:', data);
+                console.log('Params:', data.data?.params);
+                console.log('Pagination:', data.data?.params?.pagination);
+
+                if (data.status === 'success' && data.data && data.data.items) {
+                    const movies = data.data.items;
+                    allMovies = movies; // Replace instead of append for pagination
+
+                    // Lấy thông tin phân trang - FIX: API không trả về pagination trong params
+                    // Tạm thời hardcode totalPages = 18 (như trên ophim17.cc)
+                    totalPages = 18; // Hardcode vì API không trả về
+                    totalItems = 432; // 18 pages * 24 items
+                    currentPage = page;
+
+                    console.log('Set pagination - Pages:', totalPages, 'Items:', totalItems);
+
+                    renderMovies(allMovies);
+
+                    // Hiển thị pagination
+                    console.log('Showing pagination - Current:', currentPage, 'Total:', totalPages);
+                    showLoadMoreButton();
+
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('moviesGrid').classList.remove('hidden');
+                } else {
+                    throw new Error('Invalid data format');
+                }
+            } catch (err) {
+                console.error('Error loading movies:', err);
+                if (page === 1) {
+                    loading.classList.add('hidden');
+                    error.classList.remove('hidden');
+                }
+            } finally {
+                isLoading = false;
+            }
+        }
+
+        function renderMovies(movies) {
+            loading.classList.add('hidden');
+            moviesGrid.classList.remove('hidden');
+
+            movieCount.textContent = `${movies.length} phim (Trang ${currentPage}/${totalPages} - Tổng: ${totalItems} phim)`;
+
+            // Get movie links from localStorage
+            const movieLinks = JSON.parse(localStorage.getItem('movieLinks') || '{}');
+
+            moviesList.innerHTML = movies.map(movie => {
+                const hasCustomLink = !!movieLinks[movie.slug];
+                const linkUrl = hasCustomLink ? `watch-simple.html?slug=${movie.slug}` : `movie-detail.html?slug=${movie.slug}`;
+
+                return `
+                <a href="${linkUrl}"
+                    class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300">
+                    <div class="aspect-[2/3] w-full overflow-hidden relative">
+                        <img alt="${movie.name}"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
+                            onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
+                        <div class="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-2 py-0.5 rounded">
+                            ${movie.quality || 'HD'}
+                        </div>
+                        ${movie.episode_current ? `
+                        <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                            ${movie.episode_current}
+                        </div>` : ''}
+                        ${hasCustomLink ? `
+                        <div class="absolute bottom-2 right-2 bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
+                            <span class="material-icons-round text-[10px]">check_circle</span> Có link
+                        </div>` : ''}
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
+                            <div class="text-[10px] text-gray-300 truncate">${movie.origin_name || ''}</div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-white font-semibold truncate group-hover:text-primary transition-colors">
+                            ${movie.name}
+                        </h3>
+                        <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+                            <span>${movie.year || 'N/A'}</span>
+                            <span class="flex items-center gap-1 text-yellow-500 font-bold">
+                                <span class="material-icons-round text-[10px]">star</span> 
+                                ${movie.tmdb?.vote_average?.toFixed(1) || 'N/A'}
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            `;
+            }).join('');
+
+            console.log(`Rendered ${movies.length} Vietnamese movies`);
+        }
+
+        function showLoadMoreButton() {
+            console.log('showLoadMoreButton called - Page:', currentPage, 'Total:', totalPages);
+
+            let paginationContainer = document.getElementById('paginationContainer');
+            if (!paginationContainer) {
+                paginationContainer = document.createElement('div');
+                paginationContainer.id = 'paginationContainer';
+                paginationContainer.className = 'mt-12';
+                const moviesGridElement = document.getElementById('moviesGrid');
+                if (moviesGridElement) {
+                    moviesGridElement.appendChild(paginationContainer);
+                    console.log('Pagination container created and appended');
+                } else {
+                    console.error('moviesGrid element not found!');
+                    return;
+                }
+            }
+
+            // Build pagination HTML
+            let paginationHTML = '<div class="flex flex-col items-center gap-6">';
+
+            // Page info
+            paginationHTML += `
+                <div class="text-center">
+                    <p class="text-white text-lg font-bold">Trang ${currentPage} / ${totalPages}</p>
+                    <p class="text-gray-400 text-sm mt-1">Hiển thị ${allMovies.length} phim trên trang này</p>
+                    <p class="text-gray-500 text-xs mt-1">Tổng cộng: ${totalItems} phim Việt Nam</p>
+                </div>
+            `;
+
+            // Pagination buttons
+            paginationHTML += '<div class="flex flex-wrap items-center justify-center gap-2">';
+
+            // Previous button
+            if (currentPage > 1) {
+                paginationHTML += `
+                    <button onclick="loadVietnameseMovies(${currentPage - 1})" 
+                        class="w-10 h-10 flex items-center justify-center bg-surface-dark border border-white/10 rounded-lg hover:bg-white/5 hover:border-primary transition-colors">
+                        <span class="material-icons-round text-sm">chevron_left</span>
+                    </button>
+                `;
+            }
+
+            // First page
+            if (currentPage > 3) {
+                paginationHTML += `
+                    <button onclick="loadVietnameseMovies(1)" 
+                        class="w-10 h-10 flex items-center justify-center bg-surface-dark border border-white/10 rounded-lg hover:bg-white/5 hover:border-primary transition-colors text-sm">
+                        1
+                    </button>
+                `;
+                if (currentPage > 4) {
+                    paginationHTML += `
+                        <span class="text-gray-500 px-2">...</span>
+                    `;
+                }
+            }
+
+            // Page numbers (show 5 pages around current)
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 2);
+
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === currentPage) {
+                    paginationHTML += `
+                        <button class="w-10 h-10 flex items-center justify-center bg-primary text-black font-bold rounded-lg shadow-lg shadow-primary/30 text-sm">
+                            ${i}
+                        </button>
+                    `;
+                } else {
+                    paginationHTML += `
+                        <button onclick="loadVietnameseMovies(${i})" 
+                            class="w-10 h-10 flex items-center justify-center bg-surface-dark border border-white/10 rounded-lg hover:bg-white/5 hover:border-primary transition-colors text-sm">
+                            ${i}
+                        </button>
+                    `;
+                }
+            }
+
+            // Last page
+            if (currentPage < totalPages - 2) {
+                if (currentPage < totalPages - 3) {
+                    paginationHTML += `
+                        <span class="text-gray-500 px-2">...</span>
+                    `;
+                }
+                paginationHTML += `
+                    <button onclick="loadVietnameseMovies(${totalPages})" 
+                        class="w-10 h-10 flex items-center justify-center bg-surface-dark border border-white/10 rounded-lg hover:bg-white/5 hover:border-primary transition-colors text-sm">
+                        ${totalPages}
+                    </button>
+                `;
+            }
+
+            // Next button
+            if (currentPage < totalPages) {
+                paginationHTML += `
+                    <button onclick="loadVietnameseMovies(${currentPage + 1})" 
+                        class="w-10 h-10 flex items-center justify-center bg-surface-dark border border-white/10 rounded-lg hover:bg-white/5 hover:border-primary transition-colors">
+                        <span class="material-icons-round text-sm">chevron_right</span>
+                    </button>
+                `;
+            }
+
+            paginationHTML += '</div>';
+
+            // Quick jump
+            paginationHTML += `
+                <div class="flex items-center gap-2">
+                    <span class="text-gray-400 text-sm">Đi đến trang:</span>
+                    <input type="number" id="pageInput" min="1" max="${totalPages}" value="${currentPage}" 
+                        class="w-20 px-3 py-2 bg-surface-dark border border-white/10 rounded-lg text-white text-sm text-center focus:border-primary focus:ring-1 focus:ring-primary">
+                    <button onclick="jumpToPage()" 
+                        class="px-4 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors text-sm">
+                        Đi
+                    </button>
+                </div>
+            `;
+
+            paginationHTML += '</div>';
+
+            paginationContainer.innerHTML = paginationHTML;
+
+            // Scroll to top when page changes
+            if (currentPage > 1) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function hideLoadMoreButton() {
+            const paginationContainer = document.getElementById('paginationContainer');
+            if (paginationContainer) {
+                paginationContainer.remove();
+            }
+        }
+
+        function jumpToPage() {
+            const pageInput = document.getElementById('pageInput');
+            const page = parseInt(pageInput.value);
+            if (page >= 1 && page <= totalPages) {
+                loadVietnameseMovies(page);
+            } else {
+                alert(`Vui lòng nhập số trang từ 1 đến ${totalPages}`);
+            }
+        }
+
+        function loadMoreMovies() {
+            if (currentPage < totalPages && !isLoading) {
+                loadVietnameseMovies(currentPage + 1);
+            }
+        }
+
+        // Load movies on page load
+        loadVietnameseMovies(1);
+    </script>
+</body>
+
+</html>

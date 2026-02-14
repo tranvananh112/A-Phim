@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineStream - Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2f20d",
+                        "background-dark": "#1a1a0c",
+                        "surface-dark": "#2a2a18",
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-background-dark text-white">
+    <!-- Simple Header -->
+    <nav class="bg-black/50 p-4">
+        <div class="container mx-auto">
+            <h1 class="text-2xl font-bold">Cine<span class="text-primary">Stream</span></h1>
+        </div>
+    </nav>
+
+    <!-- Movies Section -->
+    <main class="container mx-auto px-6 py-12">
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-3xl font-bold">Phim Nổi Bật</h2>
+            <div id="status" class="text-sm text-gray-400"></div>
+        </div>
+
+        <!-- Movie Grid -->
+        <div id="movieGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <!-- Movies will be loaded here -->
+            <div class="col-span-full text-center py-10">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                <p class="mt-4 text-gray-400">Đang tải phim...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        const movieGrid = document.getElementById('movieGrid');
+        const status = document.getElementById('status');
+
+        async function loadMovies() {
+            console.log('=== Starting to load movies ===');
+            console.log('Config:', {
+                USE_BACKEND: API_CONFIG.USE_BACKEND,
+                BACKEND_URL: API_CONFIG.BACKEND_URL
+            });
+
+            try {
+                status.textContent = 'Đang tải...';
+
+                const data = await movieAPI.getMovieList(1);
+                console.log('Response:', data);
+
+                if (data && data.status === 'success' && data.data && data.data.items) {
+                    const movies = data.data.items;
+                    console.log(`✅ Loaded ${movies.length} movies`);
+                    status.textContent = `${movies.length} phim`;
+
+                    movieGrid.innerHTML = movies.map(movie => `
+                        <a href="movie-detail.html?slug=${movie.slug}"
+                            class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all">
+                            <div class="aspect-[2/3] w-full overflow-hidden relative">
+                                <img alt="${movie.name}"
+                                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                    src="${movieAPI.getImageURL(movie.thumb_url)}"
+                                    onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
+                                <div class="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-2 py-0.5 rounded">
+                                    ${movie.quality || 'HD'}
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="text-white font-semibold truncate group-hover:text-primary transition-colors">
+                                    ${movie.name}
+                                </h3>
+                                <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+                                    <span>${movie.year || 'N/A'}</span>
+                                    <span>${movie.quality || 'HD'}</span>
+                                </div>
+                            </div>
+                        </a>
+                    `).join('');
+                } else {
+                    console.error('❌ Invalid response structure');
+                    status.textContent = 'Lỗi';
+                    movieGrid.innerHTML = `
+                        <div class="col-span-full text-center py-10 text-red-400">
+                            <p>Không thể tải danh sách phim</p>
+                            <pre class="text-xs mt-4 text-left bg-black/50 p-4 rounded">${JSON.stringify(data, null, 2).substring(0, 500)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('❌ Error:', error);
+                status.textContent = 'Lỗi';
+                movieGrid.innerHTML = `
+                    <div class="col-span-full text-center py-10 text-red-400">
+                        <p>Đã xảy ra lỗi: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load movies when page loads
+        document.addEventListener('DOMContentLoaded', loadMovies);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,128 @@
+<!-- NAVIGATION COMPONENT - Copy this to all pages -->
+<nav class="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-md border-b border-white/10">
+    <div class="container mx-auto px-6 h-20 flex items-center justify-between">
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center gap-2 group">
+            <div
+                class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-105 transition-transform">
+                <span class="material-icons-round text-black text-2xl">play_arrow</span>
+            </div>
+            <span class="text-2xl font-bold tracking-tight text-white">Cine<span
+                    class="text-primary">Stream</span></span>
+        </a>
+
+        <!-- Desktop Menu -->
+        <div class="hidden lg:flex items-center gap-6">
+            <!-- Trang chủ -->
+            <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
+                href="index.html">Trang chủ</a>
+
+            <!-- Phim Dropdown -->
+            <div class="relative group">
+                <button
+                    class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide flex items-center gap-1">
+                    Phim
+                    <span class="material-icons-round text-sm">expand_more</span>
+                </button>
+                <div
+                    class="absolute top-full left-0 mt-2 w-48 bg-black/95 backdrop-blur-md border border-white/10 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                    <a href="search.html?type=series"
+                        class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-colors">
+                        📺 Phim Bộ
+                    </a>
+                    <a href="search.html?type=single"
+                        class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-colors">
+                        🎬 Phim Lẻ
+                    </a>
+                    <a href="phim-viet-nam.html"
+                        class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-colors">
+                        🇻🇳 Phim Việt Nam
+                    </a>
+                </div>
+            </div>
+
+            <!-- Thể loại -->
+            <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
+                href="categories.html">Thể Loại</a>
+
+            <!-- Khám phá -->
+            <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
+                href="search.html">Khám phá</a>
+
+            <!-- Gói cước -->
+            <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
+                href="pricing.html">Gói cước</a>
+        </div>
+
+        <!-- Right Menu -->
+        <div class="flex items-center gap-4">
+            <a href="search.html" class="text-gray-300 hover:text-primary transition-colors">
+                <span class="material-icons-round">search</span>
+            </a>
+            <a href="login.html"
+                class="px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors">
+                Đăng nhập
+            </a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobileMenuBtn" class="lg:hidden text-white">
+            <span class="material-icons-round">menu</span>
+        </button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="lg:hidden hidden bg-black/95 backdrop-blur-md border-t border-white/10">
+        <div class="container mx-auto px-6 py-4">
+            <a href="index.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
+                🏠 Trang chủ
+            </a>
+            <div class="py-3">
+                <div class="text-gray-400 text-sm font-bold mb-2">PHIM</div>
+                <a href="search.html?type=series"
+                    class="block py-2 pl-4 text-gray-300 hover:text-primary transition-colors">
+                    📺 Phim Bộ
+                </a>
+                <a href="search.html?type=single"
+                    class="block py-2 pl-4 text-gray-300 hover:text-primary transition-colors">
+                    🎬 Phim Lẻ
+                </a>
+                <a href="phim-viet-nam.html" class="block py-2 pl-4 text-gray-300 hover:text-primary transition-colors">
+                    🇻🇳 Phim Việt Nam
+                </a>
+            </div>
+            <a href="categories.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
+                🎭 Thể Loại
+            </a>
+            <a href="search.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
+                🔍 Khám phá
+            </a>
+            <a href="pricing.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
+                💎 Gói cước
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile Menu Script -->
+<script>
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    if (mobileMenuBtn && mobileMenu) {
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
+</script>
+
+<style>
+    /* Dropdown hover effect */
+    .group:hover .group-hover\:opacity-100 {
+        opacity: 1;
+    }
+
+    .group:hover .group-hover\:visible {
+        visibility: visible;
+    }
+</style>

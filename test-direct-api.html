@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Direct API Test</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        button {
+            background: #f2f20d;
+            color: #000;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        pre {
+            background: #000;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+
+        .success {
+            color: #0f0;
+        }
+
+        .error {
+            color: #f00;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔍 Direct API Test</h1>
+
+    <div>
+        <button onclick="testProxy()">Test Proxy (Port 5001)</button>
+        <button onclick="testBackend()">Test Backend (Port 5000)</button>
+        <button onclick="testWithFetch()">Test with Fetch API</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        const result = document.getElementById('result');
+
+        async function testProxy() {
+            result.innerHTML = '<p>Testing proxy on port 5001...</p>';
+
+            try {
+                const response = await fetch('http://localhost:5001/api/movies?page=1');
+                const data = await response.json();
+
+                console.log('Proxy response:', data);
+
+                if (data.status === 'success' && data.data && data.data.items) {
+                    result.innerHTML = `
+                        <h2 class="success">✅ Proxy Works!</h2>
+                        <p>Found ${data.data.items.length} movies</p>
+                        <h3>Sample movie:</h3>
+                        <pre>${JSON.stringify(data.data.items[0], null, 2)}</pre>
+                        <h3>Full response structure:</h3>
+                        <pre>${JSON.stringify({
+                        status: data.status,
+                        data: {
+                            items: `Array(${data.data.items.length})`,
+                            params: data.data.params
+                        }
+                    }, null, 2)}</pre>
+                    `;
+                } else {
+                    result.innerHTML = `
+                        <h2 class="error">❌ Unexpected format</h2>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                result.innerHTML = `<h2 class="error">❌ Error: ${error.message}</h2>`;
+                console.error(error);
+            }
+        }
+
+        async function testBackend() {
+            result.innerHTML = '<p>Testing backend on port 5000...</p>';
+
+            try {
+                const response = await fetch('http://localhost:5000/api/movies?page=1');
+                const data = await response.json();
+
+                console.log('Backend response:', data);
+                result.innerHTML = `<h2>Backend Response:</h2><pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                result.innerHTML = `<h2 class="error">❌ Error: ${error.message}</h2>`;
+                console.error(error);
+            }
+        }
+
+        async function testWithFetch() {
+            result.innerHTML = '<p>Testing with raw fetch...</p>';
+
+            const tests = [
+                { name: 'Proxy Health', url: 'http://localhost:5001/health' },
+                { name: 'Proxy Movies', url: 'http://localhost:5001/api/movies?page=1' },
+                { name: 'Backend Health', url: 'http://localhost:5000/health' },
+            ];
+
+            let html = '<h2>Test Results:</h2>';
+
+            for (const test of tests) {
+                try {
+                    const response = await fetch(test.url);
+                    const data = await response.json();
+                    html += `
+                        <h3 class="success">✅ ${test.name}</h3>
+                        <p>Status: ${response.status}</p>
+                        <pre>${JSON.stringify(data, null, 2).substring(0, 300)}...</pre>
+                    `;
+                } catch (error) {
+                    html += `<h3 class="error">❌ ${test.name}: ${error.message}</h3>`;
+                }
+            }
+
+            result.innerHTML = html;
+        }
+
+        // Auto test on load
+        testProxy();
+    </script>
+</body>
+
+</html>

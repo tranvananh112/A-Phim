@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ngày Xưa Có Một Chuyện Tình - CineStream</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <style>
+        body {
+            background: #0a0a0a;
+            color: white;
+        }
+
+        #status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .success {
+            background: #10b981;
+            color: white;
+        }
+
+        .error {
+            background: #ef4444;
+            color: white;
+        }
+
+        .info {
+            background: #3b82f6;
+            color: white;
+        }
+    </style>
+</head>
+
+<body class="p-4">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="mb-6">
+            <a href="index.html" class="flex items-center gap-2 mb-4 inline-flex">
+                <span class="material-icons-round text-yellow-400 text-3xl">arrow_back</span>
+                <span class="text-xl">Về trang chủ</span>
+            </a>
+            <h1 class="text-3xl font-bold mb-2">🎬 Ngày Xưa Có Một Chuyện Tình</h1>
+            <p class="text-gray-400">Once Upon A Love Story (2024) - HD Lồng Tiếng</p>
+        </div>
+
+        <!-- Status -->
+        <div id="status" class="info">
+            ⏳ Đang tải video...
+        </div>
+
+        <!-- Video Player -->
+        <div class="bg-black rounded-lg overflow-hidden mb-6">
+            <video id="videoPlayer" class="w-full aspect-video" controls controlsList="nodownload"
+                poster="https://img.ophim.live/uploads/movies/ngay-xua-co-mot-chuyen-tinh-thumb.jpg">
+                Trình duyệt của bạn không hỗ trợ video.
+            </video>
+        </div>
+
+        <!-- Movie Info -->
+        <div class="bg-gray-900 rounded-lg p-6">
+            <h2 class="text-2xl font-bold mb-4">Thông tin phim</h2>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                    <span class="text-gray-400">Thời lượng:</span>
+                    <span class="ml-2">135 Phút</span>
+                </div>
+                <div>
+                    <span class="text-gray-400">Năm:</span>
+                    <span class="ml-2">2024</span>
+                </div>
+                <div>
+                    <span class="text-gray-400">Chất lượng:</span>
+                    <span class="ml-2">HD</span>
+                </div>
+                <div>
+                    <span class="text-gray-400">Ngôn ngữ:</span>
+                    <span class="ml-2">Lồng Tiếng</span>
+                </div>
+                <div class="col-span-2">
+                    <span class="text-gray-400">Thể loại:</span>
+                    <span class="ml-2">Tình Cảm</span>
+                </div>
+                <div class="col-span-2">
+                    <span class="text-gray-400">Quốc gia:</span>
+                    <span class="ml-2">Việt Nam</span>
+                </div>
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-gray-700">
+                <h3 class="font-bold mb-2">Nội dung:</h3>
+                <p class="text-gray-300 leading-relaxed">
+                    Ngày Xưa Có Một Chuyện Tình xoay quanh câu chuyện tình bạn, tình yêu giữa hai chàng trai và một cô
+                    gái từ thuở ấu thơ cho đến khi trưởng thành, phải đối mặt với những thử thách của số phận. Trải dài
+                    trong 4 giai đoạn từ năm 1987 - 2000, ba người bạn cùng tuổi - Vinh, Miền, Phúc đã cùng yêu, cùng bỡ
+                    ngỡ bước vào đời, va vấp và vượt qua.
+                </p>
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-gray-700">
+                <h3 class="font-bold mb-2">Diễn viên:</h3>
+                <p class="text-gray-300">Ngọc Xuân, Lương Anh Vũ, Đỗ Nhật Hoàng, Hạo Khang, Rima Thanh Vy, Kiều Trinh
+                </p>
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-gray-700">
+                <h3 class="font-bold mb-2">Đạo diễn:</h3>
+                <p class="text-gray-300">Trinh Dinh Le Minh</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('videoPlayer');
+        const status = document.getElementById('status');
+
+        // Link video trực tiếp
+        const videoUrl = 'https://vip.opstream13.com/20251205/21005_1facae63/index.m3u8';
+
+        function updateStatus(message, type) {
+            status.textContent = message;
+            status.className = type;
+        }
+
+        // Khởi tạo HLS.js
+        if (Hls.isSupported()) {
+            updateStatus('✅ Đang tải video...', 'info');
+
+            const hls = new Hls({
+                debug: false,
+                enableWorker: true,
+                lowLatencyMode: true,
+            });
+
+            hls.loadSource(videoUrl);
+            hls.attachMedia(video);
+
+            hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                updateStatus('✅ Video đã sẵn sàng! Click play để xem.', 'success');
+                console.log('✅ Video loaded successfully');
+            });
+
+            hls.on(Hls.Events.ERROR, function (event, data) {
+                console.error('HLS Error:', data);
+
+                if (data.fatal) {
+                    switch (data.type) {
+                        case Hls.ErrorTypes.NETWORK_ERROR:
+                            updateStatus('❌ Lỗi mạng. Đang thử kết nối lại...', 'error');
+                            hls.startLoad();
+                            break;
+                        case Hls.ErrorTypes.MEDIA_ERROR:
+                            updateStatus('❌ Lỗi media. Đang thử khôi phục...', 'error');
+                            hls.recoverMediaError();
+                            break;
+                        default:
+                            updateStatus('❌ Lỗi không thể khôi phục: ' + data.type, 'error');
+                            hls.destroy();
+                            break;
+                    }
+                }
+            });
+
+            // Tự động phát khi video sẵn sàng
+            video.addEventListener('loadedmetadata', () => {
+                console.log('Video metadata loaded');
+            });
+
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            // Native HLS support (Safari)
+            updateStatus('✅ Đang tải video (Safari)...', 'info');
+            video.src = videoUrl;
+            video.addEventListener('loadedmetadata', () => {
+                updateStatus('✅ Video đã sẵn sàng! Click play để xem.', 'success');
+            });
+        } else {
+            updateStatus('❌ Trình duyệt của bạn không hỗ trợ phát video HLS', 'error');
+        }
+
+        // Log khi video bắt đầu phát
+        video.addEventListener('play', () => {
+            console.log('▶️ Video đang phát');
+        });
+
+        video.addEventListener('error', (e) => {
+            console.error('Video error:', e);
+            updateStatus('❌ Lỗi khi phát video', 'error');
+        });
+    </script>
+</body>
+
+</html>

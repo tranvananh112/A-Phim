@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Test Movie API</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        button {
+            background: #f2f20d;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #d4d40b;
+        }
+
+        pre {
+            background: #000;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+
+        .success {
+            color: #0f0;
+        }
+
+        .error {
+            color: #f00;
+        }
+
+        .info {
+            color: #0ff;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🎬 Test Movie API - Ngày Xưa Có Một Chuyện Tình</h1>
+
+    <div>
+        <button onclick="testDirectAPI()">Test Direct Ophim API</button>
+        <button onclick="testWithConfig()">Test With Config.js</button>
+        <button onclick="openDemoPage()">Open Demo Player</button>
+        <button onclick="openWatchPage()">Open Watch Page</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        const movieSlug = 'ngay-xua-co-mot-chuyen-tinh';
+        const result = document.getElementById('result');
+
+        async function testDirectAPI() {
+            result.innerHTML = '<p class="info">⏳ Testing direct Ophim API...</p>';
+
+            try {
+                const response = await fetch(`https://ophim17.cc/phim/${movieSlug}`);
+                const data = await response.json();
+
+                console.log('Direct API Response:', data);
+
+                if (data.status === 'success' && data.data && data.data.item) {
+                    const movie = data.data.item;
+                    const episode = movie.episodes?.[0]?.server_data?.[0];
+
+                    result.innerHTML = `
+                        <h2 class="success">✅ API hoạt động!</h2>
+                        <h3>Thông tin phim:</h3>
+                        <ul>
+                            <li><strong>Tên:</strong> ${movie.name}</li>
+                            <li><strong>Tên gốc:</strong> ${movie.origin_name}</li>
+                            <li><strong>Năm:</strong> ${movie.year}</li>
+                            <li><strong>Chất lượng:</strong> ${movie.quality} - ${movie.lang}</li>
+                            <li><strong>Thời lượng:</strong> ${movie.time}</li>
+                            <li><strong>Trạng thái:</strong> ${movie.episode_current}</li>
+                        </ul>
+                        <h3>Link stream:</h3>
+                        <ul>
+                            <li><strong>Server:</strong> ${movie.episodes?.[0]?.server_name}</li>
+                            <li><strong>Episode:</strong> ${episode?.name}</li>
+                            <li><strong>M3U8:</strong> <a href="${episode?.link_m3u8}" target="_blank" style="color: #0ff;">${episode?.link_m3u8}</a></li>
+                        </ul>
+                        <h3>Full Response:</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    result.innerHTML = `<p class="error">❌ Invalid response structure</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+                console.error(error);
+            }
+        }
+
+        async function testWithConfig() {
+            result.innerHTML = '<p class="info">⏳ Testing with movieAPI service...</p>';
+
+            try {
+                console.log('API Config:', API_CONFIG);
+                console.log('USE_BACKEND:', API_CONFIG.USE_BACKEND);
+
+                const data = await movieAPI.getMovieDetail(movieSlug);
+                console.log('MovieAPI Response:', data);
+
+                if (data && data.status === 'success' && data.data && data.data.item) {
+                    const movie = data.data.item;
+                    const episode = movie.episodes?.[0]?.server_data?.[0];
+
+                    result.innerHTML = `
+                        <h2 class="success">✅ MovieAPI service hoạt động!</h2>
+                        <p><strong>Backend Mode:</strong> ${API_CONFIG.USE_BACKEND ? 'Enabled' : 'Disabled (Direct Ophim)'}</p>
+                        <h3>Thông tin phim:</h3>
+                        <ul>
+                            <li><strong>Tên:</strong> ${movie.name}</li>
+                            <li><strong>Slug:</strong> ${movie.slug}</li>
+                            <li><strong>Link stream:</strong> <a href="${episode?.link_m3u8}" target="_blank" style="color: #0ff;">${episode?.link_m3u8}</a></li>
+                        </ul>
+                        <h3>Full Response:</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    result.innerHTML = `<p class="error">❌ Invalid response</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+                console.error(error);
+            }
+        }
+
+        function openDemoPage() {
+            window.open('demo-movie.html', '_blank');
+        }
+
+        function openWatchPage() {
+            window.open(`watch.html?slug=${movieSlug}&episode=full`, '_blank');
+        }
+
+        // Auto test on load
+        testDirectAPI();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CineStream - Dune: Hành Tinh Cát</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2f20d",
+                        "primary-dim": "#b3b30a", 
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#1a1a0c", 
+                        "surface-dark": "#2a2a18",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #f2f20d;
+            cursor: pointer;
+            margin-top: -6px; 
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #4b5563;
+            border-radius: 2px;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a1a0c; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f2f20d; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 font-display min-h-screen flex flex-col">
+<nav class="sticky top-0 z-50 bg-[#15150a]/95 backdrop-blur-md border-b border-white/5">
+<div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-20">
+<div class="flex items-center gap-12">
+<a class="flex items-center gap-2 group" href="#">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300">
+<span class="material-icons-round text-3xl text-black">play_arrow</span>
+</div>
+<div class="flex flex-col leading-none">
+<span class="text-2xl font-bold tracking-tighter text-white uppercase">Cine<span class="text-primary">Stream</span></span>
+<span class="text-[10px] tracking-widest text-gray-400 uppercase font-medium">Entertainment</span>
+</div>
+</a>
+<div class="hidden lg:flex items-center bg-white/5 rounded-full p-1 border border-white/10">
+<a class="px-5 py-2 rounded-full text-sm font-semibold text-black bg-primary transition-all shadow-[0_0_15px_rgba(242,242,13,0.3)]" href="#">Trang chủ</a>
+<a class="px-5 py-2 rounded-full text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 transition-all" href="#">Phim bộ</a>
+<a class="px-5 py-2 rounded-full text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 transition-all" href="#">Phim lẻ</a>
+<a class="px-5 py-2 rounded-full text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 transition-all" href="#">Thể loại</a>
+<a class="px-5 py-2 rounded-full text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 transition-all" href="#">Gói cước</a>
+</div>
+</div>
+<div class="flex items-center gap-5">
+<div class="hidden xl:flex relative group">
+<input class="bg-[#0a0a05] border border-white/10 text-gray-300 text-sm rounded-full focus:ring-1 focus:ring-primary focus:border-primary block w-64 pl-10 pr-4 py-2.5 transition-all group-hover:border-white/20" placeholder="Tìm kiếm phim, diễn viên..." type="text"/>
+<div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
+<span class="material-icons-outlined text-gray-500 group-hover:text-primary transition-colors">search</span>
+</div>
+</div>
+<div class="flex items-center gap-3 border-l border-white/10 pl-5">
+<button class="relative p-2 text-gray-400 hover:text-primary transition-colors">
+<span class="material-icons-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-[#15150a]"></span>
+</button>
+<button class="hidden sm:flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full pl-1 pr-3 py-1 transition-all group">
+<div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-orange-500 p-[2px]">
+<img alt="User" class="rounded-full w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9zQQ3JNhyAZYmFomeFQ1DBirzUnSdEkgGG9yn8jtSVOg2ZCBZM0oKJB5gIEnLXx9uJwEKPQ6Wx-f2Dmy6U195K8VifMNmkru3POrBYazj5_hbTtfnaQqSEcb-o6pmZcEpBDYPEryIRy_cU6x2elx8ZC7SWB0wnDPyfHLngVRtgctz8e46ygSezfDtGlZjacvdhrdGzr2EkjidYsQ3D382Hg0cFksT02YlShJb2LnhH8LcHxkda5sQsnJyI59_9WnAPXvDijWc4Nk"/>
+</div>
+<span class="text-sm font-semibold text-gray-200 group-hover:text-white">Minh Tuấn</span>
+<span class="material-icons-round text-gray-400 text-lg">expand_more</span>
+</button>
+<button class="lg:hidden p-2 text-gray-300">
+<span class="material-icons-round text-2xl">menu</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</nav>
+<main class="flex-grow max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<div class="lg:col-span-9 flex flex-col gap-6">
+<div class="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl group border border-gray-800">
+<img alt="Cinematic desert landscape scene from a movie" class="w-full h-full object-cover opacity-60" data-alt="Cinematic desert landscape scene from a movie" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAC7QDf6qKofNs5w5M7upn-OijPJM5AetmqBVyP5LzF0cc_JHo2etySWIdZiHSDdygD_0-zozkqZPWbrtTQg8uhTv_OhCykR31uYzYA6cQ7zOgHQYvvIIqQZg0EEtUx_uJSyNQ0PwNsQ3AcVCk9fWLBwmOAgfTx0x-Zhqt-5ZcNfEmhDIB1OsPFKZcSBVv2BNPx-CzuXoTZ3sfhBUQM28Ip3-MMay0PunwN5aUt6vLxKKeSGLgQ_fftVQKo_jcqvenVgtKEFDShllY"/>
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<button class="w-20 h-20 bg-primary/90 text-black rounded-full flex items-center justify-center transform scale-0 group-hover:scale-100 transition-transform duration-300 pointer-events-auto hover:bg-white hover:text-primary">
+<span class="material-icons-round text-5xl ml-2">play_arrow</span>
+</button>
+</div>
+<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent px-4 pb-4 pt-12 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<div class="relative w-full h-1 bg-gray-600 rounded-full mb-4 cursor-pointer group/progress">
+<div class="absolute h-full bg-primary w-[35%] rounded-full relative">
+<div class="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-primary rounded-full scale-0 group-hover/progress:scale-150 transition-transform shadow-lg"></div>
+</div>
+</div>
+<div class="flex items-center justify-between text-white">
+<div class="flex items-center gap-4">
+<button class="hover:text-primary transition-colors"><span class="material-icons-round text-3xl">pause</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-icons-round">replay_10</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-icons-round">forward_10</span></button>
+<div class="flex items-center gap-2 group/vol">
+<button class="hover:text-primary transition-colors"><span class="material-icons-round">volume_up</span></button>
+<div class="w-0 overflow-hidden group-hover/vol:w-20 transition-all duration-300">
+<div class="w-16 h-1 bg-white/30 rounded-full ml-2 relative">
+<div class="absolute left-0 top-0 bottom-0 bg-primary w-[70%] rounded-full"></div>
+</div>
+</div>
+</div>
+<span class="text-xs font-medium font-mono text-gray-300 ml-2">45:20 / 2:35:00</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-1 text-xs font-bold bg-white/10 hover:bg-primary hover:text-black px-2 py-1 rounded transition-colors">
+<span class="material-icons-outlined text-sm">subtitles</span> VIE
+                            </button>
+<button class="flex items-center gap-1 text-xs font-bold bg-white/10 hover:bg-primary hover:text-black px-2 py-1 rounded transition-colors">
+                                4K
+                            </button>
+<button class="hover:text-primary transition-colors"><span class="material-icons-round">settings</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-icons-round">fullscreen</span></button>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col md:flex-row justify-between items-start gap-4">
+<div>
+<h1 class="text-3xl md:text-4xl font-bold mb-2 text-white">Dune: Hành Tinh Cát (2021)</h1>
+<div class="flex flex-wrap items-center gap-4 text-sm text-gray-400">
+<span class="flex items-center text-primary font-bold"><span class="material-icons-round text-base mr-1">star</span> 8.5</span>
+<span>2021</span>
+<span class="border border-gray-700 px-2 py-0.5 rounded text-xs uppercase">PG-13</span>
+<span>2h 35m</span>
+<span class="text-gray-500">|</span>
+<span>Khoa học viễn tưởng, Phiêu lưu</span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 bg-surface-dark hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors border border-gray-700">
+<span class="material-icons-outlined text-lg">share</span> Chia sẻ
+                    </button>
+<button class="flex items-center gap-2 bg-surface-dark hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors border border-gray-700">
+<span class="material-icons-outlined text-lg">bookmark_add</span> Lưu phim
+                    </button>
+<button class="flex items-center gap-2 bg-primary/20 hover:bg-primary text-primary hover:text-black border border-primary/50 px-4 py-2 rounded-lg transition-colors font-semibold">
+<span class="material-icons-outlined text-lg">bug_report</span> Báo lỗi
+                    </button>
+</div>
+</div>
+<div class="bg-surface-dark/50 border border-gray-800 rounded-xl p-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-xl font-bold flex items-center gap-2">
+<span class="w-1 h-6 bg-primary rounded-full"></span>
+                        Danh sách tập
+                    </h3>
+<div class="flex bg-black/40 rounded-lg p-1">
+<button class="px-3 py-1 rounded-md bg-primary text-black text-xs font-bold shadow">Phần 1</button>
+<button class="px-3 py-1 rounded-md text-gray-400 hover:text-white text-xs font-medium transition-colors">Phần 2</button>
+</div>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+<button class="bg-primary text-black font-bold py-3 rounded-lg border border-primary hover:brightness-110 shadow-[0_0_15px_rgba(242,242,13,0.3)]">Tập 1</button>
+<button class="bg-black/40 hover:bg-gray-700 hover:text-primary text-gray-300 font-medium py-3 rounded-lg border border-gray-700 transition-colors">Tập 2</button>
+<button class="bg-black/40 hover:bg-gray-700 hover:text-primary text-gray-300 font-medium py-3 rounded-lg border border-gray-700 transition-colors">Tập 3</button>
+<button class="bg-black/40 hover:bg-gray-700 hover:text-primary text-gray-300 font-medium py-3 rounded-lg border border-gray-700 transition-colors">Tập 4</button>
+<button class="bg-black/40 hover:bg-gray-700 hover:text-primary text-gray-300 font-medium py-3 rounded-lg border border-gray-700 transition-colors relative overflow-hidden group">
+<span class="relative z-10">Tập 5</span>
+<div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+</button>
+<button class="bg-black/40 text-gray-500 font-medium py-3 rounded-lg border border-gray-800 cursor-not-allowed opacity-60">Tập 6</button>
+</div>
+</div>
+<div class="mt-4">
+<div class="flex border-b border-gray-800 mb-6">
+<button class="px-6 py-3 text-primary border-b-2 border-primary font-bold">Bình luận (124)</button>
+<button class="px-6 py-3 text-gray-400 hover:text-white font-medium">Thông tin phim</button>
+</div>
+<div class="bg-surface-dark/30 rounded-xl p-4 mb-8 border border-gray-800">
+<div class="flex gap-4">
+<img alt="User avatar" class="w-10 h-10 rounded-full" data-alt="Current user avatar for comment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC472Bl6NeI2ETHlPqgNK80KZFuNBoirkk0FCYVVSAvZZ_cv1HIIQVditZuLkf5qYZRJxrIvxn2UsbtwP6ibxYltlA7VesehUBknMbnyPOJxhYTxQS5xIFiVvlZ_Tc8ZlcTGGZP3eIAi_fAeZ_6bYbK7sKAK8Di8WtLrt1gowiPWMvRdNIi1DGU1iyStyNV3dYKcWravA0mwB6OlGDzDtsbDLahNbrFGI1JsUpXM5iA1-yQZibHMAHYaUX_dKjizUTDSaKePEK0F9A"/>
+<div class="flex-grow">
+<div class="flex items-center gap-2 mb-2">
+<span class="text-sm font-semibold text-gray-300">Đánh giá phim:</span>
+<div class="flex text-yellow-500 gap-1">
+<span class="material-icons-round text-lg cursor-pointer hover:text-primary">star</span>
+<span class="material-icons-round text-lg cursor-pointer hover:text-primary">star</span>
+<span class="material-icons-round text-lg cursor-pointer hover:text-primary">star</span>
+<span class="material-icons-round text-lg cursor-pointer hover:text-primary">star</span>
+<span class="material-icons-round text-lg text-gray-600 cursor-pointer hover:text-primary">star</span>
+</div>
+<span class="text-xs text-primary font-mono ml-2">8/10</span>
+</div>
+<textarea class="w-full bg-black/50 border border-gray-700 rounded-lg p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-white placeholder-gray-500" placeholder="Chia sẻ cảm nghĩ của bạn về bộ phim..." rows="3"></textarea>
+<div class="flex justify-end mt-2">
+<button class="bg-primary hover:bg-primary-dim text-black font-bold py-2 px-6 rounded-lg text-sm transition-colors">Gửi bình luận</button>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-6">
+<div class="flex gap-4 group">
+<div class="flex-shrink-0">
+<img alt="Minh Tuan" class="w-10 h-10 rounded-full" data-alt="User avatar for Minh Tuan" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClY0MQr1Sfgk19yYNM2n8jlsOAWo_dRggYO-x_zErcUwpGqW2cwhdcu2eexJetyVybiwnLnygI7ogUvCjx2zLjbcC3Bln3dbM0M5JO3W7KOpEgQouhi724MZS2orCKrloAqzofuj_wzCe4JFBWc8qnzA7a5q7xeWWmo5ia1gfr924lUy6pTxTc4-aBO-8IpgbEuyZ-6Nk-bkMF46tIu4L2gltZ2ageDUudF8rF-VkuzEBzMBzyEwxEh9h2o8CXp44k5R1FkeYsUaY"/>
+</div>
+<div class="flex-grow">
+<div class="flex items-center justify-between mb-1">
+<h4 class="font-bold text-white group-hover:text-primary transition-colors">Minh Tuấn</h4>
+<span class="text-xs text-gray-500">2 giờ trước</span>
+</div>
+<div class="flex items-center gap-1 mb-2">
+<span class="text-primary text-xs flex"><span class="material-icons-round text-[14px]">star</span> 10/10</span>
+<span class="text-gray-600 text-xs">•</span>
+<span class="text-gray-400 text-xs">Cực phẩm</span>
+</div>
+<p class="text-gray-300 text-sm leading-relaxed">Phim quá đỉnh, hình ảnh và âm thanh không chê vào đâu được. Timothée Chalamet diễn xuất thần sầu. Mong chờ phần 2 quá!</p>
+<div class="flex items-center gap-4 mt-2">
+<button class="flex items-center gap-1 text-gray-500 hover:text-primary text-xs">
+<span class="material-icons-outlined text-sm">thumb_up</span> 45
+                                </button>
+<button class="flex items-center gap-1 text-gray-500 hover:text-red-500 text-xs">
+<span class="material-icons-outlined text-sm">thumb_down</span> 2
+                                </button>
+<button class="text-gray-500 hover:text-white text-xs">Trả lời</button>
+</div>
+</div>
+</div>
+<div class="flex gap-4 group">
+<div class="flex-shrink-0">
+<img alt="Lan Anh" class="w-10 h-10 rounded-full" data-alt="User avatar for Lan Anh" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcNMJ6cMpUWmhPdiZudUbIEWg9E2MpENjauobThjwddQTC75M7nncY4hQhd1VfOGdxN62HtzvtAYJ6JFqvNz1NVQ6Tl32uQoDoRebmYt695K6znYkKLLXyZLSnU2xNmxI69mKNSGFySP4yLwgw3qRHGs7OGFnUQMh87b-AbA01VsFBflz7jThyP2vtpeCarl1oFpgfRCQoAT89q1yzPiwo16Ehdz3-csj9tLkb_QcqYv7WG1wGAek7ToHx5mdfWLnowR0C6Xb56s0"/>
+</div>
+<div class="flex-grow">
+<div class="flex items-center justify-between mb-1">
+<h4 class="font-bold text-white group-hover:text-primary transition-colors">Lan Anh</h4>
+<span class="text-xs text-gray-500">1 ngày trước</span>
+</div>
+<div class="flex items-center gap-1 mb-2">
+<span class="text-primary text-xs flex"><span class="material-icons-round text-[14px]">star</span> 8/10</span>
+</div>
+<p class="text-gray-300 text-sm leading-relaxed">Nội dung hơi chậm một chút nhưng world-building cực kỳ ấn tượng. Fan Dune chắc chắn sẽ thích.</p>
+<div class="flex items-center gap-4 mt-2">
+<button class="flex items-center gap-1 text-gray-500 hover:text-primary text-xs">
+<span class="material-icons-outlined text-sm">thumb_up</span> 12
+                                </button>
+<button class="text-gray-500 hover:text-white text-xs">Trả lời</button>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-6 text-center">
+<button class="text-primary hover:text-white text-sm font-medium transition-colors">Xem thêm bình luận</button>
+</div>
+</div>
+</div>
+<aside class="lg:col-span-3 space-y-8">
+<div class="flex items-center justify-between">
+<h3 class="font-bold text-lg text-white border-l-4 border-primary pl-3">Có thể bạn sẽ thích</h3>
+<a class="text-xs text-gray-400 hover:text-primary" href="#">Xem tất cả</a>
+</div>
+<div class="space-y-4">
+<a class="group flex gap-3 p-2 rounded-lg hover:bg-surface-dark transition-colors" href="#">
+<div class="relative w-24 aspect-[2/3] flex-shrink-0 rounded-md overflow-hidden">
+<img alt="Blade Runner 2049 poster thumbnail" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Futuristic neon city movie poster thumbnail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5fDutyLsHbwN6ZODwhqzNTFbSw0Y4bgNod9x5Mb-mDwNSVjAeVCuSsIKiSveZqpaMKcyxVir019UTE7ZaMDwSSr5ZRVYzvJZm9SXRbpc70tbMKuZo0y8om9kmaY2_HEi6PucB8lBXZEFZQ6IDT3bZ9osJMlqo1-p0DNCr6zgoAyALh8fYiud9JycPMmdtfoa5tVd4GsrwKdYtEy0xJNcoPhYDoQldkg8k4iw6IK9YhU_etvhLAb1-e3Z_hfvzIck2OePJZTfv8XY"/>
+<span class="absolute top-1 left-1 bg-primary text-black text-[10px] font-bold px-1.5 rounded">HD</span>
+</div>
+<div class="flex flex-col justify-center">
+<h4 class="font-bold text-sm text-gray-200 group-hover:text-primary line-clamp-2 mb-1">Blade Runner 2049: Tội Phạm Nhân Bản</h4>
+<span class="text-xs text-gray-500 mb-2">2017</span>
+<div class="flex items-center text-xs text-yellow-500 gap-1">
+<span class="material-icons-round text-[14px]">star</span>
+<span class="text-gray-300">8.0</span>
+</div>
+</div>
+</a>
+<a class="group flex gap-3 p-2 rounded-lg hover:bg-surface-dark transition-colors" href="#">
+<div class="relative w-24 aspect-[2/3] flex-shrink-0 rounded-md overflow-hidden">
+<img alt="Interstellar poster thumbnail" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Space galaxy movie poster thumbnail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrjHaY1nzjdTOqf0vtghP7wf6WNqFpM58hbTufNofW_VfBFBoe71-ttiRaAsq_QoVRU6NrKmsJhvrrhkkrFruSfgmV58A5Wn_IBaMAfJYD4kwRsGvaA4Q8TYJYsDbveFEIm-CLbHDybniqNT7mkGbucaMzzyA5Rjszp-P5SqO1cnOBvAk6lW_erYZLaBsp-1rsqOk2US8xmBBmAPyfHqnhQ2yM4bFgVIn8BXB5yiTepsQSqslwS2G2tNQUlBtpb-txVsEHqXdvfSA"/>
+<span class="absolute top-1 left-1 bg-primary text-black text-[10px] font-bold px-1.5 rounded">4K</span>
+</div>
+<div class="flex flex-col justify-center">
+<h4 class="font-bold text-sm text-gray-200 group-hover:text-primary line-clamp-2 mb-1">Interstellar: Hố Đen Tử Thần</h4>
+<span class="text-xs text-gray-500 mb-2">2014</span>
+<div class="flex items-center text-xs text-yellow-500 gap-1">
+<span class="material-icons-round text-[14px]">star</span>
+<span class="text-gray-300">8.7</span>
+</div>
+</div>
+</a>
+<a class="group flex gap-3 p-2 rounded-lg hover:bg-surface-dark transition-colors" href="#">
+<div class="relative w-24 aspect-[2/3] flex-shrink-0 rounded-md overflow-hidden">
+<img alt="Star Wars poster thumbnail" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Sci-fi space battle movie poster thumbnail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKoRd81jQeDVk6soRIAhoUMrAxPCl9LiALeqviYaPGSoZiS0GHfA17i7xg7vrOpCGKjDeMa0-5DQlFccGEAs_ZsSwqVuPEU_re22LivfN9zYGEslP4M6Y3BiXumw2eLH5oIIxyOhHIsi9qk3QRjIk4PRz-o2Cr_40Tb1pnkAgvaZhRPwSqbF5vW_mk8jeXqg_nQ_TrF4-fsckDafwE2zXiLJqC48mu9Tq0nxLB4b19UZvaS07jMD5Rr4q_Q3gY-AsdiNssglwAamM"/>
+<span class="absolute top-1 left-1 bg-primary text-black text-[10px] font-bold px-1.5 rounded">HD</span>
+</div>
+<div class="flex flex-col justify-center">
+<h4 class="font-bold text-sm text-gray-200 group-hover:text-primary line-clamp-2 mb-1">Star Wars: Niềm Hy Vọng Mới</h4>
+<span class="text-xs text-gray-500 mb-2">1977</span>
+<div class="flex items-center text-xs text-yellow-500 gap-1">
+<span class="material-icons-round text-[14px]">star</span>
+<span class="text-gray-300">8.6</span>
+</div>
+</div>
+</a>
+<a class="group flex gap-3 p-2 rounded-lg hover:bg-surface-dark transition-colors" href="#">
+<div class="relative w-24 aspect-[2/3] flex-shrink-0 rounded-md overflow-hidden">
+<img alt="Arrival poster thumbnail" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Mysterious alien ship movie poster thumbnail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzxTy5VBY0u7xAU1VJC3KChyQL1IyfQPdpfMMy7jjG6a392r3q7VpnQJJED55EH13dEOmVQP4Jh6hrHnHhPUXArhn5fpRjNtzUSn14dATLM3URi2FLYfrOQ7z4fYOlCAFl3-dxzArXB9YIgad8pBh4yStsnTlgQAlcDiryqbfank616YagnRMtiy2_cYPTty4cv3-9fLsZrPm5_4hXKuDPKW55bUfBVCoqGzno8RkbEbfnKk8QB7EcAyUvTcROx8N61_9SHeUnFjQ"/>
+<span class="absolute top-1 left-1 bg-primary text-black text-[10px] font-bold px-1.5 rounded">HD</span>
+</div>
+<div class="flex flex-col justify-center">
+<h4 class="font-bold text-sm text-gray-200 group-hover:text-primary line-clamp-2 mb-1">Arrival: Cuộc Đổ Bộ Bí Ẩn</h4>
+<span class="text-xs text-gray-500 mb-2">2016</span>
+<div class="flex items-center text-xs text-yellow-500 gap-1">
+<span class="material-icons-round text-[14px]">star</span>
+<span class="text-gray-300">7.9</span>
+</div>
+</div>
+</a>
+</div>
+<div class="pt-6 border-t border-gray-800">
+<h3 class="font-bold text-lg text-white mb-4">Từ khóa phổ biến</h3>
+<div class="flex flex-wrap gap-2">
+<a class="px-3 py-1 bg-surface-dark hover:bg-primary hover:text-black text-xs text-gray-300 rounded-full transition-colors" href="#">#KhoaHocVienTuong</a>
+<a class="px-3 py-1 bg-surface-dark hover:bg-primary hover:text-black text-xs text-gray-300 rounded-full transition-colors" href="#">#TimothéeChalamet</a>
+<a class="px-3 py-1 bg-surface-dark hover:bg-primary hover:text-black text-xs text-gray-300 rounded-full transition-colors" href="#">#Oscar2022</a>
+<a class="px-3 py-1 bg-surface-dark hover:bg-primary hover:text-black text-xs text-gray-300 rounded-full transition-colors" href="#">#HanhDong</a>
+<a class="px-3 py-1 bg-surface-dark hover:bg-primary hover:text-black text-xs text-gray-300 rounded-full transition-colors" href="#">#PhimChieuRap</a>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<footer class="mt-auto border-t border-gray-800 bg-[#12120a] py-8">
+<div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="material-icons-round text-2xl text-primary">play_circle</span>
+<span class="text-lg font-bold tracking-tighter text-white">CINE<span class="text-primary">STREAM</span></span>
+</div>
+<p class="text-gray-500 text-sm text-center md:text-right">© 2023 CineStream. All rights reserved. <br class="md:hidden"/>Designed for Cinema Lovers.</p>
+</div>
+</footer>
+
+</body></html>

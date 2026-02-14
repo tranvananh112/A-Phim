@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Test</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .movie {
+            background: #2a2a2a;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        img {
+            max-width: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Test Ophim API</h1>
+    <button onclick="loadMovies()">Load Movies</button>
+    <div id="result"></div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        async function loadMovies() {
+            const result = document.getElementById('result');
+            result.innerHTML = 'Loading...';
+
+            try {
+                console.log('Calling API...');
+                const data = await movieAPI.getMovieList(1);
+                console.log('Response:', data);
+
+                if (data && data.status === 'success' && data.data && data.data.items) {
+                    const movies = data.data.items;
+                    result.innerHTML = `
+                        <h2>Found ${movies.length} movies</h2>
+                        ${movies.slice(0, 5).map(m => `
+                            <div class="movie">
+                                <img src="${movieAPI.getImageURL(m.thumb_url)}" alt="${m.name}">
+                                <h3>${m.name}</h3>
+                                <p>Year: ${m.year} | Quality: ${m.quality}</p>
+                            </div>
+                        `).join('')}
+                    `;
+                } else {
+                    result.innerHTML = 'No data: ' + JSON.stringify(data);
+                }
+            } catch (error) {
+                result.innerHTML = 'Error: ' + error.message;
+                console.error(error);
+            }
+        }
+
+        // Auto load
+        loadMovies();
+    </script>
+</body>
+
+</html>

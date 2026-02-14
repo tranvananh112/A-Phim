@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Phim Việt Nam</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-white p-8">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">Test API Phim Việt Nam</h1>
+
+        <div class="mb-6 flex gap-4">
+            <input type="number" id="pageInput" value="1" min="1" max="20"
+                class="px-4 py-2 bg-gray-800 border border-gray-700 rounded text-white w-32">
+            <button onclick="testAPI()" class="px-6 py-2 bg-blue-600 hover:bg-blue-500 rounded font-bold">
+                Test Trang
+            </button>
+        </div>
+
+        <div id="result" class="bg-gray-800 p-6 rounded-lg">
+            <p class="text-gray-400">Nhấn "Test Trang" để kiểm tra API...</p>
+        </div>
+
+        <div id="movies" class="mt-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        </div>
+    </div>
+
+    <script>
+        async function testAPI() {
+            const page = document.getElementById('pageInput').value;
+            const resultDiv = document.getElementById('result');
+            const moviesDiv = document.getElementById('movies');
+
+            resultDiv.innerHTML = '<p class="text-yellow-400">Đang tải...</p>';
+            moviesDiv.innerHTML = '';
+
+            try {
+                const url = `https://ophim1.com/v1/api/quoc-gia/viet-nam?page=${page}`;
+                console.log('Fetching:', url);
+
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: { 'accept': 'application/json' }
+                });
+
+                console.log('Response status:', response.status);
+                const data = await response.json();
+                console.log('Data:', data);
+
+                if (data.status === 'success' && data.data) {
+                    const items = data.data.items || [];
+                    const params = data.data.params || {};
+                    const pagination = params.pagination || {};
+
+                    resultDiv.innerHTML = `
+                        <div class="space-y-2">
+                            <p class="text-green-400 font-bold">✅ API hoạt động tốt!</p>
+                            <p>📄 Trang: ${pagination.currentPage || page} / ${pagination.totalPages || 'N/A'}</p>
+                            <p>🎬 Số phim trên trang: ${items.length}</p>
+                            <p>📊 Tổng số phim: ${pagination.totalItems || 'N/A'}</p>
+                            <p>🔗 URL: <code class="text-xs">${url}</code></p>
+                        </div>
+                    `;
+
+                    // Render movies
+                    moviesDiv.innerHTML = items.map(movie => `
+                        <div class="bg-gray-700 rounded-lg overflow-hidden">
+                            <img src="https://img.ophim.live/uploads/movies/${movie.thumb_url}" 
+                                alt="${movie.name}"
+                                class="w-full aspect-[2/3] object-cover"
+                                onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
+                            <div class="p-2">
+                                <p class="text-xs font-bold truncate">${movie.name}</p>
+                                <p class="text-[10px] text-gray-400">${movie.year || 'N/A'}</p>
+                            </div>
+                        </div>
+                    `).join('');
+
+                } else {
+                    resultDiv.innerHTML = `
+                        <p class="text-red-400">❌ Lỗi: ${data.message || 'Invalid response'}</p>
+                        <pre class="text-xs mt-2 overflow-auto">${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `
+                    <p class="text-red-400">❌ Lỗi: ${error.message}</p>
+                    <p class="text-xs text-gray-400 mt-2">${error.stack}</p>
+                `;
+            }
+        }
+
+        // Auto test on load
+        window.onload = () => testAPI();
+    </script>
+</body>
+
+</html>

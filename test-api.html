@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .movie-card {
+            background: #2a2a2a;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .movie-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .movie-info {
+            padding: 10px;
+        }
+
+        .movie-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+        }
+
+        .error {
+            color: #ff4444;
+            text-align: center;
+            padding: 40px;
+        }
+
+        button {
+            background: #e50914;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #f40612;
+        }
+
+        pre {
+            background: #000;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🎬 Test Ophim API</h1>
+
+    <div>
+        <button onclick="testMovieList()">Test Movie List</button>
+        <button onclick="testMovieDetail()">Test Movie Detail</button>
+        <button onclick="testSearch()">Test Search</button>
+    </div>
+
+    <div id="result"></div>
+    <div id="movies" class="movie-grid"></div>
+
+    <script>
+        const OPHIM_URL = 'https://ophim17.cc';
+        const IMAGE_BASE = 'https://img.ophim.live/uploads/movies/';
+
+        async function testMovieList() {
+            const result = document.getElementById('result');
+            const movies = document.getElementById('movies');
+
+            result.innerHTML = '<div class="loading">Đang tải danh sách phim...</div>';
+            movies.innerHTML = '';
+
+            try {
+                const response = await fetch(`${OPHIM_URL}/danh-sach/phim-moi-cap-nhat?page=1`);
+                const data = await response.json();
+
+                result.innerHTML = `<h3>✅ API Response:</h3><pre>${JSON.stringify(data, null, 2).substring(0, 500)}...</pre>`;
+
+                if (data.status === 'success' && data.data && data.data.items) {
+                    renderMovies(data.data.items);
+                } else {
+                    movies.innerHTML = '<div class="error">Không có dữ liệu phim</div>';
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">❌ Lỗi: ${error.message}</div>`;
+            }
+        }
+
+        async function testMovieDetail() {
+            const result = document.getElementById('result');
+            const movies = document.getElementById('movies');
+
+            result.innerHTML = '<div class="loading">Đang tải chi tiết phim...</div>';
+            movies.innerHTML = '';
+
+            try {
+                const response = await fetch(`${OPHIM_URL}/phim/ngay-xua-co-mot-chuyen-tinh`);
+                const data = await response.json();
+
+                result.innerHTML = `<h3>✅ Movie Detail:</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+
+                if (data.status === 'success' && data.data && data.data.item) {
+                    renderMovies([data.data.item]);
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">❌ Lỗi: ${error.message}</div>`;
+            }
+        }
+
+        async function testSearch() {
+            const result = document.getElementById('result');
+            const movies = document.getElementById('movies');
+
+            result.innerHTML = '<div class="loading">Đang tìm kiếm...</div>';
+            movies.innerHTML = '';
+
+            try {
+                const response = await fetch(`${OPHIM_URL}/tim-kiem?keyword=tình&page=1`);
+                const data = await response.json();
+
+                result.innerHTML = `<h3>✅ Search Results:</h3><pre>${JSON.stringify(data, null, 2).substring(0, 500)}...</pre>`;
+
+                if (data.status === 'success' && data.data && data.data.items) {
+                    renderMovies(data.data.items);
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">❌ Lỗi: ${error.message}</div>`;
+            }
+        }
+
+        function renderMovies(movieList) {
+            const movies = document.getElementById('movies');
+
+            movies.innerHTML = movieList.map(movie => `
+                <div class="movie-card">
+                    <img src="${getImageURL(movie.thumb_url)}" 
+                         alt="${movie.name}"
+                         onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
+                    <div class="movie-info">
+                        <div class="movie-title">${movie.name}</div>
+                        <div style="font-size: 12px; color: #999;">
+                            ${movie.year || 'N/A'} • ${movie.quality || 'HD'}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getImageURL(imagePath) {
+            if (!imagePath) return 'https://via.placeholder.com/200x300?text=No+Image';
+            if (imagePath.startsWith('http')) return imagePath;
+            return `${IMAGE_BASE}${imagePath}`;
+        }
+
+        // Auto test on load
+        window.onload = () => {
+            testMovieList();
+        };
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Navigation - CineStream</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2f20d",
+                        "background-dark": "#1a1a0c",
+                        "surface-dark": "#2a2a18",
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Smooth gradient animation */
+        @keyframes gradient-shift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .nav-link {
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Underline effect */
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #f2f20d, #ffd700);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::before {
+            width: 100%;
+        }
+
+        /* Glow effect on hover */
+        .nav-link:hover {
+            text-shadow: 0 0 8px rgba(242, 242, 13, 0.5);
+        }
+
+        /* Logo pulse effect */
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(242, 242, 13, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 30px rgba(242, 242, 13, 0.6);
+            }
+        }
+
+        .logo-box:hover {
+            animation: pulse-glow 2s infinite;
+        }
+
+        /* Dropdown slide animation */
+        .dropdown-menu {
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .group:hover .dropdown-menu {
+            transform: translateY(0);
+        }
+
+        /* Button shine effect */
+        .btn-shine {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-shine::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            bottom: -50%;
+            left: -50%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0));
+            transform: rotateZ(60deg) translate(-5em, 7.5em);
+            transition: transform 0.6s;
+        }
+
+        .btn-shine:hover::after {
+            transform: rotateZ(60deg) translate(1em, -9em);
+        }
+
+        /* Backdrop blur enhancement */
+        .glass-effect {
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body class="bg-background-dark text-white min-h-screen">
+
+    <!-- Modern Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-effect border-b border-white/10 transition-all duration-300">
+        <div class="container mx-auto px-6 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="index.html" class="flex items-center gap-3 group">
+                <div
+                    class="logo-box w-12 h-12 bg-gradient-to-br from-primary via-yellow-400 to-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                    <span
+                        class="material-icons-round text-black text-2xl group-hover:scale-110 transition-transform">play_arrow</span>
+                </div>
+                <span class="text-2xl font-bold tracking-tight">
+                    <span class="text-white group-hover:text-gray-200 transition-colors">Cine</span>
+                    <span class="text-primary group-hover:text-yellow-300 transition-colors">Stream</span>
+                </span>
+            </a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden lg:flex items-center gap-8">
+                <a href="index.html" class="nav-link text-primary font-bold text-sm uppercase tracking-wider py-2">
+                    Trang chủ
+                </a>
+
+                <!-- Phim Dropdown -->
+                <div class="relative group">
+                    <button
+                        class="nav-link text-gray-300 hover:text-primary font-medium text-sm uppercase tracking-wider flex items-center gap-1 py-2 transition-all duration-300">
+                        Phim
+                        <span
+                            class="material-icons-round text-sm group-hover:rotate-180 transition-transform duration-300">expand_more</span>
+                    </button>
+                    <div
+                        class="dropdown-menu absolute top-full left-0 mt-2 w-56 glass-effect border border-white/20 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible overflow-hidden">
+                        <a href="search.html?type=series"
+                            class="flex items-center gap-3 px-5 py-3 text-gray-300 hover:text-primary hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-all duration-300 group/item">
+                            <span class="text-2xl">📺</span>
+                            <span class="font-medium">Phim Bộ</span>
+                            <span
+                                class="material-icons-round ml-auto text-sm opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-1 transition-all">arrow_forward</span>
+                        </a>
+                        <a href="search.html?type=single"
+                            class="flex items-center gap-3 px-5 py-3 text-gray-300 hover:text-primary hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-all duration-300 group/item">
+                            <span class="text-2xl">🎬</span>
+                            <span class="font-medium">Phim Lẻ</span>
+                            <span
+                                class="material-icons-round ml-auto text-sm opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-1 transition-all">arrow_forward</span>
+                        </a>
+                        <a href="phim-viet-nam.html"
+                            class="flex items-center gap-3 px-5 py-3 text-gray-300 hover:text-primary hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-all duration-300 group/item">
+                            <span class="text-2xl">🇻🇳</span>
+                            <span class="font-medium">Phim Việt Nam</span>
+                            <span
+                                class="material-icons-round ml-auto text-sm opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-1 transition-all">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <a href="categories.html"
+                    class="nav-link text-gray-300 hover:text-primary font-medium text-sm uppercase tracking-wider py-2 transition-all duration-300">
+                    Thể Loại
+                </a>
+
+                <a href="filter.html"
+                    class="nav-link text-gray-300 hover:text-primary font-medium text-sm uppercase tracking-wider py-2 transition-all duration-300">
+                    Bộ Lọc
+                </a>
+
+                <a href="search.html"
+                    class="nav-link text-gray-300 hover:text-primary font-medium text-sm uppercase tracking-wider py-2 transition-all duration-300">
+                    Khám phá
+                </a>
+
+                <a href="pricing.html"
+                    class="nav-link text-gray-300 hover:text-primary font-medium text-sm uppercase tracking-wider py-2 transition-all duration-300">
+                    Gói cước
+                </a>
+            </div>
+
+            <!-- Right Actions -->
+            <div class="flex items-center gap-4">
+                <!-- Search Button -->
+                <a href="search.html"
+                    class="text-gray-300 hover:text-primary hover:scale-110 transition-all duration-300 p-2 hover:bg-white/5 rounded-lg">
+                    <span class="material-icons-round">search</span>
+                </a>
+
+                <!-- Notifications -->
+                <button
+                    class="relative text-gray-300 hover:text-primary hover:scale-110 transition-all duration-300 p-2 hover:bg-white/5 rounded-lg">
+                    <span class="material-icons-round">notifications</span>
+                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                </button>
+
+                <!-- Login Button -->
+                <a href="login.html"
+                    class="btn-shine px-6 py-2.5 bg-gradient-to-r from-primary via-yellow-400 to-primary bg-size-200 text-black font-bold rounded-full hover:shadow-lg hover:shadow-primary/50 hover:scale-105 transition-all duration-300">
+                    Đăng nhập
+                </a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobileMenuBtn"
+                class="lg:hidden text-white hover:text-primary transition-colors p-2 hover:bg-white/5 rounded-lg">
+                <span class="material-icons-round">menu</span>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="lg:hidden hidden glass-effect border-t border-white/10">
+            <div class="container mx-auto px-6 py-4 space-y-2">
+                <a href="index.html"
+                    class="block py-3 px-4 text-primary font-bold rounded-lg hover:bg-white/5 transition-all">
+                    🏠 Trang chủ
+                </a>
+
+                <div class="py-2">
+                    <div class="text-gray-400 text-xs font-bold mb-2 px-4">PHIM</div>
+                    <a href="search.html?type=series"
+                        class="block py-3 px-4 pl-8 text-gray-300 hover:text-primary rounded-lg hover:bg-white/5 transition-all">
+                        📺 Phim Bộ
+                    </a>
+                    <a href="search.html?type=single"
+                        class="block py-3 px-4 pl-8 text-gray-300 hover:text-primary rounded-lg hover:bg-white/5 transition-all">
+                        🎬 Phim Lẻ
+                    </a>
+                    <a href="phim-viet-nam.html"
+                        class="block py-3 px-4 pl-8 text-gray-300 hover:text-primary rounded-lg hover:bg-white/5 transition-all">
+                        🇻🇳 Phim Việt Nam
+                    </a>
+                </div>
+
+                <a href="categories.html"
+                    class="block py-3 px-4 text-gray-300 hover:text-primary rounded-lg hover:bg-white/5 transition-all">
+                    🎭 Thể Loại
+                </a>
+
+                <a href="filter.html"
+                    class="block py-3 px-4 text-gray-300 hover:text-primary rounded-lg hover:bg-white/5 transition-all">
+                    🔍 Bộ Lọc
+                </a>
+
+                <a href="search.html"
+                    class="block py-3 px-4 text-gray-300 hover:text-primary rounded-lg hover:bg-white/5 transition-all">
+                    🔎 Khám phá
+                </a>
+
+                <a href="pricing.html"
+                    class="block py-3 px-4 text-gray-300 hover:text-primary rounded-lg hover:bg-white/5 transition-all">
+                    💎 Gói cước
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Demo Content -->
+    <main class="pt-32 pb-20 container mx-auto px-6">
+        <div class="text-center">
+            <h1 class="text-5xl font-bold mb-4">Modern Navigation Demo</h1>
+            <p class="text-gray-400 text-lg mb-8">Hover qua các menu để xem hiệu ứng</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+                <div class="bg-surface-dark p-6 rounded-xl border border-white/10">
+                    <h3 class="text-xl font-bold mb-2 text-primary">✨ Hiệu ứng Underline</h3>
+                    <p class="text-gray-400">Gạch chân mượt mà khi hover</p>
+                </div>
+                <div class="bg-surface-dark p-6 rounded-xl border border-white/10">
+                    <h3 class="text-xl font-bold mb-2 text-primary">🌟 Glow Effect</h3>
+                    <p class="text-gray-400">Text phát sáng khi hover</p>
+                </div>
+                <div class="bg-surface-dark p-6 rounded-xl border border-white/10">
+                    <h3 class="text-xl font-bold mb-2 text-primary">💫 Smooth Dropdown</h3>
+                    <p class="text-gray-400">Menu dropdown với animation mượt</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                const icon = mobileMenuBtn.querySelector('.material-icons-round');
+                icon.textContent = mobileMenu.classList.contains('hidden') ? 'menu' : 'close';
+            });
+        }
+
+        // Navbar scroll effect
+        let lastScroll = 0;
+        const navbar = document.querySelector('nav');
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+
+            if (currentScroll > 100) {
+                navbar.classList.add('shadow-2xl');
+            } else {
+                navbar.classList.remove('shadow-2xl');
+            }
+
+            lastScroll = currentScroll;
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xem Phim - CineStream</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2f20d",
+                        "background-dark": "#1a1a0c",
+                        "surface-dark": "#2a2a18",
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-background-dark text-white">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-md border-b border-white/10">
+        <div class="container mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2 group">
+                <div
+                    class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-105 transition-transform">
+                    <span class="material-icons-round text-black text-2xl">play_arrow</span>
+                </div>
+                <span class="text-2xl font-bold tracking-tight text-white">Cine<span
+                        class="text-primary">Stream</span></span>
+            </a>
+            <a href="index.html" class="text-gray-300 hover:text-primary transition-colors">
+                <span class="material-icons-round">home</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 pt-32 pb-20">
+        <!-- Video Player -->
+        <div class="mb-8">
+            <div id="playerContainer"
+                class="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl">
+                <div id="loading" class="absolute inset-0 flex items-center justify-center bg-black">
+                    <div class="text-center">
+                        <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4"></div>
+                        <p class="text-gray-400">Đang tải video...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Movie Info -->
+        <div id="movieInfo" class="bg-surface-dark rounded-xl p-6 border border-white/10">
+            <h1 id="movieTitle" class="text-3xl font-bold mb-4">Đang tải...</h1>
+            <div id="movieDetails" class="text-gray-400"></div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="mt-6 bg-blue-900/20 border border-blue-500/30 rounded-xl p-4">
+            <p class="text-blue-300 text-sm">
+                💡 <strong>Lưu ý:</strong> Video được nhúng trực tiếp từ nguồn. Nếu không xem được, vui lòng thử:
+            </p>
+            <ul class="text-blue-300 text-sm mt-2 ml-6 list-disc">
+                <li>Tắt AdBlock</li>
+                <li>Cho phép popup từ trang này</li>
+                <li>Thử trình duyệt khác (Chrome, Firefox)</li>
+            </ul>
+        </div>
+    </main>
+
+    <script>
+        // Get slug from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const slug = urlParams.get('slug');
+
+        if (!slug) {
+            alert('Không tìm thấy thông tin phim!');
+            window.location.href = 'index.html';
+        }
+
+        // Get link from localStorage
+        const movieLinks = JSON.parse(localStorage.getItem('movieLinks') || '{}');
+        const videoUrl = movieLinks[slug];
+
+        if (!videoUrl) {
+            document.getElementById('loading').innerHTML = `
+                <div class="text-center p-8">
+                    <span class="material-icons-round text-6xl text-red-400 mb-4">error_outline</span>
+                    <p class="text-red-400 text-lg mb-4">Phim chưa có link xem!</p>
+                    <a href="index.html" class="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors inline-block">
+                        Về trang chủ
+                    </a>
+                </div>
+            `;
+        } else {
+            console.log('Video URL:', videoUrl);
+            loadMovieInfo(slug);
+            embedVideo(videoUrl);
+        }
+
+        // Load movie info from API
+        async function loadMovieInfo(slug) {
+            try {
+                const response = await fetch(`https://ophim1.com/phim/${slug}`);
+                const data = await response.json();
+
+                if (data && data.movie) {
+                    const movie = data.movie;
+                    document.getElementById('movieTitle').textContent = movie.name;
+                    document.getElementById('movieDetails').innerHTML = `
+                        <div class="flex flex-wrap gap-4 text-sm">
+                            <span>${movie.origin_name || ''}</span>
+                            <span>•</span>
+                            <span>${movie.year || 'N/A'}</span>
+                            <span>•</span>
+                            <span>${movie.quality || 'HD'}</span>
+                            <span>•</span>
+                            <span>${movie.time || 'N/A'}</span>
+                        </div>
+                    `;
+                    document.title = `${movie.name} - CineStream`;
+                }
+            } catch (error) {
+                console.error('Error loading movie info:', error);
+            }
+        }
+
+        // Embed video - Simple iframe approach
+        function embedVideo(videoUrl) {
+            const container = document.getElementById('playerContainer');
+            const loading = document.getElementById('loading');
+
+            // Create iframe to embed the video
+            const iframe = document.createElement('iframe');
+            iframe.src = videoUrl;
+            iframe.className = 'w-full h-full';
+            iframe.allowFullscreen = true;
+            iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+            iframe.frameBorder = '0';
+            iframe.scrolling = 'no';
+
+            // Hide loading when iframe loads
+            iframe.onload = function () {
+                console.log('✅ Video iframe loaded');
+                loading.style.display = 'none';
+            };
+
+            iframe.onerror = function () {
+                console.error('❌ Error loading iframe');
+                loading.innerHTML = `
+                    <div class="text-center p-8">
+                        <span class="material-icons-round text-6xl text-red-400 mb-4">error_outline</span>
+                        <p class="text-red-400 text-lg mb-2">Không thể tải video</p>
+                        <p class="text-gray-400 text-sm mb-4">Link có thể không hợp lệ hoặc bị chặn</p>
+                        <button onclick="openInNewTab()" class="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors mr-2">
+                            Mở tab mới
+                        </button>
+                        <button onclick="location.reload()" class="px-6 py-3 bg-gray-600 text-white font-bold rounded-lg hover:bg-gray-500 transition-colors">
+                            Thử lại
+                        </button>
+                    </div>
+                `;
+            };
+
+            container.appendChild(iframe);
+
+            // Hide loading after 3 seconds anyway
+            setTimeout(() => {
+                loading.style.display = 'none';
+            }, 3000);
+        }
+
+        // Open video in new tab
+        function openInNewTab() {
+            window.open(videoUrl, '_blank');
+        }
+    </script>
+</body>
+
+</html>

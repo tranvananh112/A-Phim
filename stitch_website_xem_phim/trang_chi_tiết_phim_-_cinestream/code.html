@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Trang Chi tiết Phim - CineStream</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+            extend: {
+                colors: {
+                    "primary": "#ec1313",
+                    "background-light": "#f8f6f6",
+                    "background-dark": "#141414", 
+                    "surface-dark": "#1f1f1f", 
+                },
+                fontFamily: {
+                    "display": ["Be Vietnam Pro", "sans-serif"]
+                },
+                borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+            },
+            },
+        }
+    </script>
+<style>
+        .backdrop-gradient {
+            background: linear-gradient(to top, #141414 10%, rgba(20, 20, 20, 0.8) 50%, rgba(20, 20, 20, 0.4) 100%);
+        }
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }.hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-100 font-display min-h-screen selection:bg-primary selection:text-white">
+<nav class="fixed top-0 w-full z-50 bg-gradient-to-b from-black/90 to-transparent dark:from-black/90 transition-all duration-300">
+<div class="container mx-auto px-6 h-20 flex items-center justify-between">
+<a class="flex items-center gap-2 group" href="#">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-105 transition-transform">
+<span class="material-icons-round text-white text-2xl">play_arrow</span>
+</div>
+<span class="text-2xl font-bold tracking-tight text-white">Cine<span class="text-primary">Stream</span></span>
+</a>
+<div class="hidden lg:flex items-center gap-8 bg-black/20 backdrop-blur-md px-6 py-2 rounded-full border border-white/5">
+<a class="text-gray-300 hover:text-white font-medium transition-colors text-sm uppercase tracking-wide" href="#">Trang chủ</a>
+<a class="text-primary font-bold transition-colors text-sm uppercase tracking-wide border-b-2 border-primary pb-0.5" href="#">Phim bộ</a>
+<a class="text-gray-300 hover:text-white font-medium transition-colors text-sm uppercase tracking-wide" href="#">Phim lẻ</a>
+<a class="text-gray-300 hover:text-white font-medium transition-colors text-sm uppercase tracking-wide" href="#">Thể loại</a>
+<a class="text-gray-300 hover:text-white font-medium transition-colors text-sm uppercase tracking-wide" href="#">Gói cước</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors group">
+<span class="material-icons-round text-gray-300 group-hover:text-white">search</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors relative group">
+<span class="material-icons-round text-gray-300 group-hover:text-white">notifications</span>
+<span class="absolute top-2.5 right-2.5 w-2 h-2 bg-primary rounded-full"></span>
+</button>
+<button class="w-10 h-10 rounded-full overflow-hidden border-2 border-white/20 hover:border-primary transition-colors">
+<img alt="User Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfTdKx_R3xmt_LaqmSkut9IQOIgKuEJJf-gIXSAMcHkwvLwxzueYeoLmBBF5-c8vLh1W_tXRi0YfjZc0LV-44FdbyKXi4cTlftix8pUceCEMif5u23vtNE6KkmErKCFyBxq5VADiufAmn3lLTUR02HejBMyb8qtIUy9oEDAkCdWbpo3t4X0I2jt-AXPr00cWGMERJUUFiFVevyO3kfd6ukyqJygt9Z0OsrYyXrOWshmU3EfNGl-ec43VQAjLzP8wqPi7quDvGlZdk"/>
+</button>
+</div>
+</div>
+</nav>
+<main class="relative pt-0 min-h-screen pb-20">
+<div class="absolute top-0 left-0 w-full h-[100vh] z-0 overflow-hidden">
+<div class="relative w-full h-full">
+<img alt="Cinematic movie scene background" class="w-full h-full object-cover opacity-60 dark:opacity-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTY6MpV6hlKE1unr6px1oDYgkvLpwm4hmvEKOOl3spK8_ckbCpn6auHFUM-fyW-I_lBZz9pzl7Aj6dXbroCojgFcE3jZHvkF4eSQH5HFIev6eBmR3bTqFVYZRvYqY_TtVSm25djo17o_ObMqMvnO7fLCMLpUixBjobB7sCyphOZGIcQ7mY1pRpuydENvQnecpXNLFSw2Gh64gPdL1AsOXnnwu40GR6nc0hjghLb9VNwFXJFkG7Na_JBqJYUGRK_60urAK0XjeYTxU"/>
+<div class="absolute inset-0 backdrop-gradient"></div>
+<div class="absolute inset-0 bg-background-dark/20 backdrop-blur-[1px]"></div>
+</div>
+</div>
+<div class="container mx-auto px-6 relative z-10 pt-32">
+<div class="flex items-center gap-2 text-sm text-gray-400 mb-8 font-medium">
+<a class="hover:text-white transition-colors" href="#">Trang chủ</a>
+<span class="material-icons-round text-base">chevron_right</span>
+<a class="hover:text-white transition-colors" href="#">Phim bộ</a>
+<span class="material-icons-round text-base">chevron_right</span>
+<span class="text-white font-semibold">Stranger Things: Mùa 4</span>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+<div class="lg:col-span-4 xl:col-span-3 flex flex-col gap-6">
+<div class="relative aspect-[2/3] rounded-xl overflow-hidden shadow-2xl shadow-black/50 group border border-white/5">
+<img alt="Movie poster artwork" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMJEE1vf2Pzn-GMmhpY7g6O1Nwn54rZc7ypSTigrMVed3VzjNO2SMowN9HmarmF0n0zDQ03g4lu17uPeeco2l-d9-Gunv-PLhsVSuqnXRzlmiy5VShI73PxauyVGt9q6YnsE0dT_jIrU6aoGEUgmXnlyi3gC93uoMCyBsHD2eVqHrMBp-xcgnBZmW7WQ66GK6N5G-Kt3_QIvhBuRQTD8BQJrYekV_N1CLuBcIUOZinIQIO5frqkO81Je7XoYGu3dvb9VMZbpAdJXQ"/>
+<div class="absolute top-4 left-4 bg-primary/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded shadow-lg uppercase tracking-wider">
+                            Full HD
+                        </div>
+</div>
+<div class="flex lg:hidden justify-between items-center bg-surface-dark/80 backdrop-blur-md p-4 rounded-xl border border-white/5">
+<div class="text-center">
+<div class="text-primary font-bold text-lg">9.6</div>
+<div class="text-xs text-gray-400">IMDb</div>
+</div>
+<div class="h-8 w-px bg-white/10"></div>
+<div class="text-center">
+<div class="text-white font-bold text-lg">2023</div>
+<div class="text-xs text-gray-400">Năm</div>
+</div>
+<div class="h-8 w-px bg-white/10"></div>
+<div class="text-center">
+<div class="text-white font-bold text-lg">18+</div>
+<div class="text-xs text-gray-400">Tuổi</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-8 xl:col-span-9 flex flex-col justify-end pb-4">
+<h1 class="text-4xl lg:text-7xl font-extrabold text-white mb-4 leading-tight text-shadow tracking-tight">
+                        Stranger Things: <br/>
+<span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-red-400">Thế giới ngược (Mùa 4)</span>
+</h1>
+<div class="flex flex-wrap items-center gap-4 mb-8 text-sm md:text-base">
+<span class="flex items-center gap-1 text-yellow-400 font-bold bg-yellow-400/10 px-3 py-1 rounded-full border border-yellow-400/20 backdrop-blur-sm">
+<span class="material-icons-round text-lg">star</span>
+                            8.7/10
+                        </span>
+<span class="text-gray-500">•</span>
+<span class="text-gray-300 font-medium">2022</span>
+<span class="text-gray-500">•</span>
+<span class="text-gray-300 font-medium">45-60 phút/tập</span>
+<span class="text-gray-500">•</span>
+<span class="text-gray-300 border border-white/20 px-3 py-0.5 rounded-full text-xs font-medium backdrop-blur-sm">US-UK</span>
+</div>
+<div class="flex flex-wrap items-center gap-4 mb-10">
+<button class="group relative px-8 py-4 bg-primary text-white font-bold rounded-full shadow-lg shadow-primary/40 hover:shadow-primary/60 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+<div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
+<div class="flex items-center gap-3 relative z-10">
+<span class="material-icons-round text-3xl">play_arrow</span>
+<span class="text-lg tracking-wide">XEM NGAY</span>
+</div>
+</button>
+<button class="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full backdrop-blur-md border border-white/10 hover:border-white/30 transition-all duration-300 flex items-center gap-3">
+<span class="material-icons-round">videocam</span>
+<span>Xem Trailer</span>
+</button>
+<button class="w-14 h-14 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-gray-300 hover:text-primary transition-colors border border-white/5 backdrop-blur-sm">
+<span class="material-icons-round">bookmark_border</span>
+</button>
+<button class="w-14 h-14 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-gray-300 hover:text-primary transition-colors border border-white/5 backdrop-blur-sm">
+<span class="material-icons-round">share</span>
+</button>
+</div>
+<div class="mb-10 max-w-4xl">
+<h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
+<span class="w-1 h-6 bg-primary rounded-full"></span>
+                            Nội dung phim
+                        </h3>
+<p class="text-gray-300 leading-relaxed text-lg font-light">
+                            Sau khi sống sót qua trận chiến ở Starcourt Mall, nhóm bạn trẻ Hawkins bị chia cắt lần đầu tiên. Một mối đe dọa siêu nhiên mới và kinh hoàng nổi lên, mang đến một bí ẩn rùng rợn, nếu được giải mã, cuối cùng có thể chấm dứt nỗi kinh hoàng của Thế giới ngược (Upside Down).
+                        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-white/10 pt-8">
+<div>
+<h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Diễn viên chính</h3>
+<div class="flex items-center gap-4">
+<div class="flex -space-x-4 overflow-hidden p-1">
+<img alt="Male actor portrait" class="inline-block h-14 w-14 rounded-full ring-2 ring-background-dark object-cover grayscale hover:grayscale-0 transition-all duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEJWgtTncQxUb0_zPuTZrdejmaE7l4uXgT9SlHEc9i-yy5GxUaW_Otvk4AUF9mpECgxuWabo4iR2pFt99iDcbcSm7-3ubIkrtyafvTCshVBEEVpxYbDYT16hUuLij8feX5GSMRQsJTM90hPynT7yMEM0WKz0JGmSMz8HIWQZkVlUdMd4f5q95RjlBI7hF1llwUkd1BGyVxyIHlo1eICZeU3RMIyVYt9Pgp0vwvx1cjNtbkLWQ3WORmnyJyFkEdOLY69aMKrLTdl8A"/>
+<img alt="Female actor portrait" class="inline-block h-14 w-14 rounded-full ring-2 ring-background-dark object-cover grayscale hover:grayscale-0 transition-all duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOikt0Z_mU2mObeepw8R-rzhNPBHbSqEEQ5mJi85eucOnKbOBNFc3IAo9yghPY7suGPt7jfTvXzd-lkKG7T8QiQmxVl2Nj_wXS4aqF29dMNLmYXz4Opg9H8o_q-tAv8rgAJG-QhFvoRikSYZ1Jh3b_dWL3AhgQdxoJMcTPZKIbPAOugseHiPEPhyIveEDct920auaVkmUWpwoB2UwzlTmLkR-57K7fs7g9a6ZGE-Z7FLGXJZc7NgFWRBeWNtdKTlOSXoqz9V7Rpqs"/>
+<img alt="Male actor portrait" class="inline-block h-14 w-14 rounded-full ring-2 ring-background-dark object-cover grayscale hover:grayscale-0 transition-all duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHxqvbfTIQuD92_3SR70OEedPnPSTJPe9XxaXpbS60FWMxJtFe2HgZ5_2FIwyNvjEGmGuVUOraK2SZfCe0s2l-vEHxzEAk4MluNawryfwB4_TutX6pHLonSTPtT0p5xQQyCsm4SxoRzpI7pavwV67KME0Mkax8-KzlZimlPpgWdz5PEaHUA3NAnOMxPHgB86BzMpCSJl2ckJtN0sSnUgnY43LZqkx2VKpOXKOIqi2Za10wqs-QymIhuEJQXTw1hQDDY-hblh7GWiM"/>
+<img alt="Female actor portrait" class="inline-block h-14 w-14 rounded-full ring-2 ring-background-dark object-cover grayscale hover:grayscale-0 transition-all duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJ89GLkuQEAUG4Ag4QweZyyCkMwpdgT52jO1Zz8Uqx7ixpAhTBLKGrN6KTaRLCp-VymlC9i3XO7V4uivANUf1YttgUemHnYjBFWaiiidvI1VoWHtjl-OxYmlbUjIE2ro0m72oYHdPqc6X0nb74x5w_CffJMHklZ_3GkQcV6UKTesJv4hWCenvx3jQnxiK6hRWcwTxH_m09tDWFMnVEPRldYKqdNRu8E-bW4s0lxG12r3lWKFQnAH_-JbQ_YLwf5zzqoHB-Kj1u4MU"/>
+<div class="h-14 w-14 rounded-full ring-2 ring-background-dark bg-surface-dark flex items-center justify-center text-xs font-bold text-gray-400 hover:text-white cursor-pointer transition-colors border border-white/5">+5</div>
+</div>
+</div>
+<div class="mt-2 text-sm text-gray-400">Millie Bobby Brown, Finn Wolfhard &amp; Winona Ryder</div>
+</div>
+<div class="space-y-6">
+<div>
+<h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Đạo diễn</h3>
+<div class="text-white font-medium text-lg">The Duffer Brothers</div>
+</div>
+<div>
+<h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Thể loại</h3>
+<div class="flex flex-wrap gap-2">
+<span class="bg-surface-dark px-4 py-1.5 rounded-full text-sm text-gray-300 hover:text-white hover:bg-white/10 cursor-pointer transition-colors border border-white/5">Kinh dị</span>
+<span class="bg-surface-dark px-4 py-1.5 rounded-full text-sm text-gray-300 hover:text-white hover:bg-white/10 cursor-pointer transition-colors border border-white/5">Giả tưởng</span>
+<span class="bg-surface-dark px-4 py-1.5 rounded-full text-sm text-gray-300 hover:text-white hover:bg-white/10 cursor-pointer transition-colors border border-white/5">Chính kịch</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-16 lg:mt-24">
+<div class="flex flex-wrap items-center justify-between mb-8 gap-4">
+<h2 class="text-2xl font-bold text-white flex items-center gap-3">
+<span class="w-1.5 h-8 bg-primary rounded-full block shadow-[0_0_10px_rgba(236,19,19,0.5)]"></span>
+                        Danh sách tập phim
+                    </h2>
+<div class="flex p-1 bg-surface-dark rounded-lg border border-white/5">
+<button class="px-6 py-2 rounded-md text-sm font-semibold text-white bg-white/10 shadow-sm transition-all">Mùa 4</button>
+<button class="px-6 py-2 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-colors">Mùa 3</button>
+<button class="px-6 py-2 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-colors">Mùa 2</button>
+</div>
+</div>
+<div class="flex gap-4 overflow-x-auto pb-6 hide-scrollbar">
+<button class="group flex-shrink-0 bg-primary/20 border border-primary text-white px-6 py-4 rounded-xl font-bold min-w-[140px] text-center hover:bg-primary hover:shadow-lg hover:shadow-primary/30 transition-all relative overflow-hidden">
+<span class="relative z-10">Tập 1</span>
+<div class="absolute bottom-0 left-0 h-1 bg-primary w-full"></div>
+</button>
+<button class="group flex-shrink-0 bg-surface-dark border border-white/5 text-gray-400 px-6 py-4 rounded-xl font-bold min-w-[140px] text-center hover:bg-white/5 hover:text-white hover:border-white/20 transition-all">
+                        Tập 2
+                    </button>
+<button class="group flex-shrink-0 bg-surface-dark border border-white/5 text-gray-400 px-6 py-4 rounded-xl font-bold min-w-[140px] text-center hover:bg-white/5 hover:text-white hover:border-white/20 transition-all">
+                        Tập 3
+                    </button>
+<button class="group flex-shrink-0 bg-surface-dark border border-white/5 text-gray-400 px-6 py-4 rounded-xl font-bold min-w-[140px] text-center hover:bg-white/5 hover:text-white hover:border-white/20 transition-all">
+                        Tập 4
+                    </button>
+<button class="group flex-shrink-0 bg-surface-dark border border-white/5 text-gray-400 px-6 py-4 rounded-xl font-bold min-w-[140px] text-center hover:bg-white/5 hover:text-white hover:border-white/20 transition-all">
+                        Tập 5
+                    </button>
+<button class="group flex-shrink-0 bg-surface-dark border border-white/5 text-gray-400 px-6 py-4 rounded-xl font-bold min-w-[140px] text-center hover:bg-white/5 hover:text-white hover:border-white/20 transition-all">
+                        Tập 6
+                    </button>
+<button class="group flex-shrink-0 bg-surface-dark border border-white/5 text-gray-400 px-6 py-4 rounded-xl font-bold min-w-[140px] text-center hover:bg-white/5 hover:text-white hover:border-white/20 transition-all">
+                        Tập 7
+                    </button>
+<button class="group flex-shrink-0 bg-surface-dark border border-white/5 text-gray-400 px-6 py-4 rounded-xl font-bold min-w-[140px] text-center hover:bg-white/5 hover:text-white hover:border-white/20 transition-all">
+                        Tập 8
+                    </button>
+<button class="group flex-shrink-0 bg-surface-dark border border-white/5 text-gray-400 px-6 py-4 rounded-xl font-bold min-w-[140px] text-center hover:bg-white/5 hover:text-white hover:border-white/20 transition-all">
+                        Tập 9
+                    </button>
+</div>
+</div>
+<div class="mt-20">
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-2xl font-bold text-white flex items-center gap-3">
+<span class="w-1.5 h-8 bg-primary rounded-full block shadow-[0_0_10px_rgba(236,19,19,0.5)]"></span>
+                        Có thể bạn sẽ thích
+                    </h2>
+<a class="text-primary text-sm font-semibold hover:text-white transition-colors flex items-center gap-1 group" href="#">
+                        Xem tất cả <span class="material-icons-round text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+<a class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300" href="#">
+<div class="aspect-[2/3] w-full overflow-hidden relative">
+<img alt="Dark fantasy movie poster" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJJWZQGgL6CxXPsQImEkqveo9ZJF0VOp8hpxujAIjM7KSpA1Ic1GyQnDcCaBdbz2XuMNnuUPrmNj9dCA2MFcpgv26u-Envnrub4sAMaMMXhbPLIT-_GA4EP1r3SaqABIVj9l1ucuC3O5mdoelUmzaZKJZWVLXFxvZYIqYya2RcE6matYyFT91iwsndaH7meH7gmtJC_8LF9TzJLKN0S23Rb51wP4vXKFQQ88bRLceWWY59gE6dPFnVQ75KFDDkWVQzRsBkctKNfwE"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity"></div>
+<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<button class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/40 transform scale-50 group-hover:scale-100 transition-transform duration-300">
+<span class="material-icons-round text-2xl">play_arrow</span>
+</button>
+</div>
+<div class="absolute top-2 left-2 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded border border-white/10">HD</div>
+</div>
+<div class="p-4">
+<h3 class="text-white font-semibold truncate group-hover:text-primary transition-colors">The Witcher: Mùa 3</h3>
+<div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+<span>2023</span>
+<span class="flex items-center gap-1 text-yellow-500 font-bold bg-yellow-500/10 px-1.5 py-0.5 rounded"><span class="material-icons-round text-[10px]">star</span> 8.1</span>
+</div>
+</div>
+</a>
+<a class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300" href="#">
+<div class="aspect-[2/3] w-full overflow-hidden relative">
+<img alt="Sci-fi movie poster gradient" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiPzH7g11NXwuwW7KyB4oBPMMZkvY4pD5BFbz6_4kAuXtoCyfZaNEXV-xlHDDllZabjtk63cHlFPgZQDEZiZVRIt8Xp_fWq8ITVYZhxyUQqF8Ry7_L3D3e-X8SzogR7AGLLFuH2ewRvU9raa4jMnp7hmFZQOPA9emoaNNFJnx6orRs3yezpeL1sUYWT_h2dgH7w7TR-2wKwIRJxZubmo9nAxf_sZS9rXFIVwqNL6xrgITPbppbWfDRdxT4YX2vCboyeYGNH9qAdVs"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity"></div>
+<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<button class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/40 transform scale-50 group-hover:scale-100 transition-transform duration-300">
+<span class="material-icons-round text-2xl">play_arrow</span>
+</button>
+</div>
+<div class="absolute top-2 left-2 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded border border-white/10">HD</div>
+</div>
+<div class="p-4">
+<h3 class="text-white font-semibold truncate group-hover:text-primary transition-colors">Black Mirror</h3>
+<div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+<span>2019</span>
+<span class="flex items-center gap-1 text-yellow-500 font-bold bg-yellow-500/10 px-1.5 py-0.5 rounded"><span class="material-icons-round text-[10px]">star</span> 8.8</span>
+</div>
+</div>
+</a>
+<a class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300" href="#">
+<div class="aspect-[2/3] w-full overflow-hidden relative">
+<img alt="Action movie scene dark" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPqQBTmB8K877f5scEOkquN2egjKlB3coKAPldWmH22StlcZgn-QYFt3N1SBtwLaHDzKjH5mLF90mtjlqGDZS9INxdXsQhZRTmaC8OPDAPkbzm74grOApS0xdkx5k99vRtT77Y8ppTXKZg8M1oRDZEHcAX63SxVUhFRvnvmUfFnxRo7s3Bni8XmJFDS7oU6dk4cG8tZugQIkwBlbnx6u91-gwHMNknz64phhStRxdTm_y_pJ1yvAzM9EHLCbeYiDbfX7Ahi-nAj8w"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity"></div>
+<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<button class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/40 transform scale-50 group-hover:scale-100 transition-transform duration-300">
+<span class="material-icons-round text-2xl">play_arrow</span>
+</button>
+</div>
+<div class="absolute top-2 left-2 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded border border-white/10">4K</div>
+</div>
+<div class="p-4">
+<h3 class="text-white font-semibold truncate group-hover:text-primary transition-colors">Dark: Mùa Cuối</h3>
+<div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+<span>2020</span>
+<span class="flex items-center gap-1 text-yellow-500 font-bold bg-yellow-500/10 px-1.5 py-0.5 rounded"><span class="material-icons-round text-[10px]">star</span> 9.0</span>
+</div>
+</div>
+</a>
+<a class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300" href="#">
+<div class="aspect-[2/3] w-full overflow-hidden relative">
+<img alt="Neon cyber retro poster" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUnfiPiFqg4-XTkwRH6ojr6GDOZ9EPyMrjZ41z8pNtVPzfzD9AKIJ7Qe_ciRUSF8nzM4PW47i4tmMkUoWsGXgaKvju4ePhWmVXQg58XlcoqVPArYBjuyvo_QEUE5QSu4W_Md91Qhqq3Jb4tNIO4n3uqEa-IMJW8Kk4nJXuFRFykOLHS6wVTfe-cZL2yAlVILOtxHTnEIaKU7y06Od010PrOoaC7c5G1ahjvgtOYZK1s_h1MkvXfMc9WVcpzkiwMhe94iwztj7TPbI"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity"></div>
+<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<button class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/40 transform scale-50 group-hover:scale-100 transition-transform duration-300">
+<span class="material-icons-round text-2xl">play_arrow</span>
+</button>
+</div>
+<div class="absolute top-2 left-2 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded border border-white/10">HD</div>
+</div>
+<div class="p-4">
+<h3 class="text-white font-semibold truncate group-hover:text-primary transition-colors">Cyberpunk: Edgerunners</h3>
+<div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+<span>2022</span>
+<span class="flex items-center gap-1 text-yellow-500 font-bold bg-yellow-500/10 px-1.5 py-0.5 rounded"><span class="material-icons-round text-[10px]">star</span> 8.6</span>
+</div>
+</div>
+</a>
+<a class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300" href="#">
+<div class="aspect-[2/3] w-full overflow-hidden relative">
+<img alt="Abstract colorful gradient poster" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDV9YbRdkvzyxl3UJXCH9F6UCoOBER8xGP5LMMvRuNlVHQYjPfoJenIXYskqXJVDb7PVNuew-tikCWzjoLbg8-2kQkWjcEMZ-3_k1vEjycLecA32clDPMlVeYgo3CTPwx2lRChdpZnTSvvxOxZdaQSS-iHOazwg1HPC0_i7e3DucTs16Pt_9fefeP_ZB0plvkUGClVHIjz_nlgETYGBr7UdjnrPPCc9dbMufb9OFahEXdBLXz2LI1VpgwVwGdKoxs1hI3dHAq-ay7c"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity"></div>
+<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<button class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/40 transform scale-50 group-hover:scale-100 transition-transform duration-300">
+<span class="material-icons-round text-2xl">play_arrow</span>
+</button>
+</div>
+<div class="absolute top-2 left-2 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded border border-white/10">HD</div>
+</div>
+<div class="p-4">
+<h3 class="text-white font-semibold truncate group-hover:text-primary transition-colors">Arcane</h3>
+<div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+<span>2021</span>
+<span class="flex items-center gap-1 text-yellow-500 font-bold bg-yellow-500/10 px-1.5 py-0.5 rounded"><span class="material-icons-round text-[10px]">star</span> 9.3</span>
+</div>
+</div>
+</a>
+</div>
+</div>
+</div>
+</main>
+<footer class="bg-surface-dark border-t border-white/5 py-16">
+<div class="container mx-auto px-6">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+<div class="col-span-1 md:col-span-1">
+<a class="flex items-center gap-2 mb-6" href="#">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-icons-round text-white text-xl">play_arrow</span>
+</div>
+<span class="text-2xl font-bold text-white">Cine<span class="text-primary">Stream</span></span>
+</a>
+<p class="text-gray-400 text-sm mb-6 leading-relaxed">Trải nghiệm điện ảnh đỉnh cao ngay tại nhà. Hàng ngàn bộ phim bom tấn đang chờ bạn khám phá với chất lượng tuyệt đỉnh.</p>
+</div>
+<div>
+<h4 class="text-white font-bold mb-6 text-lg">Khám phá</h4>
+<ul class="space-y-3 text-sm text-gray-400">
+<li><a class="hover:text-primary transition-colors" href="#">Phim mới cập nhật</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Phim lẻ hot</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Phim bộ tuyển chọn</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Phim chiếu rạp</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-bold mb-6 text-lg">Hỗ trợ</h4>
+<ul class="space-y-3 text-sm text-gray-400">
+<li><a class="hover:text-primary transition-colors" href="#">FAQ</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Trung tâm trợ giúp</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Điều khoản sử dụng</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Chính sách riêng tư</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-bold mb-6 text-lg">Kết nối</h4>
+<div class="flex gap-4 mb-6">
+<a class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white text-gray-400 transition-colors border border-white/5" href="#">
+<span class="material-icons-round text-lg">facebook</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white text-gray-400 transition-colors border border-white/5" href="#">
+<span class="material-icons-round text-lg">smart_display</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white text-gray-400 transition-colors border border-white/5" href="#">
+<span class="material-icons-round text-lg">alternate_email</span>
+</a>
+</div>
+</div>
+</div>
+<div class="border-t border-white/5 mt-12 pt-8 text-center text-sm text-gray-500">
+                © 2023 CineStream. All rights reserved. Design by AI.
+            </div>
+</div>
+</footer>
+
+</body></html>
