@@ -16,7 +16,7 @@ function setupLoginForm() {
     const form = document.querySelector('form');
     if (!form) return;
 
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', async function (e) {
         e.preventDefault();
 
         const email = document.getElementById('email').value.trim();
@@ -27,15 +27,29 @@ function setupLoginForm() {
             return;
         }
 
-        const result = authService.login(email, password);
+        // Show loading
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Đang đăng nhập...';
 
-        if (result.success) {
-            showMessage('Đăng nhập thành công!', 'success');
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 1000);
-        } else {
-            showMessage(result.message, 'error');
+        try {
+            const result = await authService.login(email, password);
+
+            if (result.success) {
+                showMessage('Đăng nhập thành công!', 'success');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            } else {
+                showMessage(result.message, 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        } catch (error) {
+            showMessage('Lỗi đăng nhập: ' + error.message, 'error');
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
         }
     });
 }
@@ -119,7 +133,7 @@ function showRegisterModal() {
     document.body.appendChild(modal);
 
     // Setup register form submit
-    document.getElementById('registerForm').addEventListener('submit', function (e) {
+    document.getElementById('registerForm').addEventListener('submit', async function (e) {
         e.preventDefault();
 
         const name = document.getElementById('regName').value.trim();
@@ -133,16 +147,30 @@ function showRegisterModal() {
             return;
         }
 
-        const result = authService.register(email, password, name, phone);
+        // Show loading
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Đang đăng ký...';
 
-        if (result.success) {
-            showMessage('Đăng ký thành công!', 'success');
-            modal.remove();
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 1000);
-        } else {
-            showMessage(result.message, 'error');
+        try {
+            const result = await authService.register(email, password, name, phone);
+
+            if (result.success) {
+                showMessage('Đăng ký thành công!', 'success');
+                modal.remove();
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            } else {
+                showMessage(result.message, 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        } catch (error) {
+            showMessage('Lỗi đăng ký: ' + error.message, 'error');
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
         }
     });
 }
@@ -267,8 +295,8 @@ function showResetPasswordModal(email, otp) {
 function showMessage(message, type = 'info') {
     const toast = document.createElement('div');
     toast.className = `fixed top-4 right-4 z-[200] px-6 py-4 rounded-lg shadow-lg ${type === 'success' ? 'bg-green-600' :
-            type === 'error' ? 'bg-red-600' :
-                'bg-blue-600'
+        type === 'error' ? 'bg-red-600' :
+            'bg-blue-600'
         } text-white font-medium animate-fade-in`;
     toast.textContent = message;
 
@@ -281,29 +309,43 @@ function showMessage(message, type = 'info') {
 
 // Social login handlers
 function loginWithGoogle() {
-    // Simulate Google login
-    const profile = {
-        email: 'user@gmail.com',
-        name: 'Google User',
-        picture: ''
-    };
+    showMessage('Đang kết nối với Google...', 'info');
+    // TODO: Implement real Google OAuth
+    // For now, simulate with demo account
+    setTimeout(() => {
+        const profile = {
+            email: 'demo.google@gmail.com',
+            name: 'Google User',
+            picture: 'https://ui-avatars.com/api/?name=Google+User&background=4285F4&color=fff'
+        };
 
-    const result = authService.socialLogin('google', profile);
-    if (result.success) {
-        window.location.href = 'index.html';
-    }
+        const result = authService.socialLogin('google', profile);
+        if (result.success) {
+            showMessage('Đăng nhập thành công!', 'success');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
+        }
+    }, 1000);
 }
 
 function loginWithFacebook() {
-    // Simulate Facebook login
-    const profile = {
-        email: 'user@facebook.com',
-        name: 'Facebook User',
-        picture: ''
-    };
+    showMessage('Đang kết nối với Facebook...', 'info');
+    // TODO: Implement real Facebook OAuth
+    // For now, simulate with demo account
+    setTimeout(() => {
+        const profile = {
+            email: 'demo.facebook@fb.com',
+            name: 'Facebook User',
+            picture: 'https://ui-avatars.com/api/?name=Facebook+User&background=1877F2&color=fff'
+        };
 
-    const result = authService.socialLogin('facebook', profile);
-    if (result.success) {
-        window.location.href = 'index.html';
-    }
+        const result = authService.socialLogin('facebook', profile);
+        if (result.success) {
+            showMessage('Đăng nhập thành công!', 'success');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
+        }
+    }, 1000);
 }

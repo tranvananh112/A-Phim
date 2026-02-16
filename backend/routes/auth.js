@@ -9,9 +9,9 @@ const {
     forgotPassword,
     resetPassword,
     logout
-} = require('../controllers/authController.simple'); // Using simple version
+} = require('../controllers/authController'); // Using MongoDB version
 
-const { protect } = require('../middleware/auth.simple'); // Using simple auth
+const { protect } = require('../middleware/auth'); // Using real auth
 const { authLimiter } = require('../middleware/rateLimit');
 
 // Public routes

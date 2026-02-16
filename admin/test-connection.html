@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Admin Connection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-white p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">Test Admin API Connection</h1>
+
+        <div class="space-y-4">
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h2 class="text-xl font-bold mb-4">Step 1: Check Token</h2>
+                <button onclick="checkToken()" class="bg-blue-500 px-4 py-2 rounded">Check Token</button>
+                <pre id="tokenResult" class="mt-4 bg-gray-700 p-4 rounded text-sm overflow-auto"></pre>
+            </div>
+
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h2 class="text-xl font-bold mb-4">Step 2: Login</h2>
+                <button onclick="login()" class="bg-green-500 px-4 py-2 rounded">Login as Admin</button>
+                <pre id="loginResult" class="mt-4 bg-gray-700 p-4 rounded text-sm overflow-auto"></pre>
+            </div>
+
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h2 class="text-xl font-bold mb-4">Step 3: Get Users</h2>
+                <button onclick="getUsers()" class="bg-purple-500 px-4 py-2 rounded">Get All Users</button>
+                <pre id="usersResult" class="mt-4 bg-gray-700 p-4 rounded text-sm overflow-auto max-h-96"></pre>
+            </div>
+
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h2 class="text-xl font-bold mb-4">Step 4: Get Stats</h2>
+                <button onclick="getStats()" class="bg-yellow-500 px-4 py-2 rounded">Get User Stats</button>
+                <pre id="statsResult" class="mt-4 bg-gray-700 p-4 rounded text-sm overflow-auto"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+
+        function checkToken() {
+            const token = localStorage.getItem('admin_token');
+            const user = localStorage.getItem('admin_user');
+
+            document.getElementById('tokenResult').textContent = JSON.stringify({
+                hasToken: !!token,
+                token: token ? token.substring(0, 50) + '...' : null,
+                user: user ? JSON.parse(user) : null
+            }, null, 2);
+        }
+
+        async function login() {
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@cinestream.vn',
+                        password: 'admin123'
+                    })
+                });
+
+                const data = await response.json();
+                document.getElementById('loginResult').textContent = JSON.stringify(data, null, 2);
+
+                if (data.success && data.token) {
+                    localStorage.setItem('admin_token', data.token);
+                    localStorage.setItem('admin_user', JSON.stringify(data.user));
+                    alert('Login successful! Token saved.');
+                }
+            } catch (error) {
+                document.getElementById('loginResult').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function getUsers() {
+            const token = localStorage.getItem('admin_token');
+
+            if (!token) {
+                alert('Please login first!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/users`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                document.getElementById('usersResult').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('usersResult').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function getStats() {
+            const token = localStorage.getItem('admin_token');
+
+            if (!token) {
+                alert('Please login first!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/users/stats`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                document.getElementById('statsResult').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('statsResult').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        // Auto check token on load
+        window.onload = () => {
+            checkToken();
+        };
+    </script>
+</body>
+
+</html>

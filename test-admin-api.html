@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Admin API</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">Test Admin API</h1>
+
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">1. Login Admin</h2>
+            <button onclick="loginAdmin()" class="bg-blue-500 text-white px-4 py-2 rounded">
+                Login as Admin
+            </button>
+            <pre id="loginResult" class="mt-4 bg-gray-100 p-4 rounded"></pre>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">2. Get User Stats</h2>
+            <button onclick="getUserStats()" class="bg-green-500 text-white px-4 py-2 rounded">
+                Get Stats
+            </button>
+            <pre id="statsResult" class="mt-4 bg-gray-100 p-4 rounded"></pre>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-bold mb-4">3. Get All Users</h2>
+            <button onclick="getAllUsers()" class="bg-purple-500 text-white px-4 py-2 rounded">
+                Get Users
+            </button>
+            <pre id="usersResult" class="mt-4 bg-gray-100 p-4 rounded"></pre>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let token = null;
+
+        async function loginAdmin() {
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@cinestream.vn',
+                        password: 'admin123'
+                    })
+                });
+
+                const data = await response.json();
+                document.getElementById('loginResult').textContent = JSON.stringify(data, null, 2);
+
+                if (data.success && data.token) {
+                    token = data.token;
+                    localStorage.setItem('admin_token', token);
+                    alert('Login successful! Token saved.');
+                }
+            } catch (error) {
+                document.getElementById('loginResult').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function getUserStats() {
+            if (!token) {
+                token = localStorage.getItem('admin_token');
+            }
+
+            if (!token) {
+                alert('Please login first!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/users/stats`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                document.getElementById('statsResult').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('statsResult').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function getAllUsers() {
+            if (!token) {
+                token = localStorage.getItem('admin_token');
+            }
+
+            if (!token) {
+                alert('Please login first!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/users`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                document.getElementById('usersResult').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('usersResult').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        // Auto-load token on page load
+        window.onload = () => {
+            token = localStorage.getItem('admin_token');
+            if (token) {
+                console.log('Token loaded from localStorage');
+            }
+        };
+    </script>
+</body>
+
+</html>

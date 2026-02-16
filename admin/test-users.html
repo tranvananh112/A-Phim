@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Admin Users</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-white p-8">
+    <h1 class="text-3xl font-bold mb-4">Test Admin Users Page</h1>
+
+    <div class="space-y-4">
+        <div>
+            <h2 class="text-xl font-bold mb-2">1. Check Files</h2>
+            <button onclick="checkFiles()" class="px-4 py-2 bg-blue-600 rounded">Check Files</button>
+            <pre id="filesResult" class="mt-2 p-4 bg-gray-800 rounded"></pre>
+        </div>
+
+        <div>
+            <h2 class="text-xl font-bold mb-2">2. Check LocalStorage</h2>
+            <button onclick="checkStorage()" class="px-4 py-2 bg-green-600 rounded">Check Storage</button>
+            <pre id="storageResult" class="mt-2 p-4 bg-gray-800 rounded"></pre>
+        </div>
+
+        <div>
+            <h2 class="text-xl font-bold mb-2">3. Load Users</h2>
+            <button onclick="loadUsers()" class="px-4 py-2 bg-purple-600 rounded">Load Users</button>
+            <pre id="usersResult" class="mt-2 p-4 bg-gray-800 rounded"></pre>
+        </div>
+
+        <div>
+            <h2 class="text-xl font-bold mb-2">4. Go to Users Page</h2>
+            <a href="users.html" class="inline-block px-4 py-2 bg-yellow-600 rounded">Go to Users Page</a>
+        </div>
+    </div>
+
+    <script>
+        function checkFiles() {
+            const result = document.getElementById('filesResult');
+            result.textContent = 'Checking files...\n';
+
+            // Try to load JS files
+            const files = [
+                '../js/config.js',
+                '../js/auth.js',
+                '../js/user.js',
+                '../js/admin/auth.js',
+                '../js/admin/users.js'
+            ];
+
+            files.forEach(file => {
+                fetch(file)
+                    .then(response => {
+                        result.textContent += `✓ ${file}: ${response.status}\n`;
+                    })
+                    .catch(error => {
+                        result.textContent += `✗ ${file}: ${error.message}\n`;
+                    });
+            });
+        }
+
+        function checkStorage() {
+            const result = document.getElementById('storageResult');
+            const keys = [
+                'cinestream_all_users',
+                'cinestream_user',
+                'cinestream_token',
+                'admin_token'
+            ];
+
+            let output = '';
+            keys.forEach(key => {
+                const value = localStorage.getItem(key);
+                output += `${key}: ${value ? 'EXISTS' : 'NOT FOUND'}\n`;
+                if (value && key === 'cinestream_all_users') {
+                    const users = JSON.parse(value);
+                    output += `  → ${users.length} users\n`;
+                }
+            });
+
+            result.textContent = output;
+        }
+
+        function loadUsers() {
+            const result = document.getElementById('usersResult');
+
+            // Get or create users
+            let users = localStorage.getItem('cinestream_all_users');
+
+            if (!users) {
+                // Create demo users
+                const demoUsers = [
+                    {
+                        id: 'user_1',
+                        name: 'Nguyễn Văn An',
+                        email: 'an@example.com',
+                        phone: '0912345678',
+                        password: btoa('password123'),
+                        subscription: { plan: 'PREMIUM' },
+                        status: 'active',
+                        createdAt: new Date().toISOString(),
+                        lastActive: new Date().toISOString()
+                    },
+                    {
+                        id: 'user_2',
+                        name: 'Trần Thị Bình',
+                        email: 'binh@example.com',
+                        phone: '0987654321',
+                        password: btoa('password123'),
+                        subscription: { plan: 'FREE' },
+                        status: 'active',
+                        createdAt: new Date().toISOString(),
+                        lastActive: new Date().toISOString()
+                    }
+                ];
+
+                localStorage.setItem('cinestream_all_users', JSON.stringify(demoUsers));
+                users = JSON.stringify(demoUsers);
+                result.textContent = 'Created demo users:\n' + JSON.stringify(demoUsers, null, 2);
+            } else {
+                const parsedUsers = JSON.parse(users);
+                result.textContent = `Found ${parsedUsers.length} users:\n` + JSON.stringify(parsedUsers, null, 2);
+            }
+        }
+
+        // Auto check on load
+        window.onload = function () {
+            checkStorage();
+        };
+    </script>
+</body>
+
+</html>

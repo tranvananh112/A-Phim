@@ -1,7 +1,6 @@
 // Home Page Script
 document.addEventListener('DOMContentLoaded', async function () {
     await loadFeaturedMovies();
-    updateUserUI();
 });
 
 // Load featured movies from API
@@ -83,24 +82,6 @@ function renderMovieGrid(movies, container) {
 }
 
 // Update user UI
-function updateUserUI() {
-    const user = authService.getCurrentUser();
-    const loginBtn = document.querySelector('a[href="login.html"]');
-
-    if (user && loginBtn) {
-        loginBtn.outerHTML = `
-            <div class="flex items-center gap-4">
-                <a href="profile.html" class="flex items-center gap-2 hover:text-primary transition-colors">
-                    <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-black font-bold">
-                        ${user.name.charAt(0).toUpperCase()}
-                    </div>
-                    <span class="hidden md:inline text-sm">${user.name}</span>
-                </a>
-            </div>
-        `;
-    }
-}
-
 // Search functionality
 function setupSearch() {
     const searchInput = document.getElementById('searchInput');

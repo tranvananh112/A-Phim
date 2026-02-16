@@ -2,8 +2,14 @@
 class AuthService {
     constructor() {
         this.backendURL = typeof API_CONFIG !== 'undefined' ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api';
-        this.useBackend = typeof API_CONFIG !== 'undefined' ? API_CONFIG.USE_BACKEND : false;
+        // Always use backend for authentication
+        this.useBackend = typeof API_CONFIG !== 'undefined' ? API_CONFIG.USE_BACKEND_FOR_AUTH : true;
         this.currentUser = this.loadUser();
+
+        console.log('🔐 AuthService initialized:', {
+            backendURL: this.backendURL,
+            useBackend: this.useBackend
+        });
     }
 
     // Load user from localStorage
@@ -22,6 +28,7 @@ class AuthService {
     async register(email, password, name, phone = '') {
         if (this.useBackend) {
             try {
+                console.log('📝 Registering via backend:', email);
                 const response = await fetch(`${this.backendURL}/auth/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -29,46 +36,34 @@ class AuthService {
                 });
 
                 const data = await response.json();
+                console.log('📊 Backend response:', data);
 
                 if (data.success) {
                     this.saveUser(data.user);
                     this.saveToken(data.token);
+                    console.log('✅ Registration successful');
                     return { success: true, user: data.user };
                 }
+                console.log('❌ Registration failed:', data.message);
                 return { success: false, message: data.message };
             } catch (error) {
-                console.error('Register error:', error);
-                return { success: false, message: 'Lỗi kết nối server' };
+                console.error('❌ Register error:', error);
+                return { success: false, message: 'Lỗi kết nối server. Vui lòng kiểm tra backend đang chạy.' };
             }
         }
 
-        // Fallback: localStorage mode
-        const users = this.getAllUsers();
-        if (users.find(u => u.email === email)) {
-            return { success: false, message: 'Email đã được sử dụng' };
-        }
-
-        const newUser = {
-            id: Date.now().toString(),
-            email, name, phone,
-            password: btoa(password),
-            avatar: '',
-            subscription: { plan: 'FREE' },
-            createdAt: new Date().toISOString()
+        // If backend is disabled, show error
+        return {
+            success: false,
+            message: 'Backend authentication is required. Please enable USE_BACKEND_FOR_AUTH in config.'
         };
-
-        users.push(newUser);
-        localStorage.setItem('cinestream_all_users', JSON.stringify(users));
-        this.saveUser(newUser);
-        this.saveToken(this.generateToken(newUser));
-
-        return { success: true, user: newUser };
     }
 
     // Login user
     async login(email, password) {
         if (this.useBackend) {
             try {
+                console.log('🔐 Logging in via backend:', email);
                 const response = await fetch(`${this.backendURL}/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -76,30 +71,27 @@ class AuthService {
                 });
 
                 const data = await response.json();
+                console.log('📊 Backend response:', data);
 
                 if (data.success) {
                     this.saveUser(data.user);
                     this.saveToken(data.token);
+                    console.log('✅ Login successful, token saved');
                     return { success: true, user: data.user };
                 }
+                console.log('❌ Login failed:', data.message);
                 return { success: false, message: data.message };
             } catch (error) {
-                console.error('Login error:', error);
-                return { success: false, message: 'Lỗi kết nối server' };
+                console.error('❌ Login error:', error);
+                return { success: false, message: 'Lỗi kết nối server. Vui lòng kiểm tra backend đang chạy.' };
             }
         }
 
-        // Fallback: localStorage mode
-        const users = this.getAllUsers();
-        const user = users.find(u => u.email === email && u.password === btoa(password));
-
-        if (!user) {
-            return { success: false, message: 'Email hoặc mật khẩu không đúng' };
-        }
-
-        this.saveUser(user);
-        this.saveToken(this.generateToken(user));
-        return { success: true, user };
+        // If backend is disabled, show error
+        return {
+            success: false,
+            message: 'Backend authentication is required. Please enable USE_BACKEND_FOR_AUTH in config.'
+        };
     }
 
     // Logout
@@ -205,6 +197,40 @@ class AuthService {
 
     saveToken(token) {
         localStorage.setItem(STORAGE_KEYS.TOKEN, token);
+    }
+
+    // Social login
+    socialLogin(provider, profile) {
+        if (!profile || !profile.email) {
+            return { success: false, message: 'Thông tin không hợp lệ' };
+        }
+
+        // Check if user exists
+        const users = this.getAllUsers();
+        let user = users.find(u => u.email === profile.email);
+
+        if (!user) {
+            // Create new user from social profile
+            user = {
+                id: Date.now().toString(),
+                email: profile.email,
+                name: profile.name || profile.email.split('@')[0],
+                phone: '',
+                password: '', // No password for social login
+                avatar: profile.picture || '',
+                subscription: { plan: 'FREE' },
+                socialProvider: provider,
+                createdAt: new Date().toISOString()
+            };
+
+            users.push(user);
+            localStorage.setItem('cinestream_all_users', JSON.stringify(users));
+        }
+
+        this.saveUser(user);
+        this.saveToken(this.generateToken(user));
+
+        return { success: true, user };
     }
 
     // Password reset

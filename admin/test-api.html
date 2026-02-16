@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Connection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .test-box {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .info {
+            color: blue;
+        }
+
+        button {
+            background: #197fe6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background: #1565c0;
+        }
+
+        pre {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔍 Test API Connection - CineStream Admin</h1>
+
+    <div class="test-box">
+        <h2>1. Test Backend Health</h2>
+        <button onclick="testHealth()">Test Health Endpoint</button>
+        <div id="health-result"></div>
+    </div>
+
+    <div class="test-box">
+        <h2>2. Test MongoDB Connection</h2>
+        <button onclick="testMongoDB()">Test MongoDB</button>
+        <div id="mongodb-result"></div>
+    </div>
+
+    <div class="test-box">
+        <h2>3. Create Admin Token</h2>
+        <button onclick="createAdminToken()">Create Token</button>
+        <div id="token-result"></div>
+    </div>
+
+    <div class="test-box">
+        <h2>4. Test Users API</h2>
+        <button onclick="testUsersAPI()">Test /api/users</button>
+        <div id="users-result"></div>
+    </div>
+
+    <div class="test-box">
+        <h2>5. Test Users Stats API</h2>
+        <button onclick="testUsersStats()">Test /api/users/stats</button>
+        <div id="stats-result"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000';
+
+        async function testHealth() {
+            const result = document.getElementById('health-result');
+            result.innerHTML = '<p class="info">Testing...</p>';
+
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    result.innerHTML = `
+                        <p class="success">✅ Backend is running!</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    result.innerHTML = `<p class="error">❌ Backend returned error: ${response.status}</p>`;
+                }
+            } catch (error) {
+                result.innerHTML = `
+                    <p class="error">❌ Cannot connect to backend!</p>
+                    <p>Error: ${error.message}</p>
+                    <p>Make sure backend is running: <code>cd backend && npm start</code></p>
+                `;
+            }
+        }
+
+        async function testMongoDB() {
+            const result = document.getElementById('mongodb-result');
+            result.innerHTML = '<p class="info">Testing MongoDB connection...</p>';
+
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    result.innerHTML = `
+                        <p class="success">✅ MongoDB is connected!</p>
+                        <p>Check backend console for connection details</p>
+                    `;
+                } else {
+                    result.innerHTML = `<p class="error">❌ MongoDB connection issue</p>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+
+        function createAdminToken() {
+            const result = document.getElementById('token-result');
+
+            // Create a simple admin token
+            const token = btoa(JSON.stringify({
+                id: 'admin123',
+                role: 'admin',
+                email: 'admin@cinestream.vn',
+                timestamp: Date.now()
+            }));
+
+            localStorage.setItem('admin_token', token);
+
+            result.innerHTML = `
+                <p class="success">✅ Admin token created and saved!</p>
+                <p>Token: <code>${token.substring(0, 50)}...</code></p>
+                <p>Saved to localStorage as 'admin_token'</p>
+            `;
+        }
+
+        async function testUsersAPI() {
+            const result = document.getElementById('users-result');
+            result.innerHTML = '<p class="info">Testing /api/users...</p>';
+
+            const token = localStorage.getItem('admin_token');
+            if (!token) {
+                result.innerHTML = '<p class="error">❌ No admin token found! Click "Create Token" first.</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/users`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    result.innerHTML = `
+                        <p class="success">✅ Users API working!</p>
+                        <p>Found ${data.count} users</p>
+                        <pre>${JSON.stringify(data.data.slice(0, 2), null, 2)}</pre>
+                        ${data.count === 0 ? '<p class="info">💡 No users in database. Create one with: <code>node scripts/createAdmin.js</code></p>' : ''}
+                    `;
+                } else {
+                    result.innerHTML = `
+                        <p class="error">❌ API Error: ${response.status}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+
+        async function testUsersStats() {
+            const result = document.getElementById('stats-result');
+            result.innerHTML = '<p class="info">Testing /api/users/stats...</p>';
+
+            const token = localStorage.getItem('admin_token');
+            if (!token) {
+                result.innerHTML = '<p class="error">❌ No admin token found! Click "Create Token" first.</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/users/stats`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    result.innerHTML = `
+                        <p class="success">✅ Stats API working!</p>
+                        <pre>${JSON.stringify(data.data, null, 2)}</pre>
+                    `;
+                } else {
+                    result.innerHTML = `
+                        <p class="error">❌ API Error: ${response.status}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+
+        // Auto test on load
+        window.addEventListener('load', () => {
+            console.log('Test page loaded. Click buttons to test each endpoint.');
+        });
+    </script>
+</body>
+
+</html>

@@ -46,14 +46,14 @@
 
             <form id="loginForm" class="space-y-6">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Tên đăng nhập</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
                     <div class="relative">
                         <span class="material-icons-round absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                            person
+                            email
                         </span>
-                        <input type="text" id="username" required
+                        <input type="email" id="username" required autocomplete="email"
                             class="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-                            placeholder="admin">
+                            placeholder="admin@cinestream.vn" value="admin@cinestream.vn">
                     </div>
                 </div>
 
@@ -63,9 +63,9 @@
                         <span class="material-icons-round absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                             lock
                         </span>
-                        <input type="password" id="password" required
+                        <input type="password" id="password" required autocomplete="current-password"
                             class="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-                            placeholder="••••••••">
+                            placeholder="••••••••" value="admin123">
                     </div>
                 </div>
 
@@ -85,10 +85,10 @@
             <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <p class="text-sm text-blue-800 font-medium mb-2">
                     <span class="material-icons-round text-sm align-middle">info</span>
-                    Thông tin đăng nhập demo:
+                    Thông tin đăng nhập:
                 </p>
-                <p class="text-sm text-blue-700">Username: <code
-                        class="font-mono bg-white px-2 py-1 rounded">admin</code></p>
+                <p class="text-sm text-blue-700">Email: <code
+                        class="font-mono bg-white px-2 py-1 rounded">admin@cinestream.vn</code></p>
                 <p class="text-sm text-blue-700">Password: <code
                         class="font-mono bg-white px-2 py-1 rounded">admin123</code></p>
             </div>
@@ -112,27 +112,45 @@
         </div>
     </div>
 
-    <script src="../js/admin/config.js"></script>
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function (e) {
+        const API_URL = 'http://localhost:5000/api';
+
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
             e.preventDefault();
 
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            // Simple authentication
-            if (username === ADMIN_CONFIG.ADMIN_CREDENTIALS.username &&
-                password === ADMIN_CONFIG.ADMIN_CREDENTIALS.password) {
+            try {
+                // Call backend API
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: username,
+                        password: password
+                    })
+                });
 
-                const token = btoa(JSON.stringify({
-                    username,
-                    timestamp: Date.now()
-                }));
+                const data = await response.json();
 
-                localStorage.setItem(ADMIN_STORAGE_KEYS.ADMIN_TOKEN, token);
-                window.location.href = 'dashboard.html';
-            } else {
-                showToast('Tên đăng nhập hoặc mật khẩu không đúng');
+                if (data.success && data.user.role === 'admin') {
+                    // Save admin token
+                    localStorage.setItem('admin_token', data.token);
+                    localStorage.setItem('admin_user', JSON.stringify(data.user));
+
+                    // Redirect to dashboard
+                    window.location.href = 'dashboard.html';
+                } else if (data.success && data.user.role !== 'admin') {
+                    showToast('Bạn không có quyền truy cập admin panel');
+                } else {
+                    showToast(data.message || 'Đăng nhập thất bại');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showToast('Không thể kết nối với server. Vui lòng thử lại.');
             }
         });
 

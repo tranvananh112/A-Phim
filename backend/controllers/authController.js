@@ -41,6 +41,8 @@ exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
+        console.log('Login attempt:', { email, passwordLength: password?.length });
+
         // Validate email & password
         if (!email || !password) {
             return res.status(400).json({
@@ -53,11 +55,14 @@ exports.login = async (req, res) => {
         const user = await User.findOne({ email }).select('+password');
 
         if (!user) {
+            console.log('User not found:', email);
             return res.status(401).json({
                 success: false,
                 message: 'Email hoặc mật khẩu không đúng'
             });
         }
+
+        console.log('User found:', { email: user.email, role: user.role });
 
         // Check if user is blocked
         if (user.isBlocked) {
@@ -69,6 +74,8 @@ exports.login = async (req, res) => {
 
         // Check if password matches
         const isMatch = await user.matchPassword(password);
+
+        console.log('Password match:', isMatch);
 
         if (!isMatch) {
             return res.status(401).json({

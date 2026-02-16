@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test Login</title>
+</head>
+
+<body>
+    <h1>Test Login API</h1>
+    <button onclick="testLogin()">Test Login</button>
+    <pre id="result"></pre>
+
+    <script>
+        async function testLogin() {
+            const result = document.getElementById('result');
+            result.textContent = 'Testing...';
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@cinestream.vn',
+                        password: 'admin123'
+                    })
+                });
+
+                const data = await response.json();
+                result.textContent = JSON.stringify(data, null, 2);
+
+                if (data.success) {
+                    console.log('Login successful!', data);
+                } else {
+                    console.error('Login failed:', data.message);
+                }
+            } catch (error) {
+                result.textContent = 'Error: ' + error.message;
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+
+</html>

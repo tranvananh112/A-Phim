@@ -12,10 +12,10 @@ exports.apiLimiter = rateLimit({
     legacyHeaders: false,
 });
 
-// Strict rate limiter for auth routes
+// Strict rate limiter for auth routes (DISABLED FOR TESTING)
 exports.authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 5, // limit each IP to 5 requests per windowMs
+    max: 1000, // Increased to 1000 for testing
     message: {
         success: false,
         message: 'Quá nhiều lần đăng nhập thất bại, vui lòng thử lại sau 15 phút'

@@ -1,7 +1,7 @@
 // API Service for ophim17.cc and Backend
 class MovieAPI {
     constructor() {
-        this.useBackend = API_CONFIG.USE_BACKEND;
+        this.useBackend = API_CONFIG.USE_BACKEND_FOR_MOVIES || false;
         this.backendURL = API_CONFIG.BACKEND_URL;
         this.ophimURL = API_CONFIG.OPHIM_URL;
         this.ophim17URL = API_CONFIG.OPHIM17_URL;

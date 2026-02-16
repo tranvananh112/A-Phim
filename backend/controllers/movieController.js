@@ -80,9 +80,6 @@ exports.getMovies = async (req, res) => {
         });
     }
 };
-        });
-    }
-};
 
 // @desc    Get single movie
 // @route   GET /api/movies/:slug

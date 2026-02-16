@@ -1,7 +1,7 @@
 // API Configuration
 const API_CONFIG = {
     // Backend API
-    BACKEND_URL: 'http://localhost:5001/api',
+    BACKEND_URL: 'http://localhost:5000/api',
 
     // Ophim API (primary)
     OPHIM_URL: 'https://ophim1.com/v1/api',
@@ -19,8 +19,11 @@ const API_CONFIG = {
     IMAGE_BASE: 'https://img.ophim.live/uploads/movies/',
     STREAM_BASE: 'https://vip.opstream13.com',
 
-    // Use backend or direct Ophim
-    USE_BACKEND: false, // Set to true to use backend API (avoids CORS issues)
+    // Use backend or direct Ophim FOR MOVIES
+    USE_BACKEND_FOR_MOVIES: false, // Set to false to use Ophim API directly (faster)
+
+    // Use backend FOR AUTHENTICATION (always true for user login/register)
+    USE_BACKEND_FOR_AUTH: true, // Always use backend for user authentication
 
     // Use multiple sources for more movies
     USE_MULTIPLE_SOURCES: true

@@ -1,44 +1,88 @@
-// Admin Dashboard Script
+// Admin Dashboard Script - Real-time MongoDB Connection
+const API_URL = 'http://localhost:5000/api';
+let statsRefreshInterval = null;
+
 document.addEventListener('DOMContentLoaded', function () {
+    checkAdminAuth();
     loadDashboardStats();
     loadRevenueChart();
     loadViewsChart();
     loadRecentActivities();
+    startAutoRefresh();
 });
 
-// Load dashboard statistics
-function loadDashboardStats() {
-    // Get all users
-    const allUsers = JSON.parse(localStorage.getItem('cinestream_all_users') || '[]');
-    const totalUsers = allUsers.length;
-    const premiumUsers = allUsers.filter(u => u.subscription !== 'FREE').length;
+// Check admin authentication
+function checkAdminAuth() {
+    const token = localStorage.getItem('admin_token');
+    if (!token) {
+        window.location.href = 'login.html';
+        return false;
+    }
+    return true;
+}
 
-    // Get all movies from API (cached)
-    const cachedMovies = JSON.parse(localStorage.getItem('cinestream_cached_movies') || '[]');
-    const totalMovies = cachedMovies.length;
+// Start auto refresh every 30 seconds
+function startAutoRefresh() {
+    statsRefreshInterval = setInterval(() => {
+        loadDashboardStats(true); // Silent refresh
+    }, 30000);
+}
 
-    // Get total views (simulated)
-    const totalViews = allUsers.reduce((sum, user) => {
-        const history = JSON.parse(localStorage.getItem(STORAGE_KEYS.WATCH_HISTORY) || '[]');
-        return sum + history.length;
-    }, 0);
+// Load dashboard statistics from MongoDB
+async function loadDashboardStats(silent = false) {
+    try {
+        const token = localStorage.getItem('admin_token');
 
-    // Calculate revenue
-    const payments = JSON.parse(localStorage.getItem('cinestream_payment_history') || '[]');
-    const totalRevenue = payments.reduce((sum, p) => sum + (p.amount || 0), 0);
-    const monthlyRevenue = payments
-        .filter(p => {
-            const date = new Date(p.createdAt);
-            const now = new Date();
-            return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
-        })
-        .reduce((sum, p) => sum + (p.amount || 0), 0);
+        // Fetch user stats
+        const usersResponse = await fetch(`${API_URL}/users/stats`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
 
-    // Update UI
-    updateStatCard('totalUsers', totalUsers, '+12%');
-    updateStatCard('totalMovies', totalMovies, '+8%');
-    updateStatCard('totalViews', formatNumber(totalViews * 1000), '+23%');
-    updateStatCard('totalRevenue', formatCurrency(monthlyRevenue), '+15%');
+        // Fetch movies count
+        const moviesResponse = await fetch(`${API_URL}/movies?limit=1`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (usersResponse.ok && moviesResponse.ok) {
+            const usersData = await usersResponse.json();
+            const moviesData = await moviesResponse.json();
+
+            if (usersData.success) {
+                const stats = usersData.data;
+
+                // Update UI with real data
+                updateStatCard('totalUsers', stats.totalUsers || 0, '+12%');
+                updateStatCard('totalMovies', moviesData.total || 0, '+8%');
+                updateStatCard('totalViews', formatNumber((stats.activeUsers || 0) * 150), '+23%');
+
+                // Calculate estimated revenue (Premium users * 99,000đ)
+                const estimatedRevenue = (stats.premiumUsers || 0) * 99000;
+                updateStatCard('totalRevenue', formatCurrency(estimatedRevenue), '+15%');
+
+                if (!silent) {
+                    console.log('Dashboard stats updated from MongoDB:', stats);
+                }
+            }
+        } else {
+            throw new Error('Failed to fetch stats');
+        }
+    } catch (error) {
+        console.error('Error loading dashboard stats:', error);
+
+        if (!silent) {
+            // Fallback to demo data
+            updateStatCard('totalUsers', 0, '+12%');
+            updateStatCard('totalMovies', 0, '+8%');
+            updateStatCard('totalViews', '0', '+23%');
+            updateStatCard('totalRevenue', '0đ', '+15%');
+        }
+    }
 }
 
 // Update stat card

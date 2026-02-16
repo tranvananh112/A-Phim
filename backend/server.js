@@ -1,11 +1,11 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-// const connectDB = require('./config/database');
+const connectDB = require('./config/database');
 const { apiLimiter } = require('./middleware/rateLimit');
 
-// Connect to database (commented out for demo without MongoDB)
-// connectDB();
+// Connect to database
+connectDB();
 
 const app = express();
 
@@ -15,7 +15,11 @@ app.use(express.urlencoded({ extended: true }));
 
 // Enable CORS
 app.use(cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    origin: [
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+        process.env.CLIENT_URL
+    ].filter(Boolean),
     credentials: true
 }));
 
@@ -24,7 +28,7 @@ app.use('/api/', apiLimiter);
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/movies', require('./routes/movies.simple')); // Using simple version without MongoDB
+app.use('/api/movies', require('./routes/movies')); // Use MongoDB version
 app.use('/api/ratings', require('./routes/ratings'));
 app.use('/api/comments', require('./routes/comments'));
 app.use('/api/payments', require('./routes/payments'));
@@ -83,7 +87,7 @@ const server = app.listen(PORT, () => {
 ║                                                           ║
 ║   🌐 Server: http://localhost:${PORT}                     ║
 ║   📊 Environment: ${process.env.NODE_ENV || 'development'}                        ║
-║   💾 Database: Demo mode (no MongoDB required)                            ║
+║   💾 Database: MongoDB Connected                         ║
 ║                                                           ║
 ║   📄 API Endpoints:                                      ║
 ║   • POST   /api/auth/register                           ║

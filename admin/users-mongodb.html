@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Users - MongoDB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+</head>
+
+<body class="bg-gray-900 text-white">
+    <!-- Header -->
+    <div class="bg-gray-800 border-b border-gray-700 p-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <h1 class="text-2xl font-bold">Quản lý Users (MongoDB)</h1>
+            <div class="flex gap-4">
+                <button onclick="loadUsers()" class="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600">
+                    <span class="material-icons-outlined text-sm align-middle">refresh</span>
+                    Refresh
+                </button>
+                <a href="dashboard.html" class="bg-gray-700 px-4 py-2 rounded hover:bg-gray-600">
+                    Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status -->
+    <div id="status" class="max-w-7xl mx-auto mt-4 px-4"></div>
+
+    <!-- Users Table -->
+    <div class="max-w-7xl mx-auto mt-6 px-4">
+        <div class="bg-gray-800 rounded-lg overflow-hidden">
+            <table class="w-full">
+                <thead class="bg-gray-700">
+                    <tr>
+                        <th class="p-4 text-left">ID</th>
+                        <th class="p-4 text-left">Tên</th>
+                        <th class="p-4 text-left">Email</th>
+                        <th class="p-4 text-left">Role</th>
+                        <th class="p-4 text-left">Plan</th>
+                        <th class="p-4 text-left">Status</th>
+                        <th class="p-4 text-left">Created</th>
+                        <th class="p-4 text-left">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTable">
+                    <tr>
+                        <td colspan="8" class="p-8 text-center text-gray-400">
+                            Click "Refresh" để tải dữ liệu
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let adminToken = null;
+
+        // Try to get token from sessionStorage (not blocked by tracking prevention)
+        function getToken() {
+            // Try sessionStorage first
+            try {
+                adminToken = sessionStorage.getItem('admin_token');
+                if (adminToken) return adminToken;
+            } catch (e) {
+                console.log('SessionStorage blocked');
+            }
+
+            // Try localStorage
+            try {
+                adminToken = localStorage.getItem('admin_token');
+                if (adminToken) return adminToken;
+            } catch (e) {
+                console.log('LocalStorage blocked');
+            }
+
+            // Prompt for token
+            adminToken = prompt('Nhập admin token (hoặc đăng nhập tại /admin/login.html):');
+            if (adminToken) {
+                try {
+                    sessionStorage.setItem('admin_token', adminToken);
+                } catch (e) { }
+            }
+            return adminToken;
+        }
+
+        async function loadUsers() {
+            const token = getToken();
+            if (!token) {
+                showStatus('Vui lòng đăng nhập tại <a href="login.html" class="underline">admin/login.html</a>', 'error');
+                return;
+            }
+
+            showStatus('Đang tải users từ MongoDB...', 'info');
+
+            try {
+                const response = await fetch(`${API_URL}/users`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        showStatus('Token không hợp lệ. <a href="login.html" class="underline">Đăng nhập lại</a>', 'error');
+                        sessionStorage.removeItem('admin_token');
+                        return;
+                    }
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayUsers(data.data);
+                    showStatus(`✅ Đã tải ${data.count} users từ MongoDB`, 'success');
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus(`❌ Lỗi: ${error.message}`, 'error');
+            }
+        }
+
+        function displayUsers(users) {
+            const tbody = document.getElementById('usersTable');
+
+            if (users.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="p-8 text-center text-gray-400">
+                            Không có users
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = users.map(user => `
+                <tr class="border-t border-gray-700 hover:bg-gray-750">
+                    <td class="p-4 text-xs text-gray-400">${user._id.substring(0, 8)}...</td>
+                    <td class="p-4 font-medium">${user.name}</td>
+                    <td class="p-4 text-gray-300">${user.email}</td>
+                    <td class="p-4">
+                        <span class="px-2 py-1 rounded text-xs ${user.role === 'admin' ? 'bg-red-500/20 text-red-400' : 'bg-blue-500/20 text-blue-400'}">
+                            ${user.role}
+                        </span>
+                    </td>
+                    <td class="p-4">
+                        <span class="px-2 py-1 rounded text-xs ${user.subscription.plan === 'PREMIUM' ? 'bg-yellow-500/20 text-yellow-400' :
+                    user.subscription.plan === 'FAMILY' ? 'bg-purple-500/20 text-purple-400' :
+                        'bg-gray-500/20 text-gray-400'
+                }">
+                            ${user.subscription.plan}
+                        </span>
+                    </td>
+                    <td class="p-4">
+                        ${user.isBlocked ?
+                    '<span class="text-red-400">🔒 Blocked</span>' :
+                    '<span class="text-green-400">✓ Active</span>'
+                }
+                    </td>
+                    <td class="p-4 text-sm text-gray-400">
+                        ${new Date(user.createdAt).toLocaleDateString('vi-VN')}
+                    </td>
+                    <td class="p-4">
+                        <button onclick="toggleBlock('${user._id}', ${user.isBlocked})" 
+                                class="px-3 py-1 rounded text-sm ${user.isBlocked ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}">
+                            ${user.isBlocked ? 'Unblock' : 'Block'}
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function toggleBlock(userId, currentlyBlocked) {
+            const token = getToken();
+            if (!token) return;
+
+            const action = currentlyBlocked ? 'mở khóa' : 'khóa';
+            if (!confirm(`Bạn có chắc muốn ${action} user này?`)) return;
+
+            try {
+                const response = await fetch(`${API_URL}/users/${userId}/block`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        isBlocked: !currentlyBlocked
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showStatus(`✅ Đã ${action} user thành công`, 'success');
+                    loadUsers(); // Reload
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                showStatus(`❌ Lỗi: ${error.message}`, 'error');
+            }
+        }
+
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            const colors = {
+                success: 'bg-green-500/20 border-green-500 text-green-400',
+                error: 'bg-red-500/20 border-red-500 text-red-400',
+                info: 'bg-blue-500/20 border-blue-500 text-blue-400'
+            };
+
+            statusDiv.innerHTML = `
+                <div class="p-4 rounded-lg border ${colors[type]}">
+                    ${message}
+                </div>
+            `;
+
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusDiv.innerHTML = '';
+                }, 3000);
+            }
+        }
+
+        // Auto load on page load
+        window.onload = () => {
+            console.log('Page loaded');
+            // Auto load if token exists
+            try {
+                if (sessionStorage.getItem('admin_token') || localStorage.getItem('admin_token')) {
+                    loadUsers();
+                }
+            } catch (e) {
+                console.log('Storage blocked, waiting for manual action');
+            }
+        };
+    </script>
+</body>
+
+</html>
