@@ -1,7 +1,9 @@
 // API Configuration
 const API_CONFIG = {
-    // Backend API
-    BACKEND_URL: 'http://localhost:5000/api',
+    // Backend API - Auto-detect environment
+    BACKEND_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:5000/api'
+        : 'https://aphim-api.ddns.net/api', // Replace with your actual backend URL
 
     // Ophim API (primary)
     OPHIM_URL: 'https://ophim1.com/v1/api',
@@ -23,7 +25,7 @@ const API_CONFIG = {
     USE_BACKEND_FOR_MOVIES: false, // Set to false to use Ophim API directly (faster)
 
     // Use backend FOR AUTHENTICATION (always true for user login/register)
-    USE_BACKEND_FOR_AUTH: true, // Always use backend for user authentication
+    USE_BACKEND_FOR_AUTH: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1', // Only use backend locally
 
     // Use multiple sources for more movies
     USE_MULTIPLE_SOURCES: true
