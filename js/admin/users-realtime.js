@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function getAdminToken() {
     // Try sessionStorage first (less likely to be blocked)
     try {
-        const token = sessionStorage.getItem('admin_token');
+        const token = sessionStorage.getItem('cinestream_admin_token');
         if (token) {
             console.log('✅ Token found in sessionStorage');
             return token;
@@ -40,12 +40,12 @@ function getAdminToken() {
 
     // Try localStorage
     try {
-        const token = localStorage.getItem('admin_token');
+        const token = localStorage.getItem('cinestream_admin_token');
         if (token) {
             console.log('✅ Token found in localStorage');
             // Save to sessionStorage for next time
             try {
-                sessionStorage.setItem('admin_token', token);
+                sessionStorage.setItem('cinestream_admin_token', token);
             } catch (e) { }
             return token;
         }
@@ -60,14 +60,14 @@ function getAdminToken() {
 // Save token with fallback
 function saveAdminToken(token) {
     try {
-        sessionStorage.setItem('admin_token', token);
+        sessionStorage.setItem('cinestream_admin_token', token);
         console.log('✅ Token saved to sessionStorage');
     } catch (e) {
         console.warn('SessionStorage blocked');
     }
 
     try {
-        localStorage.setItem('admin_token', token);
+        localStorage.setItem('cinestream_admin_token', token);
         console.log('✅ Token saved to localStorage');
     } catch (e) {
         console.warn('LocalStorage blocked');

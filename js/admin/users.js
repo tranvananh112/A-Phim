@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Check admin authentication
 function checkAdminAuth() {
-    const token = localStorage.getItem('admin_token');
+    const token = localStorage.getItem('cinestream_admin_token');
     if (!token) {
         window.location.href = 'login.html';
         return false;
@@ -57,7 +57,7 @@ async function loadUsers(silent = false) {
     }
 
     try {
-        const token = localStorage.getItem('admin_token');
+        const token = localStorage.getItem('cinestream_admin_token');
         const response = await fetch(`${API_URL}/users`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -67,7 +67,7 @@ async function loadUsers(silent = false) {
 
         if (!response.ok) {
             if (response.status === 401) {
-                localStorage.removeItem('admin_token');
+                localStorage.removeItem('cinestream_admin_token');
                 window.location.href = 'login.html';
                 return;
             }
@@ -489,7 +489,7 @@ async function toggleUserStatus(userId) {
     }
 
     try {
-        const token = localStorage.getItem('admin_token');
+        const token = localStorage.getItem('cinestream_admin_token');
         const response = await fetch(`${API_URL}/users/${userId}/block`, {
             method: 'PUT',
             headers: {
@@ -697,7 +697,8 @@ function showToast(message, type = 'info') {
 // Logout
 function logout() {
     if (confirm('Bạn có chắc muốn đăng xuất?')) {
-        localStorage.removeItem('admin_token');
+        localStorage.removeItem('cinestream_admin_token');
+        localStorage.removeItem('cinestream_admin_user');
         window.location.href = 'login.html';
     }
 }
