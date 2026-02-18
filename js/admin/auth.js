@@ -6,8 +6,10 @@ class AdminAuthService {
 
     // Check if admin is logged in
     isLoggedIn() {
-        const token = localStorage.getItem(ADMIN_STORAGE_KEYS.ADMIN_TOKEN);
-        return token !== null;
+        // Check both backend token and local token
+        const backendToken = localStorage.getItem('cinestream_admin_token');
+        const localToken = localStorage.getItem(ADMIN_STORAGE_KEYS.ADMIN_TOKEN);
+        return backendToken !== null || localToken !== null;
     }
 
     // Login admin
@@ -29,7 +31,10 @@ class AdminAuthService {
 
     // Logout admin
     logout() {
+        // Remove both tokens
         localStorage.removeItem(ADMIN_STORAGE_KEYS.ADMIN_TOKEN);
+        localStorage.removeItem('cinestream_admin_token');
+        localStorage.removeItem('cinestream_admin_user');
         window.location.href = '/admin/login.html';
     }
 
