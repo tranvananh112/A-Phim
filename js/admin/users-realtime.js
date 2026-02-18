@@ -1,5 +1,8 @@
 // Admin Users Management - Real-time MongoDB Connection (Fixed for Tracking Prevention)
-const API_URL = 'http://localhost:5000/api';
+// Auto-detect environment
+const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:5000/api'
+    : 'https://a-phim-production.up.railway.app/api';
 let currentPage = 1;
 let itemsPerPage = 10;
 let allUsers = [];
@@ -661,8 +664,8 @@ function closeModal() {
 function showToast(message, type = 'info') {
     const toast = document.createElement('div');
     toast.className = `fixed top-4 right-4 z-[200] px-6 py-4 rounded-lg shadow-lg ${type === 'success' ? 'bg-green-600' :
-            type === 'error' ? 'bg-red-600' :
-                'bg-blue-600'
+        type === 'error' ? 'bg-red-600' :
+            'bg-blue-600'
         } text-white font-medium animate-fade-in`;
     toast.textContent = message;
 

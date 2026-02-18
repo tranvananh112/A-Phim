@@ -172,7 +172,11 @@ class RealtimeSync {
 }
 
 // Create global instance
-const realtimeSync = new RealtimeSync('http://localhost:5000/api');
+// Auto-detect environment
+const realtimeApiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:5000/api'
+    : 'https://a-phim-production.up.railway.app/api';
+const realtimeSync = new RealtimeSync(realtimeApiUrl);
 
 // Export for use in other scripts
 if (typeof module !== 'undefined' && module.exports) {
