@@ -37,12 +37,15 @@ class AdminAuthService {
     checkAuth() {
         const currentPage = window.location.pathname;
         const isLoginPage = currentPage.includes('login.html');
+        const isLoggedIn = this.isLoggedIn();
 
-        if (!this.isLoggedIn() && !isLoginPage) {
+        // Only redirect if not already redirecting
+        if (!isLoggedIn && !isLoginPage) {
+            // Not logged in and not on login page -> redirect to login
             window.location.href = '/admin/login.html';
-        } else if (this.isLoggedIn() && isLoginPage) {
-            window.location.href = '/admin/dashboard.html';
         }
+        // Don't auto-redirect from login to dashboard to prevent loops
+        // Let the login form handle the redirect after successful login
     }
 
     // Get admin info

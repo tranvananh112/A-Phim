@@ -140,9 +140,9 @@
                 const data = await response.json();
 
                 if (data.success && data.user.role === 'admin') {
-                    // Save admin token
-                    localStorage.setItem('admin_token', data.token);
-                    localStorage.setItem('admin_user', JSON.stringify(data.user));
+                    // Save admin token with correct key
+                    localStorage.setItem('cinestream_admin_token', data.token);
+                    localStorage.setItem('cinestream_admin_user', JSON.stringify(data.user));
 
                     // Redirect to dashboard
                     window.location.href = 'dashboard.html';
