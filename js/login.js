@@ -1,10 +1,7 @@
 // Login Page Script
 document.addEventListener('DOMContentLoaded', function () {
-    // Check if already logged in
-    if (authService.isLoggedIn()) {
-        window.location.href = 'index.html';
-        return;
-    }
+    // Allow users to access login page even if logged in
+    // They can logout manually if needed
 
     setupLoginForm();
     setupRegisterForm();
