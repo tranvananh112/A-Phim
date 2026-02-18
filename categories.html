@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thể Loại Phim - CineStream</title>
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/favicon.png">
@@ -69,8 +69,19 @@
                     </div>
                 </div>
 
-                <a class="text-primary font-bold transition-colors text-sm uppercase tracking-wide"
-                    href="categories.html">Thể Loại</a>
+                <!-- Thể Loại Dropdown -->
+                <div class="relative group">
+                    <button
+                        class="text-primary font-bold transition-colors text-sm uppercase tracking-wide flex items-center gap-1">
+                        Thể Loại
+                        <span class="material-icons-round text-sm">expand_more</span>
+                    </button>
+                    <div id="categoryDropdown"
+                        class="absolute top-full left-0 mt-2 w-64 max-h-96 overflow-y-auto bg-black/95 backdrop-blur-md border border-white/10 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                        <!-- Categories will be loaded here -->
+                        <div class="p-4 text-center text-gray-400">Đang tải...</div>
+                    </div>
+                </div>
                 <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
                     href="search.html">Khám phá</a>
                 <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
@@ -113,9 +124,12 @@
                         🇻🇳 Phim Việt Nam
                     </a>
                 </div>
-                <a href="categories.html" class="block py-3 text-primary font-bold transition-colors">
-                    🎭 Thể Loại
-                </a>
+                <div class="py-3">
+                    <div class="text-primary text-sm font-bold mb-2">THỂ LOẠI</div>
+                    <div id="mobileCategoryList" class="pl-4">
+                        <div class="text-gray-400 text-sm">Đang tải...</div>
+                    </div>
+                </div>
                 <a href="search.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
                     🔍 Khám phá
                 </a>
@@ -126,40 +140,53 @@
         </div>
     </nav>
 
-    <script>
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        if (mobileMenuBtn && mobileMenu) {
-            mobileMenuBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
-    </script>
-
     <!-- Main Content -->
     <main class="container mx-auto px-6 pt-32 pb-20">
+        <!-- Header -->
         <div class="mb-12">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">
+            <h1 id="pageTitle" class="text-4xl md:text-5xl font-bold mb-4">
                 Thể Loại Phim
             </h1>
-            <p class="text-gray-400 text-lg">Khám phá phim theo thể loại yêu thích của bạn</p>
+            <p id="pageSubtitle" class="text-gray-400 text-lg">Khám phá phim theo thể loại yêu thích của bạn</p>
         </div>
 
         <!-- Loading -->
         <div id="loading" class="text-center py-20">
             <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4"></div>
-            <p class="text-gray-400">Đang tải danh sách thể loại...</p>
+            <p class="text-gray-400">Đang tải...</p>
         </div>
 
-        <!-- Categories Grid -->
+        <!-- Categories Grid (Default View) -->
         <div id="categoriesGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 hidden">
             <!-- Categories will be loaded here -->
+        </div>
+
+        <!-- Movies Grid (Category View) -->
+        <div id="moviesSection" class="hidden">
+            <!-- Back Button -->
+            <div class="mb-6">
+                <button onclick="showAllCategories()"
+                    class="flex items-center gap-2 text-gray-300 hover:text-primary transition-colors">
+                    <span class="material-icons-round">arrow_back</span>
+                    <span>Quay lại danh sách thể loại</span>
+                </button>
+            </div>
+
+            <!-- Movies Grid -->
+            <div id="moviesGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                <!-- Movies will be loaded here -->
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination" class="mt-12 flex justify-center items-center gap-2">
+                <!-- Pagination will be loaded here -->
+            </div>
         </div>
 
         <!-- Error -->
         <div id="error" class="hidden text-center py-20">
             <span class="material-icons-round text-6xl text-red-400 mb-4">error_outline</span>
-            <p class="text-red-400 text-lg">Không thể tải danh sách thể loại</p>
+            <p class="text-red-400 text-lg">Không thể tải dữ liệu</p>
         </div>
     </main>
 
@@ -170,30 +197,76 @@
     <script src="js/user-ui.js"></script>
 
     <script>
+        let allCategories = [];
+        let currentCategory = null;
+        let currentPage = 1;
+        let totalPages = 1;
+
         const loading = document.getElementById('loading');
         const categoriesGrid = document.getElementById('categoriesGrid');
+        const moviesSection = document.getElementById('moviesSection');
+        const moviesGrid = document.getElementById('moviesGrid');
+        const pagination = document.getElementById('pagination');
         const error = document.getElementById('error');
+        const pageTitle = document.getElementById('pageTitle');
+        const pageSubtitle = document.getElementById('pageSubtitle');
 
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        // Load categories on page load
         async function loadCategories() {
             try {
                 console.log('Fetching categories from API...');
 
-                // Gọi API thể loại
                 const response = await fetch('https://ophim1.com/v1/api/the-loai', {
                     method: 'GET',
-                    headers: {
-                        'accept': 'application/json'
-                    }
+                    headers: { 'accept': 'application/json' }
                 });
 
                 const data = await response.json();
                 console.log('Categories data:', data);
+                console.log('Categories data.data type:', typeof data.data);
+                console.log('Categories data.data:', data.data);
+                console.log('Categories data.data keys:', Object.keys(data.data));
+                console.log('Categories data.data first entry:', Object.entries(data.data)[0]);
 
                 if (data.status === 'success' && data.data) {
-                    // data.data is an object, convert to array
-                    const categoriesArray = Array.isArray(data.data) ? data.data : Object.values(data.data);
-                    console.log('Categories array:', categoriesArray);
-                    renderCategories(categoriesArray);
+                    // API returns data.data.items as array of categories
+                    if (data.data.items && Array.isArray(data.data.items)) {
+                        allCategories = data.data.items;
+                    } else if (Array.isArray(data.data)) {
+                        allCategories = data.data;
+                    } else if (typeof data.data === 'object') {
+                        // Fallback: Convert object to array
+                        allCategories = Object.entries(data.data).map(([key, value]) => {
+                            if (typeof value === 'object' && value.slug && value.name) {
+                                return value;
+                            } else if (typeof value === 'string') {
+                                return { slug: key, name: value };
+                            }
+                            return { slug: key, name: key };
+                        });
+                    }
+
+                    console.log('Categories array:', allCategories);
+                    console.log('Total categories:', allCategories.length);
+
+                    if (allCategories.length === 0) {
+                        throw new Error('No categories found');
+                    }
+
+                    // Load dropdown
+                    loadCategoriesDropdown();
+
+                    // Show categories grid
+                    renderCategoriesGrid();
                 } else {
                     throw new Error('Invalid data format');
                 }
@@ -204,11 +277,37 @@
             }
         }
 
-        function renderCategories(categories) {
+        // Load categories dropdown
+        function loadCategoriesDropdown() {
+            // Desktop dropdown
+            const dropdown = document.getElementById('categoryDropdown');
+            if (dropdown && allCategories.length > 0) {
+                dropdown.innerHTML = allCategories.map(cat => `
+                    <a href="#" onclick="loadCategoryMovies('${cat.slug}', '${cat.name}'); return false;" 
+                       class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-colors">
+                        ${cat.name}
+                    </a>
+                `).join('');
+            }
+
+            // Mobile list
+            const mobileList = document.getElementById('mobileCategoryList');
+            if (mobileList && allCategories.length > 0) {
+                mobileList.innerHTML = allCategories.map(cat => `
+                    <a href="#" onclick="loadCategoryMovies('${cat.slug}', '${cat.name}'); return false;" 
+                       class="block py-2 text-gray-300 hover:text-primary transition-colors">
+                        ${cat.name}
+                    </a>
+                `).join('');
+            }
+        }
+
+        // Render categories grid
+        function renderCategoriesGrid() {
             loading.classList.add('hidden');
             categoriesGrid.classList.remove('hidden');
+            moviesSection.classList.add('hidden');
 
-            // Màu sắc gradient cho mỗi thể loại
             const gradients = [
                 'from-red-500 to-pink-500',
                 'from-blue-500 to-cyan-500',
@@ -220,11 +319,11 @@
                 'from-teal-500 to-green-500',
             ];
 
-            categoriesGrid.innerHTML = categories.map((category, index) => {
+            categoriesGrid.innerHTML = allCategories.map((category, index) => {
                 const gradient = gradients[index % gradients.length];
 
                 return `
-                    <a href="search.html?category=${category.slug}" 
+                    <a href="#" onclick="loadCategoryMovies('${category.slug}', '${category.name}'); return false;" 
                        class="group relative block rounded-xl overflow-hidden bg-gradient-to-br ${gradient} p-6 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl">
                         <div class="relative z-10">
                             <h3 class="text-white font-bold text-lg mb-2">${category.name}</h3>
@@ -238,7 +337,245 @@
                 `;
             }).join('');
 
-            console.log(`Rendered ${categories.length} categories`);
+            console.log(`Rendered ${allCategories.length} categories`);
+        }
+
+        // Load movies by category
+        async function loadCategoryMovies(slug, name, page = 1) {
+            currentCategory = slug;
+            currentPage = page;
+
+            // Update title
+            pageTitle.textContent = name;
+            pageSubtitle.textContent = 'Đang tải danh sách phim...';
+
+            // Show loading
+            loading.classList.remove('hidden');
+            categoriesGrid.classList.add('hidden');
+            moviesSection.classList.add('hidden');
+            error.classList.add('hidden');
+
+            // Close mobile menu
+            if (mobileMenu) {
+                mobileMenu.classList.add('hidden');
+            }
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            try {
+                console.log(`Fetching movies for category: ${slug}, page: ${page}`);
+
+                const response = await fetch(`https://ophim1.com/v1/api/the-loai/${slug}?page=${page}&limit=24`, {
+                    method: 'GET',
+                    headers: { 'accept': 'application/json' }
+                });
+
+                const data = await response.json();
+                console.log('Category movies data:', data);
+
+                if (data.status === 'success' && data.data) {
+                    const movies = data.data.items || [];
+
+                    // Get pagination from params or data
+                    const params = data.data.params || data.params || {};
+                    const pagination_data = params.pagination || data.data.pagination || {};
+
+                    // Calculate pagination info
+                    const totalItems = pagination_data.totalItems || pagination_data.total || movies.length;
+                    const totalPages_api = pagination_data.totalPages || Math.ceil(totalItems / 24) || 1;
+                    totalPages = totalPages_api;
+
+                    pageSubtitle.textContent = `Trang ${currentPage}/${totalPages} | Tổng ${totalItems.toLocaleString()} kết quả`;
+
+                    // Render movies
+                    if (movies.length > 0) {
+                        renderMovies(movies);
+                        renderPagination(pagination_data);
+                    } else {
+                        throw new Error('No movies found');
+                    }
+                } else {
+                    throw new Error('Invalid data format');
+                }
+            } catch (err) {
+                console.error('Error loading category movies:', err);
+                loading.classList.add('hidden');
+                error.classList.remove('hidden');
+            }
+        }
+
+        // Render movies
+        function renderMovies(movies) {
+            loading.classList.add('hidden');
+            categoriesGrid.classList.add('hidden');
+            moviesSection.classList.remove('hidden');
+
+            moviesGrid.innerHTML = movies.map(movie => {
+                // Fix poster URL with CDN prefix
+                const thumbUrl = movie.thumb_url || movie.poster_url || '';
+                const posterUrl = thumbUrl ? `https://img.ophim.live/uploads/movies/${thumbUrl}` : 'https://via.placeholder.com/300x450?text=No+Image';
+                const year = movie.year || 'N/A';
+                const quality = movie.quality || movie.lang || '';
+                const episodeCurrent = movie.episode_current || '';
+
+                return `
+                    <a href="movie-detail.html?slug=${movie.slug}" 
+                       class="group relative block rounded-xl overflow-hidden bg-surface-dark hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-primary/20">
+                        <div class="relative aspect-[2/3] overflow-hidden">
+                            <img src="${posterUrl}" 
+                                 alt="${movie.name}"
+                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                 onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'">
+                            
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60"></div>
+                            
+                            ${quality ? `
+                                <div class="absolute top-2 left-2 px-2 py-1 bg-primary text-black text-xs font-bold rounded">
+                                    ${quality}
+                                </div>
+                            ` : ''}
+                            
+                            ${episodeCurrent ? `
+                                <div class="absolute top-2 right-2 px-2 py-1 bg-red-600 text-white text-xs font-bold rounded">
+                                    ${episodeCurrent}
+                                </div>
+                            ` : ''}
+                            
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-lg">
+                                    <span class="material-icons-round text-black text-3xl">play_arrow</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4">
+                            <h3 class="text-white font-bold text-sm mb-1 line-clamp-2 group-hover:text-primary transition-colors">
+                                ${movie.name}
+                            </h3>
+                            <p class="text-gray-400 text-xs line-clamp-1">${movie.origin_name || ''}</p>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-gray-500 text-xs">${year}</span>
+                                <div class="flex items-center gap-1 text-primary text-xs">
+                                    <span class="material-icons-round text-sm">star</span>
+                                    <span>8.5</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                `;
+            }).join('');
+
+            console.log(`Rendered ${movies.length} movies`);
+        }
+
+        // Render pagination
+        function renderPagination(paginationData) {
+            if (!paginationData || !paginationData.totalPages || paginationData.totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+
+            const totalPages_api = paginationData.totalPages;
+            const currentPage_api = paginationData.currentPage || currentPage;
+
+            const maxPagesToShow = 5;
+            let startPage = Math.max(1, currentPage_api - Math.floor(maxPagesToShow / 2));
+            let endPage = Math.min(totalPages_api, startPage + maxPagesToShow - 1);
+
+            if (endPage - startPage < maxPagesToShow - 1) {
+                startPage = Math.max(1, endPage - maxPagesToShow + 1);
+            }
+
+            let paginationHTML = '';
+
+            // Previous button
+            if (currentPage_api > 1) {
+                paginationHTML += `
+                    <button onclick="goToPage(${currentPage_api - 1})" 
+                            class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-colors">
+                        <span class="material-icons-round text-sm">chevron_left</span>
+                    </button>
+                `;
+            }
+
+            // First page
+            if (startPage > 1) {
+                paginationHTML += `
+                    <button onclick="goToPage(1)" 
+                            class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-colors">
+                        1
+                    </button>
+                `;
+                if (startPage > 2) {
+                    paginationHTML += `<span class="text-gray-400">...</span>`;
+                }
+            }
+
+            // Page numbers
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === currentPage_api) {
+                    paginationHTML += `
+                        <button class="px-4 py-2 bg-primary text-black font-bold rounded-lg">
+                            ${i}
+                        </button>
+                    `;
+                } else {
+                    paginationHTML += `
+                        <button onclick="goToPage(${i})" 
+                                class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-colors">
+                            ${i}
+                        </button>
+                    `;
+                }
+            }
+
+            // Last page
+            if (endPage < totalPages_api) {
+                if (endPage < totalPages_api - 1) {
+                    paginationHTML += `<span class="text-gray-400">...</span>`;
+                }
+                paginationHTML += `
+                    <button onclick="goToPage(${totalPages_api})" 
+                            class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-colors">
+                        ${totalPages_api}
+                    </button>
+                `;
+            }
+
+            // Next button
+            if (currentPage_api < totalPages_api) {
+                paginationHTML += `
+                    <button onclick="goToPage(${currentPage_api + 1})" 
+                            class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-colors">
+                        <span class="material-icons-round text-sm">chevron_right</span>
+                    </button>
+                `;
+            }
+
+            pagination.innerHTML = paginationHTML;
+        }
+
+        // Go to page
+        function goToPage(page) {
+            if (page < 1 || page > totalPages || !currentCategory) return;
+
+            const categoryName = allCategories.find(cat => cat.slug === currentCategory)?.name || currentCategory;
+            loadCategoryMovies(currentCategory, categoryName, page);
+        }
+
+        // Show all categories
+        function showAllCategories() {
+            currentCategory = null;
+            currentPage = 1;
+
+            pageTitle.textContent = 'Thể Loại Phim';
+            pageSubtitle.textContent = 'Khám phá phim theo thể loại yêu thích của bạn';
+
+            categoriesGrid.classList.remove('hidden');
+            moviesSection.classList.add('hidden');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // Load categories on page load

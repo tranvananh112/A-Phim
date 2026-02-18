@@ -41,9 +41,19 @@
                 </div>
             </div>
 
-            <!-- Thể loại -->
-            <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
-                href="categories.html">Thể Loại</a>
+            <!-- Thể loại Dropdown -->
+            <div class="relative group">
+                <button
+                    class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide flex items-center gap-1">
+                    Thể Loại
+                    <span class="material-icons-round text-sm">expand_more</span>
+                </button>
+                <div id="categoryDropdown"
+                    class="absolute top-full left-0 mt-2 w-64 max-h-96 overflow-y-auto bg-black/95 backdrop-blur-md border border-white/10 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                    <!-- Categories will be loaded here -->
+                    <div class="p-4 text-center text-gray-400">Đang tải...</div>
+                </div>
+            </div>
 
             <!-- Khám phá -->
             <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
