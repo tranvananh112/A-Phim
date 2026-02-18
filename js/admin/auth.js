@@ -1,7 +1,8 @@
 // Admin Authentication Service
 class AdminAuthService {
     constructor() {
-        this.checkAuth();
+        // Don't auto-check on construction to prevent redirect loops
+        // Pages will manually call checkAuth() if needed
     }
 
     // Check if admin is logged in

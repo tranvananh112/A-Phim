@@ -16,8 +16,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Check admin authentication
 function checkAdminAuth() {
-    const token = localStorage.getItem('admin_token');
-    if (!token) {
+    // Check both backend token and local token
+    const backendToken = localStorage.getItem('cinestream_admin_token');
+    const localToken = localStorage.getItem('cinestream_admin_token');
+
+    if (!backendToken && !localToken) {
         window.location.href = 'login.html';
         return false;
     }
