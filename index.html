@@ -78,46 +78,55 @@
                 </span>
             </a>
 
-            <!-- Desktop Menu with Pill Effect -->
-            <div class="hidden lg:flex items-center gap-3">
-                <a href="index.html" class="nav-pill active">
-                    <span class="nav-text text-sm uppercase tracking-wide">Trang chủ</span>
-                </a>
+            <!-- Desktop Menu with Modern Pill Container -->
+            <div class="hidden lg:flex items-center">
+                <div
+                    class="flex items-center gap-1 bg-white/5 backdrop-blur-md rounded-full p-1.5 border border-white/10">
+                    <a href="index.html"
+                        class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white">
+                        Trang chủ
+                    </a>
 
-                <!-- Phim Dropdown -->
-                <div class="relative group">
-                    <button class="nav-pill flex items-center gap-1">
-                        <span class="nav-text text-sm uppercase tracking-wide">Phim</span>
-                        <span
-                            class="material-icons-round text-sm nav-text group-hover:rotate-180 transition-transform duration-300">expand_more</span>
-                    </button>
-                    <div
-                        class="dropdown-pill absolute top-full left-0 mt-3 w-56 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
-                        <a href="phim-viet-nam.html"
-                            class="dropdown-item flex items-center gap-3 px-5 py-3 text-gray-300 hover:text-primary transition-all">
-                            <span class="font-medium">Phim Việt Nam</span>
-                        </a>
+                    <!-- Phim Dropdown -->
+                    <div class="relative group">
+                        <button
+                            class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white flex items-center gap-1">
+                            Phim
+                            <span
+                                class="material-icons-round text-sm group-hover:rotate-180 transition-transform duration-300">expand_more</span>
+                        </button>
+                        <div
+                            class="absolute top-full left-0 mt-2 w-56 bg-black/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden">
+                            <a href="phim-viet-nam.html"
+                                class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all">
+                                🇻🇳 Phim Việt Nam
+                            </a>
+                        </div>
                     </div>
+
+                    <a href="categories.html"
+                        class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white">
+                        Thể Loại
+                    </a>
+
+                    <a href="search.html"
+                        class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white">
+                        Khám phá
+                    </a>
+
+                    <a href="pricing.html"
+                        class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white">
+                        Gói cước
+                    </a>
                 </div>
-
-                <a href="categories.html" class="nav-pill">
-                    <span class="nav-text text-sm uppercase tracking-wide">Thể Loại</span>
-                </a>
-
-                <a href="search.html" class="nav-pill">
-                    <span class="nav-text text-sm uppercase tracking-wide">Khám phá</span>
-                </a>
-
-                <a href="pricing.html" class="nav-pill">
-                    <span class="nav-text text-sm uppercase tracking-wide">Gói cước</span>
-                </a>
             </div>
 
             <div class="flex items-center gap-4">
-                <a href="search.html" class="nav-pill !p-3">
-                    <span class="material-icons-round nav-text">search</span>
+                <a href="search.html" class="text-gray-300 hover:text-primary transition-colors">
+                    <span class="material-icons-round">search</span>
                 </a>
-                <a href="login.html" class="btn-pill text-black font-bold text-sm uppercase tracking-wide">
+                <a href="login.html"
+                    class="px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors text-sm uppercase tracking-wide">
                     Đăng nhập
                 </a>
             </div>
@@ -168,16 +177,68 @@
             });
         }
 
-        // Ripple effect on pill click
-        document.querySelectorAll('.nav-pill').forEach(pill => {
-            pill.addEventListener('click', function (e) {
-                this.classList.add('ripple-active');
-                setTimeout(() => {
-                    this.classList.remove('ripple-active');
-                }, 600);
-            });
-        });
+        // Sliding indicator effect for navigation
+        const navContainer = document.querySelector('.lg\\:flex.items-center > div');
+        const navLinks = navContainer?.querySelectorAll('.nav-item');
 
+        if (navContainer && navLinks) {
+            // Create sliding indicator
+            const indicator = document.createElement('div');
+            indicator.className = 'absolute rounded-full transition-all duration-300 ease-out pointer-events-none';
+            indicator.style.background = 'rgba(242, 242, 13, 0.25)'; // Màu vàng mờ hơn
+            indicator.style.backdropFilter = 'blur(8px)';
+            indicator.style.zIndex = '0';
+            navContainer.style.position = 'relative';
+            navContainer.insertBefore(indicator, navContainer.firstChild);
+
+            // Set initial position to active link
+            const activeLink = navLinks[0]; // First link is "Trang chủ"
+
+            function updateIndicator(target) {
+                const rect = target.getBoundingClientRect();
+                const containerRect = navContainer.getBoundingClientRect();
+
+                // Calculate position relative to container, accounting for padding
+                const left = rect.left - containerRect.left;
+                const width = rect.width;
+                const height = rect.height;
+                const top = rect.top - containerRect.top;
+
+                indicator.style.width = `${width}px`;
+                indicator.style.height = `${height}px`;
+                indicator.style.top = `${top}px`;
+                indicator.style.left = `${left}px`;
+                indicator.style.transform = 'none';
+                indicator.style.opacity = '1';
+            }
+
+            if (activeLink) {
+                setTimeout(() => updateIndicator(activeLink), 100);
+            }
+
+            // Add hover effect
+            navLinks.forEach(link => {
+                // Make links relative positioned
+                link.style.position = 'relative';
+                link.style.zIndex = '1';
+
+                link.addEventListener('mouseenter', () => {
+                    updateIndicator(link);
+                });
+            });
+
+            // Reset to active link when mouse leaves container
+            navContainer.addEventListener('mouseleave', () => {
+                if (activeLink) {
+                    updateIndicator(activeLink);
+                } else {
+                    indicator.style.opacity = '0';
+                }
+            });
+        }
+    </script>
+
+    <script>
         // Navbar scroll effect
         const navbar = document.querySelector('nav');
         window.addEventListener('scroll', () => {
