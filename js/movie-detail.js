@@ -120,6 +120,23 @@ function renderMovieDetail(movie) {
             });
         }
     }
+
+    // Setup trailer button
+    const trailerBtn = Array.from(document.querySelectorAll('button')).find(btn =>
+        btn.textContent.includes('Xem Trailer') || btn.textContent.includes('Trailer')
+    );
+
+    if (trailerBtn && movie.trailer_url) {
+        trailerBtn.addEventListener('click', () => {
+            showTrailerModal(movie.trailer_url, movie.name);
+        });
+    } else if (trailerBtn) {
+        trailerBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        trailerBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('Phim chưa có trailer');
+        });
+    }
 }
 
 // Add movie metadata (categories, actors, etc.)
@@ -402,4 +419,67 @@ function showError(message) {
             </div>
         `;
     }
+}
+
+// Show trailer modal
+function showTrailerModal(trailerUrl, movieName) {
+    // Extract YouTube video ID from URL
+    let videoId = '';
+
+    if (trailerUrl.includes('youtube.com/watch?v=')) {
+        videoId = trailerUrl.split('v=')[1].split('&')[0];
+    } else if (trailerUrl.includes('youtu.be/')) {
+        videoId = trailerUrl.split('youtu.be/')[1].split('?')[0];
+    } else if (trailerUrl.includes('youtube.com/embed/')) {
+        videoId = trailerUrl.split('embed/')[1].split('?')[0];
+    }
+
+    // Create modal
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm';
+    modal.innerHTML = `
+        <div class="relative w-full max-w-5xl mx-4">
+            <button onclick="this.closest('.fixed').remove()" 
+                class="absolute -top-12 right-0 text-white hover:text-primary transition-colors">
+                <span class="material-icons-round text-4xl">close</span>
+            </button>
+            <div class="bg-surface-dark rounded-xl overflow-hidden border border-white/10">
+                <div class="p-4 border-b border-white/10">
+                    <h3 class="text-xl font-bold text-white">Trailer - ${movieName}</h3>
+                </div>
+                <div class="relative aspect-video">
+                    ${videoId ? `
+                        <iframe 
+                            src="https://www.youtube.com/embed/${videoId}?autoplay=1" 
+                            class="w-full h-full"
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                        </iframe>
+                    ` : `
+                        <div class="w-full h-full flex items-center justify-center text-gray-400">
+                            <p>Không thể phát trailer</p>
+                        </div>
+                    `}
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Close on click outside
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+
+    // Close on ESC key
+    document.addEventListener('keydown', function escHandler(e) {
+        if (e.key === 'Escape') {
+            modal.remove();
+            document.removeEventListener('keydown', escHandler);
+        }
+    });
+
+    document.body.appendChild(modal);
 }
