@@ -144,6 +144,68 @@ function addMovieMetadata(movie) {
     const metadataContainer = document.querySelector('.lg\\:col-span-8');
     if (!metadataContainer) return;
 
+    const descSection = metadataContainer.querySelector('.mb-10.max-w-4xl');
+    if (!descSection) return;
+
+    // Add cast section FIRST (before description)
+    if (movie.actor && movie.actor.length > 0) {
+        console.log('🎭 Rendering cast section for', movie.actor.length, 'actors:', movie.actor);
+
+        const castHTML = `
+            <div class="mt-0 mb-10" id="cast-section">
+                <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                    <span class="w-1.5 h-8 bg-primary rounded-full block shadow-[0_0_10px_rgba(236,19,19,0.5)]"></span>
+                    Diễn viên
+                </h3>
+                <div class="relative">
+                    <div id="cast-container" class="flex gap-4 overflow-x-auto pb-4 scrollbar-hide" style="scroll-behavior: smooth;">
+                        ${movie.actor.slice(0, 10).map((actor, index) => {
+            const colors = ['from-red-500 to-red-700', 'from-blue-500 to-blue-700', 'from-green-500 to-green-700', 'from-yellow-500 to-yellow-700', 'from-purple-500 to-purple-700', 'from-pink-500 to-pink-700', 'from-indigo-500 to-indigo-700', 'from-teal-500 to-teal-700'];
+            const colorClass = colors[index % colors.length];
+            const initial = actor.charAt(0).toUpperCase();
+
+            return `
+                                <div class="flex-shrink-0 w-32 group cursor-pointer" data-actor-name="${actor}">
+                                    <div class="relative mb-3">
+                                        <div class="actor-avatar-container w-32 h-32 rounded-full bg-gradient-to-br ${colorClass} flex items-center justify-center text-white text-4xl font-bold border-4 border-white/10 group-hover:border-primary transition-all duration-300 group-hover:scale-105 overflow-hidden">
+                                            ${initial}
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <p class="text-white font-medium text-sm line-clamp-2 group-hover:text-primary transition-colors">${actor}</p>
+                                        <p class="text-gray-500 text-xs mt-1">Diễn viên</p>
+                                    </div>
+                                </div>
+                            `;
+        }).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        console.log('📝 Cast HTML length:', castHTML.length);
+        // Insert BEFORE description section
+        descSection.insertAdjacentHTML('beforebegin', castHTML);
+        console.log('✅ Cast HTML inserted into DOM');
+
+        // Load actor images from TMDB
+        if (typeof loadActorImagesFromTMDB === 'function') {
+            setTimeout(() => {
+                console.log('🎬 Calling TMDB API to load actor images...');
+
+                const actorElements = document.querySelectorAll('[data-actor-name]');
+                console.log('🎭 Actor elements found:', actorElements.length);
+
+                if (actorElements.length > 0) {
+                    loadActorImagesFromTMDB(movie);
+                }
+            }, 100);
+        } else {
+            console.warn('⚠️ loadActorImagesFromTMDB function not found');
+        }
+    }
+
+    // Add metadata AFTER description
     const metadataHTML = `
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 max-w-4xl">
             ${movie.category && movie.category.length > 0 ? `
@@ -181,80 +243,7 @@ function addMovieMetadata(movie) {
         </div>
     `;
 
-    const descSection = metadataContainer.querySelector('.mb-10.max-w-4xl');
-    if (descSection) {
-        descSection.insertAdjacentHTML('afterend', metadataHTML);
-
-        // Add cast section with images
-        if (movie.actor && movie.actor.length > 0) {
-            console.log('🎭 Rendering cast section for', movie.actor.length, 'actors:', movie.actor);
-
-            const castHTML = `
-                <div class="mt-12 mb-10" id="cast-section">
-                    <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                        <span class="w-1.5 h-8 bg-primary rounded-full block shadow-[0_0_10px_rgba(236,19,19,0.5)]"></span>
-                        Diễn viên
-                    </h3>
-                    <div class="relative">
-                        <div id="cast-container" class="flex gap-4 overflow-x-auto pb-4 scrollbar-hide" style="scroll-behavior: smooth;">
-                            ${movie.actor.slice(0, 10).map((actor, index) => {
-                const colors = ['from-red-500 to-red-700', 'from-blue-500 to-blue-700', 'from-green-500 to-green-700', 'from-yellow-500 to-yellow-700', 'from-purple-500 to-purple-700', 'from-pink-500 to-pink-700', 'from-indigo-500 to-indigo-700', 'from-teal-500 to-teal-700'];
-                const colorClass = colors[index % colors.length];
-                const initial = actor.charAt(0).toUpperCase();
-
-                return `
-                                    <div class="flex-shrink-0 w-32 group cursor-pointer" data-actor-name="${actor}">
-                                        <div class="relative mb-3">
-                                            <div class="actor-avatar-container w-32 h-32 rounded-full bg-gradient-to-br ${colorClass} flex items-center justify-center text-white text-4xl font-bold border-4 border-white/10 group-hover:border-primary transition-all duration-300 group-hover:scale-105 overflow-hidden">
-                                                ${initial}
-                                            </div>
-                                        </div>
-                                        <div class="text-center">
-                                            <p class="text-white font-medium text-sm line-clamp-2 group-hover:text-primary transition-colors">${actor}</p>
-                                            <p class="text-gray-500 text-xs mt-1">Diễn viên</p>
-                                        </div>
-                                    </div>
-                                `;
-            }).join('')}
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            console.log('📝 Cast HTML length:', castHTML.length);
-            descSection.insertAdjacentHTML('afterend', castHTML);
-            console.log('✅ Cast HTML inserted into DOM');
-
-            // Load actor images from TMDB (ensure DOM is fully rendered)
-            if (typeof loadActorImagesFromTMDB === 'function') {
-                // Use setTimeout with longer delay to ensure DOM is fully rendered
-                setTimeout(() => {
-                    console.log('🎬 Calling TMDB API to load actor images...');
-
-                    // Try multiple selectors to find actor elements
-                    let actorElements = document.querySelectorAll('[data-actor-name]');
-                    console.log('🎭 Actor elements found with [data-actor-name]:', actorElements.length);
-
-                    if (actorElements.length === 0) {
-                        // Try alternative selector
-                        actorElements = document.querySelectorAll('#cast-container .flex-shrink-0.w-32');
-                        console.log('🎭 Actor elements found with class selector:', actorElements.length);
-                    }
-
-                    if (actorElements.length > 0) {
-                        console.log('✅ Found actor elements, calling TMDB API...');
-                        loadActorImagesFromTMDB(movie);
-                    } else {
-                        console.error('❌ No actor elements found in DOM. Cannot load images.');
-                        console.log('🔍 Cast section exists:', !!document.querySelector('#cast-section'));
-                        console.log('🔍 Cast section HTML:', document.querySelector('#cast-section')?.innerHTML.substring(0, 500));
-                    }
-                }, 500);
-            } else {
-                console.warn('⚠️ loadActorImagesFromTMDB function not found');
-            }
-        }
-    }
+    descSection.insertAdjacentHTML('afterend', metadataHTML);
 }
 
 // Render episodes
