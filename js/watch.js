@@ -370,3 +370,195 @@ function showError(message) {
         `;
     }
 }
+
+// Setup Share and Save buttons
+function setupActionButtons() {
+    // Find all buttons
+    const buttons = document.querySelectorAll('button');
+    let shareBtn = null;
+    let saveBtn = null;
+
+    buttons.forEach(btn => {
+        const text = btn.textContent.trim();
+        if (text.includes('Chia sẻ') || text.includes('share')) {
+            shareBtn = btn;
+        } else if (text.includes('Lưu phim') || text.includes('bookmark')) {
+            saveBtn = btn;
+        }
+    });
+
+    // Setup share button
+    if (shareBtn) {
+        shareBtn.addEventListener('click', () => shareMovie());
+        console.log('✅ Share button setup');
+    }
+
+    // Setup save button
+    if (saveBtn && currentMovie) {
+        updateSaveButton(saveBtn);
+        saveBtn.addEventListener('click', () => toggleSaveMovie(saveBtn));
+        console.log('✅ Save button setup');
+    }
+}
+
+// Share movie function
+function shareMovie() {
+    if (!currentMovie) return;
+
+    const shareData = {
+        title: currentMovie.name,
+        text: `Xem phim ${currentMovie.name} (${currentMovie.year}) trên A Phim`,
+        url: window.location.href
+    };
+
+    // Check if Web Share API is supported
+    if (navigator.share) {
+        navigator.share(shareData)
+            .then(() => console.log('✅ Shared successfully'))
+            .catch((error) => console.log('❌ Error sharing:', error));
+    } else {
+        // Fallback: Copy link to clipboard
+        navigator.clipboard.writeText(window.location.href)
+            .then(() => {
+                alert('✅ Đã sao chép link phim vào clipboard!');
+            })
+            .catch(() => {
+                // Show share modal with social media options
+                showShareModal();
+            });
+    }
+}
+
+// Show share modal
+function showShareModal() {
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm';
+    modal.innerHTML = `
+        <div class="bg-surface-dark rounded-xl p-6 max-w-md w-full mx-4 border border-white/10">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-white">Chia sẻ phim</h3>
+                <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-white">
+                    <span class="material-icons-round">close</span>
+                </button>
+            </div>
+            <div class="mb-4">
+                <p class="text-gray-300 mb-2">${currentMovie.name}</p>
+                <div class="flex items-center gap-2 bg-black/40 p-3 rounded-lg">
+                    <input type="text" value="${window.location.href}" 
+                        class="flex-1 bg-transparent text-gray-300 text-sm outline-none" readonly />
+                    <button onclick="copyShareLink()" 
+                        class="px-3 py-1 bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors text-sm">
+                        Sao chép
+                    </button>
+                </div>
+            </div>
+            <div class="grid grid-cols-4 gap-3">
+                <button onclick="shareToFacebook()" 
+                    class="flex flex-col items-center gap-2 p-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
+                    <span class="text-2xl">📘</span>
+                    <span class="text-xs text-white">Facebook</span>
+                </button>
+                <button onclick="shareToTwitter()" 
+                    class="flex flex-col items-center gap-2 p-3 bg-sky-500 hover:bg-sky-600 rounded-lg transition-colors">
+                    <span class="text-2xl">🐦</span>
+                    <span class="text-xs text-white">Twitter</span>
+                </button>
+                <button onclick="shareToTelegram()" 
+                    class="flex flex-col items-center gap-2 p-3 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors">
+                    <span class="text-2xl">✈️</span>
+                    <span class="text-xs text-white">Telegram</span>
+                </button>
+                <button onclick="shareToZalo()" 
+                    class="flex flex-col items-center gap-2 p-3 bg-blue-400 hover:bg-blue-500 rounded-lg transition-colors">
+                    <span class="text-2xl">💬</span>
+                    <span class="text-xs text-white">Zalo</span>
+                </button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+// Copy share link
+window.copyShareLink = function () {
+    navigator.clipboard.writeText(window.location.href)
+        .then(() => {
+            alert('✅ Đã sao chép link!');
+        });
+};
+
+// Share to social media
+window.shareToFacebook = function () {
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+};
+
+window.shareToTwitter = function () {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(`Xem phim ${currentMovie.name} trên A Phim`);
+    window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+};
+
+window.shareToTelegram = function () {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(`Xem phim ${currentMovie.name}`);
+    window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
+};
+
+window.shareToZalo = function () {
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://zalo.me/share?url=${url}`, '_blank');
+};
+
+// Toggle save movie
+function toggleSaveMovie(button) {
+    if (!currentMovie) return;
+
+    // Check if user is logged in
+    if (!authService.isLoggedIn()) {
+        if (confirm('Bạn cần đăng nhập để lưu phim. Chuyển đến trang đăng nhập?')) {
+            window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
+        }
+        return;
+    }
+
+    if (userService.isFavorite(currentMovie.slug)) {
+        userService.removeFromFavorites(currentMovie.slug);
+        alert('❌ Đã xóa khỏi danh sách yêu thích');
+    } else {
+        if (userService.addToFavorites(currentMovie)) {
+            alert('✅ Đã lưu vào danh sách yêu thích');
+        }
+    }
+
+    updateSaveButton(button);
+}
+
+// Update save button UI
+function updateSaveButton(button) {
+    if (!currentMovie) return;
+
+    const isSaved = userService.isFavorite(currentMovie.slug);
+    const icon = button.querySelector('.material-icons-outlined');
+    const text = button.childNodes[button.childNodes.length - 1];
+
+    if (isSaved) {
+        icon.textContent = 'bookmark';
+        text.textContent = ' Đã lưu';
+        button.classList.add('bg-primary', 'text-black');
+        button.classList.remove('bg-surface-dark', 'text-white');
+    } else {
+        icon.textContent = 'bookmark_add';
+        text.textContent = ' Lưu phim';
+        button.classList.remove('bg-primary', 'text-black');
+        button.classList.add('bg-surface-dark', 'text-white');
+    }
+}
+
+// Call setupActionButtons after movie is loaded
+document.addEventListener('DOMContentLoaded', function () {
+    // Wait for movie to load
+    setTimeout(() => {
+        setupActionButtons();
+    }, 1000);
+});
