@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html class="dark" lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Thanh Toán - A Phim</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2f20d",
+                        "background-dark": "#222210",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="bg-background-dark text-white font-display min-h-screen flex flex-col">
+    <nav class="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-md border-b border-white/10">
+        <div class="container mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2 group">
+                <div
+                    class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-105 transition-transform">
+                    <span class="material-icons text-black text-2xl">play_arrow</span>
+                </div>
+                <span class="text-2xl font-bold tracking-tight">
+                    <span class="text-white">A</span> <span class="text-primary">Phim</span>
+                </span>
+            </a>
+
+            <a href="pricing.html" class="text-gray-300 hover:text-primary transition-colors flex items-center gap-2">
+                <span class="material-icons">arrow_back</span>
+                <span>Quay lại</span>
+            </a>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold mb-4">Thanh Toán</h1>
+            <p class="text-gray-400" id="planName">Đang tải...</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Thông tin gói -->
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <span class="material-icons text-primary">receipt</span>
+                    Chi Tiết Đơn Hàng
+                </h2>
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Gói dịch vụ:</span>
+                        <span class="font-medium" id="planNameDetail">-</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Thời hạn:</span>
+                        <span class="font-medium" id="planDuration">-</span>
+                    </div>
+                    <div class="border-t border-white/10 pt-3 mt-3"></div>
+                    <div class="flex justify-between text-lg">
+                        <span class="font-bold">Tổng cộng:</span>
+                        <span class="font-bold text-primary" id="totalAmount">-</span>
+                    </div>
+                </div>
+
+                <div class="mt-6 p-4 bg-primary/10 border border-primary/30 rounded-lg">
+                    <h3 class="font-bold text-primary mb-2 flex items-center gap-2">
+                        <span class="material-icons text-sm">info</span>
+                        Hướng Dẫn Thanh Toán
+                    </h3>
+                    <ol class="text-xs text-gray-300 space-y-1 list-decimal list-inside">
+                        <li>Quét mã QR bằng ứng dụng ngân hàng</li>
+                        <li>Kiểm tra thông tin chuyển khoản</li>
+                        <li>Xác nhận thanh toán</li>
+                        <li>Nhấn nút "Đã Thanh Toán" bên dưới</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- QR Code -->
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <span class="material-icons text-primary">qr_code_2</span>
+                    Quét Mã QR
+                </h2>
+
+                <div class="bg-white rounded-xl p-4 mb-4">
+                    <img id="qrCode" src="" alt="QR Code" class="w-full h-auto rounded-lg" />
+                </div>
+
+                <div class="space-y-2 text-xs text-gray-400 mb-6">
+                    <p><strong>Ngân hàng:</strong> TMCP Quân đội (MB Bank)</p>
+                    <p><strong>Số tài khoản:</strong> 048889019999</p>
+                    <p><strong>Chủ tài khoản:</strong> TRAN VAN ANH</p>
+                    <p><strong>Số tiền:</strong> <span id="amountText" class="text-primary font-bold">-</span></p>
+                    <p><strong>Nội dung:</strong> <span id="contentText" class="text-primary font-bold">-</span></p>
+                </div>
+
+                <button id="confirmPaymentBtn"
+                    class="w-full py-3 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                    <span class="material-icons">check_circle</span>
+                    <span>Đã Thanh Toán</span>
+                </button>
+
+                <button id="confirmedBtn"
+                    class="w-full py-3 rounded-lg bg-red-600 text-white font-bold hidden items-center justify-center gap-2 cursor-not-allowed">
+                    <span class="material-icons">verified</span>
+                    <span>Đã Xác Nhận Thanh Toán</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Lưu ý -->
+        <div class="mt-8 p-6 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
+            <h3 class="font-bold text-yellow-500 mb-2 flex items-center gap-2">
+                <span class="material-icons">warning</span>
+                Lưu Ý Quan Trọng
+            </h3>
+            <ul class="text-sm text-gray-300 space-y-1 list-disc list-inside">
+                <li>Vui lòng chuyển khoản đúng số tiền và nội dung để hệ thống tự động kích hoạt</li>
+                <li>Gói dịch vụ sẽ được kích hoạt trong vòng 5-10 phút sau khi thanh toán</li>
+                <li>Nếu có vấn đề, vui lòng liên hệ hỗ trợ qua email: support@aphim.io.vn</li>
+            </ul>
+        </div>
+    </main>
+
+    <footer class="border-t border-gray-800 py-8 text-center text-sm text-gray-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>© 2026 A Phim Vietnam. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/payment.js"></script>
+</body>
+
+</html>

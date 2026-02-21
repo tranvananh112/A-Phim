@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pill Navigation - CineStream</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2f20d",
+                        "background-dark": "#1a1a0c",
+                        "surface-dark": "#2a2a18",
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Glass pill effect */
+        .nav-pill {
+            position: relative;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        /* Glow effect on hover */
+        .nav-pill:hover {
+            box-shadow: 0 0 20px rgba(242, 242, 13, 0.3),
+                inset 0 0 20px rgba(242, 242, 13, 0.2);
+        }
