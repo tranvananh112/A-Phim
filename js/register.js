@@ -1,4 +1,19 @@
 // Register Page Script
+
+// Check if redirected from login page with highlight parameter
+document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('highlight') === 'true') {
+        // Show message
+        showMessage('Vui lòng đăng ký tài khoản thủ công bên dưới', 'info');
+
+        // Wait a bit then scroll and highlight
+        setTimeout(() => {
+            scrollToManualForm();
+        }, 500);
+    }
+});
+
 document.getElementById('registerForm').addEventListener('submit', async function (e) {
     e.preventDefault();
 
@@ -142,15 +157,55 @@ function showMessage(message, type = 'info') {
 
 // Social login functions
 function loginWithGoogle() {
-    showMessage('Tính năng đăng nhập Google đang được phát triển', 'info');
-    // TODO: Implement Google OAuth
-    // window.location.href = 'YOUR_GOOGLE_OAUTH_URL';
+    showMessage('Hiện tại chưa hỗ trợ đăng ký bằng Google. Vui lòng đăng ký thủ công bên dưới.', 'error');
+    scrollToManualForm();
 }
 
 function loginWithFacebook() {
-    showMessage('Tính năng đăng nhập Facebook đang được phát triển', 'info');
-    // TODO: Implement Facebook OAuth
-    // window.location.href = 'YOUR_FACEBOOK_OAUTH_URL';
+    showMessage('Hiện tại chưa hỗ trợ đăng ký bằng Facebook. Vui lòng đăng ký thủ công bên dưới.', 'error');
+    scrollToManualForm();
+}
+
+// Scroll to manual registration form and highlight it
+function scrollToManualForm() {
+    const form = document.getElementById('registerForm');
+    if (form) {
+        // Scroll to form
+        form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // Add red border highlight
+        form.style.border = '2px solid #ef4444';
+        form.style.borderRadius = '12px';
+        form.style.padding = '20px';
+        form.style.transition = 'all 0.3s ease';
+
+        // Add pulsing animation
+        form.style.animation = 'pulse-red 1.5s ease-in-out 3';
+
+        // Remove highlight after 5 seconds
+        setTimeout(() => {
+            form.style.border = '';
+            form.style.padding = '';
+            form.style.animation = '';
+        }, 5000);
+    }
+}
+
+// Add CSS animation for pulsing effect
+if (!document.getElementById('pulse-animation-style')) {
+    const style = document.createElement('style');
+    style.id = 'pulse-animation-style';
+    style.textContent = `
+        @keyframes pulse-red {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
+            }
+        }
+    `;
+    document.head.appendChild(style);
 }
 
 // Real-time validation feedback

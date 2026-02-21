@@ -306,43 +306,17 @@ function showMessage(message, type = 'info') {
 
 // Social login handlers
 function loginWithGoogle() {
-    showMessage('Đang kết nối với Google...', 'info');
-    // TODO: Implement real Google OAuth
-    // For now, simulate with demo account
+    showMessage('Hiện tại chưa hỗ trợ đăng nhập bằng Google. Vui lòng đăng ký tài khoản thủ công.', 'error');
+    // Redirect to register page after 1.5 seconds
     setTimeout(() => {
-        const profile = {
-            email: 'demo.google@gmail.com',
-            name: 'Google User',
-            picture: 'https://ui-avatars.com/api/?name=Google+User&background=4285F4&color=fff'
-        };
-
-        const result = authService.socialLogin('google', profile);
-        if (result.success) {
-            showMessage('Đăng nhập thành công!', 'success');
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 1000);
-        }
-    }, 1000);
+        window.location.href = 'register.html?highlight=true';
+    }, 1500);
 }
 
 function loginWithFacebook() {
-    showMessage('Đang kết nối với Facebook...', 'info');
-    // TODO: Implement real Facebook OAuth
-    // For now, simulate with demo account
+    showMessage('Hiện tại chưa hỗ trợ đăng nhập bằng Facebook. Vui lòng đăng ký tài khoản thủ công.', 'error');
+    // Redirect to register page after 1.5 seconds
     setTimeout(() => {
-        const profile = {
-            email: 'demo.facebook@fb.com',
-            name: 'Facebook User',
-            picture: 'https://ui-avatars.com/api/?name=Facebook+User&background=1877F2&color=fff'
-        };
-
-        const result = authService.socialLogin('facebook', profile);
-        if (result.success) {
-            showMessage('Đăng nhập thành công!', 'success');
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 1000);
-        }
-    }, 1000);
+        window.location.href = 'register.html?highlight=true';
+    }, 1500);
 }
