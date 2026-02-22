@@ -187,7 +187,7 @@ async function loadUsers(silent = false) {
         if (tbody) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="7" class="p-8 text-center">
+                    <td colspan="8" class="p-8 text-center">
                         <div class="text-red-400 mb-4">
                             <span class="material-icons-outlined text-4xl">error</span>
                         </div>
@@ -276,7 +276,7 @@ function showLoadingState() {
     if (tbody) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="7" class="p-8 text-center">
+                <td colspan="8" class="p-8 text-center">
                     <div class="flex items-center justify-center gap-3">
                         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                         <span class="text-gray-400">Đang tải dữ liệu từ MongoDB...</span>
@@ -342,6 +342,9 @@ function renderUsers() {
                             <p class="text-xs text-gray-400">${user.email}</p>
                         </div>
                     </div>
+                </td>
+                <td class="p-4">
+                    <span class="text-gray-300">${user.phone || '<span class="text-gray-500 italic">Chưa có</span>'}</span>
                 </td>
                 <td class="p-4">${planBadge}</td>
                 <td class="p-4 text-gray-400">${formatDate(user.createdAt)}</td>
