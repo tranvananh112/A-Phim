@@ -29,9 +29,38 @@ function getPlanFromURL() {
     return PLANS[plan] || null;
 }
 
+// Lấy thông tin user hiện tại
+function getCurrentUser() {
+    try {
+        const userStr = localStorage.getItem('cinestream_user');
+        return userStr ? JSON.parse(userStr) : null;
+    } catch (error) {
+        return null;
+    }
+}
+
+// Tạo username ngắn gọn từ thông tin user
+function generateUsername(user) {
+    if (!user) return null;
+
+    // Ưu tiên lấy name, nếu không có thì lấy từ email
+    let username = user.name || user.email?.split('@')[0] || '';
+
+    // Loại bỏ khoảng trắng và ký tự đặc biệt, chỉ giữ chữ và số
+    username = username.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+
+    // Giới hạn độ dài tối đa 15 ký tự
+    return username.substring(0, 15);
+}
+
 // Tạo nội dung chuyển khoản
-function generateTransferContent(planCode) {
+function generateTransferContent(planCode, username = null) {
     const timestamp = Date.now().toString().slice(-6);
+    if (username) {
+        // Nếu có username, thêm vào nội dung
+        return `APHIM ${planCode} ${username} ${timestamp}`;
+    }
+    // Nếu không có username (chưa đăng nhập)
     return `APHIM ${planCode} ${timestamp}`;
 }
 
@@ -64,8 +93,12 @@ function initPaymentPage() {
         return;
     }
 
-    // Tạo nội dung chuyển khoản
-    const transferContent = generateTransferContent(plan.code);
+    // Lấy thông tin user và tạo username
+    const user = getCurrentUser();
+    const username = generateUsername(user);
+
+    // Tạo nội dung chuyển khoản (có hoặc không có username)
+    const transferContent = generateTransferContent(plan.code, username);
 
     // Cập nhật thông tin gói
     document.getElementById('planName').textContent = `Thanh toán ${plan.name}`;
@@ -74,6 +107,30 @@ function initPaymentPage() {
     document.getElementById('totalAmount').textContent = formatCurrency(plan.amount);
     document.getElementById('amountText').textContent = formatCurrency(plan.amount);
     document.getElementById('contentText').textContent = transferContent;
+
+    // Hiển thị thông tin user nếu đã đăng nhập
+    if (user) {
+        const userInfoDiv = document.getElementById('userInfo');
+        if (userInfoDiv) {
+            userInfoDiv.innerHTML = `
+                <div class="p-3 bg-green-500/10 border border-green-500/30 rounded-lg text-sm">
+                    <p class="text-green-400 font-bold mb-1">✓ Đã đăng nhập</p>
+                    <p class="text-gray-300">Tài khoản: <span class="text-white font-medium">${user.name || user.email}</span></p>
+                    <p class="text-gray-400 text-xs mt-1">Nội dung chuyển khoản đã bao gồm tên tài khoản của bạn</p>
+                </div>
+            `;
+        }
+    } else {
+        const userInfoDiv = document.getElementById('userInfo');
+        if (userInfoDiv) {
+            userInfoDiv.innerHTML = `
+                <div class="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg text-sm">
+                    <p class="text-yellow-400 font-bold mb-1">⚠ Chưa đăng nhập</p>
+                    <p class="text-gray-300">Bạn có thể <a href="login.html" class="text-primary hover:underline">đăng nhập</a> để nội dung chuyển khoản bao gồm tên tài khoản</p>
+                </div>
+            `;
+        }
+    }
 
     // Tạo và hiển thị QR Code
     const qrCodeURL = generateQRCodeURL(plan.amount, transferContent);
