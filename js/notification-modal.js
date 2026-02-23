@@ -114,8 +114,8 @@
         }
     }
 
-    // Fetch total donation amount
-    async function fetchTotalDonation() {
+    // Fetch total donation amount and recent supporter
+    async function fetchDonationData() {
         try {
             // Determine API URL based on environment
             let API_URL;
@@ -131,17 +131,27 @@
                 API_URL = 'https://a-phim-production.up.railway.app/api';
             }
 
-            console.log('Fetching donation stats from:', API_URL);
-            const response = await fetch(`${API_URL}/supporters/statistics`);
-            const data = await response.json();
+            console.log('Fetching donation data from:', API_URL);
 
-            if (data.success && data.statistics) {
-                return data.statistics.verifiedAmount || 0;
-            }
-            return 0;
+            // Fetch both statistics and recent supporters in parallel
+            const [statsResponse, recentResponse] = await Promise.all([
+                fetch(`${API_URL}/supporters/statistics`),
+                fetch(`${API_URL}/supporters/recent?limit=1`)
+            ]);
+
+            const statsData = await statsResponse.json();
+            const recentData = await recentResponse.json();
+
+            return {
+                totalAmount: (statsData.success && statsData.statistics) ? statsData.statistics.verifiedAmount || 0 : 0,
+                latestSupporter: (recentData.success && recentData.supporters && recentData.supporters.length > 0) ? recentData.supporters[0] : null
+            };
         } catch (error) {
-            console.error('Error fetching donation stats:', error);
-            return 0;
+            console.error('Error fetching donation data:', error);
+            return {
+                totalAmount: 0,
+                latestSupporter: null
+            };
         }
     }
 
@@ -150,10 +160,63 @@
         return new Intl.NumberFormat('vi-VN').format(amount);
     }
 
+    // Format date time
+    function formatDateTime(dateString) {
+        const date = new Date(dateString);
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${hours}:${minutes} ${day}/${month}/${year}`;
+    }
+
     // Create and show modal
     async function createModal() {
-        // Fetch total donation amount
-        const totalAmount = await fetchTotalDonation();
+        // Preload fonts to avoid FOUT (Flash of Unstyled Text)
+        if (!document.querySelector('link[href*="Material+Symbols+Outlined"]')) {
+            const link = document.createElement('link');
+            link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap';
+            link.rel = 'stylesheet';
+            document.head.appendChild(link);
+        }
+
+        // Fetch donation data
+        const { totalAmount, latestSupporter } = await fetchDonationData();
+
+        // Build latest supporter HTML
+        let latestSupporterHTML = '';
+        if (latestSupporter) {
+            const initials = latestSupporter.name.substring(0, 2).toUpperCase();
+            latestSupporterHTML = `
+                <div class="w-full mb-4 bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-green-500/10 border border-green-500/30 rounded-xl p-3 shadow-[0_0_25px_rgba(34,197,94,0.1)] backdrop-blur-sm">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-green-500 to-emerald-400 flex items-center justify-center text-sm font-bold text-white shadow-lg flex-shrink-0">
+                            ${initials}
+                        </div>
+                        <div class="flex-1 min-w-0 flex items-center justify-between gap-2">
+                            <p class="text-white text-sm font-bold truncate">${latestSupporter.name}</p>
+                            <p class="text-green-400 text-sm font-bold whitespace-nowrap">+${formatCurrency(latestSupporter.amount)} VNĐ</p>
+                        </div>
+                        <span class="material-symbols-outlined text-green-400 text-xl animate-pulse flex-shrink-0">favorite</span>
+                    </div>
+                    ${latestSupporter.message ? `
+                    <div class="bg-white/5 rounded-lg p-2 mt-2">
+                        <div class="flex gap-2">
+                            <span class="text-gray-400 text-xs font-semibold whitespace-nowrap">Lời nhắn:</span>
+                            <p class="text-gray-300 text-xs italic line-clamp-2 flex-1">"${latestSupporter.message}"</p>
+                        </div>
+                    </div>` : ''}
+                    <div class="mt-2 text-[10px] text-gray-400 flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-xs">schedule</span>
+                            <span>Người ủng hộ mới nhất</span>
+                        </div>
+                        <span class="text-green-400 font-medium">${formatDateTime(latestSupporter.createdAt)}</span>
+                    </div>
+                </div>
+            `;
+        }
 
         const modalHTML = `
             <div id="welcome-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-lg" style="display: none;">
@@ -172,14 +235,9 @@
                         </div>
                         
                         <!-- Title -->
-                        <h2 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight leading-tight px-2">
-                            <span class="bg-gradient-to-r from-white via-primary to-white bg-clip-text text-transparent">
-                                CHÀO MỪNG BẠN ĐẾN VỚI
-                            </span>
+                        <h2 class="text-xl sm:text-2xl lg:text-3xl font-black mb-4 bg-gradient-to-r from-primary via-yellow-400 to-primary bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(242,242,13,0.5)] animate-gradient">
+                            NUÔI WEB APHIM
                         </h2>
-                        <div class="text-xl sm:text-2xl lg:text-3xl font-black mb-4 bg-gradient-to-r from-primary via-yellow-400 to-primary bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(242,242,13,0.5)] animate-gradient">
-                            APHIM.IO.VN
-                        </div>
                         
                         <!-- Donation Stats Card -->
                         <div class="w-full mb-4 bg-gradient-to-br from-primary/10 via-yellow-500/5 to-primary/10 border border-primary/30 rounded-xl p-3 sm:p-4 shadow-[0_0_25px_rgba(242,242,13,0.1)] backdrop-blur-sm">
@@ -196,10 +254,13 @@
                             </div>
                         </div>
                         
+                        <!-- Latest Supporter Card -->
+                        ${latestSupporterHTML}
+                        
                         <!-- Message Box -->
                         <div class="bg-white/5 border border-white/10 rounded-xl p-3 sm:p-4 mb-4 shadow-inner backdrop-blur-sm">
                             <p class="text-gray-200 leading-relaxed text-xs sm:text-sm font-light text-justify">
-                                Admin xin chào tất cả thành viên của trang APHIM.IO.VN. Để đảm bảo duy trì Server phục vụ cho mọi người xem phim không quảng cáo. Mình rất mong nhận được sự ủng hộ nho nhỏ của tất cả các thành viên. Mọi người có thể mua gói hoặc ủng hộ mình để có thể duy trì server website và một cộng đồng xem phim thật chất lượng mượt mà nhất. Rất cảm ơn tất cả mọi người.
+                                Để duy trì server phục vụ mọi người xem phim không quảng cáo, mình rất mong nhận được sự ủng hộ từ các bạn. Mọi người có thể mua gói hoặc ủng hộ để giúp duy trì website và cộng đồng xem phim chất lượng. Cảm ơn tất cả!
                             </p>
                         </div>
                         
@@ -226,14 +287,6 @@
 
         // Add modal to body
         document.body.insertAdjacentHTML('beforeend', modalHTML);
-
-        // Add Material Icons if not already present
-        if (!document.querySelector('link[href*="Material+Symbols+Outlined"]')) {
-            const link = document.createElement('link');
-            link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap';
-            link.rel = 'stylesheet';
-            document.head.appendChild(link);
-        }
 
         // Add animation styles
         const style = document.createElement('style');
