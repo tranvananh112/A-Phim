@@ -6,8 +6,8 @@
 
     // Configuration
     const CONFIG = {
-        // Option 1: Time-based (days)
-        showAfterDays: 7,
+        // Option 1: Time-based (hours) - Show modal again after X hours
+        showAfterHours: 6, // Show modal again after 6 hours
 
         // Option 2: Visit count-based
         showEveryNVisits: 5,
@@ -15,8 +15,8 @@
         // Option 3: Hide for N days after donation confirmation
         hideDaysAfterDonation: 4, // Random 3-5 days, using 4 as middle
 
-        // Choose which method to use: 'time', 'visits', 'both', 'donation'
-        method: 'both' // Will check both time and donation status
+        // Choose which method to use: 'time', 'visits', 'both', 'donation', 'hours'
+        method: 'hours' // Will check time in hours
     };
 
     // Increment visit count
@@ -44,8 +44,23 @@
         }
     }
 
-    // Check if modal should be shown based on time
+    // Check if modal should be shown based on time (hours)
     function shouldShowByTime() {
+        const lastSeen = localStorage.getItem(MODAL_STORAGE_KEY);
+
+        if (!lastSeen) {
+            return true;
+        }
+
+        const lastSeenTime = parseInt(lastSeen);
+        const now = Date.now();
+        const hoursPassed = (now - lastSeenTime) / (1000 * 60 * 60);
+
+        return hoursPassed >= CONFIG.showAfterHours;
+    }
+
+    // Check if modal should be shown based on time (days) - legacy
+    function shouldShowByDays() {
         const lastSeen = localStorage.getItem(MODAL_STORAGE_KEY);
 
         if (!lastSeen) {
@@ -56,7 +71,7 @@
         const now = new Date();
         const daysDiff = Math.floor((now - lastSeenDate) / (1000 * 60 * 60 * 24));
 
-        return daysDiff >= CONFIG.showAfterDays;
+        return daysDiff >= (CONFIG.showAfterDays || 7);
     }
 
     // Check if modal should be shown based on visit count
@@ -75,8 +90,13 @@
 
         // Check based on configured method
         switch (CONFIG.method) {
-            case 'time':
+            case 'hours':
+                // Show based on hours passed
                 return shouldShowByTime();
+
+            case 'days':
+                // Show based on days passed (legacy)
+                return shouldShowByDays();
 
             case 'visits':
                 return shouldShowByVisits();
@@ -94,40 +114,95 @@
         }
     }
 
+    // Fetch total donation amount
+    async function fetchTotalDonation() {
+        try {
+            const API_URL = (window.API_CONFIG && window.API_CONFIG.BACKEND_URL) ||
+                (window.API_BASE_URL ? `${window.API_BASE_URL}/api` : 'http://localhost:5000/api');
+            const response = await fetch(`${API_URL}/supporters/statistics`);
+            const data = await response.json();
+
+            if (data.success && data.statistics) {
+                return data.statistics.verifiedAmount || 0;
+            }
+            return 0;
+        } catch (error) {
+            console.error('Error fetching donation stats:', error);
+            return 0;
+        }
+    }
+
+    // Format currency
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('vi-VN').format(amount);
+    }
+
     // Create and show modal
-    function createModal() {
+    async function createModal() {
+        // Fetch total donation amount
+        const totalAmount = await fetchTotalDonation();
+
         const modalHTML = `
-            <div id="welcome-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" style="display: none;">
-                <div class="relative w-full max-w-md sm:max-w-lg lg:max-w-2xl bg-black/40 backdrop-blur-xl border border-red-500/30 rounded-3xl p-6 sm:p-8 lg:p-12 shadow-[0_0_50px_rgba(236,19,19,0.15)] overflow-hidden group ring-1 ring-white/10 animate-fade-in max-h-[90vh] overflow-y-auto">
-                    <div class="absolute -top-24 -right-24 w-64 h-64 bg-red-500/20 rounded-full blur-[100px] group-hover:bg-red-500/30 transition-colors duration-700"></div>
-                    <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-red-500/10 rounded-full blur-[100px] group-hover:bg-red-500/20 transition-colors duration-700"></div>
+            <div id="welcome-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-lg" style="display: none;">
+                <div class="relative w-full max-w-sm sm:max-w-md lg:max-w-lg bg-gradient-to-br from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-xl border border-primary/20 rounded-2xl sm:rounded-3xl p-5 sm:p-6 lg:p-8 shadow-[0_0_60px_rgba(242,242,13,0.15)] overflow-hidden group ring-1 ring-white/5 animate-fade-in max-h-[95vh] overflow-y-auto">
+                    <!-- Animated background effects -->
+                    <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-[100px] animate-pulse-slow"></div>
+                    <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-red-500/10 rounded-full blur-[100px] animate-pulse-slow" style="animation-delay: 1s;"></div>
                     
                     <div class="relative z-10 flex flex-col items-center text-center">
-                        <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-red-500/20 to-black rounded-2xl flex items-center justify-center mb-4 sm:mb-6 border border-red-500/40 shadow-[0_0_30px_rgba(236,19,19,0.3)]">
-                            <span class="material-symbols-outlined text-red-500 text-4xl sm:text-5xl font-light drop-shadow-[0_0_10px_rgba(236,19,19,0.8)]">favorite</span>
+                        <!-- Icon with glow effect -->
+                        <div class="relative mb-4">
+                            <div class="absolute inset-0 bg-gradient-to-br from-primary/30 to-red-500/30 rounded-2xl blur-lg animate-pulse"></div>
+                            <div class="relative w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-primary/20 via-yellow-500/20 to-red-500/20 rounded-2xl flex items-center justify-center border border-primary/30 shadow-[0_0_30px_rgba(242,242,13,0.3)]">
+                                <span class="material-symbols-outlined text-primary text-3xl sm:text-4xl font-light drop-shadow-[0_0_10px_rgba(242,242,13,0.8)] animate-pulse">volunteer_activism</span>
+                            </div>
                         </div>
                         
-                        <h2 class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white mb-4 sm:mb-6 tracking-tight leading-snug px-2">
-                            CHÀO MỪNG BẠN ĐẾN VỚI <br/>
-                            <span class="text-red-500 drop-shadow-[0_0_8px_rgba(236,19,19,0.8)]">APHIM.IO.VN</span>
+                        <!-- Title -->
+                        <h2 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight leading-tight px-2">
+                            <span class="bg-gradient-to-r from-white via-primary to-white bg-clip-text text-transparent">
+                                CHÀO MỪNG BẠN ĐẾN VỚI
+                            </span>
                         </h2>
+                        <div class="text-xl sm:text-2xl lg:text-3xl font-black mb-4 bg-gradient-to-r from-primary via-yellow-400 to-primary bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(242,242,13,0.5)] animate-gradient">
+                            APHIM.IO.VN
+                        </div>
                         
-                        <div class="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 shadow-inner">
-                            <p class="text-gray-200 leading-relaxed text-sm sm:text-base lg:text-lg font-light text-justify">
+                        <!-- Donation Stats Card -->
+                        <div class="w-full mb-4 bg-gradient-to-br from-primary/10 via-yellow-500/5 to-primary/10 border border-primary/30 rounded-xl p-3 sm:p-4 shadow-[0_0_25px_rgba(242,242,13,0.1)] backdrop-blur-sm">
+                            <div class="flex items-center justify-center gap-2 mb-1">
+                                <span class="material-symbols-outlined text-primary text-lg sm:text-xl animate-pulse">payments</span>
+                                <span class="text-gray-300 text-xs sm:text-sm font-semibold uppercase tracking-wide">Tổng tiền đã ủng hộ</span>
+                            </div>
+                            <div class="text-2xl sm:text-3xl lg:text-4xl font-black bg-gradient-to-r from-primary via-yellow-300 to-primary bg-clip-text text-transparent drop-shadow-[0_0_12px_rgba(242,242,13,0.6)]" id="total-donation-amount">
+                                ${formatCurrency(totalAmount)} VNĐ
+                            </div>
+                            <div class="mt-1 text-[10px] sm:text-xs text-gray-400 flex items-center justify-center gap-1">
+                                <span class="material-symbols-outlined text-green-400 text-xs">verified</span>
+                                <span>Cập nhật thời gian thực</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Message Box -->
+                        <div class="bg-white/5 border border-white/10 rounded-xl p-3 sm:p-4 mb-4 shadow-inner backdrop-blur-sm">
+                            <p class="text-gray-200 leading-relaxed text-xs sm:text-sm font-light text-justify">
                                 Admin xin chào tất cả thành viên của trang APHIM.IO.VN. Để đảm bảo duy trì Server phục vụ cho mọi người xem phim không quảng cáo. Mình rất mong nhận được sự ủng hộ nho nhỏ của tất cả các thành viên. Mọi người có thể mua gói hoặc ủng hộ mình để có thể duy trì server website và một cộng đồng xem phim thật chất lượng mượt mà nhất. Rất cảm ơn tất cả mọi người.
                             </p>
                         </div>
                         
-                        <div class="flex flex-col gap-3 w-full">
-                            <a href="pricing.html" class="px-6 sm:px-8 py-3 sm:py-3.5 bg-gradient-to-r from-primary to-yellow-500 hover:from-yellow-500 hover:to-primary text-black font-bold rounded-xl shadow-[0_0_30px_rgba(242,242,13,0.5)] hover:shadow-[0_0_50px_rgba(242,242,13,0.7)] hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 group/btn w-full uppercase tracking-wider text-sm">
-                                <span class="material-symbols-outlined">shopping_cart</span>
-                                Mua Gói
+                        <!-- Action Buttons -->
+                        <div class="flex flex-col gap-2.5 w-full">
+                            <a href="pricing.html" class="group/btn px-5 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-primary via-yellow-400 to-primary hover:from-yellow-400 hover:via-primary hover:to-yellow-400 text-black font-bold rounded-lg shadow-[0_0_25px_rgba(242,242,13,0.4)] hover:shadow-[0_0_40px_rgba(242,242,13,0.7)] hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 w-full uppercase tracking-wide text-xs sm:text-sm relative overflow-hidden">
+                                <span class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-700"></span>
+                                <span class="material-symbols-outlined relative z-10 text-lg">shopping_cart</span>
+                                <span class="relative z-10">Mua Gói</span>
                             </a>
-                            <a href="support.html" class="px-6 sm:px-8 py-3 sm:py-3.5 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-500 text-white font-bold rounded-xl shadow-[0_0_30px_rgba(236,19,19,0.5)] hover:shadow-[0_0_50px_rgba(236,19,19,0.7)] hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 group/btn w-full uppercase tracking-wider text-sm">
-                                <span class="material-symbols-outlined animate-pulse">favorite</span>
-                                Ủng Hộ Aphim
+                            <a href="support.html" class="group/btn px-5 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-red-500 via-red-600 to-red-500 hover:from-red-600 hover:via-red-500 hover:to-red-600 text-white font-bold rounded-lg shadow-[0_0_25px_rgba(239,68,68,0.4)] hover:shadow-[0_0_40px_rgba(239,68,68,0.7)] hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 w-full uppercase tracking-wide text-xs sm:text-sm relative overflow-hidden">
+                                <span class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-700"></span>
+                                <span class="material-symbols-outlined animate-pulse relative z-10 text-lg">favorite</span>
+                                <span class="relative z-10">Ủng Hộ</span>
                             </a>
-                            <button id="modal-close-btn" class="px-6 sm:px-8 py-3 sm:py-3.5 bg-transparent hover:bg-white/10 text-gray-300 hover:text-white font-semibold rounded-xl border border-white/20 transition-all cursor-pointer text-center w-full tracking-wide text-sm uppercase">
+                            <button id="modal-close-btn" class="px-5 sm:px-6 py-2.5 sm:py-3 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white font-semibold rounded-lg border border-white/20 hover:border-white/40 transition-all cursor-pointer text-center w-full tracking-wide text-xs sm:text-sm uppercase backdrop-blur-sm">
                                 Đã Hiểu
                             </button>
                         </div>
@@ -162,6 +237,31 @@
             }
             .animate-fade-in {
                 animation: fade-in 0.3s ease-out;
+            }
+            @keyframes pulse-slow {
+                0%, 100% {
+                    opacity: 0.3;
+                    transform: scale(1);
+                }
+                50% {
+                    opacity: 0.5;
+                    transform: scale(1.05);
+                }
+            }
+            .animate-pulse-slow {
+                animation: pulse-slow 4s ease-in-out infinite;
+            }
+            @keyframes gradient {
+                0%, 100% {
+                    background-position: 0% 50%;
+                }
+                50% {
+                    background-position: 100% 50%;
+                }
+            }
+            .animate-gradient {
+                background-size: 200% auto;
+                animation: gradient 3s ease infinite;
             }
         `;
         document.head.appendChild(style);
@@ -205,7 +305,15 @@
     // Debug function (can be called from console)
     window.aphimDebugModal = function () {
         console.log('Modal Configuration:', CONFIG);
-        console.log('Last seen:', localStorage.getItem(MODAL_STORAGE_KEY));
+        const lastSeen = localStorage.getItem(MODAL_STORAGE_KEY);
+        console.log('Last seen:', lastSeen);
+
+        if (lastSeen) {
+            const hoursPassed = (Date.now() - parseInt(lastSeen)) / (1000 * 60 * 60);
+            const daysPassed = hoursPassed / 24;
+            console.log(`Time passed: ${hoursPassed.toFixed(2)} hours (${daysPassed.toFixed(2)} days)`);
+        }
+
         console.log('Visit count:', localStorage.getItem(VISIT_COUNT_KEY));
         console.log('Donation confirmed:', localStorage.getItem(DONATION_CONFIRMED_KEY));
         console.log('Should show:', shouldShowModal());
