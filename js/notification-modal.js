@@ -117,8 +117,21 @@
     // Fetch total donation amount
     async function fetchTotalDonation() {
         try {
-            const API_URL = (window.API_CONFIG && window.API_CONFIG.BACKEND_URL) ||
-                (window.API_BASE_URL ? `${window.API_BASE_URL}/api` : 'http://localhost:5000/api');
+            // Determine API URL based on environment
+            let API_URL;
+
+            if (window.API_CONFIG && window.API_CONFIG.BACKEND_URL) {
+                API_URL = window.API_CONFIG.BACKEND_URL;
+            } else if (window.API_BASE_URL) {
+                API_URL = `${window.API_BASE_URL}/api`;
+            } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                API_URL = 'http://localhost:5000/api';
+            } else {
+                // Production - use Railway backend
+                API_URL = 'https://a-phim-production.up.railway.app/api';
+            }
+
+            console.log('Fetching donation stats from:', API_URL);
             const response = await fetch(`${API_URL}/supporters/statistics`);
             const data = await response.json();
 
