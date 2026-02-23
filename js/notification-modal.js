@@ -19,6 +19,11 @@
         method: 'visits' // Will check visit count
     };
 
+    // Check if this is first time visitor
+    function isFirstTimeVisitor() {
+        return !localStorage.getItem(VISIT_COUNT_KEY);
+    }
+
     // Increment visit count
     function incrementVisitCount() {
         let visits = parseInt(localStorage.getItem(VISIT_COUNT_KEY) || '0') + 1;
@@ -82,7 +87,14 @@
 
     // Main check function
     function shouldShowModal() {
-        // Priority 1: Check if user donated recently
+        // Priority 1: First time visitor - always show
+        if (isFirstTimeVisitor()) {
+            console.log('Modal shown: First time visitor');
+            incrementVisitCount(); // Initialize visit count
+            return true;
+        }
+
+        // Priority 2: Check if user donated recently
         if (hasRecentDonation()) {
             console.log('Modal hidden: User donated recently');
             return false;
@@ -371,6 +383,8 @@
     // Debug function (can be called from console)
     window.aphimDebugModal = function () {
         console.log('Modal Configuration:', CONFIG);
+        console.log('Is first time visitor:', isFirstTimeVisitor());
+
         const lastSeen = localStorage.getItem(MODAL_STORAGE_KEY);
         console.log('Last seen:', lastSeen);
 
