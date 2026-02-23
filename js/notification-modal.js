@@ -10,13 +10,13 @@
         showAfterHours: 6, // Show modal again after 6 hours
 
         // Option 2: Visit count-based
-        showEveryNVisits: 5,
+        showEveryNVisits: 4, // Show modal every 4 visits
 
         // Option 3: Hide for N days after donation confirmation
         hideDaysAfterDonation: 4, // Random 3-5 days, using 4 as middle
 
         // Choose which method to use: 'time', 'visits', 'both', 'donation', 'hours'
-        method: 'hours' // Will check time in hours
+        method: 'visits' // Will check visit count
     };
 
     // Increment visit count
