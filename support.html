@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html class="dark" lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Ủng hộ - APHIM.IO.VN</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="js/config.js"></script>
+    <style>
+        body {
+            font-family: "Be Vietnam Pro", sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #141118;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #302839;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #facc15;
+        }
+
+        .primary-color {
+            color: #facc15;
+        }
+
+        .bg-primary {
+            background-color: #facc15;
+        }
+
+        .border-primary {
+            border-color: #facc15;
+        }
+    </style>
+</head>
+
+<body class="bg-[#141118] text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header
+        class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#302839] bg-[#141118]/95 backdrop-blur-md px-4 py-3 lg:px-10">
+        <div class="flex items-center gap-4 lg:gap-8">
+            <a href="index.html" class="flex items-center gap-3 text-white">
+                <div class="size-8">
+                    <img src="favicon.png" alt="APHIM Logo" class="w-full h-full object-contain" />
+                </div>
+                <h2 class="text-white text-xl font-bold leading-tight tracking-[-0.015em]">APHIM.IO.VN</h2>
+            </a>
+        </div>
+        <div class="flex flex-1 justify-end gap-4">
+            <a href="index.html" class="px-6 py-2 text-white/80 hover:text-white transition-colors text-sm font-medium">
+                Quay lại trang chủ
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 w-full max-w-[1200px] mx-auto px-4 py-8 lg:px-8 lg:py-12">
+        <div class="flex flex-col items-center text-center gap-6 mb-16">
+            <div
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#facc15]/10 border border-[#facc15]/20 primary-color text-xs font-bold uppercase tracking-wider">
+                <span class="material-symbols-outlined text-sm">qr_code_scanner</span>
+                Quét mã ủng hộ nhanh chóng
+            </div>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight">
+                Ủng hộ duy trì <span class="primary-color">Server</span>
+            </h1>
+            <p class="text-slate-400 text-base md:text-lg max-w-2xl leading-relaxed">
+                Cảm ơn bạn đã đồng hành cùng <strong>APHIM.IO.VN</strong>. Mã QR sẽ tự động cập nhật nội dung chuyển
+                khoản khi bạn nhập thông tin bên dưới.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- QR Code Section -->
+            <div class="lg:col-span-7 flex flex-col gap-8 order-2 lg:order-1">
+                <div class="bg-[#1e1a24] rounded-2xl p-1 border border-[#302839] overflow-hidden relative group">
+                    <div class="relative bg-[#1a1620] rounded-xl p-6 md:p-10 flex flex-col items-center">
+                        <div class="w-full max-w-md mx-auto flex flex-col items-center gap-6">
+                            <div class="relative group/qr cursor-pointer" onclick="downloadQR()">
+                                <div
+                                    class="bg-white p-4 rounded-3xl w-full max-w-[320px] aspect-square shadow-2xl flex items-center justify-center relative overflow-hidden z-10 mx-auto">
+                                    <img alt="VietQR MB Bank Dynamic" class="w-full h-full object-contain"
+                                        id="dynamic-qr-code"
+                                        src="https://api.vietqr.io/image/970422-048889019999-a1Gm36d.jpg?accountName=TRAN%20VAN%20ANH&amount=20000&addInfo=APHIM%20UNG%20HO" />
+                                </div>
+                            </div>
+
+                            <div class="text-center w-full mt-4 space-y-4">
+                                <div
+                                    class="inline-flex items-center justify-center gap-2 bg-blue-600/10 px-4 py-1.5 rounded-full border border-blue-600/30">
+                                    <span class="text-blue-400 font-bold text-sm uppercase tracking-wide">MB BANK</span>
+                                </div>
+                                <div class="flex flex-col items-center gap-2">
+                                    <p class="text-slate-400 text-sm font-medium">Số tài khoản</p>
+                                    <div class="flex items-center justify-center gap-3 bg-[#25202b] px-5 py-3 rounded-xl border border-[#302839] group/copy cursor-pointer hover:border-[#facc15]/50 transition-all w-full max-w-xs mx-auto"
+                                        onclick="copyAccountNumber()">
+                                        <p class="text-white font-mono text-2xl font-bold tracking-wider">0488 8901 9999
+                                        </p>
+                                        <span
+                                            class="material-symbols-outlined text-slate-500 group-hover/copy:text-[#facc15] transition-colors"
+                                            title="Sao chép">content_copy</span>
+                                    </div>
+                                </div>
+                                <div class="bg-[#25202b]/50 rounded-xl p-4 border border-[#302839]/50 max-w-sm mx-auto">
+                                    <p class="text-slate-400 text-sm mb-1">Chủ tài khoản</p>
+                                    <p class="text-white font-bold text-lg uppercase">TRAN VAN ANH</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Supporters -->
+                <div class="bg-[#1e1a24] rounded-xl p-6 border border-[#302839]">
+                    <h3 class="text-white font-bold text-lg mb-4 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-yellow-500">stars</span>
+                        Ủng hộ gần đây
+                    </h3>
+                    <div id="recent-supporters" class="space-y-3">
+                        <div class="text-center text-slate-500 py-4">Đang tải...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Section -->
+            <div class="lg:col-span-5 flex flex-col gap-6 lg:sticky lg:top-24 order-1 lg:order-2">
+                <div class="bg-[#1e1a24] rounded-2xl p-6 md:p-8 border border-[#302839] relative overflow-hidden">
+                    <h2 class="text-2xl font-bold text-white mb-2 relative z-10">Thông tin ủng hộ</h2>
+                    <p class="text-slate-400 text-sm mb-6 relative z-10">Nhập thông tin để tạo mã QR chính xác</p>
+
+                    <form id="support-form" class="flex flex-col gap-5 relative z-10">
+                        <!-- Amount Selection -->
+                        <div class="flex flex-col gap-2">
+                            <label class="text-sm font-medium text-slate-300">Chọn mức ủng hộ</label>
+                            <div id="amount-error"
+                                class="hidden text-red-400 text-sm mb-2 p-2 bg-red-500/10 rounded-lg border border-red-500/20">
+                                Vui lòng chọn số tiền ủng hộ
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button
+                                    class="amount-btn group relative overflow-hidden flex flex-col items-center justify-center gap-1 p-3 rounded-xl border border-[#302839] bg-[#25202b] text-slate-400 transition-all hover:border-[#facc15] hover:text-white hover:bg-[#302839]"
+                                    type="button" data-amount="20000">
+                                    <span class="font-bold text-lg">20.000đ</span>
+                                    <span class="text-xs opacity-80">Ly Cafe</span>
+                                </button>
+                                <button
+                                    class="amount-btn group flex flex-col items-center justify-center gap-1 p-3 rounded-xl border border-[#302839] bg-[#25202b] text-slate-400 transition-all hover:border-[#facc15] hover:text-white hover:bg-[#302839]"
+                                    type="button" data-amount="50000">
+                                    <span class="font-bold text-lg">50.000đ</span>
+                                    <span class="text-xs opacity-80">Bắp rang</span>
+                                </button>
+                                <button
+                                    class="amount-btn group flex flex-col items-center justify-center gap-1 p-3 rounded-xl border border-[#302839] bg-[#25202b] text-slate-400 transition-all hover:border-[#facc15] hover:text-white hover:bg-[#302839]"
+                                    type="button" data-amount="100000">
+                                    <span class="font-bold text-lg">100.000đ</span>
+                                    <span class="text-xs opacity-80">Vé xem phim</span>
+                                </button>
+                                <button
+                                    class="amount-btn group flex flex-col items-center justify-center gap-1 p-3 rounded-xl border border-[#302839] bg-[#25202b] text-slate-400 transition-all hover:border-[#facc15] hover:text-white hover:bg-[#302839]"
+                                    type="button" data-amount="custom">
+                                    <span class="font-bold text-lg">Số khác</span>
+                                    <span class="text-xs opacity-80">Tùy tâm</span>
+                                </button>
+                            </div>
+
+                            <!-- Custom Amount Input -->
+                            <div id="custom-amount-input" class="hidden mt-3">
+                                <input type="number" id="custom-amount"
+                                    class="w-full bg-[#25202b] border border-[#302839] rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:border-[#facc15] focus:ring-1 focus:ring-[#facc15] outline-none transition-colors"
+                                    placeholder="Nhập số tiền (VNĐ) - Tối thiểu 2.000đ" min="2000" step="1000" />
+                            </div>
+                        </div>
+
+                        <!-- Name Input -->
+                        <div class="flex flex-col gap-2">
+                            <label class="text-sm font-medium text-slate-300" for="name">Tên của bạn <span
+                                    class="text-slate-500 font-normal">(Tùy chọn)</span></label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="material-symbols-outlined text-slate-500 text-lg">person</span>
+                                </div>
+                                <input
+                                    class="w-full bg-[#25202b] border border-[#302839] rounded-xl pl-10 pr-4 py-3 text-white placeholder:text-slate-600 focus:border-[#facc15] focus:ring-1 focus:ring-[#facc15] outline-none transition-colors"
+                                    id="name" placeholder="Nhập tên hiển thị" type="text" />
+                            </div>
+                        </div>
+
+                        <!-- Message Input -->
+                        <div class="flex flex-col gap-2">
+                            <label class="text-sm font-medium text-slate-300" for="message">Lời nhắn <span
+                                    class="text-slate-500 font-normal">(Tùy chọn)</span></label>
+                            <div class="relative">
+                                <div class="absolute top-3 left-3 pointer-events-none">
+                                    <span class="material-symbols-outlined text-slate-500 text-lg">chat</span>
+                                </div>
+                                <textarea
+                                    class="w-full bg-[#25202b] border border-[#302839] rounded-xl pl-10 pr-4 py-3 text-white placeholder:text-slate-600 focus:border-[#facc15] focus:ring-1 focus:ring-[#facc15] outline-none transition-colors resize-none"
+                                    id="message" placeholder="Web hay lắm, ủng hộ admin..." rows="3"
+                                    maxlength="50"></textarea>
+                            </div>
+                            <p class="text-xs text-slate-500 text-right"><span id="char-count">0</span>/50 ký tự</p>
+                        </div>
+
+                        <!-- Summary -->
+                        <div class="bg-[#facc15]/10 rounded-xl p-4 border border-[#facc15]/20">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-slate-400 text-sm">Số tiền:</span>
+                                <span class="text-white font-bold text-lg" id="summary-amount">0đ</span>
+                            </div>
+                            <div class="flex justify-between items-start">
+                                <span class="text-slate-400 text-sm">Nội dung:</span>
+                                <span class="primary-color font-bold text-sm text-right break-all"
+                                    id="summary-content">APHIM UNG HO</span>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit"
+                            class="w-full bg-gradient-to-r from-[#facc15] to-yellow-600 hover:from-[#facc15]/90 hover:to-yellow-600/90 text-black font-bold py-4 rounded-xl shadow-lg transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 mt-2 group">
+                            <span class="material-symbols-outlined group-hover:animate-bounce">qr_code_2</span>
+                            Cập nhật mã QR
+                        </button>
+
+                        <!-- Confirm Donation Button (Hidden by default) -->
+                        <button type="button" id="confirm-donation-btn" onclick="confirmDonation()"
+                            class="hidden w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-500 text-white font-bold py-4 rounded-xl shadow-lg transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 mt-2 group">
+                            <span class="material-symbols-outlined">check_circle</span>
+                            Tôi đã ủng hộ
+                        </button>
+                    </form>
+                </div>
+
+                <div class="px-4 py-3 rounded-xl bg-green-500/10 border border-green-500/20 flex gap-3 items-start">
+                    <span class="material-symbols-outlined text-green-400 shrink-0 mt-0.5">verified</span>
+                    <p class="text-sm text-green-200/80 leading-snug">
+                        Hệ thống sử dụng VietQR chuẩn quốc gia. Chuyển khoản 24/7, hoàn toàn miễn phí.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/support.js"></script>
+</body>
+
+</html>

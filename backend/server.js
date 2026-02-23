@@ -50,6 +50,7 @@ app.use('/api/ratings', require('./routes/ratings'));
 app.use('/api/comments', require('./routes/comments'));
 app.use('/api/payments', require('./routes/payments'));
 app.use('/api/users', require('./routes/users'));
+app.use('/api/supporters', require('./routes/supporters'));
 
 // Health check
 app.get('/health', (req, res) => {
@@ -72,7 +73,8 @@ app.get('/', (req, res) => {
             ratings: '/api/ratings',
             comments: '/api/comments',
             payments: '/api/payments',
-            users: '/api/users'
+            users: '/api/users',
+            supporters: '/api/supporters'
         }
     });
 });

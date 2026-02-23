@@ -52,3 +52,8 @@ const STORAGE_KEYS = {
     WATCH_PROGRESS: 'cinestream_progress',
     SUBSCRIPTION: 'cinestream_subscription'
 };
+
+// Backward compatibility - Export API_BASE_URL for admin pages
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:5000'
+    : 'https://a-phim-production.up.railway.app';

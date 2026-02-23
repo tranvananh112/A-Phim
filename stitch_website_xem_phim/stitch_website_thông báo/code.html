@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Trang Chi tiết Phim - CineStream</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec1313",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#141414", 
+                        "surface-dark": "#1f1f1f", 
+                    },
+                    fontFamily: {
+                        "display": ["Be Vietnam Pro", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        .backdrop-gradient {
+            background: linear-gradient(to top, #141414 10%, rgba(20, 20, 20, 0.8) 50%, rgba(20, 20, 20, 0.4) 100%);
+        }
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }#modal-switch:checked ~ #welcome-modal {
+            display: none;
+        }
+        #modal-switch:checked ~ main,
+        #modal-switch:checked ~ nav,
+        #modal-switch:checked ~ footer {
+            filter: none !important;
+        }
+        .modal-blur-overlay {
+            filter: blur(8px);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-100 font-display min-h-screen selection:bg-primary selection:text-white overflow-x-hidden">
+<input class="hidden" id="modal-switch" type="checkbox"/>
+<div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" id="welcome-modal">
+<div class="relative w-full max-w-2xl bg-black/40 backdrop-blur-xl border border-primary/30 rounded-3xl p-8 lg:p-12 shadow-[0_0_50px_rgba(236,19,19,0.15)] overflow-hidden group ring-1 ring-white/10">
+<div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/20 rounded-full blur-[100px] group-hover:bg-primary/30 transition-colors duration-700"></div>
+<div class="absolute -bottom-24 -left-24 w-64 h-64 bg-primary/10 rounded-full blur-[100px] group-hover:bg-primary/20 transition-colors duration-700"></div>
+<div class="relative z-10 flex flex-col items-center text-center">
+<div class="w-20 h-20 bg-gradient-to-br from-primary/20 to-black rounded-2xl flex items-center justify-center mb-6 border border-primary/40 shadow-[0_0_30px_rgba(236,19,19,0.3)]">
+<span class="material-symbols-outlined text-primary text-5xl font-light drop-shadow-[0_0_10px_rgba(236,19,19,0.8)]">favorite</span>
+</div>
+<h2 class="text-2xl lg:text-3xl font-extrabold text-white mb-6 tracking-tight leading-snug">
+                CHÀO MỪNG BẠN ĐẾN VỚI <br/><span class="text-primary drop-shadow-[0_0_8px_rgba(236,19,19,0.8)]">APHIM.IO.VN</span>
+</h2>
+<div class="bg-white/5 border border-white/10 rounded-2xl p-6 mb-8 shadow-inner">
+<p class="text-gray-200 leading-relaxed text-base lg:text-lg font-light">
+                    "Admin xin chào tất cả thành viên của trang APHIM.IO.VN. Để đảm bảo duy trì Server phục vụ cho mọi người xem phim không quảng cáo. Mình rất mong nhận được sự ủng hộ nho nhỏ bao nhiêu cũng được ạ vì có sự giúp sức của mọi người mình có thể duy trì server và một cộng đồng xem phim thật chất lượng mượt mà nhất. Rất cảm ơn tất cả thành viên."
+                </p>
+</div>
+<div class="flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
+<label class="order-2 sm:order-1 px-8 py-3.5 bg-transparent hover:bg-white/10 text-gray-300 hover:text-white font-semibold rounded-xl border border-white/20 transition-all cursor-pointer text-center w-full sm:w-auto tracking-wide text-sm uppercase" for="modal-switch">
+                    Đã hiểu
+                </label>
+<a class="order-1 sm:order-2 px-10 py-4 bg-gradient-to-r from-primary to-red-600 hover:from-red-600 hover:to-primary text-white font-bold rounded-xl shadow-[0_0_30px_rgba(236,19,19,0.5)] hover:shadow-[0_0_50px_rgba(236,19,19,0.7)] hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 group/btn w-full sm:w-auto uppercase tracking-wider text-sm" href="#">
+<span class="material-symbols-outlined animate-pulse">favorite</span>
+                    Ủng hộ Admin
+                </a>
+</div>
+</div>
+</div>
+</div>
+<nav class="fixed top-0 w-full z-50 bg-gradient-to-b from-black/90 to-transparent dark:from-black/90 transition-all duration-300 modal-blur-overlay">
+<div class="container mx-auto px-6 h-20 flex items-center justify-between">
+<a class="flex items-center gap-2 group" href="#">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-105 transition-transform">
+<span class="material-icons-round text-white text-2xl">play_arrow</span>
+</div>
+<span class="text-2xl font-bold tracking-tight text-white">APHIM<span class="text-primary">.IO.VN</span></span>
+</a>
+<div class="hidden lg:flex items-center gap-8 bg-black/20 backdrop-blur-md px-6 py-2 rounded-full border border-white/5">
+<a class="text-gray-300 hover:text-white font-medium transition-colors text-sm uppercase tracking-wide" href="#">Trang chủ</a>
+<a class="text-primary font-bold transition-colors text-sm uppercase tracking-wide border-b-2 border-primary pb-0.5" href="#">Phim bộ</a>
+<a class="text-gray-300 hover:text-white font-medium transition-colors text-sm uppercase tracking-wide" href="#">Phim lẻ</a>
+<a class="text-gray-300 hover:text-white font-medium transition-colors text-sm uppercase tracking-wide" href="#">Thể loại</a>
+<a class="text-gray-300 hover:text-white font-medium transition-colors text-sm uppercase tracking-wide" href="#">Gói cước</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors group">
+<span class="material-icons-round text-gray-300 group-hover:text-white">search</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors relative group">
+<span class="material-icons-round text-gray-300 group-hover:text-white">notifications</span>
+<span class="absolute top-2.5 right-2.5 w-2 h-2 bg-primary rounded-full"></span>
+</button>
+<button class="w-10 h-10 rounded-full overflow-hidden border-2 border-white/20 hover:border-primary transition-colors">
+<img alt="User Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfTdKx_R3xmt_LaqmSkut9IQOIgKuEJJf-gIXSAMcHkwvLwxzueYeoLmBBF5-c8vLh1W_tXRi0YfjZc0LV-44FdbyKXi4cTlftix8pUceCEMif5u23vtNE6KkmErKCFyBxq5VADiufAmn3lLTUR02HejBMyb8qtIUy9oEDAkCdWbpo3t4X0I2jt-AXPr00cWGMERJUUFiFVevyO3kfd6ukyqJygt9Z0OsrYyXrOWshmU3EfNGl-ec43VQAjLzP8wqPi7quDvGlZdk"/>
+</button>
+</div>
+</div>
+</nav>
+<main class="relative pt-0 min-h-screen pb-20 modal-blur-overlay">
+<div class="absolute top-0 left-0 w-full h-[100vh] z-0 overflow-hidden">
+<div class="relative w-full h-full">
+<img alt="Cinematic movie scene background" class="w-full h-full object-cover opacity-60 dark:opacity-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTY6MpV6hlKE1unr6px1oDYgkvLpwm4hmvEKOOl3spK8_ckbCpn6auHFUM-fyW-I_lBZz9pzl7Aj6dXbroCojgFcE3jZHvkF4eSQH5HFIev6eBmR3bTqFVYZRvYqY_TtVSm25djo17o_ObMqMvnO7fLCMLpUixBjobB7sCyphOZGIcQ7mY1pRpuydENvQnecpXNLFSw2Gh64gPdL1AsOXnnwu40GR6nc0hjghLb9VNwFXJFkG7Na_JBqJYUGRK_60urAK0XjeYTxU"/>
+<div class="absolute inset-0 backdrop-gradient"></div>
+<div class="absolute inset-0 bg-background-dark/20 backdrop-blur-[1px]"></div>
+</div>
+</div>
+<div class="container mx-auto px-6 relative z-10 pt-32">
+<div class="flex items-center gap-2 text-sm text-gray-400 mb-8 font-medium">
+<a class="hover:text-white transition-colors" href="#">Trang chủ</a>
+<span class="material-icons-round text-base">chevron_right</span>
+<a class="hover:text-white transition-colors" href="#">Phim bộ</a>
+<span class="material-icons-round text-base">chevron_right</span>
+<span class="text-white font-semibold">Stranger Things: Mùa 4</span>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+<div class="lg:col-span-4 xl:col-span-3 flex flex-col gap-6">
+<div class="relative aspect-[2/3] rounded-xl overflow-hidden shadow-2xl shadow-black/50 group border border-white/5">
+<img alt="Movie poster artwork" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMJEE1vf2Pzn-GMmhpY7g6O1Nwn54rZc7ypSTigrMVed3VzjNO2SMowN9HmarmF0n0zDQ03g4lu17uPeeco2l-d9-Gunv-PLhsVSuqnXRzlmiy5VShI73PxauyVGt9q6YnsE0dT_jIrU6aoGEUgmXnlyi3gC93uoMCyBsHD2eVqHrMBp-xcgnBZmW7WQ66GK6N5G-Kt3_QIvhBuRQTD8BQJrYekV_N1CLuBcIUOZinIQIO5frqkO81Je7XoYGu3dvb9VMZbpAdJXQ"/>
+<div class="absolute top-4 left-4 bg-primary/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded shadow-lg uppercase tracking-wider">
+                        Full HD
+                    </div>
+</div>
+</div>
+<div class="lg:col-span-8 xl:col-span-9 flex flex-col justify-end pb-4">
+<h1 class="text-4xl lg:text-7xl font-extrabold text-white mb-4 leading-tight text-shadow tracking-tight">
+                    Stranger Things: <br/>
+<span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-red-400">Thế giới ngược (Mùa 4)</span>
+</h1>
+<div class="flex flex-wrap items-center gap-4 mb-8 text-sm md:text-base">
+<span class="flex items-center gap-1 text-yellow-400 font-bold bg-yellow-400/10 px-3 py-1 rounded-full border border-yellow-400/20 backdrop-blur-sm">
+<span class="material-icons-round text-lg">star</span>
+                        8.7/10
+                    </span>
+<span class="text-gray-500">•</span>
+<span class="text-gray-300 font-medium">2022</span>
+<span class="text-gray-500">•</span>
+<span class="text-gray-300 font-medium">45-60 phút/tập</span>
+<span class="text-gray-500">•</span>
+<span class="text-gray-300 border border-white/20 px-3 py-0.5 rounded-full text-xs font-medium backdrop-blur-sm">US-UK</span>
+</div>
+<div class="flex flex-wrap items-center gap-4 mb-10">
+<button class="group relative px-8 py-4 bg-primary text-white font-bold rounded-full shadow-lg shadow-primary/40 hover:shadow-primary/60 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+<div class="flex items-center gap-3 relative z-10">
+<span class="material-icons-round text-3xl">play_arrow</span>
+<span class="text-lg tracking-wide">XEM NGAY</span>
+</div>
+</button>
+<button class="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full backdrop-blur-md border border-white/10 hover:border-white/30 transition-all duration-300 flex items-center gap-3">
+<span class="material-icons-round">videocam</span>
+<span>Xem Trailer</span>
+</button>
+</div>
+<div class="mb-10 max-w-4xl">
+<h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
+<span class="w-1 h-6 bg-primary rounded-full"></span>
+                        Nội dung phim
+                    </h3>
+<p class="text-gray-300 leading-relaxed text-lg font-light">
+                        Sau khi sống sót qua trận chiến ở Starcourt Mall, nhóm bạn trẻ Hawkins bị chia cắt lần đầu tiên. Một mối đe dọa siêu nhiên mới và kinh hoàng nổi lên, mang đến một bí ẩn rùng rợn, nếu được giải mã, cuối cùng có thể chấm dứt nỗi kinh hoàng của Thế giới ngược (Upside Down).
+                    </p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="bg-surface-dark border-t border-white/5 py-16 modal-blur-overlay">
+<div class="container mx-auto px-6">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+<div class="col-span-1 md:col-span-1">
+<a class="flex items-center gap-2 mb-6" href="#">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-icons-round text-white text-xl">play_arrow</span>
+</div>
+<span class="text-2xl font-bold text-white">APHIM<span class="text-primary">.IO.VN</span></span>
+</a>
+<p class="text-gray-400 text-sm mb-6 leading-relaxed">Trải nghiệm điện ảnh đỉnh cao ngay tại nhà. Hàng ngàn bộ phim bom tấn đang chờ bạn khám phá với chất lượng tuyệt đỉnh.</p>
+</div>
+<div>
+<h4 class="text-white font-bold mb-6 text-lg">Khám phá</h4>
+<ul class="space-y-3 text-sm text-gray-400">
+<li><a class="hover:text-primary transition-colors" href="#">Phim mới cập nhật</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Phim lẻ hot</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Phim bộ tuyển chọn</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-bold mb-6 text-lg">Hỗ trợ</h4>
+<ul class="space-y-3 text-sm text-gray-400">
+<li><a class="hover:text-primary transition-colors" href="#">FAQ</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Điều khoản sử dụng</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-bold mb-6 text-lg">Kết nối</h4>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white text-gray-400 transition-colors border border-white/5" href="#">
+<span class="material-icons-round text-lg">facebook</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white text-gray-400 transition-colors border border-white/5" href="#">
+<span class="material-icons-round text-lg">smart_display</span>
+</a>
+</div>
+</div>
+</div>
+<div class="border-t border-white/5 mt-12 pt-8 text-center text-sm text-gray-500">
+            © 2023 APHIM.IO.VN. All rights reserved.
+        </div>
+</div>
+</footer>
+</body></html>

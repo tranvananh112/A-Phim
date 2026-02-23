@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Token</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #0f0;
+        }
+
+        .box {
+            background: #000;
+            border: 2px solid #0f0;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        button {
+            background: #0f0;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #0a0;
+        }
+
+        .success {
+            color: #0f0;
+        }
+
+        .error {
+            color: #f00;
+        }
+
+        .warning {
+            color: #ff0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔍 DEBUG TOKEN SYSTEM</h1>
+
+    <div class="box">
+        <h2>Token Status:</h2>
+        <div id="token-status"></div>
+    </div>
+
+    <div class="box">
+        <h2>Actions:</h2>
+        <button onclick="checkToken()">Check Token</button>
+        <button onclick="testAPI()">Test API</button>
+        <button onclick="clearAll()">Clear All</button>
+        <button onclick="goToDashboard()">Go to Dashboard</button>
+        <button onclick="goToSupporters()">Go to Supporters</button>
+    </div>
+
+    <div class="box">
+        <h2>Results:</h2>
+        <pre id="results"></pre>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script>
+        function log(message, type = 'success') {
+            const results = document.getElementById('results');
+            const timestamp = new Date().toLocaleTimeString();
+            results.innerHTML += `<span class="${type}">[${timestamp}] ${message}</span>\n`;
+        }
+
+        function checkToken() {
+            const token = localStorage.getItem('adminToken');
+            const user = localStorage.getItem('adminUser');
+
+            const statusDiv = document.getElementById('token-status');
+
+            if (token) {
+                statusDiv.innerHTML = `
+                    <p class="success">✓ Token EXISTS</p>
+                    <p>Length: ${token.length}</p>
+                    <p>First 50 chars: ${token.substring(0, 50)}...</p>
+                    <p>User: ${user ? JSON.parse(user).email : 'N/A'}</p>
+                `;
+                log('Token found!', 'success');
+            } else {
+                statusDiv.innerHTML = `<p class="error">✗ NO TOKEN FOUND</p>`;
+                log('No token found!', 'error');
+            }
+
+            // Check all localStorage
+            log('All localStorage keys:', 'warning');
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                log(`  - ${key}`, 'warning');
+            }
+        }
+
+        async function testAPI() {
+            const token = localStorage.getItem('adminToken');
+
+            if (!token) {
+                log('Cannot test API: No token', 'error');
+                return;
+            }
+
+            log('Testing API...', 'warning');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/supporters/statistics`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                log(`API Response Status: ${response.status}`, response.ok ? 'success' : 'error');
+
+                const data = await response.json();
+                log(`API Data: ${JSON.stringify(data, null, 2)}`, 'success');
+
+            } catch (error) {
+                log(`API Error: ${error.message}`, 'error');
+            }
+        }
+
+        function clearAll() {
+            if (confirm('Clear all localStorage?')) {
+                localStorage.clear();
+                log('All localStorage cleared!', 'warning');
+                checkToken();
+            }
+        }
+
+        function goToDashboard() {
+            log('Navigating to dashboard...', 'warning');
+            window.location.href = 'admin/dashboard.html';
+        }
+
+        function goToSupporters() {
+            log('Navigating to supporters...', 'warning');
+            window.location.href = 'admin/supporters.html';
+        }
+
+        // Auto-check on load
+        window.addEventListener('DOMContentLoaded', checkToken);
+
+        // Monitor localStorage changes
+        window.addEventListener('storage', function (e) {
+            log(`Storage changed: ${e.key} = ${e.newValue}`, 'warning');
+            checkToken();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Supporters API</title>
+    <script src="../js/config.js"></script>
+</head>
+
+<body>
+    <h1>Test Supporters API</h1>
+
+    <div id="status"></div>
+
+    <h2>Admin Token:</h2>
+    <pre id="token"></pre>
+
+    <h2>Test Results:</h2>
+    <pre id="results"></pre>
+
+    <button onclick="testAPI()">Test API</button>
+    <button onclick="clearToken()">Clear Token</button>
+    <button onclick="goToLogin()">Go to Login</button>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const tokenDiv = document.getElementById('token');
+        const resultsDiv = document.getElementById('results');
+
+        // Check token on load
+        window.addEventListener('DOMContentLoaded', function () {
+            const token = localStorage.getItem('adminToken');
+
+            if (token) {
+                tokenDiv.textContent = token.substring(0, 50) + '...';
+                statusDiv.innerHTML = '<p style="color: green;">✓ Token found</p>';
+            } else {
+                tokenDiv.textContent = 'No token found';
+                statusDiv.innerHTML = '<p style="color: red;">✗ No token - Please login first</p>';
+            }
+        });
+
+        async function testAPI() {
+            resultsDiv.textContent = 'Testing...';
+
+            const token = localStorage.getItem('adminToken');
+
+            if (!token) {
+                resultsDiv.textContent = 'ERROR: No admin token found. Please login first.';
+                return;
+            }
+
+            try {
+                // Test 1: Statistics
+                console.log('Testing statistics endpoint...');
+                const statsResponse = await fetch(`${API_BASE_URL}/api/supporters/statistics`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                console.log('Stats response status:', statsResponse.status);
+                const statsData = await statsResponse.json();
+                console.log('Stats data:', statsData);
+
+                // Test 2: List supporters
+                console.log('Testing list endpoint...');
+                const listResponse = await fetch(`${API_BASE_URL}/api/supporters?page=1&limit=10`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                console.log('List response status:', listResponse.status);
+                const listData = await listResponse.json();
+                console.log('List data:', listData);
+
+                // Display results
+                resultsDiv.textContent = JSON.stringify({
+                    statistics: {
+                        status: statsResponse.status,
+                        data: statsData
+                    },
+                    list: {
+                        status: listResponse.status,
+                        data: listData
+                    }
+                }, null, 2);
+
+            } catch (error) {
+                console.error('Test error:', error);
+                resultsDiv.textContent = 'ERROR: ' + error.message;
+            }
+        }
+
+        function clearToken() {
+            localStorage.removeItem('adminToken');
+            location.reload();
+        }
+
+        function goToLogin() {
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+
+</html>
