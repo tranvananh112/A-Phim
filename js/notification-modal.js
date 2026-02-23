@@ -98,34 +98,38 @@
     function createModal() {
         const modalHTML = `
             <div id="welcome-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" style="display: none;">
-                <div class="relative w-full max-w-2xl bg-black/40 backdrop-blur-xl border border-red-500/30 rounded-3xl p-8 lg:p-12 shadow-[0_0_50px_rgba(236,19,19,0.15)] overflow-hidden group ring-1 ring-white/10 animate-fade-in">
+                <div class="relative w-full max-w-md sm:max-w-lg lg:max-w-2xl bg-black/40 backdrop-blur-xl border border-red-500/30 rounded-3xl p-6 sm:p-8 lg:p-12 shadow-[0_0_50px_rgba(236,19,19,0.15)] overflow-hidden group ring-1 ring-white/10 animate-fade-in max-h-[90vh] overflow-y-auto">
                     <div class="absolute -top-24 -right-24 w-64 h-64 bg-red-500/20 rounded-full blur-[100px] group-hover:bg-red-500/30 transition-colors duration-700"></div>
                     <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-red-500/10 rounded-full blur-[100px] group-hover:bg-red-500/20 transition-colors duration-700"></div>
                     
                     <div class="relative z-10 flex flex-col items-center text-center">
-                        <div class="w-20 h-20 bg-gradient-to-br from-red-500/20 to-black rounded-2xl flex items-center justify-center mb-6 border border-red-500/40 shadow-[0_0_30px_rgba(236,19,19,0.3)]">
-                            <span class="material-symbols-outlined text-red-500 text-5xl font-light drop-shadow-[0_0_10px_rgba(236,19,19,0.8)]">favorite</span>
+                        <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-red-500/20 to-black rounded-2xl flex items-center justify-center mb-4 sm:mb-6 border border-red-500/40 shadow-[0_0_30px_rgba(236,19,19,0.3)]">
+                            <span class="material-symbols-outlined text-red-500 text-4xl sm:text-5xl font-light drop-shadow-[0_0_10px_rgba(236,19,19,0.8)]">favorite</span>
                         </div>
                         
-                        <h2 class="text-2xl lg:text-3xl font-extrabold text-white mb-6 tracking-tight leading-snug">
+                        <h2 class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white mb-4 sm:mb-6 tracking-tight leading-snug px-2">
                             CHÀO MỪNG BẠN ĐẾN VỚI <br/>
                             <span class="text-red-500 drop-shadow-[0_0_8px_rgba(236,19,19,0.8)]">APHIM.IO.VN</span>
                         </h2>
                         
-                        <div class="bg-white/5 border border-white/10 rounded-2xl p-6 mb-8 shadow-inner">
-                            <p class="text-gray-200 leading-relaxed text-base lg:text-lg font-light">
-                                Admin xin chào tất cả thành viên của trang APHIM.IO.VN. Để đảm bảo duy trì Server phục vụ cho mọi người xem phim không quảng cáo. Mình rất mong nhận được sự ủng hộ nho nhỏ bao nhiêu cũng được ạ vì có sự giúp sức của mọi người mình có thể duy trì server và một cộng đồng xem phim thật chất lượng mượt mà nhất. Rất cảm ơn tất cả thành viên.
+                        <div class="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 shadow-inner">
+                            <p class="text-gray-200 leading-relaxed text-sm sm:text-base lg:text-lg font-light text-justify">
+                                Admin xin chào tất cả thành viên của trang APHIM.IO.VN. Để đảm bảo duy trì Server phục vụ cho mọi người xem phim không quảng cáo. Mình rất mong nhận được sự ủng hộ nho nhỏ của tất cả các thành viên. Mọi người có thể mua gói hoặc ủng hộ mình để có thể duy trì server website và một cộng đồng xem phim thật chất lượng mượt mà nhất. Rất cảm ơn tất cả mọi người.
                             </p>
                         </div>
                         
-                        <div class="flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
-                            <button id="modal-close-btn" class="order-2 sm:order-1 px-8 py-3.5 bg-transparent hover:bg-white/10 text-gray-300 hover:text-white font-semibold rounded-xl border border-white/20 transition-all cursor-pointer text-center w-full sm:w-auto tracking-wide text-sm uppercase">
-                                Đã hiểu
-                            </button>
-                            <a href="support.html" class="order-1 sm:order-2 px-10 py-4 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-500 text-white font-bold rounded-xl shadow-[0_0_30px_rgba(236,19,19,0.5)] hover:shadow-[0_0_50px_rgba(236,19,19,0.7)] hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 group/btn w-full sm:w-auto uppercase tracking-wider text-sm">
-                                <span class="material-symbols-outlined animate-pulse">favorite</span>
-                                Ủng hộ Admin
+                        <div class="flex flex-col gap-3 w-full">
+                            <a href="pricing.html" class="px-6 sm:px-8 py-3 sm:py-3.5 bg-gradient-to-r from-primary to-yellow-500 hover:from-yellow-500 hover:to-primary text-black font-bold rounded-xl shadow-[0_0_30px_rgba(242,242,13,0.5)] hover:shadow-[0_0_50px_rgba(242,242,13,0.7)] hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 group/btn w-full uppercase tracking-wider text-sm">
+                                <span class="material-symbols-outlined">shopping_cart</span>
+                                Mua Gói
                             </a>
+                            <a href="support.html" class="px-6 sm:px-8 py-3 sm:py-3.5 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-500 text-white font-bold rounded-xl shadow-[0_0_30px_rgba(236,19,19,0.5)] hover:shadow-[0_0_50px_rgba(236,19,19,0.7)] hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 group/btn w-full uppercase tracking-wider text-sm">
+                                <span class="material-symbols-outlined animate-pulse">favorite</span>
+                                Ủng Hộ Aphim
+                            </a>
+                            <button id="modal-close-btn" class="px-6 sm:px-8 py-3 sm:py-3.5 bg-transparent hover:bg-white/10 text-gray-300 hover:text-white font-semibold rounded-xl border border-white/20 transition-all cursor-pointer text-center w-full tracking-wide text-sm uppercase">
+                                Đã Hiểu
+                            </button>
                         </div>
                     </div>
                 </div>
