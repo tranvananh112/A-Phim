@@ -28,6 +28,30 @@
         document.head.appendChild(s);
     </script>
 
+    <!-- Propush TrafficBack -->
+    <script>
+        (function () {
+            var trafficBackUrl = '//rm358.com/4/10647261';
+            var trafficBackTriggered = false;
+
+            // Detect when user tries to leave the page
+            document.addEventListener('mouseout', function (e) {
+                if (!trafficBackTriggered && e.clientY < 0) {
+                    trafficBackTriggered = true;
+                    window.open(trafficBackUrl, '_blank');
+                }
+            });
+
+            // Detect back button or close tab
+            window.addEventListener('beforeunload', function (e) {
+                if (!trafficBackTriggered) {
+                    trafficBackTriggered = true;
+                    window.location.href = trafficBackUrl;
+                }
+            });
+        })();
+    </script>
+
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 
