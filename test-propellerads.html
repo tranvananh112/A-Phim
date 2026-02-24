@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test PropellerAds Direct Link</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .info-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-card .label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .info-card .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .status.active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn.secondary {
+            background: #6c757d;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .alert.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert.warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+
+        #log {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #00ff00;
+            padding-left: 10px;
+        }
+
+        .click-area {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            margin: 20px 0;
+            transition: transform 0.2s;
+        }
+
+        .click-area:hover {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔗 PropellerAds Direct Link Test</h1>
+        <p class="subtitle">Kiểm tra Direct Link từ PropellerAds</p>
+
+        <!-- Status Section -->
+        <div class="section">
+            <h2>📊 Trạng Thái</h2>
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="label">Direct Link ID</div>
+                    <div class="value">10647261</div>
+                </div>
+                <div class="info-card">
+                    <div class="label">Trạng thái</div>
+                    <div class="value">
+                        <span class="status active">Active ✅</span>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="label">Đã click</div>
+                    <div class="value" id="clickCount">0 / 2</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- What is Direct Link -->
+        <div class="section">
+            <h2>❓ Direct Link là gì?</h2>
+            <p style="line-height: 1.8;">
+                <strong>Direct Link</strong> là link chuyển hướng trực tiếp từ PropellerAds.
+                Khi user click vào link này, họ sẽ được tự động chuyển đến quảng cáo phù hợp nhất
+                dựa trên vị trí, thiết bị, trình duyệt của họ.
+            </p>
+            <br>
+            <p><strong>Link của bạn:</strong></p>
+            <div
+                style="background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 8px; overflow-x: auto; margin-top: 10px;">
+                //rm358.com/4/10647261?var={your_source_id}
+            </div>
+        </div>
+
+        <!-- How it works -->
+        <div class="section">
+            <h2>⚙️ Cách Hoạt Động</h2>
+            <ol style="margin-left: 20px; line-height: 1.8;">
+                <li>User truy cập trang web của bạn</li>
+                <li>User click vào bất kỳ đâu trên trang</li>
+                <li>Direct Link tự động mở trong tab mới</li>
+                <li>User được chuyển đến quảng cáo phù hợp</li>
+                <li>Bạn nhận tiền từ PropellerAds</li>
+            </ol>
+
+            <div class="alert info" style="margin-top: 15px;">
+                <strong>ℹ️ Lưu ý:</strong> Direct Link chỉ mở tối đa 2 lần mỗi session để không làm phiền user.
+            </div>
+        </div>
+
+        <!-- Testing -->
+        <div class="section">
+            <h2>🧪 Kiểm Tra</h2>
+
+            <div class="click-area" onclick="testClick()">
+                <h3 style="margin-bottom: 10px;">👆 CLICK VÀO ĐÂY ĐỂ TEST</h3>
+                <p>Một tab mới sẽ mở với quảng cáo PropellerAds</p>
+            </div>
+
+            <button class="btn" onclick="manualTest()">🔗 Test Direct Link Thủ Công</button>
+            <button class="btn secondary" onclick="checkStatus()">📊 Kiểm Tra Trạng Thái</button>
+            <button class="btn secondary" onclick="resetCounter()">🔄 Reset Counter</button>
+
+            <div id="log"></div>
+        </div>
+
+        <!-- Setup Guide -->
+        <div class="section">
+            <h2>📖 Đã Tích Hợp</h2>
+
+            <div class="alert success">
+                <strong>✅ Direct Link đã được tích hợp vào các trang:</strong><br>
+                • index.html (Trang chủ)<br>
+                • watch.html (Xem phim)<br>
+                • categories.html (Danh mục)<br>
+                • filter.html (Lọc phim)<br>
+                • search.html (Tìm kiếm)
+            </div>
+
+            <p style="margin: 15px 0;">
+                Khi user click vào các trang này, Direct Link sẽ tự động mở (tối đa 2 lần/session).
+            </p>
+
+            <h3 style="margin: 20px 0 10px 0;">Thay đổi cấu hình:</h3>
+            <p>Sửa file <code>js/propellerads.js</code> dòng cuối:</p>
+            <pre
+                style="background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 8px; overflow-x: auto; margin-top: 10px;">
+window.propellerAdsManager = new PropellerAdsManager({
+    directLinkId: '10647261',
+    directLinkUrl: '//rm358.com/4/10647261',
+    enabled: true,
+    triggerOnClick: true, // Tự động mở khi click
+    maxPerSession: 2 // Số lần tối đa mỗi session
+});</pre>
+        </div>
+
+        <!-- Revenue -->
+        <div class="section">
+            <h2>💰 Thu Nhập Dự Kiến</h2>
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr style="background: #667eea; color: white;">
+                    <th style="padding: 10px; text-align: left;">Traffic/Ngày</th>
+                    <th style="padding: 10px; text-align: left;">Click Rate</th>
+                    <th style="padding: 10px; text-align: left;">CPM</th>
+                    <th style="padding: 10px; text-align: left;">Thu Nhập/Ngày</th>
+                </tr>
+                <tr style="background: #f8f9fa;">
+                    <td style="padding: 10px;">1,000 visitors</td>
+                    <td style="padding: 10px;">50%</td>
+                    <td style="padding: 10px;">$5</td>
+                    <td style="padding: 10px;">$2.5</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px;">5,000 visitors</td>
+                    <td style="padding: 10px;">50%</td>
+                    <td style="padding: 10px;">$5</td>
+                    <td style="padding: 10px;">$12.5</td>
+                </tr>
+                <tr style="background: #f8f9fa;">
+                    <td style="padding: 10px;">10,000 visitors</td>
+                    <td style="padding: 10px;">50%</td>
+                    <td style="padding: 10px;">$5</td>
+                    <td style="padding: 10px;">$25</td>
+                </tr>
+            </table>
+
+            <div class="alert warning" style="margin-top: 15px;">
+                <strong>💡 Tips:</strong> Kết hợp Direct Link với Push Notifications và Popunder để tối đa thu nhập!
+            </div>
+        </div>
+    </div>
+
+    <script src="js/propellerads.js"></script>
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function updateClickCount() {
+            const stats = window.propellerAdsManager.getStats();
+            document.getElementById('clickCount').textContent =
+                `${stats.clickedToday} / ${stats.maxPerSession}`;
+        }
+
+        function testClick() {
+            log('👆 User clicked on test area');
+            log('🔗 Opening Direct Link...');
+            window.propellerAdsManager.openDirectLink('test_source');
+            setTimeout(updateClickCount, 100);
+        }
+
+        function manualTest() {
+            log('🔗 Manual test triggered');
+            window.propellerAdsManager.openDirectLink('manual_test');
+            setTimeout(updateClickCount, 100);
+        }
+
+        function checkStatus() {
+            log('📊 Checking status...');
+            const stats = window.propellerAdsManager.getStats();
+            log(`   Clicked: ${stats.clickedToday}/${stats.maxPerSession}`);
+            log(`   Remaining: ${stats.remaining}`);
+            log(`   Can show: ${stats.canShow ? 'Yes' : 'No'}`);
+            updateClickCount();
+        }
+
+        function resetCounter() {
+            window.propellerAdsManager.resetCounter();
+            log('🔄 Counter reset');
+            updateClickCount();
+        }
+
+        // Auto check on load
+        setTimeout(() => {
+            log('🚀 PropellerAds Direct Link Test Page loaded');
+            checkStatus();
+        }, 500);
+    </script>
+</body>
+
+</html>
