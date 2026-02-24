@@ -139,18 +139,18 @@ class PropellerAdsManager {
 // Export
 window.PropellerAdsManager = PropellerAdsManager;
 
-// Khởi tạo mặc định với cả Direct Link và Push Notifications
+// Khởi tạo mặc định - CHỈ Direct Link (2 lần/session khi click)
 window.propellerAdsManager = new PropellerAdsManager({
-    // Direct Link
+    // Direct Link - Mở khi user click vào trang
     directLinkId: '10647261',
     directLinkUrl: '//rm358.com/4/10647261',
     directLinkEnabled: true,
     triggerOnClick: true,
     maxPerSession: 2,
 
-    // Push Notifications
+    // Push Notifications - TẮT
     pushId: '10647059',
-    pushEnabled: true
+    pushEnabled: false // ❌ Tắt Push Notifications
 });
 
-console.log('PropellerAds Manager initialized (Direct Link + Push Notifications)');
+console.log('PropellerAds Manager initialized (Direct Link only - 2 clicks/session)');
