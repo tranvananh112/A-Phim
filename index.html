@@ -27,57 +27,8 @@
         };
         document.head.appendChild(s);
     </script>
-
-    <!-- Propush TrafficBack (Mobile + Desktop) -->
-    <script>
-        (function () {
-            var trafficBackUrl = '//rm358.com/4/10647261';
-            var trafficBackTriggered = sessionStorage.getItem('trafficBackTriggered') === 'true';
-
-            function triggerTrafficBack() {
-                if (!trafficBackTriggered) {
-                    trafficBackTriggered = true;
-                    sessionStorage.setItem('trafficBackTriggered', 'true');
-                    window.location.href = trafficBackUrl;
-                }
-            }
-
-            // Desktop: Detect mouse leaving viewport
-            document.addEventListener('mouseout', function (e) {
-                if (!trafficBackTriggered && e.clientY < 0) {
-                    trafficBackTriggered = true;
-                    sessionStorage.setItem('trafficBackTriggered', 'true');
-                    window.open(trafficBackUrl, '_blank');
-                }
-            });
-
-            // Mobile + Desktop: Detect back button
-            var historyLength = history.length;
-            window.addEventListener('popstate', function (e) {
-                triggerTrafficBack();
-            });
-
-            // Mobile: Detect page visibility change (switching apps)
-            document.addEventListener('visibilitychange', function () {
-                if (document.visibilityState === 'hidden' && !trafficBackTriggered) {
-                    // User is leaving, trigger on next page load
-                    sessionStorage.setItem('trafficBackPending', 'true');
-                }
-            });
-
-            // Check if there's a pending trafficback from previous session
-            if (sessionStorage.getItem('trafficBackPending') === 'true' && !trafficBackTriggered) {
-                sessionStorage.removeItem('trafficBackPending');
-                triggerTrafficBack();
-            }
-        })();
-    </script>
-
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-
-    <!-- Propush Verification -->
-    <meta name="pushsdk" content="991e56f7f4c72bc6950deed5c3cbea41">
 
     <title>Aphim - Trải nghiệm điện ảnh đỉnh cao</title>
 
