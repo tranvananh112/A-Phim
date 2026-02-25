@@ -7,10 +7,10 @@
     // Cấu hình
     const CONFIG = {
         enabled: true,
-        delayOnFirstVisit: 3000, // 3 giây delay cho lần đầu
-        delayOnReturn: 1000, // 1 giây cho lần sau
+        delayOnFirstVisit: 0, // Không delay - test ngay
+        delayOnReturn: 0, // Không delay
         excludePages: ['/login.html', '/register.html', '/payment.html'], // Không chạy ở các trang này
-        maxPopsPerSession: 3 // Tối đa 3 pops mỗi session
+        maxPopsPerSession: 5 // Tăng lên 5 pops để test
     };
 
     // Kiểm tra xem có nên load PopAds không
