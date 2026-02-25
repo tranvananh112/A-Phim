@@ -6,7 +6,7 @@
         enabled: true,
         excludePages: ['/login.html', '/register.html', '/payment.html'],
         maxPopsPerSession: 3, // Giảm xuống 3 lần/session để ít phiền hơn
-        minTimeBetweenPops: 300000, // 5 phút giữa các pops (tăng từ 3 phút)
+        minTimeBetweenPops: 180000, // 3 phút giữa các pops (cân bằng UX & revenue)
         initialDelay: 15000, // Đợi 15 giây sau khi vào trang
         requireInteraction: true, // YÊU CẦU user phải click/scroll trước
         storageKey: 'adsterra_popunder'
