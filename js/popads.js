@@ -4,13 +4,14 @@
 (function () {
     'use strict';
 
-    // Cấu hình
+    // Cấu hình - CÂN BẰNG giữa doanh thu và trải nghiệm
     const CONFIG = {
         enabled: true,
-        delayOnFirstVisit: 0, // Không delay - test ngay
-        delayOnReturn: 0, // Không delay
+        delayOnFirstVisit: 5000, // 5 giây - để user xem nội dung trước
+        delayOnReturn: 10000, // 10 giây - ít phiền hơn
         excludePages: ['/login.html', '/register.html', '/payment.html'], // Không chạy ở các trang này
-        maxPopsPerSession: 5 // Tăng lên 5 pops để test
+        maxPopsPerSession: 2, // CHỈ 2 pops/session - ít phiền
+        minTimeBetweenPops: 30000 // 30 giây giữa các lần pop
     };
 
     // Kiểm tra xem có nên load PopAds không
@@ -29,8 +30,18 @@
         popCount = parseInt(popCount);
 
         if (popCount >= CONFIG.maxPopsPerSession) {
-            console.log('[PopAds] Max pops per session reached');
+            console.log('[PopAds] Max pops per session reached:', popCount);
             return false;
+        }
+
+        // Kiểm tra thời gian giữa các lần pop
+        const lastPopTime = sessionStorage.getItem('popads_last_time');
+        if (lastPopTime) {
+            const timeSinceLastPop = Date.now() - parseInt(lastPopTime);
+            if (timeSinceLastPop < CONFIG.minTimeBetweenPops) {
+                console.log('[PopAds] Too soon since last pop. Wait', Math.round((CONFIG.minTimeBetweenPops - timeSinceLastPop) / 1000), 'seconds');
+                return false;
+            }
         }
 
         return true;
@@ -42,9 +53,10 @@
             return;
         }
 
-        // Tăng counter
+        // Tăng counter và lưu thời gian
         let popCount = sessionStorage.getItem('popads_count') || 0;
         sessionStorage.setItem('popads_count', parseInt(popCount) + 1);
+        sessionStorage.setItem('popads_last_time', Date.now().toString());
 
         // Xác định delay
         const isFirstVisit = !localStorage.getItem('popads_visited');
@@ -53,7 +65,7 @@
         // Đánh dấu đã visit
         localStorage.setItem('popads_visited', 'true');
 
-        console.log('[PopAds] Will load in', delay, 'ms');
+        console.log('[PopAds] Will load in', delay / 1000, 'seconds. Pop count:', parseInt(popCount) + 1);
 
         // Load sau delay
         setTimeout(function () {
