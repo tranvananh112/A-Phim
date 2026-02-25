@@ -1,5 +1,4 @@
 // Load and render all movie sections from home API
-
 async function loadHomeMovies() {
     try {
         const response = await fetch('https://ophim1.com/v1/api/home', {
@@ -9,22 +8,37 @@ async function loadHomeMovies() {
 
         const data = await response.json();
         console.log('Home API data:', data);
+        console.log('Home API structure check:', {
+            hasData: !!data.data,
+            hasItems: !!data.data?.items,
+            itemsType: Array.isArray(data.data?.items) ? 'array' : typeof data.data?.items,
+            itemsLength: data.data?.items?.length,
+            firstItem: data.data?.items?.[0]
+        });
 
-        if (data.status === 'success' && data.data && data.data.items) {
-            const sections = data.data.items;
+        if (data.status === 'success' && data.data) {
+            // Kiểm tra xem data.data.items có phải là array sections không
+            if (Array.isArray(data.data.items)) {
+                const sections = data.data.items;
+                console.log('Processing sections:', sections.length);
 
-            // Render all sections
-            renderAllSections(sections);
+                // Render all sections
+                renderAllSections(sections);
 
-            // Find and render Vietnamese movies section
-            const vietnamSection = sections.find(section =>
-                section.slug === 'viet-nam' ||
-                section.name?.toLowerCase().includes('việt nam')
-            );
+                // Find and render Vietnamese movies section
+                const vietnamSection = sections.find(section =>
+                    section.slug === 'viet-nam' ||
+                    section.name?.toLowerCase().includes('việt nam')
+                );
 
-            if (vietnamSection && vietnamSection.items) {
-                renderVietnameseMovies(vietnamSection.items.slice(0, 10));
+                if (vietnamSection && Array.isArray(vietnamSection.items) && vietnamSection.items.length > 0) {
+                    renderVietnameseMovies(vietnamSection.items.slice(0, 10));
+                } else {
+                    loadVietnameseMoviesHome();
+                }
             } else {
+                // Nếu không phải array sections, có thể là direct movies
+                console.log('API structure different, loading fallback');
                 loadVietnameseMoviesHome();
             }
         }
@@ -51,16 +65,19 @@ function renderAllSections(sections) {
     // Filter out Vietnam section (already displayed separately)
     // Lấy TẤT CẢ các sections có phim
     const filteredSections = sections.filter(section => {
-        // Log để debug
-        console.log('Checking section:', section.name, 'slug:', section.slug, 'has items:', !!section.items);
-
         // Bỏ qua section Việt Nam (đã hiển thị riêng)
         if (section.slug === 'viet-nam' || section.name?.toLowerCase().includes('việt nam')) {
             return false;
         }
 
-        // Chỉ lấy sections có items
-        return section.items && section.items.length > 0;
+        // Chỉ lấy sections có items và items là array có phần tử
+        const hasItems = Array.isArray(section.items) && section.items.length > 0;
+
+        if (!hasItems) {
+            console.log('Skipping section (no items):', section.name, 'slug:', section.slug);
+        }
+
+        return hasItems;
     });
 
     console.log('Filtered sections:', filteredSections.length, filteredSections.map(s => s.name));
