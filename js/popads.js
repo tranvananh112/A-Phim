@@ -1,50 +1,22 @@
-// PopAds Integration - Optimized for Revenue
-// Tích hợp PopAds tối ưu cho doanh thu
+// PopAds Integration - Mỗi lần vào = 2 pops
+// Tích hợp PopAds: 2 pops mỗi lần vào, cách nhau 5 phút
 
 (function () {
     'use strict';
 
-    // Cấu hình - CÂN BẰNG giữa doanh thu và trải nghiệm
+    // Cấu hình - Mỗi lần vào = 2 pops
     const CONFIG = {
         enabled: true,
         delayOnFirstVisit: 5000, // 5 giây - để user xem nội dung trước
-        delayOnReturn: 10000, // 10 giây - ít phiền hơn
+        delayOnReturn: 5000, // 5 giây cho lần sau
         excludePages: ['/login.html', '/register.html', '/payment.html'], // Không chạy ở các trang này
-        maxPopsPerSession: 2, // CHỈ 2 pops/session - ít phiền
-        maxPopsPerDay: 4, // Tối đa 4 pops/ngày cho mỗi user
-        minTimeBetweenPops: 30000, // 30 giây giữa các lần pop
-        resetAfterHours: 24 // Reset sau 24 giờ
+        maxPopsPerSession: 2, // 2 pops mỗi lần vào
+        minTimeBetweenSessions: 300000, // 5 phút giữa các lần vào (300000ms = 5 phút)
+        minTimeBetweenPops: 30000 // 30 giây giữa 2 pops trong cùng session
     };
-
-    // Kiểm tra và reset dữ liệu cũ
-    function checkAndResetOldData() {
-        const lastResetTime = localStorage.getItem('popads_last_reset');
-        const now = Date.now();
-
-        if (lastResetTime) {
-            const hoursSinceReset = (now - parseInt(lastResetTime)) / (1000 * 60 * 60);
-
-            if (hoursSinceReset >= CONFIG.resetAfterHours) {
-                // Reset sau 24 giờ
-                localStorage.removeItem('popads_daily_count');
-                localStorage.removeItem('popads_visited');
-                localStorage.setItem('popads_last_reset', now.toString());
-                console.log('[PopAds] Data reset after', CONFIG.resetAfterHours, 'hours');
-                return true;
-            }
-        } else {
-            // Lần đầu tiên
-            localStorage.setItem('popads_last_reset', now.toString());
-        }
-
-        return false;
-    }
 
     // Kiểm tra xem có nên load PopAds không
     function shouldLoadPopAds() {
-        // Reset dữ liệu cũ nếu cần
-        checkAndResetOldData();
-
         // Kiểm tra trang hiện tại
         const currentPath = window.location.pathname;
         for (let excludePath of CONFIG.excludePages) {
@@ -54,16 +26,21 @@
             }
         }
 
-        // Kiểm tra số lần pop trong ngày (localStorage - theo user)
-        let dailyCount = localStorage.getItem('popads_daily_count') || 0;
-        dailyCount = parseInt(dailyCount);
+        // Kiểm tra thời gian từ lần vào trước (localStorage)
+        const lastSessionTime = localStorage.getItem('popads_last_session');
+        const now = Date.now();
 
-        if (dailyCount >= CONFIG.maxPopsPerDay) {
-            console.log('[PopAds] Max pops per day reached:', dailyCount);
-            return false;
+        if (lastSessionTime) {
+            const timeSinceLastSession = now - parseInt(lastSessionTime);
+
+            if (timeSinceLastSession < CONFIG.minTimeBetweenSessions) {
+                const waitMinutes = Math.round((CONFIG.minTimeBetweenSessions - timeSinceLastSession) / 60000);
+                console.log('[PopAds] Too soon since last session. Wait', waitMinutes, 'minutes');
+                return false;
+            }
         }
 
-        // Kiểm tra số lần pop trong session
+        // Kiểm tra số lần pop trong session hiện tại
         let popCount = sessionStorage.getItem('popads_count') || 0;
         popCount = parseInt(popCount);
 
@@ -72,10 +49,10 @@
             return false;
         }
 
-        // Kiểm tra thời gian giữa các lần pop
+        // Kiểm tra thời gian giữa các lần pop trong cùng session
         const lastPopTime = sessionStorage.getItem('popads_last_time');
         if (lastPopTime) {
-            const timeSinceLastPop = Date.now() - parseInt(lastPopTime);
+            const timeSinceLastPop = now - parseInt(lastPopTime);
             if (timeSinceLastPop < CONFIG.minTimeBetweenPops) {
                 console.log('[PopAds] Too soon since last pop. Wait', Math.round((CONFIG.minTimeBetweenPops - timeSinceLastPop) / 1000), 'seconds');
                 return false;
@@ -91,14 +68,18 @@
             return;
         }
 
+        const now = Date.now();
+
         // Tăng counter session
         let popCount = sessionStorage.getItem('popads_count') || 0;
         sessionStorage.setItem('popads_count', parseInt(popCount) + 1);
-        sessionStorage.setItem('popads_last_time', Date.now().toString());
+        sessionStorage.setItem('popads_last_time', now.toString());
 
-        // Tăng counter daily (localStorage - theo user)
-        let dailyCount = localStorage.getItem('popads_daily_count') || 0;
-        localStorage.setItem('popads_daily_count', parseInt(dailyCount) + 1);
+        // Lưu thời gian session (localStorage)
+        // Chỉ lưu khi pop đầu tiên của session
+        if (parseInt(popCount) === 0) {
+            localStorage.setItem('popads_last_session', now.toString());
+        }
 
         // Xác định delay
         const isFirstVisit = !localStorage.getItem('popads_visited');
@@ -108,8 +89,7 @@
         localStorage.setItem('popads_visited', 'true');
 
         const sessionCount = parseInt(popCount) + 1;
-        const totalDailyCount = parseInt(dailyCount) + 1;
-        console.log('[PopAds] Will load in', delay / 1000, 'seconds. Session:', sessionCount, '| Daily:', totalDailyCount);
+        console.log('[PopAds] Will load in', delay / 1000, 'seconds. Pop', sessionCount, 'of', CONFIG.maxPopsPerSession);
 
         // Load sau delay
         setTimeout(function () {
