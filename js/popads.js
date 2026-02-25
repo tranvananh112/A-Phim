@@ -4,15 +4,15 @@
 (function () {
     'use strict';
 
-    // Cấu hình - BALANCED - Cân bằng doanh thu & trải nghiệm
+    // Cấu hình - AGGRESSIVE - Tối ưu doanh thu
     const CONFIG = {
         enabled: true,
-        delayOnFirstVisit: 3000, // 3 giây - user có thời gian xem
-        delayOnReturn: 3000, // 3 giây
+        delayOnFirstVisit: 2000, // 2 giây - nhanh hơn
+        delayOnReturn: 2000, // 2 giây
         excludePages: ['/login.html', '/register.html', '/payment.html'],
-        maxPopsPerSession: 3, // 3 pops mỗi session - vừa phải
-        minTimeBetweenSessions: 180000, // 3 phút cooldown - hợp lý
-        minTimeBetweenPops: 25000 // 25 giây giữa các pops
+        maxPopsPerSession: 5, // 5 pops mỗi session - tăng doanh thu
+        minTimeBetweenSessions: 120000, // 2 phút cooldown - nhanh hơn
+        minTimeBetweenPops: 15000 // 15 giây giữa các pops - nhanh hơn
     };
 
     // Kiểm tra xem có nên load PopAds không
@@ -96,10 +96,10 @@
             const script = document.createElement('script');
             script.type = 'text/javascript';
             script.setAttribute('data-cfasync', 'false');
-            script.innerHTML = `/*<![CDATA[/* */(function(){var d=window,b="af9fbcfa4a8705d83a443d8ef461c8d7",z=[["siteId",667*988+774*711+4070531],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],t=["d3d3LmNkbjRhZHMuY29tL3dqcXVlcnkuanNjcm9sbC5taW4uY3Nz","ZDNnNW92Zm5nanc5YncuY2xvdWRmcm9udC5uZXQvcS94bWF0cml4Lm1pbi5qcw=="],k=-1,r,m,l=function(){clearTimeout(m);k++;if(t[k]&&!(1797908510000<(new Date).getTime()&&1<k)){r=d.document.createElement("script");r.type="text/javascript";r.async=!0;var c=d.document.getElementsByTagName("script")[0];r.src="https://"+atob(t[k]);r.crossOrigin="anonymous";r.onerror=l;r.onload=function(){clearTimeout(m);d[b.slice(0,16)+b.slice(0,16)]||l()};m=setTimeout(l,5E3);c.parentNode.insertBefore(r,c)}};if(!d[b]){try{Object.freeze(d[b]=z)}catch(e){}l()}})();/*]]>/* */`;
+            script.innerHTML = `/*<![CDATA[/* */(function(){var p=window,r="af9fbcfa4a8705d83a443d8ef461c8d7",y=[["siteId",865-402-248-351*667+5513743],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],t=["d3d3LmNkbjRhZHMuY29tL2FqcXVlcnkuanNjcm9sbC5taW4uY3Nz","ZDNnNW92Zm5nanc5YncuY2xvdWRmcm9udC5uZXQvZ3lUSC9obWF0cml4Lm1pbi5qcw=="],d=-1,i,e,l=function(){clearTimeout(e);d++;if(t[d]&&!(1797928011000<(new Date).getTime()&&1<d)){i=p.document.createElement("script");i.type="text/javascript";i.async=!0;var w=p.document.getElementsByTagName("script")[0];i.src="https://"+atob(t[d]);i.crossOrigin="anonymous";i.onerror=l;i.onload=function(){clearTimeout(e);p[r.slice(0,16)+r.slice(0,16)]||l()};e=setTimeout(l,5E3);w.parentNode.insertBefore(i,w)}};if(!p[r]){try{Object.freeze(p[r]=y)}catch(e){}l()}})();/*]]>/* */`;
 
             document.head.appendChild(script);
-            console.log('[PopAds] Script loaded successfully');
+            console.log('[PopAds] Script loaded successfully with NEW code');
         }, delay);
     }
 
