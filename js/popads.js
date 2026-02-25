@@ -4,15 +4,15 @@
 (function () {
     'use strict';
 
-    // Cấu hình - Mỗi lần vào = 2 pops
+    // Cấu hình - BALANCED - Cân bằng doanh thu & trải nghiệm
     const CONFIG = {
         enabled: true,
-        delayOnFirstVisit: 5000, // 5 giây - để user xem nội dung trước
-        delayOnReturn: 5000, // 5 giây cho lần sau
-        excludePages: ['/login.html', '/register.html', '/payment.html'], // Không chạy ở các trang này
-        maxPopsPerSession: 2, // 2 pops mỗi lần vào
-        minTimeBetweenSessions: 300000, // 5 phút giữa các lần vào (300000ms = 5 phút)
-        minTimeBetweenPops: 30000 // 30 giây giữa 2 pops trong cùng session
+        delayOnFirstVisit: 3000, // 3 giây - user có thời gian xem
+        delayOnReturn: 3000, // 3 giây
+        excludePages: ['/login.html', '/register.html', '/payment.html'],
+        maxPopsPerSession: 3, // 3 pops mỗi session - vừa phải
+        minTimeBetweenSessions: 180000, // 3 phút cooldown - hợp lý
+        minTimeBetweenPops: 25000 // 25 giây giữa các pops
     };
 
     // Kiểm tra xem có nên load PopAds không
