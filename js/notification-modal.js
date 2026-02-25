@@ -6,6 +6,8 @@
 
     // Configuration
     const CONFIG = {
+        enabled: false, // TẮT thông báo - đã có quảng cáo
+
         // Option 1: Time-based (hours) - Show modal again after X hours
         showAfterHours: 24, // Show modal again after 24 hours (1 ngày)
 
@@ -374,6 +376,12 @@
 
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function () {
+        // Kiểm tra enabled trước
+        if (!CONFIG.enabled) {
+            console.log('Notification modal disabled');
+            return;
+        }
+
         if (shouldShowModal()) {
             // Delay showing modal slightly for better UX
             setTimeout(createModal, 500);
