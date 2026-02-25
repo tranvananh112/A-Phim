@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test AdsTerra Ads</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .ad-container {
+            border: 2px dashed #f2f20d;
+            padding: 20px;
+            margin: 20px 0;
+            background: #2a2a18;
+        }
+
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .success {
+            background: #10b981;
+            color: white;
+        }
+
+        .error {
+            background: #ef4444;
+            color: white;
+        }
+
+        .info {
+            background: #3b82f6;
+            color: white;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-white p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-bold mb-8 text-yellow-400">🧪 Test AdsTerra Quảng Cáo</h1>
+
+        <!-- Status -->
+        <div id="status" class="space-y-2 mb-8">
+            <div class="status info">⏳ Đang kiểm tra...</div>
+        </div>
+
+        <!-- Test 1: Popunder -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-4">1️⃣ Test Popunder</h2>
+            <div class="ad-container">
+                <p class="mb-4">Popunder sẽ load tự động khi vào trang (chỉ 1 lần/session)</p>
+                <div id="popunderStatus" class="status info">Đang load...</div>
+            </div>
+        </div>
+
+        <!-- Test 2: Banner 728x90 -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-4">2️⃣ Test Banner 728x90</h2>
+            <div class="ad-container flex justify-center">
+                <div id="banner728x90">
+                    <script>
+                        atOptions = {
+                            'key': 'fe21546b444c2a83074f13138c4492de',
+                            'format': 'iframe',
+                            'height': 90,
+                            'width': 728,
+                            'params': {}
+                        };
+                    </script>
+                    <script
+                        src="https://www.highperformanceformat.com/fe21546b444c2a83074f13138c4492de/invoke.js"></script>
+                </div>
+            </div>
+            <div id="banner728Status" class="status info">Đang load...</div>
+        </div>
+
+        <!-- Test 3: Banner 300x250 -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-4">3️⃣ Test Banner 300x250</h2>
+            <div class="ad-container flex justify-center">
+                <div id="banner300x250">
+                    <script>
+                        atOptions = {
+                            'key': 'be0a1ecf4d78398110da14edf051ef18',
+                            'format': 'iframe',
+                            'height': 250,
+                            'width': 300,
+                            'params': {}
+                        };
+                    </script>
+                    <script
+                        src="https://www.highperformanceformat.com/be0a1ecf4d78398110da14edf051ef18/invoke.js"></script>
+                </div>
+            </div>
+            <div id="banner300Status" class="status info">Đang load...</div>
+        </div>
+
+        <!-- Console Log -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-4">📋 Console Log</h2>
+            <div id="consoleLog" class="bg-black p-4 rounded font-mono text-sm max-h-96 overflow-y-auto">
+                <div class="text-green-400">Console output sẽ hiển thị ở đây...</div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="bg-blue-900 p-6 rounded-lg">
+            <h3 class="text-xl font-bold mb-4">📝 Hướng dẫn kiểm tra:</h3>
+            <ol class="list-decimal list-inside space-y-2">
+                <li>Mở trang này trong trình duyệt</li>
+                <li>Mở Developer Tools (F12) → Console tab</li>
+                <li>Kiểm tra xem có lỗi màu đỏ không</li>
+                <li>Chờ 5-10 giây để banner load</li>
+                <li>Nếu thấy banner hiển thị → ✅ OK</li>
+                <li>Nếu không thấy gì → ⚠️ Có vấn đề</li>
+            </ol>
+        </div>
+
+        <!-- Expected Results -->
+        <div class="bg-green-900 p-6 rounded-lg mt-6">
+            <h3 class="text-xl font-bold mb-4">✅ Kết quả mong đợi:</h3>
+            <ul class="list-disc list-inside space-y-2">
+                <li>Banner 728x90: Hiển thị hình chữ nhật ngang (728px × 90px)</li>
+                <li>Banner 300x250: Hiển thị hình vuông (300px × 250px)</li>
+                <li>Popunder: Không thấy gì (chỉ load script, không hiển thị)</li>
+                <li>Console: Có log "[AdsTerra] Popunder loaded"</li>
+                <li>Không có lỗi màu đỏ trong Console</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- AdsTerra Popunder Script -->
+    <script src="js/adsterra.js"></script>
+
+    <!-- Test Script -->
+    <script>
+        const statusDiv = document.getElementById('status');
+        const consoleLogDiv = document.getElementById('consoleLog');
+        const popunderStatus = document.getElementById('popunderStatus');
+        const banner728Status = document.getElementById('banner728Status');
+        const banner300Status = document.getElementById('banner300Status');
+
+        // Override console.log to capture logs
+        const originalLog = console.log;
+        console.log = function (...args) {
+            originalLog.apply(console, args);
+            const logEntry = document.createElement('div');
+            logEntry.className = 'text-green-400 mb-1';
+            logEntry.textContent = '✓ ' + args.join(' ');
+            consoleLogDiv.appendChild(logEntry);
+            consoleLogDiv.scrollTop = consoleLogDiv.scrollHeight;
+        };
+
+        // Override console.error to capture errors
+        const originalError = console.error;
+        console.error = function (...args) {
+            originalError.apply(console, args);
+            const logEntry = document.createElement('div');
+            logEntry.className = 'text-red-400 mb-1';
+            logEntry.textContent = '✗ ERROR: ' + args.join(' ');
+            consoleLogDiv.appendChild(logEntry);
+            consoleLogDiv.scrollTop = consoleLogDiv.scrollHeight;
+        };
+
+        // Check if scripts loaded
+        setTimeout(() => {
+            let allGood = true;
+            let messages = [];
+
+            // Check Popunder
+            const popunderScript = document.querySelector('script[src*="effectivegatecpm.com"]');
+            if (popunderScript) {
+                popunderStatus.className = 'status success';
+                popunderStatus.textContent = '✅ Popunder script loaded';
+                messages.push('✅ Popunder: OK');
+            } else {
+                popunderStatus.className = 'status error';
+                popunderStatus.textContent = '❌ Popunder script KHÔNG load';
+                messages.push('❌ Popunder: FAILED');
+                allGood = false;
+            }
+
+            // Check Banner 728x90
+            const banner728 = document.querySelector('iframe[src*="highperformanceformat.com"][width="728"]');
+            if (banner728) {
+                banner728Status.className = 'status success';
+                banner728Status.textContent = '✅ Banner 728x90 loaded';
+                messages.push('✅ Banner 728x90: OK');
+            } else {
+                banner728Status.className = 'status error';
+                banner728Status.textContent = '❌ Banner 728x90 KHÔNG load';
+                messages.push('❌ Banner 728x90: FAILED');
+                allGood = false;
+            }
+
+            // Check Banner 300x250
+            const banner300 = document.querySelector('iframe[src*="highperformanceformat.com"][width="300"]');
+            if (banner300) {
+                banner300Status.className = 'status success';
+                banner300Status.textContent = '✅ Banner 300x250 loaded';
+                messages.push('✅ Banner 300x250: OK');
+            } else {
+                banner300Status.className = 'status error';
+                banner300Status.textContent = '❌ Banner 300x250 KHÔNG load';
+                messages.push('❌ Banner 300x250: FAILED');
+                allGood = false;
+            }
+
+            // Update main status
+            statusDiv.innerHTML = '';
+            if (allGood) {
+                statusDiv.innerHTML = `
+                    <div class="status success">
+                        <div class="text-2xl font-bold mb-2">🎉 TẤT CẢ QUẢNG CÁO HOẠT ĐỘNG HOÀN HẢO!</div>
+                        <div>${messages.join(' | ')}</div>
+                        <div class="mt-4 text-lg">✅ An toàn để push lên Git!</div>
+                    </div>
+                `;
+            } else {
+                statusDiv.innerHTML = `
+                    <div class="status error">
+                        <div class="text-2xl font-bold mb-2">⚠️ CÓ VẤN ĐỀ!</div>
+                        <div>${messages.join(' | ')}</div>
+                        <div class="mt-4">Kiểm tra Console để xem lỗi chi tiết</div>
+                    </div>
+                `;
+            }
+
+            console.log('=== TEST COMPLETED ===');
+            console.log('Results:', messages.join(', '));
+        }, 5000); // Wait 5 seconds for ads to load
+
+        // Log initial message
+        console.log('=== AdsTerra Test Started ===');
+        console.log('Waiting 5 seconds for ads to load...');
+    </script>
+</body>
+
+</html>

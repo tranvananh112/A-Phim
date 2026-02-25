@@ -4,9 +4,9 @@
 (function () {
     'use strict';
 
-    // Cấu hình - AGGRESSIVE - Tối ưu doanh thu
+    // Cấu hình - DISABLED - Chuyển sang AdsTerra
     const CONFIG = {
-        enabled: true,
+        enabled: false, // TẮT PopAds, dùng AdsTerra
         delayOnFirstVisit: 2000, // 2 giây - nhanh hơn
         delayOnReturn: 2000, // 2 giây
         excludePages: ['/login.html', '/register.html', '/payment.html'],
