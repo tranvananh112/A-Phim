@@ -7,7 +7,7 @@
     // Configuration
     const CONFIG = {
         // Option 1: Time-based (hours) - Show modal again after X hours
-        showAfterHours: 6, // Show modal again after 6 hours
+        showAfterHours: 24, // Show modal again after 24 hours (1 ngày)
 
         // Option 2: Visit count-based
         showEveryNVisits: 4, // Show modal every 4 visits
@@ -16,7 +16,7 @@
         hideDaysAfterDonation: 4, // Random 3-5 days, using 4 as middle
 
         // Choose which method to use: 'time', 'visits', 'both', 'donation', 'hours'
-        method: 'visits' // Will check visit count
+        method: 'hours' // Show every 24 hours (1 ngày)
     };
 
     // Check if this is first time visitor
