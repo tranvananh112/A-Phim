@@ -201,6 +201,13 @@
         let currentPage = 1;
         let totalPages = 1;
 
+        // Track movie click
+        function trackMovieClick(movieName, movieSlug, categoryName) {
+            if (typeof trackUserAction !== 'undefined') {
+                trackUserAction('movie_click', 'Movie', `${movieName} (${categoryName})`, 1);
+            }
+        }
+
         const loading = document.getElementById('loading');
         const categoriesGrid = document.getElementById('categoriesGrid');
         const moviesSection = document.getElementById('moviesSection');
@@ -448,6 +455,7 @@
 
                 moviesHTML += `
                     <a href="movie-detail.html?slug=${movie.slug}" 
+                       onclick="trackMovieClick('${movie.name}', '${movie.slug}', '${currentCategory}')"
                        class="group relative block rounded-xl overflow-hidden bg-surface-dark hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-primary/20">
                         <div class="relative aspect-[2/3] overflow-hidden">
                             <img src="${posterUrl}" 
