@@ -5,20 +5,20 @@
     const CONFIG = {
         enabled: true,
         excludePages: ['/login.html', '/register.html', '/payment.html'],
-        maxPopsPerSession: 4, // Tăng lên 4 lần/session
-        minTimeBetweenPops: 240000, // 4 phút giữa các pops (sau lần đầu)
-        firstPopDelay: 10000, // Lần đầu chỉ đợi 10 giây
-        initialDelay: 3000, // Giảm xuống 3 giây để pop nhanh hơn
-        interactionDelay: 1000, // Chỉ đợi 1 giây sau interaction
-        requireInteraction: true, // YÊU CẦU user phải click/scroll trước
-        storageKey: 'adsterra_popunder',
-        watchButtonStorageKey: 'adsterra_watch_button_pop',
-        scriptUrl: 'https://pl28791542.effectivegatecpm.com/bd/33/6d/bd336d4948e946b0e4a42348436b9f13.js'
+        maxPopsPerSession: 4, // Tổng 4 pops cho cả session
+        minTimeBetweenPops: 180000, // 3 phút giữa các pops
+        firstPopDelay: 5000, // 5 giây cho lần đầu
+        initialDelay: 3000, // 3 giây sau khi vào trang
+        interactionDelay: 1000, // 1 giây sau interaction
+        requireInteraction: true,
+        storageKey: 'adsterra_popunder', // Dùng session storage
+        watchButtonStorageKey: 'adsterra_watch_button',
+        scriptUrl: 'https://pl28791542.effectivegatecpm.com/bd/33/6d/bd336d4948e946b0e4a42348436b9f13.js',
+        resetOnPageChange: false // KHÔNG reset mỗi trang - giữ counter cho cả session
     };
 
     let isReady = false;
     let hasInteracted = false;
-    let isFirstPop = true;
     let preloadedScript = null;
 
     // Preload script để giảm độ trễ
@@ -54,7 +54,7 @@
         // Check session limit
         const popCount = parseInt(sessionStorage.getItem(CONFIG.storageKey + '_count') || '0');
         if (popCount >= CONFIG.maxPopsPerSession) {
-            console.log('[AdsTerra] ⛔ Max pops reached:', popCount, '/', CONFIG.maxPopsPerSession);
+            console.log('[AdsTerra] ⛔ Max pops reached for this session:', popCount, '/', CONFIG.maxPopsPerSession);
             return false;
         }
 
@@ -98,7 +98,7 @@
         script.async = true;
         document.head.appendChild(script);
 
-        const nextWait = popCount === 0 ? '10 seconds' : Math.ceil(CONFIG.minTimeBetweenPops / 60000) + ' minutes';
+        const nextWait = popCount === 0 ? '5 seconds' : Math.ceil(CONFIG.minTimeBetweenPops / 60000) + ' minutes';
         console.log('[AdsTerra] ✅ Popunder loaded (' + source + ') - Pop', popCount + 1, '/', CONFIG.maxPopsPerSession, '| Next in', nextWait);
     }
 
