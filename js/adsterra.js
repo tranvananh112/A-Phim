@@ -1,19 +1,38 @@
-// AdsTerra Popunder Integration - UX Optimized
+// AdsTerra Popunder Integration - Revenue Optimized
 (function () {
     'use strict';
 
     const CONFIG = {
         enabled: true,
         excludePages: ['/login.html', '/register.html', '/payment.html'],
-        maxPopsPerSession: 3, // Giảm xuống 3 lần/session để ít phiền hơn
-        minTimeBetweenPops: 180000, // 3 phút giữa các pops (cân bằng UX & revenue)
-        initialDelay: 15000, // Đợi 15 giây sau khi vào trang
+        maxPopsPerSession: 4, // Tăng lên 4 lần/session
+        minTimeBetweenPops: 240000, // 4 phút giữa các pops (sau lần đầu)
+        firstPopDelay: 10000, // Lần đầu chỉ đợi 10 giây
+        initialDelay: 3000, // Giảm xuống 3 giây để pop nhanh hơn
+        interactionDelay: 1000, // Chỉ đợi 1 giây sau interaction
         requireInteraction: true, // YÊU CẦU user phải click/scroll trước
-        storageKey: 'adsterra_popunder'
+        storageKey: 'adsterra_popunder',
+        watchButtonStorageKey: 'adsterra_watch_button_pop',
+        scriptUrl: 'https://pl28791542.effectivegatecpm.com/bd/33/6d/bd336d4948e946b0e4a42348436b9f13.js'
     };
 
     let isReady = false;
     let hasInteracted = false;
+    let isFirstPop = true;
+    let preloadedScript = null;
+
+    // Preload script để giảm độ trễ
+    function preloadPopunderScript() {
+        if (preloadedScript) return;
+
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'script';
+        link.href = CONFIG.scriptUrl;
+        document.head.appendChild(link);
+
+        console.log('[AdsTerra] 📦 Preloading popunder script...');
+    }
 
     function shouldLoadAds() {
         const currentPath = window.location.pathname;
@@ -43,9 +62,15 @@
         const lastPopTime = sessionStorage.getItem(CONFIG.storageKey + '_time');
         if (lastPopTime) {
             const timeSince = Date.now() - parseInt(lastPopTime);
-            if (timeSince < CONFIG.minTimeBetweenPops) {
-                const waitMinutes = Math.ceil((CONFIG.minTimeBetweenPops - timeSince) / 60000);
-                console.log('[AdsTerra] ⏰ Wait', waitMinutes, 'minutes before next pop');
+            const isFirstPopDone = sessionStorage.getItem(CONFIG.storageKey + '_first_done');
+
+            // Lần đầu tiên chỉ cần đợi 10 giây
+            const requiredDelay = isFirstPopDone ? CONFIG.minTimeBetweenPops : CONFIG.firstPopDelay;
+
+            if (timeSince < requiredDelay) {
+                const waitMinutes = Math.ceil((requiredDelay - timeSince) / 60000);
+                const waitSeconds = Math.ceil((requiredDelay - timeSince) / 1000);
+                console.log('[AdsTerra] ⏰ Wait', waitSeconds < 60 ? waitSeconds + ' seconds' : waitMinutes + ' minutes', 'before next pop');
                 return false;
             }
         }
@@ -53,7 +78,7 @@
         return true;
     }
 
-    function loadPopunder() {
+    function loadPopunder(source = 'auto') {
         if (!CONFIG.enabled || !isReady || !shouldLoadAds()) {
             return;
         }
@@ -63,13 +88,70 @@
         sessionStorage.setItem(CONFIG.storageKey + '_count', (popCount + 1).toString());
         sessionStorage.setItem(CONFIG.storageKey + '_time', Date.now().toString());
 
+        // Đánh dấu lần đầu đã xong
+        if (popCount === 0) {
+            sessionStorage.setItem(CONFIG.storageKey + '_first_done', 'true');
+        }
+
         const script = document.createElement('script');
-        script.src = 'https://pl28791542.effectivegatecpm.com/bd/33/6d/bd336d4948e946b0e4a42348436b9f13.js';
+        script.src = CONFIG.scriptUrl;
         script.async = true;
         document.head.appendChild(script);
 
-        const nextWait = Math.ceil(CONFIG.minTimeBetweenPops / 60000);
-        console.log('[AdsTerra] ✅ Popunder loaded - Pop', popCount + 1, '/', CONFIG.maxPopsPerSession, '| Next in', nextWait, 'minutes');
+        const nextWait = popCount === 0 ? '10 seconds' : Math.ceil(CONFIG.minTimeBetweenPops / 60000) + ' minutes';
+        console.log('[AdsTerra] ✅ Popunder loaded (' + source + ') - Pop', popCount + 1, '/', CONFIG.maxPopsPerSession, '| Next in', nextWait);
+    }
+
+    // Special function for "XEM NGAY" button pop - INSTANT trigger
+    function loadWatchButtonPop() {
+        // Check if already popped for watch button in this session
+        const hasPopped = sessionStorage.getItem(CONFIG.watchButtonStorageKey);
+        if (hasPopped) {
+            console.log('[AdsTerra] ⏭️ Watch button pop already triggered this session');
+            return;
+        }
+
+        // Mark as popped IMMEDIATELY
+        sessionStorage.setItem(CONFIG.watchButtonStorageKey, 'true');
+
+        // Load popunder INSTANTLY - no delay
+        const script = document.createElement('script');
+        script.src = CONFIG.scriptUrl;
+        script.async = false; // Load synchronously for faster execution
+        document.head.appendChild(script);
+
+        console.log('[AdsTerra] 🎬 Watch button popunder loaded INSTANTLY (1 time per session)');
+    }
+
+    // Setup watch button listener on movie detail pages
+    function setupWatchButtonListener() {
+        // Check if we're on movie-detail page
+        if (!window.location.pathname.includes('movie-detail.html')) {
+            return;
+        }
+
+        // Wait for button to be available
+        const checkButton = setInterval(() => {
+            const watchButtons = document.querySelectorAll('button, a');
+
+            watchButtons.forEach(button => {
+                const textSpan = button.querySelector('span.text-lg.tracking-wide');
+                if (textSpan && textSpan.textContent.trim() === 'XEM NGAY') {
+                    // Found the button
+                    clearInterval(checkButton);
+
+                    button.addEventListener('click', function (e) {
+                        console.log('[AdsTerra] 🎯 "XEM NGAY" button clicked');
+                        loadWatchButtonPop();
+                    }, { once: true }); // Only trigger once
+
+                    console.log('[AdsTerra] 👂 Listening for "XEM NGAY" button click');
+                }
+            });
+        }, 500);
+
+        // Stop checking after 10 seconds
+        setTimeout(() => clearInterval(checkButton), 10000);
     }
 
     // Track user interaction (click, scroll, touch)
@@ -78,11 +160,11 @@
             hasInteracted = true;
             console.log('[AdsTerra] 👆 User interaction detected');
 
-            // Đợi thêm 3 giây sau interaction đầu tiên
+            // Giảm delay xuống 1 giây để pop nhanh hơn
             setTimeout(() => {
                 console.log('[AdsTerra] 🎯 Ready to trigger popunder');
-                loadPopunder();
-            }, 3000);
+                loadPopunder('interaction');
+            }, CONFIG.interactionDelay);
         }
     }
 
@@ -104,6 +186,9 @@
     function initialize() {
         console.log('[AdsTerra] ⏳ Initializing in', CONFIG.initialDelay / 1000, 'seconds...');
 
+        // Preload script ngay lập tức để giảm độ trễ
+        preloadPopunderScript();
+
         setTimeout(() => {
             isReady = true;
             console.log('[AdsTerra] ✅ Ready');
@@ -112,8 +197,11 @@
                 setupInteractionListeners();
             } else {
                 // Nếu không yêu cầu interaction, trigger luôn
-                loadPopunder();
+                loadPopunder('auto');
             }
+
+            // Setup watch button listener for movie detail pages
+            setupWatchButtonListener();
         }, CONFIG.initialDelay);
     }
 
@@ -123,5 +211,8 @@
     } else {
         initialize();
     }
+
+    // Expose function globally for manual triggering if needed
+    window.triggerWatchButtonPop = loadWatchButtonPop;
 
 })();
