@@ -31,9 +31,15 @@ document.addEventListener('DOMContentLoaded', function () {
         searchInput.value = currentKeyword;
     }
 
-    // Load categories and countries
-    loadCategories();
-    loadCountries();
+    // Load categories and countries in parallel
+    Promise.all([
+        loadCategories(),
+        loadCountries()
+    ]).then(() => {
+        console.log('✓ Categories and countries loaded');
+    }).catch(err => {
+        console.error('Error loading filters:', err);
+    });
 
     setupSearch();
     setupFilters();
