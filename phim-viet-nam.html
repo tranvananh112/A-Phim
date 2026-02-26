@@ -18,8 +18,16 @@
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/favicon.png">
+
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://ophim1.com">
+    <link rel="dns-prefetch" href="https://img.ophim.live">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="css/skeleton-loading.css">
     <script>
         tailwind.config = {
             theme: {
@@ -132,24 +140,70 @@
             </div>
         </div>
 
-        <!-- AdsTerra Banner 728x90 -->
-        <div class="mb-8 flex justify-center bg-surface-dark/50 border border-white/5 rounded-xl p-4">
-            <script>
-                atOptions = {
-                    'key': 'fe21546b444c2a83074f13138c4492de',
-                    'format': 'iframe',
-                    'height': 90,
-                    'width': 728,
-                    'params': {}
-                };
-            </script>
-            <script src="https://www.highperformanceformat.com/fe21546b444c2a83074f13138c4492de/invoke.js"></script>
+        <!-- AdsTerra Banner 728x90 - Lazy loaded -->
+        <div id="adContainer"
+            class="mb-8 flex justify-center bg-surface-dark/50 border border-white/5 rounded-xl p-4 min-h-[120px]">
+            <div class="text-gray-500 text-sm">Quảng cáo đang tải...</div>
         </div>
 
         <!-- Loading -->
         <div id="loading" class="text-center py-20">
             <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4"></div>
             <p class="text-gray-400">Đang tải phim Việt Nam...</p>
+        </div>
+
+        <!-- Skeleton Loading Grid -->
+        <div id="skeletonGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <div class="skeleton-card">
+                <div class="skeleton-poster"></div>
+                <div class="skeleton-title"></div>
+                <div class="skeleton-subtitle"></div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton-poster"></div>
+                <div class="skeleton-title"></div>
+                <div class="skeleton-subtitle"></div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton-poster"></div>
+                <div class="skeleton-title"></div>
+                <div class="skeleton-subtitle"></div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton-poster"></div>
+                <div class="skeleton-title"></div>
+                <div class="skeleton-subtitle"></div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton-poster"></div>
+                <div class="skeleton-title"></div>
+                <div class="skeleton-subtitle"></div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton-poster"></div>
+                <div class="skeleton-title"></div>
+                <div class="skeleton-subtitle"></div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton-poster"></div>
+                <div class="skeleton-title"></div>
+                <div class="skeleton-subtitle"></div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton-poster"></div>
+                <div class="skeleton-title"></div>
+                <div class="skeleton-subtitle"></div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton-poster"></div>
+                <div class="skeleton-title"></div>
+                <div class="skeleton-subtitle"></div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton-poster"></div>
+                <div class="skeleton-title"></div>
+                <div class="skeleton-subtitle"></div>
+            </div>
         </div>
 
         <!-- Movies Grid -->
@@ -175,8 +229,39 @@
     <script src="js/auth.js"></script>
     <script src="js/user.js"></script>
     <script src="js/user-ui.js"></script>
+    <script src="js/performance.js"></script>
+    <script src="js/page-optimization.js"></script>
+    <script>
+        // Start loading data immediately
+        document.addEventListener('DOMContentLoaded', () => {
+            loadVietnameseMovies(1);
+            loadAdsLazy();
+        });
+
+        // Lazy load ads after page content
+        function loadAdsLazy() {
+            setTimeout(() => {
+                const adContainer = document.getElementById('adContainer');
+                if (adContainer) {
+                    adContainer.innerHTML = `
+                        <script>
+                            atOptions = {
+                                'key': 'fe21546b444c2a83074f13138c4492de',
+                                'format': 'iframe',
+                                'height': 90,
+                                'width': 728,
+                                'params': {}
+                            };
+                        <\/script>
+                        <script src="https://www.highperformanceformat.com/fe21546b444c2a83074f13138c4492de/invoke.js"><\/script>
+                    `;
+                }
+            }, 2000);
+        }
+    </script>
     <script>
         const loading = document.getElementById('loading');
+        const skeletonGrid = document.getElementById('skeletonGrid');
         const moviesGrid = document.getElementById('moviesGrid');
         const moviesList = document.getElementById('moviesList');
         const movieCount = document.getElementById('movieCount');
@@ -185,7 +270,7 @@
         let currentPage = 1;
         let totalPages = 1;
         let allMovies = [];
-        let totalItems = 0; // Thêm biến tổng số phim
+        let totalItems = 0;
         let isLoading = false;
 
         async function loadVietnameseMovies(page = 1) {
@@ -195,7 +280,12 @@
                 isLoading = true;
                 console.log(`Loading Vietnamese movies - Page ${page}...`);
 
-                // Gọi API phim Việt Nam từ ophim1.com
+                // Show skeleton immediately
+                if (page === 1) {
+                    skeletonGrid.classList.remove('hidden');
+                    loading.classList.add('hidden');
+                }
+
                 const url = `https://ophim1.com/v1/api/quoc-gia/viet-nam?page=${page}`;
                 console.log('Fetching from:', url);
 
@@ -212,35 +302,29 @@
 
                 const data = await response.json();
                 console.log('Vietnamese movies data:', data);
-                console.log('Params:', data.data?.params);
-                console.log('Pagination:', data.data?.params?.pagination);
 
                 if (data.status === 'success' && data.data && data.data.items) {
                     const movies = data.data.items;
-                    allMovies = movies; // Replace instead of append for pagination
+                    allMovies = movies;
 
-                    // Lấy thông tin phân trang - FIX: API không trả về pagination trong params
-                    // Tạm thời hardcode totalPages = 18 (như trên ophim17.cc)
-                    totalPages = 18; // Hardcode vì API không trả về
-                    totalItems = 432; // 18 pages * 24 items
+                    totalPages = 18;
+                    totalItems = 432;
                     currentPage = page;
 
                     console.log('Set pagination - Pages:', totalPages, 'Items:', totalItems);
 
                     renderMovies(allMovies);
-
-                    // Hiển thị pagination
-                    console.log('Showing pagination - Current:', currentPage, 'Total:', totalPages);
                     showLoadMoreButton();
 
-                    document.getElementById('loading').classList.add('hidden');
-                    document.getElementById('moviesGrid').classList.remove('hidden');
+                    skeletonGrid.classList.add('hidden');
+                    moviesGrid.classList.remove('hidden');
                 } else {
                     throw new Error('Invalid data format');
                 }
             } catch (err) {
                 console.error('Error loading movies:', err);
                 if (page === 1) {
+                    skeletonGrid.classList.add('hidden');
                     loading.classList.add('hidden');
                     error.classList.remove('hidden');
                 }
@@ -250,12 +334,11 @@
         }
 
         function renderMovies(movies) {
-            loading.classList.add('hidden');
+            skeletonGrid.classList.add('hidden');
             moviesGrid.classList.remove('hidden');
 
             movieCount.textContent = `${movies.length} phim (Trang ${currentPage}/${totalPages} - Tổng: ${totalItems} phim)`;
 
-            // Get movie links from localStorage
             const movieLinks = JSON.parse(localStorage.getItem('movieLinks') || '{}');
 
             moviesList.innerHTML = movies.map(movie => {
@@ -269,6 +352,7 @@
                         <img alt="${movie.name}"
                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                             src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
+                            loading="lazy"
                             onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
                         <div class="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-2 py-0.5 rounded">
                             ${movie.quality || 'HD'}
@@ -322,10 +406,8 @@
                 }
             }
 
-            // Build pagination HTML
             let paginationHTML = '<div class="flex flex-col items-center gap-6">';
 
-            // Page info
             paginationHTML += `
                 <div class="text-center">
                     <p class="text-white text-lg font-bold">Trang ${currentPage} / ${totalPages}</p>
@@ -334,10 +416,8 @@
                 </div>
             `;
 
-            // Pagination buttons
             paginationHTML += '<div class="flex flex-wrap items-center justify-center gap-2">';
 
-            // Previous button
             if (currentPage > 1) {
                 paginationHTML += `
                     <button onclick="loadVietnameseMovies(${currentPage - 1})" 
@@ -347,7 +427,6 @@
                 `;
             }
 
-            // First page
             if (currentPage > 3) {
                 paginationHTML += `
                     <button onclick="loadVietnameseMovies(1)" 
@@ -362,7 +441,6 @@
                 }
             }
 
-            // Page numbers (show 5 pages around current)
             const startPage = Math.max(1, currentPage - 2);
             const endPage = Math.min(totalPages, currentPage + 2);
 
@@ -383,7 +461,6 @@
                 }
             }
 
-            // Last page
             if (currentPage < totalPages - 2) {
                 if (currentPage < totalPages - 3) {
                     paginationHTML += `
@@ -398,7 +475,6 @@
                 `;
             }
 
-            // Next button
             if (currentPage < totalPages) {
                 paginationHTML += `
                     <button onclick="loadVietnameseMovies(${currentPage + 1})" 
@@ -410,7 +486,6 @@
 
             paginationHTML += '</div>';
 
-            // Quick jump
             paginationHTML += `
                 <div class="flex items-center gap-2">
                     <span class="text-gray-400 text-sm">Đi đến trang:</span>
@@ -427,16 +502,8 @@
 
             paginationContainer.innerHTML = paginationHTML;
 
-            // Scroll to top when page changes
             if (currentPage > 1) {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-
-        function hideLoadMoreButton() {
-            const paginationContainer = document.getElementById('paginationContainer');
-            if (paginationContainer) {
-                paginationContainer.remove();
             }
         }
 
@@ -449,15 +516,6 @@
                 alert(`Vui lòng nhập số trang từ 1 đến ${totalPages}`);
             }
         }
-
-        function loadMoreMovies() {
-            if (currentPage < totalPages && !isLoading) {
-                loadVietnameseMovies(currentPage + 1);
-            }
-        }
-
-        // Load movies on page load
-        loadVietnameseMovies(1);
     </script>
 
     <!-- Defer ads -->
