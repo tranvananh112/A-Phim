@@ -140,10 +140,18 @@
             </div>
         </div>
 
-        <!-- AdsTerra Banner 728x90 - Lazy loaded -->
-        <div id="adContainer"
-            class="mb-8 flex justify-center bg-surface-dark/50 border border-white/5 rounded-xl p-4 min-h-[120px]">
-            <div class="text-gray-500 text-sm">Quảng cáo đang tải...</div>
+        <!-- AdsTerra Banner 728x90 -->
+        <div class="mb-8 flex justify-center bg-surface-dark/50 border border-white/5 rounded-xl p-4">
+            <script>
+                atOptions = {
+                    'key': 'fe21546b444c2a83074f13138c4492de',
+                    'format': 'iframe',
+                    'height': 90,
+                    'width': 728,
+                    'params': {}
+                };
+            </script>
+            <script src="https://www.highperformanceformat.com/fe21546b444c2a83074f13138c4492de/invoke.js"></script>
         </div>
 
         <!-- Loading -->
@@ -235,29 +243,7 @@
         // Start loading data immediately
         document.addEventListener('DOMContentLoaded', () => {
             loadVietnameseMovies(1);
-            loadAdsLazy();
         });
-
-        // Lazy load ads after page content
-        function loadAdsLazy() {
-            setTimeout(() => {
-                const adContainer = document.getElementById('adContainer');
-                if (adContainer) {
-                    adContainer.innerHTML = `
-                        <script>
-                            atOptions = {
-                                'key': 'fe21546b444c2a83074f13138c4492de',
-                                'format': 'iframe',
-                                'height': 90,
-                                'width': 728,
-                                'params': {}
-                            };
-                        <\/script>
-                        <script src="https://www.highperformanceformat.com/fe21546b444c2a83074f13138c4492de/invoke.js"><\/script>
-                    `;
-                }
-            }, 2000);
-        }
     </script>
     <script>
         const loading = document.getElementById('loading');
@@ -407,6 +393,22 @@
             }
 
             let paginationHTML = '<div class="flex flex-col items-center gap-6">';
+
+            // Add banner before pagination
+            paginationHTML += `
+                <div class="w-full flex justify-center bg-surface-dark/50 border border-white/5 rounded-xl p-4 min-h-[120px]">
+                    <script>
+                        atOptions = {
+                            'key': 'fe21546b444c2a83074f13138c4492de',
+                            'format': 'iframe',
+                            'height': 90,
+                            'width': 728,
+                            'params': {}
+                        };
+                    <\/script>
+                    <script src="https://www.highperformanceformat.com/fe21546b444c2a83074f13138c4492de/invoke.js"><\/script>
+                </div>
+            `;
 
             paginationHTML += `
                 <div class="text-center">

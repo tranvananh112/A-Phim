@@ -365,6 +365,11 @@
             currentCategory = slug;
             currentPage = page;
 
+            // Track category selection (only on first page)
+            if (page === 1 && typeof trackCategoryClick !== 'undefined') {
+                trackCategoryClick(name, slug);
+            }
+
             // Update title
             pageTitle.textContent = name;
             pageSubtitle.textContent = 'Đang tải danh sách phim...';
@@ -431,7 +436,9 @@
             categoriesGrid.classList.add('hidden');
             moviesSection.classList.remove('hidden');
 
-            moviesGrid.innerHTML = movies.map(movie => {
+            let moviesHTML = '';
+
+            movies.forEach((movie, index) => {
                 // Fix poster URL with CDN prefix
                 const thumbUrl = movie.thumb_url || movie.poster_url || '';
                 const posterUrl = thumbUrl ? `https://img.ophim.live/uploads/movies/${thumbUrl}` : 'https://via.placeholder.com/300x450?text=No+Image';
@@ -439,7 +446,7 @@
                 const quality = movie.quality || movie.lang || '';
                 const episodeCurrent = movie.episode_current || '';
 
-                return `
+                moviesHTML += `
                     <a href="movie-detail.html?slug=${movie.slug}" 
                        class="group relative block rounded-xl overflow-hidden bg-surface-dark hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-primary/20">
                         <div class="relative aspect-[2/3] overflow-hidden">
@@ -484,7 +491,21 @@
                         </div>
                     </a>
                 `;
-            }).join('');
+
+                // Add Native Banner after 12 movies (middle of page)
+                if (index === 11) {
+                    moviesHTML += `
+                        <div class="col-span-2 md:col-span-3 lg:col-span-4 xl:col-span-5 flex justify-center my-8">
+                            <div class="w-full max-w-2xl bg-surface-dark/50 border border-white/5 rounded-xl p-6">
+                                <script async="async" data-cfasync="false" src="https://pl28796430.effectivegatecpm.com/a2e915282093d8bc705200c51a7da447/invoke.js"><\/script>
+                                <div id="container-a2e915282093d8bc705200c51a7da447"></div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            moviesGrid.innerHTML = moviesHTML;
 
             console.log(`Rendered ${movies.length} movies`);
         }
@@ -574,6 +595,7 @@
             }
 
             pagination.innerHTML = paginationHTML;
+            addBottomBanner();
         }
 
         // Go to page
@@ -598,11 +620,39 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // Add banner after pagination
+        function addBottomBanner() {
+            const paginationContainer = document.getElementById('pagination');
+            if (paginationContainer && !document.getElementById('bottomBannerContainer')) {
+                const bannerDiv = document.createElement('div');
+                bannerDiv.id = 'bottomBannerContainer';
+                bannerDiv.className = 'mt-12 flex justify-center bg-surface-dark/50 border border-white/5 rounded-xl p-6';
+                bannerDiv.innerHTML = `
+                    <div class="w-full max-w-2xl">
+                        <script async="async" data-cfasync="false" src="https://pl28796430.effectivegatecpm.com/a2e915282093d8bc705200c51a7da447/invoke.js"><\/script>
+                        <div id="container-a2e915282093d8bc705200c51a7da447"></div>
+                    </div>
+                `;
+                paginationContainer.parentNode.insertBefore(bannerDiv, paginationContainer.nextSibling);
+            }
+        }
+
         // Load categories on page load
         loadCategories();
     </script>
 
     <!-- Defer ads -->
+    <!-- Bottom Native Banner -->
+    <div class="container mx-auto px-6 py-12">
+        <div class="flex justify-center bg-surface-dark/50 border border-white/5 rounded-xl p-6">
+            <div class="w-full max-w-2xl">
+                <script async="async" data-cfasync="false"
+                    src="https://pl28796430.effectivegatecpm.com/a2e915282093d8bc705200c51a7da447/invoke.js"></script>
+                <div id="container-a2e915282093d8bc705200c51a7da447"></div>
+            </div>
+        </div>
+    </div>
+
     <script defer src="js/adsterra.js"></script>
 </body>
 

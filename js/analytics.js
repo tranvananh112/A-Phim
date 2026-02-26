@@ -81,6 +81,18 @@ function trackPricingPlan(planName, planPrice) {
     }
 }
 
+// Track category selection
+function trackCategoryClick(categoryName, categorySlug) {
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'select_category', {
+            'event_category': 'Category',
+            'event_label': categoryName,
+            'category_slug': categorySlug,
+            'page_location': window.location.href
+        });
+    }
+}
+
 // Initialize navigation tracking when DOM is ready
 document.addEventListener('DOMContentLoaded', function () {
     // Track all navigation links
@@ -186,3 +198,4 @@ window.trackMovieView = trackMovieView;
 window.trackSearch = trackSearch;
 window.trackSupportClick = trackSupportClick;
 window.trackPricingPlan = trackPricingPlan;
+window.trackCategoryClick = trackCategoryClick;
