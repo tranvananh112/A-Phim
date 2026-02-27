@@ -18,9 +18,12 @@
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Round&display=swap"
+        rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script>
         tailwind.config = {
@@ -137,10 +140,20 @@
                         </div>
                     </div>
 
-                    <a href="categories.html"
-                        class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white hover:text-primary">
-                        Thể Loại
-                    </a>
+                    <!-- Thể Loại Dropdown -->
+                    <div class="relative group">
+                        <button
+                            class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white hover:text-primary flex items-center gap-1">
+                            Thể Loại
+                            <span
+                                class="material-icons-round text-sm group-hover:rotate-180 transition-transform duration-300">expand_more</span>
+                        </button>
+                        <div id="categoryDropdown"
+                            class="absolute top-full left-0 mt-2 w-[700px] bg-black/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden z-50">
+                            <!-- Categories will be loaded here in grid format -->
+                            <div class="p-4 text-center text-gray-400">Đang tải...</div>
+                        </div>
+                    </div>
                     <a href="search.html"
                         class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white hover:text-primary">
                         Khám phá
