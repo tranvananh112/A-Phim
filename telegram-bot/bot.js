@@ -158,10 +158,25 @@ bot.on('message', async (msg) => {
         return;
     }
 
-    console.log(`📩 Nhận tin nhắn: "${text}"`);
+    // Kiểm tra tin nhắn có bắt đầu bằng "Phim" hoặc "phim" không
+    const lowerText = text.toLowerCase();
+    if (!lowerText.startsWith('phim ')) {
+        console.log(`⏭️ Bỏ qua tin nhắn không bắt đầu bằng "phim"`);
+        return;
+    }
+
+    // Lấy tên phim (bỏ chữ "phim" ở đầu)
+    const movieName = text.substring(5).trim(); // Bỏ "phim " (5 ký tự)
+
+    if (!movieName) {
+        console.log(`⚠️ Không có tên phim sau chữ "phim"`);
+        return;
+    }
+
+    console.log(`📩 Tìm phim: "${movieName}"`);
 
     // Tìm kiếm phim trên API
-    const searchResults = await searchMovies(text);
+    const searchResults = await searchMovies(movieName);
 
     // Nếu tìm thấy nhiều kết quả (>1), hiển thị danh sách cho user chọn
     if (searchResults.length > 1) {
@@ -219,7 +234,7 @@ bot.on('message', async (msg) => {
         if (movieInfo.posterUrl) {
             try {
                 await bot.sendPhoto(chatId, movieInfo.posterUrl, {
-                    caption: `🎬 <b>${text}</b>`,
+                    caption: `🎬 <b>${movieName}</b>`,
                     parse_mode: 'HTML',
                     reply_markup: keyboard,
                     reply_to_message_id: msg.message_id
@@ -228,7 +243,7 @@ bot.on('message', async (msg) => {
             } catch (error) {
                 // Nếu gửi ảnh lỗi, gửi text với button
                 console.log(`⚠️ Không gửi được ảnh, gửi text thay thế`);
-                await bot.sendMessage(chatId, `🎬 <b>${text}</b>`, {
+                await bot.sendMessage(chatId, `🎬 <b>${movieName}</b>`, {
                     parse_mode: 'HTML',
                     reply_markup: keyboard,
                     reply_to_message_id: msg.message_id
@@ -236,7 +251,7 @@ bot.on('message', async (msg) => {
             }
         } else {
             // Không có ảnh, chỉ gửi text với button
-            await bot.sendMessage(chatId, `🎬 <b>${text}</b>`, {
+            await bot.sendMessage(chatId, `🎬 <b>${movieName}</b>`, {
                 parse_mode: 'HTML',
                 reply_markup: keyboard,
                 reply_to_message_id: msg.message_id
@@ -251,7 +266,7 @@ bot.on('message', async (msg) => {
 // Lệnh /start
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
-    bot.sendMessage(chatId, '👋 Xin chào! Gõ tên phim để tôi tìm link cho bạn.\n\nVí dụ: Quỷ Nhập Tràng 2');
+    bot.sendMessage(chatId, '👋 Xin chào! Gõ "phim [tên phim]" để tôi tìm link cho bạn.\n\nVí dụ: phim Thỏ Ơi');
 });
 
 // Chào mừng thành viên mới vào nhóm
@@ -272,8 +287,8 @@ bot.on('new_chat_members', (msg) => {
         // Tin nhắn chào mừng
         const welcomeMessage = `👋 Chào mừng ${firstName} đã tham gia nhóm A Phim!
 
-🎬 Gõ tên phim vào nhóm, bot sẽ tự động gửi link cho bạn!
-Ví dụ: Gõ Thỏ Ơi
+🎬 Gõ "phim [tên phim]" vào nhóm, bot sẽ tự động gửi link cho bạn!
+Ví dụ: phim Thỏ Ơi
 
 🔗 Website: https://aphim.io.vn
 Chúc bạn xem phim vui vẻ! 🍿`.trim();
