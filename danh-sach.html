@@ -19,6 +19,23 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round&display=swap" rel="stylesheet">
+    <style>
+        /* Ensure icons display properly while font loads */
+        .material-icons-round {
+            font-family: 'Material Icons Round', sans-serif;
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            display: inline-flex;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+    </style>
+
     <script>
         tailwind.config = {
             theme: {
@@ -166,8 +183,9 @@
                     <span class="material-icons-round">search</span>
                 </a>
                 <a href="login.html"
-                    class="px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors">Đăng
-                    nhập</a>
+                    class="px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors text-sm uppercase tracking-wide">
+                    Đăng nhập
+                </a>
             </div>
 
             <button id="mobileMenuBtn" class="lg:hidden text-white">
