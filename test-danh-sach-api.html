@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Danh Sách API</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        pre {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #f2f20d;
+            color: #000;
+            border: none;
+            cursor: pointer;
+        }
+
+        .error {
+            color: #ff4444;
+        }
+
+        .success {
+            color: #44ff44;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Test Ophim17 Danh Sách API</h1>
+
+    <div>
+        <button onclick="testAPI('phim-moi')">Test Phim Mới</button>
+        <button onclick="testAPI('phim-bo')">Test Phim Bộ</button>
+        <button onclick="testAPI('phim-le')">Test Phim Lẻ</button>
+        <button onclick="testAPI('phim-chieu-rap')">Test Phim Chiếu Rạp</button>
+    </div>
+
+    <h2>Response:</h2>
+    <pre id="output">Chưa có dữ liệu...</pre>
+
+    <script>
+        async function testAPI(listSlug) {
+            const output = document.getElementById('output');
+            output.textContent = `Đang gọi API: https://ophim17.cc/danh-sach/${listSlug}?page=1\n\nĐợi...`;
+
+            try {
+                const response = await fetch(`https://ophim17.cc/danh-sach/${listSlug}?page=1`, {
+                    method: 'GET',
+                    headers: {
+                        'accept': 'application/json'
+                    }
+                });
+
+                output.textContent = `Status: ${response.status} ${response.statusText}\n\n`;
+
+                if (!response.ok) {
+                    output.textContent += `ERROR: HTTP ${response.status}\n`;
+                    output.className = 'error';
+                    return;
+                }
+
+                const data = await response.json();
+                output.textContent += JSON.stringify(data, null, 2);
+                output.className = 'success';
+
+                // Log structure
+                console.log('Full response:', data);
+                console.log('Status:', data.status);
+                console.log('Data:', data.data);
+                console.log('Items:', data.data?.items);
+                console.log('First movie:', data.data?.items?.[0]);
+                console.log('Pagination:', data.data?.params?.pagination || data.data?.pagination);
+
+            } catch (err) {
+                output.textContent = `ERROR: ${err.message}\n\n${err.stack}`;
+                output.className = 'error';
+                console.error('Error:', err);
+            }
+        }
+
+        // Auto test on load
+        window.onload = () => testAPI('phim-moi');
+    </script>
+</body>
+
+</html>

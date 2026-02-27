@@ -49,36 +49,107 @@
                 </span>
             </a>
 
-            <!-- Desktop Menu -->
-            <div class="hidden lg:flex items-center gap-6">
-                <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
-                    href="index.html">Trang chủ</a>
+            <!-- Desktop Menu with Modern Pill Container -->
+            <div class="hidden lg:flex items-center">
+                <div
+                    class="flex items-center gap-1 bg-white/5 backdrop-blur-md rounded-full p-1.5 border border-white/10">
+                    <a href="index.html"
+                        class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white hover:text-primary">
+                        Trang chủ
+                    </a>
 
-                <!-- Phim Link -->
-                <a href="phim-viet-nam.html"
-                    class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide">
-                    🇻🇳 Phim Việt Nam
-                </a>
-
-                <!-- Thể Loại Dropdown -->
-                <div class="relative group">
-                    <button
-                        class="text-primary font-bold transition-colors text-sm uppercase tracking-wide flex items-center gap-1">
-                        Thể Loại
-                        <span class="material-icons-round text-sm">expand_more</span>
-                    </button>
-                    <div id="categoryDropdown"
-                        class="absolute top-full left-0 mt-2 w-64 max-h-96 overflow-y-auto bg-black/95 backdrop-blur-md border border-white/10 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                        <!-- Categories will be loaded here -->
-                        <div class="p-4 text-center text-gray-400">Đang tải...</div>
+                    <!-- Phim Dropdown -->
+                    <div class="relative group">
+                        <button
+                            class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white hover:text-primary flex items-center gap-1">
+                            Phim
+                            <span
+                                class="material-icons-round text-sm group-hover:rotate-180 transition-transform duration-300">expand_more</span>
+                        </button>
+                        <div
+                            class="absolute top-full left-0 mt-2 w-56 bg-black/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden z-50">
+                            <a href="phim-viet-nam.html"
+                                class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all flex items-center gap-2">
+                                <svg width="20" height="14" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg"
+                                    class="flex-shrink-0">
+                                    <rect width="30" height="20" fill="#DA251D" />
+                                    <polygon points="15,4 16.5,9 21.5,9 17.5,12 19,17 15,14 11,17 12.5,12 8.5,9 13.5,9"
+                                        fill="#FFFF00" />
+                                </svg>
+                                Phim Việt Nam
+                            </a>
+                        </div>
                     </div>
+
+                    <!-- Danh Sách Dropdown -->
+                    <div class="relative group">
+                        <button
+                            class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white hover:text-primary flex items-center gap-1">
+                            Danh Sách
+                            <span
+                                class="material-icons-round text-sm group-hover:rotate-180 transition-transform duration-300">expand_more</span>
+                        </button>
+                        <div
+                            class="absolute top-full left-0 mt-2 w-[600px] bg-black/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden z-50">
+                            <div class="grid grid-cols-3 gap-0">
+                                <a href="danh-sach.html?list=phim-moi"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Phim
+                                    Mới</a>
+                                <a href="danh-sach.html?list=phim-bo"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Phim
+                                    Bộ</a>
+                                <a href="danh-sach.html?list=phim-le"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">Phim
+                                    Lẻ</a>
+                                <a href="danh-sach.html?list=tv-shows"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Shows</a>
+                                <a href="danh-sach.html?list=hoat-hinh"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Hoạt
+                                    Hình</a>
+                                <a href="danh-sach.html?list=phim-vietsub"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">Phim
+                                    Vietsub</a>
+                                <a href="danh-sach.html?list=phim-thuyet-minh"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Phim
+                                    Thuyết Minh</a>
+                                <a href="danh-sach.html?list=phim-long-tien"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Phim
+                                    Lồng Tiếng</a>
+                                <a href="danh-sach.html?list=phim-bo-dang-chieu"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">Phim
+                                    Bộ Đang Chiếu</a>
+                                <a href="danh-sach.html?list=phim-bo-hoan-thanh"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-white/5">Phim
+                                    Bộ Đã Hoàn Thành</a>
+                                <a href="danh-sach.html?list=phim-sap-chieu"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-white/5">Phim
+                                    Sắp Chiếu</a>
+                                <a href="danh-sach.html?list=subteam"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all">Subteam</a>
+                                <a href="danh-sach.html?list=phim-chieu-rap"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all col-span-3 border-t border-white/5 text-center font-semibold">Phim
+                                    Chiếu Rạp</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="categories.html"
+                        class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-primary font-bold">
+                        Thể Loại
+                    </a>
+                    <a href="search.html"
+                        class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white hover:text-primary">
+                        Khám phá
+                    </a>
+                    <a href="pricing.html"
+                        class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white hover:text-primary">
+                        Gói cước
+                    </a>
+                    <a href="support.html"
+                        class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white hover:text-primary">
+                        Nuôi APhim
+                    </a>
                 </div>
-                <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
-                    href="search.html">Khám phá</a>
-                <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
-                    href="pricing.html">Gói cước</a>
-                <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
-                    href="support.html">Nuôi APhim</a>
             </div>
 
             <div class="flex items-center gap-4">
@@ -98,29 +169,7 @@
 
         <!-- Mobile Menu -->
         <div id="mobileMenu" class="lg:hidden hidden bg-black/95 backdrop-blur-md border-t border-white/10">
-            <div class="container mx-auto px-6 py-4">
-                <a href="index.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
-                    🏠 Trang chủ
-                </a>
-                <a href="phim-viet-nam.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
-                    🇻🇳 Phim Việt Nam
-                </a>
-                <div class="py-3">
-                    <div class="text-primary text-sm font-bold mb-2">THỂ LOẠI</div>
-                    <div id="mobileCategoryList" class="pl-4">
-                        <div class="text-gray-400 text-sm">Đang tải...</div>
-                    </div>
-                </div>
-                <a href="search.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
-                    🔍 Khám phá
-                </a>
-                <a href="pricing.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
-                    💎 Gói cước
-                </a>
-                <a href="support.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
-                    ❤️ Nuôi APhim
-                </a>
-            </div>
+            <!-- Content will be injected by mobile-menu-simple.js -->
         </div>
     </nav>
 
@@ -162,7 +211,7 @@
             </div>
 
             <!-- Pagination -->
-            <div id="pagination" class="mt-12 flex justify-center items-center gap-2">
+            <div id="pagination" class="mt-12">
                 <!-- Pagination will be loaded here -->
             </div>
         </div>
@@ -175,6 +224,8 @@
     </main>
 
     <script src="js/analytics.js"></script>
+    <script src="js/mobile-menu-simple.js"></script>
+    <script src="js/navigation-danh-sach.js"></script>
     <script src="js/config.js"></script>
     <script src="js/api.js"></script>
     <script src="js/data-cache.js"></script>
@@ -213,6 +264,16 @@
             mobileMenuBtn.addEventListener('click', () => {
                 mobileMenu.classList.toggle('hidden');
             });
+        }
+
+        // Toggle mobile sections
+        function toggleMobileSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const icon = document.getElementById(sectionId + 'Icon');
+            if (section && icon) {
+                section.classList.toggle('hidden');
+                icon.style.transform = section.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+            }
         }
 
         // Load categories on page load
@@ -407,12 +468,20 @@
                     const totalPages_api = pagination_data.totalPages || Math.ceil(totalItems / 24) || 1;
                     totalPages = totalPages_api;
 
+                    // Build complete pagination data
+                    const completePaginationData = {
+                        currentPage: currentPage,
+                        totalPages: totalPages_api,
+                        totalItems: totalItems,
+                        ...pagination_data
+                    };
+
                     pageSubtitle.textContent = `Trang ${currentPage}/${totalPages} | Tổng ${totalItems.toLocaleString()} kết quả`;
 
                     // Render movies
                     if (movies.length > 0) {
                         renderMovies(movies);
-                        renderPagination(pagination_data);
+                        renderPagination(completePaginationData);
                     } else {
                         throw new Error('No movies found');
                     }
@@ -506,6 +575,7 @@
 
             const totalPages_api = paginationData.totalPages;
             const currentPage_api = paginationData.currentPage || currentPage;
+            const totalItems = paginationData.totalItems || paginationData.total || 0;
 
             const maxPagesToShow = 5;
             let startPage = Math.max(1, currentPage_api - Math.floor(maxPagesToShow / 2));
@@ -515,13 +585,16 @@
                 startPage = Math.max(1, endPage - maxPagesToShow + 1);
             }
 
-            let paginationHTML = '';
+            let paginationHTML = `
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="flex items-center gap-2 overflow-x-auto px-2 py-1">
+            `;
 
             // Previous button
             if (currentPage_api > 1) {
                 paginationHTML += `
                     <button onclick="goToPage(${currentPage_api - 1})" 
-                            class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-colors">
+                            class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
                         <span class="material-icons-round text-sm">chevron_left</span>
                     </button>
                 `;
@@ -531,12 +604,12 @@
             if (startPage > 1) {
                 paginationHTML += `
                     <button onclick="goToPage(1)" 
-                            class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-colors">
+                            class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
                         1
                     </button>
                 `;
                 if (startPage > 2) {
-                    paginationHTML += `<span class="text-gray-400">...</span>`;
+                    paginationHTML += `<span class="text-gray-400 flex-shrink-0">...</span>`;
                 }
             }
 
@@ -544,14 +617,14 @@
             for (let i = startPage; i <= endPage; i++) {
                 if (i === currentPage_api) {
                     paginationHTML += `
-                        <button class="px-4 py-2 bg-primary text-black font-bold rounded-lg">
+                        <button class="px-4 py-2 bg-primary text-black font-bold rounded-lg flex-shrink-0 transition-all duration-300">
                             ${i}
                         </button>
                     `;
                 } else {
                     paginationHTML += `
                         <button onclick="goToPage(${i})" 
-                                class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-colors">
+                                class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
                             ${i}
                         </button>
                     `;
@@ -561,11 +634,11 @@
             // Last page
             if (endPage < totalPages_api) {
                 if (endPage < totalPages_api - 1) {
-                    paginationHTML += `<span class="text-gray-400">...</span>`;
+                    paginationHTML += `<span class="text-gray-400 flex-shrink-0">...</span>`;
                 }
                 paginationHTML += `
                     <button onclick="goToPage(${totalPages_api})" 
-                            class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-colors">
+                            class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
                         ${totalPages_api}
                     </button>
                 `;
@@ -575,11 +648,19 @@
             if (currentPage_api < totalPages_api) {
                 paginationHTML += `
                     <button onclick="goToPage(${currentPage_api + 1})" 
-                            class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-colors">
+                            class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
                         <span class="material-icons-round text-sm">chevron_right</span>
                     </button>
                 `;
             }
+
+            paginationHTML += `
+                    </div>
+                    <div class="text-gray-400 text-sm whitespace-nowrap">
+                        Trang ${currentPage_api}/${totalPages_api} | Tổng ${totalItems.toLocaleString()} kết quả
+                    </div>
+                </div>
+            `;
 
             pagination.innerHTML = paginationHTML;
             addBottomBanner();
@@ -588,6 +669,20 @@
         // Go to page
         function goToPage(page) {
             if (page < 1 || page > totalPages || !currentCategory) return;
+
+            // Update pagination UI immediately for smooth transition
+            const paginationContainer = document.getElementById('pagination');
+            if (paginationContainer && page !== currentPage) {
+                const allButtons = paginationContainer.querySelectorAll('button');
+                allButtons.forEach(btn => {
+                    const btnText = btn.textContent.trim();
+                    if (btnText === page.toString()) {
+                        btn.className = 'px-4 py-2 bg-primary text-black font-bold rounded-lg flex-shrink-0 transition-all duration-300';
+                    } else if (!btn.querySelector('.material-icons-round')) {
+                        btn.className = 'px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0';
+                    }
+                });
+            }
 
             const categoryName = allCategories.find(cat => cat.slug === currentCategory)?.name || currentCategory;
             loadCategoryMovies(currentCategory, categoryName, page);

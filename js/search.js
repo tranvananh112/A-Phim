@@ -384,23 +384,16 @@ function renderPagination(params) {
         return;
     }
 
-    let paginationHTML = '';
-
-    // First page button
-    if (currentPageNum > 1) {
-        paginationHTML += `
-            <button onclick="goToPage(1)" 
-                class="px-4 py-2 bg-surface-dark border border-white/10 rounded-lg hover:border-primary hover:text-primary transition-colors">
-                <span class="material-icons-round text-sm">first_page</span>
-            </button>
-        `;
-    }
+    let paginationHTML = `
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2 overflow-x-auto px-2 py-1">
+    `;
 
     // Previous button
     if (currentPageNum > 1) {
         paginationHTML += `
             <button onclick="goToPage(${currentPageNum - 1})" 
-                class="px-4 py-2 bg-surface-dark border border-white/10 rounded-lg hover:border-primary hover:text-primary transition-colors">
+                class="px-3 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
                 <span class="material-icons-round text-sm">chevron_left</span>
             </button>
         `;
@@ -419,33 +412,41 @@ function renderPagination(params) {
     if (startPage > 1) {
         paginationHTML += `
             <button onclick="goToPage(1)" 
-                class="px-4 py-2 bg-surface-dark text-gray-300 border border-white/10 rounded-lg hover:border-primary transition-colors font-medium">
+                class="px-3 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
                 1
             </button>
         `;
         if (startPage > 2) {
-            paginationHTML += `<span class="px-2 text-gray-500">...</span>`;
+            paginationHTML += `<span class="text-gray-400 flex-shrink-0">...</span>`;
         }
     }
 
     // Page numbers
     for (let i = startPage; i <= endPage; i++) {
-        paginationHTML += `
-            <button onclick="goToPage(${i})" 
-                class="px-4 py-2 ${i === currentPageNum ? 'bg-primary text-black font-bold' : 'bg-surface-dark text-gray-300'} border border-white/10 rounded-lg hover:border-primary transition-colors font-medium">
-                ${i}
-            </button>
-        `;
+        if (i === currentPageNum) {
+            paginationHTML += `
+                <button class="px-3 py-2 bg-primary text-black font-bold rounded-lg flex-shrink-0 transition-all duration-300">
+                    ${i}
+                </button>
+            `;
+        } else {
+            paginationHTML += `
+                <button onclick="goToPage(${i})" 
+                    class="px-3 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
+                    ${i}
+                </button>
+            `;
+        }
     }
 
     // Show last page if not in range
     if (endPage < totalPages) {
         if (endPage < totalPages - 1) {
-            paginationHTML += `<span class="px-2 text-gray-500">...</span>`;
+            paginationHTML += `<span class="text-gray-400 flex-shrink-0">...</span>`;
         }
         paginationHTML += `
             <button onclick="goToPage(${totalPages})" 
-                class="px-4 py-2 bg-surface-dark text-gray-300 border border-white/10 rounded-lg hover:border-primary transition-colors font-medium">
+                class="px-3 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
                 ${totalPages}
             </button>
         `;
@@ -455,26 +456,17 @@ function renderPagination(params) {
     if (currentPageNum < totalPages) {
         paginationHTML += `
             <button onclick="goToPage(${currentPageNum + 1})" 
-                class="px-4 py-2 bg-surface-dark border border-white/10 rounded-lg hover:border-primary hover:text-primary transition-colors">
+                class="px-3 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
                 <span class="material-icons-round text-sm">chevron_right</span>
             </button>
         `;
     }
 
-    // Last page button
-    if (currentPageNum < totalPages) {
-        paginationHTML += `
-            <button onclick="goToPage(${totalPages})" 
-                class="px-4 py-2 bg-surface-dark border border-white/10 rounded-lg hover:border-primary hover:text-primary transition-colors">
-                <span class="material-icons-round text-sm">last_page</span>
-            </button>
-        `;
-    }
-
-    // Page info
     paginationHTML += `
-        <div class="px-4 py-2 text-gray-400 text-sm">
-            Trang ${currentPageNum} / ${totalPages}
+            </div>
+            <div class="text-gray-400 text-sm whitespace-nowrap">
+                Trang ${currentPageNum}/${totalPages} | Tổng ${totalItems.toLocaleString()} kết quả
+            </div>
         </div>
     `;
 
@@ -483,6 +475,20 @@ function renderPagination(params) {
 
 // Go to page
 window.goToPage = function (page) {
+    // Update UI immediately for smooth transition
+    const pagination = document.getElementById('pagination');
+    const allButtons = pagination.querySelectorAll('button');
+    allButtons.forEach(btn => {
+        const btnText = btn.textContent.trim();
+        if (btnText === page.toString()) {
+            // Highlight new page button
+            btn.className = 'px-4 py-2 bg-primary text-black font-bold rounded-lg flex-shrink-0 transition-all duration-300';
+        } else if (!btn.querySelector('.material-icons-round')) {
+            // Reset other page buttons
+            btn.className = 'px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0';
+        }
+    });
+
     currentPage = page;
     performSearch();
     window.scrollTo({ top: 0, behavior: 'smooth' });

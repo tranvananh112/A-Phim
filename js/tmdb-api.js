@@ -12,6 +12,16 @@ async function loadActorImagesFromTMDB(movie) {
         return false;
     }
 
+    // Check cache first
+    const cacheKey = `tmdb_actors_${movie.slug}`;
+    const cached = sessionStorage.getItem(cacheKey);
+    if (cached) {
+        console.log('✅ Using cached actor images');
+        const cachedData = JSON.parse(cached);
+        updateActorAvatars(movie.actor, cachedData);
+        return true;
+    }
+
     try {
         console.log('🎬 Loading actor images for:', movie.name);
 
@@ -49,6 +59,8 @@ async function loadActorImagesFromTMDB(movie) {
 
                     if (creditsData.cast && creditsData.cast.length > 0) {
                         console.log('✅ Found', creditsData.cast.length, 'cast members');
+                        // Cache the result
+                        sessionStorage.setItem(cacheKey, JSON.stringify(creditsData.cast));
                         updateActorAvatars(movie.actor, creditsData.cast);
                         return true;
                     }
@@ -59,9 +71,9 @@ async function loadActorImagesFromTMDB(movie) {
             }
         }
 
-        // If all movie search strategies fail, try searching actors directly
-        console.log('❌ Movie not found, trying direct actor search...');
-        return trySearchActorsDirectly(movie);
+        // If all movie search strategies fail, skip direct actor search (too slow)
+        console.log('❌ Movie not found in TMDB');
+        return false;
 
     } catch (error) {
         console.error('❌ Error:', error);

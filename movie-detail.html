@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html class="dark" lang="vi">
 
 <head>
@@ -99,30 +99,7 @@
 
         <!-- Mobile Menu -->
         <div id="mobileMenu" class="lg:hidden hidden bg-black/95 backdrop-blur-md border-t border-white/10">
-            <div class="container mx-auto px-6 py-4">
-                <a href="index.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
-                    🏠 Trang chủ
-                </a>
-                <div class="py-3">
-                    <div class="text-gray-400 text-sm font-bold mb-2">PHIM</div>
-                    <a href="phim-viet-nam.html"
-                        class="block py-2 pl-4 text-gray-300 hover:text-primary transition-colors">
-                        🇻🇳 Phim Việt Nam
-                    </a>
-                </div>
-                <a href="categories.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
-                    🎭 Thể Loại
-                </a>
-                <a href="search.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
-                    🔍 Khám phá
-                </a>
-                <a href="pricing.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
-                    💎 Gói cước
-                </a>
-                <a href="support.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
-                    ❤️ Nuôi APhim
-                </a>
-            </div>
+            <!-- Content will be injected by mobile-menu-simple.js -->
         </div>
     </nav>
 
@@ -184,18 +161,18 @@
                         <span class="text-gray-300 font-medium">45-60 phút/tập</span>
                     </div>
 
-                    <div class="flex flex-wrap items-center gap-4 mb-10">
+                    <div class="flex flex-nowrap overflow-x-auto items-center gap-2 md:gap-4 mb-10 pb-2">
                         <a href="watch.html"
-                            class="group relative px-8 py-4 bg-primary text-white font-bold rounded-full shadow-lg shadow-primary/40 hover:shadow-primary/60 hover:-translate-y-1 transition-all duration-300">
-                            <div class="flex items-center gap-3">
-                                <span class="material-icons-round text-3xl">play_arrow</span>
-                                <span class="text-lg tracking-wide">XEM NGAY</span>
+                            class="group relative px-4 md:px-8 py-3 md:py-4 bg-primary text-white font-bold rounded-full shadow-lg shadow-primary/40 hover:shadow-primary/60 hover:-translate-y-1 transition-all duration-300 flex-shrink-0">
+                            <div class="flex items-center gap-2 md:gap-3">
+                                <span class="material-icons-round text-2xl md:text-3xl">play_arrow</span>
+                                <span class="text-sm md:text-lg tracking-wide whitespace-nowrap">XEM NGAY</span>
                             </div>
                         </a>
                         <button
-                            class="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full backdrop-blur-md border border-white/10 hover:border-white/30 transition-all duration-300 flex items-center gap-3">
-                            <span class="material-icons-round">videocam</span>
-                            <span>Xem Trailer</span>
+                            class="px-4 md:px-8 py-3 md:py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full backdrop-blur-md border border-white/10 hover:border-white/30 transition-all duration-300 flex items-center gap-2 md:gap-3 flex-shrink-0">
+                            <span class="material-icons-round text-lg md:text-xl">videocam</span>
+                            <span class="text-sm md:text-base whitespace-nowrap">Trailer</span>
                         </button>
                     </div>
 
@@ -262,6 +239,7 @@
     </footer>
 
     <script src="js/analytics.js"></script>
+    <script src="js/navigation-danh-sach.js"></script>
     <script src="js/config.js"></script>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
@@ -273,6 +251,7 @@
 
     <!-- Defer ads -->
     <script defer src="js/adsterra.js"></script>
+    <script src="js/mobile-menu-simple.js"></script>
 </body>
 
 </html>

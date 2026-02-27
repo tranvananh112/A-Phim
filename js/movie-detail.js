@@ -56,9 +56,11 @@ function renderMovieDetail(movie) {
     // Update title
     const titleElement = document.querySelector('h1');
     if (titleElement) {
+        // Vietnamese name larger, English name smaller and on one line
+        titleElement.className = 'font-extrabold text-white mb-4 leading-tight tracking-tight';
         titleElement.innerHTML = `
-            ${movie.name}<br />
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-red-400">
+            <span class="block text-3xl md:text-5xl lg:text-7xl">${movie.name}</span>
+            <span class="block text-xl md:text-3xl lg:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-primary to-red-400 whitespace-nowrap overflow-hidden text-ellipsis">
                 ${movie.origin_name}
             </span>
         `;
@@ -67,20 +69,23 @@ function renderMovieDetail(movie) {
     // Update info
     const infoContainer = document.querySelector('.flex.flex-wrap.items-center.gap-4.mb-8');
     if (infoContainer) {
+        // Change to flex-nowrap with overflow for mobile
+        infoContainer.className = 'flex flex-nowrap overflow-x-auto items-center gap-3 md:gap-4 mb-8 pb-2 text-sm md:text-base';
+
         const avgRating = ratingService.getAverageRating(movie.slug);
         const ratings = ratingService.getRatings(movie.slug);
 
         infoContainer.innerHTML = `
-            <span class="flex items-center gap-1 text-yellow-400 font-bold bg-yellow-400/10 px-3 py-1 rounded-full border border-yellow-400/20 backdrop-blur-sm">
+            <span class="flex items-center gap-1 text-yellow-400 font-bold bg-yellow-400/10 px-3 py-1 rounded-full border border-yellow-400/20 backdrop-blur-sm flex-shrink-0 whitespace-nowrap">
                 <span class="material-icons-round text-lg">star</span>
                 ${avgRating}/10 (${ratings.length} đánh giá)
             </span>
-            <span class="text-gray-500">•</span>
-            <span class="text-gray-300 font-medium">${movie.year}</span>
-            <span class="text-gray-500">•</span>
-            <span class="text-gray-300 font-medium">${movie.time || 'N/A'}</span>
-            <span class="text-gray-500">•</span>
-            <span class="text-gray-300 font-medium">${movie.quality} - ${movie.lang}</span>
+            <span class="text-gray-500 flex-shrink-0">•</span>
+            <span class="text-gray-300 font-medium flex-shrink-0 whitespace-nowrap">${movie.year}</span>
+            <span class="text-gray-500 flex-shrink-0">•</span>
+            <span class="text-gray-300 font-medium flex-shrink-0 whitespace-nowrap">${movie.time || 'N/A'}</span>
+            <span class="text-gray-500 flex-shrink-0">•</span>
+            <span class="text-gray-300 font-medium flex-shrink-0 whitespace-nowrap">${movie.quality} - ${movie.lang}</span>
         `;
     }
 
@@ -190,16 +195,19 @@ function addMovieMetadata(movie) {
 
         // Load actor images from TMDB
         if (typeof loadActorImagesFromTMDB === 'function') {
+            // Load async without blocking - use setTimeout to defer
             setTimeout(() => {
-                console.log('🎬 Calling TMDB API to load actor images...');
+                console.log('🎬 Loading actor images in background...');
 
                 const actorElements = document.querySelectorAll('[data-actor-name]');
                 console.log('🎭 Actor elements found:', actorElements.length);
 
                 if (actorElements.length > 0) {
-                    loadActorImagesFromTMDB(movie);
+                    loadActorImagesFromTMDB(movie).catch(err => {
+                        console.warn('⚠️ Failed to load actor images:', err);
+                    });
                 }
-            }, 100);
+            }, 500); // Delay 500ms to let page render first
         } else {
             console.warn('⚠️ loadActorImagesFromTMDB function not found');
         }
@@ -269,25 +277,25 @@ function renderEpisodes(episodes) {
 
 // Setup favorite button
 function setupFavoriteButton() {
-    const buttonsContainer = document.querySelector('.flex.flex-wrap.items-center.gap-4.mb-10');
+    const buttonsContainer = document.querySelector('.flex.flex-nowrap.overflow-x-auto.items-center.gap-2');
     if (!buttonsContainer || !currentMovie) return;
 
     const isFav = userService.isFavorite(currentMovie.slug);
 
     const favBtn = document.createElement('button');
-    favBtn.className = 'px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full backdrop-blur-md border border-white/10 hover:border-white/30 transition-all duration-300 flex items-center gap-3';
+    favBtn.className = 'px-3 md:px-8 py-3 md:py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full backdrop-blur-md border border-white/10 hover:border-white/30 transition-all duration-300 flex items-center gap-2 md:gap-3 flex-shrink-0';
     favBtn.innerHTML = `
-        <span class="material-icons-round">${isFav ? 'favorite' : 'favorite_border'}</span>
-        <span>${isFav ? 'Đã lưu' : 'Lưu phim'}</span>
+        <span class="material-icons-round text-lg md:text-xl">${isFav ? 'favorite' : 'favorite_border'}</span>
+        <span class="text-sm md:text-base whitespace-nowrap">${isFav ? 'Đã lưu' : 'Lưu phim'}</span>
     `;
 
     favBtn.addEventListener('click', () => {
         if (userService.isFavorite(currentMovie.slug)) {
             userService.removeFromFavorites(currentMovie.slug);
-            favBtn.innerHTML = '<span class="material-icons-round">favorite_border</span><span>Lưu phim</span>';
+            favBtn.innerHTML = '<span class="material-icons-round text-lg md:text-xl">favorite_border</span><span class="text-sm md:text-base whitespace-nowrap">Lưu phim</span>';
         } else {
             if (userService.addToFavorites(currentMovie)) {
-                favBtn.innerHTML = '<span class="material-icons-round">favorite</span><span>Đã lưu</span>';
+                favBtn.innerHTML = '<span class="material-icons-round text-lg md:text-xl">favorite</span><span class="text-sm md:text-base whitespace-nowrap">Đã lưu</span>';
             }
         }
     });

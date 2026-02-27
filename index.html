@@ -148,10 +148,72 @@
                         </div>
                     </div>
 
-                    <a href="categories.html"
-                        class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white">
-                        Thể Loại
-                    </a>
+                    <!-- Danh Sách Dropdown -->
+                    <div class="relative group">
+                        <button
+                            class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white flex items-center gap-1">
+                            Danh Sách
+                            <span
+                                class="material-icons-round text-sm group-hover:rotate-180 transition-transform duration-300">expand_more</span>
+                        </button>
+                        <div
+                            class="absolute top-full left-0 mt-2 w-[600px] bg-black/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden">
+                            <div class="grid grid-cols-3 gap-0">
+                                <a href="danh-sach.html?list=phim-moi"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Phim
+                                    Mới</a>
+                                <a href="danh-sach.html?list=phim-bo"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Phim
+                                    Bộ</a>
+                                <a href="danh-sach.html?list=phim-le"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">Phim
+                                    Lẻ</a>
+                                <a href="danh-sach.html?list=tv-shows"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Shows</a>
+                                <a href="danh-sach.html?list=hoat-hinh"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Hoạt
+                                    Hình</a>
+                                <a href="danh-sach.html?list=phim-vietsub"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">Phim
+                                    Vietsub</a>
+                                <a href="danh-sach.html?list=phim-thuyet-minh"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Phim
+                                    Thuyết Minh</a>
+                                <a href="danh-sach.html?list=phim-long-tien"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Phim
+                                    Lồng Tiếng</a>
+                                <a href="danh-sach.html?list=phim-bo-dang-chieu"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">Phim
+                                    Bộ Đang Chiếu</a>
+                                <a href="danh-sach.html?list=phim-bo-hoan-thanh"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-white/5">Phim
+                                    Bộ Đã Hoàn Thành</a>
+                                <a href="danh-sach.html?list=phim-sap-chieu"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-white/5">Phim
+                                    Sắp Chiếu</a>
+                                <a href="danh-sach.html?list=subteam"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all">Subteam</a>
+                                <a href="danh-sach.html?list=phim-chieu-rap"
+                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all col-span-3 border-t border-white/5 text-center font-semibold">Phim
+                                    Chiếu Rạp</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Thể Loại Dropdown -->
+                    <div class="relative group">
+                        <button
+                            class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white flex items-center gap-1">
+                            Thể Loại
+                            <span
+                                class="material-icons-round text-sm group-hover:rotate-180 transition-transform duration-300">expand_more</span>
+                        </button>
+                        <div id="categoryDropdown"
+                            class="absolute top-full left-0 mt-2 w-[700px] bg-black/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden">
+                            <!-- Categories will be loaded here in grid format -->
+                            <div class="p-4 text-center text-gray-400">Đang tải...</div>
+                        </div>
+                    </div>
 
                     <a href="search.html"
                         class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white">
@@ -188,30 +250,7 @@
 
         <!-- Mobile Menu -->
         <div id="mobileMenu" class="lg:hidden hidden bg-black/95 backdrop-blur-md border-t border-white/10">
-            <div class="container mx-auto px-6 py-4">
-                <a href="index.html" class="block py-3 text-primary font-bold transition-colors">
-                    🏠 Trang chủ
-                </a>
-                <div class="py-3">
-                    <div class="text-gray-400 text-sm font-bold mb-2">PHIM</div>
-                    <a href="phim-viet-nam.html"
-                        class="block py-2 pl-4 text-gray-300 hover:text-primary transition-colors">
-                        🇻🇳 Phim Việt Nam
-                    </a>
-                </div>
-                <a href="categories.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
-                    🎭 Thể Loại
-                </a>
-                <a href="search.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
-                    🔍 Khám phá
-                </a>
-                <a href="pricing.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
-                    💎 Gói cước
-                </a>
-                <a href="support.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
-                    ❤️ Nuôi APhim
-                </a>
-            </div>
+            <!-- Content will be injected by mobile-menu-simple.js -->
         </div>
     </nav>
 
@@ -228,6 +267,55 @@
                 }
             });
         }
+
+        // Toggle mobile sections
+        function toggleMobileSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const icon = document.getElementById(sectionId + 'Icon');
+            if (section && icon) {
+                section.classList.toggle('hidden');
+                icon.style.transform = section.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+            }
+        }
+
+        // Load categories for dropdown
+        async function loadCategoriesDropdown() {
+            try {
+                const response = await fetch('https://ophim1.com/v1/api/the-loai', {
+                    method: 'GET',
+                    headers: { 'accept': 'application/json' }
+                });
+                const data = await response.json();
+
+                if (data.status === 'success' && data.data && data.data.items) {
+                    const categories = data.data.items;
+                    const dropdown = document.getElementById('categoryDropdown');
+                    if (dropdown && categories.length > 0) {
+                        // Render as grid 4 columns
+                        const gridHTML = '<div class="grid grid-cols-4 gap-0">' +
+                            categories.map((cat, index) => {
+                                const isLastRow = index >= categories.length - (categories.length % 4 || 4);
+                                const isRightEdge = (index + 1) % 4 === 0;
+                                const borderClasses = `${!isRightEdge ? 'border-r' : ''} ${!isLastRow ? 'border-b' : ''} border-white/5`;
+
+                                return `
+                                    <a href="search.html?category=${cat.slug}" 
+                                       class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all ${borderClasses}">
+                                        ${cat.name}
+                                    </a>
+                                `;
+                            }).join('') +
+                            '</div>';
+                        dropdown.innerHTML = gridHTML;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+
+        // Load categories on page load
+        loadCategoriesDropdown();
 
         // Sliding indicator effect for navigation
         const navContainer = document.querySelector('.lg\\:flex.items-center > div');
@@ -320,7 +408,7 @@
                 Hàng ngàn bộ phim bom tấn và series độc quyền với chất lượng 4K HDR
             </p>
             <div class="flex flex-wrap gap-4 justify-center">
-                <a href="xem-phim-demo.html"
+                <a href="search.html"
                     class="px-8 py-4 bg-primary text-black font-bold rounded-full shadow-lg shadow-primary/40 hover:shadow-primary/60 hover:-translate-y-1 transition-all duration-300 flex items-center gap-3">
                     <span class="material-icons-round text-3xl">play_arrow</span>
                     <span class="text-lg">Xem phim ngay</span>
@@ -459,6 +547,7 @@
     <script src="js/user.js"></script>
     <script src="js/rating.js"></script>
     <script src="js/user-ui.js"></script>
+    <script src="js/mobile-menu-simple.js"></script>
     <script src="js/home.js"></script>
     <script src="js/home-sections.js"></script>
 
@@ -669,6 +758,7 @@
 
     <!-- Analytics & Ads -->
     <script defer src="js/analytics.js"></script>
+    <script src="js/navigation-danh-sach.js"></script>
     <script defer src="js/adsterra.js"></script>
 </body>
 
