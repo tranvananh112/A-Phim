@@ -25,6 +25,11 @@
     <link rel="preconnect" href="https://ophim1.com">
     <link rel="dns-prefetch" href="https://img.ophim.live">
 
+    <!-- Preload Material Icons font -->
+    <link rel="preload"
+        href="https://fonts.gstatic.com/s/materialiconsround/v108/LDItaoyNOAY6Uewc665JcIzCKsKc_M9flwmPq_HTTw.woff2"
+        as="font" type="font/woff2" crossorigin>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap"
@@ -34,6 +39,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="css/skeleton-loading.css">
+    <link rel="stylesheet" href="css/sticky-nav.css">
+    <link rel="stylesheet" href="css/material-icons-fix.css">
+
+    <!-- Material Icons Loader -->
+    <script src="js/material-icons-loader.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -472,8 +483,8 @@
             }
 
             let paginationHTML = `
-                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div class="flex items-center gap-2 overflow-x-auto px-2 py-1">
+                <div class="flex flex-col items-center gap-4">
+                    <div class="flex items-center justify-center gap-2 overflow-x-auto px-2 py-1">
             `;
 
             // Previous button
@@ -544,7 +555,7 @@
 
             paginationHTML += `
                     </div>
-                    <div class="text-gray-400 text-sm whitespace-nowrap">
+                    <div class="text-gray-400 text-sm text-center whitespace-nowrap">
                         Trang ${currentPage}/${totalPages} | Tổng ${totalItems.toLocaleString()} phim
                     </div>
                 </div>
@@ -576,6 +587,7 @@
     <script defer src="js/analytics.js"></script>
     <script src="js/navigation-danh-sach.js"></script>
     <script src="js/categories-dropdown.js"></script>
+    <script src="js/sticky-nav.js"></script>
     <script defer src="js/adsterra.js"></script>
     <script src="js/mobile-menu-simple.js"></script>
 </body>

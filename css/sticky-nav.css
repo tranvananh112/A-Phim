@@ -1,0 +1,62 @@
+/* Sticky Navigation Styles */
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Scrolled state - thêm shadow và background đậm hơn */
+nav.scrolled {
+    background: rgba(0, 0, 0, 0.98) !important;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    border-bottom: 1px solid rgba(242, 242, 13, 0.2);
+}
+
+/* Ensure content doesn't hide behind fixed nav */
+body {
+    padding-top: 0;
+}
+
+main {
+    position: relative;
+    z-index: 1;
+}
+
+/* Dropdown menus should be above everything and positioned correctly */
+nav .group {
+    position: relative;
+}
+
+nav .group:hover>div[class*="absolute"] {
+    z-index: 10000;
+}
+
+/* Ensure dropdowns stay in place */
+nav .container {
+    position: static;
+}
+
+/* Mobile menu */
+#mobileMenu {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    right: 0;
+    z-index: 9998;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+}
+
+/* Smooth scroll behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Prevent layout shift */
+nav+* {
+    margin-top: 0;
+}
