@@ -37,7 +37,7 @@ function startAutoRefresh() {
 // Load dashboard statistics from MongoDB
 async function loadDashboardStats(silent = false) {
     try {
-        const token = localStorage.getItem('admin_token');
+        const token = localStorage.getItem('cinestream_admin_token') || sessionStorage.getItem('cinestream_admin_token');
 
         // Fetch user stats
         const usersResponse = await fetch(`${API_URL}/users/stats`, {

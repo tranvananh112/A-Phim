@@ -132,9 +132,9 @@ async function loadUsers(silent = false) {
         if (!response.ok) {
             if (response.status === 401) {
                 console.error('❌ Unauthorized - Token invalid');
-                // Clear tokens
-                try { sessionStorage.removeItem('admin_token'); } catch (e) { }
-                try { localStorage.removeItem('admin_token'); } catch (e) { }
+                // Clear tokens with correct keys
+                try { sessionStorage.removeItem('cinestream_admin_token'); } catch (e) { }
+                try { localStorage.removeItem('cinestream_admin_token'); } catch (e) { }
 
                 showToast('Token không hợp lệ. Đang chuyển đến trang đăng nhập...', 'error');
                 setTimeout(() => {
@@ -682,8 +682,8 @@ function showToast(message, type = 'info') {
 // Logout
 function logout() {
     if (confirm('Bạn có chắc muốn đăng xuất?')) {
-        try { sessionStorage.removeItem('admin_token'); } catch (e) { }
-        try { localStorage.removeItem('admin_token'); } catch (e) { }
+        try { sessionStorage.removeItem('cinestream_admin_token'); } catch (e) { }
+        try { localStorage.removeItem('cinestream_admin_token'); } catch (e) { }
         window.location.href = 'login.html';
     }
 }

@@ -234,7 +234,7 @@ function exportToCSV(data, filename) {
 
 // Check if user is admin
 function isAdmin() {
-    const token = localStorage.getItem('admin_token');
+    const token = localStorage.getItem('cinestream_admin_token') || sessionStorage.getItem('cinestream_admin_token');
     if (!token) return false;
 
     try {
@@ -248,7 +248,8 @@ function isAdmin() {
 // Logout
 function logout() {
     confirmDialog('Bạn có chắc muốn đăng xuất?', () => {
-        localStorage.removeItem('admin_token');
+        try { localStorage.removeItem('cinestream_admin_token'); } catch (e) { }
+        try { sessionStorage.removeItem('cinestream_admin_token'); } catch (e) { }
         window.location.href = 'login.html';
     });
 }

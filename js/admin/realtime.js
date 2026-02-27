@@ -72,7 +72,7 @@ class RealtimeSync {
 
     // Fetch resource from API
     async fetchResource(resource) {
-        const token = localStorage.getItem('admin_token');
+        const token = localStorage.getItem('cinestream_admin_token') || sessionStorage.getItem('cinestream_admin_token');
         const response = await fetch(`${this.apiUrl}/${resource}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -111,7 +111,7 @@ class RealtimeSync {
             return cached;
         }
 
-        const token = localStorage.getItem('admin_token');
+        const token = localStorage.getItem('cinestream_admin_token') || sessionStorage.getItem('cinestream_admin_token');
         const response = await fetch(`${this.apiUrl}/${resource}/stats`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
