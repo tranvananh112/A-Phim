@@ -1,0 +1,36 @@
+/* Hero Banner Styles */
+.text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.text-glow {
+    text-shadow: 0 0 10px rgba(252, 211, 77, 0.5);
+}
+
+.hero-gradient {
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.6) 40%, rgba(0, 0, 0, 0.1) 100%);
+}
+
+.hero-bottom-gradient {
+    background: linear-gradient(to top, #1a1a0c 5%, transparent 100%);
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Font for hero title */
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:ital,wght@1,700&display=swap');
+
+.font-script {
+    font-family: 'Dancing Script', cursive;
+}
+
+.font-serif-italic {
+    font-family: 'Playfair Display', serif;
+}
