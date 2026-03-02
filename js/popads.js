@@ -12,6 +12,10 @@
         excludePages: ['/login.html', '/register.html', '/payment.html'],
         maxPopsPerSession: 1, // 1 pop mỗi session
 
+        // GRACE PERIOD: Cấm quảng cáo trong 1 phút đầu
+        gracePeriod: 60000, // 1 PHÚT - người dùng có thời gian tìm phim
+        firstVisitKey: 'popads_first_visit',
+
         // Desktop: 7 phút, Mobile: 15 phút
         desktop: {
             minTimeBetweenSessions: 420000, // 7 PHÚT
@@ -39,6 +43,21 @@
         const device = isMobile ? 'mobile' : 'desktop';
         const minTimeBetweenSessions = CONFIG[device].minTimeBetweenSessions;
         const minTimeBetweenPops = CONFIG[device].minTimeBetweenPops;
+
+        // GRACE PERIOD: Kiểm tra xem người dùng mới vào trong vòng 1 phút chưa
+        let firstVisitTime = sessionStorage.getItem(CONFIG.firstVisitKey);
+        if (!firstVisitTime) {
+            // Lần đầu vào - lưu thời gian
+            sessionStorage.setItem(CONFIG.firstVisitKey, now.toString());
+            firstVisitTime = now;
+        }
+
+        const timeSinceFirstVisit = now - parseInt(firstVisitTime);
+        if (timeSinceFirstVisit < CONFIG.gracePeriod) {
+            const waitSeconds = Math.ceil((CONFIG.gracePeriod - timeSinceFirstVisit) / 1000);
+            console.log('[PopAds] 🛡️ Grace period active. Wait', waitSeconds, 'seconds (let user browse first)');
+            return false;
+        }
 
         // Kiểm tra thời gian từ lần vào trước (localStorage)
         const lastSessionTime = localStorage.getItem('popads_last_session');

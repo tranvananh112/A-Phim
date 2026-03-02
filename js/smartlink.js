@@ -9,6 +9,10 @@
         smartlinkUrl: 'https://encyclopediainsoluble.com/cymf7jzj?key=4e5b8afe200c9075f14db00783c40f51',
         smartlinkId: '28724969',
 
+        // GRACE PERIOD: Cấm quảng cáo trong 1 phút đầu
+        gracePeriod: 60000, // 1 PHÚT - người dùng có thời gian tìm phim
+        firstVisitKey: 'smartlink_first_visit',
+
         // Desktop: 7 phút - tăng thu nhập
         desktop: {
             maxPops: 1,
@@ -33,6 +37,21 @@
         const now = Date.now();
         const session = JSON.parse(sessionStorage.getItem(CONFIG.storageKey) || '{}');
         const maxPops = isMobile ? CONFIG.mobile.maxPops : CONFIG.desktop.maxPops;
+
+        // GRACE PERIOD: Kiểm tra xem người dùng mới vào trong vòng 1 phút chưa
+        let firstVisitTime = sessionStorage.getItem(CONFIG.firstVisitKey);
+        if (!firstVisitTime) {
+            // Lần đầu vào - lưu thời gian
+            sessionStorage.setItem(CONFIG.firstVisitKey, now.toString());
+            firstVisitTime = now;
+        }
+
+        const timeSinceFirstVisit = now - parseInt(firstVisitTime);
+        if (timeSinceFirstVisit < CONFIG.gracePeriod) {
+            const waitSeconds = Math.ceil((CONFIG.gracePeriod - timeSinceFirstVisit) / 1000);
+            console.log('[Smartlink] 🛡️ Grace period active. Wait', waitSeconds, 'seconds (let user browse first)');
+            return false;
+        }
 
         // Kiểm tra cooldown giữa các session (localStorage)
         const lastSessionTime = localStorage.getItem(CONFIG.lastSessionKey);
