@@ -2,19 +2,24 @@
 (function () {
     'use strict';
 
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
     const CONFIG = {
         enabled: true,
         excludePages: ['/login.html', '/register.html', '/payment.html'],
-        maxPopsPerSession: 4, // Tổng 4 pops cho cả session
-        minTimeBetweenPops: 180000, // 3 phút giữa các pops
-        firstPopDelay: 5000, // 5 giây cho lần đầu
+
+        // MOBILE: Giảm xuống để tránh spam
+        maxPopsPerSession: isMobile ? 2 : 4, // Mobile: 2 pops, Desktop: 4 pops
+        minTimeBetweenPops: isMobile ? 300000 : 180000, // Mobile: 5 phút, Desktop: 3 phút
+        firstPopDelay: isMobile ? 10000 : 5000, // Mobile: 10 giây, Desktop: 5 giây
+
         initialDelay: 3000, // 3 giây sau khi vào trang
-        interactionDelay: 1000, // 1 giây sau interaction
+        interactionDelay: isMobile ? 2000 : 1000, // Mobile: 2 giây, Desktop: 1 giây
         requireInteraction: true,
-        storageKey: 'adsterra_popunder', // Dùng session storage
+        storageKey: 'adsterra_popunder',
         watchButtonStorageKey: 'adsterra_watch_button',
         scriptUrl: 'https://pl28791542.effectivegatecpm.com/bd/33/6d/bd336d4948e946b0e4a42348436b9f13.js',
-        resetOnPageChange: false // KHÔNG reset mỗi trang - giữ counter cho cả session
+        resetOnPageChange: false
     };
 
     let isReady = false;
@@ -135,7 +140,12 @@
 
     // Initialize after initial delay
     function initialize() {
+        const device = isMobile ? 'Mobile' : 'Desktop';
+        const maxPops = CONFIG.maxPopsPerSession;
+        const minTime = Math.ceil(CONFIG.minTimeBetweenPops / 60000);
+
         console.log('[AdsTerra] ⏳ Initializing in', CONFIG.initialDelay / 1000, 'seconds...');
+        console.log('[AdsTerra] 📱 Device:', device, '| Max pops:', maxPops, '| Min time:', minTime, 'min');
 
         // Preload script ngay lập tức để giảm độ trễ
         preloadPopunderScript();
