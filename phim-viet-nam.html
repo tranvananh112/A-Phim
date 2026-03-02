@@ -32,18 +32,24 @@
     <link rel="preconnect" href="https://ophim1.com">
     <link rel="dns-prefetch" href="https://img.ophim.live">
 
-    <!-- Preload Material Icons font -->
+    <!-- Preload Material Icons font - CRITICAL -->
     <link rel="preload"
         href="https://fonts.gstatic.com/s/materialiconsround/v108/LDItaoyNOAY6Uewc665JcIzCKsKc_M9flwmPq_HTTw.woff2"
+        as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="https://fonts.gstatic.com/s/materialicons/v140/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2"
         as="font" type="font/woff2" crossorigin>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/dropdown-blue.css">
+
+    <!-- Load Material Icons FIRST before other fonts -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round&display=block" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=block" rel="stylesheet" />
+
     <link
         href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons"
-        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="css/skeleton-loading.css">
@@ -595,7 +601,7 @@
 
     <!-- Defer ads -->
     <script defer src="js/analytics.js"></script>
-    <script src="js/navigation-danh-sach.js"></script>
+    <!-- <script src="js/navigation-danh-sach.js"></script> -->
     <script src="js/categories-dropdown.js"></script>
     <script src="js/sticky-nav.js"></script>
     <script defer src="js/adsterra.js"></script>

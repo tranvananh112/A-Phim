@@ -1,11 +1,11 @@
 /* Material Icons Fallback & Fix for Mobile */
 
-/* Ensure Material Icons load properly */
+/* Ensure Material Icons load properly with better fallback */
 .material-icons-round,
 .material-icons,
 .material-icons-outlined,
 .material-symbols-outlined {
-    font-family: 'Material Icons Round', 'Material Icons', sans-serif !important;
+    font-family: 'Material Icons Round', 'Material Icons', 'Material Symbols Outlined', sans-serif !important;
     font-weight: normal;
     font-style: normal;
     font-size: 24px;
@@ -21,36 +21,66 @@
     text-rendering: optimizeLegibility;
     font-feature-settings: 'liga';
     vertical-align: middle;
+    /* Prevent text from showing before font loads */
+    text-indent: 0;
+    overflow: visible;
 }
 
-/* Hide text content while font is loading */
-.material-icons-round:not(.material-icons-loaded),
-.material-icons:not(.material-icons-loaded) {
-    font-size: 0;
-    width: 24px;
-    height: 24px;
-    display: inline-block;
-    overflow: hidden;
+/* Critical: Hide English text fallback on mobile */
+@media (max-width: 768px) {
+
+    .material-icons-round:not(.material-icons-loaded),
+    .material-icons:not(.material-icons-loaded),
+    .material-icons-outlined:not(.material-icons-loaded) {
+        color: transparent !important;
+        text-shadow: none !important;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        min-width: 24px;
+        min-height: 24px;
+    }
 }
 
 /* Show icons after font loaded */
 .material-icons-loaded {
-    font-size: inherit !important;
+    color: inherit !important;
+    background: transparent !important;
 }
 
 /* Specific size overrides */
 .material-icons-round.text-sm,
 .material-icons.text-sm {
     font-size: 18px !important;
-    width: 18px;
-    height: 18px;
+    min-width: 18px;
+    min-height: 18px;
+}
+
+.material-icons-round.text-xs,
+.material-icons.text-xs {
+    font-size: 14px !important;
+    min-width: 14px;
+    min-height: 14px;
+}
+
+.material-icons-round.text-\[10px\],
+.material-icons.text-\[10px\] {
+    font-size: 10px !important;
+    min-width: 10px;
+    min-height: 10px;
 }
 
 .material-icons-round.text-2xl,
 .material-icons.text-2xl {
     font-size: 32px !important;
-    width: 32px;
-    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+}
+
+.material-icons-round.text-6xl,
+.material-icons.text-6xl {
+    font-size: 64px !important;
+    min-width: 64px;
+    min-height: 64px;
 }
 
 /* Loading state - show a placeholder */
@@ -66,24 +96,25 @@
     }
 }
 
-.material-icons-round:empty::before,
-.material-icons:empty::before {
+/* Placeholder for loading icons */
+.material-icons-round:not(.material-icons-loaded)::before,
+.material-icons:not(.material-icons-loaded)::before {
     content: '';
     display: inline-block;
-    width: 24px;
-    height: 24px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
+    width: 1em;
+    height: 1em;
+    background: currentColor;
+    opacity: 0.2;
+    border-radius: 2px;
     animation: iconPulse 1.5s ease-in-out infinite;
 }
 
-/* Prevent text fallback from showing */
-.material-icons-round:not(:empty):not(.material-icons-loaded)::before,
-.material-icons:not(:empty):not(.material-icons-loaded)::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    z-index: 1;
+/* Force icon rendering on mobile */
+@supports (-webkit-appearance: none) {
+
+    .material-icons-round,
+    .material-icons {
+        -webkit-font-smoothing: antialiased;
+        -webkit-text-stroke: 0;
+    }
 }

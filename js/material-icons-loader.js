@@ -1,13 +1,19 @@
-// Material Icons Font Loader
+// Material Icons Font Loader - Optimized for Mobile
 (function () {
     'use strict';
 
+    let fontsLoaded = false;
+
     // Check if Material Icons font is loaded
     function checkFontLoaded() {
+        if (fontsLoaded) return true;
+
         if (document.fonts && document.fonts.check) {
             // Modern browsers with Font Loading API
-            return document.fonts.check('24px "Material Icons Round"') ||
+            const loaded = document.fonts.check('24px "Material Icons Round"') ||
                 document.fonts.check('24px "Material Icons"');
+            if (loaded) fontsLoaded = true;
+            return loaded;
         }
         return false;
     }
@@ -15,9 +21,19 @@
     // Add loaded class to all material icons
     function markIconsAsLoaded() {
         const icons = document.querySelectorAll('.material-icons-round, .material-icons, .material-icons-outlined, .material-symbols-outlined');
+        console.log(`📦 Marking ${icons.length} icons as loaded`);
         icons.forEach(icon => {
             icon.classList.add('material-icons-loaded');
         });
+        fontsLoaded = true;
+    }
+
+    // Force mark icons as loaded (fallback)
+    function forceMarkLoaded() {
+        if (!fontsLoaded) {
+            console.log('⚠️ Font loading timeout - forcing icons to show');
+            markIconsAsLoaded();
+        }
     }
 
     // Wait for fonts to load
@@ -28,23 +44,27 @@
         }
 
         if (document.fonts && document.fonts.ready) {
+            // Set a timeout as fallback
+            const timeout = setTimeout(forceMarkLoaded, 1500);
+
             document.fonts.ready.then(() => {
+                clearTimeout(timeout);
                 markIconsAsLoaded();
             }).catch(() => {
-                // Fallback: mark as loaded after timeout
-                setTimeout(markIconsAsLoaded, 2000);
+                clearTimeout(timeout);
+                forceMarkLoaded();
             });
         } else {
             // Fallback for older browsers
-            setTimeout(() => {
-                markIconsAsLoaded();
-            }, 1500);
+            setTimeout(forceMarkLoaded, 1000);
         }
     }
 
     // Observer for dynamically added icons
     function observeNewIcons() {
         const observer = new MutationObserver((mutations) => {
+            if (!fontsLoaded && !checkFontLoaded()) return;
+
             mutations.forEach((mutation) => {
                 mutation.addedNodes.forEach((node) => {
                     if (node.nodeType === 1) { // Element node
@@ -55,14 +75,12 @@
                             node.classList.contains('material-icons-outlined') ||
                             node.classList.contains('material-symbols-outlined')
                         )) {
-                            if (checkFontLoaded()) {
-                                node.classList.add('material-icons-loaded');
-                            }
+                            node.classList.add('material-icons-loaded');
                         }
 
                         // Check for icon children
                         const icons = node.querySelectorAll && node.querySelectorAll('.material-icons-round, .material-icons, .material-icons-outlined, .material-symbols-outlined');
-                        if (icons && icons.length > 0 && checkFontLoaded()) {
+                        if (icons && icons.length > 0) {
                             icons.forEach(icon => icon.classList.add('material-icons-loaded'));
                         }
                     }
@@ -76,19 +94,26 @@
         });
     }
 
-    // Initialize
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            waitForFonts();
-            observeNewIcons();
-        });
-    } else {
+    // Initialize immediately
+    function init() {
         waitForFonts();
         observeNewIcons();
     }
 
-    // Also check on window load as a fallback
+    // Start as early as possible
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+    // Also check on window load as a final fallback
     window.addEventListener('load', () => {
-        setTimeout(markIconsAsLoaded, 500);
+        setTimeout(() => {
+            if (!fontsLoaded) {
+                console.log('🔄 Window loaded - final check');
+                forceMarkLoaded();
+            }
+        }, 500);
     });
 })();
