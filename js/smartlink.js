@@ -1,5 +1,5 @@
 // Smartlink Integration - ID: 28724969
-// Desktop: 2 lần/phiên (Lưu phim + Chọn tập), cách 5 phút
+// Desktop: 2 lần/phiên (XEM NGAY + Chọn tập), cách 5 phút
 // Mobile: 1 lần/phiên (Đăng nhập)
 
 (function () {
@@ -13,18 +13,11 @@
         desktop: {
             maxPops: 2,
             minTimeBetween: 300000, // 5 phút
-            triggers: {
-                saveMovie: true,      // Lưu phim
-                selectEpisode: true   // Chọn tập
-            }
         },
 
         // Mobile: 1 pop duy nhất
         mobile: {
             maxPops: 1,
-            triggers: {
-                login: true  // Đăng nhập
-            }
         },
 
         storageKey: 'smartlink_session'
@@ -79,29 +72,26 @@
     function setupMovieDetailTriggers() {
         if (!window.location.pathname.includes('movie-detail.html')) return;
 
-        // Desktop: Trigger 1 - Nút "Lưu phim" / "Bookmark"
-        if (!isMobile && CONFIG.desktop.triggers.saveMovie) {
-            const checkSaveButton = setInterval(() => {
-                // Tìm nút có icon bookmark hoặc text "Lưu"
-                const buttons = document.querySelectorAll('button, a');
+        // Desktop: Trigger 1 - Nút "XEM NGAY"
+        if (!isMobile) {
+            const checkWatchButton = setInterval(() => {
+                // Tìm nút có text "XEM NGAY"
+                const buttons = document.querySelectorAll('a, button');
                 buttons.forEach(btn => {
-                    const hasBookmarkIcon = btn.querySelector('[class*="bookmark"]') ||
-                        btn.innerHTML.includes('bookmark');
-                    const hasText = btn.textContent.includes('Lưu') ||
-                        btn.textContent.includes('Save');
+                    const hasText = btn.textContent.includes('XEM NGAY');
 
-                    if ((hasBookmarkIcon || hasText) && !btn.dataset.smartlinkAttached) {
+                    if (hasText && !btn.dataset.smartlinkAttached) {
                         btn.dataset.smartlinkAttached = 'true';
                         btn.addEventListener('click', () => {
-                            triggerSmartlink('Save Movie Button');
+                            triggerSmartlink('XEM NGAY Button (Desktop)');
                         });
-                        console.log('[Smartlink] Listening on Save Movie button');
-                        clearInterval(checkSaveButton);
+                        console.log('[Smartlink] Desktop - Listening on XEM NGAY button');
+                        clearInterval(checkWatchButton);
                     }
                 });
             }, 500);
 
-            setTimeout(() => clearInterval(checkSaveButton), 10000);
+            setTimeout(() => clearInterval(checkWatchButton), 10000);
         }
     }
 
@@ -110,21 +100,24 @@
         if (!window.location.pathname.includes('watch.html')) return;
 
         // Desktop: Trigger 2 - Chọn tập phim
-        if (!isMobile && CONFIG.desktop.triggers.selectEpisode) {
+        if (!isMobile) {
             const checkEpisodeButtons = setInterval(() => {
-                // Tìm các nút tập phim
-                const episodeButtons = document.querySelectorAll('[class*="episode"], [class*="tap-phim"], button[data-episode]');
+                // Tìm các nút có text "Tập"
+                const buttons = document.querySelectorAll('button');
+                const episodeButtons = Array.from(buttons).filter(btn =>
+                    btn.textContent.includes('Tập') || btn.textContent.includes('Episode')
+                );
 
                 if (episodeButtons.length > 0) {
                     episodeButtons.forEach(btn => {
                         if (!btn.dataset.smartlinkAttached) {
                             btn.dataset.smartlinkAttached = 'true';
                             btn.addEventListener('click', () => {
-                                triggerSmartlink('Select Episode');
+                                triggerSmartlink('Episode Button (Desktop)');
                             });
                         }
                     });
-                    console.log('[Smartlink] Listening on', episodeButtons.length, 'episode buttons');
+                    console.log('[Smartlink] Desktop - Listening on', episodeButtons.length, 'episode buttons');
                     clearInterval(checkEpisodeButtons);
                 }
             }, 500);
@@ -138,22 +131,21 @@
         if (!window.location.pathname.includes('login.html')) return;
 
         // Mobile: Trigger duy nhất - Nút đăng nhập
-        if (isMobile && CONFIG.mobile.triggers.login) {
+        if (isMobile) {
             const checkLoginButton = setInterval(() => {
-                const loginButtons = document.querySelectorAll('button[type="submit"], button[class*="login"], button[class*="dang-nhap"]');
+                // Tìm nút submit có text "ĐĂNG NHẬP"
+                const buttons = document.querySelectorAll('button[type="submit"]');
 
-                if (loginButtons.length > 0) {
-                    loginButtons.forEach(btn => {
-                        if (!btn.dataset.smartlinkAttached) {
-                            btn.dataset.smartlinkAttached = 'true';
-                            btn.addEventListener('click', () => {
-                                triggerSmartlink('Login Button');
-                            });
-                        }
-                    });
-                    console.log('[Smartlink] Mobile - Listening on login button');
-                    clearInterval(checkLoginButton);
-                }
+                buttons.forEach(btn => {
+                    if (btn.textContent.includes('ĐĂNG NHẬP') && !btn.dataset.smartlinkAttached) {
+                        btn.dataset.smartlinkAttached = 'true';
+                        btn.addEventListener('click', () => {
+                            triggerSmartlink('Login Button (Mobile)');
+                        });
+                        console.log('[Smartlink] Mobile - Listening on login button');
+                        clearInterval(checkLoginButton);
+                    }
+                });
             }, 500);
 
             setTimeout(() => clearInterval(checkLoginButton), 10000);

@@ -102,57 +102,8 @@
         console.log('[AdsTerra] ✅ Popunder loaded (' + source + ') - Pop', popCount + 1, '/', CONFIG.maxPopsPerSession, '| Next in', nextWait);
     }
 
-    // Special function for "XEM NGAY" button pop - INSTANT trigger
-    function loadWatchButtonPop() {
-        // Check if already popped for watch button in this session
-        const hasPopped = sessionStorage.getItem(CONFIG.watchButtonStorageKey);
-        if (hasPopped) {
-            console.log('[AdsTerra] ⏭️ Watch button pop already triggered this session');
-            return;
-        }
-
-        // Mark as popped IMMEDIATELY
-        sessionStorage.setItem(CONFIG.watchButtonStorageKey, 'true');
-
-        // Load popunder INSTANTLY - no delay
-        const script = document.createElement('script');
-        script.src = CONFIG.scriptUrl;
-        script.async = false; // Load synchronously for faster execution
-        document.head.appendChild(script);
-
-        console.log('[AdsTerra] 🎬 Watch button popunder loaded INSTANTLY (1 time per session)');
-    }
-
-    // Setup watch button listener on movie detail pages
-    function setupWatchButtonListener() {
-        // Check if we're on movie-detail page
-        if (!window.location.pathname.includes('movie-detail.html')) {
-            return;
-        }
-
-        // Wait for button to be available
-        const checkButton = setInterval(() => {
-            const watchButtons = document.querySelectorAll('button, a');
-
-            watchButtons.forEach(button => {
-                const textSpan = button.querySelector('span.text-lg.tracking-wide');
-                if (textSpan && textSpan.textContent.trim() === 'XEM NGAY') {
-                    // Found the button
-                    clearInterval(checkButton);
-
-                    button.addEventListener('click', function (e) {
-                        console.log('[AdsTerra] 🎯 "XEM NGAY" button clicked');
-                        loadWatchButtonPop();
-                    }, { once: true }); // Only trigger once
-
-                    console.log('[AdsTerra] 👂 Listening for "XEM NGAY" button click');
-                }
-            });
-        }, 500);
-
-        // Stop checking after 10 seconds
-        setTimeout(() => clearInterval(checkButton), 10000);
-    }
+    // REMOVED: "XEM NGAY" button listener to avoid conflict with Smartlink
+    // Smartlink now handles "XEM NGAY" button exclusively
 
     // Track user interaction (click, scroll, touch)
     function trackInteraction() {
@@ -200,8 +151,7 @@
                 loadPopunder('auto');
             }
 
-            // Setup watch button listener for movie detail pages
-            setupWatchButtonListener();
+            // REMOVED: setupWatchButtonListener() - Smartlink handles "XEM NGAY" now
         }, CONFIG.initialDelay);
     }
 
@@ -212,7 +162,6 @@
         initialize();
     }
 
-    // Expose function globally for manual triggering if needed
-    window.triggerWatchButtonPop = loadWatchButtonPop;
+    // REMOVED: window.triggerWatchButtonPop - No longer needed
 
 })();
