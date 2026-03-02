@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Mobile menu - find PHIM section and add DANH SÁCH after it
-    const mobileMenus = document.querySelectorAll('#mobileMenu .container, #mobileMenu > div');
+    const mobileMen us = document.querySelectorAll('#mobileMenu .container, #mobileMenu > div');
 
     mobileMenus.forEach(menu => {
         // Find PHIM section
