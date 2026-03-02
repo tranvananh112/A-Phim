@@ -5,7 +5,7 @@
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
     const CONFIG = {
-        enabled: true,
+        enabled: false, // TẮT AdsTerra - chỉ dùng PopAds và Smartlink
         excludePages: ['/login.html', '/register.html', '/payment.html'],
 
         // MOBILE: Giảm xuống để tránh spam

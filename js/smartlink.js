@@ -67,7 +67,7 @@
         return true;
     }
 
-    // Trigger smartlink
+    // Trigger smartlink - KHÔNG CHẶN hành động gốc
     function triggerSmartlink(source) {
         if (!canTrigger()) return;
 
@@ -84,8 +84,11 @@
             localStorage.setItem(CONFIG.lastSessionKey, now.toString());
         }
 
-        // Open smartlink
-        window.open(CONFIG.smartlinkUrl, '_blank');
+        // Open smartlink trong tab mới - KHÔNG CHẶN hành động gốc
+        // Sử dụng setTimeout để đảm bảo hành động gốc được thực hiện trước
+        setTimeout(() => {
+            window.open(CONFIG.smartlinkUrl, '_blank');
+        }, 100); // Delay 100ms để hành động gốc hoàn thành
 
         const device = isMobile ? 'Mobile' : 'Desktop';
         const maxPops = isMobile ? CONFIG.mobile.maxPops : CONFIG.desktop.maxPops;
@@ -106,10 +109,15 @@
 
                     if (hasText && !btn.dataset.smartlinkAttached) {
                         btn.dataset.smartlinkAttached = 'true';
-                        btn.addEventListener('click', () => {
+
+                        // KHÔNG preventDefault - để hành động gốc vẫn thực hiện
+                        btn.addEventListener('click', (e) => {
+                            // Trigger quảng cáo NHƯNG KHÔNG chặn navigation
                             triggerSmartlink('XEM NGAY Button (Desktop)');
-                        });
-                        console.log('[Smartlink] Desktop - Listening on XEM NGAY button');
+                            // Hành động gốc (chuyển trang) vẫn tiếp tục
+                        }, { capture: false }); // capture: false để không chặn event
+
+                        console.log('[Smartlink] Desktop - Listening on XEM NGAY button (non-blocking)');
                         clearInterval(checkWatchButton);
                     }
                 });
@@ -136,12 +144,16 @@
                     episodeButtons.forEach(btn => {
                         if (!btn.dataset.smartlinkAttached) {
                             btn.dataset.smartlinkAttached = 'true';
-                            btn.addEventListener('click', () => {
+
+                            // KHÔNG preventDefault - để hành động gốc vẫn thực hiện
+                            btn.addEventListener('click', (e) => {
+                                // Trigger quảng cáo NHƯNG KHÔNG chặn việc đổi tập
                                 triggerSmartlink('Episode Button (Desktop)');
-                            });
+                                // Hành động gốc (đổi tập phim) vẫn tiếp tục
+                            }, { capture: false });
                         }
                     });
-                    console.log('[Smartlink] Desktop - Listening on', episodeButtons.length, 'episode buttons');
+                    console.log('[Smartlink] Desktop - Listening on', episodeButtons.length, 'episode buttons (non-blocking)');
                     clearInterval(checkEpisodeButtons);
                 }
             }, 500);
@@ -163,10 +175,15 @@
                 buttons.forEach(btn => {
                     if (btn.textContent.includes('ĐĂNG NHẬP') && !btn.dataset.smartlinkAttached) {
                         btn.dataset.smartlinkAttached = 'true';
-                        btn.addEventListener('click', () => {
+
+                        // KHÔNG preventDefault - để form vẫn submit
+                        btn.addEventListener('click', (e) => {
+                            // Trigger quảng cáo NHƯNG KHÔNG chặn việc đăng nhập
                             triggerSmartlink('Login Button (Mobile)');
-                        });
-                        console.log('[Smartlink] Mobile - Listening on login button');
+                            // Hành động gốc (submit form) vẫn tiếp tục
+                        }, { capture: false });
+
+                        console.log('[Smartlink] Mobile - Listening on login button (non-blocking)');
                         clearInterval(checkLoginButton);
                     }
                 });
