@@ -1,25 +1,33 @@
-// AdsTerra Popunder Integration - Revenue Optimized
+// AdsTerra Popunder Integration - Professional & Balanced
+// Cấu hình tối ưu: Tăng doanh thu nhưng không làm phiền người dùng
 (function () {
     'use strict';
 
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
     const CONFIG = {
-        enabled: false, // TẮT AdsTerra - chỉ dùng PopAds và Smartlink
-        excludePages: ['/login.html', '/register.html', '/payment.html'],
+        enabled: true, // BẬT kiểm soát chuyên nghiệp
+        excludePages: ['/payment.html', '/pricing.html'], // Chỉ loại trừ trang thanh toán
 
-        // MOBILE: Giảm xuống để tránh spam
-        maxPopsPerSession: isMobile ? 2 : 4, // Mobile: 2 pops, Desktop: 4 pops
-        minTimeBetweenPops: isMobile ? 300000 : 180000, // Mobile: 5 phút, Desktop: 3 phút
-        firstPopDelay: isMobile ? 10000 : 5000, // Mobile: 10 giây, Desktop: 5 giây
+        // CHIẾN LƯỢC CÂN BẰNG:
+        // Desktop: 3 pops/session, mỗi 5 phút - Đủ để kiếm tiền, không quá spam
+        // Mobile: 2 pops/session, mỗi 8 phút - Ít hơn vì màn hình nhỏ
+        maxPopsPerSession: isMobile ? 2 : 3,
+        minTimeBetweenPops: isMobile ? 480000 : 300000, // Mobile: 8 phút, Desktop: 5 phút
 
-        initialDelay: 3000, // 3 giây sau khi vào trang
-        interactionDelay: isMobile ? 2000 : 1000, // Mobile: 2 giây, Desktop: 1 giây
-        requireInteraction: true,
+        // GRACE PERIOD: Cho người dùng thời gian làm quen với trang
+        gracePeriod: 45000, // 45 giây - người dùng có thời gian tìm phim
+        firstVisitKey: 'adsterra_first_visit',
+
+        // Delay lần đầu: Sau grace period + tương tác đầu tiên
+        firstPopDelay: isMobile ? 15000 : 10000, // Mobile: 15s, Desktop: 10s
+
+        initialDelay: 5000, // 5 giây để trang load xong
+        interactionDelay: 3000, // 3 giây sau tương tác - tránh trigger ngay lập tức
+        requireInteraction: true, // BẮT BUỘC phải có tương tác
         storageKey: 'adsterra_popunder',
-        watchButtonStorageKey: 'adsterra_watch_button',
-        scriptUrl: 'https://pl28791542.effectivegatecpm.com/bd/33/6d/bd336d4948e946b0e4a42348436b9f13.js',
-        resetOnPageChange: false
+        scriptUrl: 'https://encyclopediainsoluble.com/bd/33/6d/bd336d4948e946b0e4a42348436b9f13.js',
+        resetOnPageChange: false // Giữ counter qua các trang
     };
 
     let isReady = false;
@@ -50,7 +58,22 @@
             }
         }
 
-        // QUAN TRỌNG: Yêu cầu user phải tương tác trước
+        // GRACE PERIOD: Người dùng mới vào, cho thời gian làm quen
+        const now = Date.now();
+        let firstVisitTime = sessionStorage.getItem(CONFIG.firstVisitKey);
+        if (!firstVisitTime) {
+            sessionStorage.setItem(CONFIG.firstVisitKey, now.toString());
+            firstVisitTime = now;
+        }
+
+        const timeSinceFirstVisit = now - parseInt(firstVisitTime);
+        if (timeSinceFirstVisit < CONFIG.gracePeriod) {
+            const waitSeconds = Math.ceil((CONFIG.gracePeriod - timeSinceFirstVisit) / 1000);
+            console.log('[AdsTerra] 🛡️ Grace period active. Wait', waitSeconds, 'seconds (let user browse first)');
+            return false;
+        }
+
+        // Yêu cầu tương tác trước
         if (CONFIG.requireInteraction && !hasInteracted) {
             console.log('[AdsTerra] ⏳ Waiting for user interaction (click/scroll)...');
             return false;
@@ -66,16 +89,17 @@
         // Check time between pops
         const lastPopTime = sessionStorage.getItem(CONFIG.storageKey + '_time');
         if (lastPopTime) {
-            const timeSince = Date.now() - parseInt(lastPopTime);
+            const timeSince = now - parseInt(lastPopTime);
             const isFirstPopDone = sessionStorage.getItem(CONFIG.storageKey + '_first_done');
 
-            // Lần đầu tiên chỉ cần đợi 10 giây
+            // Lần đầu tiên delay ngắn hơn
             const requiredDelay = isFirstPopDone ? CONFIG.minTimeBetweenPops : CONFIG.firstPopDelay;
 
             if (timeSince < requiredDelay) {
                 const waitMinutes = Math.ceil((requiredDelay - timeSince) / 60000);
                 const waitSeconds = Math.ceil((requiredDelay - timeSince) / 1000);
-                console.log('[AdsTerra] ⏰ Wait', waitSeconds < 60 ? waitSeconds + ' seconds' : waitMinutes + ' minutes', 'before next pop');
+                const displayTime = waitSeconds < 60 ? waitSeconds + ' seconds' : waitMinutes + ' minutes';
+                console.log('[AdsTerra] ⏰ Wait', displayTime, 'before next pop');
                 return false;
             }
         }
@@ -101,14 +125,16 @@
         const script = document.createElement('script');
         script.src = CONFIG.scriptUrl;
         script.async = true;
+        script.setAttribute('data-cfasync', 'false');
         document.head.appendChild(script);
 
-        const nextWait = popCount === 0 ? '5 seconds' : Math.ceil(CONFIG.minTimeBetweenPops / 60000) + ' minutes';
-        console.log('[AdsTerra] ✅ Popunder loaded (' + source + ') - Pop', popCount + 1, '/', CONFIG.maxPopsPerSession, '| Next in', nextWait);
-    }
+        const nextWait = popCount === 0
+            ? Math.ceil(CONFIG.firstPopDelay / 1000) + ' seconds'
+            : Math.ceil(CONFIG.minTimeBetweenPops / 60000) + ' minutes';
 
-    // REMOVED: "XEM NGAY" button listener to avoid conflict with Smartlink
-    // Smartlink now handles "XEM NGAY" button exclusively
+        const device = isMobile ? 'Mobile' : 'Desktop';
+        console.log('[AdsTerra] ✅ Popunder loaded (' + source + ') - ' + device + ' - Pop', popCount + 1, '/', CONFIG.maxPopsPerSession, '| Next in', nextWait);
+    }
 
     // Track user interaction (click, scroll, touch)
     function trackInteraction() {
@@ -116,7 +142,7 @@
             hasInteracted = true;
             console.log('[AdsTerra] 👆 User interaction detected');
 
-            // Giảm delay xuống 1 giây để pop nhanh hơn
+            // Delay để không trigger ngay lập tức
             setTimeout(() => {
                 console.log('[AdsTerra] 🎯 Ready to trigger popunder');
                 loadPopunder('interaction');
@@ -140,12 +166,18 @@
 
     // Initialize after initial delay
     function initialize() {
+        if (!CONFIG.enabled) {
+            console.log('[AdsTerra] ⏭️ Disabled by config');
+            return;
+        }
+
         const device = isMobile ? 'Mobile' : 'Desktop';
         const maxPops = CONFIG.maxPopsPerSession;
         const minTime = Math.ceil(CONFIG.minTimeBetweenPops / 60000);
+        const gracePeriod = Math.ceil(CONFIG.gracePeriod / 1000);
 
         console.log('[AdsTerra] ⏳ Initializing in', CONFIG.initialDelay / 1000, 'seconds...');
-        console.log('[AdsTerra] 📱 Device:', device, '| Max pops:', maxPops, '| Min time:', minTime, 'min');
+        console.log('[AdsTerra] 📱 Device:', device, '| Max pops:', maxPops, '| Min time:', minTime, 'min | Grace period:', gracePeriod, 's');
 
         // Preload script ngay lập tức để giảm độ trễ
         preloadPopunderScript();
@@ -160,8 +192,6 @@
                 // Nếu không yêu cầu interaction, trigger luôn
                 loadPopunder('auto');
             }
-
-            // REMOVED: setupWatchButtonListener() - Smartlink handles "XEM NGAY" now
         }, CONFIG.initialDelay);
     }
 
@@ -171,7 +201,5 @@
     } else {
         initialize();
     }
-
-    // REMOVED: window.triggerWatchButtonPop - No longer needed
 
 })();
