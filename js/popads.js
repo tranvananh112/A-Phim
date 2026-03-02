@@ -1,18 +1,26 @@
-// PopAds Integration - Mỗi lần vào = 2 pops
-// Tích hợp PopAds: 2 pops mỗi lần vào, cách nhau 5 phút
+// PopAds Integration - Controlled frequency
+// Tích hợp PopAds với kiểm soát tần suất hợp lý
 
 (function () {
     'use strict';
 
-    // Cấu hình - DISABLED - Chuyển sang AdsTerra
+    // Cấu hình - Desktop: 7 phút, Mobile: 15 phút
     const CONFIG = {
-        enabled: false, // TẮT PopAds, dùng AdsTerra
-        delayOnFirstVisit: 2000, // 2 giây - nhanh hơn
-        delayOnReturn: 2000, // 2 giây
+        enabled: true, // BẬT PopAds - hoạt động song song với Smartlink
+        delayOnFirstVisit: 5000, // 5 giây
+        delayOnReturn: 3000, // 3 giây
         excludePages: ['/login.html', '/register.html', '/payment.html'],
-        maxPopsPerSession: 5, // 5 pops mỗi session - tăng doanh thu
-        minTimeBetweenSessions: 120000, // 2 phút cooldown - nhanh hơn
-        minTimeBetweenPops: 15000 // 15 giây giữa các pops - nhanh hơn
+        maxPopsPerSession: 1, // 1 pop mỗi session
+
+        // Desktop: 7 phút, Mobile: 15 phút
+        desktop: {
+            minTimeBetweenSessions: 420000, // 7 PHÚT
+            minTimeBetweenPops: 420000 // 7 PHÚT
+        },
+        mobile: {
+            minTimeBetweenSessions: 900000, // 15 PHÚT
+            minTimeBetweenPops: 900000 // 15 PHÚT
+        }
     };
 
     // Kiểm tra xem có nên load PopAds không
@@ -26,16 +34,20 @@
             }
         }
 
+        const now = Date.now();
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        const device = isMobile ? 'mobile' : 'desktop';
+        const minTimeBetweenSessions = CONFIG[device].minTimeBetweenSessions;
+        const minTimeBetweenPops = CONFIG[device].minTimeBetweenPops;
+
         // Kiểm tra thời gian từ lần vào trước (localStorage)
         const lastSessionTime = localStorage.getItem('popads_last_session');
-        const now = Date.now();
-
         if (lastSessionTime) {
             const timeSinceLastSession = now - parseInt(lastSessionTime);
 
-            if (timeSinceLastSession < CONFIG.minTimeBetweenSessions) {
-                const waitMinutes = Math.round((CONFIG.minTimeBetweenSessions - timeSinceLastSession) / 60000);
-                console.log('[PopAds] Too soon since last session. Wait', waitMinutes, 'minutes');
+            if (timeSinceLastSession < minTimeBetweenSessions) {
+                const waitMinutes = Math.round((minTimeBetweenSessions - timeSinceLastSession) / 60000);
+                console.log('[PopAds]', device, '- Too soon since last session. Wait', waitMinutes, 'minutes');
                 return false;
             }
         }
@@ -53,8 +65,8 @@
         const lastPopTime = sessionStorage.getItem('popads_last_time');
         if (lastPopTime) {
             const timeSinceLastPop = now - parseInt(lastPopTime);
-            if (timeSinceLastPop < CONFIG.minTimeBetweenPops) {
-                console.log('[PopAds] Too soon since last pop. Wait', Math.round((CONFIG.minTimeBetweenPops - timeSinceLastPop) / 1000), 'seconds');
+            if (timeSinceLastPop < minTimeBetweenPops) {
+                console.log('[PopAds]', device, '- Too soon since last pop. Wait', Math.round((minTimeBetweenPops - timeSinceLastPop) / 1000), 'seconds');
                 return false;
             }
         }
@@ -99,7 +111,7 @@
             script.innerHTML = `/*<![CDATA[/* */(function(){var p=window,r="af9fbcfa4a8705d83a443d8ef461c8d7",y=[["siteId",865-402-248-351*667+5513743],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],t=["d3d3LmNkbjRhZHMuY29tL2FqcXVlcnkuanNjcm9sbC5taW4uY3Nz","ZDNnNW92Zm5nanc5YncuY2xvdWRmcm9udC5uZXQvZ3lUSC9obWF0cml4Lm1pbi5qcw=="],d=-1,i,e,l=function(){clearTimeout(e);d++;if(t[d]&&!(1797928011000<(new Date).getTime()&&1<d)){i=p.document.createElement("script");i.type="text/javascript";i.async=!0;var w=p.document.getElementsByTagName("script")[0];i.src="https://"+atob(t[d]);i.crossOrigin="anonymous";i.onerror=l;i.onload=function(){clearTimeout(e);p[r.slice(0,16)+r.slice(0,16)]||l()};e=setTimeout(l,5E3);w.parentNode.insertBefore(i,w)}};if(!p[r]){try{Object.freeze(p[r]=y)}catch(e){}l()}})();/*]]>/* */`;
 
             document.head.appendChild(script);
-            console.log('[PopAds] Script loaded successfully with NEW code');
+            console.log('[PopAds] Script loaded successfully');
         }, delay);
     }
 

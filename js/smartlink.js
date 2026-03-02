@@ -9,37 +9,54 @@
         smartlinkUrl: 'https://encyclopediainsoluble.com/cymf7jzj?key=4e5b8afe200c9075f14db00783c40f51',
         smartlinkId: '28724969',
 
-        // Desktop: 2 pops, cách 5 phút
+        // Desktop: 7 phút - tăng thu nhập
         desktop: {
-            maxPops: 2,
-            minTimeBetween: 300000, // 5 phút
+            maxPops: 1,
+            minTimeBetween: 420000, // 7 phút
+            sessionCooldown: 420000, // 7 phút cooldown
         },
 
-        // Mobile: 1 pop duy nhất
+        // Mobile: 15 phút - giữ nguyên
         mobile: {
             maxPops: 1,
+            sessionCooldown: 900000, // 15 phút cooldown
         },
 
-        storageKey: 'smartlink_session'
+        storageKey: 'smartlink_session',
+        lastSessionKey: 'smartlink_last_session'
     };
 
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
     // Kiểm tra có thể trigger không
     function canTrigger() {
+        const now = Date.now();
         const session = JSON.parse(sessionStorage.getItem(CONFIG.storageKey) || '{}');
         const maxPops = isMobile ? CONFIG.mobile.maxPops : CONFIG.desktop.maxPops;
 
-        // Kiểm tra số lần đã pop
+        // Kiểm tra cooldown giữa các session (localStorage)
+        const lastSessionTime = localStorage.getItem(CONFIG.lastSessionKey);
+        if (lastSessionTime) {
+            const timeSinceLastSession = now - parseInt(lastSessionTime);
+            const cooldown = isMobile ? CONFIG.mobile.sessionCooldown : CONFIG.desktop.sessionCooldown;
+
+            if (timeSinceLastSession < cooldown) {
+                const waitMinutes = Math.ceil((cooldown - timeSinceLastSession) / 60000);
+                console.log('[Smartlink] Session cooldown active. Wait', waitMinutes, 'minutes');
+                return false;
+            }
+        }
+
+        // Kiểm tra số lần đã pop trong session hiện tại
         const popCount = session.count || 0;
         if (popCount >= maxPops) {
             console.log('[Smartlink] Max pops reached:', popCount, '/', maxPops);
             return false;
         }
 
-        // Desktop: Kiểm tra thời gian giữa các lần pop
+        // Desktop: Kiểm tra thời gian giữa các lần pop trong cùng session
         if (!isMobile && session.lastTime) {
-            const timeSince = Date.now() - session.lastTime;
+            const timeSince = now - session.lastTime;
             if (timeSince < CONFIG.desktop.minTimeBetween) {
                 const waitMinutes = Math.ceil((CONFIG.desktop.minTimeBetween - timeSince) / 60000);
                 console.log('[Smartlink] Wait', waitMinutes, 'minutes before next pop');
@@ -54,11 +71,18 @@
     function triggerSmartlink(source) {
         if (!canTrigger()) return;
 
-        // Update session
+        const now = Date.now();
+
+        // Update session (sessionStorage)
         const session = JSON.parse(sessionStorage.getItem(CONFIG.storageKey) || '{}');
         session.count = (session.count || 0) + 1;
-        session.lastTime = Date.now();
+        session.lastTime = now;
         sessionStorage.setItem(CONFIG.storageKey, JSON.stringify(session));
+
+        // Lưu thời gian session (localStorage) - chỉ lưu lần đầu tiên
+        if (session.count === 1) {
+            localStorage.setItem(CONFIG.lastSessionKey, now.toString());
+        }
 
         // Open smartlink
         window.open(CONFIG.smartlinkUrl, '_blank');

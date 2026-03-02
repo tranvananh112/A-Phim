@@ -1,0 +1,98 @@
+/* Hero Mobile Fixes - Fix button and layout issues on mobile */
+
+@media (max-width: 768px) {
+
+    /* Ensure title uses Dancing Script on mobile with better sizing */
+    #heroTitle {
+        font-family: 'Dancing Script', cursive !important;
+        font-size: 2.5rem !important;
+        line-height: 1.2 !important;
+    }
+
+    /* Adjust hero content layout for mobile */
+    #heroContent {
+        padding-bottom: 200px !important;
+    }
+
+    /* Reduce spacing between elements */
+    #heroContent>div {
+        gap: 0.75rem !important;
+    }
+
+    /* Compact badges */
+    #heroBadges {
+        margin-bottom: 0.5rem !important;
+        gap: 0.5rem !important;
+    }
+
+    #heroBadges span {
+        padding: 0.25rem 0.75rem !important;
+        font-size: 0.75rem !important;
+    }
+
+    /* Compact genres */
+    #heroGenres {
+        margin-bottom: 0.75rem !important;
+        gap: 0.5rem !important;
+    }
+
+    #heroGenres span {
+        padding: 0.25rem 0.75rem !important;
+        font-size: 0.75rem !important;
+    }
+
+    /* Limit description height */
+    #heroDescription {
+        max-height: 4.5em !important;
+        overflow: hidden !important;
+        margin-bottom: 1rem !important;
+        font-size: 0.875rem !important;
+        line-height: 1.5 !important;
+    }
+
+    /* Play button - ensure it's visible and not covered */
+    #heroPlayBtn {
+        position: relative !important;
+        z-index: 30 !important;
+        margin-top: 1.5rem !important;
+    }
+
+    /* Reduce play button size on mobile */
+    #heroPlayBtn .w-24 {
+        width: 70px !important;
+        height: 70px !important;
+    }
+
+    #heroPlayBtn .material-icons-round {
+        font-size: 36px !important;
+    }
+
+    /* Adjust thumbnails position */
+    .absolute.bottom-4 {
+        bottom: 1rem !important;
+    }
+
+    #heroThumbnails {
+        gap: 0.5rem !important;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+    #heroTitle {
+        font-size: 2rem !important;
+    }
+
+    #heroContent {
+        padding-bottom: 180px !important;
+    }
+
+    #heroPlayBtn .w-24 {
+        width: 60px !important;
+        height: 60px !important;
+    }
+
+    #heroPlayBtn .material-icons-round {
+        font-size: 32px !important;
+    }
+}

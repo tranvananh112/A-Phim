@@ -24,11 +24,23 @@
     scrollbar-width: none;
 }
 
-/* Font for hero title */
-@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:ital,wght@1,700&display=swap');
+/* Font for hero title - Responsive: Different fonts for mobile and desktop */
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:wght@400;500;600;700&display=swap');
 
+/* Mobile: Use playful handwriting font (Dancing Script) */
 .font-script {
     font-family: 'Dancing Script', cursive;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+/* Desktop (768px and up): Use elegant serif font (Playfair Display) */
+@media (min-width: 768px) {
+    .font-script {
+        font-family: 'Playfair Display', serif;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+    }
 }
 
 .font-serif-italic {
