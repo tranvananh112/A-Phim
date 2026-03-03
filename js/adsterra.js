@@ -9,30 +9,35 @@
         enabled: true, // BẬT kiểm soát chuyên nghiệp
         excludePages: ['/payment.html', '/pricing.html'], // Chỉ loại trừ trang thanh toán
 
-        // CHIẾN LƯỢC CÂN BẰNG:
-        // Desktop: 3 pops/session, mỗi 5 phút - Đủ để kiếm tiền, không quá spam
-        // Mobile: 2 pops/session, mỗi 8 phút - Ít hơn vì màn hình nhỏ
-        maxPopsPerSession: isMobile ? 2 : 3,
-        minTimeBetweenPops: isMobile ? 480000 : 300000, // Mobile: 8 phút, Desktop: 5 phút
+        // CHIẾN LƯỢC TĂNG DOANH THU DESKTOP:
+        // Desktop: 6 pops/session, mỗi 2 phút - Tăng gấp đôi để tăng doanh thu
+        // Mobile: 3 pops/session, mỗi 5 phút - Tăng nhẹ
+        maxPopsPerSession: isMobile ? 3 : 6,
+        minTimeBetweenPops: isMobile ? 300000 : 120000, // Mobile: 5 phút, Desktop: 2 phút
 
-        // GRACE PERIOD: Cho người dùng thời gian làm quen với trang
-        gracePeriod: 45000, // 45 giây - người dùng có thời gian tìm phim
+        // GRACE PERIOD: Giảm xuống để trigger nhanh hơn
+        gracePeriod: 20000, // 20 giây - trigger nhanh hơn
         firstVisitKey: 'adsterra_first_visit',
 
-        // Delay lần đầu: Sau grace period + tương tác đầu tiên
-        firstPopDelay: isMobile ? 15000 : 10000, // Mobile: 15s, Desktop: 10s
+        // Delay lần đầu: Giảm để trigger nhanh hơn
+        firstPopDelay: isMobile ? 10000 : 5000, // Mobile: 10s, Desktop: 5s
 
-        initialDelay: 5000, // 5 giây để trang load xong
-        interactionDelay: 3000, // 3 giây sau tương tác - tránh trigger ngay lập tức
+        initialDelay: 3000, // 3 giây để trang load xong
+        interactionDelay: 1000, // 1 giây sau tương tác - trigger nhanh hơn
         requireInteraction: true, // BẮT BUỘC phải có tương tác
         storageKey: 'adsterra_popunder',
         scriptUrl: 'https://encyclopediainsoluble.com/bd/33/6d/bd336d4948e946b0e4a42348436b9f13.js',
-        resetOnPageChange: false // Giữ counter qua các trang
+        resetOnPageChange: false, // Giữ counter qua các trang
+
+        // PRELOAD NAVIGATION: Load trang đích trước khi popunder xuất hiện
+        preloadNavigation: true, // BẬT preload navigation
+        preloadDelay: 300 // 300ms để trang bắt đầu load trước khi popunder trigger
     };
 
     let isReady = false;
     let hasInteracted = false;
     let preloadedScript = null;
+    let pendingNavigation = null; // Lưu navigation đang chờ
 
     // Preload script để giảm độ trễ
     function preloadPopunderScript() {
@@ -45,6 +50,58 @@
         document.head.appendChild(link);
 
         console.log('[AdsTerra] 📦 Preloading popunder script...');
+    }
+
+    // Intercept navigation để preload trang trước khi popunder xuất hiện
+    function setupNavigationInterceptor() {
+        if (!CONFIG.preloadNavigation) return;
+
+        // Intercept tất cả clicks vào links
+        document.addEventListener('click', function (e) {
+            // Tìm link gần nhất
+            const link = e.target.closest('a');
+            if (!link || !link.href) return;
+
+            // Chỉ intercept internal links
+            const url = new URL(link.href);
+            if (url.origin !== window.location.origin) return;
+
+            // Bỏ qua links có target="_blank" hoặc download
+            if (link.target === '_blank' || link.hasAttribute('download')) return;
+
+            // Kiểm tra xem có nên trigger popunder không
+            if (!shouldLoadAds()) return;
+
+            // Prevent default navigation
+            e.preventDefault();
+
+            const targetUrl = link.href;
+            console.log('[AdsTerra] 🔗 Navigation intercepted:', targetUrl);
+
+            // Bước 1: Bắt đầu preload trang đích (fetch HTML)
+            console.log('[AdsTerra] ⏳ Preloading target page...');
+            fetch(targetUrl)
+                .then(response => response.text())
+                .then(html => {
+                    console.log('[AdsTerra] ✅ Target page preloaded');
+
+                    // Bước 2: Trigger popunder NGAY SAU KHI preload xong
+                    loadPopunder('navigation');
+
+                    // Bước 3: Navigate đến trang đích sau delay ngắn
+                    setTimeout(() => {
+                        console.log('[AdsTerra] 🚀 Navigating to:', targetUrl);
+                        window.location.href = targetUrl;
+                    }, CONFIG.preloadDelay);
+                })
+                .catch(err => {
+                    // Nếu preload fail, navigate bình thường
+                    console.log('[AdsTerra] ⚠️ Preload failed, navigating normally');
+                    window.location.href = targetUrl;
+                });
+        }, true); // useCapture = true để catch trước các handlers khác
+
+        console.log('[AdsTerra] 🔗 Navigation interceptor active');
     }
 
     function shouldLoadAds() {
@@ -178,9 +235,13 @@
 
         console.log('[AdsTerra] ⏳ Initializing in', CONFIG.initialDelay / 1000, 'seconds...');
         console.log('[AdsTerra] 📱 Device:', device, '| Max pops:', maxPops, '| Min time:', minTime, 'min | Grace period:', gracePeriod, 's');
+        console.log('[AdsTerra] 🔗 Navigation preload:', CONFIG.preloadNavigation ? 'ENABLED' : 'DISABLED');
 
         // Preload script ngay lập tức để giảm độ trễ
         preloadPopunderScript();
+
+        // Setup navigation interceptor
+        setupNavigationInterceptor();
 
         setTimeout(() => {
             isReady = true;
