@@ -1,0 +1,248 @@
+/* Country Sections Styles - Phim Hàn Quốc, Trung Quốc, US-UK */
+
+.country-section {
+    padding: 0.5rem 0;
+}
+
+@media (min-width: 768px) {
+    .country-section {
+        padding: 1rem 0;
+    }
+}
+
+.country-section-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+@media (min-width: 1024px) {
+    .country-section-container {
+        flex-direction: row;
+        gap: 2rem;
+        align-items: center;
+    }
+}
+
+.country-section-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+@media (min-width: 1024px) {
+    .country-section-header {
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        width: 20%;
+        min-width: 200px;
+        flex-shrink: 0;
+    }
+}
+
+.country-section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0;
+    line-height: 1.1;
+}
+
+@media (min-width: 1024px) {
+    .country-section-title {
+        font-size: 2.25rem;
+        margin-bottom: 0.75rem;
+    }
+}
+
+.country-section-link {
+    display: flex;
+    align-items: center;
+    color: #9ca3af;
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: color 0.3s;
+    white-space: nowrap;
+}
+
+@media (min-width: 1024px) {
+    .country-section-link {
+        font-size: 0.875rem;
+    }
+}
+
+.country-section-link:hover {
+    color: #f2f20d;
+}
+
+.country-section-link .material-icons-round {
+    font-size: 1rem;
+    margin-left: 0.25rem;
+    transition: transform 0.3s;
+}
+
+.country-section-link:hover .material-icons-round {
+    transform: translateX(0.25rem);
+}
+
+.country-section-content {
+    position: relative;
+    width: 100%;
+}
+
+@media (min-width: 1024px) {
+    .country-section-content {
+        width: 80%;
+    }
+}
+
+.country-section-scroll {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+@media (min-width: 768px) {
+    .country-section-scroll {
+        gap: 1rem;
+        padding-bottom: 0.5rem;
+    }
+}
+
+.country-section-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.country-movie-card {
+    min-width: 200px;
+    width: 200px;
+    flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+    .country-movie-card {
+        min-width: 240px;
+        width: 240px;
+    }
+}
+
+.country-movie-poster {
+    position: relative;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    cursor: pointer;
+}
+
+.country-movie-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.3s;
+}
+
+.country-movie-poster:hover img {
+    transform: scale(1.05);
+}
+
+.country-movie-badge {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 0.5rem;
+    display: flex;
+    gap: 0.25rem;
+}
+
+.country-movie-badge span {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
+    color: white;
+    font-size: 0.625rem;
+    font-weight: 700;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+}
+
+.country-movie-info {
+    margin-top: 0.5rem;
+}
+
+@media (min-width: 768px) {
+    .country-movie-info {
+        margin-top: 0.75rem;
+    }
+}
+
+.country-movie-title {
+    font-weight: 700;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.country-movie-title:hover {
+    color: #f2f20d;
+}
+
+.country-movie-subtitle {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Scroll button */
+.country-scroll-btn {
+    position: absolute;
+    right: 0;
+    top: 35%;
+    z-index: 10;
+    background: white;
+    color: black;
+    border-radius: 9999px;
+    padding: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    opacity: 0.8;
+    transform: translateX(50%);
+    transition: all 0.3s;
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .country-scroll-btn {
+        display: block;
+    }
+}
+
+.country-scroll-btn:hover {
+    background: #e5e7eb;
+    opacity: 1;
+}
+
+.country-scroll-btn .material-icons-round {
+    font-size: 1.5rem;
+}
+
+/* Color variants */
+.text-pink-500 {
+    color: #ec4899;
+}
+
+.text-pink-400 {
+    color: #f472b6;
+}
+
+.text-yellow-400 {
+    color: #facc15;
+}

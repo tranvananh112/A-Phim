@@ -333,6 +333,43 @@
     <link rel="stylesheet" href="css/splash-loader.css">
     <script src="js/splash-loader.js"></script>
 
+    <!-- Turbo Performance Optimization - Load ASAP -->
+    <script>
+        // Inline critical performance code for instant execution
+        (function () {
+            // Mark page start time
+            window.__pageStartTime = performance.now();
+
+            // Preconnect to critical domains immediately
+            const criticalDomains = [
+                'https://ophim1.com',
+                'https://img.ophim.live',
+                'https://cdn.tailwindcss.com'
+            ];
+
+            criticalDomains.forEach(domain => {
+                const link = document.createElement('link');
+                link.rel = 'preconnect';
+                link.href = domain;
+                link.crossOrigin = 'anonymous';
+                document.head.appendChild(link);
+            });
+
+            // Enable passive event listeners by default
+            if (typeof EventTarget !== 'undefined') {
+                const originalAddEventListener = EventTarget.prototype.addEventListener;
+                EventTarget.prototype.addEventListener = function (type, listener, options) {
+                    if (typeof options === 'boolean') {
+                        options = { capture: options, passive: true };
+                    } else if (typeof options === 'object' && options.passive === undefined) {
+                        options.passive = true;
+                    }
+                    return originalAddEventListener.call(this, type, listener, options);
+                };
+            }
+        })();
+    </script>
+
     <!-- SEO Meta Tags -->
     <meta name="description"
         content="Xem phim online chất lượng cao với hàng ngàn bộ phim bom tấn và series độc quyền. Phim Việt Nam, phim bộ, phim lẻ với chất lượng 4K HDR. Trải nghiệm điện ảnh đỉnh cao tại Aphim.io.vn" />
@@ -403,6 +440,7 @@
     </script>
     <link rel="stylesheet" href="css/navigation-modern.css">
     <link rel="stylesheet" href="css/navigation-pill-v2.css">
+    <link rel="stylesheet" href="css/navigation-smooth.css">
     <link rel="stylesheet" href="css/sticky-nav.css">
     <link rel="stylesheet" href="css/material-icons-fix.css">
     <link rel="stylesheet" href="css/top-movies.css">
@@ -411,6 +449,8 @@
     <link rel="stylesheet" href="css/page-animations.css">
     <link rel="stylesheet" href="css/dropdown-blue.css">
     <link rel="stylesheet" href="css/search-icon-desktop.css">
+    <link rel="stylesheet" href="css/horror-section.css">
+    <link rel="stylesheet" href="css/country-sections.css">
 
     <!-- Material Icons Loader -->
     <script src="js/material-icons-loader.js"></script>
@@ -432,6 +472,16 @@
 
         ::-webkit-scrollbar-thumb:hover {
             background: #f2f20d;
+        }
+
+        /* Hide scrollbar for horizontal scroll sections */
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
         }
     </style>
 </head>
@@ -470,11 +520,37 @@
                                 class="material-icons-round text-sm group-hover:rotate-180 transition-transform duration-300">expand_more</span>
                         </button>
                         <div
-                            class="absolute top-full left-0 mt-2 w-56 bg-black/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden">
-                            <a href="phim-viet-nam.html"
-                                class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all">
-                                🇻🇳 Phim Việt Nam
-                            </a>
+                            class="absolute top-full left-0 mt-2 w-64 bg-black/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden z-50">
+                            <div class="grid grid-cols-1 gap-0">
+                                <a href="phim-theo-quoc-gia.html"
+                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5 font-semibold">
+                                    🌍 Tất Cả Quốc Gia
+                                </a>
+                                <a href="phim-viet-nam.html"
+                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
+                                    🇻🇳 Phim Việt Nam
+                                </a>
+                                <a href="phim-theo-quoc-gia.html?country=han-quoc"
+                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
+                                    🇰🇷 Phim Hàn Quốc
+                                </a>
+                                <a href="phim-theo-quoc-gia.html?country=trung-quoc"
+                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
+                                    🇨🇳 Phim Trung Quốc
+                                </a>
+                                <a href="phim-theo-quoc-gia.html?country=nhat-ban"
+                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
+                                    🇯🇵 Phim Nhật Bản
+                                </a>
+                                <a href="phim-theo-quoc-gia.html?country=thai-lan"
+                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
+                                    🇹🇭 Phim Thái Lan
+                                </a>
+                                <a href="phim-theo-quoc-gia.html?country=au-my"
+                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all">
+                                    🇺🇸 Phim Âu Mỹ
+                                </a>
+                            </div>
                         </div>
                     </div>
 
@@ -895,12 +971,13 @@
                     <div class="w-1.5 h-8 bg-red-600 rounded-full shadow-[0_0_10px_#dc2626]"></div>
                     <h2
                         class="text-lg md:text-2xl lg:text-3xl font-extrabold uppercase tracking-tight flex items-center gap-2 text-red-600 drop-shadow-[0_0_5px_rgba(220,38,38,0.5)]">
-                        🇻🇳 <span class="text-white">Phim Việt Nam</span>
+                        <span class="text-white">Phim Việt Nam</span>
                     </h2>
                 </div>
                 <a href="phim-viet-nam.html"
-                    class="text-primary text-sm font-semibold hover:text-white transition-colors flex items-center gap-1 group">
-                    Xem tất cả <span
+                    class="text-white md:text-primary font-semibold hover:text-white transition-colors flex items-center gap-1 group">
+                    <span class="hidden md:inline text-sm">Xem tất cả</span>
+                    <span
                         class="material-icons-round text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
                 </a>
             </div>
@@ -911,8 +988,8 @@
                 <p class="text-gray-400">Đang tải phim Việt Nam...</p>
             </div>
 
-            <!-- Movies Grid -->
-            <div id="vietnamMoviesGrid" class="hidden grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <!-- Movies Horizontal Scroll -->
+            <div id="vietnamMoviesGrid" class="hidden flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
                 <!-- Movies will be loaded here -->
             </div>
         </div>
@@ -926,12 +1003,13 @@
                     <div class="w-1.5 h-8 bg-purple-600 rounded-full shadow-[0_0_10px_#9333ea]"></div>
                     <h2
                         class="text-lg md:text-2xl lg:text-3xl font-extrabold uppercase tracking-tight flex items-center gap-2 text-purple-600 drop-shadow-[0_0_5px_rgba(147,51,234,0.5)]">
-                        🔥 <span class="text-white">Phim Mới Cập Nhật</span>
+                        <span class="text-white">Phim Mới Cập Nhật</span>
                     </h2>
                 </div>
                 <a href="search.html"
-                    class="text-primary text-sm font-semibold hover:text-white transition-colors flex items-center gap-1 group">
-                    Xem tất cả <span
+                    class="text-white md:text-primary font-semibold hover:text-white transition-colors flex items-center gap-2 group">
+                    <span class="hidden md:inline text-sm whitespace-nowrap">Xem tất cả</span>
+                    <span
                         class="material-icons-round text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
                 </a>
             </div>
@@ -942,9 +1020,40 @@
                 <p class="text-gray-400">Đang tải phim mới...</p>
             </div>
 
-            <!-- Movies Grid -->
-            <div id="latestMoviesGrid" class="hidden grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <!-- Movies Horizontal Scroll -->
+            <div id="latestMoviesGrid" class="hidden flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
                 <!-- Movies will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Horror Section -->
+    <section class="py-8 md:py-12 horror-section">
+        <div class="container mx-auto px-6">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-8 bg-red-600 rounded-full shadow-[0_0_10px_#dc2626]"></div>
+                    <h2
+                        class="text-base md:text-2xl lg:text-3xl font-extrabold uppercase tracking-tight flex items-center gap-2 text-red-600 drop-shadow-[0_0_5px_rgba(220,38,38,0.5)]">
+                        <span class="text-white whitespace-nowrap md:whitespace-normal">Kho Tàng Phim Kinh Dị Mới
+                            Nhất</span>
+                    </h2>
+                </div>
+                <a href="search.html?category=kinh-di"
+                    class="text-white md:text-primary font-semibold hover:text-white transition-colors flex items-center gap-1 group whitespace-nowrap">
+                    <span class="hidden md:inline text-sm">Xem tất cả</span>
+                    <span
+                        class="material-icons-round text-base md:text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                </a>
+            </div>
+
+            <!-- Horror Banner Container -->
+            <div id="horrorBannerContainer">
+                <!-- Loading -->
+                <div class="text-center py-20">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
+                    <p class="text-gray-400">Đang tải phim kinh dị...</p>
+                </div>
             </div>
         </div>
     </section>
@@ -1018,6 +1127,7 @@
     <script src="js/mobile-menu-simple.js"></script>
     <script src="js/home.js"></script>
     <script src="js/home-sections.js"></script>
+    <script src="js/horror-section.js"></script>
 
     <script>
         // Preload critical data on page load
@@ -1098,7 +1208,7 @@
 
                 return `
                 <a href="${linkUrl}"
-                    class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300">
+                    class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300 flex-shrink-0 w-40 md:w-48">
                     <div class="aspect-[2/3] w-full overflow-hidden relative">
                         <img alt="${movie.name}"
                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
@@ -1187,7 +1297,7 @@
 
                 return `
                 <a href="${linkUrl}"
-                    class="group relative block rounded-xl overflow-hidden bg-gradient-to-b from-slate-900 to-black border border-white/5 hover:border-purple-600/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-600/20">
+                    class="group relative block rounded-xl overflow-hidden bg-gradient-to-b from-slate-900 to-black border border-white/5 hover:border-purple-600/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-600/20 flex-shrink-0 w-40 md:w-48">
                     <div class="aspect-[2/3] w-full overflow-hidden relative">
                         <img alt="${movie.name}"
                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
@@ -1380,6 +1490,9 @@
 
     <!-- Top Movies Hot -->
     <script src="js/top-movies.js"></script>
+
+    <!-- Country Sections - Phim Hàn Quốc, Trung Quốc, US-UK -->
+    <script src="js/country-sections.js"></script>
 
     <!-- Analytics & Ads -->
     <script defer src="js/analytics.js"></script>

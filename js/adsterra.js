@@ -9,18 +9,18 @@
         enabled: true, // BẬT kiểm soát chuyên nghiệp
         excludePages: ['/payment.html', '/pricing.html'], // Chỉ loại trừ trang thanh toán
 
-        // CHIẾN LƯỢC TĂNG DOANH THU DESKTOP:
-        // Desktop: 6 pops/session, mỗi 2 phút - Tăng gấp đôi để tăng doanh thu
-        // Mobile: 3 pops/session, mỗi 5 phút - Tăng nhẹ
-        maxPopsPerSession: isMobile ? 3 : 6,
-        minTimeBetweenPops: isMobile ? 300000 : 120000, // Mobile: 5 phút, Desktop: 2 phút
+        // CHIẾN LƯỢC TĂNG DOANH THU DESKTOP - NÂNG CAO:
+        // Desktop: 10 pops/session, mỗi 90 giây (1.5 phút) - Tăng mạnh để tối đa doanh thu
+        // Mobile: 3 pops/session, mỗi 5 phút - Giữ nguyên
+        maxPopsPerSession: isMobile ? 3 : 10,
+        minTimeBetweenPops: isMobile ? 300000 : 90000, // Mobile: 5 phút, Desktop: 1.5 phút
 
-        // GRACE PERIOD: Giảm xuống để trigger nhanh hơn
-        gracePeriod: 20000, // 20 giây - trigger nhanh hơn
+        // GRACE PERIOD: Giảm xuống để trigger nhanh hơn (chỉ desktop)
+        gracePeriod: isMobile ? 20000 : 15000, // Mobile: 20s, Desktop: 15s
         firstVisitKey: 'adsterra_first_visit',
 
-        // Delay lần đầu: Giảm để trigger nhanh hơn
-        firstPopDelay: isMobile ? 10000 : 5000, // Mobile: 10s, Desktop: 5s
+        // Delay lần đầu: Giảm để trigger nhanh hơn (chỉ desktop)
+        firstPopDelay: isMobile ? 10000 : 3000, // Mobile: 10s, Desktop: 3s
 
         initialDelay: 3000, // 3 giây để trang load xong
         interactionDelay: 1000, // 1 giây sau tương tác - trigger nhanh hơn

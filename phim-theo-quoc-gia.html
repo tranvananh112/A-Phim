@@ -17,7 +17,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phim Việt Nam - A Phim</title>
+    <title>Phim Theo Quốc Gia - A Phim</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon.png">
@@ -29,30 +29,17 @@
     <link rel="preconnect" href="https://ophim1.com">
     <link rel="dns-prefetch" href="https://img.ophim.live">
 
-    <!-- Preload Material Icons font - CRITICAL -->
-    <link rel="preload"
-        href="https://fonts.gstatic.com/s/materialiconsround/v108/LDItaoyNOAY6Uewc665JcIzCKsKc_M9flwmPq_HTTw.woff2"
-        as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="https://fonts.gstatic.com/s/materialicons/v140/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2"
-        as="font" type="font/woff2" crossorigin>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/dropdown-blue.css">
-
-    <!-- Load Material Icons FIRST before other fonts -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round&display=block" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=block" rel="stylesheet" />
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="css/skeleton-loading.css">
+    <link rel="stylesheet" href="css/navigation-pill-v2.css">
     <link rel="stylesheet" href="css/sticky-nav.css">
     <link rel="stylesheet" href="css/navigation-smooth.css">
     <link rel="stylesheet" href="css/material-icons-fix.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round&display=block" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="css/skeleton-loading.css">
 
     <!-- Material Icons Loader -->
     <script src="js/material-icons-loader.js"></script>
@@ -63,6 +50,7 @@
                 extend: {
                     colors: {
                         "primary": "#f2f20d",
+                        "primary-dim": "#b3b30a",
                         "background-dark": "#1a1a0c",
                         "surface-dark": "#2a2a18",
                     }
@@ -109,11 +97,11 @@
                             class="absolute top-full left-0 mt-2 w-64 bg-black/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden z-50">
                             <div class="grid grid-cols-1 gap-0">
                                 <a href="phim-theo-quoc-gia.html"
-                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5 font-semibold">
+                                    class="block px-5 py-3 text-primary hover:bg-white/5 transition-all border-b border-white/5 font-semibold">
                                     🌍 Tất Cả Quốc Gia
                                 </a>
                                 <a href="phim-viet-nam.html"
-                                    class="block px-5 py-3 text-primary hover:bg-white/5 transition-all border-b border-white/5 font-semibold">
+                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
                                     🇻🇳 Phim Việt Nam
                                 </a>
                                 <a href="phim-theo-quoc-gia.html?country=han-quoc"
@@ -202,10 +190,10 @@
                         </button>
                         <div id="categoryDropdown"
                             class="absolute top-full left-0 mt-2 w-[700px] bg-black/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden z-50">
-                            <!-- Categories will be loaded here in grid format -->
                             <div class="p-4 text-center text-gray-400">Đang tải...</div>
                         </div>
                     </div>
+
                     <a href="search.html"
                         class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white hover:text-primary">
                         Khám phá
@@ -255,70 +243,113 @@
 
     <!-- Main Content -->
     <main class="container mx-auto px-6 pt-32 pb-20">
-        <!-- Loading -->
-        <div id="loading" class="text-center py-20">
-            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4"></div>
-            <p class="text-gray-400">Đang tải phim Việt Nam...</p>
+        <!-- Country Selector - Hidden (navigation handles country selection) -->
+        <div class="mb-8 hidden">
+            <div class="flex flex-wrap gap-3">
+                <button onclick="loadCountryMovies('viet-nam', 'Việt Nam')"
+                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300 flex items-center gap-2">
+                    <svg width="24" height="16" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="30" height="20" fill="#DA251D" />
+                        <polygon points="15,4 16.5,9 21.5,9 17.5,12 19,17 15,14 11,17 12.5,12 8.5,9 13.5,9"
+                            fill="#FFFF00" />
+                    </svg>
+                    Việt Nam
+                </button>
+                <button onclick="loadCountryMovies('han-quoc', 'Hàn Quốc')"
+                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
+                    🇰🇷 Hàn Quốc
+                </button>
+                <button onclick="loadCountryMovies('trung-quoc', 'Trung Quốc')"
+                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
+                    🇨🇳 Trung Quốc
+                </button>
+                <button onclick="loadCountryMovies('nhat-ban', 'Nhật Bản')"
+                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
+                    🇯🇵 Nhật Bản
+                </button>
+                <button onclick="loadCountryMovies('thai-lan', 'Thái Lan')"
+                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
+                    🇹🇭 Thái Lan
+                </button>
+                <button onclick="loadCountryMovies('au-my', 'Âu Mỹ')"
+                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
+                    🇺🇸 Âu Mỹ
+                </button>
+                <button onclick="loadCountryMovies('hong-kong', 'Hồng Kông')"
+                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
+                    🇭🇰 Hồng Kông
+                </button>
+                <button onclick="loadCountryMovies('dai-loan', 'Đài Loan')"
+                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
+                    🇹🇼 Đài Loan
+                </button>
+                <button onclick="loadCountryMovies('an-do', 'Ấn Độ')"
+                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
+                    🇮🇳 Ấn Độ
+                </button>
+                <button onclick="loadCountryMovies('anh', 'Anh')"
+                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
+                    🇬🇧 Anh
+                </button>
+                <button onclick="loadCountryMovies('phap', 'Pháp')"
+                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
+                    🇫🇷 Pháp
+                </button>
+                <button onclick="loadCountryMovies('canada', 'Canada')"
+                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
+                    🇨🇦 Canada
+                </button>
+            </div>
         </div>
 
         <!-- Skeleton Loading Grid -->
-        <div id="skeletonGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        <div id="skeletonGrid" class="hidden grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
             <div class="skeleton-card">
                 <div class="skeleton-poster"></div>
                 <div class="skeleton-title"></div>
-                <div class="skeleton-subtitle"></div>
             </div>
             <div class="skeleton-card">
                 <div class="skeleton-poster"></div>
                 <div class="skeleton-title"></div>
-                <div class="skeleton-subtitle"></div>
             </div>
             <div class="skeleton-card">
                 <div class="skeleton-poster"></div>
                 <div class="skeleton-title"></div>
-                <div class="skeleton-subtitle"></div>
             </div>
             <div class="skeleton-card">
                 <div class="skeleton-poster"></div>
                 <div class="skeleton-title"></div>
-                <div class="skeleton-subtitle"></div>
             </div>
             <div class="skeleton-card">
                 <div class="skeleton-poster"></div>
                 <div class="skeleton-title"></div>
-                <div class="skeleton-subtitle"></div>
             </div>
             <div class="skeleton-card">
                 <div class="skeleton-poster"></div>
                 <div class="skeleton-title"></div>
-                <div class="skeleton-subtitle"></div>
             </div>
             <div class="skeleton-card">
                 <div class="skeleton-poster"></div>
                 <div class="skeleton-title"></div>
-                <div class="skeleton-subtitle"></div>
             </div>
             <div class="skeleton-card">
                 <div class="skeleton-poster"></div>
                 <div class="skeleton-title"></div>
-                <div class="skeleton-subtitle"></div>
             </div>
             <div class="skeleton-card">
                 <div class="skeleton-poster"></div>
                 <div class="skeleton-title"></div>
-                <div class="skeleton-subtitle"></div>
             </div>
             <div class="skeleton-card">
                 <div class="skeleton-poster"></div>
                 <div class="skeleton-title"></div>
-                <div class="skeleton-subtitle"></div>
             </div>
         </div>
 
         <!-- Movies Grid -->
         <div id="moviesGrid" class="hidden">
             <div class="mb-6">
-                <h2 class="text-2xl font-bold mb-2">Tất cả phim Việt Nam</h2>
+                <h2 id="countryTitle" class="text-2xl font-bold mb-2">Chọn quốc gia để xem phim</h2>
                 <span id="movieCount" class="text-gray-400"></span>
             </div>
             <div id="moviesList" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
@@ -335,75 +366,50 @@
 
     <script src="js/config.js"></script>
     <script src="js/api.js"></script>
-    <script src="js/data-cache.js"></script>
-    <script src="js/api-optimization.js"></script>
-    <script src="js/image-optimization.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/user.js"></script>
-    <script src="js/user-ui.js"></script>
-    <script src="js/performance.js"></script>
-    <script src="js/page-optimization.js"></script>
     <script>
-        // Preload critical data in parallel
-        document.addEventListener('DOMContentLoaded', () => {
-            // Start preloading in background
-            preloadCriticalData().catch(err => console.warn('Preload error:', err));
+        let currentCountry = '';
+        let currentCountryName = '';
+        let currentPage = 1;
+        let totalPages = 1;
+        let isLoading = false;
 
-            // Load Vietnamese movies
-            loadVietnameseMovies(1);
-        });
-    </script>
-    <script>
-        const loading = document.getElementById('loading');
         const skeletonGrid = document.getElementById('skeletonGrid');
         const moviesGrid = document.getElementById('moviesGrid');
         const moviesList = document.getElementById('moviesList');
         const movieCount = document.getElementById('movieCount');
+        const countryTitle = document.getElementById('countryTitle');
         const error = document.getElementById('error');
 
-        let currentPage = 1;
-        let totalPages = 1;
-        let allMovies = [];
-        let totalItems = 0;
-        let isLoading = false;
-
-        async function loadVietnameseMovies(page = 1) {
+        async function loadCountryMovies(countrySlug, countryName, page = 1) {
             if (isLoading) return;
-
-            // Update pagination UI immediately for smooth transition
-            const paginationContainer = document.querySelector('#moviesGrid > div:last-child');
-            if (paginationContainer && page !== currentPage) {
-                const allButtons = paginationContainer.querySelectorAll('button');
-                allButtons.forEach(btn => {
-                    const btnText = btn.textContent.trim();
-                    if (btnText === page.toString()) {
-                        // Highlight new page button
-                        btn.className = 'px-4 py-2 bg-primary text-black font-bold rounded-lg flex-shrink-0 transition-all duration-300';
-                    } else if (!btn.querySelector('.material-icons-round')) {
-                        // Reset other page buttons
-                        btn.className = 'px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0';
-                    }
-                });
-            }
 
             try {
                 isLoading = true;
-                console.log(`Loading Vietnamese movies - Page ${page}...`);
+                currentCountry = countrySlug;
+                currentCountryName = countryName;
+                currentPage = page;
 
-                // Show skeleton immediately
-                if (page === 1) {
-                    skeletonGrid.classList.remove('hidden');
-                    loading.classList.add('hidden');
-                }
+                // Update active button
+                document.querySelectorAll('.country-btn').forEach(btn => {
+                    btn.classList.remove('bg-primary', 'text-black', 'font-bold');
+                    btn.classList.add('bg-surface-dark');
+                });
+                event.target.closest('.country-btn').classList.add('bg-primary', 'text-black', 'font-bold');
+                event.target.closest('.country-btn').classList.remove('bg-surface-dark');
 
-                const url = `https://ophim1.com/v1/api/quoc-gia/viet-nam?page=${page}`;
+                // Show skeleton
+                skeletonGrid.classList.remove('hidden');
+                moviesGrid.classList.add('hidden');
+                error.classList.add('hidden');
+
+                console.log(`Loading ${countryName} movies - Page ${page}...`);
+
+                const url = `https://ophim1.com/v1/api/quoc-gia/${countrySlug}?page=${page}`;
                 console.log('Fetching from:', url);
 
                 const response = await fetch(url, {
                     method: 'GET',
-                    headers: {
-                        'accept': 'application/json'
-                    }
+                    headers: { 'accept': 'application/json' }
                 });
 
                 if (!response.ok) {
@@ -411,20 +417,20 @@
                 }
 
                 const data = await response.json();
-                console.log('Vietnamese movies data:', data);
+                console.log(`${countryName} movies data:`, data);
 
                 if (data.status === 'success' && data.data && data.data.items) {
                     const movies = data.data.items;
-                    allMovies = movies;
+                    const params = data.data.params || {};
+                    const pagination = params.pagination || {};
 
-                    totalPages = 18;
-                    totalItems = 432;
-                    currentPage = page;
+                    totalPages = pagination.totalPages || 1;
+                    const totalItems = pagination.totalItems || movies.length;
 
-                    console.log('Set pagination - Pages:', totalPages, 'Items:', totalItems);
+                    console.log('Pagination:', pagination);
 
-                    renderMovies(allMovies);
-                    showLoadMoreButton();
+                    renderMovies(movies, countryName, totalItems);
+                    showPagination();
 
                     skeletonGrid.classList.add('hidden');
                     moviesGrid.classList.remove('hidden');
@@ -433,20 +439,15 @@
                 }
             } catch (err) {
                 console.error('Error loading movies:', err);
-                if (page === 1) {
-                    skeletonGrid.classList.add('hidden');
-                    loading.classList.add('hidden');
-                    error.classList.remove('hidden');
-                }
+                skeletonGrid.classList.add('hidden');
+                error.classList.remove('hidden');
             } finally {
                 isLoading = false;
             }
         }
 
-        function renderMovies(movies) {
-            skeletonGrid.classList.add('hidden');
-            moviesGrid.classList.remove('hidden');
-
+        function renderMovies(movies, countryName, totalItems) {
+            countryTitle.textContent = `Phim ${countryName}`;
             movieCount.textContent = `${movies.length} phim (Trang ${currentPage}/${totalPages} - Tổng: ${totalItems} phim)`;
 
             const movieLinks = JSON.parse(localStorage.getItem('movieLinks') || '{}');
@@ -475,9 +476,6 @@
                         <div class="absolute bottom-2 right-2 bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
                             <span class="material-icons-round text-[10px]">check_circle</span> Có link
                         </div>` : ''}
-                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
-                            <div class="text-[10px] text-gray-300 truncate">${movie.origin_name || ''}</div>
-                        </div>
                     </div>
                     <div class="p-4">
                         <h3 class="text-white font-semibold truncate group-hover:text-primary transition-colors">
@@ -494,26 +492,15 @@
                 </a>
             `;
             }).join('');
-
-            console.log(`Rendered ${movies.length} Vietnamese movies`);
         }
 
-        function showLoadMoreButton() {
-            console.log('showLoadMoreButton called - Page:', currentPage, 'Total:', totalPages);
-
+        function showPagination() {
             let paginationContainer = document.getElementById('paginationContainer');
             if (!paginationContainer) {
                 paginationContainer = document.createElement('div');
                 paginationContainer.id = 'paginationContainer';
                 paginationContainer.className = 'mt-12';
-                const moviesGridElement = document.getElementById('moviesGrid');
-                if (moviesGridElement) {
-                    moviesGridElement.appendChild(paginationContainer);
-                    console.log('Pagination container created and appended');
-                } else {
-                    console.error('moviesGrid element not found!');
-                    return;
-                }
+                moviesGrid.appendChild(paginationContainer);
             }
 
             let paginationHTML = `
@@ -524,39 +511,27 @@
             // Previous button
             if (currentPage > 1) {
                 paginationHTML += `
-                    <button onclick="loadVietnameseMovies(${currentPage - 1})" 
+                    <button onclick="loadCountryMovies('${currentCountry}', '${currentCountryName}', ${currentPage - 1})" 
                         class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
                         <span class="material-icons-round text-sm">chevron_left</span>
                     </button>
                 `;
             }
 
-            // First page
-            if (currentPage > 3) {
-                paginationHTML += `
-                    <button onclick="loadVietnameseMovies(1)" 
-                        class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
-                        1
-                    </button>
-                `;
-                if (currentPage > 4) {
-                    paginationHTML += `<span class="text-gray-400 flex-shrink-0">...</span>`;
-                }
-            }
-
+            // Page numbers
             const startPage = Math.max(1, currentPage - 2);
             const endPage = Math.min(totalPages, currentPage + 2);
 
             for (let i = startPage; i <= endPage; i++) {
                 if (i === currentPage) {
                     paginationHTML += `
-                        <button class="px-4 py-2 bg-primary text-black font-bold rounded-lg flex-shrink-0 transition-all duration-300">
+                        <button class="px-4 py-2 bg-primary text-black font-bold rounded-lg flex-shrink-0">
                             ${i}
                         </button>
                     `;
                 } else {
                     paginationHTML += `
-                        <button onclick="loadVietnameseMovies(${i})" 
+                        <button onclick="loadCountryMovies('${currentCountry}', '${currentCountryName}', ${i})" 
                             class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
                             ${i}
                         </button>
@@ -564,23 +539,10 @@
                 }
             }
 
-            // Last page
-            if (currentPage < totalPages - 2) {
-                if (currentPage < totalPages - 3) {
-                    paginationHTML += `<span class="text-gray-400 flex-shrink-0">...</span>`;
-                }
-                paginationHTML += `
-                    <button onclick="loadVietnameseMovies(${totalPages})" 
-                        class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
-                        ${totalPages}
-                    </button>
-                `;
-            }
-
             // Next button
             if (currentPage < totalPages) {
                 paginationHTML += `
-                    <button onclick="loadVietnameseMovies(${currentPage + 1})" 
+                    <button onclick="loadCountryMovies('${currentCountry}', '${currentCountryName}', ${currentPage + 1})" 
                         class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
                         <span class="material-icons-round text-sm">chevron_right</span>
                     </button>
@@ -589,40 +551,49 @@
 
             paginationHTML += `
                     </div>
-                    <div class="text-gray-400 text-sm text-center whitespace-nowrap">
-                        Trang ${currentPage}/${totalPages} | Tổng ${totalItems.toLocaleString()} phim
-                    </div>
+                    <p class="text-sm text-gray-400">Trang ${currentPage} / ${totalPages}</p>
                 </div>
             `;
 
             paginationContainer.innerHTML = paginationHTML;
-
-
-
-            if (currentPage > 1) {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
         }
 
-        function jumpToPage() {
-            const pageInput = document.getElementById('pageInput');
-            const page = parseInt(pageInput.value);
-            if (page >= 1 && page <= totalPages) {
-                loadVietnameseMovies(page);
+        // Auto load Vietnam movies on page load
+        window.onload = () => {
+            // Check if country is specified in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const countryParam = urlParams.get('country');
+
+            if (countryParam) {
+                // Find and click the button for the specified country
+                const buttons = document.querySelectorAll('.country-btn');
+                let found = false;
+
+                buttons.forEach(btn => {
+                    const onclick = btn.getAttribute('onclick');
+                    if (onclick && onclick.includes(`'${countryParam}'`)) {
+                        btn.click();
+                        found = true;
+                    }
+                });
+
+                // If not found, load first country
+                if (!found) {
+                    const firstBtn = document.querySelector('.country-btn');
+                    if (firstBtn) firstBtn.click();
+                }
             } else {
-                alert(`Vui lòng nhập số trang từ 1 đến ${totalPages}`);
+                // Default: load first country (Vietnam)
+                const firstBtn = document.querySelector('.country-btn');
+                if (firstBtn) firstBtn.click();
             }
-        }
+        };
     </script>
 
-
-
-    <!-- Defer ads -->
-    <script defer src="js/analytics.js"></script>
-    <!-- <script src="js/navigation-danh-sach.js"></script> -->
+    <!-- Load additional scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
     <script src="js/categories-dropdown.js"></script>
-    <script src="js/sticky-nav.js"></script>
-    <script defer src="js/adsterra.js"></script>
     <script src="js/mobile-menu-simple.js"></script>
 </body>
 

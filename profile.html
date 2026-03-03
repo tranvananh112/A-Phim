@@ -20,6 +20,7 @@
     <link rel="apple-touch-icon" href="/favicon.png">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link rel="stylesheet" href="css/dropdown-blue.css">
+    <link rel="stylesheet" href="css/navigation-smooth.css">
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
@@ -69,24 +70,53 @@
                         <span class="material-icons-round text-sm">expand_more</span>
                     </button>
                     <div
-                        class="absolute top-full left-0 mt-2 w-48 bg-black/95 backdrop-blur-md border border-white/10 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                        <a href="search.html?type=series"
-                            class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-colors">
-                            📺 Phim Bộ
-                        </a>
-                        <a href="search.html?type=single"
-                            class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-colors">
-                            🎬 Phim Lẻ
-                        </a>
-                        <a href="phim-viet-nam.html"
-                            class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-colors">
-                            🇻🇳 Phim Việt Nam
-                        </a>
+                        class="absolute top-full left-0 mt-2 w-64 bg-black/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden z-50">
+                        <div class="grid grid-cols-1 gap-0">
+                            <a href="phim-theo-quoc-gia.html"
+                                class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5 font-semibold">
+                                🌍 Tất Cả Quốc Gia
+                            </a>
+                            <a href="phim-viet-nam.html"
+                                class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
+                                🇻🇳 Phim Việt Nam
+                            </a>
+                            <a href="phim-theo-quoc-gia.html?country=han-quoc"
+                                class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
+                                🇰🇷 Phim Hàn Quốc
+                            </a>
+                            <a href="phim-theo-quoc-gia.html?country=trung-quoc"
+                                class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
+                                🇨🇳 Phim Trung Quốc
+                            </a>
+                            <a href="phim-theo-quoc-gia.html?country=nhat-ban"
+                                class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
+                                🇯🇵 Phim Nhật Bản
+                            </a>
+                            <a href="phim-theo-quoc-gia.html?country=thai-lan"
+                                class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
+                                🇹🇭 Phim Thái Lan
+                            </a>
+                            <a href="phim-theo-quoc-gia.html?country=au-my"
+                                class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all">
+                                🇺🇸 Phim Âu Mỹ
+                            </a>
+                        </div>
                     </div>
                 </div>
 
-                <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
-                    href="categories.html">Thể Loại</a>
+                <!-- Thể Loại Dropdown -->
+                <div class="relative group">
+                    <button
+                        class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide flex items-center gap-1">
+                        Thể Loại
+                        <span class="material-icons-round text-sm">expand_more</span>
+                    </button>
+                    <div id="categoryDropdown"
+                        class="absolute top-full left-0 mt-2 w-[700px] bg-black/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden z-50">
+                        <div class="p-4 text-center text-gray-400">Đang tải...</div>
+                    </div>
+                </div>
+
                 <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
                     href="search.html">Khám phá</a>
                 <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
@@ -273,6 +303,7 @@
     <script src="js/user.js"></script>
     <script src="js/rating.js"></script>
     <script src="js/profile.js"></script>
+    <script src="js/categories-dropdown.js"></script>
 
     <!-- Ads -->
     <script defer src="js/adsterra.js"></script>
