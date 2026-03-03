@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html class="dark" lang="vi">
+
+<head>
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1617450652619669"
+        crossorigin="anonymous"></script>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QYK5R13WK2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-QYK5R13WK2');
+    </script>
+
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Phim Hành Động - Aphim</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.png">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="stylesheet" href="css/dropdown-blue.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2f20d",
+                        "background-dark": "#1a1a0c",
+                        "surface-dark": "#2a2a18",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a0c;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f2f20d;
+        }
+    </style>
+</head>
+
+<body class="bg-background-dark text-gray-100 font-display min-h-screen">
+    <nav class="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-md border-b border-white/10">
+        <div class="container mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2 group">
+                <div
+                    class="w-10 h-10 rounded-full border-2 border-primary flex items-center justify-center bg-black/50 group-hover:bg-primary transition-colors duration-300 overflow-hidden">
+                    <img src="/favicon.png" alt="A Phim Logo"
+                        class="w-6 h-6 object-contain group-hover:scale-110 transition-transform" />
+                </div>
+                <div class="flex flex-col leading-none">
+                    <span class="text-2xl font-bold text-white tracking-wide">A Phim</span>
+                    <span class="text-[10px] text-primary uppercase tracking-widest">Cinema</span>
+                </div>
+            </a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden lg:flex items-center">
+                <div
+                    class="flex items-center gap-1 bg-white/5 backdrop-blur-md rounded-full p-1.5 border border-white/10">
+                    <a href="index.html"
+                        class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white hover:text-primary">
+                        Trang chủ
+                    </a>
+                    <a href="search.html"
+                        class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white hover:text-primary">
+                        Khám phá
+                    </a>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <a href="login.html"
+                    class="px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors">Đăng
+                    nhập</a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobileMenuBtn" class="lg:hidden text-white">
+                <span class="material-icons-round">menu</span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="pt-32 pb-20 container mx-auto px-6">
+        <div class="flex items-center gap-3 mb-8">
+            <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-white">
+                Mãn Nhãn với Phim Hành Động
+            </h2>
+            <button onclick="window.location.href='search.html?category=hanh-dong'"
+                class="flex items-center justify-center w-10 h-10 rounded-full border border-gray-400 hover:bg-primary hover:border-primary hover:text-black transition-all">
+                <span class="material-icons-round text-sm">arrow_forward_ios</span>
+            </button>
+        </div>
+
+        <!-- Movies Grid -->
+        <div id="moviesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 gap-y-16">
+            <!-- Loading -->
+            <div class="col-span-full text-center py-20">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                <p class="text-gray-400 mt-4">Đang tải phim hành động...</p>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination" class="mt-12 flex justify-center gap-2"></div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/data-cache.js"></script>
+    <script src="js/api-optimization.js"></script>
+    <script src="js/image-optimization.js"></script>
+    <script src="js/hanh-dong.js"></script>
+
+    <!-- Defer ads -->
+    <script defer src="js/analytics.js"></script>
+    <script defer src="js/adsterra.js"></script>
+</body>
+
+</html>

@@ -145,26 +145,39 @@ function renderThumbnails() {
     if (!thumbnailsContainer || vietnamMoviesForThumbnails.length === 0) return;
 
     thumbnailsContainer.innerHTML = vietnamMoviesForThumbnails.map((movie, index) => `
-        <div class="relative flex-shrink-0 w-32 sm:w-36 md:w-40 group cursor-pointer ${index === 0 ? 'opacity-100' : 'opacity-70'} hover:opacity-100 transition-all hover:scale-105 snap-start">
-            <a href="movie-detail.html?slug=${movie.slug}">
-                <div class="aspect-video rounded-md md:rounded-lg overflow-hidden border-2 ${index === 0 ? 'border-primary shadow-[0_0_15px_rgba(252,211,77,0.3)]' : 'border-white/20'} bg-gray-800 relative">
+        <div class="relative flex-shrink-0 group cursor-pointer ${index === 0 ? 'opacity-100' : 'opacity-70'} hover:opacity-100 transition-all hover:scale-105 snap-start">
+            <a href="movie-detail.html?slug=${movie.slug}" class="flex items-center gap-2 md:gap-3">
+                <!-- Poster Image -->
+                <div class="flex-shrink-0 w-20 sm:w-24 md:w-28 aspect-[2/3] rounded-md md:rounded-lg overflow-hidden border-2 ${index === 0 ? 'border-primary shadow-[0_0_15px_rgba(252,211,77,0.3)]' : 'border-white/20'} bg-gray-800 relative">
                     <img alt="${movie.name}"
                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
                         onerror="this.src='https://via.placeholder.com/320x180?text=No+Image'" />
                     ${index === 0 ? `
                     <!-- Trailer Badge -->
-                    <div class="absolute top-1.5 left-1.5 md:top-2 md:left-2 bg-primary text-black text-[9px] md:text-[11px] font-black px-2 md:px-3 py-0.5 md:py-1 rounded shadow-lg z-20 uppercase tracking-wider">
+                    <div class="absolute top-1 left-1 md:top-1.5 md:left-1.5 bg-primary text-black text-[8px] md:text-[9px] font-black px-1.5 md:px-2 py-0.5 rounded shadow-lg z-20 uppercase tracking-wider">
                         Trailer
                     </div>
                     <!-- Play Icon -->
                     <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
-                        <span class="material-icons-round text-white text-3xl md:text-4xl opacity-80">play_circle</span>
+                        <span class="material-icons-round text-white text-2xl md:text-3xl opacity-80">play_circle</span>
                     </div>
                     ` : ''}
-                    <!-- Movie Title -->
-                    <div class="absolute bottom-0 left-0 w-full p-1.5 md:p-2 bg-gradient-to-t from-black/90 to-transparent">
-                        <p class="text-[9px] md:text-[10px] text-white font-medium truncate">${movie.name}</p>
+                </div>
+                
+                <!-- Movie Info next to poster -->
+                <div class="flex flex-col justify-center min-w-0 pr-2">
+                    <p class="text-[11px] md:text-xs text-white font-semibold truncate mb-0.5 max-w-[120px] md:max-w-[150px]">${movie.name}</p>
+                    <p class="text-[9px] md:text-[10px] text-gray-400 truncate max-w-[120px] md:max-w-[150px]">${movie.origin_name || movie.name}</p>
+                    <div class="flex items-center gap-1.5 mt-0.5 text-[9px] md:text-[10px] text-gray-300">
+                        <span>${movie.year || 'N/A'}</span>
+                        ${movie.tmdb?.vote_average ? `
+                        <span>•</span>
+                        <span class="flex items-center gap-0.5 text-yellow-500 font-bold">
+                            <span class="material-icons-round text-[10px] md:text-xs">star</span>
+                            ${movie.tmdb.vote_average.toFixed(1)}
+                        </span>
+                        ` : ''}
                     </div>
                 </div>
             </a>

@@ -38,6 +38,8 @@
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <link rel="stylesheet" href="css/dropdown-blue.css">
     <link rel="stylesheet" href="css/search-icon-desktop.css">
+    <link rel="stylesheet" href="css/navigation-modern.css">
+    <link rel="stylesheet" href="css/navigation-pill-v2.css">
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -58,7 +60,7 @@
 </head>
 
 <body class="bg-background-dark text-gray-100 font-display min-h-screen flex flex-col">
-    <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/10">
+    <nav class="sticky top-0 z-50 bg-transparent backdrop-blur-sm border-b border-white/5">
         <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
                 <a href="index.html" class="flex items-center gap-2 group">
@@ -73,50 +75,130 @@
                     </div>
                 </a>
 
-                <!-- Desktop Menu -->
-                <div class="hidden lg:flex items-center gap-6">
-                    <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
-                        href="index.html">Trang chủ</a>
+                <!-- Desktop Menu with Modern Pill Container -->
+                <div class="hidden lg:flex items-center">
+                    <div
+                        class="flex items-center gap-1 bg-white/5 backdrop-blur-md rounded-full p-1.5 border border-white/10">
+                        <a href="index.html"
+                            class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white">
+                            Trang chủ
+                        </a>
 
-                    <!-- Phim Dropdown -->
-                    <div class="relative group">
-                        <button
-                            class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide flex items-center gap-1">
-                            Phim
-                            <span class="material-icons-round text-sm">expand_more</span>
-                        </button>
-                        <div
-                            class="absolute top-full left-0 mt-2 w-48 bg-black/95 backdrop-blur-md border border-white/10 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                            <a href="phim-viet-nam.html"
-                                class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-colors">
-                                🇻🇳 Phim Việt Nam
-                            </a>
+                        <!-- Phim Dropdown -->
+                        <div class="relative group">
+                            <button
+                                class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white flex items-center gap-1">
+                                Phim
+                                <span
+                                    class="material-icons-round text-sm group-hover:rotate-180 transition-transform duration-300">expand_more</span>
+                            </button>
+                            <div
+                                class="absolute top-full left-0 mt-2 w-56 bg-black/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden">
+                                <a href="phim-viet-nam.html"
+                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all">
+                                    🇻🇳 Phim Việt Nam
+                                </a>
+                            </div>
                         </div>
-                    </div>
 
-                    <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
-                        href="categories.html">Thể Loại</a>
-                    <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
-                        href="search.html">Khám phá</a>
-                    <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
-                        href="pricing.html">Gói cước</a>
-                    <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
-                        href="support.html">Nuôi APhim</a>
+                        <!-- Danh Sách Dropdown -->
+                        <div class="relative group">
+                            <button
+                                class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white flex items-center gap-1">
+                                Danh Sách
+                                <span
+                                    class="material-icons-round text-sm group-hover:rotate-180 transition-transform duration-300">expand_more</span>
+                            </button>
+                            <div
+                                class="absolute top-full left-0 mt-2 w-[600px] bg-black/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden">
+                                <div class="grid grid-cols-3 gap-0">
+                                    <a href="danh-sach.html?list=phim-moi"
+                                        class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Phim
+                                        Mới</a>
+                                    <a href="danh-sach.html?list=phim-bo"
+                                        class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Phim
+                                        Bộ</a>
+                                    <a href="danh-sach.html?list=phim-le"
+                                        class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">Phim
+                                        Lẻ</a>
+                                    <a href="danh-sach.html?list=tv-shows"
+                                        class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Shows</a>
+                                    <a href="danh-sach.html?list=hoat-hinh"
+                                        class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Hoạt
+                                        Hình</a>
+                                    <a href="danh-sach.html?list=phim-vietsub"
+                                        class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">Phim
+                                        Vietsub</a>
+                                    <a href="danh-sach.html?list=phim-thuyet-minh"
+                                        class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Phim
+                                        Thuyết Minh</a>
+                                    <a href="danh-sach.html?list=phim-long-tien"
+                                        class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Phim
+                                        Lồng Tiếng</a>
+                                    <a href="danh-sach.html?list=phim-bo-dang-chieu"
+                                        class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">Phim
+                                        Bộ Đang Chiếu</a>
+                                    <a href="danh-sach.html?list=phim-bo-hoan-thanh"
+                                        class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-white/5">Phim
+                                        Bộ Đã Hoàn Thành</a>
+                                    <a href="danh-sach.html?list=phim-sap-chieu"
+                                        class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-white/5">Phim
+                                        Sắp Chiếu</a>
+                                    <a href="danh-sach.html?list=subteam"
+                                        class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all">Subteam</a>
+                                    <a href="danh-sach.html?list=phim-chieu-rap"
+                                        class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all col-span-3 border-t border-white/5 text-center font-semibold">Phim
+                                        Chiếu Rạp</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thể Loại Dropdown -->
+                        <div class="relative group">
+                            <button
+                                class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white flex items-center gap-1">
+                                Thể Loại
+                                <span
+                                    class="material-icons-round text-sm group-hover:rotate-180 transition-transform duration-300">expand_more</span>
+                            </button>
+                            <div id="categoryDropdown"
+                                class="absolute top-full left-0 mt-2 w-[700px] bg-black/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden">
+                                <!-- Categories will be loaded here -->
+                                <div class="p-4 text-center text-gray-400">Đang tải...</div>
+                            </div>
+                        </div>
+
+                        <a href="search.html"
+                            class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white">
+                            Khám phá
+                        </a>
+
+                        <a href="pricing.html"
+                            class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white">
+                            Gói cước
+                        </a>
+
+                        <a href="support.html"
+                            class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white">
+                            Nuôi APhim
+                        </a>
+                    </div>
                 </div>
 
+                <!-- Right Side: Search, Login, Mobile Menu -->
                 <div class="flex items-center gap-4">
-                    <a href="search.html" class="text-gray-300 hover:text-primary transition-colors">
+                    <a href="search.html" class="hidden lg:block text-gray-300 hover:text-primary transition-colors">
                         <span class="material-icons-round">search</span>
                     </a>
                     <a href="login.html"
-                        class="px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors">Đăng
+                        class="hidden lg:block px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors">Đăng
                         nhập</a>
-                </div>
 
-                <!-- Mobile Menu Button -->
-                <button id="mobileMenuBtn" class="lg:hidden text-white">
-                    <span class="material-icons-round">menu</span>
-                </button>
+                    <!-- Mobile Menu Button -->
+                    <button id="mobileMenuBtn" class="lg:hidden text-white">
+                        <span class="material-icons-round">menu</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Mobile Menu -->
@@ -255,6 +337,7 @@
     <script src="js/rating.js"></script>
     <script src="js/user-ui.js"></script>
     <script src="js/watch.js"></script>
+    <script src="js/categories-dropdown.js"></script>
 
     <!-- Defer non-critical scripts -->
     <script defer src="js/analytics.js"></script>
