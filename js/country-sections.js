@@ -149,20 +149,20 @@ function scrollCountrySection(sectionId, direction) {
 
 // Initialize all country sections
 function initCountrySections() {
-    // Find the insertion point (after action section, before vietnam section)
-    const actionSection = document.querySelector('section:has(#actionMoviesContainer)');
+    // Find the insertion point (before top movies section)
+    const topMoviesSection = document.querySelector('section.top-movies-section');
 
-    if (!actionSection) {
-        console.error('Action section not found');
+    if (!topMoviesSection) {
+        console.error('Top movies section not found');
         return;
     }
 
-    // Create and insert all three sections
+    // Create and insert all three sections BEFORE top movies
     const sectionsHTML = Object.values(COUNTRY_CONFIGS)
         .map(config => createCountrySection(config))
         .join('');
 
-    actionSection.insertAdjacentHTML('afterend', sectionsHTML);
+    topMoviesSection.insertAdjacentHTML('beforebegin', sectionsHTML);
 
     // Load movies for each section
     Object.values(COUNTRY_CONFIGS).forEach(config => {

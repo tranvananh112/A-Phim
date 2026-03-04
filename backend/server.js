@@ -53,6 +53,7 @@ app.use('/api/comments', require('./routes/comments'));
 app.use('/api/payments', require('./routes/payments'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/supporters', require('./routes/supporters'));
+app.use('/api/banners', require('./routes/banners'));
 
 // Health check
 app.get('/health', (req, res) => {

@@ -8,44 +8,131 @@ async function loadHomeMovies() {
 
         const data = await response.json();
         console.log('Home API data:', data);
-        console.log('Home API structure check:', {
-            hasData: !!data.data,
-            hasItems: !!data.data?.items,
-            itemsType: Array.isArray(data.data?.items) ? 'array' : typeof data.data?.items,
-            itemsLength: data.data?.items?.length,
-            firstItem: data.data?.items?.[0]
-        });
 
         if (data.status === 'success' && data.data) {
-            // Kiểm tra xem data.data.items có phải là array sections không
-            if (Array.isArray(data.data.items)) {
-                const sections = data.data.items;
-                console.log('Processing sections:', sections.length);
+            // Home API trả về flat array của movies, không phải sections
+            // Chúng ta sẽ group chúng theo category hoặc hiển thị như "Phim Mới Cập Nhật"
+            if (Array.isArray(data.data.items) && data.data.items.length > 0) {
+                const movies = data.data.items;
+                console.log('Processing movies from home API:', movies.length);
 
-                // Render all sections
-                renderAllSections(sections);
+                // Không render "Latest Updates" section nữa vì đã có trong index.html
+                // renderLatestMoviesSection(movies);
 
-                // Find and render Vietnamese movies section
-                const vietnamSection = sections.find(section =>
-                    section.slug === 'viet-nam' ||
-                    section.name?.toLowerCase().includes('việt nam')
-                );
+                // Ẩn loading và dynamicSections vì không dùng nữa
+                const loading = document.getElementById('sectionsLoading');
+                const container = document.getElementById('dynamicSections');
+                if (loading) loading.style.display = 'none';
+                if (container) container.style.display = 'none';
 
-                if (vietnamSection && Array.isArray(vietnamSection.items) && vietnamSection.items.length > 0) {
-                    renderVietnameseMovies(vietnamSection.items.slice(0, 10));
-                } else {
-                    loadVietnameseMoviesHome();
-                }
+                // Load Vietnamese movies separately
+                loadVietnameseMoviesHome();
             } else {
-                // Nếu không phải array sections, có thể là direct movies
-                console.log('API structure different, loading fallback');
+                console.log('No movies in home API, loading fallback');
+
+                // Ẩn loading và dynamicSections
+                const loading = document.getElementById('sectionsLoading');
+                const container = document.getElementById('dynamicSections');
+                if (loading) loading.style.display = 'none';
+                if (container) container.style.display = 'none';
+
                 loadVietnameseMoviesHome();
             }
         }
     } catch (error) {
         console.error('Error loading home movies:', error);
+
+        // Ẩn loading và dynamicSections khi có lỗi
+        const loading = document.getElementById('sectionsLoading');
+        const container = document.getElementById('dynamicSections');
+        if (loading) loading.style.display = 'none';
+        if (container) container.style.display = 'none';
+
         loadVietnameseMoviesHome();
     }
+}
+
+// Render latest movies section (from home API)
+function renderLatestMoviesSection(movies) {
+    const container = document.getElementById('dynamicSections');
+    const loading = document.getElementById('sectionsLoading');
+
+    if (!container) {
+        console.error('dynamicSections container not found!');
+        return;
+    }
+
+    console.log('Rendering latest movies section:', movies.length);
+
+    // Hide loading
+    if (loading) {
+        loading.style.display = 'none';
+    }
+
+    const movieLinks = JSON.parse(localStorage.getItem('movieLinks') || '{}');
+
+    const html = `
+        <section class="py-20 bg-gradient-to-b from-background-dark to-surface-dark/30">
+            <div class="container mx-auto px-6">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-3xl font-bold text-white flex items-center gap-3">
+                        <span class="w-1.5 h-8 bg-primary rounded-full block shadow-[0_0_10px_rgba(242,242,13,0.5)]"></span>
+                        Phim Mới Cập Nhật
+                    </h2>
+                    <a href="danh-sach.html?list=phim-moi"
+                        class="text-primary text-sm font-semibold hover:text-white transition-colors flex items-center gap-1 group">
+                        Xem tất cả <span class="material-icons-round text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                    ${movies.slice(0, 18).map(movie => {
+        const hasCustomLink = !!movieLinks[movie.slug];
+        const linkUrl = hasCustomLink ? `watch-simple.html?slug=${movie.slug}` : `movie-detail.html?slug=${movie.slug}`;
+
+        return `
+                            <a href="${linkUrl}"
+                                class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300">
+                                <div class="aspect-[2/3] w-full overflow-hidden relative">
+                                    <img alt="${movie.name}"
+                                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                        src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
+                                        onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
+                                    <div class="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-2 py-0.5 rounded">
+                                        ${movie.quality || 'HD'}
+                                    </div>
+                                    ${movie.episode_current ? `
+                                    <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                                        ${movie.episode_current}
+                                    </div>` : ''}
+                                    ${hasCustomLink ? `
+                                    <div class="absolute bottom-2 right-2 bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
+                                        <span class="material-icons-round text-[10px]">check_circle</span>
+                                    </div>` : ''}
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="text-white font-semibold text-sm truncate group-hover:text-primary transition-colors">
+                                        ${movie.name}
+                                    </h3>
+                                    <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+                                        <span>${movie.year || 'N/A'}</span>
+                                        ${movie.tmdb?.vote_average ? `
+                                        <span class="flex items-center gap-1 text-yellow-500 font-bold">
+                                            <span class="material-icons-round text-[10px]">star</span> 
+                                            ${movie.tmdb.vote_average.toFixed(1)}
+                                        </span>` : ''}
+                                    </div>
+                                </div>
+                            </a>
+                        `;
+    }).join('')}
+                </div>
+            </div>
+        </section>
+    `;
+
+    container.innerHTML = html;
+    console.log('Latest movies section rendered');
 }
 
 // Render all movie sections

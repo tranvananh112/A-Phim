@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Banner API</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-white p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">Test Banner API</h1>
+
+        <div class="space-y-4">
+            <div class="bg-gray-800 p-4 rounded">
+                <h2 class="text-xl font-bold mb-2">1. Test Backend Health</h2>
+                <button onclick="testHealth()" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">
+                    Test Health
+                </button>
+                <pre id="healthResult" class="mt-2 bg-gray-900 p-2 rounded text-sm"></pre>
+            </div>
+
+            <div class="bg-gray-800 p-4 rounded">
+                <h2 class="text-xl font-bold mb-2">2. Test Get Active Banner (Public)</h2>
+                <button onclick="testActiveBanner()" class="px-4 py-2 bg-green-600 rounded hover:bg-green-700">
+                    Get Active Banner
+                </button>
+                <pre id="activeBannerResult" class="mt-2 bg-gray-900 p-2 rounded text-sm"></pre>
+            </div>
+
+            <div class="bg-gray-800 p-4 rounded">
+                <h2 class="text-xl font-bold mb-2">3. Test Auth Token</h2>
+                <button onclick="testAuthToken()" class="px-4 py-2 bg-yellow-600 rounded hover:bg-yellow-700">
+                    Check Token
+                </button>
+                <pre id="tokenResult" class="mt-2 bg-gray-900 p-2 rounded text-sm"></pre>
+            </div>
+
+            <div class="bg-gray-800 p-4 rounded">
+                <h2 class="text-xl font-bold mb-2">4. Test Load Movies (Admin)</h2>
+                <input type="number" id="startPage" value="1" min="1" max="20"
+                    class="px-3 py-2 bg-gray-700 rounded mr-2">
+                <input type="number" id="endPage" value="1" min="1" max="20" class="px-3 py-2 bg-gray-700 rounded mr-2">
+                <button onclick="testLoadMovies()" class="px-4 py-2 bg-purple-600 rounded hover:bg-purple-700">
+                    Load Movies
+                </button>
+                <pre id="moviesResult" class="mt-2 bg-gray-900 p-2 rounded text-sm max-h-96 overflow-auto"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000';
+
+        function getAuthToken() {
+            return localStorage.getItem('cinestream_admin_token') ||
+                localStorage.getItem('adminToken');
+        }
+
+        async function testHealth() {
+            const result = document.getElementById('healthResult');
+            try {
+                const response = await fetch(`${API_BASE_URL}/health`);
+                const data = await response.json();
+                result.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                result.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function testActiveBanner() {
+            const result = document.getElementById('activeBannerResult');
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/banners/active`);
+                const data = await response.json();
+                result.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                result.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        function testAuthToken() {
+            const result = document.getElementById('tokenResult');
+            const token = getAuthToken();
+            result.textContent = token ?
+                `Token found: ${token.substring(0, 50)}...` :
+                'No token found. Please login first.';
+        }
+
+        async function testLoadMovies() {
+            const result = document.getElementById('moviesResult');
+            const startPage = document.getElementById('startPage').value;
+            const endPage = document.getElementById('endPage').value;
+            const token = getAuthToken();
+
+            if (!token) {
+                result.textContent = 'Error: No auth token. Please login first.';
+                return;
+            }
+
+            try {
+                result.textContent = 'Loading...';
+                const response = await fetch(`${API_BASE_URL}/api/banners/load-movies`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ startPage: parseInt(startPage), endPage: parseInt(endPage) })
+                });
+
+                const data = await response.json();
+                result.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                result.textContent = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+
+</html>

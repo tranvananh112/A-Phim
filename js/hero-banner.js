@@ -4,7 +4,32 @@ let vietnamMoviesForThumbnails = [];
 
 async function loadHeroBanner() {
     try {
-        // Load phim hot từ API
+        // Load banner từ localStorage (được chọn bởi admin)
+        const banners = JSON.parse(localStorage.getItem('cinestream_banners') || '[]');
+        const activeBanner = banners.find(b => b.isActive);
+
+        if (activeBanner) {
+            // Có banner được chọn từ admin
+            currentHeroMovie = convertBannerToMovie(activeBanner);
+            renderHeroBanner(currentHeroMovie);
+        } else {
+            // Không có banner được chọn, load fallback từ API
+            console.log('No active banner in localStorage, loading from API...');
+            await loadFallbackBanner();
+        }
+    } catch (error) {
+        console.error('Error loading hero banner from localStorage:', error);
+        // Fallback to API if localStorage fails
+        await loadFallbackBanner();
+    }
+
+    // Load phim Việt Nam cho thumbnails
+    loadVietnameseThumbnails();
+}
+
+// Fallback: Load từ API nếu không có banner trong MongoDB
+async function loadFallbackBanner() {
+    try {
         const response = await fetch('https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=1', {
             method: 'GET',
             headers: { 'accept': 'application/json' }
@@ -13,18 +38,34 @@ async function loadHeroBanner() {
         const data = await response.json();
 
         if (data.status === 'success' && data.data && data.data.items && data.data.items.length > 0) {
-            // Lấy phim đầu tiên làm hero
             currentHeroMovie = data.data.items[0];
             renderHeroBanner(currentHeroMovie);
+        } else {
+            showHeroContent();
         }
     } catch (error) {
-        console.error('Error loading hero banner:', error);
-        // Show content even if API fails
+        console.error('Error loading fallback banner:', error);
         showHeroContent();
     }
+}
 
-    // Load phim Việt Nam cho thumbnails
-    loadVietnameseThumbnails();
+// Convert banner from localStorage to movie format
+function convertBannerToMovie(banner) {
+    return {
+        slug: banner.slug,
+        name: banner.name,
+        origin_name: banner.origin_name,
+        thumb_url: banner.thumb_url,
+        poster_url: banner.poster_url,
+        content: banner.content,
+        year: banner.year,
+        quality: banner.quality,
+        lang: banner.lang,
+        episode_current: banner.episode_current,
+        category: banner.category || [],
+        tmdb: banner.tmdb || {},
+        imdb: banner.imdb || {}
+    };
 }
 
 async function loadVietnameseThumbnails() {

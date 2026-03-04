@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html class="dark" lang="vi">
+
+<head>
+    <!-- Critical Performance Optimization -->
+    <script>
+        // Mark page start
+        performance.mark('page-start');
+        window.__pageStartTime = performance.now();
+    </script>
+
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Aphim - Trải nghiệm điện ảnh đỉnh cao</title>
+
+    <!-- Preconnect to critical domains -->
+    <link rel="preconnect" href="https://ophim1.com" crossorigin>
+    <link rel="preconnect" href="https://img.ophim.live" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Critical Inline CSS - Splash Loader -->
+    <style>
+        #splashLoader {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: linear-gradient(135deg, #1a1a0c 0%, #2a2a18 50%, #1a1a0c 100%) !important;
+            z-index: 99999 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .splash-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(242, 242, 13, 0.3);
+            border-top-color: #f2f20d;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        body:not(.loaded)>*:not(#splashLoader) {
+            opacity: 0 !important;
+        }
+    </style>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <!-- Load Tailwind CSS async -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries" async></script>
+
+    <!-- Load fonts with display=swap -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Be+Vietnam+Pro:wght@400;600&display=swap"
+        rel="stylesheet" />
+
+    <!-- Defer Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" media="print"
+        onload="this.media='all'">
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2f20d",
+                        "background-dark": "#1a1a0c",
+                        "surface-dark": "#2a2a18",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "vietnam": ["Be Vietnam Pro", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Critical CSS only -->
+    <link rel="stylesheet" href="css/navigation-modern.css">
+    <link rel="stylesheet" href="css/hero-banner.css">
+
+    <!-- SEO Meta Tags -->
+    <meta name="description"
+        content="Xem phim online chất lượng cao với hàng ngàn bộ phim bom tấn và series độc quyền." />
+    <meta name="keywords" content="xem phim online, phim việt nam, phim bộ, phim lẻ, phim 4K, phim HD" />
+
+    <!-- Google Analytics - Defer -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QYK5R13WK2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-QYK5R13WK2');
+    </script>
+</head>
+
+<body class="bg-background-dark text-gray-100 font-display min-h-screen">
+    <!-- Splash Loader -->
+    <div id="splashLoader">
+        <div class="splash-spinner"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-transparent backdrop-blur-sm border-b border-white/5">
+        <div class="container mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2">
+                <div
+                    class="w-10 h-10 rounded-full border-2 border-primary flex items-center justify-center bg-black/50">
+                    <img src="/favicon.png" alt="A Phim Logo" class="w-6 h-6 object-contain" />
+                </div>
+                <span class="text-2xl font-bold text-white">A Phim</span>
+            </a>
+
+            <div class="flex items-center gap-4">
+                <a href="search.html" class="text-gray-300 hover:text-primary">
+                    <span class="material-icons-round">search</span>
+                </a>
+                <a href="login.html" class="px-6 py-2 bg-primary text-black font-bold rounded-full">
+                    Đăng nhập
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="relative h-screen w-full overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img id="heroImage" alt="Hero"
+                class="w-full h-full object-cover opacity-0 transition-opacity duration-700" />
+            <div id="heroSkeleton" class="absolute inset-0 bg-gradient-to-br from-gray-800 to-black animate-pulse">
+            </div>
+        </div>
+
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"></div>
+
+        <div id="heroContent"
+            class="relative z-20 h-full flex flex-col justify-center px-6 lg:px-12 pt-20 opacity-0 transition-opacity duration-700">
+            <div class="max-w-3xl space-y-6">
+                <h1 id="heroTitle" class="text-6xl md:text-8xl font-bold text-white">Đang tải...</h1>
+                <p id="heroDescription" class="text-gray-300 text-lg">Đang tải thông tin phim...</p>
+                <div class="pt-6">
+                    <a id="heroPlayBtn" href="#"
+                        class="inline-flex items-center gap-2 px-8 py-4 bg-primary text-black font-bold rounded-full hover:bg-yellow-400 transition-all">
+                        <span class="material-icons-round">play_arrow</span>
+                        Xem Ngay
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Top Movies Section -->
+    <section class="py-12" data-load-function="loadTopMovies">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold mb-6 text-primary">Top Phim Hot</h2>
+            <div id="topMoviesLoading" class="text-center py-8">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+            </div>
+            <div id="topMoviesContainer" class="hidden flex gap-6 overflow-x-auto pb-8"></div>
+        </div>
+    </section>
+
+    <!-- Action Movies Section - Lazy Load -->
+    <section class="py-12" data-load-function="loadActionMovies">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold mb-6 text-orange-600">Phim Hành Động</h2>
+            <div id="actionLoading" class="text-center py-8">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
+            </div>
+            <div id="actionMoviesContainer" class="hidden flex gap-6 overflow-x-auto pb-8"></div>
+        </div>
+    </section>
+
+    <!-- Vietnamese Movies Section - Lazy Load -->
+    <section class="py-12" data-load-function="loadVietnameseMovies">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold mb-6 text-red-600">Phim Việt Nam</h2>
+            <div id="vietnamLoading" class="text-center py-8">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto"></div>
+            </div>
+            <div id="vietnamMoviesGrid" class="hidden flex gap-4 overflow-x-auto pb-4"></div>
+        </div>
+    </section>
+
+    <!-- Latest Movies Section - Lazy Load -->
+    <section class="py-12" data-load-function="loadLatestMovies">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold mb-6 text-purple-600">Phim Mới Cập Nhật</h2>
+            <div id="latestLoading" class="text-center py-8">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
+            </div>
+            <div id="latestMoviesGrid" class="hidden flex gap-4 overflow-x-auto pb-4"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-surface-dark border-t border-white/5 py-16">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-gray-400">© 2024 A Phim. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Critical Scripts - Load immediately -->
+    <script src="js/config.js"></script>
+    <script src="js/api-cache-enhanced.js"></script>
+    <script src="js/lazy-loader.js"></script>
+    <script src="js/performance-monitor.js"></script>
+
+    <!-- Main App Script -->
+    <script>
+        // Hide splash loader when page is ready
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('splashLoader').style.display = 'none';
+                document.body.classList.add('loaded');
+            }, 500);
+        });
+
+        // Load Hero Banner immediately
+        async function loadHeroBanner() {
+            performance.mark('hero-start');
+
+            try {
+                const data = await window.apiCache.fetch('https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=1');
+
+                if (data.status === 'success' && data.data?.items?.length > 0) {
+                    const movie = data.data.items[0];
+
+                    // Update hero content
+                    document.getElementById('heroTitle').textContent = movie.name;
+                    document.getElementById('heroDescription').textContent = movie.origin_name || 'Đang cập nhật...';
+                    document.getElementById('heroPlayBtn').href = `movie-detail.html?slug=${movie.slug}`;
+
+                    // Load hero image
+                    const heroImage = document.getElementById('heroImage');
+                    heroImage.src = `https://img.ophim.live/uploads/movies/${movie.thumb_url}`;
+                    heroImage.onload = () => {
+                        heroImage.style.opacity = '1';
+                        document.getElementById('heroSkeleton').style.display = 'none';
+                        document.getElementById('heroContent').style.opacity = '1';
+                    };
+                }
+
+                performance.mark('hero-end');
+                window.performanceMonitor.measure('Hero Load Time', 'hero-start');
+            } catch (error) {
+                console.error('Error loading hero:', error);
+            }
+        }
+
+        // Load Top Movies
+        async function loadTopMovies() {
+            performance.mark('top-movies-start');
+
+            try {
+                const data = await window.apiCache.fetch('https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=1');
+
+                if (data.status === 'success' && data.data?.items) {
+                    const movies = data.data.items.slice(0, 6);
+                    renderMovies('topMoviesContainer', 'topMoviesLoading', movies);
+                }
+
+                performance.mark('top-movies-end');
+                window.performanceMonitor.measure('Top Movies Load Time', 'top-movies-start');
+            } catch (error) {
+                console.error('Error loading top movies:', error);
+            }
+        }
+
+        // Load Action Movies
+        async function loadActionMovies() {
+            try {
+                const data = await window.apiCache.fetch('https://ophim1.com/v1/api/the-loai/hanh-dong?page=1');
+
+                if (data.status === 'success' && data.data?.items) {
+                    const movies = data.data.items.slice(0, 6);
+                    renderMovies('actionMoviesContainer', 'actionLoading', movies);
+                }
+            } catch (error) {
+                console.error('Error loading action movies:', error);
+            }
+        }
+
+        // Load Vietnamese Movies
+        async function loadVietnameseMovies() {
+            try {
+                const data = await window.apiCache.fetch('https://ophim1.com/v1/api/quoc-gia/viet-nam?page=1');
+
+                if (data.status === 'success' && data.data?.items) {
+                    const movies = data.data.items.slice(0, 6);
+                    renderMovies('vietnamMoviesGrid', 'vietnamLoading', movies);
+                }
+            } catch (error) {
+                console.error('Error loading Vietnamese movies:', error);
+            }
+        }
+
+        // Load Latest Movies
+        async function loadLatestMovies() {
+            try {
+                const data = await window.apiCache.fetch('https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=1');
+
+                if (data.status === 'success' && data.data?.items) {
+                    const movies = data.data.items.slice(0, 6);
+                    renderMovies('latestMoviesGrid', 'latestLoading', movies);
+                }
+            } catch (error) {
+                console.error('Error loading latest movies:', error);
+            }
+        }
+
+        // Render movies helper
+        function renderMovies(containerId, loadingId, movies) {
+            const container = document.getElementById(containerId);
+            const loading = document.getElementById(loadingId);
+
+            loading.classList.add('hidden');
+            container.classList.remove('hidden');
+
+            container.innerHTML = movies.map(movie => `
+                <a href="movie-detail.html?slug=${movie.slug}" class="group block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all flex-shrink-0 w-48">
+                    <div class="aspect-[2/3] w-full overflow-hidden">
+                        <img alt="${movie.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
+                            loading="lazy"
+                            onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-primary font-bold text-base mb-1 line-clamp-1">${movie.name}</h3>
+                        <p class="text-gray-400 text-xs line-clamp-1">${movie.origin_name || 'Đang cập nhật...'}</p>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        // Initialize - Load critical content immediately
+        document.addEventListener('DOMContentLoaded', async () => {
+            performance.mark('dom-ready');
+
+            // Load hero immediately
+            await loadHeroBanner();
+
+            // Load top movies after short delay
+            setTimeout(() => {
+                loadTopMovies();
+            }, 300);
+
+            // Lazy loader will handle the rest
+        });
+    </script>
+
+    <!-- Defer non-critical scripts -->
+    <script defer src="js/analytics.js"></script>
+    <script defer src="js/adsterra.js"></script>
+</body>
+
+</html>
