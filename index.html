@@ -484,6 +484,14 @@
             display: none;
         }
     </style>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="APhim">
+    <link rel="apple-touch-icon" href="/logo_aphim1.png">
 </head>
 
 <body class="bg-background-dark text-gray-100 font-display min-h-screen">
@@ -1499,6 +1507,49 @@
     <!-- <script src="js/navigation-danh-sach.js"></script> -->
     <script src="js/search-icon-enhance.js"></script>
     <script defer src="js/adsterra.js"></script>
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('✅ PWA: Service Worker đã đăng ký thành công!', registration.scope);
+
+                        // Check for updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('🔄 PWA: Có phiên bản mới! Tải lại trang để cập nhật.');
+                                }
+                            });
+                        });
+                    })
+                    .catch(error => {
+                        console.log('❌ PWA: Lỗi đăng ký Service Worker:', error);
+                    });
+            });
+
+            // Show install prompt
+            let deferredPrompt;
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                console.log('📱 PWA: Sẵn sàng cài đặt! User có thể thêm vào màn hình chính.');
+
+                // Optional: Show custom install button
+                // You can create a button and trigger: deferredPrompt.prompt();
+            });
+
+            // Track installation
+            window.addEventListener('appinstalled', () => {
+                console.log('🎉 PWA: App đã được cài đặt thành công!');
+                deferredPrompt = null;
+            });
+        }
+    </script>
 </body>
 
 </html>
