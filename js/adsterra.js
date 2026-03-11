@@ -11,9 +11,9 @@
 
         // CHIẾN LƯỢC TĂNG DOANH THU DESKTOP - NÂNG CAO:
         // Desktop: 10 pops/session, mỗi 90 giây (1.5 phút) - Tăng mạnh để tối đa doanh thu
-        // Mobile: 3 pops/session, mỗi 5 phút - Giữ nguyên
-        maxPopsPerSession: isMobile ? 3 : 10,
-        minTimeBetweenPops: isMobile ? 300000 : 90000, // Mobile: 5 phút, Desktop: 1.5 phút
+        // Mobile: 4 pops/session, mỗi 3 phút - Tăng nhẹ để cân bằng doanh thu và UX
+        maxPopsPerSession: isMobile ? 4 : 10,
+        minTimeBetweenPops: isMobile ? 180000 : 90000, // Mobile: 3 phút, Desktop: 1.5 phút
 
         // GRACE PERIOD: Giảm xuống để trigger nhanh hơn (chỉ desktop)
         gracePeriod: isMobile ? 20000 : 15000, // Mobile: 20s, Desktop: 15s
