@@ -1,22 +1,34 @@
-// Sticky Navigation with scroll effects
+// Sticky Navigation with scroll effects and auto-hide
 (function () {
     const nav = document.querySelector('nav');
     if (!nav) return;
 
     let lastScrollTop = 0;
     let ticking = false;
+    const scrollThreshold = 10; // Ngưỡng scroll để kích hoạt ẩn/hiện
+    const hideThreshold = 100; // Scroll xuống bao nhiêu px thì bắt đầu ẩn
 
     function updateNavOnScroll() {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollDelta = scrollTop - lastScrollTop;
 
-        // Add 'scrolled' class when scrolled down
-        if (scrollTop > 50) {
-            nav.classList.add('scrolled');
-        } else {
-            nav.classList.remove('scrolled');
+        // Nếu ở đầu trang (scrollTop < 50), luôn hiện nav và trong suốt
+        if (scrollTop < 50) {
+            nav.classList.remove('scrolled', 'nav-hidden');
+            nav.classList.add('nav-visible');
+        }
+        // Nếu scroll xuống và đã scroll qua ngưỡng - ẨN thanh nav
+        else if (scrollDelta > scrollThreshold && scrollTop > hideThreshold) {
+            nav.classList.add('scrolled', 'nav-hidden');
+            nav.classList.remove('nav-visible');
+        }
+        // Nếu đã scroll xuống nhưng không di chuyển - VẪN ẨN
+        else if (scrollTop > 50) {
+            nav.classList.add('scrolled', 'nav-hidden');
+            nav.classList.remove('nav-visible');
         }
 
-        lastScrollTop = scrollTop;
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
         ticking = false;
     }
 

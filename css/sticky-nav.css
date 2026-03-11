@@ -1,24 +1,51 @@
-/* Sticky Navigation Styles */
+/* Sticky Navigation Styles with Safe Area Support */
 nav {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 9999;
-    transition: all 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out, background 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    background: rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(10px);
+
+    /* Tràn lên vùng notch/Dynamic Island */
+    padding-top: env(safe-area-inset-top);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+}
+
+/* Container bên trong nav cần điều chỉnh */
+nav>div {
+    /* Đảm bảo nội dung không bị che bởi notch */
+    min-height: 80px;
 }
 
 /* Scrolled state - thêm shadow và background đậm hơn */
 nav.scrolled {
-    background: rgba(0, 0, 0, 0.98) !important;
+    background: rgba(0, 0, 0, 0.7) !important;
     backdrop-filter: blur(20px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
     border-bottom: 1px solid rgba(242, 242, 13, 0.2);
 }
 
+/* Hidden state - ẩn khi scroll xuống */
+nav.nav-hidden {
+    transform: translateY(calc(-100% - env(safe-area-inset-top)));
+    opacity: 0;
+}
+
+/* Visible state - hiện khi scroll lên */
+nav.nav-visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
 /* Ensure content doesn't hide behind fixed nav */
 body {
     padding-top: 0;
+    /* Thêm padding cho safe area */
+    padding-top: calc(80px + env(safe-area-inset-top));
 }
 
 main {
@@ -40,15 +67,19 @@ nav .container {
     position: static;
 }
 
-/* Mobile menu */
+/* Mobile menu - điều chỉnh cho safe area */
 #mobileMenu {
     position: fixed;
-    top: 80px;
+    top: calc(80px + env(safe-area-inset-top));
     left: 0;
     right: 0;
     z-index: 9998;
-    max-height: calc(100vh - 80px);
+    max-height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     overflow-y: auto;
+    /* Thêm padding cho safe area bên trái/phải */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* Smooth scroll behavior */
@@ -59,4 +90,20 @@ html {
 /* Prevent layout shift */
 nav+* {
     margin-top: 0;
+}
+
+/* Responsive cho landscape mode trên iPhone với notch */
+@media (orientation: landscape) and (max-height: 500px) {
+    nav {
+        /* Giảm padding khi ở landscape để tiết kiệm không gian */
+        padding-top: max(env(safe-area-inset-top), 10px);
+    }
+
+    nav>div {
+        min-height: 60px;
+    }
+
+    body {
+        padding-top: calc(60px + env(safe-area-inset-top));
+    }
 }
