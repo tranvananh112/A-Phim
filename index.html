@@ -483,6 +483,25 @@
         .scrollbar-hide::-webkit-scrollbar {
             display: none;
         }
+
+        /* Thẻ cứng khóa kích thước ngang chống lỗi fOUC co bóp dẹt trên Safari/Mobile */
+        .movie-card-w {
+            flex: none !important;
+            width: 160px !important;
+            scroll-snap-align: start;
+        }
+        @media (min-width: 768px) {
+            .movie-card-w { width: 192px !important; }
+        }
+
+        .movie-card-w-sm {
+            flex: none !important;
+            width: 140px !important;
+            scroll-snap-align: start;
+        }
+        @media (min-width: 768px) {
+            .movie-card-w-sm { width: 180px !important; }
+        }
     </style>
 
     <!-- PWA Manifest -->
@@ -1305,7 +1324,7 @@
 
                 return `
                 <a href="${linkUrl}"
-                    class="group relative block rounded-xl overflow-hidden bg-gradient-to-b from-slate-900 to-black border border-white/5 hover:border-purple-600/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-600/20 flex-shrink-0 w-40 md:w-48">
+                    class="group relative block rounded-xl overflow-hidden bg-gradient-to-b from-slate-900 to-black border border-white/5 hover:border-purple-600/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-600/20 movie-card-w-sm">
                     <div class="aspect-[2/3] w-full overflow-hidden relative">
                         <img alt="${movie.name}"
                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
@@ -1509,7 +1528,6 @@
     <script defer src="js/analytics.js"></script>
     <!-- <script src="js/navigation-danh-sach.js"></script> -->
     <script src="js/search-icon-enhance.js"></script>
-    <script defer src="js/adsterra.js"></script>
 
     <!-- PWA Service Worker Registration -->
     <script>

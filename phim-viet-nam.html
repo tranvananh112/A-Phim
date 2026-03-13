@@ -59,15 +59,24 @@
 
     <script>
         tailwind.config = {
+            darkMode: "class",
             theme: {
                 extend: {
                     colors: {
                         "primary": "#f2f20d",
+                        "primary-dim": "#b3b30a",
+                        "primary-red": "#ec1313",
+                        "background-light": "#f8f8f5",
                         "background-dark": "#1a1a0c",
                         "surface-dark": "#2a2a18",
-                    }
-                }
-            }
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "vietnam": ["Be Vietnam Pro", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                },
+            },
         }
     </script>
 </head>
@@ -623,7 +632,6 @@
     <!-- <script src="js/navigation-danh-sach.js"></script> -->
     <script src="js/categories-dropdown.js"></script>
     <script src="js/sticky-nav.js"></script>
-    <script defer src="js/adsterra.js"></script>
     <script src="js/mobile-menu-simple.js"></script>
 
     <!-- Popunder Desktop Only -->

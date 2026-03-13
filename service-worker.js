@@ -1,5 +1,5 @@
-const CACHE_NAME = 'aphim-v1';
-const RUNTIME_CACHE = 'aphim-runtime';
+const CACHE_NAME = 'aphim-v2';
+const RUNTIME_CACHE = 'aphim-runtime-v2';
 
 // Files to cache immediately
 const PRECACHE_URLS = [
@@ -45,8 +45,11 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Network first strategy for API calls
-    if (url.pathname.includes('/api/') || url.hostname.includes('ophim')) {
+    // Network first strategy for HTML pages and API calls
+    if (request.mode === 'navigate' || 
+        (request.headers.get('accept') && request.headers.get('accept').includes('text/html')) ||
+        url.pathname.includes('/api/') || 
+        url.hostname.includes('ophim')) {
         event.respondWith(
             fetch(request)
                 .then(response => {

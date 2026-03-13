@@ -104,3 +104,83 @@ nav+* {
         min-height: 60px;
     }
 }
+
+/* Flexible mobile nav scaling */
+@media (max-width: 480px) {
+    nav .container {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+        gap: 0.4rem !important; /* Small gap between action buttons and menu */
+        justify-content: flex-start !important; /* Override justify-between to collapse gaps */
+    }
+    
+    /* Push the Search+Login blocks and Menu Button to the right edge */
+    nav .container > div.flex.items-center.gap-4 {
+        margin-left: auto !important;
+    }
+    
+    /* Adjust logo container */
+    nav a.group.flex {
+        gap: 0.35rem !important;
+        flex-shrink: 1 !important;
+        min-width: 0 !important;
+    }
+    
+    /* Optimize logo icon size */
+    nav .w-10.h-10 {
+        width: 2rem !important;
+        height: 2rem !important;
+        min-width: 2rem !important;
+        border-width: 1.5px !important;
+    }
+    nav .w-6.h-6 {
+        width: 1.25rem !important;
+        height: 1.25rem !important;
+    }
+    
+    /* Optimize title text */
+    nav .text-2xl {
+        font-size: 1.15rem !important;
+        line-height: 1.25rem !important;
+        white-space: nowrap !important;
+        letter-spacing: -0.025em !important;
+    }
+    nav .text-\[10px\] {
+        font-size: 0.55rem !important;
+        line-height: 0.75rem !important;
+        margin-top: -1px !important;
+    }
+    
+    /* Tools section spacing */
+    nav .gap-4 {
+        gap: 0.5rem !important;
+        flex-shrink: 0 !important;
+    }
+    
+    /* Optimize login button */
+    nav a[href="login.html"],
+    nav a.bg-primary {
+        white-space: nowrap !important;
+        font-size: 0.75rem !important;
+        padding-left: 0.8rem !important;
+        padding-right: 0.8rem !important;
+        padding-top: 0.4rem !important;
+        padding-bottom: 0.4rem !important;
+        border-radius: 9999px !important;
+        line-height: 1.1 !important;
+        font-weight: 700 !important;
+    }
+    
+    /* Standardize icons size (search, menu) */
+    nav .material-icons-round {
+        font-size: 20px !important;
+    }
+    
+    /* Burger menu button padding reduction for alignment */
+    nav button#mobileMenuBtn {
+        padding: 0px !important;
+        display: flex;
+        align-items: center;
+        margin-left: 0.15rem;
+    }
+}

@@ -288,7 +288,7 @@ function renderVietnameseMovies(movies) {
 
         return `
         <a href="${linkUrl}"
-            class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300">
+            class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300 movie-card-w-sm">
             <div class="aspect-[2/3] w-full overflow-hidden relative">
                 <img alt="${movie.name}"
                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"

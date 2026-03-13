@@ -18,13 +18,7 @@
 
     // Defer non-critical scripts
     window.addEventListener('load', () => {
-        // Load ads sau khi trang load xong
-        setTimeout(() => {
-            const adsScript = document.querySelector('script[src*="adsterra"]');
-            if (adsScript && !adsScript.loaded) {
-                adsScript.loaded = true;
-            }
-        }, 1000);
+        // Reserved for future use
     });
 
 })();

@@ -26,19 +26,13 @@
     overflow: visible;
 }
 
-/* Critical: Hide English text fallback on mobile */
-@media (max-width: 768px) {
-
-    .material-icons-round:not(.material-icons-loaded),
-    .material-icons:not(.material-icons-loaded),
-    .material-icons-outlined:not(.material-icons-loaded) {
-        color: transparent !important;
-        text-shadow: none !important;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 4px;
-        min-width: 24px;
-        min-height: 24px;
-    }
+/* Critical: Hide text fallback globally until loaded */
+.material-icons-round:not(.material-icons-loaded),
+.material-icons:not(.material-icons-loaded),
+.material-icons-outlined:not(.material-icons-loaded),
+.material-symbols-outlined:not(.material-icons-loaded) {
+    color: transparent !important;
+    text-shadow: none !important;
 }
 
 /* Show icons after font loaded */
@@ -83,31 +77,7 @@
     min-height: 64px;
 }
 
-/* Loading state - show a placeholder */
-@keyframes iconPulse {
 
-    0%,
-    100% {
-        opacity: 0.4;
-    }
-
-    50% {
-        opacity: 0.8;
-    }
-}
-
-/* Placeholder for loading icons */
-.material-icons-round:not(.material-icons-loaded)::before,
-.material-icons:not(.material-icons-loaded)::before {
-    content: '';
-    display: inline-block;
-    width: 1em;
-    height: 1em;
-    background: currentColor;
-    opacity: 0.2;
-    border-radius: 2px;
-    animation: iconPulse 1.5s ease-in-out infinite;
-}
 
 /* Force icon rendering on mobile */
 @supports (-webkit-appearance: none) {

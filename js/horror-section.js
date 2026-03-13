@@ -63,7 +63,17 @@ console.log('[Horror] Script loaded!');
         const description = mainMovie.content || 'Một bộ phim kinh dị đầy ám ảnh...';
 
         const html = `
-            <section class="relative w-full aspect-[21/9] rounded-3xl overflow-hidden shadow-2xl bg-slate-800">
+            <style>
+                .horror-stage { aspect-ratio: 3/4; min-height: 550px; }
+                .horror-text-pos { bottom: 144px; }
+                @media (min-width: 640px) { .horror-stage { aspect-ratio: 4/5; } }
+                @media (min-width: 768px) { .horror-stage { aspect-ratio: 16/9; min-height: 600px; } }
+                @media (min-width: 1024px) { 
+                    .horror-stage { aspect-ratio: 21/9; min-height: 0; } 
+                    .horror-text-pos { bottom: 48px; }
+                }
+            </style>
+            <section class="relative w-full horror-stage rounded-3xl overflow-hidden shadow-2xl bg-slate-800">
                 <img 
                     alt="${title}" 
                     class="absolute inset-0 w-full h-full object-cover object-center scale-105" 
@@ -74,9 +84,9 @@ console.log('[Horror] Script loaded!');
                 <div class="absolute inset-0 horror-banner-gradient"></div>
                 <div class="absolute inset-0 horror-banner-overlay"></div>
                 
-                <div class="relative z-10 h-full flex flex-col justify-end px-8 md:px-16 max-w-4xl pb-56 md:pb-60">
-                    <h2 class="font-cursive text-3xl md:text-5xl text-white mb-2 drop-shadow-lg">${title}</h2>
-                    ${originName ? `<h3 class="text-primary text-base md:text-lg font-semibold mb-3 uppercase tracking-wider">${originName}</h3>` : ''}
+                <div class="absolute horror-text-pos left-0 w-full px-6 md:px-16 z-10">
+                    <h2 class="font-cursive text-3xl md:text-5xl text-white mb-2 drop-shadow-lg leading-none pt-2">${title}</h2>
+                    ${originName ? `<h3 class="text-primary text-sm md:text-lg font-semibold mb-3 uppercase tracking-wider">${originName}</h3>` : ''}
                     
                     <div class="flex flex-wrap gap-2 mb-3">
                         <span class="horror-glass-tag px-2 py-1 rounded text-xs font-bold text-primary">${quality}</span>
@@ -84,17 +94,17 @@ console.log('[Horror] Script loaded!');
                         <span class="horror-glass-tag px-2 py-1 rounded text-xs font-medium border border-white/20">${lang}</span>
                     </div>
                     
-                    <p class="text-slate-200 text-xs md:text-sm leading-relaxed line-clamp-2 mb-4 max-w-2xl">
+                    <p class="text-slate-200 text-xs md:text-sm leading-relaxed line-clamp-2 md:line-clamp-3 mb-4 max-w-2xl hidden sm:block">
                         ${stripHtml(description).substring(0, 150)}...
                     </p>
                     
                     <div class="flex items-center gap-3">
                         <a href="movie-detail.html?slug=${mainMovie.slug}" 
-                           class="w-12 h-12 md:w-14 md:h-14 bg-primary rounded-full flex items-center justify-center hover:scale-110 transition-transform">
+                           class="w-12 h-12 md:w-14 md:h-14 bg-primary rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_15px_rgba(250,204,21,0.5)]">
                             <span class="material-icons text-black text-2xl ml-1">play_arrow</span>
                         </a>
                         <a href="movie-detail.html?slug=${mainMovie.slug}"
-                           class="w-10 h-10 md:w-11 md:h-11 rounded-full border border-white/30 flex items-center justify-center hover:bg-white/10 transition-colors">
+                           class="w-10 h-10 md:w-11 md:h-11 rounded-full border border-white/30 flex items-center justify-center hover:bg-white/10 transition-colors backdrop-blur-md bg-black/20">
                             <span class="material-icons text-white text-lg">info_outline</span>
                         </a>
                     </div>
