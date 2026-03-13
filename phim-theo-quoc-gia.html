@@ -243,65 +243,6 @@
 
     <!-- Main Content -->
     <main class="container mx-auto px-6 pt-32 pb-20">
-        <!-- Country Selector - Hidden (navigation handles country selection) -->
-        <div class="mb-8 hidden">
-            <div class="flex flex-wrap gap-3">
-                <button onclick="loadCountryMovies('viet-nam', 'Việt Nam')"
-                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300 flex items-center gap-2">
-                    <svg width="24" height="16" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="30" height="20" fill="#DA251D" />
-                        <polygon points="15,4 16.5,9 21.5,9 17.5,12 19,17 15,14 11,17 12.5,12 8.5,9 13.5,9"
-                            fill="#FFFF00" />
-                    </svg>
-                    Việt Nam
-                </button>
-                <button onclick="loadCountryMovies('han-quoc', 'Hàn Quốc')"
-                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
-                    🇰🇷 Hàn Quốc
-                </button>
-                <button onclick="loadCountryMovies('trung-quoc', 'Trung Quốc')"
-                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
-                    🇨🇳 Trung Quốc
-                </button>
-                <button onclick="loadCountryMovies('nhat-ban', 'Nhật Bản')"
-                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
-                    🇯🇵 Nhật Bản
-                </button>
-                <button onclick="loadCountryMovies('thai-lan', 'Thái Lan')"
-                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
-                    🇹🇭 Thái Lan
-                </button>
-                <button onclick="loadCountryMovies('au-my', 'Âu Mỹ')"
-                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
-                    🇺🇸 Âu Mỹ
-                </button>
-                <button onclick="loadCountryMovies('hong-kong', 'Hồng Kông')"
-                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
-                    🇭🇰 Hồng Kông
-                </button>
-                <button onclick="loadCountryMovies('dai-loan', 'Đài Loan')"
-                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
-                    🇹🇼 Đài Loan
-                </button>
-                <button onclick="loadCountryMovies('an-do', 'Ấn Độ')"
-                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
-                    🇮🇳 Ấn Độ
-                </button>
-                <button onclick="loadCountryMovies('anh', 'Anh')"
-                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
-                    🇬🇧 Anh
-                </button>
-                <button onclick="loadCountryMovies('phap', 'Pháp')"
-                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
-                    🇫🇷 Pháp
-                </button>
-                <button onclick="loadCountryMovies('canada', 'Canada')"
-                    class="country-btn px-6 py-3 bg-surface-dark hover:bg-primary hover:text-black rounded-lg transition-all duration-300">
-                    🇨🇦 Canada
-                </button>
-            </div>
-        </div>
-
         <!-- Skeleton Loading Grid -->
         <div id="skeletonGrid" class="hidden grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
             <div class="skeleton-card">
@@ -364,13 +305,13 @@
         </div>
     </main>
 
-    <script src="js/config.js"></script>
-    <script src="js/api.js"></script>
+    <!-- Country Pagination Logic - INLINE -->
     <script>
         let currentCountry = '';
         let currentCountryName = '';
         let currentPage = 1;
         let totalPages = 1;
+        let totalItems = 0;
         let isLoading = false;
 
         const skeletonGrid = document.getElementById('skeletonGrid');
@@ -389,15 +330,6 @@
                 currentCountryName = countryName;
                 currentPage = page;
 
-                // Update active button
-                document.querySelectorAll('.country-btn').forEach(btn => {
-                    btn.classList.remove('bg-primary', 'text-black', 'font-bold');
-                    btn.classList.add('bg-surface-dark');
-                });
-                event.target.closest('.country-btn').classList.add('bg-primary', 'text-black', 'font-bold');
-                event.target.closest('.country-btn').classList.remove('bg-surface-dark');
-
-                // Show skeleton
                 skeletonGrid.classList.remove('hidden');
                 moviesGrid.classList.add('hidden');
                 error.classList.add('hidden');
@@ -424,12 +356,27 @@
                     const params = data.data.params || {};
                     const pagination = params.pagination || {};
 
-                    totalPages = pagination.totalPages || 1;
-                    const totalItems = pagination.totalItems || movies.length;
+                    // Calculate pagination from API data
+                    const totalItemsFromAPI = pagination.totalItems || 0;
+                    const itemsPerPage = pagination.totalItemsPerPage || 24;
+
+                    // Calculate total pages
+                    if (totalItemsFromAPI > 0) {
+                        totalPages = Math.ceil(totalItemsFromAPI / itemsPerPage);
+                        totalItems = totalItemsFromAPI;
+                    } else {
+                        totalPages = 18;
+                        totalItems = movies.length * totalPages;
+                    }
 
                     console.log('Pagination:', pagination);
+                    console.log('=== PAGINATION DEBUG ===');
+                    console.log('totalItems:', totalItems);
+                    console.log('itemsPerPage:', itemsPerPage);
+                    console.log('Calculated totalPages:', totalPages);
+                    console.log('========================');
 
-                    renderMovies(movies, countryName, totalItems);
+                    renderMovies(movies, countryName);
                     showPagination();
 
                     skeletonGrid.classList.add('hidden');
@@ -446,9 +393,9 @@
             }
         }
 
-        function renderMovies(movies, countryName, totalItems) {
+        function renderMovies(movies, countryName) {
             countryTitle.textContent = `Phim ${countryName}`;
-            movieCount.textContent = `${movies.length} phim (Trang ${currentPage}/${totalPages} - Tổng: ${totalItems} phim)`;
+            movieCount.textContent = `${movies.length} phim (Trang ${currentPage}/${totalPages} - Tổng: ${totalItems.toLocaleString()} phim)`;
 
             const movieLinks = JSON.parse(localStorage.getItem('movieLinks') || '{}');
 
@@ -457,40 +404,40 @@
                 const linkUrl = hasCustomLink ? `watch-simple.html?slug=${movie.slug}` : `movie-detail.html?slug=${movie.slug}`;
 
                 return `
-                <a href="${linkUrl}"
-                    class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300">
-                    <div class="aspect-[2/3] w-full overflow-hidden relative">
-                        <img alt="${movie.name}"
-                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                            src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
-                            loading="lazy"
-                            onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
-                        <div class="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-2 py-0.5 rounded">
-                            ${movie.quality || 'HD'}
+                    <a href="${linkUrl}"
+                        class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300">
+                        <div class="aspect-[2/3] w-full overflow-hidden relative">
+                            <img alt="${movie.name}"
+                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
+                                loading="lazy"
+                                onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
+                            <div class="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-2 py-0.5 rounded">
+                                ${movie.quality || 'HD'}
+                            </div>
+                            ${movie.episode_current ? `
+                            <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                                ${movie.episode_current}
+                            </div>` : ''}
+                            ${hasCustomLink ? `
+                            <div class="absolute bottom-2 right-2 bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
+                                <span class="material-icons-round text-[10px]">check_circle</span> Có link
+                            </div>` : ''}
                         </div>
-                        ${movie.episode_current ? `
-                        <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                            ${movie.episode_current}
-                        </div>` : ''}
-                        ${hasCustomLink ? `
-                        <div class="absolute bottom-2 right-2 bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
-                            <span class="material-icons-round text-[10px]">check_circle</span> Có link
-                        </div>` : ''}
-                    </div>
-                    <div class="p-4">
-                        <h3 class="text-white font-semibold truncate group-hover:text-primary transition-colors">
-                            ${movie.name}
-                        </h3>
-                        <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
-                            <span>${movie.year || 'N/A'}</span>
-                            <span class="flex items-center gap-1 text-yellow-500 font-bold">
-                                <span class="material-icons-round text-[10px]">star</span> 
-                                ${movie.tmdb?.vote_average?.toFixed(1) || 'N/A'}
-                            </span>
+                        <div class="p-4">
+                            <h3 class="text-white font-semibold truncate group-hover:text-primary transition-colors">
+                                ${movie.name}
+                            </h3>
+                            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+                                <span>${movie.year || 'N/A'}</span>
+                                <span class="flex items-center gap-1 text-yellow-500 font-bold">
+                                    <span class="material-icons-round text-[10px]">star</span> 
+                                    ${movie.tmdb?.vote_average?.toFixed(1) || 'N/A'}
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                </a>
-            `;
+                    </a>
+                `;
             }).join('');
         }
 
@@ -518,6 +465,19 @@
                 `;
             }
 
+            // First page
+            if (currentPage > 3) {
+                paginationHTML += `
+                    <button onclick="loadCountryMovies('${currentCountry}', '${currentCountryName}', 1)" 
+                        class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
+                        1
+                    </button>
+                `;
+                if (currentPage > 4) {
+                    paginationHTML += `<span class="text-gray-400 flex-shrink-0">...</span>`;
+                }
+            }
+
             // Page numbers
             const startPage = Math.max(1, currentPage - 2);
             const endPage = Math.min(totalPages, currentPage + 2);
@@ -525,7 +485,7 @@
             for (let i = startPage; i <= endPage; i++) {
                 if (i === currentPage) {
                     paginationHTML += `
-                        <button class="px-4 py-2 bg-primary text-black font-bold rounded-lg flex-shrink-0">
+                        <button class="px-4 py-2 bg-primary text-black font-bold rounded-lg flex-shrink-0 transition-all duration-300">
                             ${i}
                         </button>
                     `;
@@ -537,6 +497,19 @@
                         </button>
                     `;
                 }
+            }
+
+            // Last page
+            if (currentPage < totalPages - 2) {
+                if (currentPage < totalPages - 3) {
+                    paginationHTML += `<span class="text-gray-400 flex-shrink-0">...</span>`;
+                }
+                paginationHTML += `
+                    <button onclick="loadCountryMovies('${currentCountry}', '${currentCountryName}', ${totalPages})" 
+                        class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
+                        ${totalPages}
+                    </button>
+                `;
             }
 
             // Next button
@@ -551,57 +524,73 @@
 
             paginationHTML += `
                     </div>
-                    <p class="text-sm text-gray-400">Trang ${currentPage} / ${totalPages}</p>
+                    <div class="text-gray-400 text-sm text-center whitespace-nowrap">
+                        Trang ${currentPage}/${totalPages} | Tổng ${totalItems.toLocaleString()} phim
+                    </div>
                 </div>
             `;
 
             paginationContainer.innerHTML = paginationHTML;
+
+            // Update URL - Use replaceState for first page, pushState for navigation
+            const newUrl = `${window.location.pathname}?country=${currentCountry}&page=${currentPage}`;
+            if (currentPage === 1 && !window.location.search.includes('page=')) {
+                // First load - replace URL without adding to history
+                window.history.replaceState({}, '', newUrl);
+            } else {
+                // Navigation - add to history
+                window.history.pushState({}, '', newUrl);
+            }
+
+            // Scroll to top
+            if (currentPage > 1) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         }
 
-        // Auto load Vietnam movies on page load
-        window.onload = () => {
-            // Check if country is specified in URL
+        // Auto load on page load
+        window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const countryParam = urlParams.get('country');
+            const pageParam = parseInt(urlParams.get('page')) || 1;
 
-            if (countryParam) {
-                // Find and click the button for the specified country
-                const buttons = document.querySelectorAll('.country-btn');
-                let found = false;
+            const countryNames = {
+                'viet-nam': 'Việt Nam',
+                'han-quoc': 'Hàn Quốc',
+                'trung-quoc': 'Trung Quốc',
+                'nhat-ban': 'Nhật Bản',
+                'thai-lan': 'Thái Lan',
+                'au-my': 'Âu Mỹ',
+                'hong-kong': 'Hồng Kông',
+                'dai-loan': 'Đài Loan',
+                'an-do': 'Ấn Độ',
+                'anh': 'Anh',
+                'phap': 'Pháp',
+                'canada': 'Canada'
+            };
 
-                buttons.forEach(btn => {
-                    const onclick = btn.getAttribute('onclick');
-                    if (onclick && onclick.includes(`'${countryParam}'`)) {
-                        btn.click();
-                        found = true;
-                    }
-                });
-
-                // If not found, load first country
-                if (!found) {
-                    const firstBtn = document.querySelector('.country-btn');
-                    if (firstBtn) firstBtn.click();
-                }
+            if (countryParam && countryNames[countryParam]) {
+                loadCountryMovies(countryParam, countryNames[countryParam], pageParam);
             } else {
-                // Default: load first country (Vietnam)
-                const firstBtn = document.querySelector('.country-btn');
-                if (firstBtn) firstBtn.click();
+                moviesGrid.classList.remove('hidden');
+                countryTitle.textContent = 'Chọn quốc gia để xem phim';
+                movieCount.textContent = 'Vui lòng chọn quốc gia từ menu "Phim" ở trên';
             }
-        };
+        });
     </script>
 
     <!-- Load additional scripts -->
-    <script src="js/config.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/categories-dropdown.js"></script>
-    <script src="js/dropdown-hover-fix.js"></script>
-    <script src="js/mobile-menu-simple.js"></script>
+    <script src="js/config.js?v=2"></script>
+    <script src="js/api.js?v=2"></script>
+    <script src="js/categories-dropdown.js?v=2"></script>
+    <script src="js/dropdown-hover-fix.js?v=2"></script>
+    <script src="js/mobile-menu-simple.js?v=2"></script>
 
     <!-- Popunder Desktop Only -->
-    <script src="js/popunder-desktop.js"></script>
+    <script src="js/popunder-desktop.js?v=2"></script>
 
     <!-- Sticky Navigation -->
-    <script src="js/sticky-nav.js"></script>
+    <script src="js/sticky-nav.js?v=2"></script>
 </body>
 
 </html>

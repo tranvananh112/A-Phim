@@ -1,38 +1,60 @@
-// Sticky Navigation with scroll effects and auto-hide
+// Sticky Navigation with scroll effects
+// Desktop: Always visible, only background changes
+// Mobile: Auto-hide on scroll down, show on scroll up
 (function () {
     const nav = document.querySelector('nav');
     if (!nav) return;
 
     let lastScrollTop = 0;
     let ticking = false;
-    const scrollThreshold = 10; // Ngưỡng scroll để kích hoạt ẩn/hiện
-    const hideThreshold = 100; // Scroll xuống bao nhiêu px thì bắt đầu ẩn
+    const scrollThreshold = 10;
+    const hideThreshold = 100;
+
+    // Check if device is mobile/tablet
+    function isMobileDevice() {
+        return window.innerWidth < 1024; // lg breakpoint
+    }
 
     function updateNavOnScroll() {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         const scrollDelta = scrollTop - lastScrollTop;
+        const isMobile = isMobileDevice();
 
-        // Nếu ở đầu trang (scrollTop < 50), luôn hiện nav và trong suốt
-        if (scrollTop < 50) {
-            nav.classList.remove('scrolled', 'nav-hidden');
-            nav.classList.add('nav-visible');
+        // DESKTOP: Luôn hiện, chỉ thay đổi background (CODE CŨ)
+        if (!isMobile) {
+            if (scrollTop > 50) {
+                nav.classList.add('scrolled');
+                nav.classList.remove('nav-hidden');
+                nav.classList.add('nav-visible');
+            } else {
+                nav.classList.remove('scrolled');
+                nav.classList.remove('nav-hidden');
+                nav.classList.add('nav-visible');
+            }
         }
-        // Nếu scroll xuống và đã scroll qua ngưỡng - ẨN thanh nav
-        else if (scrollDelta > scrollThreshold && scrollTop > hideThreshold) {
-            nav.classList.add('scrolled', 'nav-hidden');
-            nav.classList.remove('nav-visible');
-        }
-        // Nếu đã scroll xuống nhưng không di chuyển - VẪN ẨN
-        else if (scrollTop > 50) {
-            nav.classList.add('scrolled', 'nav-hidden');
-            nav.classList.remove('nav-visible');
+        // MOBILE: Auto-hide khi scroll xuống
+        else {
+            // Ở đầu trang - luôn hiện
+            if (scrollTop < 50) {
+                nav.classList.remove('scrolled', 'nav-hidden');
+                nav.classList.add('nav-visible');
+            }
+            // Scroll xuống - ẨN
+            else if (scrollDelta > scrollThreshold && scrollTop > hideThreshold) {
+                nav.classList.add('scrolled', 'nav-hidden');
+                nav.classList.remove('nav-visible');
+            }
+            // Scroll lên - HIỆN
+            else if (scrollDelta < -scrollThreshold) {
+                nav.classList.add('scrolled', 'nav-visible');
+                nav.classList.remove('nav-hidden');
+            }
         }
 
         lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
         ticking = false;
     }
 
-    // Use requestAnimationFrame for better performance
     function requestTick() {
         if (!ticking) {
             window.requestAnimationFrame(updateNavOnScroll);
@@ -40,8 +62,12 @@
         }
     }
 
-    // Listen to scroll events
     window.addEventListener('scroll', requestTick, { passive: true });
+
+    // Re-check on resize
+    window.addEventListener('resize', () => {
+        updateNavOnScroll();
+    }, { passive: true });
 
     // Initial check
     updateNavOnScroll();
