@@ -78,6 +78,11 @@
         font-size: 1.25rem !important;
         line-height: 1.5rem !important;
     }
+
+    /* Đảm bảo mobile thumbnail strip không bị cắt */
+    .horror-stage {
+        min-height: 580px !important;
+    }
 }
 
 /* Tablet responsive */

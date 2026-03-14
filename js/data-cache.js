@@ -28,7 +28,7 @@ class DataCache {
 
             // Check if cache is still valid
             if (now - data.timestamp < this.cacheDuration) {
-                console.log(`✓ Cache hit: ${key}`);
+                // console.log(`✓ Cache hit: ${key}`);
                 return data.value;
             } else {
                 // Cache expired
@@ -51,7 +51,7 @@ class DataCache {
                 value: value
             };
             localStorage.setItem(key, JSON.stringify(data));
-            console.log(`✓ Cached: ${key}`);
+            // console.log(`✓ Cached: ${key}`);
         } catch (error) {
             console.error('Cache save error:', error);
         }
@@ -61,7 +61,7 @@ class DataCache {
     async deduplicateRequest(key, requestFn) {
         // If request is already in progress, wait for it
         if (this.requestCache.has(key)) {
-            console.log(`⏳ Waiting for duplicate request: ${key}`);
+            // console.log(`⏳ Waiting for duplicate request: ${key}`);
             return this.requestCache.get(key);
         }
 
@@ -86,7 +86,7 @@ class DataCache {
                 localStorage.removeItem(key);
             }
         });
-        console.log('✓ Cache cleared');
+        // console.log('✓ Cache cleared');
     }
 
     // Clear specific cache type
@@ -97,7 +97,7 @@ class DataCache {
                 localStorage.removeItem(key);
             }
         });
-        console.log(`✓ Cache cleared for type: ${type}`);
+        // console.log(`✓ Cache cleared for type: ${type}`);
     }
 }
 
@@ -255,7 +255,7 @@ async function loadDataInParallel(tasks) {
 
 // Preload critical data
 async function preloadCriticalData() {
-    console.log('🚀 Preloading critical data...');
+    // console.log('🚀 Preloading critical data...');
 
     const tasks = [
         movieAPI.getCategories(),
@@ -267,9 +267,9 @@ async function preloadCriticalData() {
 
     results.forEach((result, index) => {
         if (result.status === 'fulfilled') {
-            console.log(`✓ Preloaded task ${index + 1}`);
+            // console.log(`✓ Preloaded task ${index + 1}`);
         } else {
-            console.warn(`✗ Preload task ${index + 1} failed:`, result.reason);
+            // console.warn(`✗ Preload task ${index + 1} failed:`, result.reason);
         }
     });
 }

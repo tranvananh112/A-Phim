@@ -1,32 +1,20 @@
 // Horror Section - Load phim kinh dị từ API (giống search.html)
-console.log('[Horror] Script loaded!');
+// Horror Section - Load phim kinh dị từ API
 
 (function () {
     'use strict';
 
     async function loadHorrorMovies() {
-        console.log('[Horror] loadHorrorMovies() called');
 
         const container = document.getElementById('horrorBannerContainer');
 
-        if (!container) {
-            console.error('[Horror] Container NOT FOUND!');
-            return;
-        }
-
-        console.log('[Horror] Container found!');
+        if (!container) { return; }
 
         try {
-            // Sử dụng movieAPI.getMoviesFromMultipleSources() giống search.html
-            console.log('[Horror] Loading horror movies using movieAPI...');
-
             const data = await movieAPI.getMoviesFromMultipleSources(1, 'kinh-di');
-            console.log('[Horror] Data received:', data);
 
             if (data && data.status === 'success' && data.data && data.data.items) {
                 const movies = data.data.items.slice(0, 15);
-                console.log('[Horror] Found', movies.length, 'horror movies');
-                console.log('[Horror] First movie:', movies[0]);
                 renderHorrorBanner(movies[0], movies);
             } else {
                 console.error('[Horror] Invalid data structure:', data);
@@ -41,7 +29,6 @@ console.log('[Horror] Script loaded!');
     let currentActiveIndex = 0; // Track active thumbnail
 
     function renderHorrorBanner(mainMovie, allMovies, activeIndex = 0) {
-        console.log('[Horror] renderHorrorBanner() called');
         currentActiveIndex = activeIndex;
 
         const container = document.getElementById('horrorBannerContainer');
@@ -161,22 +148,38 @@ console.log('[Horror] Script loaded!');
                     </div>
                 </div><!-- end horror-thumbnails-container -->
             </div><!-- end lg:flex wrapper -->
+
+                <!-- Mobile thumbnail strip - chỉ hiện trên mobile (dưới lg) -->
+                <div class="absolute bottom-0 left-0 w-full z-10 lg:hidden px-3 pb-2">
+                    <div class="flex items-center gap-2 horror-thumbnail-scroll">
+                        ${allMovies.map((movie, index) => {
+            let mobileThumb = movie.thumb_url || movie.poster_url || '';
+            if (mobileThumb && !mobileThumb.startsWith('http')) {
+                mobileThumb = 'https://img.ophim.live/uploads/movies/' + mobileThumb;
+            }
+            if (!mobileThumb) { mobileThumb = 'https://via.placeholder.com/60x90?text=Phim'; }
+            const isActiveMobile = index === activeIndex;
+            return `
+                            <div class="flex-shrink-0 ${isActiveMobile ? 'w-14 h-20 horror-thumbnail-active' : 'w-12 h-16 opacity-50'} rounded-lg overflow-hidden horror-thumbnail cursor-pointer transition-all duration-300" data-movie-index="${index}">
+                                <img alt="${movie.name || 'Phim'}" class="w-full h-full object-cover" src="${mobileThumb}" onerror="this.src='https://via.placeholder.com/60x90?text=No'">
+                            </div>`;
+        }).join('')}
+                    </div>
+                </div>
+
             </section>
         `;
 
         container.innerHTML = html;
-        console.log('[Horror] Banner rendered!');
 
         setupThumbnailHandlers(allMovies);
     }
 
     function setupThumbnailHandlers(movies) {
         const thumbnails = document.querySelectorAll('.horror-thumbnail');
-        console.log('[Horror] Setting up', thumbnails.length, 'thumbnail handlers');
 
         thumbnails.forEach((thumb, index) => {
             thumb.addEventListener('click', () => {
-                console.log('[Horror] Clicked thumbnail', index);
                 renderHorrorBanner(movies[index], movies, index);
             });
         });
@@ -208,10 +211,10 @@ console.log('[Horror] Script loaded!');
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
             // Đợi một chút để movieAPI được khởi tạo
-            setTimeout(loadHorrorMovies, 500);
+            setTimeout(loadHorrorMovies, 100);
         });
     } else {
-        setTimeout(loadHorrorMovies, 500);
+        setTimeout(loadHorrorMovies, 100);
     }
 
 })();

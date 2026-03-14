@@ -19,26 +19,20 @@ async function loadFeaturedMovies() {
     }
 
     if (!container) {
-        console.error('Movie container not found');
-        console.log('Available grids:', containers.length);
-        return;
+        return; // Container không tồn tại trong trang này
     }
 
-    console.log('Found container:', container.className);
+    // Found container
 
     // Show loading
     container.innerHTML = '<div class="col-span-full text-center py-10"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div></div>';
 
     try {
-        console.log('Calling movieAPI.getMovieList(1)...');
         const data = await movieAPI.getMovieList(1);
-        console.log('API Response:', data);
 
         if (data && data.status === 'success' && data.data && data.data.items) {
-            console.log('Movies found:', data.data.items.length);
             renderMovieGrid(data.data.items, container);
         } else {
-            console.error('Invalid data structure:', data);
             container.innerHTML = '<div class="col-span-full text-center py-10 text-gray-400">Không thể tải danh sách phim</div>';
         }
     } catch (error) {
@@ -104,5 +98,5 @@ function setupSearch() {
 // Display search results
 function displaySearchResults(results) {
     // Implement search results dropdown
-    console.log('Search results:', results);
+    // Search results handled elsewhere
 }

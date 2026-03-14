@@ -28,7 +28,7 @@ const API_CONFIG = {
     USE_BACKEND_FOR_AUTH: true, // Always use backend for authentication
 
     // Use multiple sources for more movies
-    USE_MULTIPLE_SOURCES: true
+    USE_MULTIPLE_SOURCES: false // Tắt ophim17.cc (domain không tồn tại → gây chậm mobile)
 };
 
 // App Configuration
