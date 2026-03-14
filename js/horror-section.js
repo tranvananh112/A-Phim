@@ -69,8 +69,10 @@ console.log('[Horror] Script loaded!');
                 @media (min-width: 640px) { .horror-stage { aspect-ratio: 4/5; } }
                 @media (min-width: 768px) { .horror-stage { aspect-ratio: 16/9; min-height: 600px; } }
                 @media (min-width: 1024px) { 
-                    .horror-stage { aspect-ratio: 21/9; min-height: 0; } 
-                    .horror-text-pos { bottom: 48px; }
+                    .horror-stage { aspect-ratio: 21/9; min-height: 0; display: flex; flex-direction: column; justify-content: flex-end; } 
+                    .horror-text-pos { position: relative !important; bottom: auto !important; left: auto !important; width: 100% !important; padding-bottom: 0; }
+                    .horror-desktop-content { display: flex; flex-direction: column; width: 100%; position: relative; z-index: 10; padding: 0 4rem 0 4rem; }
+                    .horror-thumbnails-container-desktop { position: relative !important; bottom: auto !important; padding: 1.5rem 4rem 1.5rem 4rem; }
                 }
             </style>
             <section class="relative w-full horror-stage rounded-3xl overflow-hidden shadow-2xl bg-slate-800">
@@ -83,21 +85,19 @@ console.log('[Horror] Script loaded!');
                 
                 <div class="absolute inset-0 horror-banner-gradient"></div>
                 <div class="absolute inset-0 horror-banner-overlay"></div>
-                
-                <div class="absolute horror-text-pos left-0 w-full px-6 md:px-16 z-10">
+
+                <!-- Mobile/Tablet layout: absolute positioning -->
+                <div class="absolute horror-text-pos left-0 w-full px-6 md:px-16 z-10 lg:hidden">
                     <h2 class="font-cursive text-3xl md:text-5xl text-white mb-2 drop-shadow-lg leading-none pt-2">${title}</h2>
                     ${originName ? `<h3 class="text-primary text-sm md:text-lg font-semibold mb-3 uppercase tracking-wider">${originName}</h3>` : ''}
-                    
                     <div class="flex flex-wrap gap-2 mb-3">
                         <span class="horror-glass-tag px-2 py-1 rounded text-xs font-bold text-primary">${quality}</span>
                         <span class="horror-glass-tag px-2 py-1 rounded text-xs font-medium border border-white/20">${year}</span>
                         <span class="horror-glass-tag px-2 py-1 rounded text-xs font-medium border border-white/20">${lang}</span>
                     </div>
-                    
                     <p class="text-slate-200 text-xs md:text-sm leading-relaxed line-clamp-2 md:line-clamp-3 mb-4 max-w-2xl hidden sm:block">
                         ${stripHtml(description).substring(0, 150)}...
                     </p>
-                    
                     <div class="flex items-center gap-3">
                         <a href="movie-detail.html?slug=${mainMovie.slug}" 
                            class="w-12 h-12 md:w-14 md:h-14 bg-primary rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_15px_rgba(250,204,21,0.5)]">
@@ -109,8 +109,32 @@ console.log('[Horror] Script loaded!');
                         </a>
                     </div>
                 </div>
-                
-                <div class="absolute bottom-6 left-0 right-0 px-8 md:px-16 horror-thumbnails-container">
+
+                <!-- Desktop layout: flex column at bottom -->
+                <div class="hidden lg:flex flex-col justify-end absolute inset-0 z-10 pb-6">
+                    <div class="px-16 mb-4">
+                        <h2 class="font-cursive text-5xl text-white mb-2 drop-shadow-lg leading-none pt-2">${title}</h2>
+                        ${originName ? `<h3 class="text-primary text-lg font-semibold mb-3 uppercase tracking-wider">${originName}</h3>` : ''}
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            <span class="horror-glass-tag px-2 py-1 rounded text-xs font-bold text-primary">${quality}</span>
+                            <span class="horror-glass-tag px-2 py-1 rounded text-xs font-medium border border-white/20">${year}</span>
+                            <span class="horror-glass-tag px-2 py-1 rounded text-xs font-medium border border-white/20">${lang}</span>
+                        </div>
+                        <p class="text-slate-200 text-sm leading-relaxed line-clamp-3 mb-4 max-w-2xl">
+                            ${stripHtml(description).substring(0, 150)}...
+                        </p>
+                        <div class="flex items-center gap-3">
+                            <a href="movie-detail.html?slug=${mainMovie.slug}" 
+                               class="w-14 h-14 bg-primary rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_15px_rgba(250,204,21,0.5)]">
+                                <span class="material-icons text-black text-2xl ml-1">play_arrow</span>
+                            </a>
+                            <a href="movie-detail.html?slug=${mainMovie.slug}"
+                               class="w-11 h-11 rounded-full border border-white/30 flex items-center justify-center hover:bg-white/10 transition-colors backdrop-blur-md bg-black/20">
+                                <span class="material-icons text-white text-lg">info_outline</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="px-16 horror-thumbnails-container" style="position:static">
                     <div class="flex items-center gap-3 horror-thumbnail-scroll pb-2">
                         ${allMovies.map((movie, index) => {
             let movieThumb = movie.thumb_url || movie.poster_url || '';
@@ -135,7 +159,8 @@ console.log('[Horror] Script loaded!');
                             `;
         }).join('')}
                     </div>
-                </div>
+                </div><!-- end horror-thumbnails-container -->
+            </div><!-- end lg:flex wrapper -->
             </section>
         `;
 

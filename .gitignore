@@ -27,3 +27,20 @@ yarn-error.log*
 # Build files
 dist/
 build/
+
+# Documentation and notes (Markdown files)
+*.md
+!README.md
+
+# Batch files
+*.bat
+
+# Word documents
+*.doc
+*.docx
+
+# Temporary folders
+Yeu_Cau_Cung_Cap_Banner_Quang_Cao_files/
+
+# Stitch website templates
+stitch_website_xem_phim/

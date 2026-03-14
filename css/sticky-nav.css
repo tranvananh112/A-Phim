@@ -5,7 +5,8 @@ nav {
     left: 0;
     right: 0;
     z-index: 9999;
-    transition: transform 0.3s ease-in-out, background 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    /* Tối ưu tốc độ: 0.2s cubic-bezier cho transform để nhanh nhạy hơn, 0.3s cho background để mượt */
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease-in-out, opacity 0.2s ease-in-out;
     /* Mặc định: TRONG SUỐT HOÀN TOÀN */
     background: transparent !important;
     backdrop-filter: none;
@@ -182,5 +183,48 @@ nav+* {
         display: flex;
         align-items: center;
         margin-left: 0.15rem;
+    }
+}
+
+/* ================================================
+   TRUNG BÌNH (1024px - 1279px): Desktop nav hiện nhưng chật
+   Giảm padding + font để vừa vào màn hình hẹp hơn
+   ================================================ */
+@media (min-width: 1024px) and (max-width: 1279px) {
+    /* Thu nhỏ các nav-item button */
+    nav .nav-item {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+        font-size: 0.7rem !important;
+        white-space: nowrap !important;
+    }
+
+    /* Thu nhỏ gap trong pill container */
+    nav .hidden.lg\:flex > div {
+        gap: 0.1rem !important;
+        padding: 0.2rem !important;
+    }
+
+    /* Đảm bảo logo không bị thu nhỏ */
+    nav a.group.flex {
+        flex-shrink: 0;
+    }
+
+    /* Thu nhỏ khoảng cách giữa logo và menu */
+    nav > div {
+        gap: 0.5rem !important;
+    }
+
+    /* Thu nhỏ nút đăng nhập */
+    nav a[href="login.html"],
+    nav a.bg-primary {
+        padding-left: 0.9rem !important;
+        padding-right: 0.9rem !important;
+        padding-top: 0.35rem !important;
+        padding-bottom: 0.35rem !important;
+        font-size: 0.7rem !important;
+        white-space: nowrap !important;
     }
 }

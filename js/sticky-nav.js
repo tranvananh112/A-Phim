@@ -7,8 +7,9 @@
 
     let lastScrollTop = 0;
     let ticking = false;
-    const scrollThreshold = 10;
-    const hideThreshold = 100;
+    // Giảm threshold để scroll nhạy hơn (vuốt 5px là ẩn ngay)
+    const scrollThreshold = 5;
+    const hideThreshold = 80; // Hạ thấp ngưỡng ẩn cho nhạy hơn
 
     // Check if device is mobile/tablet
     function isMobileDevice() {
