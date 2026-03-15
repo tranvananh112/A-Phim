@@ -48,6 +48,7 @@ async function loadMovieAndPlay(slug, episodeSlug) {
             renderMovieInfo(currentMovie, currentEpisode);
             renderEpisodeList(currentMovie.episodes);
             initializePlayer(currentEpisode);
+            setupActionButtons();
 
             // Add to watch history
             userService.addToHistory(currentMovie, currentEpisode?.name);
@@ -70,7 +71,7 @@ function renderMovieInfo(movie, episode) {
         titleElement.textContent = `${movie.name} (${movie.year})`;
     }
 
-    const infoElement = document.querySelector('.flex.flex-wrap.items-center.gap-4.text-sm');
+    const infoElement = document.getElementById('movie-info') || document.querySelector('.flex.flex-wrap.items-center.gap-4.text-sm');
     if (infoElement) {
         const avgRating = ratingService.getAverageRating(movie.slug);
         infoElement.innerHTML = `
@@ -80,7 +81,7 @@ function renderMovieInfo(movie, episode) {
             <span>${movie.year}</span>
             <span class="border border-gray-700 px-2 py-0.5 rounded text-xs uppercase">${movie.quality}</span>
             <span>${movie.time}</span>
-            <span class="text-gray-500">|</span>
+            <span class="text-gray-500 px-1">•</span>
             <span>${movie.category?.map(c => c.name).join(', ')}</span>
         `;
     }
@@ -90,7 +91,7 @@ function renderMovieInfo(movie, episode) {
 function renderEpisodeList(episodes) {
     if (!episodes || episodes.length === 0) return;
 
-    const container = document.querySelector('.grid.grid-cols-2');
+    const container = document.getElementById('episode-list') || document.querySelector('.grid.grid-cols-2');
     if (!container) return;
 
     const serverData = episodes[0].server_data;
@@ -99,7 +100,8 @@ function renderEpisodeList(episodes) {
         const isActive = currentEpisode && ep.slug === currentEpisode.slug;
         return `
             <button onclick="changeEpisode('${ep.slug}')"
-                class="${isActive ? 'bg-primary text-black' : 'bg-black/40 hover:bg-gray-700 hover:text-primary text-gray-300'} font-medium py-3 rounded-lg border ${isActive ? 'border-primary shadow-[0_0_15px_rgba(242,242,13,0.3)]' : 'border-gray-700'} transition-colors">
+                class="${isActive ? 'bg-[#fcd576] text-black font-bold border-transparent' : 'bg-[#1f2129] hover:bg-white/10 text-gray-300 border-white/5'} px-4 py-3 rounded-lg flex items-center justify-center gap-2 transition-colors border whitespace-nowrap shadow-lg">
+                <span class="material-icons-round text-[18px]">${isActive ? 'play_arrow' : 'play_arrow'}</span>
                 ${ep.name}
             </button>
         `;
@@ -314,14 +316,25 @@ function autoPlayNext() {
 
 // Load recommendations
 async function loadRecommendations() {
-    const sidebar = document.querySelector('aside .space-y-4');
+    const sidebar = document.getElementById('recommendations-list') || document.querySelector('aside .space-y-4');
     if (!sidebar) return;
 
     try {
         const data = await movieAPI.getMovieList(1);
+        let movies = [];
+        
         if (data && data.data && data.data.items) {
-            const movies = data.data.items.slice(0, 5);
+            movies = data.data.items.slice(0, 4);
+        } else if (data && data.items) {
+            movies = data.items.slice(0, 4);
+        } else if (Array.isArray(data)) {
+            movies = data.slice(0, 4);
+        }
+        
+        if (movies.length > 0) {
             renderRecommendations(movies, sidebar);
+        } else {
+            console.warn("No recommendation movies found. API Response:", data);
         }
     } catch (error) {
         console.error('Error loading recommendations:', error);
@@ -331,25 +344,27 @@ async function loadRecommendations() {
 // Render recommendations
 function renderRecommendations(movies, container) {
     container.innerHTML = movies.map(movie => `
-        <a class="group flex gap-3 p-2 rounded-lg hover:bg-surface-dark transition-colors" 
+        <a class="group bg-[#181a20] rounded-xl overflow-hidden border border-white/5 hover:border-white/20 transition-all flex flex-col h-full" 
            href="movie-detail.html?slug=${movie.slug}">
-            <div class="relative w-24 aspect-[2/3] flex-shrink-0 rounded-md overflow-hidden">
+            <div class="relative w-full aspect-[2/3] flex-shrink-0">
                 <img src="${movieAPI.getImageURL(movie.thumb_url)}" 
                      alt="${movie.name}"
-                     class="w-full h-full object-cover"
-                     onerror="this.src='https://via.placeholder.com/100x150?text=No+Image'" />
-                <span class="absolute top-1 left-1 bg-primary text-black text-[10px] font-bold px-1.5 rounded">
+                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                     onerror="this.src='https://via.placeholder.com/150x225?text=No+Image'" />
+                <span class="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-1.5 py-0.5 rounded">
                     ${movie.quality || 'HD'}
                 </span>
             </div>
-            <div class="flex flex-col justify-center">
-                <h4 class="font-bold text-sm text-gray-200 group-hover:text-primary line-clamp-2 mb-1">
+            <div class="p-3 flex flex-col flex-grow">
+                <h4 class="font-bold text-sm md:text-base text-gray-200 group-hover:text-primary line-clamp-2 mb-1">
                     ${movie.name}
                 </h4>
-                <span class="text-xs text-gray-500 mb-2">${movie.year}</span>
-                <div class="flex items-center text-xs text-yellow-500 gap-1">
-                    <span class="material-icons-round text-[14px]">star</span>
-                    <span class="text-gray-300">${movie.tmdb?.vote_average?.toFixed(1) || 'N/A'}</span>
+                <div class="mt-auto pt-2">
+                    <span class="text-xs text-gray-500 mb-1 block">${movie.year}</span>
+                    <div class="flex items-center text-xs text-yellow-500 gap-1">
+                        <span class="material-icons-round text-[14px]">star</span>
+                        <span class="text-gray-300 font-medium">${movie.tmdb?.vote_average?.toFixed(1) || 'N/A'}</span>
+                    </div>
                 </div>
             </div>
         </a>
@@ -373,17 +388,16 @@ function showError(message) {
 
 // Setup Share and Save buttons
 function setupActionButtons() {
-    // Find all buttons
+    const saveBtn = document.getElementById('saveMovieBtn');
+    const favBtn = document.getElementById('favoriteMovieBtn');
+
+    // Find share button
     const buttons = document.querySelectorAll('button');
     let shareBtn = null;
-    let saveBtn = null;
-
     buttons.forEach(btn => {
         const text = btn.textContent.trim();
         if (text.includes('Chia sẻ') || text.includes('share')) {
             shareBtn = btn;
-        } else if (text.includes('Lưu phim') || text.includes('bookmark')) {
-            saveBtn = btn;
         }
     });
 
@@ -398,6 +412,13 @@ function setupActionButtons() {
         updateSaveButton(saveBtn);
         saveBtn.addEventListener('click', () => toggleSaveMovie(saveBtn));
         console.log('✅ Save button setup');
+    }
+
+    // Setup favorite button
+    if (favBtn && currentMovie) {
+        updateFavoriteButton(favBtn);
+        favBtn.addEventListener('click', () => toggleFavoriteMovie(favBtn));
+        console.log('✅ Favorite button setup');
     }
 }
 
@@ -539,26 +560,95 @@ function updateSaveButton(button) {
     if (!currentMovie) return;
 
     const isSaved = userService.isFavorite(currentMovie.slug);
-    const icon = button.querySelector('.material-icons-outlined');
-    const text = button.childNodes[button.childNodes.length - 1];
+    const icon = button.querySelector('.material-icons-outlined') || button.querySelector('.material-icons-round');
+    const textSpan = button.querySelectorAll('span')[1];
 
     if (isSaved) {
-        icon.textContent = 'bookmark';
-        text.textContent = ' Đã lưu';
-        button.classList.add('bg-primary', 'text-black');
-        button.classList.remove('bg-surface-dark', 'text-white');
+        if(icon) icon.textContent = 'check';
+        if(textSpan) textSpan.textContent = 'Đã thêm';
+        button.classList.add('text-primary');
     } else {
-        icon.textContent = 'bookmark_add';
-        text.textContent = ' Lưu phim';
-        button.classList.remove('bg-primary', 'text-black');
-        button.classList.add('bg-surface-dark', 'text-white');
+        if(icon) icon.textContent = 'add';
+        if(textSpan) textSpan.textContent = 'Thêm vào';
+        button.classList.remove('text-primary');
     }
 }
 
-// Call setupActionButtons after movie is loaded
-document.addEventListener('DOMContentLoaded', function () {
-    // Wait for movie to load
-    setTimeout(() => {
-        setupActionButtons();
-    }, 1000);
-});
+// setupActionButtons is now called directly in loadMovieAndPlay() after currentMovie is set
+
+// Toggle favorite movie
+function toggleFavoriteMovie(button) {
+    if (!currentMovie) return;
+
+    // Check if user is logged in
+    if (!authService.isLoggedIn()) {
+        if (confirm('Bạn cần đăng nhập để thêm vào yêu thích. Chuyển đến trang đăng nhập?')) {
+            window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
+        }
+        return;
+    }
+
+    if (userService.isFavorite(currentMovie.slug)) {
+        userService.removeFromFavorites(currentMovie.slug);
+    } else {
+        userService.addToFavorites(currentMovie);
+    }
+
+    updateFavoriteButton(button);
+}
+
+// Update favorite button UI
+function updateFavoriteButton(button) {
+    if (!currentMovie) return;
+
+    const isFav = userService.isFavorite(currentMovie.slug);
+    const icon = button.querySelector('.material-icons-round') || button.querySelector('.material-icons-outlined');
+
+    if (isFav) {
+        if (icon) icon.textContent = 'favorite';
+        button.classList.add('text-red-500');
+        button.childNodes.forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+                node.textContent = ' Đã thích';
+            }
+        });
+    } else {
+        if (icon) icon.textContent = 'favorite_border';
+        button.classList.remove('text-red-500');
+        button.childNodes.forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+                node.textContent = ' Yêu thích';
+            }
+        });
+    }
+}
+
+
+// Toggle Cinema Mode Function
+window.toggleCinemaMode = function() {
+    const videoContainer = document.getElementById('video-container');
+    const sidebarCol = document.getElementById('sidebar-col');
+    const cinemaModeBadge = document.getElementById('cinemaModeBadge');
+    
+    if (!videoContainer || !sidebarCol || !cinemaModeBadge) return;
+    
+    if (sidebarCol.classList.contains('hidden')) {
+        // Turn OFF Cinema
+        sidebarCol.classList.remove('hidden');
+        sidebarCol.classList.add('lg:block'); 
+        videoContainer.classList.remove('lg:col-span-12');
+        videoContainer.classList.add('lg:col-span-9');
+        cinemaModeBadge.textContent = 'OFF';
+        cinemaModeBadge.classList.replace('text-primary', 'text-gray-400');
+        cinemaModeBadge.classList.replace('border-primary', 'border-gray-500');
+    } else {
+        // Turn ON Cinema
+        sidebarCol.classList.add('hidden');
+        sidebarCol.classList.remove('lg:block');
+        videoContainer.classList.remove('lg:col-span-9');
+        videoContainer.classList.add('lg:col-span-12');
+        cinemaModeBadge.textContent = 'ON';
+        cinemaModeBadge.classList.replace('text-gray-400', 'text-primary');
+        cinemaModeBadge.classList.replace('border-gray-500', 'border-primary');
+    }
+};

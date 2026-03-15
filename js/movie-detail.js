@@ -11,9 +11,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     await loadMovieDetail(slug);
-    setupFavoriteButton();
-    setupRatingSystem();
-    setupCommentSystem();
 });
 
 // Load movie detail from API
@@ -25,6 +22,8 @@ async function loadMovieDetail(slug) {
             currentMovie = response.data.item;
             renderMovieDetail(currentMovie);
             renderEpisodes(currentMovie.episodes);
+            setupFavoriteButton();
+            setupRatingSystem();
             loadRatingsAndComments(slug);
         } else {
             showError('Không thể tải thông tin phim');
@@ -67,10 +66,10 @@ function renderMovieDetail(movie) {
     }
 
     // Update info
-    const infoContainer = document.querySelector('.flex.flex-wrap.items-center.gap-4.mb-8');
+    const infoContainer = document.querySelector('.movie-info-container') || document.querySelector('.flex.flex-wrap.items-center.gap-4.mb-8');
     if (infoContainer) {
-        // Change to flex-nowrap with overflow for mobile
-        infoContainer.className = 'flex flex-nowrap overflow-x-auto items-center gap-3 md:gap-4 mb-8 pb-2 text-sm md:text-base';
+        // Change to flex-wrap for mobile so it drops to next line instead of scrolling
+        infoContainer.className = 'movie-info-container flex flex-wrap justify-center lg:justify-start items-center gap-y-2 gap-x-3 md:gap-4 mb-6 md:mb-8 text-sm md:text-base';
 
         const avgRating = ratingService.getAverageRating(movie.slug);
         const ratings = ratingService.getRatings(movie.slug);
@@ -170,9 +169,9 @@ function addMovieMetadata(movie) {
             const initial = actor.charAt(0).toUpperCase();
 
             return `
-                                <div class="flex-shrink-0 w-32 group cursor-pointer" data-actor-name="${actor}">
-                                    <div class="relative mb-3">
-                                        <div class="actor-avatar-container w-32 h-32 rounded-full bg-gradient-to-br ${colorClass} flex items-center justify-center text-white text-4xl font-bold border-4 border-white/10 group-hover:border-primary transition-all duration-300 group-hover:scale-105 overflow-hidden">
+                                <div class="flex-shrink-0 w-20 md:w-24 group cursor-pointer" data-actor-name="${actor}">
+                                    <div class="relative mb-2">
+                                        <div class="actor-avatar-container w-20 h-20 md:w-24 md:h-24 mx-auto rounded-full bg-gradient-to-br ${colorClass} flex items-center justify-center text-white text-2xl font-bold border-2 border-white/10 group-hover:border-primary transition-all duration-300 group-hover:scale-105 overflow-hidden">
                                             ${initial}
                                         </div>
                                     </div>
@@ -258,44 +257,56 @@ function addMovieMetadata(movie) {
 function renderEpisodes(episodes) {
     if (!episodes || episodes.length === 0) return;
 
-    // Use more specific selector to avoid conflict with cast section
-    const episodeContainer = document.querySelector('.mt-16.lg\\:mt-24 .flex.gap-4.overflow-x-auto');
-    if (!episodeContainer) {
-        console.warn('⚠️ Episode container not found');
+    const desktopContainer = document.getElementById('episodes-desktop');
+    const mobileContainer = document.getElementById('episodes-mobile');
+
+    if (!desktopContainer && !mobileContainer) {
+        console.warn('⚠️ Episode containers not found');
         return;
     }
 
     const serverData = episodes[0].server_data;
 
-    episodeContainer.innerHTML = serverData.map((ep, index) => `
-        <a href="watch.html?slug=${currentMovie.slug}&episode=${ep.slug}"
-            class="flex-shrink-0 ${index === 0 ? 'bg-primary/20 border-primary text-white' : 'bg-surface-dark border-white/5 text-gray-400'} border px-6 py-4 rounded-xl font-bold min-w-[140px] text-center hover:bg-primary hover:text-white hover:shadow-lg hover:shadow-primary/30 transition-all">
-            ${ep.name}
-        </a>
-    `).join('');
+    const html = serverData.map((ep, index) => {
+        const isActive = index === 0;
+        const btnClass = isActive 
+            ? 'bg-primary/20 border border-primary text-white shadow-[0_0_10px_rgba(236,19,19,0.3)]' 
+            : 'bg-[#1e2025] border border-white/5 text-gray-300 hover:bg-white/10 hover:text-white';
+            
+        return `
+            <a href="watch.html?slug=${currentMovie.slug}&episode=${ep.slug}"
+                class="flex items-center justify-center gap-1 sm:gap-2 ${btnClass} rounded-lg py-2.5 px-2 text-sm font-medium transition-all group">
+                <span class="material-icons-round text-[16px] ${isActive ? 'text-primary' : 'text-gray-400 group-hover:text-white'}">play_arrow</span>
+                <span class="truncate">${ep.name}</span>
+            </a>
+        `;
+    }).join('');
+
+    if (desktopContainer) desktopContainer.innerHTML = html;
+    if (mobileContainer) mobileContainer.innerHTML = html;
 }
 
 // Setup favorite button
 function setupFavoriteButton() {
-    const buttonsContainer = document.querySelector('.flex.flex-nowrap.overflow-x-auto.items-center.gap-2');
+    const buttonsContainer = document.querySelector('.movie-actions-container');
     if (!buttonsContainer || !currentMovie) return;
 
     const isFav = userService.isFavorite(currentMovie.slug);
 
     const favBtn = document.createElement('button');
-    favBtn.className = 'px-3 md:px-8 py-3 md:py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full backdrop-blur-md border border-white/10 hover:border-white/30 transition-all duration-300 flex items-center gap-2 md:gap-3 flex-shrink-0';
+    favBtn.className = 'px-4 sm:px-6 md:px-8 py-3 md:py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full backdrop-blur-md border border-white/10 hover:border-white/30 transition-all duration-300 flex items-center gap-2 md:gap-3 flex-none min-w-max';
     favBtn.innerHTML = `
         <span class="material-icons-round text-lg md:text-xl">${isFav ? 'favorite' : 'favorite_border'}</span>
-        <span class="text-sm md:text-base whitespace-nowrap">${isFav ? 'Đã lưu' : 'Lưu phim'}</span>
+        <span class="text-xs sm:text-sm md:text-base whitespace-nowrap">${isFav ? 'Đã lưu' : 'Lưu phim'}</span>
     `;
 
     favBtn.addEventListener('click', () => {
         if (userService.isFavorite(currentMovie.slug)) {
             userService.removeFromFavorites(currentMovie.slug);
-            favBtn.innerHTML = '<span class="material-icons-round text-lg md:text-xl">favorite_border</span><span class="text-sm md:text-base whitespace-nowrap">Lưu phim</span>';
+            favBtn.innerHTML = '<span class="material-icons-round text-lg md:text-xl">favorite_border</span><span class="text-xs sm:text-sm md:text-base whitespace-nowrap">Lưu phim</span>';
         } else {
             if (userService.addToFavorites(currentMovie)) {
-                favBtn.innerHTML = '<span class="material-icons-round text-lg md:text-xl">favorite</span><span class="text-sm md:text-base whitespace-nowrap">Đã lưu</span>';
+                favBtn.innerHTML = '<span class="material-icons-round text-lg md:text-xl">favorite</span><span class="text-xs sm:text-sm md:text-base whitespace-nowrap">Đã lưu</span>';
             }
         }
     });
@@ -305,52 +316,19 @@ function setupFavoriteButton() {
 
 // Setup rating system
 function setupRatingSystem() {
-    // Add rating section after episodes
-    const episodeSection = document.querySelector('.mt-16');
-    if (!episodeSection || !currentMovie) return;
-
-    const ratingHTML = `
-        <div class="mt-16 bg-surface-dark/50 border border-white/5 rounded-xl p-8">
-            <h3 class="text-2xl font-bold mb-6 flex items-center gap-3">
-                <span class="w-1.5 h-8 bg-primary rounded-full"></span>
-                Đánh giá phim
-            </h3>
-            
-            ${authService.isLoggedIn() ? `
-            <div class="mb-8 p-6 bg-black/30 rounded-lg border border-white/5">
-                <div class="flex items-center gap-4 mb-4">
-                    <span class="text-gray-300">Đánh giá của bạn:</span>
-                    <div class="flex gap-2" id="ratingStars">
-                        ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => `
-                            <button class="rating-star text-2xl text-gray-600 hover:text-yellow-400 transition-colors" data-rating="${i}">
-                                <span class="material-icons-round">star</span>
-                            </button>
-                        `).join('')}
-                    </div>
-                    <span id="ratingValue" class="text-primary font-bold">0/10</span>
-                </div>
-                <textarea id="commentInput" 
-                    class="w-full bg-background-dark border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:border-primary focus:ring-1 focus:ring-primary"
-                    rows="3" placeholder="Viết nhận xét của bạn..."></textarea>
-                <button id="submitRating" 
-                    class="mt-4 px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors">
-                    Gửi đánh giá
-                </button>
-            </div>
-            ` : `
-            <div class="mb-8 p-6 bg-black/30 rounded-lg border border-white/5 text-center">
-                <p class="text-gray-400 mb-4">Vui lòng đăng nhập để đánh giá phim</p>
-                <a href="login.html" class="inline-block px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors">
-                    Đăng nhập
-                </a>
-            </div>
-            `}
-            
-            <div id="ratingsContainer"></div>
-        </div>
-    `;
-
-    episodeSection.insertAdjacentHTML('afterend', ratingHTML);
+    console.log("Setting up rating system...");
+    // Comment section is now static in HTML
+    const commentsSection = document.getElementById('comments-section') || document.querySelector('#comments-section');
+    
+    if (!commentsSection) {
+        console.error("DOM Element #comments-section not found!");
+        return;
+    }
+    
+    if (!currentMovie) {
+        console.warn("currentMovie is null, cannot setup rating.");
+        return;
+    }
 
     if (authService.isLoggedIn()) {
         setupRatingStars();
