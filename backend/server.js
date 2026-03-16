@@ -9,6 +9,10 @@ connectDB();
 
 const app = express();
 
+// Trust proxy - Required when deployed behind Railway/Nginx/reverse proxy
+// Fixes ERR_ERL_UNEXPECTED_X_FORWARDED_FOR from express-rate-limit
+app.set('trust proxy', 1);
+
 // Body parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
