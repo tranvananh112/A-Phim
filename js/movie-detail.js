@@ -68,16 +68,16 @@ function renderMovieDetail(movie) {
     // Update info
     const infoContainer = document.querySelector('.movie-info-container') || document.querySelector('.flex.flex-wrap.items-center.gap-4.mb-8');
     if (infoContainer) {
-        // Change to flex-wrap for mobile so it drops to next line instead of scrolling
-        infoContainer.className = 'movie-info-container flex flex-wrap justify-center lg:justify-start items-center gap-y-2 gap-x-3 md:gap-4 mb-6 md:mb-8 text-sm md:text-base';
+        // Nowrap on mobile - text auto shrinks to fit one line
+        infoContainer.className = 'movie-info-container flex flex-nowrap justify-center lg:justify-start items-center gap-x-1.5 sm:gap-x-3 md:gap-4 mb-6 md:mb-8 text-[11px] sm:text-sm md:text-base overflow-hidden';
 
         const avgRating = ratingService.getAverageRating(movie.slug);
         const ratings = ratingService.getRatings(movie.slug);
 
         infoContainer.innerHTML = `
-            <span class="flex items-center gap-1 text-yellow-400 font-bold bg-yellow-400/10 px-3 py-1 rounded-full border border-yellow-400/20 backdrop-blur-sm flex-shrink-0 whitespace-nowrap">
-                <span class="material-icons-round text-lg">star</span>
-                ${avgRating}/10 (${ratings.length} đánh giá)
+            <span class="flex items-center gap-1 text-yellow-400 font-bold bg-yellow-400/10 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full border border-yellow-400/20 backdrop-blur-sm flex-shrink-0 whitespace-nowrap">
+                <span class="material-icons-round text-sm sm:text-lg">star</span>
+                ${avgRating}/10
             </span>
             <span class="text-gray-500 flex-shrink-0">•</span>
             <span class="text-gray-300 font-medium flex-shrink-0 whitespace-nowrap">${movie.year}</span>
@@ -294,19 +294,19 @@ function setupFavoriteButton() {
     const isFav = userService.isFavorite(currentMovie.slug);
 
     const favBtn = document.createElement('button');
-    favBtn.className = 'px-4 sm:px-6 md:px-8 py-3 md:py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full backdrop-blur-md border border-white/10 hover:border-white/30 transition-all duration-300 flex items-center gap-2 md:gap-3 flex-none min-w-max';
+    favBtn.className = 'flex-1 lg:flex-none px-3 sm:px-6 md:px-8 py-3 md:py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full backdrop-blur-md border border-white/10 hover:border-white/30 transition-all duration-300 flex items-center justify-center gap-1 sm:gap-2 md:gap-3';
     favBtn.innerHTML = `
-        <span class="material-icons-round text-lg md:text-xl">${isFav ? 'favorite' : 'favorite_border'}</span>
+        <span class="material-icons-round text-base md:text-xl">${isFav ? 'favorite' : 'favorite_border'}</span>
         <span class="text-xs sm:text-sm md:text-base whitespace-nowrap">${isFav ? 'Đã lưu' : 'Lưu phim'}</span>
     `;
 
     favBtn.addEventListener('click', () => {
         if (userService.isFavorite(currentMovie.slug)) {
             userService.removeFromFavorites(currentMovie.slug);
-            favBtn.innerHTML = '<span class="material-icons-round text-lg md:text-xl">favorite_border</span><span class="text-xs sm:text-sm md:text-base whitespace-nowrap">Lưu phim</span>';
+            favBtn.innerHTML = '<span class="material-icons-round text-base md:text-xl">favorite_border</span><span class="text-xs sm:text-sm md:text-base whitespace-nowrap">Lưu phim</span>';
         } else {
             if (userService.addToFavorites(currentMovie)) {
-                favBtn.innerHTML = '<span class="material-icons-round text-lg md:text-xl">favorite</span><span class="text-xs sm:text-sm md:text-base whitespace-nowrap">Đã lưu</span>';
+                favBtn.innerHTML = '<span class="material-icons-round text-base md:text-xl">favorite</span><span class="text-xs sm:text-sm md:text-base whitespace-nowrap">Đã lưu</span>';
             }
         }
     });
