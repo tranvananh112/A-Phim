@@ -173,14 +173,35 @@ class PerformanceOptimizer {
 
         // Handle back/forward buttons
         window.addEventListener('popstate', () => {
+            // Reset body styles trước khi reload (phòng trường hợp bfcache)
+            this.resetBodyStyles();
             window.location.reload();
         });
+
+        // FIX CHÍNH: Khi trang được restore từ bfcache (mobile back button)
+        // persisted = true nghĩa là trang được lấy từ bfcache, không reload
+        window.addEventListener('pageshow', (e) => {
+            if (e.persisted) {
+                // Trang restore từ bfcache → reset styles ngay lập tức
+                this.resetBodyStyles();
+            }
+        });
+    }
+
+    resetBodyStyles() {
+        document.body.style.opacity = '';
+        document.body.style.pointerEvents = '';
     }
 
     navigateInstant(url) {
         // Show loading indicator
         document.body.style.opacity = '0.7';
         document.body.style.pointerEvents = 'none';
+
+        // Safety net: nếu navigation thất bại sau 3 giây, tự reset
+        setTimeout(() => {
+            this.resetBodyStyles();
+        }, 3000);
 
         // Navigate
         window.location.href = url;
