@@ -36,7 +36,7 @@
                 </button>
                 <div
                     class="absolute top-full left-0 mt-2 w-56 bg-black/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden z-50">
-                    <a href="phim-viet-nam.html"
+                    <a href="phim-theo-quoc-gia.html?country=viet-nam"
                         class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all flex items-center gap-2">
                         <svg width="20" height="14" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg" class="flex-shrink-0">
                             <rect width="30" height="20" fill="#DA251D"/>

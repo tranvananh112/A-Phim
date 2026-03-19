@@ -22,11 +22,12 @@ let totalPages = 1;
 
 const loading = document.getElementById('loading');
 const moviesTable = document.getElementById('moviesTable');
-const moviesTableBody = document.getElementById('moviesTableBody');
+const moviesGrid = document.getElementById('moviesGrid');
 const pagination = document.getElementById('pagination');
 const error = document.getElementById('error');
 const pageTitle = document.getElementById('pageTitle');
 const pageSubtitle = document.getElementById('pageSubtitle');
+const categoriesGrid = document.getElementById('categoriesGrid');
 
 // Mobile menu toggle
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -58,6 +59,7 @@ async function loadMoviesList(listSlug, page = 1) {
     loading.classList.remove('hidden');
     moviesTable.classList.add('hidden');
     error.classList.add('hidden');
+    if (categoriesGrid) categoriesGrid.classList.add('hidden');
 
     if (mobileMenu) {
         mobileMenu.classList.add('hidden');
@@ -67,7 +69,8 @@ async function loadMoviesList(listSlug, page = 1) {
 
     try {
         // Use correct API endpoint: /v1/api/danh-sach/[slug]
-        const apiUrl = `https://ophim1.com/v1/api/danh-sach/${listSlug}?page=${page}&limit=24`;
+        // Load 40 movies per page (8 columns x 5 rows)
+        const apiUrl = `https://ophim1.com/v1/api/danh-sach/${listSlug}?page=${page}&limit=40`;
         console.log(`Fetching: ${apiUrl}`);
 
         const response = await fetch(apiUrl, {
@@ -90,7 +93,7 @@ async function loadMoviesList(listSlug, page = 1) {
             const pagination_data = params.pagination || data.data.pagination || {};
 
             const totalItems = pagination_data.totalItems || pagination_data.total || movies.length;
-            const totalPages_api = pagination_data.totalPages || Math.ceil(totalItems / 24) || 1;
+            const totalPages_api = pagination_data.totalPages || Math.ceil(totalItems / 40) || 1;
             totalPages = totalPages_api;
 
             // Move page info to bottom, will be shown in pagination
@@ -123,138 +126,101 @@ async function loadMoviesList(listSlug, page = 1) {
     }
 }
 
-// Render movies table
+// Render movies grid
 function renderMoviesTable(movies) {
     loading.classList.add('hidden');
+
+    const moviesTable = document.getElementById('moviesTable');
+    const moviesGrid = document.getElementById('moviesGrid');
+
+    console.log('moviesTable:', moviesTable);
+    console.log('moviesGrid:', moviesGrid);
+
+    if (!moviesTable) {
+        console.error('moviesTable element not found!');
+        return;
+    }
+
+    if (!moviesGrid) {
+        console.error('moviesGrid element not found!');
+        return;
+    }
+
     moviesTable.classList.remove('hidden');
 
-    let tableHTML = '';
+    let gridHTML = '';
 
     movies.forEach((movie) => {
         const thumbUrl = movie.thumb_url || movie.poster_url || '';
-        const posterUrl = thumbUrl ? `https://img.ophim.live/uploads/movies/${thumbUrl}` : 'https://via.placeholder.com/100x150?text=No+Image';
+        const posterUrl = thumbUrl ? `https://img.ophim.live/uploads/movies/${thumbUrl}` : 'https://via.placeholder.com/200x300?text=No+Image';
         const year = movie.year || 'N/A';
         const quality = movie.quality || movie.lang || '';
         const episodeCurrent = movie.episode_current || 'N/A';
         const tmdbRating = movie.tmdb?.vote_average || 'N/A';
-        const imdbRating = movie.imdb?.rating || 'N/A';
-        const countries = movie.country?.map(c => c.name).join(', ') || 'N/A';
-        const modifiedTime = movie.modified?.time || 'N/A';
 
-        // Get country flags
-        let countryFlags = '';
-        if (movie.country && movie.country.length > 0) {
-            const flagMap = {
-                'Việt Nam': '🇻🇳',
-                'Trung Quốc': '🇨🇳',
-                'Hàn Quốc': '🇰🇷',
-                'Nhật Bản': '🇯🇵',
-                'Thái Lan': '🇹🇭',
-                'Mỹ': '🇺🇸',
-                'Anh': '🇬🇧',
-                'Pháp': '🇫🇷',
-                'Đức': '🇩🇪',
-                'Ý': '🇮🇹',
-                'Tây Ban Nha': '🇪🇸',
-                'Nga': '🇷🇺',
-                'Ấn Độ': '🇮🇳',
-                'Indonesia': '🇮🇩',
-                'Philippines': '🇵🇭',
-                'Hồng Kông': '🇭🇰',
-                'Đài Loan': '🇹🇼'
-            };
-            countryFlags = movie.country.map(c => flagMap[c.name] || '🌍').join(' ');
-        }
-
-        tableHTML += `
-            <tr class="border-b border-white/10 hover:bg-white/5 transition-colors">
-                <td class="px-4 py-4">
-                    <a href="movie-detail.html?slug=${movie.slug}" class="flex items-center gap-4 group">
-                        <img src="${posterUrl}" 
-                             alt="${movie.name}"
-                             class="w-16 h-24 object-cover rounded-lg group-hover:scale-105 transition-transform"
-                             onerror="this.src='https://via.placeholder.com/100x150?text=No+Image'">
-                        <div class="flex-1">
-                            <h3 class="text-white font-bold text-sm mb-1 group-hover:text-primary transition-colors line-clamp-2">
-                                ${movie.name}
-                            </h3>
-                            <p class="text-gray-400 text-xs line-clamp-1">${movie.origin_name || ''}</p>
-                            ${quality ? `<span class="inline-block mt-1 px-2 py-0.5 bg-primary text-black text-xs font-bold rounded">${quality}</span>` : ''}
-                        </div>
-                    </a>
-                </td>
-                <td class="px-4 py-4 text-center text-white text-sm">${year}</td>
-                <td class="px-4 py-4 text-center">
-                    <span class="inline-block px-2 py-1 bg-red-600 text-white text-xs font-bold rounded">
-                        ${episodeCurrent}
-                    </span>
-                </td>
-                <td class="px-4 py-4 text-center">
-                    <div class="flex items-center justify-center gap-1 text-primary text-sm">
-                        <span class="material-icons-round text-sm">star</span>
-                        <span>${tmdbRating}</span>
-                    </div>
-                </td>
-                <td class="px-4 py-4 text-center">
-                    <div class="flex items-center justify-center gap-1 text-yellow-400 text-sm">
-                        <span class="material-icons-round text-sm">star</span>
-                        <span>${imdbRating}</span>
-                    </div>
-                </td>
-                <td class="px-4 py-4 text-center text-white text-sm">${quality || 'N/A'}</td>
-                <td class="px-4 py-4 text-center text-2xl">${countryFlags || countries}</td>
-                <td class="px-4 py-4 text-center text-gray-400 text-xs">${modifiedTime}</td>
-            </tr>
-        `;
-    });
-
-    moviesTableBody.innerHTML = tableHTML;
-
-    // Render mobile card view
-    renderMoviesCardView(movies);
-}
-
-// Render movies card view for mobile
-function renderMoviesCardView(movies) {
-    const moviesCardView = document.getElementById('moviesCardView');
-    if (!moviesCardView) return;
-
-    let cardHTML = '';
-
-    movies.forEach((movie) => {
-        const thumbUrl = movie.thumb_url || movie.poster_url || '';
-        const posterUrl = thumbUrl ? `https://img.ophim.live/uploads/movies/${thumbUrl}` : 'https://via.placeholder.com/100x150?text=No+Image';
-        const year = movie.year || 'N/A';
-        const quality = movie.quality || movie.lang || '';
-        const episodeCurrent = movie.episode_current || 'N/A';
-        const tmdbRating = movie.tmdb?.vote_average || 'N/A';
-        const imdbRating = movie.imdb?.rating || 'N/A';
-
-        cardHTML += `
+        gridHTML += `
             <a href="movie-detail.html?slug=${movie.slug}" 
-               class="flex gap-4 bg-surface-dark rounded-lg overflow-hidden hover:bg-surface-dark/80 transition-all">
-                <img src="${posterUrl}" 
-                     alt="${movie.name}"
-                     class="w-24 h-36 object-cover"
-                     onerror="this.src='https://via.placeholder.com/100x150?text=No+Image'">
-                <div class="flex-1 py-3 pr-3">
-                    <h3 class="text-white font-bold text-base mb-1 line-clamp-2">${movie.name}</h3>
-                    <p class="text-gray-400 text-sm mb-2">${movie.origin_name || ''}</p>
-                    <div class="flex flex-wrap gap-2 text-xs">
-                        <span class="px-2 py-1 bg-primary/20 text-primary rounded">${year}</span>
-                        ${quality ? `<span class="px-2 py-1 bg-blue-500/20 text-blue-400 rounded">${quality}</span>` : ''}
-                        <span class="px-2 py-1 bg-purple-500/20 text-purple-400 rounded">${episodeCurrent}</span>
+               class="group relative block rounded-xl overflow-hidden bg-surface-dark hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl">
+                <!-- Poster -->
+                <div class="relative aspect-[2/3]">
+                    <img src="${posterUrl}" 
+                         alt="${movie.name}"
+                         class="w-full h-full object-cover"
+                         onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
+                    
+                    <!-- Overlay gradient -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    
+                    <!-- Quality badge -->
+                    ${quality ? `
+                        <div class="absolute top-2 left-2">
+                            <span class="px-2 py-1 bg-primary text-black text-xs font-bold rounded shadow-lg">
+                                ${quality}
+                            </span>
+                        </div>
+                    ` : ''}
+                    
+                    <!-- Episode badge -->
+                    <div class="absolute top-2 right-2">
+                        <span class="px-2 py-1 bg-red-600 text-white text-xs font-bold rounded shadow-lg">
+                            ${episodeCurrent}
+                        </span>
                     </div>
-                    <div class="flex gap-3 mt-2 text-xs text-gray-400">
-                        ${tmdbRating !== 'N/A' ? `<span>⭐ ${tmdbRating}</span>` : ''}
-                        ${imdbRating !== 'N/A' ? `<span>🎬 ${imdbRating}</span>` : ''}
+                    
+                    <!-- Rating -->
+                    ${tmdbRating !== 'N/A' ? `
+                        <div class="absolute bottom-2 left-2 flex items-center gap-1 bg-black/80 px-2 py-1 rounded">
+                            <span class="material-icons-round text-primary text-sm">star</span>
+                            <span class="text-white text-xs font-bold">${tmdbRating}</span>
+                        </div>
+                    ` : ''}
+                    
+                    <!-- Year -->
+                    <div class="absolute bottom-2 right-2 bg-black/80 px-2 py-1 rounded">
+                        <span class="text-white text-xs font-bold">${year}</span>
                     </div>
+                    
+                    <!-- Play icon on hover -->
+                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div class="w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center transform scale-75 group-hover:scale-100 transition-transform">
+                            <span class="material-icons-round text-black text-4xl">play_arrow</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Movie info -->
+                <div class="p-3">
+                    <h3 class="text-white font-bold text-sm mb-1 line-clamp-2 group-hover:text-primary transition-colors">
+                        ${movie.name}
+                    </h3>
+                    <p class="text-gray-400 text-xs line-clamp-1">${movie.origin_name || ''}</p>
                 </div>
             </a>
         `;
     });
 
-    moviesCardView.innerHTML = cardHTML;
+    moviesGrid.innerHTML = gridHTML;
+    console.log(`✅ Rendered ${movies.length} movies to grid`);
 }
 
 // Render pagination

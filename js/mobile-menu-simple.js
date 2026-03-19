@@ -23,7 +23,7 @@ function injectSimpleMobileMenu() {
                     <a href="phim-theo-quoc-gia.html" class="block py-2 text-gray-400 hover:text-primary transition-colors">
                         🌍 Tất Cả Quốc Gia
                     </a>
-                    <a href="phim-viet-nam.html" class="flex items-center py-2 text-gray-400 hover:text-primary transition-colors">
+                    <a href="phim-theo-quoc-gia.html?country=viet-nam" class="flex items-center py-2 text-gray-400 hover:text-primary transition-colors">
                         <svg class="w-5 h-5 mr-2" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
                             <rect width="30" height="20" fill="#DA251D"/>
                             <polygon points="15,4 16.5,9 21.5,9 17.5,12 19,17 15,14 11,17 12.5,12 8.5,9 13.5,9" fill="#FFFF00"/>

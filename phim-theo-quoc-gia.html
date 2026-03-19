@@ -35,6 +35,7 @@
     <link rel="stylesheet" href="css/sticky-nav.css">
     <link rel="stylesheet" href="css/navigation-smooth.css">
     <link rel="stylesheet" href="css/material-icons-fix.css?v=2">
+    <link rel="stylesheet" href="css/dropdown-z-index-fix.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round&display=block" rel="stylesheet" />
     <link
         href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap"
@@ -108,7 +109,7 @@
                                     class="block px-5 py-3 text-primary hover:bg-white/5 transition-all border-b border-white/5 font-semibold">
                                     🌍 Tất Cả Quốc Gia
                                 </a>
-                                <a href="phim-viet-nam.html"
+                                <a href="phim-theo-quoc-gia.html?country=viet-nam"
                                     class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
                                     🇻🇳 Phim Việt Nam
                                 </a>
@@ -298,8 +299,14 @@
                 <h2 id="countryTitle" class="text-2xl font-bold mb-2">Chọn quốc gia để xem phim</h2>
                 <span id="movieCount" class="text-gray-400"></span>
             </div>
-            <div id="moviesList" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <div id="moviesList"
+                class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4 mb-8">
                 <!-- Movies will be loaded here -->
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination" class="mt-12 flex justify-center items-center gap-2">
+                <!-- Pagination will be loaded here -->
             </div>
         </div>
 
@@ -452,7 +459,8 @@
 
                 console.log(`Loading ${countryName} movies - Page ${page}...`);
 
-                const url = `https://ophim1.com/v1/api/quoc-gia/${countrySlug}?page=${page}`;
+                // Load 40 movies per page (8 columns x 5 rows)
+                const url = `https://ophim1.com/v1/api/quoc-gia/${countrySlug}?page=${page}&limit=40`;
                 console.log('Fetching from:', url);
 
                 const response = await fetch(url, {
@@ -474,7 +482,7 @@
 
                     // Calculate pagination from API data
                     const totalItemsFromAPI = pagination.totalItems || 0;
-                    const itemsPerPage = pagination.totalItemsPerPage || 24;
+                    const itemsPerPage = 40; // 8 columns x 5 rows
 
                     // Calculate total pages
                     if (totalItemsFromAPI > 0) {
@@ -513,44 +521,71 @@
             countryTitle.textContent = `Phim ${countryName}`;
             movieCount.textContent = `${movies.length} phim (Trang ${currentPage}/${totalPages} - Tổng: ${totalItems.toLocaleString()} phim)`;
 
-            const movieLinks = JSON.parse(localStorage.getItem('movieLinks') || '{}');
-
             moviesList.innerHTML = movies.map(movie => {
-                const hasCustomLink = !!movieLinks[movie.slug];
-                const linkUrl = hasCustomLink ? `watch-simple.html?slug=${movie.slug}` : `movie-detail.html?slug=${movie.slug}`;
+                const thumbUrl = movie.thumb_url || movie.poster_url || '';
+                const posterUrl = thumbUrl ? `https://img.ophim.live/uploads/movies/${thumbUrl}` : 'https://via.placeholder.com/200x300?text=No+Image';
+                const year = movie.year || 'N/A';
+                const quality = movie.quality || movie.lang || '';
+                const episodeCurrent = movie.episode_current || 'N/A';
+                const tmdbRating = movie.tmdb?.vote_average || 'N/A';
 
                 return `
-                    <a href="${linkUrl}"
-                        class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300">
-                        <div class="aspect-[2/3] w-full overflow-hidden relative">
-                            <img alt="${movie.name}"
-                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                                src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
-                                loading="lazy"
-                                onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
-                            <div class="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-2 py-0.5 rounded">
-                                ${movie.quality || 'HD'}
-                            </div>
-                            ${movie.episode_current ? `
-                            <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                                ${movie.episode_current}
-                            </div>` : ''}
-                            ${hasCustomLink ? `
-                            <div class="absolute bottom-2 right-2 bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
-                                <span class="material-icons-round text-[10px]">check_circle</span> Có link
-                            </div>` : ''}
-                        </div>
-                        <div class="p-4">
-                            <h3 class="text-white font-semibold truncate group-hover:text-primary transition-colors">
-                                ${movie.name}
-                            </h3>
-                            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
-                                <span>${movie.year || 'N/A'}</span>
-                                <span class="flex items-center gap-1 text-yellow-500 font-bold">
-                                    <span class="material-icons-round text-[10px]">star</span> 
-                                    ${movie.tmdb?.vote_average?.toFixed(1) || 'N/A'}
+                    <a href="movie-detail.html?slug=${movie.slug}" 
+                       class="group relative block rounded-xl overflow-hidden bg-surface-dark hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl">
+                        <!-- Poster -->
+                        <div class="relative aspect-[2/3]">
+                            <img src="${posterUrl}" 
+                                 alt="${movie.name}"
+                                 class="w-full h-full object-cover"
+                                 loading="lazy"
+                                 onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
+                            
+                            <!-- Overlay gradient -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            
+                            <!-- Quality badge -->
+                            ${quality ? `
+                                <div class="absolute top-2 left-2">
+                                    <span class="px-2 py-1 bg-primary text-black text-xs font-bold rounded shadow-lg">
+                                        ${quality}
+                                    </span>
+                                </div>
+                            ` : ''}
+                            
+                            <!-- Episode badge -->
+                            <div class="absolute top-2 right-2">
+                                <span class="px-2 py-1 bg-red-600 text-white text-xs font-bold rounded shadow-lg">
+                                    ${episodeCurrent}
                                 </span>
                             </div>
+                            
+                            <!-- Rating -->
+                            ${tmdbRating !== 'N/A' ? `
+                                <div class="absolute bottom-2 left-2 flex items-center gap-1 bg-black/80 px-2 py-1 rounded">
+                                    <span class="material-icons-round text-primary text-sm">star</span>
+                                    <span class="text-white text-xs font-bold">${tmdbRating}</span>
+                                </div>
+                            ` : ''}
+                            
+                            <!-- Year -->
+                            <div class="absolute bottom-2 right-2 bg-black/80 px-2 py-1 rounded">
+                                <span class="text-white text-xs font-bold">${year}</span>
+                            </div>
+                            
+                            <!-- Play icon on hover -->
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div class="w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center transform scale-75 group-hover:scale-100 transition-transform">
+                                    <span class="material-icons-round text-black text-4xl">play_arrow</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Movie info -->
+                        <div class="p-3">
+                            <h3 class="text-white font-bold text-sm mb-1 line-clamp-2 group-hover:text-primary transition-colors">
+                                ${movie.name}
+                            </h3>
+                            <p class="text-gray-400 text-xs line-clamp-1">${movie.origin_name || ''}</p>
                         </div>
                     </a>
                 `;

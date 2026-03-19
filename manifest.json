@@ -42,7 +42,7 @@
             "name": "Phim Việt Nam",
             "short_name": "Việt Nam",
             "description": "Phim Việt Nam hay nhất",
-            "url": "/phim-viet-nam.html",
+            "url": "/phim-theo-quoc-gia.html?country=viet-nam",
             "icons": [
                 {
                     "src": "favicon.png",

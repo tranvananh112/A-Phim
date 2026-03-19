@@ -443,6 +443,7 @@
     <link rel="stylesheet" href="css/navigation-smooth.css">
     <link rel="stylesheet" href="css/sticky-nav.css">
     <link rel="stylesheet" href="css/material-icons-fix.css?v=2">
+    <link rel="stylesheet" href="css/dropdown-z-index-fix.css">
     <link rel="stylesheet" href="css/top-movies.css">
     <link rel="stylesheet" href="css/hero-banner.css">
     <link rel="stylesheet" href="css/hero-mobile-fix.css">
@@ -560,7 +561,7 @@
                                     class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5 font-semibold">
                                     🌍 Tất Cả Quốc Gia
                                 </a>
-                                <a href="phim-viet-nam.html"
+                                <a href="phim-theo-quoc-gia.html?country=viet-nam"
                                     class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
                                     🇻🇳 Phim Việt Nam
                                 </a>
@@ -734,7 +735,7 @@
                                 const borderClasses = `${!isRightEdge ? 'border-r' : ''} ${!isLastRow ? 'border-b' : ''} border-white/5`;
 
                                 return `
-                                    <a href="search.html?category=${cat.slug}" 
+                                    <a href="categories.html?category=${cat.slug}" 
                                        class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all ${borderClasses}">
                                         ${cat.name}
                                     </a>
@@ -1008,7 +1009,7 @@
                         <span class="text-white">Phim Việt Nam</span>
                     </h2>
                 </div>
-                <a href="phim-viet-nam.html"
+                <a href="phim-theo-quoc-gia.html?country=viet-nam"
                     class="text-white md:text-primary font-semibold hover:text-white transition-colors flex items-center gap-1 group">
                     <span class="hidden md:inline text-sm">Xem tất cả</span>
                     <span
@@ -1073,7 +1074,7 @@
                             Nhất</span>
                     </h2>
                 </div>
-                <a href="search.html?category=kinh-di"
+                <a href="categories.html?category=kinh-di"
                     class="text-white md:text-primary font-semibold hover:text-white transition-colors flex items-center gap-1 group whitespace-nowrap">
                     <span class="hidden md:inline text-sm">Xem tất cả</span>
                     <span

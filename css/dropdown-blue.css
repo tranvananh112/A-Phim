@@ -20,9 +20,10 @@
 /* Hover effect for dropdown items */
 .group .absolute.top-full a:hover {
     background: rgba(255, 255, 255, 0.15) !important;
-    color: #ffffff !important;
+    /* Removed color override to allow hover:text-primary to work */
     transform: translateX(5px);
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.1);
 }
 
 /* Border colors for grid items */
@@ -51,10 +52,7 @@
     transform: translateY(-2px);
 }
 
-/* Add subtle glow effect on hover */
-.group .absolute.top-full a:hover {
-    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.1);
-}
+/* Add subtle glow effect on hover - removed duplicate rule */
 
 /* Smooth transition for dropdown appearance */
 .group .absolute.top-full {

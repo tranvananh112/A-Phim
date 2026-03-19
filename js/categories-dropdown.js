@@ -19,7 +19,7 @@ async function loadCategoriesDropdown() {
                         const borderClasses = `${!isRightEdge ? 'border-r' : ''} ${!isLastRow ? 'border-b' : ''} border-white/5`;
 
                         return `
-                            <a href="search.html?category=${cat.slug}" 
+                            <a href="categories.html?category=${cat.slug}" 
                                class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all ${borderClasses}">
                                 ${cat.name}
                             </a>

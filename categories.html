@@ -36,6 +36,7 @@
     <link rel="stylesheet" href="css/sticky-nav.css">
     <link rel="stylesheet" href="css/navigation-smooth.css">
     <link rel="stylesheet" href="css/material-icons-fix.css?v=2">
+    <link rel="stylesheet" href="css/dropdown-z-index-fix.css">
 
     <!-- Material Icons Loader -->
     <script src="js/material-icons-loader.js?v=2"></script>
@@ -104,7 +105,7 @@
                                     class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5 font-semibold">
                                     🌍 Tất Cả Quốc Gia
                                 </a>
-                                <a href="phim-viet-nam.html"
+                                <a href="phim-theo-quoc-gia.html?country=viet-nam"
                                     class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
                                     🇻🇳 Phim Việt Nam
                                 </a>
@@ -233,10 +234,10 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-6 pt-32 pb-20">
+    <main class="container mx-auto px-6 pt-24 pb-20">
         <!-- Header -->
-        <div class="mb-12">
-            <h1 id="pageTitle" class="text-4xl md:text-5xl font-bold mb-4">
+        <div class="mb-6">
+            <h1 id="pageTitle" class="text-4xl md:text-5xl font-bold mb-2">
                 Thể Loại Phim
             </h1>
             <p id="pageSubtitle" class="text-gray-400 text-lg">Khám phá phim theo thể loại yêu thích của bạn</p>
@@ -256,7 +257,7 @@
         <!-- Movies Grid (Category View) -->
         <div id="moviesSection" class="hidden">
             <!-- Back Button -->
-            <div class="mb-6">
+            <div class="mb-4">
                 <button onclick="showAllCategories()"
                     class="flex items-center gap-2 text-gray-300 hover:text-primary transition-colors">
                     <span class="material-icons-round">arrow_back</span>
@@ -264,13 +265,14 @@
                 </button>
             </div>
 
-            <!-- Movies Grid -->
-            <div id="moviesGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            <!-- Movies Grid - 8 columns -->
+            <div id="moviesGrid"
+                class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2">
                 <!-- Movies will be loaded here -->
             </div>
 
             <!-- Pagination -->
-            <div id="pagination" class="mt-12">
+            <div id="pagination" class="mt-8">
                 <!-- Pagination will be loaded here -->
             </div>
         </div>
@@ -458,10 +460,6 @@
 
                 const data = await response.json();
                 console.log('Categories data:', data);
-                console.log('Categories data.data type:', typeof data.data);
-                console.log('Categories data.data:', data.data);
-                console.log('Categories data.data keys:', Object.keys(data.data));
-                console.log('Categories data.data first entry:', Object.entries(data.data)[0]);
 
                 if (data.status === 'success' && data.data) {
                     // API returns data.data.items as array of categories
@@ -490,9 +488,6 @@
 
                     // Load dropdown
                     loadCategoriesDropdown();
-
-                    // Show categories grid
-                    renderCategoriesGrid();
                 } else {
                     throw new Error('Invalid data format');
                 }
@@ -505,22 +500,31 @@
 
         // Load categories dropdown
         function loadCategoriesDropdown() {
-            // Desktop dropdown
+            // Desktop dropdown - Grid 4 columns like index.html
             const dropdown = document.getElementById('categoryDropdown');
             if (dropdown && allCategories.length > 0) {
-                dropdown.innerHTML = allCategories.map(cat => `
-                    <a href="#" onclick="loadCategoryMovies('${cat.slug}', '${cat.name}'); return false;" 
-                       class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-colors">
-                        ${cat.name}
-                    </a>
-                `).join('');
+                const gridHTML = '<div class="grid grid-cols-4 gap-0">' +
+                    allCategories.map((cat, index) => {
+                        const isLastRow = index >= allCategories.length - (allCategories.length % 4 || 4);
+                        const isRightEdge = (index + 1) % 4 === 0;
+                        const borderClasses = `${!isRightEdge ? 'border-r' : ''} ${!isLastRow ? 'border-b' : ''} border-white/5`;
+
+                        return `
+                            <a href="categories.html?category=${cat.slug}" 
+                               class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all ${borderClasses}">
+                                ${cat.name}
+                            </a>
+                        `;
+                    }).join('') +
+                    '</div>';
+                dropdown.innerHTML = gridHTML;
             }
 
             // Mobile list
             const mobileList = document.getElementById('mobileCategoryList');
             if (mobileList && allCategories.length > 0) {
                 mobileList.innerHTML = allCategories.map(cat => `
-                    <a href="#" onclick="loadCategoryMovies('${cat.slug}', '${cat.name}'); return false;" 
+                    <a href="categories.html?category=${cat.slug}" 
                        class="block py-2 text-gray-300 hover:text-primary transition-colors">
                         ${cat.name}
                     </a>
@@ -712,12 +716,12 @@
                             </div>
                         </div>
                         
-                        <div class="p-4">
+                        <div class="p-3">
                             <h3 class="text-white font-bold text-sm mb-1 line-clamp-2 group-hover:text-primary transition-colors">
                                 ${movie.name}
                             </h3>
                             <p class="text-gray-400 text-xs line-clamp-1">${movie.origin_name || ''}</p>
-                            <div class="flex items-center justify-between mt-2">
+                            <div class="flex items-center justify-between mt-1">
                                 <span class="text-gray-500 text-xs">${year}</span>
                                 <div class="flex items-center gap-1 text-primary text-xs">
                                     <span class="material-icons-round text-sm">star</span>
@@ -878,7 +882,29 @@
         }
 
         // Load categories on page load
-        loadCategories();
+        async function init() {
+            // Check if we have a category parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const categorySlug = urlParams.get('category');
+            const pageParam = urlParams.get('page');
+            const page = pageParam ? parseInt(pageParam) : 1;
+
+            // Load all categories first
+            await loadCategories();
+
+            // If we have a category parameter, load movies for that category
+            if (categorySlug) {
+                const category = allCategories.find(cat => cat.slug === categorySlug);
+                const categoryName = category ? category.name : categorySlug;
+                await loadCategoryMovies(categorySlug, categoryName, page);
+            } else {
+                // Otherwise, show categories grid
+                await renderCategoriesGrid();
+            }
+        }
+
+        // Initialize on page load
+        init();
     </script>
 
     <script src="js/sticky-nav.js"></script>
