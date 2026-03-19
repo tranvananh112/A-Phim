@@ -31,8 +31,25 @@
 .material-icons:not(.material-icons-loaded),
 .material-icons-outlined:not(.material-icons-loaded),
 .material-symbols-outlined:not(.material-icons-loaded) {
-    color: transparent !important;
-    text-shadow: none !important;
+    /* Show a placeholder instead of text */
+    font-size: 0 !important;
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    position: relative;
+}
+
+/* Add a loading indicator */
+.material-icons-round:not(.material-icons-loaded)::before,
+.material-icons:not(.material-icons-loaded)::before {
+    content: '⋯';
+    font-size: 14px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: currentColor;
+    opacity: 0.5;
 }
 
 /* Show icons after font loaded */

@@ -44,8 +44,8 @@
         }
 
         if (document.fonts && document.fonts.ready) {
-            // Set a timeout as fallback
-            const timeout = setTimeout(forceMarkLoaded, 1500);
+            // Set a shorter timeout as fallback (500ms instead of 1500ms)
+            const timeout = setTimeout(forceMarkLoaded, 500);
 
             document.fonts.ready.then(() => {
                 clearTimeout(timeout);
@@ -55,8 +55,8 @@
                 forceMarkLoaded();
             });
         } else {
-            // Fallback for older browsers
-            setTimeout(forceMarkLoaded, 1000);
+            // Fallback for older browsers - faster timeout
+            setTimeout(forceMarkLoaded, 300);
         }
     }
 
