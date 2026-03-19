@@ -12,8 +12,8 @@ const goodConfig = `    <script>
                         "primary-dim": "#b3b30a",
                         "primary-red": "#ec1313",
                         "background-light": "#f8f8f5",
-                        "background-dark": "#1a1a0c",
-                        "surface-dark": "#2a2a18",
+                        "background-dark": "#1e202c",
+                        "surface-dark": "#282a3a",
                     },
                     fontFamily: {
                         "display": ["Space Grotesk", "sans-serif"],

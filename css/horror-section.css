@@ -1,14 +1,13 @@
-/* Horror Section Styles */
 .horror-section {
-    background: linear-gradient(180deg, #0a0a0c 0%, #1a0a0a 100%);
+    background: linear-gradient(180deg, #1e202c 0%, #1e202c 100%);
 }
 
 .horror-banner-gradient {
-    background: linear-gradient(90deg, #0a0a0c 15%, transparent 60%);
+    background: linear-gradient(90deg, #1e202c 15%, transparent 60%);
 }
 
 .horror-banner-overlay {
-    background: linear-gradient(0deg, #0a0a0c 5%, transparent 40%);
+    background: linear-gradient(0deg, #1e202c 5%, transparent 40%);
 }
 
 .horror-glass-tag {

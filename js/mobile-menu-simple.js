@@ -60,9 +60,6 @@ function injectSimpleMobileMenu() {
             <a href="pricing.html" class="block py-3 ${currentPage === 'pricing.html' ? 'text-primary font-bold' : 'text-gray-300 hover:text-primary'} transition-colors">
                 💎 Gói cước
             </a>
-            <a href="support.html" class="block py-3 ${currentPage === 'support.html' ? 'text-primary font-bold' : 'text-gray-300 hover:text-primary'} transition-colors">
-                ❤️ Nuôi APhim
-            </a>
         </div>
     `;
 

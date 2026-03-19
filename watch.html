@@ -49,8 +49,8 @@
                 extend: {
                     colors: {
                         "primary": "#f2f20d",
-                        "background-dark": "#1a1a0c",
-                        "surface-dark": "#2a2a18",
+                        "background-dark": "#1e202c",
+                        "surface-dark": "#282a3a",
                     },
                     fontFamily: {
                         "display": ["Space Grotesk", "sans-serif"]
@@ -206,10 +206,7 @@
                             Gói cước
                         </a>
 
-                        <a href="support.html"
-                            class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white">
-                            Nuôi APhim
-                        </a>
+
                     </div>
                 </div>
 
@@ -262,10 +259,12 @@
                 </div>
 
                 <!-- Movie Info -->
-                <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 pb-4 border-b border-gray-800">
+                <div
+                    class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 pb-4 border-b border-gray-800">
                     <div class="w-full overflow-hidden">
                         <h1 class="text-2xl md:text-3xl font-bold mb-2 text-white">Cẩm Nang Yêu (2026)</h1>
-                        <div id="movie-info" class="flex flex-nowrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-400 overflow-x-auto whitespace-nowrap pb-2 custom-scrollbar">
+                        <div id="movie-info"
+                            class="flex flex-nowrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-400 overflow-x-auto whitespace-nowrap pb-2 custom-scrollbar">
                             <span class="flex items-center text-primary font-bold"><span
                                     class="material-icons-round text-base mr-1">star</span> 8.5</span>
                             <span>2021</span>
@@ -275,20 +274,26 @@
                             <span>Khoa học viễn tưởng, Phiêu lưu</span>
                         </div>
                     </div>
-                    <div class="flex items-center justify-between w-full xl:w-auto xl:flex-shrink-0 gap-1 sm:gap-4 text-gray-300 font-medium mt-3 xl:mt-0">
-                        <button id="cinemaModeBtn" onclick="toggleCinemaMode()" class="flex-1 xl:flex-none flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:text-white transition-colors text-xs sm:text-sm">
+                    <div
+                        class="flex items-center justify-between w-full xl:w-auto xl:flex-shrink-0 gap-1 sm:gap-4 text-gray-300 font-medium mt-3 xl:mt-0">
+                        <button id="cinemaModeBtn" onclick="toggleCinemaMode()"
+                            class="flex-1 xl:flex-none flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:text-white transition-colors text-xs sm:text-sm">
                             <span class="material-icons-round text-base sm:text-xl">theaters</span>
-                            <span class="whitespace-nowrap">Rạp phim <span id="cinemaModeBadge" class="text-[9px] text-gray-400 font-bold">OFF</span></span>
+                            <span class="whitespace-nowrap">Rạp phim <span id="cinemaModeBadge"
+                                    class="text-[9px] text-gray-400 font-bold">OFF</span></span>
                         </button>
-                        <button id="favoriteMovieBtn" class="flex-1 xl:flex-none flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:text-white transition-colors text-xs sm:text-sm">
+                        <button id="favoriteMovieBtn"
+                            class="flex-1 xl:flex-none flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:text-white transition-colors text-xs sm:text-sm">
                             <span class="material-icons-round text-base sm:text-xl">favorite</span>
                             <span class="whitespace-nowrap">Yêu thích</span>
                         </button>
-                        <button id="saveMovieBtn" class="flex-1 xl:flex-none flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:text-white transition-colors text-xs sm:text-sm">
+                        <button id="saveMovieBtn"
+                            class="flex-1 xl:flex-none flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:text-white transition-colors text-xs sm:text-sm">
                             <span class="material-icons-outlined text-base sm:text-xl">bookmark_add</span>
                             <span class="whitespace-nowrap">Lưu phim</span>
                         </button>
-                        <button onclick="shareMovie()" class="flex-1 xl:flex-none flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:text-white transition-colors text-xs sm:text-sm">
+                        <button onclick="shareMovie()"
+                            class="flex-1 xl:flex-none flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:text-white transition-colors text-xs sm:text-sm">
                             <span class="material-icons-round text-base sm:text-xl">share</span>
                             <span class="whitespace-nowrap">Chia sẻ</span>
                         </button>
@@ -301,7 +306,8 @@
                         <span class="w-1 h-6 bg-primary rounded-full shadow-[0_0_10px_rgba(236,19,19,0.5)]"></span>
                         Danh sách tập
                     </h3>
-                    <div id="episode-list" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2 md:gap-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                    <div id="episode-list"
+                        class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2 md:gap-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                         <!-- JS Render Here -->
                     </div>
                 </div>
@@ -322,67 +328,186 @@
 
         <!-- DOM placeholder for Comments & Rating System -->
         <div id="comments-section" class="w-full mt-8 mb-8">
-            <div class="mt-8 bg-[#181a20] border border-white/5 rounded-xl p-4 md:p-8 text-white w-full">
+            <div class="mt-8 bg-[#282a3a] border border-white/5 rounded-xl p-4 md:p-8 text-white w-full">
                 <h3 class="text-xl md:text-2xl font-bold mb-6 flex items-center gap-3">
                     <span class="material-icons-round text-primary outline-none">sentiment_satisfied_alt</span>
                     Bình luận (70)
                 </h3>
-                
+
                 <div class="flex gap-2 mb-6">
-                    <button class="px-6 py-2 bg-[#fcd576] text-black font-semibold rounded-full text-sm">Bình luận</button>
-                    <button class="px-6 py-2 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-full text-sm transition-colors">Đánh giá</button>
+                    <button class="px-6 py-2 bg-[#fcd576] text-black font-semibold rounded-full text-sm">Bình
+                        luận</button>
+                    <button
+                        class="px-6 py-2 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-full text-sm transition-colors">Đánh
+                        giá</button>
                 </div>
-                
-                <p class="text-gray-400 text-sm mb-6">Bạn có thể không <span class="text-[#fcd576] font-medium cursor-pointer hover:underline">đăng nhập</span> để tham gia bình luận.</p>
-                
-                <div class="space-y-4 border border-white/10 rounded-xl p-4 md:p-6 bg-[#1f2129]">
-                    <textarea id="commentInput" 
+
+                <p class="text-gray-400 text-sm mb-6">Bạn có thể không <span
+                        class="text-[#fcd576] font-medium cursor-pointer hover:underline">đăng nhập</span> để tham gia
+                    bình luận.</p>
+
+                <div class="space-y-4 border border-white/10 rounded-xl p-4 md:p-6 bg-[#323447]">
+                    <textarea id="commentInput"
                         class="w-full bg-transparent border-none text-gray-300 placeholder-gray-500 focus:ring-0 resize-none"
                         rows="3" placeholder="Viết bình luận"></textarea>
                     <div class="text-right text-xs text-gray-500 mb-4">0 / 1000</div>
-                    
+
                     <div class="space-y-4">
                         <div>
                             <label class="block text-gray-400 text-sm mb-1">Tên của bạn</label>
-                            <input type="text" class="w-full bg-[#181a20] border border-white/10 rounded-lg p-3 text-white focus:border-primary focus:ring-1 focus:ring-primary" placeholder="Tên của bạn">
+                            <input type="text"
+                                class="w-full bg-[#282a3a] border border-white/10 rounded-lg p-3 text-white focus:border-primary focus:ring-1 focus:ring-primary"
+                                placeholder="Tên của bạn">
                         </div>
                         <div>
                             <label class="block text-gray-400 text-sm mb-1">Email</label>
-                            <input type="email" class="w-full bg-[#181a20] border border-white/10 rounded-lg p-3 text-white focus:border-primary focus:ring-1 focus:ring-primary" placeholder="Email (không bắt buộc)">
+                            <input type="email"
+                                class="w-full bg-[#282a3a] border border-white/10 rounded-lg p-3 text-white focus:border-primary focus:ring-1 focus:ring-primary"
+                                placeholder="Email (không bắt buộc)">
                         </div>
                     </div>
-                    
+
                     <div class="mt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div class="flex items-center gap-4">
                             <label class="flex items-center cursor-pointer">
                                 <div class="relative">
                                     <input type="checkbox" class="sr-only">
                                     <div class="block bg-gray-600 w-10 h-6 rounded-full"></div>
-                                    <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition transform"></div>
+                                    <div
+                                        class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition transform">
+                                    </div>
                                 </div>
                                 <div class="ml-3 text-gray-400 text-sm">Tiết lộ?</div>
                             </label>
-                            <button class="flex items-center gap-2 text-sm text-gray-400 bg-black/40 px-3 py-1.5 rounded-full border border-white/10">
+                            <button
+                                class="flex items-center gap-2 text-sm text-gray-400 bg-black/40 px-3 py-1.5 rounded-full border border-white/10">
                                 <span class="w-4 h-4 rounded-full bg-gray-600"></span>
                                 Ảnh đại diện
                             </button>
                         </div>
                     </div>
-                    
-                    <button id="submitRating" class="mt-6 w-full flex items-center justify-center gap-2 py-3 bg-[#fcd576] text-black font-bold rounded-full hover:bg-[#eabb5a] transition-colors shadow-lg">
+
+                    <button id="submitRating"
+                        class="mt-6 w-full flex items-center justify-center gap-2 py-3 bg-[#fcd576] text-black font-bold rounded-full hover:bg-[#eabb5a] transition-colors shadow-lg">
                         GỬI
                         <span class="material-icons-round text-sm">play_arrow</span>
                     </button>
-                    
-                    <p class="text-xs text-gray-500 mt-4 text-center">* Không cần đăng nhập. Bình luận vi phạm chính sách sẽ bị xoá.</p>
+
+                    <p class="text-xs text-gray-500 mt-4 text-center">* Không cần đăng nhập. Bình luận vi phạm chính
+                        sách sẽ bị xoá.</p>
                 </div>
             </div>
         </div>
     </main>
 
-    <footer class="mt-auto border-t border-gray-800 bg-[#12120a] py-8">
-        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-gray-500 text-sm">© 2023 CineStream. All rights reserved.</p>
+    <!-- Footer -->
+    <footer class="bg-[#1e202c] border-t border-white/5 py-12 relative overflow-hidden">
+        <!-- Background pattern/logo graphic -->
+        <div class="absolute right-0 top-1/2 -translate-y-1/2 opacity-5 pointer-events-none scale-150">
+            <span class="material-icons-round text-[400px]">play_circle_outline</span>
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <!-- Top row: Logo & Social -->
+            <div
+                class="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 border-b border-white/5 pb-8">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-3">
+                    <div
+                        class="w-12 h-12 rounded-full border-2 border-primary flex items-center justify-center bg-black/50 shadow-[0_0_15px_rgba(242,242,13,0.3)] overflow-hidden">
+                        <img src="/favicon.png" alt="A Phim Logo"
+                            class="w-8 h-8 object-contain group-hover:scale-110 transition-transform" />
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-3xl font-bold text-white tracking-tight">A <span
+                                class="text-primary">Phim</span></span>
+                        <span class="text-gray-400 text-sm">Xem Phim Mới Nhất</span>
+                    </div>
+                </a>
+
+                <!-- Social Icons -->
+                <div class="flex flex-wrap justify-center gap-3">
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.11.03-1.84 1.18-5.18 3.44-.49.34-.93.5-1.33.49-.44-.01-1.29-.25-1.92-.45-.73-.24-1.31-.36-1.26-.77.03-.21.32-.42.87-.64 3.41-1.48 5.68-2.46 6.83-2.94 3.25-1.36 3.93-1.59 4.37-1.59.1 0 .31.02.43.09.1.06.18.14.2.25.01.12.01.19.01.37z" />
+                        </svg>
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                            <path
+                                d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" />
+                        </svg>
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 1200 1227" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" />
+                        </svg>
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                            <path
+                                d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z" />
+                        </svg>
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 448 512">
+                            <path
+                                d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" />
+                        </svg>
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                            <path
+                                d="M21.582 6.186a2.6 2.6 0 0 0-1.83-1.844C18.14 4 12 4 12 4s-6.14 0-7.752.342a2.6 2.6 0 0 0-1.83 1.844C2 7.82 2 12 2 12s0 4.18.418 5.814a2.6 2.6 0 0 0 1.83 1.844C5.86 20 12 20 12 20s6.14 0 7.752-.342a2.6 2.6 0 0 0 1.83-1.844C22 16.18 22 12 22 12s0-4.18-.418-5.814zM9.8 15.116V8.884L15.352 12 9.8 15.116z" />
+                        </svg>
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all font-bold text-lg leading-none">
+                        @
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                            <path
+                                d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Bottom half: Links, text, copyright -->
+            <div class="mt-8">
+                <!-- Links -->
+                <div
+                    class="flex flex-wrap text-center justify-center md:justify-start gap-6 mb-6 text-sm font-semibold text-gray-300">
+                    <a href="#" class="hover:text-primary transition-colors">Hỏi-Đáp</a>
+                    <a href="#" class="hover:text-primary transition-colors">Chính sách bảo mật</a>
+                    <a href="#" class="hover:text-primary transition-colors">Điều khoản sử dụng</a>
+                    <a href="#" class="hover:text-primary transition-colors">Giới thiệu</a>
+                    <a href="#" class="hover:text-primary transition-colors">Liên hệ</a>
+                </div>
+
+                <!-- Text block -->
+                <p class="text-sm text-gray-400 leading-relaxed max-w-5xl text-center md:text-left mb-6">
+                    A Phim - Phim hay cả rổ - trang xem phim online miễn phí Full HD Vietsub, thuyết minh + lồng tiếng.
+                    Kho phim mới khổng lồ, phim chiếu rạp, phim bộ, phim lẻ từ nhiều quốc gia như Việt Nam, Hàn Quốc,
+                    Trung Quốc, Thái Lan, Nhật Bản, Âu Mỹ... đa dạng thể loại. Khám phá nền tảng phim trực tuyến hay
+                    nhất năm 2025 chất lượng 4K!
+                </p>
+
+                <!-- Copyright -->
+                <div class="text-xs text-gray-500 font-medium text-center md:text-left">
+                    Copyright ©2025 A Phim
+                </div>
+            </div>
         </div>
     </footer>
 
@@ -401,7 +526,7 @@
     <script defer src="js/analytics.js"></script>
     <!-- <script src="js/navigation-danh-sach.js"></script> -->
     <script src="js/search-icon-enhance.js"></script>
-    <script src="js/mobile-menu-simple.js"></script>
+    <script src="js/mobile-menu-simple.js?v=3"></script>
 
     <!-- Sticky Navigation -->
     <script src="js/sticky-nav.js"></script>

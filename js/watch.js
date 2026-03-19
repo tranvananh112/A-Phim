@@ -100,7 +100,7 @@ function renderEpisodeList(episodes) {
         const isActive = currentEpisode && ep.slug === currentEpisode.slug;
         return `
             <button onclick="changeEpisode('${ep.slug}')"
-                class="${isActive ? 'bg-[#fcd576] text-black font-bold border-transparent' : 'bg-[#1f2129] hover:bg-white/10 text-gray-300 border-white/5'} px-4 py-3 rounded-lg flex items-center justify-center gap-2 transition-colors border whitespace-nowrap shadow-lg">
+                class="${isActive ? 'bg-[#fcd576] text-black font-bold border-transparent' : 'bg-[#323447] hover:bg-white/10 text-gray-300 border-white/5'} px-4 py-3 rounded-lg flex items-center justify-center gap-2 transition-colors border whitespace-nowrap shadow-lg">
                 <span class="material-icons-round text-[18px]">${isActive ? 'play_arrow' : 'play_arrow'}</span>
                 ${ep.name}
             </button>
@@ -344,7 +344,7 @@ async function loadRecommendations() {
 // Render recommendations
 function renderRecommendations(movies, container) {
     container.innerHTML = movies.map(movie => `
-        <a class="group bg-[#181a20] rounded-xl overflow-hidden border border-white/5 hover:border-white/20 transition-all flex flex-col h-full" 
+        <a class="group bg-[#282a3a] rounded-xl overflow-hidden border border-white/5 hover:border-white/20 transition-all flex flex-col h-full" 
            href="movie-detail.html?slug=${movie.slug}">
             <div class="relative w-full aspect-[2/3] flex-shrink-0">
                 <img src="${movieAPI.getImageURL(movie.thumb_url)}" 

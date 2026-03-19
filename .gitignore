@@ -44,3 +44,14 @@ Yeu_Cau_Cung_Cap_Banner_Quang_Cao_files/
 
 # Stitch website templates
 stitch_website_xem_phim/
+
+# Test files (development only - not for production)
+test-*.html
+demo-*.html
+debug-*.html
+unregister-*.html
+
+# Phim X development folder (not ready for production)
+_phim-x-dev/
+phim-x.html
+js/phim-x-modal.js

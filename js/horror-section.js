@@ -62,7 +62,7 @@
                     .horror-thumbnails-container-desktop { position: relative !important; bottom: auto !important; padding: 1.5rem 4rem 1.5rem 4rem; }
                 }
             </style>
-            <section class="relative w-full horror-stage rounded-3xl overflow-hidden shadow-2xl bg-slate-800">
+            <section class="relative w-full horror-stage rounded-3xl overflow-hidden shadow-2xl bg-[#282a3a]">
                 <img 
                     alt="${title}" 
                     class="absolute inset-0 w-full h-full object-cover object-center scale-105" 
@@ -87,8 +87,9 @@
                     </p>
                     <div class="flex items-center gap-3">
                         <a href="movie-detail.html?slug=${mainMovie.slug}" 
-                           class="w-12 h-12 md:w-14 md:h-14 bg-primary rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_15px_rgba(250,204,21,0.5)]">
-                            <span class="material-icons text-black text-2xl ml-1">play_arrow</span>
+                           class="relative w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-[#facc15] to-[#f59e0b] rounded-full flex items-center justify-center hover:scale-110 transition-all shadow-lg group">
+                            <div class="absolute inset-[3px] md:inset-[4px] bg-black/15 rounded-full pointer-events-none transition-colors group-hover:bg-black/10"></div>
+                            <span class="material-icons text-white text-2xl md:text-3xl ml-1 relative z-10 drop-shadow-md">play_arrow</span>
                         </a>
                         <a href="movie-detail.html?slug=${mainMovie.slug}"
                            class="w-10 h-10 md:w-11 md:h-11 rounded-full border border-white/30 flex items-center justify-center hover:bg-white/10 transition-colors backdrop-blur-md bg-black/20">
@@ -112,8 +113,9 @@
                         </p>
                         <div class="flex items-center gap-3">
                             <a href="movie-detail.html?slug=${mainMovie.slug}" 
-                               class="w-14 h-14 bg-primary rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_15px_rgba(250,204,21,0.5)]">
-                                <span class="material-icons text-black text-2xl ml-1">play_arrow</span>
+                               class="relative w-14 h-14 bg-gradient-to-br from-[#facc15] to-[#f59e0b] rounded-full flex items-center justify-center hover:scale-110 transition-all shadow-lg group">
+                                <div class="absolute inset-[4px] bg-black/15 rounded-full pointer-events-none transition-colors group-hover:bg-black/10"></div>
+                                <span class="material-icons text-white text-3xl ml-1 relative z-10 drop-shadow-md">play_arrow</span>
                             </a>
                             <a href="movie-detail.html?slug=${mainMovie.slug}"
                                class="w-11 h-11 rounded-full border border-white/30 flex items-center justify-center hover:bg-white/10 transition-colors backdrop-blur-md bg-black/20">
@@ -178,9 +180,12 @@
     function setupThumbnailHandlers(movies) {
         const thumbnails = document.querySelectorAll('.horror-thumbnail');
 
-        thumbnails.forEach((thumb, index) => {
+        thumbnails.forEach((thumb) => {
             thumb.addEventListener('click', () => {
-                renderHorrorBanner(movies[index], movies, index);
+                const idx = parseInt(thumb.getAttribute('data-movie-index'));
+                if (!isNaN(idx) && movies[idx]) {
+                    renderHorrorBanner(movies[idx], movies, idx);
+                }
             });
         });
     }

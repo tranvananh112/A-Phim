@@ -72,7 +72,7 @@ function renderLatestMoviesSection(movies) {
     const movieLinks = JSON.parse(localStorage.getItem('movieLinks') || '{}');
 
     const html = `
-        <section class="py-20 bg-gradient-to-b from-background-dark to-surface-dark/30">
+        <section class="py-20 bg-background-dark">
             <div class="container mx-auto px-6">
                 <div class="flex items-center justify-between mb-8">
                     <h2 class="text-3xl font-bold text-white flex items-center gap-3">
@@ -180,7 +180,7 @@ function renderAllSections(sections) {
     }
 
     const html = filteredSections.map((section, index) => {
-        const bgClass = index % 2 === 0 ? 'bg-background-dark' : 'bg-gradient-to-b from-background-dark to-surface-dark/30';
+        const bgClass = 'bg-background-dark';
 
         return `
             <section class="py-20 ${bgClass}">

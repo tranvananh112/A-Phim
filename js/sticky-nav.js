@@ -41,12 +41,12 @@
                 nav.classList.add('nav-visible');
             }
             // Scroll xuống - ẨN
-            else if (scrollDelta > scrollThreshold && scrollTop > hideThreshold) {
+            else if (scrollTop > lastScrollTop && scrollTop > 50) {
                 nav.classList.add('scrolled', 'nav-hidden');
                 nav.classList.remove('nav-visible');
             }
-            // Scroll lên - HIỆN
-            else if (scrollDelta < -scrollThreshold) {
+            // Scroll lên - HIỆN (với một chút debounce nhẹ 2px để tránh nhảy lung tung do ngón tay rung)
+            else if (scrollTop < lastScrollTop - 2) {
                 nav.classList.add('scrolled', 'nav-visible');
                 nav.classList.remove('nav-hidden');
             }
