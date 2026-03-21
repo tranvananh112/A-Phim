@@ -1,0 +1,2282 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phim X - A Phim</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.png">
+
+    <!-- Tailwind for Footer -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2f20d",
+                        "primary-dim": "#b3b30a",
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0f0f0f;
+            --bg2: #161616;
+            --bg3: #282a3a;
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #f1f1f1;
+            --text2: #aaa;
+            --text3: #666;
+            --orange: #f97316;
+            --orange-glow: rgba(249, 115, 22, 0.25);
+            --purple: #9333ea;
+            --pill-bg: #272727;
+            --pill-bg-active: #e5e5e5;
+            --pill-text-active: #0f0f0f;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Be Vietnam Pro', sans-serif;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        /* ===================== HEADER ===================== */
+        #site-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(15, 15, 15, 0.96);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .logo-badge {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--orange), #dc2626);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 900;
+            color: white;
+            letter-spacing: -1px;
+        }
+
+        .logo-name {
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--text);
+            letter-spacing: -0.5px;
+        }
+
+        .logo-name span {
+            color: var(--orange);
+        }
+
+        .header-sep {
+            width: 1px;
+            height: 24px;
+            background: var(--border);
+            flex-shrink: 0;
+        }
+
+        #header-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text2);
+        }
+
+        .header-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Search bar */
+        .search-box {
+            position: relative;
+        }
+
+        #search-input {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 7px 38px 7px 16px;
+            color: var(--text);
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+            width: 320px;
+            transition: border-color 0.2s, width 0.2s;
+        }
+
+        #search-input:focus {
+            border-color: rgba(255, 255, 255, 0.25);
+            width: 420px;
+        }
+
+        #search-input::placeholder {
+            color: var(--text3);
+        }
+
+        .search-icon-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            color: var(--text3);
+            padding: 0;
+            display: flex;
+            transition: color 0.15s;
+        }
+
+        .search-icon-btn:hover {
+            color: var(--text2);
+        }
+
+
+
+        /* Back bar (shown when in player mode) */
+        #back-bar {
+            display: none;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            background: rgba(15, 15, 15, 0.97);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .back-bar-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+        }
+
+        #btn-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text2);
+            background: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 6px 0;
+            transition: color 0.15s;
+        }
+
+        #btn-back:hover {
+            color: var(--text);
+        }
+
+        #btn-back svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* ===================== CATEGORY NAV ===================== */
+        #cat-nav {
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 56px;
+            z-index: 90;
+        }
+
+        .cat-nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            height: 54px;
+            align-items: center;
+            scrollbar-width: none;
+        }
+
+        .cat-nav-inner::-webkit-scrollbar {
+            display: none;
+        }
+
+        .cat-btn {
+            flex-shrink: 0;
+            padding: 6px 14px;
+            border-radius: 8px;
+            background: var(--pill-bg);
+            color: var(--text2);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0;
+            transition: all 0.15s;
+            white-space: nowrap;
+            height: 34px;
+            display: flex;
+            align-items: center;
+        }
+
+        .cat-btn:hover {
+            background: #333;
+            color: var(--text);
+        }
+
+        .cat-btn.active {
+            background: var(--pill-bg-active);
+            color: var(--pill-text-active);
+        }
+
+        .cat-btn.sister-hot {
+            background: linear-gradient(135deg, #ff4d4d, #ff0066);
+            color: white;
+            border: none;
+        }
+
+        .cat-btn.sister-hot:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        /* ===================== PAGE CONTENT ===================== */
+        #content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        #video-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        @media (max-width: 1200px) {
+            #video-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            #video-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            #video-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Video Card — YouTube-style */
+        .vc {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            transition: transform 0.15s;
+        }
+
+        .vc:hover {
+            transform: translateY(-2px);
+        }
+
+        .vc-thumb {
+            position: relative;
+            aspect-ratio: 16/9;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #222;
+            margin-bottom: 10px;
+        }
+
+        .vc-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .vc:hover .vc-thumb img {
+            transform: scale(1.04);
+        }
+
+        .vc-dur {
+            position: absolute;
+            bottom: 6px;
+            right: 6px;
+            background: rgba(0, 0, 0, 0.88);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            letter-spacing: 0.2px;
+        }
+
+        .vc-hd {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            background: var(--orange);
+            color: #fff;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 5px;
+            border-radius: 3px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Hover play overlay */
+        .vc-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .vc:hover .vc-overlay {
+            opacity: 1;
+        }
+
+        .vc-overlay-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(249, 115, 22, 0.92);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .vc-overlay-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+            margin-left: 2px;
+        }
+
+        /* Card footer */
+        .vc-footer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .vc-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.45;
+            margin-bottom: 6px;
+        }
+
+        .vc-meta {
+            font-size: 12px;
+            color: var(--text2);
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .vc-meta-dot {
+            color: var(--text3);
+        }
+
+        /* ===================== SKELETON LOADING ===================== */
+        #skeleton-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        @media (max-width: 1200px) {
+            #skeleton-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            #skeleton-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            #skeleton-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .sk-card {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sk-thumb {
+            aspect-ratio: 16/9;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #1a1a1a 25%, #242424 50%, #1a1a1a 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite;
+        }
+
+        .sk-line {
+            height: 12px;
+            border-radius: 6px;
+            background: linear-gradient(90deg, #1a1a1a 25%, #242424 50%, #1a1a1a 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite;
+        }
+
+        .sk-line.w80 {
+            width: 80%;
+        }
+
+        .sk-line.w60 {
+            width: 60%;
+        }
+
+        .sk-line.w45 {
+            width: 45%;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* ===================== STATES ===================== */
+        .state-box {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .state-emoji {
+            font-size: 56px;
+            margin-bottom: 16px;
+        }
+
+        .state-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .state-sub {
+            color: var(--text2);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .retry-btn {
+            padding: 10px 24px;
+            background: var(--orange);
+            color: white;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            transition: background 0.2s;
+        }
+
+        .retry-btn:hover {
+            background: #ea580c;
+        }
+
+        /* ===================== PAGINATION ===================== */
+        #pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 36px 0 16px;
+        }
+
+        .pg-btn {
+            min-width: 36px;
+            height: 36px;
+            padding: 0 12px;
+            border-radius: 8px;
+            background: var(--bg3);
+            color: var(--text2);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pg-btn:hover:not(:disabled):not(.cur):not(.pg-sep) {
+            background: #2a2a2a;
+            color: var(--text);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .pg-btn.cur {
+            background: var(--orange);
+            color: white;
+            border-color: transparent;
+        }
+
+        .pg-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        .pg-sep {
+            background: transparent;
+            border-color: transparent;
+            color: var(--text3);
+            cursor: default;
+        }
+
+        /* ===================== EXPLORE SECTION (in player) ===================== */
+        .explore-section {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px 24px;
+            margin-bottom: 20px;
+        }
+
+        .explore-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 14px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .explore-title svg {
+            color: var(--orange);
+        }
+
+        .explore-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .ex-tag {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            color: var(--text2);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .ex-tag:hover {
+            background: rgba(249, 115, 22, 0.1);
+            border-color: rgba(249, 115, 22, 0.35);
+            color: var(--orange);
+        }
+
+        .ex-tag svg {
+            width: 11px;
+            height: 11px;
+        }
+
+        /* ===================== PLAYER MODE ===================== */
+        #player-section {
+            display: none;
+        }
+
+        .player-layout {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+            .player-layout {
+                grid-template-columns: 1fr;
+            }
+
+            #related-col {
+                display: block;
+            }
+
+            /* Show as stacked section on tablet/mobile */
+        }
+
+        /* =================== MOBILE RESPONSIVE =================== */
+        @media (max-width: 640px) {
+
+            /* Header — compact */
+            .header-inner {
+                padding: 0 12px;
+                gap: 8px;
+                height: 52px;
+            }
+
+            .logo-name {
+                font-size: 16px;
+            }
+
+            .header-sep {
+                display: none;
+            }
+
+            #header-label {
+                display: none;
+            }
+
+            /* Search bar — shrink to fit */
+            #search-input {
+                width: 140px;
+                font-size: 12px;
+                padding: 6px 32px 6px 12px;
+            }
+
+            #search-input:focus {
+                width: 180px;
+            }
+
+            /* Category nav */
+            #cat-nav {
+                top: 52px;
+            }
+
+            .cat-nav-inner {
+                padding: 0 12px;
+                height: 48px;
+                gap: 6px;
+            }
+
+            .cat-btn {
+                font-size: 12px;
+                padding: 5px 11px;
+                height: 30px;
+            }
+
+            /* Content padding */
+            #content {
+                padding: 12px;
+            }
+
+            /* Video grid — 2 columns */
+            #video-grid,
+            #skeleton-grid {
+                gap: 8px;
+            }
+
+            .vc-title {
+                font-size: 12px;
+            }
+
+            .vc-meta {
+                font-size: 11px;
+            }
+
+            /* Pagination — smaller, wrap */
+            #pagination {
+                padding: 20px 0 12px;
+                gap: 3px;
+                flex-wrap: wrap;
+            }
+
+            .pg-btn {
+                height: 32px;
+                min-width: 32px;
+                padding: 0 8px;
+                font-size: 12px;
+            }
+
+            /* Back bar */
+            .back-bar-inner {
+                padding: 0 12px;
+            }
+
+            /* Player mode — stack everything */
+            .player-layout {
+                gap: 16px;
+            }
+
+            /* Player box */
+            #player-box {
+                border-radius: 8px;
+                margin-bottom: 12px;
+            }
+
+            /* Player info panel */
+            .video-info-block {
+                padding: 14px 16px;
+                margin-bottom: 14px;
+                border-radius: 10px;
+            }
+
+            #vp-title {
+                font-size: 16px;
+                margin-bottom: 10px;
+            }
+
+            .vp-badge-row {
+                margin-bottom: 8px;
+                gap: 6px;
+            }
+
+            .vp-action-row {
+                padding: 10px 0;
+                margin-bottom: 12px;
+                gap: 8px;
+            }
+
+            .vp-stat-chips {
+                gap: 6px;
+            }
+
+            .vp-chip {
+                padding: 5px 10px;
+                font-size: 11px;
+            }
+
+            .vp-actions {
+                gap: 6px;
+            }
+
+            .vp-btn {
+                padding: 7px 12px;
+                font-size: 12px;
+            }
+
+            .vp-section-label {
+                font-size: 10px;
+            }
+
+            .tag-actor,
+            .tag-kw {
+                font-size: 11px;
+                padding: 4px 10px;
+            }
+
+            /* Explore section */
+            .explore-section {
+                padding: 14px 16px;
+                margin-bottom: 14px;
+                border-radius: 10px;
+            }
+
+            .explore-title {
+                font-size: 14px;
+                margin-bottom: 10px;
+                padding-bottom: 10px;
+            }
+
+            .explore-tags {
+                gap: 6px;
+            }
+
+            .ex-tag {
+                padding: 6px 11px;
+                font-size: 11px;
+            }
+
+            /* Related videos — show as full-width list on mobile */
+            #related-col {
+                margin-top: 0;
+            }
+
+            .related-title {
+                font-size: 14px;
+                font-weight: 700;
+                margin-bottom: 10px;
+            }
+
+            .rel-item {
+                padding: 8px;
+                gap: 10px;
+            }
+
+            .rel-thumb {
+                width: 100px;
+            }
+
+            .rel-info-title {
+                font-size: 12px;
+                -webkit-line-clamp: 2;
+            }
+
+            .rel-info-meta {
+                font-size: 11px;
+            }
+        }
+
+        /* Main player column */
+        #player-box {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        #player-box iframe,
+        #player-box video {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        /* ====== PLAYER INFO PANEL ====== */
+        .video-info-block {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px 24px;
+            margin-bottom: 20px;
+        }
+
+        /* Top badge row */
+        .vp-badge-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .vp-badge {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            padding: 3px 9px;
+            border-radius: 5px;
+        }
+
+        .vp-badge-x {
+            background: linear-gradient(135deg, var(--orange), #dc2626);
+            color: white;
+        }
+
+        .vp-badge-hd {
+            background: rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .vp-badge-dot {
+            color: var(--text3);
+            font-size: 13px;
+        }
+
+        .vp-badge-views {
+            color: var(--text2);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Title */
+        #vp-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text);
+            line-height: 1.35;
+            margin-bottom: 14px;
+            letter-spacing: -0.3px;
+        }
+
+        /* Rating row */
+        .vp-rating-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .vp-stars {
+            display: flex;
+            gap: 2px;
+        }
+
+        .vp-star {
+            color: #f59e0b;
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        .vp-star-empty {
+            color: #374151;
+        }
+
+        .vp-rating-score {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .vp-rating-count {
+            font-size: 12px;
+            color: var(--text3);
+        }
+
+        /* Stats + actions row */
+        .vp-action-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 14px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 18px;
+        }
+
+        .vp-stat-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .vp-chip {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text2);
+        }
+
+        .vp-chip svg {
+            width: 13px;
+            height: 13px;
+            color: var(--orange);
+        }
+
+        .vp-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .vp-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .vp-btn svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        .vp-btn-like {
+            background: rgba(249, 115, 22, 0.12);
+            color: var(--orange);
+            border-color: rgba(249, 115, 22, 0.3);
+        }
+
+        .vp-btn-like:hover {
+            background: rgba(249, 115, 22, 0.22);
+            border-color: var(--orange);
+        }
+
+        .vp-btn-share {
+            background: var(--bg3);
+            color: var(--text2);
+            border-color: var(--border);
+        }
+
+        .vp-btn-share:hover {
+            background: #2a2a2a;
+            color: var(--text);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Info sections */
+        .vp-section {
+            margin-bottom: 16px;
+        }
+
+        .vp-section-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--text3);
+            margin-bottom: 8px;
+        }
+
+        .vp-tags-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .tag-actor {
+            background: rgba(147, 51, 234, 0.12);
+            border: 1px solid rgba(147, 51, 234, 0.25);
+            color: #c084fc;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 5px 13px;
+            border-radius: 100px;
+        }
+
+        .tag-kw {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            color: var(--text2);
+            font-size: 12px;
+            padding: 5px 13px;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .tag-kw:hover {
+            background: #333;
+            color: var(--text);
+            border-color: rgba(255, 255, 255, 0.18);
+        }
+
+        /* Related videos sidebar */
+
+        .related-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+
+        .rel-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .rel-item {
+            display: flex;
+            gap: 8px;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+
+        .rel-item:hover {
+            background: var(--bg3);
+        }
+
+        .rel-thumb {
+            width: 120px;
+            aspect-ratio: 16/9;
+            border-radius: 6px;
+            overflow: hidden;
+            flex-shrink: 0;
+            position: relative;
+            background: #222;
+        }
+
+        .rel-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .rel-dur {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            background: rgba(0, 0, 0, 0.85);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 1px 5px;
+            border-radius: 3px;
+        }
+
+        .rel-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .rel-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;
+            margin-bottom: 4px;
+        }
+
+        .rel-meta {
+            font-size: 11px;
+            color: var(--text2);
+        }
+
+        /* ===================== TOAST ===================== */
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #282a3a;
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--orange);
+            color: var(--text);
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.25s;
+            z-index: 9999;
+            max-width: 300px;
+        }
+
+        #toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===================== HEADER (list mode) ===================== -->
+    <div id="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">
+                <div class="logo-badge">X</div>
+                <span class="logo-name">Phim<span>X</span></span>
+            </a>
+            <div class="header-sep"></div>
+            <span id="header-label">Thịnh hành</span>
+
+            <div class="header-right">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Tìm kiếm..." autocomplete="off">
+                    <button class="search-icon-btn" onclick="doSearch()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15"
+                            height="15">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="m21 21-4.35-4.35" />
+                        </svg>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== BACK BAR (player mode) ===================== -->
+    <div id="back-bar">
+        <div class="back-bar-inner">
+            <button id="btn-back" onclick="closePlayer()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+                Quay lại danh sách
+            </button>
+        </div>
+    </div>
+
+    <!-- ===================== CATEGORY NAV ===================== -->
+    <div id="cat-nav">
+        <div class="cat-nav-inner">
+            <button class="cat-btn active" data-q="hot" onclick="selectCat(this)">Thịnh hành</button>
+            <button class="cat-btn sister-hot" data-q="Sister hot" onclick="selectCat(this)">Sister Hot 🔥</button>
+            <button class="cat-btn" data-q="asian vietnam" onclick="selectCat(this)">Phim Việt</button>
+            <button class="cat-btn" data-q="japanese teen" onclick="selectCat(this)">Nhật Bản</button>
+            <button class="cat-btn" data-q="korean bj" onclick="selectCat(this)">Hàn Quốc</button>
+            <button class="cat-btn" data-q="chinese asian" onclick="selectCat(this)">Trung Quốc</button>
+            <button class="cat-btn" data-q="milf amateur" onclick="selectCat(this)">Âu Mỹ</button>
+            <button class="cat-btn" data-q="uncensored asian" onclick="selectCat(this)">Không che</button>
+            <button class="cat-btn" data-q="amateur homemade" onclick="selectCat(this)">Nghiệp dư</button>
+            <button class="cat-btn" data-q="teen sister" onclick="selectCat(this)">Nổi bật</button>
+            <button class="cat-btn" data-q="hentai anime" onclick="selectCat(this)">Hoạt hình</button>
+        </div>
+    </div>
+
+    <!-- ===================== CONTENT ===================== -->
+    <div id="content">
+
+        <!-- LIST MODE -->
+        <div id="grid-section">
+            <!-- Skeleton loading -->
+            <div id="skeleton-grid">
+                <!-- rendered by JS -->
+            </div>
+
+            <!-- Error -->
+            <div id="state-error" class="state-box" style="display:none">
+                <div class="state-emoji">😵</div>
+                <div class="state-title">Không thể kết nối API</div>
+                <div class="state-sub">Vui lòng kiểm tra kết nối và thử lại.</div>
+                <button class="retry-btn" onclick="retryLoad()">Thử lại</button>
+            </div>
+
+            <!-- Empty -->
+            <div id="state-empty" class="state-box" style="display:none">
+                <div class="state-emoji">🔍</div>
+                <div class="state-title">Không có kết quả</div>
+                <div class="state-sub">Thử từ khóa khác hoặc chọn danh mục khác.</div>
+            </div>
+
+            <!-- Video grid -->
+            <div id="video-grid" style="display:none"></div>
+
+            <!-- Pagination -->
+            <div id="pagination" style="display:none"></div>
+        </div>
+
+        <!-- PLAYER MODE -->
+        <div id="player-section">
+            <div class="player-layout">
+                <!-- Left: player + info -->
+                <div>
+                    <div id="player-box">
+                        <!-- iframe or video injected by JS -->
+                    </div>
+
+                    <div class="video-info-block">
+                        <!-- Badge row -->
+                        <div class="vp-badge-row" id="vp-badge-row">
+                            <span class="vp-badge vp-badge-x">PHIM X</span>
+                            <span class="vp-badge vp-badge-hd" id="vp-quality-badge">HD</span>
+                            <span class="vp-badge-dot">•</span>
+                            <span class="vp-badge-views" id="vp-views-top"></span>
+                        </div>
+
+                        <!-- Title -->
+                        <h1 id="vp-title">Đang tải...</h1>
+
+                        <!-- Rating row -->
+                        <div class="vp-rating-row" id="vp-rating-row" style="display:none">
+                            <div class="vp-stars" id="vp-stars"></div>
+                            <span class="vp-rating-score" id="vp-score"></span>
+                        </div>
+
+                        <!-- Stats + action row -->
+                        <div class="vp-action-row">
+                            <div class="vp-stat-chips" id="vp-chips"></div>
+                            <div class="vp-actions">
+                                <button class="vp-btn vp-btn-like" id="vp-btn-like" onclick="toggleLike(this)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <path
+                                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                                    </svg>
+                                    Yêu thích
+                                </button>
+                                <button class="vp-btn vp-btn-share" onclick="shareVideo()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <circle cx="18" cy="5" r="3" />
+                                        <circle cx="6" cy="12" r="3" />
+                                        <circle cx="18" cy="19" r="3" />
+                                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                                    </svg>
+                                    Chia sẻ
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Author (hidden if Unknown) -->
+                        <div class="vp-author-row" style="display:none">
+                            <div class="vp-avatar" id="vp-avatar">?</div>
+                            <div id="vp-author" style="font-size:15px;font-weight:700;color:var(--text)"></div>
+                        </div>
+
+                        <!-- Actors -->
+                        <div class="vp-section" id="vp-actors-section" style="display:none">
+                            <div class="vp-section-label">Diễn viên</div>
+                            <div class="vp-tags-wrap" id="vp-actors"></div>
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="vp-section" id="vp-tags-section" style="display:none">
+                            <div class="vp-section-label">Thể loại / Tags</div>
+                            <div class="vp-tags-wrap" id="vp-tags"></div>
+                        </div>
+                    </div>
+
+                    <!-- EXPLORE / XEM THEM -->
+                    <div class="explore-section">
+                        <div class="explore-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18"
+                                height="18">
+                                <polygon points="5 3 19 12 5 21 5 3" />
+                            </svg>
+                            Xem Thêm Phim
+                        </div>
+                        <div class="explore-tags">
+                            <div class="ex-tag" onclick="exploreTag('asian vietnam')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11"
+                                    height="11">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" />
+                                    <line x1="8" y1="21" x2="16" y2="21" />
+                                    <line x1="12" y1="17" x2="12" y2="21" />
+                                </svg>
+                                Phim Việt
+                            </div>
+                            <div class="ex-tag" onclick="exploreTag('japanese teen')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11"
+                                    height="11">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" />
+                                    <line x1="8" y1="21" x2="16" y2="21" />
+                                    <line x1="12" y1="17" x2="12" y2="21" />
+                                </svg>
+                                Nhật Bản
+                            </div>
+                            <div class="ex-tag" onclick="exploreTag('korean bj')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11"
+                                    height="11">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" />
+                                    <line x1="8" y1="21" x2="16" y2="21" />
+                                    <line x1="12" y1="17" x2="12" y2="21" />
+                                </svg>
+                                Hàn Quốc
+                            </div>
+                            <div class="ex-tag" onclick="exploreTag('uncensored asian')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11"
+                                    height="11">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                    <circle cx="12" cy="12" r="3" />
+                                </svg>
+                                Không Che
+                            </div>
+                            <div class="ex-tag" onclick="exploreTag('milf amateur')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11"
+                                    height="11">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" />
+                                    <line x1="8" y1="21" x2="16" y2="21" />
+                                    <line x1="12" y1="17" x2="12" y2="21" />
+                                </svg>
+                                Âu Mỹ
+                            </div>
+                            <div class="ex-tag" onclick="exploreTag('amateur homemade')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11"
+                                    height="11">
+                                    <path d="M23 7l-7 5 7 5V7z" />
+                                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                                </svg>
+                                Nghiệp Dư
+                            </div>
+                            <div class="ex-tag" onclick="exploreTag('chinese asian')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11"
+                                    height="11">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" />
+                                    <line x1="8" y1="21" x2="16" y2="21" />
+                                    <line x1="12" y1="17" x2="12" y2="21" />
+                                </svg>
+                                Trung Quốc
+                            </div>
+                            <div class="ex-tag" onclick="exploreTag('hentai anime')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11"
+                                    height="11">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <path d="M12 8v4l3 3" />
+                                </svg>
+                                Hoạt Hình
+                            </div>
+                            <div class="ex-tag" onclick="exploreTag('teen sister')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11"
+                                    height="11">
+                                    <polygon
+                                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                </svg>
+                                Nổi Bật
+                            </div>
+                            <div class="ex-tag" style="background:rgba(255,0,102,0.15); border-color:rgba(255,0,102,0.3); color:#ff0066;" onclick="exploreTag('Sister hot')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11"
+                                    height="11">
+                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                </svg>
+                                Sister Hot 🔥
+                            </div>
+                            <div class="ex-tag" onclick="exploreTag('hot')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11"
+                                    height="11">
+                                    <polygon
+                                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                </svg>
+                                Thịnh Hành
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: related videos -->
+                <div id="related-col">
+                    <div class="related-title">Video liên quan</div>
+                    <div class="rel-list" id="rel-list">
+                        <!-- injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Toast -->
+    <div id="toast"></div>
+
+    <script>
+        // ============================================================
+        // CONFIG
+        // ============================================================
+        const API_KEY = 'd486069129msh0b8da27c0be5495p1d859djsn1739664b1f9a';
+        const API_HOST = 'porn-xnxx-api.p.rapidapi.com';
+        const API_BASE = 'https://porn-xnxx-api.p.rapidapi.com';
+        const HEADERS = {
+            'x-rapidapi-key': API_KEY,
+            'x-rapidapi-host': API_HOST,
+            'Content-Type': 'application/json'
+        };
+
+        // ============================================================
+        // STATE
+        // ============================================================
+        const S = {
+            videos: [],
+            loading: false,
+            query: 'hot trending',
+            page: 1,
+            active: null,
+            totalPages: 50,    // tổng số trang tối đa (từ API)
+            visiblePages: 10   // số trang đang hiển thị (mở rộng dần)
+        };
+
+        // ============================================================
+        // AD BLOCK — Kill popup/redirect ads at page level
+        // (Backup layer in case any script bypasses iframe sandbox)
+        // ============================================================
+        (function () {
+            const _origOpen = window.open;
+            window.open = function (url, target, features) {
+                if (!url || url === '' || url === 'about:blank') return null;
+                // Allow same-origin internal links only; block all external ad popups
+                try {
+                    const u = new URL(url, window.location.href);
+                    if (u.origin === window.location.origin) {
+                        return _origOpen.call(window, url, target, features);
+                    }
+                } catch (e) { }
+                console.warn('[PhimX AdBlock] Blocked popup/redirect:', url);
+                return null;
+            };
+        })();
+
+        // ============================================================
+        // UTILS
+        // ============================================================
+        function esc(s) {
+            return String(s || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+        }
+
+        function fmtViews(v) {
+            if (!v) return '';
+            if (typeof v === 'string' && /[KMB]/i.test(v)) return v;
+            const n = parseInt(v);
+            if (isNaN(n)) return String(v);
+            if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+            if (n >= 1e3) return (n / 1e3).toFixed(0) + 'K';
+            return String(n);
+        }
+
+        function toEmbedUrl(url) {
+            if (!url) return '';
+            // New strategy: use xnxx.health as it allows embedding more reliably than xnxx.tv
+            const mirror = 'www.xnxx.health'; 
+            
+            if (url.includes('/embed/')) {
+                return url.replace('www.pornhub.com', 'cn.pornhub.com')
+                          .replace('www.xnxx.com', mirror)
+                          .replace('www.xnxx.tv', mirror);
+            }
+            const vk = url.match(/[?&]viewkey=([^&]+)/i);
+            if (vk) return `https://cn.pornhub.com/embed/${vk[1]}`;
+            
+            const xi = url.match(/xnxx\.com\/video-([\w]+)\//i) || url.match(/xnxx\.tv\/video-([\w]+)\//i);
+            if (xi) return `https://${mirror}/embedframe/${xi[1]}`;
+            
+            return url;
+        }
+
+        function normalizeVideo(r, i) {
+            const watchUrl = r.url || r.link || r.video_url || r.video_link || '';
+            let rawViews = r.views || fmtViews(r.view_count || 0);
+            if (typeof rawViews === 'string') rawViews = rawViews.replace(/(\d+(?:\.\d+)?%)$/, ''); // remove trailing e.g. 100%
+            return {
+                id: r.id || `v${i}`,
+                title: r.title || r.name || 'Video 18+',
+                thumbnail: r.thumbnail || r.thumb || `https://picsum.photos/seed/${i + 20}/640/360`,
+                duration: r.duration || '',
+                views: rawViews,
+                author: r.author || r.channel || 'Unknown',
+                url: watchUrl,
+                videoUrl: toEmbedUrl(watchUrl),
+                models: Array.isArray(r.models) ? r.models : (r.pornstars ? r.pornstars.map(p => p.name || p) : []),
+                tags: Array.isArray(r.tags) ? r.tags : (r.categories ? r.categories.map(c => c.name || c) : []),
+                rating: r.rating || '',
+                quality: r.quality || 'HD'
+            };
+        }
+
+        // ============================================================
+        // API
+        // ============================================================
+        // ============================================================
+        // CACHE — sessionStorage, TTL 5 phút
+        // ============================================================
+        const CACHE_TTL = 5 * 60 * 1000;
+
+        function cacheKey(q, page) { return `phimx_${q}_${page}`; }
+
+        function cacheGet(q, page) {
+            try {
+                const raw = sessionStorage.getItem(cacheKey(q, page));
+                if (!raw) return null;
+                const { ts, data } = JSON.parse(raw);
+                if (Date.now() - ts > CACHE_TTL) { sessionStorage.removeItem(cacheKey(q, page)); return null; }
+                return data;
+            } catch (e) { return null; }
+        }
+
+        function cacheSet(q, page, data) {
+            try { sessionStorage.setItem(cacheKey(q, page), JSON.stringify({ ts: Date.now(), data })); } catch (e) { }
+        }
+
+        async function apiSearch(q, page) {
+            const cached = cacheGet(q, page);
+            if (cached) return cached;
+
+            // Updated to match the user's new API snippet (POST with JSON body)
+            const res = await fetch(`${API_BASE}/search`, {
+                method: 'POST',
+                headers: HEADERS,
+                body: JSON.stringify({ q: q }) // Removed page if not explicitly supported in the new snippet
+            });
+            if (!res.ok) throw new Error('API ' + res.status);
+            const data = await res.json();
+            cacheSet(q, page, data);
+            return data;
+        }
+
+        // ============================================================
+        // TRANSLATE — cache dịch, batch nhỏ hơn
+        // ============================================================
+        const _translateCache = {};
+
+        async function translateAll(titles) {
+            // Kiểm tra cache trước
+            const uncached = titles.filter(t => !_translateCache[t]);
+            if (uncached.length === 0) return titles.map(t => _translateCache[t] || t);
+
+            try {
+                // Batch tối đa 20 title để tránh URL quá dài
+                const batch = uncached.slice(0, 20);
+                const res = await fetch(
+                    `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q=${encodeURIComponent(batch.join('\n'))}`,
+                    { signal: AbortSignal.timeout(3000) } // timeout 3s
+                );
+                const data = await res.json();
+                if (data && data[0]) {
+                    const joined = data[0].map(p => p[0]).join('');
+                    const translated = joined.split('\n');
+                    batch.forEach((t, i) => { if (translated[i]) _translateCache[t] = translated[i]; });
+                }
+            } catch (e) { }
+            return titles.map(t => _translateCache[t] || t);
+        }
+
+        // Prefetch trang kế tiếp ngầm
+        function prefetchNext(q, page) {
+            if (page < S.totalPages) {
+                setTimeout(() => apiSearch(q, page + 1).catch(() => { }), 1500);
+            }
+        }
+
+        // ============================================================
+        // LOAD & RENDER
+        // ============================================================
+        async function loadVideos(q, page) {
+            if (S.loading) return;
+            S.loading = true;
+            S.query = q;
+            S.page = page;
+            if (page === 1) S.visiblePages = 10;
+            showSkeleton();
+
+            try {
+                const data = await apiSearch(q, page);
+                let raw = Array.isArray(data) ? data : (data.videos || data.data || data.results || []);
+
+                const tp = data.totalPages || data.total_pages || data.pages ||
+                    data.pageCount || data.page_count || data.totalPage ||
+                    data.total || null;
+                if (tp) S.totalPages = parseInt(tp);
+
+                if (!raw.length) { showEmpty(); return; }
+
+                let videos = raw.map((v, i) => normalizeVideo(v, i));
+                S.videos = videos;
+
+                // Render ngay với title gốc — không chờ dịch
+                renderGrid(videos);
+                renderPagination();
+                document.getElementById('header-label').textContent =
+                    document.querySelector('.cat-btn.active')?.textContent.trim() || q;
+
+                // Dịch ngầm sau khi đã hiển thị, rồi cập nhật title
+                translateAll(videos.map(v => v.title)).then(tr => {
+                    if (tr && tr.length === videos.length) {
+                        S.videos = videos.map((v, i) => ({ ...v, title: tr[i] || v.title }));
+                        // Chỉ update text, không re-render toàn bộ grid
+                        document.querySelectorAll('#video-grid .vc-title').forEach((el, i) => {
+                            if (S.videos[i]) el.textContent = S.videos[i].title;
+                        });
+                    }
+                }).catch(() => { });
+
+                // Prefetch trang kế tiếp ngầm
+                prefetchNext(q, page);
+
+            } catch (e) {
+                console.error(e);
+                showError();
+            } finally {
+                S.loading = false;
+            }
+        }
+
+        // ============================================================
+        // GRID
+        // ============================================================
+        function renderGrid(videos) {
+            const grid = document.getElementById('video-grid');
+            document.getElementById('skeleton-grid').style.display = 'none';
+            document.getElementById('state-error').style.display = 'none';
+            document.getElementById('state-empty').style.display = 'none';
+            grid.style.display = 'grid';
+            document.getElementById('pagination').style.display = 'flex';
+
+            grid.innerHTML = videos.map((v, i) => `
+        <div class="vc" onclick="openPlayer(${i})">
+            <div class="vc-thumb">
+                <img src="${esc(v.thumbnail)}" alt="${esc(v.title)}" loading="lazy"
+                     onerror="this.src='https://picsum.photos/seed/${i + 30}/640/360'">
+                ${v.duration ? `<div class="vc-dur">${esc(v.duration)}</div>` : ''}
+                ${v.quality ? `<div class="vc-hd">${esc(v.quality)}</div>` : ''}
+                <div class="vc-overlay">
+                    <div class="vc-overlay-icon">
+                        <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="vc-footer">
+                <div class="vc-title">${esc(v.title)}</div>
+                <div class="vc-meta">
+                    ${v.views ? `<span>${esc(v.views)} lượt xem</span>` : ''}
+                    ${v.views && v.duration ? `<span class="vc-meta-dot">•</span>` : ''}
+                    ${v.duration ? `<span>${esc(v.duration)}</span>` : ''}
+                </div>
+            </div>
+        </div>
+    `).join('');
+        }
+
+        // ============================================================
+        // PAGINATION
+        // ============================================================
+        function renderPagination() {
+            const pg = document.getElementById('pagination');
+            const cur = S.page;
+            const maxReal = S.totalPages || 50;     // tổng số trang thực tế
+            const visible = S.visiblePages || 10;   // số trang đang hiển thị
+
+            // Luôn hiện: 5 trang đầu, current±2, trang cuối batch
+            const pages = new Set();
+            // 5 trang đầu luôn có
+            for (let i = 1; i <= Math.min(5, visible); i++) pages.add(i);
+            // trang cuối batch
+            pages.add(visible);
+            // current ± 2
+            for (let i = Math.max(1, cur - 2); i <= Math.min(visible, cur + 2); i++) pages.add(i);
+            const sorted = [...pages].sort((a, b) => a - b);
+
+            // Insert ellipsis where gaps > 1
+            const items = [];
+            let prev = 0;
+            for (const p of sorted) {
+                if (p - prev > 2) items.push('...');
+                else if (p - prev === 2) items.push(prev + 1);
+                items.push(p);
+                prev = p;
+            }
+
+            let html = `<button class="pg-btn" onclick="goToPage(${cur - 1})" ${cur <= 1 ? 'disabled' : ''}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Trang trước
+    </button>`;
+
+            for (const item of items) {
+                if (item === '...') {
+                    html += `<button class="pg-btn pg-sep">…</button>`;
+                } else {
+                    html += `<button class="pg-btn ${item === cur ? 'cur' : ''}" onclick="goToPage(${item})">${item}</button>`;
+                }
+            }
+
+            // Nút Trang sau — disabled khi đang ở trang cuối thực tế
+            const atVisibleEnd = cur >= visible;
+            const atRealEnd = cur >= maxReal;
+            html += `<button class="pg-btn" onclick="goToPage(${cur + 1})" ${atRealEnd ? 'disabled' : ''}>
+        Trang sau
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>`;
+
+            pg.innerHTML = html;
+        }
+
+        function goToPage(p) {
+            const maxReal = S.totalPages || 50;
+            if (p < 1 || p > maxReal) return;
+            // Nếu đến cuối batch hiện tại → mở rộng thêm 10 trang
+            if (p >= S.visiblePages && S.visiblePages < maxReal) {
+                S.visiblePages = Math.min(S.visiblePages + 10, maxReal);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            loadVideos(S.query, p);
+        }
+
+        // ============================================================
+        // EXPLORE TAG (from player Xem Them section)
+        // ============================================================
+        function exploreTag(query) {
+            closePlayer();
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            // Highlight matching cat button if any
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                if (b.dataset.q === query) b.classList.add('active');
+            });
+            loadVideos(query, 1);
+        }
+
+        // ============================================================
+        // SKELETON / STATES
+        // ============================================================
+        function showSkeleton() {
+            const sk = document.getElementById('skeleton-grid');
+            sk.style.display = 'grid';
+            sk.innerHTML = Array.from({ length: 30 }, (_, i) => `
+        <div class="sk-card">
+            <div class="sk-thumb"></div>
+            <div class="sk-line w80"></div>
+            <div class="sk-line w60"></div>
+            <div class="sk-line w45"></div>
+        </div>
+    `).join('');
+            document.getElementById('video-grid').style.display = 'none';
+            document.getElementById('state-error').style.display = 'none';
+            document.getElementById('state-empty').style.display = 'none';
+            document.getElementById('pagination').style.display = 'none';
+        }
+
+        function showError() {
+            document.getElementById('skeleton-grid').style.display = 'none';
+            document.getElementById('video-grid').style.display = 'none';
+            document.getElementById('state-empty').style.display = 'none';
+            document.getElementById('state-error').style.display = 'block';
+            document.getElementById('pagination').style.display = 'none';
+        }
+
+        function showEmpty() {
+            document.getElementById('skeleton-grid').style.display = 'none';
+            document.getElementById('video-grid').style.display = 'none';
+            document.getElementById('state-error').style.display = 'none';
+            document.getElementById('state-empty').style.display = 'block';
+
+            // Vẫn hiện pagination để người dùng quay lại trang trước
+            // Thu nhỏ visiblePages về trang trước nếu trang này rỗng
+            if (S.page > 1 && S.visiblePages >= S.page) {
+                S.visiblePages = S.page - 1;
+            }
+            renderPagination();
+            document.getElementById('pagination').style.display = 'flex';
+        }
+
+        // ============================================================
+        // CATEGORY
+        // ============================================================
+        function selectCat(btn) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            closePlayer();
+            loadVideos(btn.dataset.q, 1);
+        }
+
+        // ============================================================
+        // SEARCH
+        // ============================================================
+        function doSearch() {
+            const val = document.getElementById('search-input').value.trim();
+            if (!val) return;
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            closePlayer();
+            loadVideos(val, 1);
+        }
+
+        document.getElementById('search-input').addEventListener('keydown', e => {
+            if (e.key === 'Enter') doSearch();
+        });
+
+        // ============================================================
+        // PLAYER
+        // ============================================================
+        function openPlayer(idx) {
+            const v = S.videos[idx];
+            if (!v) return;
+            S.active = v;
+
+            // Switch UI
+            document.getElementById('site-header').style.display = 'none';
+            document.getElementById('cat-nav').style.display = 'none';
+            document.getElementById('grid-section').style.display = 'none';
+            document.getElementById('back-bar').style.display = 'block';
+            document.getElementById('player-section').style.display = 'block';
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Inject player
+            const box = document.getElementById('player-box');
+            box.style.aspectRatio = '16/9';
+
+            if (v.videoUrl && /\.(mp4|webm|ogg)(\?|$)/i.test(v.videoUrl)) {
+                // Strategy 1: Direct mp4 — use native HTML5 video, zero ads possible
+                box.innerHTML = `<video controls autoplay style="width:100%;height:100%">
+            <source src="${esc(v.videoUrl)}" type="video/mp4">
+        </video>`;
+            } else if (v.videoUrl) {
+                // Strategy 2: Embed iframe — use sandbox to block popup/redirect ads
+                // sandbox rules:
+                //   allow-scripts        → let the player's JS run (needed for video controls)
+                //   allow-same-origin    → let the player detect its own origin (needed for some players)
+                //   allow-forms          → allow form submissions inside player (rare but needed)
+                //   allow-presentation   → allow Fullscreen API inside the frame
+                // NOT granted:
+                //   allow-popups         → blocks any window.open() ad popups
+                //   allow-top-navigation → blocks click-to-redirect that takes over OUR tab
+                //   allow-popups-to-escape-sandbox → blocks popup escaping the sandbox
+                box.innerHTML = `<iframe src="${esc(v.videoUrl)}"
+            allow="autoplay; fullscreen; picture-in-picture"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"
+            style="width:100%;height:100%;border:none;background:#000;"></iframe>`;
+            } else {
+                box.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:#666;background:#111;border-radius:12px;">
+            <div style="font-size:48px">🎬</div>
+            <div style="font-size:15px">Link phát không khả dụng</div>
+            ${v.url ? `<a href="${esc(v.url)}" target="_blank" style="padding:10px 20px;background:var(--orange);color:white;border-radius:8px;font-weight:700;font-size:14px;">Xem trang gốc →</a>` : ''}
+        </div>`;
+            }
+
+            // Title
+            document.getElementById('vp-title').textContent = v.title;
+
+            // Quality & views badges
+            document.getElementById('vp-quality-badge').textContent = v.quality || 'HD';
+            document.getElementById('vp-views-top').textContent = v.views ? v.views + ' lượt xem' : '';
+
+            // Rating row (show stars if rating exists)
+            const scoreNum = parseFloat(v.rating);
+            const ratingRow = document.getElementById('vp-rating-row');
+            if (!isNaN(scoreNum) && scoreNum > 0) {
+                ratingRow.style.display = 'flex';
+                const stars = Math.round(scoreNum / 2); // convert 0-10 to 0-5
+                let starsHtml = '';
+                for (let i = 1; i <= 5; i++) {
+                    starsHtml += `<span class="vp-star${i > stars ? ' vp-star-empty' : ''}">★</span>`;
+                }
+                document.getElementById('vp-stars').innerHTML = starsHtml;
+                document.getElementById('vp-score').textContent = scoreNum.toFixed(1);
+            } else {
+                ratingRow.style.display = 'none';
+            }
+
+            // Stat chips
+            const chips = document.getElementById('vp-chips');
+            let chipsHtml = '';
+            if (v.views) chipsHtml += `<div class="vp-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>${esc(v.views)}</div>`;
+            if (v.duration) chipsHtml += `<div class="vp-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${esc(v.duration)}</div>`;
+            chips.innerHTML = chipsHtml;
+
+            // Author row — only show if real name
+            const authorRow = document.querySelector('.vp-author-row');
+            const authorName = (!v.author || v.author === 'Unknown') ? '' : v.author;
+            if (authorName) {
+                authorRow.style.display = 'flex';
+                document.getElementById('vp-avatar').textContent = authorName.charAt(0).toUpperCase();
+                document.getElementById('vp-author').textContent = authorName;
+            } else {
+                authorRow.style.display = 'none';
+            }
+
+            // Reset like button
+            const likeBtn = document.getElementById('vp-btn-like');
+            if (likeBtn) { likeBtn.classList.remove('liked'); likeBtn.innerHTML = likeBtn.innerHTML; }
+
+            // Models / Actors
+            if (v.models && v.models.length) {
+                document.getElementById('vp-actors-section').style.display = 'block';
+                document.getElementById('vp-actors').innerHTML = v.models.map(m =>
+                    `<span class="tag-actor">${esc(typeof m === 'string' ? m : m.name || '')}</span>`
+                ).join('');
+            } else {
+                document.getElementById('vp-actors-section').style.display = 'none';
+            }
+
+            // Tags
+            if (v.tags && v.tags.length) {
+                document.getElementById('vp-tags-section').style.display = 'block';
+                document.getElementById('vp-tags').innerHTML = v.tags.slice(0, 25).map(t => {
+                    const label = typeof t === 'string' ? t : t.name || '';
+                    return `<span class="tag-kw" onclick="searchTag('${esc(label)}')">#${esc(label)}</span>`;
+                }).join('');
+            } else {
+                document.getElementById('vp-tags-section').style.display = 'none';
+            }
+
+            // Related videos (rest of the list, excluding current)
+            const relList = document.getElementById('rel-list');
+            const related = S.videos.filter((_, i) => i !== idx).slice(0, 15);
+            relList.innerHTML = related.map((r, ri) => `
+        <div class="rel-item" onclick="openPlayer(${S.videos.indexOf(r)})">
+            <div class="rel-thumb">
+                <img src="${esc(r.thumbnail)}" alt="${esc(r.title)}" loading="lazy"
+                     onerror="this.src='https://picsum.photos/seed/${ri + 50}/640/360'">
+                ${r.duration ? `<div class="rel-dur">${esc(r.duration)}</div>` : ''}
+            </div>
+            <div class="rel-info">
+                <div class="rel-title">${esc(r.title)}</div>
+                <div class="rel-meta">${esc(r.views)} lượt xem • ${esc(r.duration)}</div>
+            </div>
+        </div>
+    `).join('');
+        }
+
+        function closePlayer() {
+            S.active = null;
+            document.getElementById('site-header').style.display = '';
+            document.getElementById('cat-nav').style.display = '';
+            document.getElementById('grid-section').style.display = '';
+            document.getElementById('back-bar').style.display = 'none';
+            document.getElementById('player-section').style.display = 'none';
+            document.getElementById('player-box').innerHTML = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ============================================================
+        // SEARCH TAG
+        // ============================================================
+        function searchTag(tag) {
+            closePlayer();
+            document.getElementById('search-input').value = tag;
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            loadVideos(tag, 1);
+        }
+
+        // ============================================================
+        // TEST API
+        // ============================================================
+        async function testApi() {
+            const btn = document.getElementById('btn-test');
+            btn.classList.add('loading');
+            btn.textContent = 'Đang kiểm tra...';
+            try {
+                const data = await apiSearch('test', 1);
+                const count = Array.isArray(data) ? data.length : '?';
+                showToast(`✅ API hoạt động! ${count} video trả về`);
+                console.log('API response:', data);
+            } catch (e) {
+                showToast('❌ API lỗi: ' + e.message);
+            } finally {
+                btn.classList.remove('loading');
+                btn.textContent = 'Kiểm tra API';
+            }
+        }
+
+        // ============================================================
+        // LIKE / SHARE
+        // ============================================================
+        function toggleLike(btn) {
+            btn.classList.toggle('liked');
+            const liked = btn.classList.contains('liked');
+            btn.style.background = liked ? 'rgba(249,115,22,0.3)' : '';
+            btn.style.borderColor = liked ? 'var(--orange)' : '';
+            btn.innerHTML = `<svg viewBox="0 0 24 24" fill="${liked ? 'var(--orange)' : 'none'}" stroke="currentColor" stroke-width="2.5" style="width:15px;height:15px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>${liked ? 'Đã thích' : 'Yêu thích'}`;
+            showToast(liked ? '❤️ Đã thêm vào yêu thích' : '💔 Đã bỏ yêu thích');
+        }
+
+        function shareVideo() {
+            const v = S.active;
+            if (!v) return;
+            const link = v.url || window.location.href;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(link).then(() => showToast('🔗 Đã sao chép link!'));
+            } else {
+                showToast('🔗 ' + link);
+            }
+        }
+
+        // ============================================================
+        // RETRY / TOAST
+        // ============================================================
+        function retryLoad() { loadVideos(S.query, S.page); }
+
+        function showToast(msg, ms = 3500) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), ms);
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        window.addEventListener('DOMContentLoaded', () => {
+            showSkeleton();
+            loadVideos('hot trending', 1);
+        });
+    </script>
+
+    <!-- Footer -->
+    <footer class="bg-[#1e202c] border-t border-white/5 py-12 relative overflow-hidden">
+        <!-- Background pattern/logo graphic -->
+        <div class="absolute right-0 top-1/2 -translate-y-1/2 opacity-5 pointer-events-none scale-150">
+            <span class="material-icons-round text-[400px]">play_circle_outline</span>
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <!-- Top row: Logo & Social -->
+            <div
+                class="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 border-b border-white/5 pb-8">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-3">
+                    <div
+                        class="w-12 h-12 rounded-full border-2 border-primary flex items-center justify-center bg-black/50 shadow-[0_0_15px_rgba(242,242,13,0.3)] overflow-hidden">
+                        <img src="/favicon.png" alt="A Phim Logo"
+                            class="w-8 h-8 object-contain group-hover:scale-110 transition-transform" />
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-3xl font-bold text-white tracking-tight">A <span
+                                class="text-primary">Phim</span></span>
+                        <span class="text-gray-400 text-sm">Xem Phim Mới Nhất</span>
+                    </div>
+                </a>
+
+                <!-- Social Icons -->
+                <div class="flex flex-wrap justify-center gap-3">
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.11.03-1.84 1.18-5.18 3.44-.49.34-.93.5-1.33.49-.44-.01-1.29-.25-1.92-.45-.73-.24-1.31-.36-1.26-.77.03-.21.32-.42.87-.64 3.41-1.48 5.68-2.46 6.83-2.94 3.25-1.36 3.93-1.59 4.37-1.59.1 0 .31.02.43.09.1.06.18.14.2.25.01.12.01.19.01.37z" />
+                        </svg>
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                            <path
+                                d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" />
+                        </svg>
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 1200 1227" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" />
+                        </svg>
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                            <path
+                                d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z" />
+                        </svg>
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 448 512">
+                            <path
+                                d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" />
+                        </svg>
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                            <path
+                                d="M21.582 6.186a2.6 2.6 0 0 0-1.83-1.844C18.14 4 12 4 12 4s-6.14 0-7.752.342a2.6 2.6 0 0 0-1.83 1.844C2 7.82 2 12 2 12s0 4.18.418 5.814a2.6 2.6 0 0 0 1.83 1.844C5.86 20 12 20 12 20s6.14 0 7.752-.342a2.6 2.6 0 0 0 1.83-1.844C22 16.18 22 12 22 12s0-4.18-.418-5.814zM9.8 15.116V8.884L15.352 12 9.8 15.116z" />
+                        </svg>
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all font-bold text-lg leading-none">
+                        @
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                            <path
+                                d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Bottom half: Links, text, copyright -->
+            <div class="mt-8">
+                <!-- Links -->
+                <div
+                    class="flex flex-wrap text-center justify-center md:justify-start gap-6 mb-6 text-sm font-semibold text-gray-300">
+                    <a href="#" class="hover:text-primary transition-colors">Hỏi-Đáp</a>
+                    <a href="#" class="hover:text-primary transition-colors">Chính sách bảo mật</a>
+                    <a href="#" class="hover:text-primary transition-colors">Điều khoản sử dụng</a>
+                    <a href="#" class="hover:text-primary transition-colors">Giới thiệu</a>
+                    <a href="#" class="hover:text-primary transition-colors">Liên hệ</a>
+                </div>
+
+                <!-- Text block -->
+                <p class="text-sm text-gray-400 leading-relaxed max-w-5xl text-center md:text-left mb-6">
+                    A Phim - Phim hay cả rổ - trang xem phim online miễn phí Full HD Vietsub, thuyết minh + lồng tiếng.
+                    Kho phim mới khổng lồ, phim chiếu rạp, phim bộ, phim lẻ từ nhiều quốc gia như Việt Nam, Hàn Quốc,
+                    Trung Quốc, Thái Lan, Nhật Bản, Âu Mỹ... đa dạng thể loại. Khám phá nền tảng phim trực tuyến hay
+                    nhất năm 2025 chất lượng 4K!
+                </p>
+
+                <!-- Copyright -->
+                <div class="text-xs text-gray-500 font-medium text-center md:text-left">
+                    Copyright ©2025 A Phim
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

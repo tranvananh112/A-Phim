@@ -50,8 +50,3 @@ test-*.html
 demo-*.html
 debug-*.html
 unregister-*.html
-
-# Phim X development folder (not ready for production)
-_phim-x-dev/
-phim-x.html
-js/phim-x-modal.js

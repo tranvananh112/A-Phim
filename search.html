@@ -22,6 +22,10 @@
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/favicon.png">
+
+    <!-- Page Loader CSS -->
+    <link rel="stylesheet" href="css/page-loader.css">
+
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link rel="stylesheet" href="css/dropdown-blue.css">
     <link rel="stylesheet" href="css/sticky-nav.css">
@@ -50,6 +54,21 @@
 </head>
 
 <body class="bg-background-dark text-gray-100 font-display min-h-screen">
+    <!-- Page Loader -->
+    <div id="page-loader" class="page-loader">
+        <div class="page-loader__spinner">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+                y="0px" width="60px" height="60px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;"
+                xml:space="preserve">
+                <path fill="#f2f20d"
+                    d="M25.251,6.461c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615V6.461z">
+                    <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 25 25"
+                        to="360 25 25" dur="0.6s" repeatCount="indefinite" />
+                </path>
+            </svg>
+        </div>
+    </div>
+
     <nav class="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-md border-b border-white/10">
         <div class="container mx-auto px-6 h-20 flex items-center justify-between">
             <a href="index.html" class="flex items-center gap-2 group">
@@ -189,6 +208,12 @@
                     <a href="pricing.html"
                         class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white hover:text-primary">
                         Gói cước
+                    </a>
+
+                    <!-- Phim X (18+) -->
+                    <a href="phim-x.html"
+                        class="nav-item px-6 py-2.5 rounded-full text-sm font-bold uppercase tracking-wide transition-colors duration-200 text-red-400 hover:text-red-300">
+                        🔞 Phim X
                     </a>
 
                 </div>
@@ -456,6 +481,8 @@
     <!-- Sticky Navigation -->
     <script src="js/sticky-nav.js"></script>
 
+    <!-- Page Loader Script -->
+    <script src="js/page-loader.js"></script>
 
 </body>
 

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html class="dark" lang="vi">
 
 <head>
@@ -446,11 +446,13 @@
     <link rel="stylesheet" href="css/dropdown-z-index-fix.css">
     <link rel="stylesheet" href="css/top-movies.css">
     <link rel="stylesheet" href="css/hero-banner.css">
+    <link rel="stylesheet" href="css/imdb-carousel-3d.css">
     <link rel="stylesheet" href="css/hero-mobile-fix.css">
     <link rel="stylesheet" href="css/page-animations.css">
     <link rel="stylesheet" href="css/dropdown-blue.css">
     <link rel="stylesheet" href="css/navigation-pill-v2.css">
     <link rel="stylesheet" href="css/search-icon-desktop.css">
+    <link rel="stylesheet" href="css/search-expand-simple.css">
     <link rel="stylesheet" href="css/horror-section.css">
     <link rel="stylesheet" href="css/country-sections.css">
 
@@ -665,13 +667,24 @@
                         class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white">
                         Gói cước
                     </a>
+
+                    <!-- Phim X (18+) -->
+                    <a href="phim-x.html"
+                        class="nav-item px-6 py-2.5 rounded-full text-sm font-bold uppercase tracking-wide transition-colors duration-200 text-red-400 hover:text-red-300">
+                        🔞 Phim X
+                    </a>
                 </div>
             </div>
 
             <div class="flex items-center gap-4">
-                <a href="search.html" class="text-gray-300 hover:text-primary transition-colors">
-                    <span class="material-icons-round">search</span>
-                </a>
+                <!-- Expandable Search -->
+                <div class="search-expand-wrapper">
+                    <input type="text" id="searchExpandInput" placeholder="Tìm kiếm..." class="search-expand-input">
+                    <button class="search-expand-icon" onclick="handleSearchSubmit()">
+                        <span class="material-icons-round">search</span>
+                    </button>
+                </div>
+
                 <a href="login.html"
                     class="px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors text-sm uppercase tracking-wide">
                     Đăng nhập
@@ -924,7 +937,7 @@
     </main>
 
     <!-- Top Movies Hot Section -->
-    <section class="py-8 md:py-12 top-movies-section">
+    <section class="py-6 md:py-8 top-movies-section">
         <div class="container mx-auto px-6">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
@@ -962,8 +975,19 @@
         </div>
     </section>
 
+    <!-- IMDB Top 250 3D Carousel Section -->
+    <section class="imdb-section">
+        <div class="container mx-auto px-6">
+            <div class="imdb-wrapper">
+                <div id="imdb-ring" class="imdb-ring loading" style="--total: 6">
+                    <!-- Images will be loaded here by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Action Movies Section -->
-    <section class="py-8 md:py-12 bg-background-dark">
+    <section class="py-6 md:py-8 bg-background-dark">
         <div class="container mx-auto px-6">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
@@ -999,7 +1023,7 @@
     </section>
 
     <!-- Vietnamese Movies Section -->
-    <section class="py-8 md:py-12 bg-background-dark">
+    <section class="py-6 md:py-8 bg-background-dark">
         <div class="container mx-auto px-6">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
@@ -1031,7 +1055,7 @@
     </section>
 
     <!-- Latest Updates Section -->
-    <section class="py-8 md:py-12 bg-background-dark">
+    <section class="py-6 md:py-8 bg-background-dark">
         <div class="container mx-auto px-6">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
@@ -1063,7 +1087,7 @@
     </section>
 
     <!-- Horror Section -->
-    <section class="py-8 md:py-12 horror-section">
+    <section class="py-6 md:py-8 horror-section">
         <div class="container mx-auto px-6">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
@@ -1132,7 +1156,6 @@
 
                 <!-- Social Icons -->
                 <div class="flex flex-wrap justify-center gap-3">
-                    <!-- Telegram -->
                     <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
                         class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
                         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
@@ -1140,23 +1163,20 @@
                                 d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.11.03-1.84 1.18-5.18 3.44-.49.34-.93.5-1.33.49-.44-.01-1.29-.25-1.92-.45-.73-.24-1.31-.36-1.26-.77.03-.21.32-.42.87-.64 3.41-1.48 5.68-2.46 6.83-2.94 3.25-1.36 3.93-1.59 4.37-1.59.1 0 .31.02.43.09.1.06.18.14.2.25.01.12.01.19.01.37z" />
                         </svg>
                     </a>
-                    <!-- Discord -->
                     <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
                         class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
                         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
                             <path
-                                d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286z" />
+                                d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" />
                         </svg>
                     </a>
-                    <!-- YouTube -->
                     <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
                         class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 1200 1227" xmlns="http://www.w3.org/2000/svg">
                             <path
-                                d="M21.582 6.186a2.6 2.6 0 0 0-1.83-1.844C18.14 4 12 4 12 4s-6.14 0-7.752.342a2.6 2.6 0 0 0-1.83 1.844C2 7.82 2 12 2 12s0 4.18.418 5.814a2.6 2.6 0 0 0 1.83 1.844C5.86 20 12 20 12 20s6.14 0 7.752-.342a2.6 2.6 0 0 0 1.83-1.844C22 16.18 22 12 22 12s0-4.18-.418-5.814zM9.8 15.116V8.884L15.352 12 9.8 15.116z" />
+                                d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" />
                         </svg>
                     </a>
-                    <!-- Facebook -->
                     <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
                         class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
                         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
@@ -1164,7 +1184,24 @@
                                 d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z" />
                         </svg>
                     </a>
-                    <!-- Instagram -->
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 448 512">
+                            <path
+                                d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" />
+                        </svg>
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                            <path
+                                d="M21.582 6.186a2.6 2.6 0 0 0-1.83-1.844C18.14 4 12 4 12 4s-6.14 0-7.752.342a2.6 2.6 0 0 0-1.83 1.844C2 7.82 2 12 2 12s0 4.18.418 5.814a2.6 2.6 0 0 0 1.83 1.844C5.86 20 12 20 12 20s6.14 0 7.752-.342a2.6 2.6 0 0 0 1.83-1.844C22 16.18 22 12 22 12s0-4.18-.418-5.814zM9.8 15.116V8.884L15.352 12 9.8 15.116z" />
+                        </svg>
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all font-bold text-lg leading-none">
+                        @
+                    </a>
                     <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
                         class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
                         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
@@ -1189,17 +1226,15 @@
 
                 <!-- Text block -->
                 <p class="text-sm text-gray-400 leading-relaxed max-w-5xl text-center md:text-left mb-6">
-                    A Phim - Phim hay cập nhật mới nhất - trang xem phim online miễn phí Full HD Vietsub, thuyết minh +
-                    lồng tiếng.
+                    A Phim - Phim hay cả rổ - trang xem phim online miễn phí Full HD Vietsub, thuyết minh + lồng tiếng.
                     Kho phim mới khổng lồ, phim chiếu rạp, phim bộ, phim lẻ từ nhiều quốc gia như Việt Nam, Hàn Quốc,
-                    Trung Quốc, Thái Lan, Nhật Bản, Âu Mỹ... Đa dạng thể loại. Khám phá nền tảng phim trực tuyến hay
-                    nhất
-                    năm 2025 chất lượng 4K!
+                    Trung Quốc, Thái Lan, Nhật Bản, Âu Mỹ... đa dạng thể loại. Khám phá nền tảng phim trực tuyến hay
+                    nhất năm 2025 chất lượng 4K!
                 </p>
 
                 <!-- Copyright -->
                 <div class="text-xs text-gray-500 font-medium text-center md:text-left">
-                    Copyright 2025 A Phim
+                    Copyright ©2025 A Phim
                 </div>
             </div>
         </div>
@@ -1592,6 +1627,35 @@
     <script defer src="js/analytics.js"></script>
     <!-- <script src="js/navigation-danh-sach.js"></script> -->
     <script src="js/search-icon-enhance.js"></script>
+
+    <!-- Expandable Search Logic -->
+    <script>
+        function handleSearchSubmit() {
+            const input = document.getElementById('searchExpandInput');
+            const query = input.value.trim();
+
+            if (query) {
+                // Có query -> chuyển sang search.html
+                window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+            } else {
+                // Không có query -> focus vào input
+                input.focus();
+            }
+        }
+
+        // Enter key to search
+        document.addEventListener('DOMContentLoaded', function () {
+            const input = document.getElementById('searchExpandInput');
+
+            if (input) {
+                input.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        handleSearchSubmit();
+                    }
+                });
+            }
+        });
+    </script>
 
     <!-- Login Popunder -->
     <script src="js/login-popunder.js"></script>

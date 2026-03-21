@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phim X - A Phim</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <meta name="robots" content="noindex, nofollow">
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0f0f0f;
+            --bg2: #161616;
+            --bg3: #282a3a;
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #f1f1f1;
+            --text2: #aaa;
+            --text3: #666;
+            --orange: #f97316;
+            --purple: #9333ea;
+            --pill-bg: #272727;
+            --pill-bg-active: #e5e5e5;
+            --pill-text-active: #0f0f0f;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Be Vietnam Pro', sans-serif;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+
+        /* ===== HEADER ===== */
+        #site-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(15, 15, 15, 0.96);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            pointer-events: auto;
+        }
+
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-badge {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--orange), #dc2626);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 900;
+            color: white;
+        }
+
+        .logo-name {
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--text);
+        }
+
+        .logo-name span {
+            color: var(--orange);
+        }
+
+        .header-sep {
+            width: 1px;
+            height: 24px;
+            background: var(--border);
+        }
+
+        #header-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text2);
+        }
+
+        .header-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Server Selector */
+        .server-selector {
+            position: relative;
+        }
+
+        .server-btn-header {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 6px 14px;
+            color: var(--text2);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .server-btn-header:hover {
+            border-color: var(--orange);
+            color: var(--text);
+        }
+
+        .server-btn-header.active {
+            background: var(--orange);
+            border-color: var(--orange);
+            color: white;
+        }
+
+        /* Server Dropdown */
+        .server-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 8px;
+            min-width: 200px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            display: none;
+            z-index: 1000;
+        }
+
+        .server-dropdown.show {
+            display: block;
+        }
+
+        .server-option {
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--text2);
+        }
+
+        .server-option:hover {
+            background: var(--bg3);
+            color: var(--text);
+        }
+
+        .server-option.active {
+            background: rgba(249, 115, 22, 0.15);
+            color: var(--orange);
+            font-weight: 600;
+        }
+
+        .server-option-icon {
+            font-size: 18px;
+        }
+
+        .server-option-info {
+            flex: 1;
+        }
+
+        .server-option-name {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .server-option-desc {
+            font-size: 11px;
+            opacity: 0.7;
+        }
+
+        /* Search */
+        .search-box {
+            position: relative;
+        }
+
+        #search-input {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 7px 38px 7px 16px;
+            color: var(--text);
+            font-size: 13px;
+            outline: none;
+            width: 320px;
+            transition: all 0.2s;
+        }
+
+        #search-input:focus {
+            border-color: rgba(255, 255, 255, 0.25);
+            width: 420px;
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            color: var(--text3);
+            padding: 0;
+            display: flex;
+            cursor: pointer;
+            border: none;
+            transition: color 0.2s;
+        }
+
+        .search-btn:hover {
+            color: var(--orange);
+        }
+
+        /* ===== CATEGORY NAV ===== */
+        #cat-nav {
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 56px;
+            z-index: 90;
+            pointer-events: auto;
+        }
+
+        .cat-nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            height: 54px;
+            align-items: center;
+            scrollbar-width: none;
+        }
+
+        .cat-nav-inner::-webkit-scrollbar {
+            display: none;
+        }
+
+        .cat-btn {
+            flex-shrink: 0;
+            padding: 6px 14px;
+            border-radius: 8px;
+            background: var(--pill-bg);
+            color: var(--text2);
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.15s;
+            white-space: nowrap;
+            height: 34px;
+            border: none;
+            cursor: pointer;
+            pointer-events: auto;
+            position: relative;
+            z-index: 91;
+        }
+
+        .cat-btn:hover {
+            background: #333;
+            color: var(--text);
+        }
+
+        .cat-btn.active {
+            background: var(--pill-bg-active);
+            color: var(--pill-text-active);
+        }
+
+        .cat-btn.sister-hot {
+            background: linear-gradient(135deg, #ff4d4d, #ff0066);
+            color: white;
+        }
+
+        .cat-btn.sister-hot:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        /* ===== CONTENT ===== */
+        #content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        #video-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        /* Video Card */
+        .vc {
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+
+        .vc:hover {
+            transform: translateY(-2px);
+        }
+
+        .vc-thumb {
+            position: relative;
+            aspect-ratio: 16/9;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #222;
+            margin-bottom: 10px;
+        }
+
+        .vc-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .vc:hover .vc-thumb img {
+            transform: scale(1.04);
+        }
+
+        .vc-dur {
+            position: absolute;
+            bottom: 6px;
+            right: 6px;
+            background: rgba(0, 0, 0, 0.88);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .vc-hd {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            background: var(--orange);
+            color: #fff;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 5px;
+            border-radius: 3px;
+            letter-spacing: 0.5px;
+        }
+
+        .vc-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.45;
+            margin-bottom: 6px;
+        }
+
+        .vc-meta {
+            font-size: 12px;
+            color: var(--text2);
+        }
+
+        /* Player Section */
+        #player-section {
+            display: none;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        #player-box {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        #player-box iframe,
+        #player-box video {
+            width: 100%;
+            height: 100%;
+            border: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        .video-info-block {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px 24px;
+        }
+
+        #vp-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+
+        .vp-meta {
+            display: flex;
+            gap: 16px;
+            color: var(--text2);
+            font-size: 13px;
+        }
+
+        /* Skeleton Loading */
+        #skeleton-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        .sk-card {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sk-thumb {
+            aspect-ratio: 16/9;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #1a1a1a 25%, #242424 50%, #1a1a1a 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite;
+        }
+
+        .sk-line {
+            height: 12px;
+            border-radius: 6px;
+            background: linear-gradient(90deg, #1a1a1a 25%, #242424 50%, #1a1a1a 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite;
+        }
+
+        .sk-line.w80 {
+            width: 80%;
+        }
+
+        .sk-line.w60 {
+            width: 60%;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+
+            #video-grid,
+            #skeleton-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+
+            #video-grid,
+            #skeleton-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+
+            #video-grid,
+            #skeleton-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            #search-input {
+                width: 180px;
+            }
+
+            #search-input:focus {
+                width: 220px;
+            }
+
+            .header-sep,
+            #header-label {
+                display: none;
+            }
+
+            #cat-nav {
+                top: 52px;
+            }
+
+            .cat-nav-inner {
+                padding: 0 12px;
+                height: 48px;
+            }
+
+            .cat-btn {
+                font-size: 12px;
+                padding: 5px 11px;
+            }
+
+            #content {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header id="site-header">
+        <div class="header-inner">
+            <a href="/" class="logo">
+                <div class="logo-badge">A</div>
+                <div class="logo-name">A<span>Phim</span></div>
+            </a>
+            <div class="header-sep"></div>
+            <div id="header-label">🔞 Thịnh hành</div>
+            <div class="header-right">
+                <!-- Server Selector -->
+                <div class="server-selector">
+                    <button class="server-btn-header active" onclick="toggleServerDropdown()" id="current-server-btn">
+                        🟢 Server 2
+                    </button>
+                    <div class="server-dropdown" id="server-dropdown">
+                        <div class="server-option" onclick="selectServerOption(1)">
+                            <div class="server-option-icon">🔵</div>
+                            <div class="server-option-info">
+                                <div class="server-option-name">Server 1</div>
+                                <div class="server-option-desc">RapidAPI Pornhub</div>
+                            </div>
+                        </div>
+                        <div class="server-option active" onclick="selectServerOption(2)">
+                            <div class="server-option-icon">🟢</div>
+                            <div class="server-option-info">
+                                <div class="server-option-name">Server 2</div>
+                                <div class="server-option-desc">Eporner API</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Tìm kiếm...">
+                    <button class="search-btn" onclick="doSearch()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="m21 21-4.35-4.35" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Category Nav -->
+    <div id="cat-nav">
+        <div class="cat-nav-inner">
+            <button class="cat-btn active" data-q="hot trending" onclick="selectCat(this, event)">Thịnh hành</button>
+            <button class="cat-btn sister-hot" data-q="Sister hot" onclick="selectCat(this, event)">Sister Hot
+                🔥</button>
+            <button class="cat-btn" data-q="asian vietnam" onclick="selectCat(this, event)">Phim Việt</button>
+            <button class="cat-btn" data-q="japanese teen" onclick="selectCat(this, event)">Nhật Bản</button>
+            <button class="cat-btn" data-q="korean bj" onclick="selectCat(this, event)">Hàn Quốc</button>
+            <button class="cat-btn" data-q="chinese asian" onclick="selectCat(this, event)">Trung Quốc</button>
+            <button class="cat-btn" data-q="milf amateur" onclick="selectCat(this, event)">Âu Mỹ</button>
+            <button class="cat-btn" data-q="uncensored asian" onclick="selectCat(this, event)">Không che</button>
+            <button class="cat-btn" data-q="amateur homemade" onclick="selectCat(this, event)">Nghiệp dư</button>
+            <button class="cat-btn" data-q="teen sister" onclick="selectCat(this, event)">Nổi bật</button>
+            <button class="cat-btn" data-q="hentai anime" onclick="selectCat(this, event)">Hoạt hình</button>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div id="content">
+        <!-- Player Section -->
+        <div id="player-section">
+            <div id="player-box"></div>
+            <div class="video-info-block">
+                <div id="vp-title">Video Title</div>
+                <div class="vp-meta" id="vp-meta"></div>
+            </div>
+        </div>
+
+        <!-- Video Grid -->
+        <div id="video-grid"></div>
+
+        <!-- Skeleton Grid -->
+        <div id="skeleton-grid" style="display: none;"></div>
+
+        <!-- Pagination -->
+        <div id="pagination" style="display: none; margin-top: 40px; text-align: center;">
+            <div style="display: inline-flex; gap: 8px; align-items: center;">
+                <button onclick="goToPage(S.currentPage - 1)" id="prevBtn"
+                    style="padding: 8px 16px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; color: var(--text2); cursor: pointer; transition: all 0.2s;">
+                    ← Trước
+                </button>
+
+                <div id="pageNumbers" style="display: flex; gap: 4px;"></div>
+
+                <button onclick="goToPage(S.currentPage + 1)" id="nextBtn"
+                    style="padding: 8px 16px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; color: var(--text2); cursor: pointer; transition: all 0.2s;">
+                    Sau →
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Config
+        const RAPIDAPI_KEY = 'd486069129msh0b8da27c0be5495p1d859djsn1739664b1f9a';
+        const RAPIDAPI_HOST = 'pornhub-api-xnxx.p.rapidapi.com';
+
+        // State
+        const S = {
+            videos: [],
+            loading: false,
+            query: 'hot trending',
+            page: 1,
+            currentPage: 1,
+            totalPages: 50, // Tăng lên 50 trang
+            active: null,
+            currentServer: 2 // Default to Server 2 (Eporner)
+        };
+
+        let currentVideos = [];
+        let currentQuery = '';
+
+        // Show Skeleton
+        function showSkeleton() {
+            document.getElementById('video-grid').style.display = 'none';
+            const skeleton = document.getElementById('skeleton-grid');
+            skeleton.style.display = 'grid';
+            skeleton.innerHTML = Array(20).fill(0).map(() => `
+                <div class="sk-card">
+                    <div class="sk-thumb"></div>
+                    <div class="sk-line w80"></div>
+                    <div class="sk-line w60"></div>
+                </div>
+            `).join('');
+        }
+
+        // Hide Skeleton
+        function hideSkeleton() {
+            document.getElementById('skeleton-grid').style.display = 'none';
+            document.getElementById('video-grid').style.display = 'grid';
+        }
+
+        // Prevent multiple calls
+        let isLoading = false;
+
+        // Select Category
+        function selectCat(btn, event) {
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+
+            if (isLoading) {
+                console.log('⏳ Already loading, please wait...');
+                return;
+            }
+
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const query = btn.dataset.q;
+            document.getElementById('header-label').textContent = '🔞 ' + btn.textContent.trim();
+            loadVideos(query);
+        }
+
+        // Do Search
+        function doSearch() {
+            if (isLoading) {
+                console.log('⏳ Already loading, please wait...');
+                return;
+            }
+
+            const val = document.getElementById('search-input').value.trim();
+            if (!val) return;
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('header-label').textContent = '🔞 ' + val;
+            loadVideos(val);
+        }
+
+        // Load Videos (Dual Server - Independent, NO Fallback)
+        async function loadVideos(query, page = 1) {
+            if (isLoading) {
+                console.log('⏳ Already loading, skipping...');
+                return;
+            }
+
+            isLoading = true;
+            currentQuery = query;
+            S.currentPage = page;
+
+            // Hide player section when loading new videos
+            document.getElementById('player-section').style.display = 'none';
+
+            showSkeleton();
+            console.log('🔍 Loading:', query, '| Server:', S.currentServer, '| Page:', page);
+
+            try {
+                let videos;
+
+                // Load from selected server ONLY (no fallback)
+                if (S.currentServer === 1) {
+                    console.log('🔵 Loading from Server 1 (RapidAPI Pornhub)');
+                    videos = await searchServer1(query, page);
+                } else {
+                    console.log('🟢 Loading from Server 2 (Eporner)');
+                    videos = await searchServer2(query, page);
+                }
+
+                if (!videos || videos.length === 0) {
+                    throw new Error('No videos found on Server ' + S.currentServer);
+                }
+
+                currentVideos = videos;
+                displayVideos(videos);
+                renderPagination();
+                hideSkeleton();
+
+                // Save state to history
+                const state = { query, page, server: S.currentServer };
+                const url = `${window.location.pathname}?q=${encodeURIComponent(query)}&page=${page}`;
+                history.pushState(state, '', url);
+
+            } catch (error) {
+                console.error('❌ Load error:', error);
+                hideSkeleton();
+                document.getElementById('video-grid').innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 80px 20px; color: #666;">
+                        <div style="font-size: 48px; margin-bottom: 16px;">😔</div>
+                        <div>Không thể tải video từ Server ${S.currentServer}.</div>
+                        <div style="margin-top: 8px; font-size: 14px;">${error.message}</div>
+                    </div>
+                `;
+            } finally {
+                isLoading = false;
+            }
+        }
+
+        // Search Server 1 (RapidAPI)
+        async function searchServer1(query, page = 1) {
+            try {
+                console.log('🔵 Server 1:', query, 'Page:', page);
+                const response = await fetch(`https://pornhub-api-xnxx.p.rapidapi.com/api/search`, {
+                    method: 'POST',
+                    headers: {
+                        'x-rapidapi-key': RAPIDAPI_KEY,
+                        'x-rapidapi-host': RAPIDAPI_HOST,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ q: query, pages: page })
+                });
+
+                if (!response.ok) {
+                    console.warn('Server 1 failed:', response.status);
+                    return null;
+                }
+
+                const data = await response.json();
+                console.log('🔵 Server 1 raw data:', data);
+
+                const videos = Array.isArray(data) ? data : (data.videos || data.data || []);
+
+                if (videos.length > 0) {
+                    console.log('🔵 Server 1 first video sample:', videos[0]);
+                }
+
+                return videos.map(v => ({
+                    id: v.id || v.video_id || v.viewkey,
+                    title: v.title,
+                    thumbnail: v.thumbnail || v.thumb || v.default_thumb?.src,
+                    duration: v.duration || v.length_min || 'N/A',
+                    views: v.views || 0,
+                    rating: v.rating || v.rate || 0,
+                    embed: v.embed || v.embedUrl || v.embed_url,
+                    url: v.url || v.video_url || v.link,
+                    server: 1
+                }));
+            } catch (error) {
+                console.warn('Server 1 error:', error);
+                return null;
+            }
+        }
+
+        // Search Server 2 (Eporner)
+        async function searchServer2(query, page = 1) {
+            try {
+                console.log('🟢 Server 2:', query, 'Page:', page);
+                const url = `https://www.eporner.com/api/v2/video/search/?query=${encodeURIComponent(query)}&per_page=20&page=${page}&thumbsize=big&order=top-weekly&gay=0&lq=1&format=json`;
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    console.warn('Server 2 failed:', response.status);
+                    return null;
+                }
+
+                const data = await response.json();
+                if (!data.videos || data.videos.length === 0) {
+                    return null;
+                }
+
+                return data.videos.map(v => ({
+                    id: v.id,
+                    title: v.title,
+                    thumbnail: v.default_thumb?.src,
+                    duration: v.length_min || 'N/A',
+                    views: typeof v.views === 'number' ? v.views.toLocaleString() : v.views,
+                    rating: v.rate || 'N/A',
+                    embed: v.embed,
+                    url: v.url,
+                    server: 2
+                }));
+            } catch (error) {
+                console.warn('Server 2 error:', error);
+                return null;
+            }
+        }
+
+        // Display Videos
+        function displayVideos(videos) {
+            const grid = document.getElementById('video-grid');
+
+            grid.innerHTML = videos.map((v, i) => `
+                <div class="vc" onclick="playVideo(${i})">
+                    <div class="vc-thumb">
+                        <img src="${v.thumbnail || 'https://via.placeholder.com/320x180'}" 
+                             alt="${v.title}"
+                             onerror="this.src='https://via.placeholder.com/320x180?text=No+Image'">
+                        <div class="vc-dur">${v.duration}</div>
+                        <div class="vc-hd">HD</div>
+                    </div>
+                    <div class="vc-title">${v.title}</div>
+                    <div class="vc-meta">${v.views} views</div>
+                </div>
+            `).join('');
+        }
+
+        // Play Video
+        function playVideo(index) {
+            const video = currentVideos[index];
+            if (!video) return;
+
+            console.log('🎬 Playing video:', video);
+
+            document.getElementById('player-section').style.display = 'block';
+            document.getElementById('vp-title').textContent = video.title;
+            document.getElementById('vp-meta').innerHTML = `
+                <span>⏱️ ${video.duration}</span>
+                <span>👁️ ${video.views} views</span>
+                <span>⭐ ${video.rating}</span>
+            `;
+
+            const playerBox = document.getElementById('player-box');
+
+            if (video.server === 1) {
+                // Server 1: RapidAPI Pornhub
+                let embedUrl = video.embed;
+
+                // Try different embed URL formats
+                if (!embedUrl && video.url) {
+                    // Extract video ID from URL if possible
+                    const urlMatch = video.url.match(/viewkey=([^&]+)/);
+                    if (urlMatch) {
+                        embedUrl = `https://www.pornhub.com/embed/${urlMatch[1]}`;
+                    }
+                }
+
+                if (!embedUrl && video.id) {
+                    embedUrl = `https://www.pornhub.com/embed/${video.id}`;
+                }
+
+                console.log('🔵 Server 1 embed URL:', embedUrl);
+
+                if (embedUrl) {
+                    playerBox.innerHTML = `
+                        <iframe 
+                            src="${embedUrl}" 
+                            allowfullscreen 
+                            allow="autoplay; fullscreen"
+                            sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+                        ></iframe>
+                    `;
+                } else {
+                    playerBox.innerHTML = `
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #999;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
+                                <div>Không thể phát video từ Server 1</div>
+                                <div style="margin-top: 8px; font-size: 14px;">Vui lòng thử video khác hoặc chuyển sang Server 2</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            } else {
+                // Server 2: Eporner
+                console.log('🟢 Server 2 embed URL:', video.embed);
+
+                if (video.embed) {
+                    playerBox.innerHTML = `
+                        <iframe 
+                            src="${video.embed}" 
+                            allowfullscreen 
+                            allow="autoplay; fullscreen"
+                            sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+                        ></iframe>
+                    `;
+                } else {
+                    playerBox.innerHTML = `
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #999;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
+                                <div>Không thể phát video từ Server 2</div>
+                                <div style="margin-top: 8px; font-size: 14px;">Vui lòng thử video khác</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            document.getElementById('player-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Enter key to search
+        document.getElementById('search-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') doSearch();
+        });
+
+        // Toggle Server Dropdown
+        function toggleServerDropdown() {
+            const dropdown = document.getElementById('server-dropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const selector = document.querySelector('.server-selector');
+            const dropdown = document.getElementById('server-dropdown');
+            if (selector && !selector.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Select Server Option
+        function selectServerOption(serverNum) {
+            const servers = {
+                1: { icon: '🔵', name: 'Server 1' },
+                2: { icon: '🟢', name: 'Server 2' }
+            };
+
+            // Update button
+            const btn = document.getElementById('current-server-btn');
+            btn.textContent = `${servers[serverNum].icon} ${servers[serverNum].name}`;
+
+            // Update dropdown active state
+            document.querySelectorAll('.server-option').forEach((opt, idx) => {
+                opt.classList.toggle('active', idx + 1 === serverNum);
+            });
+
+            // Close dropdown
+            document.getElementById('server-dropdown').classList.remove('show');
+
+            // Update server state
+            S.currentServer = serverNum;
+
+            console.log('🔄 Switched to Server', serverNum, '-', serverNum === 1 ? 'RapidAPI Pornhub' : 'Eporner');
+
+            // Reload current category
+            const activeBtn = document.querySelector('.cat-btn.active');
+            if (activeBtn) {
+                selectCat(activeBtn);
+            }
+        }
+
+        // Auto-load on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            showSkeleton();
+
+            // Check if there's a saved state in history
+            const savedState = history.state;
+            if (savedState && savedState.query && savedState.page) {
+                console.log('📍 Restoring from history:', savedState);
+                S.currentPage = savedState.page;
+                currentQuery = savedState.query;
+
+                // Restore active category button
+                const activeBtn = document.querySelector(`.cat-btn[data-q="${savedState.query}"]`);
+                if (activeBtn) {
+                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                    activeBtn.classList.add('active');
+                    document.getElementById('header-label').textContent = '🔞 ' + activeBtn.textContent.trim();
+                }
+
+                loadVideos(savedState.query, savedState.page);
+            } else {
+                // Default load
+                loadVideos('hot trending', 1);
+            }
+        });
+
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.query) {
+                console.log('⬅️ Back/Forward to:', event.state);
+                S.currentPage = event.state.page || 1;
+                currentQuery = event.state.query;
+
+                // Restore active category button
+                const activeBtn = document.querySelector(`.cat-btn[data-q="${event.state.query}"]`);
+                if (activeBtn) {
+                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                    activeBtn.classList.add('active');
+                    document.getElementById('header-label').textContent = '🔞 ' + activeBtn.textContent.trim();
+                }
+
+                loadVideos(event.state.query, event.state.page);
+            }
+        });
+
+        // Pagination functions
+        function goToPage(page) {
+            if (page < 1 || page > S.totalPages || page === S.currentPage) return;
+
+            S.currentPage = page;
+            loadVideos(currentQuery, page);
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderPagination() {
+            const pagination = document.getElementById('pagination');
+            const pageNumbers = document.getElementById('pageNumbers');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (S.totalPages <= 1) {
+                pagination.style.display = 'none';
+                return;
+            }
+
+            pagination.style.display = 'block';
+
+            // Enable/disable prev/next buttons
+            prevBtn.disabled = S.currentPage === 1;
+            prevBtn.style.opacity = S.currentPage === 1 ? '0.5' : '1';
+            prevBtn.style.cursor = S.currentPage === 1 ? 'not-allowed' : 'pointer';
+
+            nextBtn.disabled = S.currentPage === S.totalPages;
+            nextBtn.style.opacity = S.currentPage === S.totalPages ? '0.5' : '1';
+            nextBtn.style.cursor = S.currentPage === S.totalPages ? 'not-allowed' : 'pointer';
+
+            // Render page numbers (show max 7 pages)
+            pageNumbers.innerHTML = '';
+            const maxVisible = 7;
+            let startPage = Math.max(1, S.currentPage - Math.floor(maxVisible / 2));
+            let endPage = Math.min(S.totalPages, startPage + maxVisible - 1);
+
+            if (endPage - startPage < maxVisible - 1) {
+                startPage = Math.max(1, endPage - maxVisible + 1);
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.onclick = () => goToPage(i);
+                btn.style.cssText = `
+                    padding: 8px 12px;
+                    background: ${i === S.currentPage ? 'var(--orange)' : 'var(--bg3)'};
+                    border: 1px solid ${i === S.currentPage ? 'var(--orange)' : 'var(--border)'};
+                    border-radius: 8px;
+                    color: ${i === S.currentPage ? '#fff' : 'var(--text2)'};
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    font-weight: ${i === S.currentPage ? '700' : '400'};
+                `;
+                pageNumbers.appendChild(btn);
+            }
+        }
+
+        console.log('🎬 Phim X loaded with Dual Server!');
+        console.log('📡 Default Server:', S.currentServer === 1 ? 'Server 1 - RapidAPI Pornhub' : 'Server 2 - Eporner');
+
+        // ============================================================
+        // 18+ Warning Modal - Check if user confirmed
+        // ============================================================
+        (function () {
+            const CONFIRMED_KEY = 'phimx_18plus_confirmed';
+            const confirmed = sessionStorage.getItem(CONFIRMED_KEY);
+
+            if (confirmed === 'true') {
+                // User already confirmed, load content
+                loadVideos('hot trending');
+                return;
+            }
+
+            // Show warning modal
+            const modalHTML = `
+            <div id="phimXWarningModal" style="
+                position: fixed;
+                inset: 0;
+                z-index: 999999;
+                background: rgba(0,0,0,0.95);
+                backdrop-filter: blur(12px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: 'Be Vietnam Pro', sans-serif;
+            ">
+                <div style="
+                    background: linear-gradient(135deg, #1a0a0a 0%, #1f1025 50%, #0f0a1a 100%);
+                    border: 1px solid rgba(249,115,22,0.4);
+                    border-radius: 20px;
+                    padding: 40px 32px;
+                    max-width: 480px;
+                    width: 90%;
+                    text-align: center;
+                    box-shadow: 0 0 60px rgba(249,115,22,0.2);
+                    animation: slideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+                    position: relative;
+                ">
+                    <div style="
+                        position: absolute; inset: 0;
+                        background: radial-gradient(ellipse at 50% 0%, rgba(249,115,22,0.08) 0%, transparent 70%);
+                        pointer-events: none;
+                    "></div>
+
+                    <div style="
+                        width: 80px; height: 80px; margin: 0 auto 20px;
+                        background: linear-gradient(135deg, #f97316, #dc2626);
+                        border-radius: 50%;
+                        display: flex; align-items: center; justify-content: center;
+                        font-size: 36px;
+                        box-shadow: 0 0 30px rgba(249,115,22,0.5);
+                        animation: pulse 2s ease-in-out infinite;
+                    ">🔞</div>
+
+                    <div style="
+                        display: inline-block;
+                        background: rgba(249,115,22,0.15);
+                        border: 1px solid rgba(249,115,22,0.4);
+                        color: #f97316;
+                        font-size: 11px;
+                        font-weight: 800;
+                        letter-spacing: 3px;
+                        text-transform: uppercase;
+                        padding: 4px 16px;
+                        border-radius: 100px;
+                        margin-bottom: 16px;
+                    ">NỘI DUNG NGƯỜI LỚN</div>
+
+                    <h2 style="
+                        color: #ffffff;
+                        font-size: 22px;
+                        font-weight: 800;
+                        margin: 0 0 12px;
+                        letter-spacing: 0.5px;
+                    ">Cảnh báo: 18+</h2>
+
+                    <p style="
+                        color: #9ca3af;
+                        font-size: 14px;
+                        line-height: 1.7;
+                        margin: 0 0 28px;
+                    ">
+                        Khu vực <strong style="color:#f97316">Phim X</strong> chứa nội dung dành riêng cho
+                        người lớn từ <strong style="color:#fff">18 tuổi trở lên</strong>.
+                        <br><br>
+                        Bằng cách tiếp tục, bạn xác nhận rằng bạn đủ 18 tuổi và đồng ý với
+                        điều khoản sử dụng của chúng tôi.
+                    </p>
+
+                    <div style="
+                        background: rgba(239,68,68,0.08);
+                        border: 1px solid rgba(239,68,68,0.25);
+                        border-radius: 10px;
+                        padding: 10px 16px;
+                        margin-bottom: 28px;
+                        font-size: 12px;
+                        color: #fca5a5;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        text-align: left;
+                    ">
+                        <span style="font-size:16px;flex-shrink:0;">⚠️</span>
+                        <span>Không dành cho người dưới 18 tuổi. Nếu bạn chưa đủ tuổi, vui lòng rời khỏi trang này.</span>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <button onclick="confirmAge()" id="confirmBtn" style="
+                            background: linear-gradient(135deg, #f97316, #ea580c);
+                            color: #fff;
+                            font-weight: 800;
+                            font-size: 15px;
+                            letter-spacing: 0.5px;
+                            border: none;
+                            border-radius: 12px;
+                            padding: 14px 24px;
+                            cursor: pointer;
+                            width: 100%;
+                            transition: all 0.2s;
+                            box-shadow: 0 4px 20px rgba(249,115,22,0.4);
+                        ">
+                            ✅ Tôi đã đủ 18 tuổi, cho tôi vào!
+                        </button>
+
+                        <button onclick="goBack()" style="
+                            background: rgba(255,255,255,0.05);
+                            color: #9ca3af;
+                            font-weight: 600;
+                            font-size: 14px;
+                            border: 1px solid rgba(255,255,255,0.1);
+                            border-radius: 12px;
+                            padding: 12px 24px;
+                            cursor: pointer;
+                            width: 100%;
+                            transition: all 0.2s;
+                        ">
+                            ← Quay lại trang an toàn
+                        </button>
+                    </div>
+
+                    <p style="
+                        color: #4b5563;
+                        font-size: 11px;
+                        margin-top: 20px;
+                    ">Lựa chọn của bạn sẽ được lưu trong phiên trình duyệt hiện tại</p>
+                </div>
+            </div>
+
+            <style>
+                @keyframes slideIn {
+                    from { opacity: 0; transform: scale(0.85) translateY(20px); }
+                    to   { opacity: 1; transform: scale(1)   translateY(0); }
+                }
+                @keyframes pulse {
+                    0%, 100% { box-shadow: 0 0 20px rgba(249,115,22,0.4); }
+                    50%       { box-shadow: 0 0 40px rgba(249,115,22,0.7); }
+                }
+            </style>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+            // Confirm age
+            window.confirmAge = function () {
+                sessionStorage.setItem(CONFIRMED_KEY, 'true');
+                const modal = document.getElementById('phimXWarningModal');
+                if (modal) {
+                    modal.style.opacity = '0';
+                    modal.style.transition = 'opacity 0.3s';
+                    setTimeout(() => {
+                        modal.remove();
+                        loadVideos('hot trending');
+                    }, 300);
+                }
+            };
+
+            // Go back
+            window.goBack = function () {
+                window.location.href = '/';
+            };
+        })();
+    </script>
+
+    <!-- Footer -->
+    <footer class="bg-[#1e202c] border-t border-white/5 py-12 relative overflow-hidden">
+        <!-- Background pattern/logo graphic -->
+        <div class="absolute right-0 top-1/2 -translate-y-1/2 opacity-5 pointer-events-none scale-150">
+            <span class="material-icons-round text-[400px]">play_circle_outline</span>
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <!-- Top row: Logo & Social -->
+            <div
+                class="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 border-b border-white/5 pb-8">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-3">
+                    <div
+                        class="w-12 h-12 rounded-full border-2 border-primary flex items-center justify-center bg-black/50 shadow-[0_0_15px_rgba(242,242,13,0.3)] overflow-hidden">
+                        <img src="/favicon.png" alt="A Phim Logo"
+                            class="w-8 h-8 object-contain group-hover:scale-110 transition-transform" />
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-3xl font-bold text-white tracking-tight">A <span
+                                class="text-primary">Phim</span></span>
+                        <span class="text-gray-400 text-sm">Xem Phim Mới Nhất</span>
+                    </div>
+                </a>
+
+                <!-- Social Icons -->
+                <div class="flex flex-wrap justify-center gap-3">
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.11.03-1.84 1.18-5.18 3.44-.49.34-.93.5-1.33.49-.44-.01-1.29-.25-1.92-.45-.73-.24-1.31-.36-1.26-.77.03-.21.32-.42.87-.64 3.41-1.48 5.68-2.46 6.83-2.94 3.25-1.36 3.93-1.59 4.37-1.59.1 0 .31.02.43.09.1.06.18.14.2.25.01.12.01.19.01.37z" />
+                        </svg>
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                            <path
+                                d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" />
+                        </svg>
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 1200 1227" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" />
+                        </svg>
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                            <path
+                                d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z" />
+                        </svg>
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 448 512">
+                            <path
+                                d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" />
+                        </svg>
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                            <path
+                                d="M21.582 6.186a2.6 2.6 0 0 0-1.83-1.844C18.14 4 12 4 12 4s-6.14 0-7.752.342a2.6 2.6 0 0 0-1.83 1.844C2 7.82 2 12 2 12s0 4.18.418 5.814a2.6 2.6 0 0 0 1.83 1.844C5.86 20 12 20 12 20s6.14 0 7.752-.342a2.6 2.6 0 0 0 1.83-1.844C22 16.18 22 12 22 12s0-4.18-.418-5.814zM9.8 15.116V8.884L15.352 12 9.8 15.116z" />
+                        </svg>
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all font-bold text-lg leading-none">
+                        @
+                    </a>
+                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                            <path
+                                d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Bottom half: Links, text, copyright -->
+            <div class="mt-8">
+                <!-- Links -->
+                <div
+                    class="flex flex-wrap text-center justify-center md:justify-start gap-6 mb-6 text-sm font-semibold text-gray-300">
+                    <a href="#" class="hover:text-primary transition-colors">Hỏi-Đáp</a>
+                    <a href="#" class="hover:text-primary transition-colors">Chính sách bảo mật</a>
+                    <a href="#" class="hover:text-primary transition-colors">Điều khoản sử dụng</a>
+                    <a href="#" class="hover:text-primary transition-colors">Giới thiệu</a>
+                    <a href="#" class="hover:text-primary transition-colors">Liên hệ</a>
+                </div>
+
+                <!-- Text block -->
+                <p class="text-sm text-gray-400 leading-relaxed max-w-5xl text-center md:text-left mb-6">
+                    A Phim - Phim hay cả rổ - trang xem phim online miễn phí Full HD Vietsub, thuyết minh + lồng tiếng.
+                    Kho phim mới khổng lồ, phim chiếu rạp, phim bộ, phim lẻ từ nhiều quốc gia như Việt Nam, Hàn Quốc,
+                    Trung Quốc, Thái Lan, Nhật Bản, Âu Mỹ... đa dạng thể loại. Khám phá nền tảng phim trực tuyến hay
+                    nhất năm 2025 chất lượng 4K!
+                </p>
+
+                <!-- Copyright -->
+                <div class="text-xs text-gray-500 font-medium text-center md:text-left">
+                    Copyright ©2025 A Phim
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

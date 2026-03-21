@@ -58,6 +58,7 @@ app.use('/api/payments', require('./routes/payments'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/supporters', require('./routes/supporters'));
 app.use('/api/banners', require('./routes/banners'));
+app.use('/api/adult', require('./routes/adultContent')); // Adult content proxy
 
 // Health check
 app.get('/health', (req, res) => {
@@ -81,7 +82,8 @@ app.get('/', (req, res) => {
             comments: '/api/comments',
             payments: '/api/payments',
             users: '/api/users',
-            supporters: '/api/supporters'
+            supporters: '/api/supporters',
+            adult: '/api/adult'
         }
     });
 });

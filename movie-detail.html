@@ -17,6 +17,49 @@
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+
+    <!-- Critical CSS inline to prevent FOUC -->
+    <style>
+        /* Prevent mobile menu flash on desktop */
+        @media (min-width: 1024px) {
+            .mobile-menu-btn {
+                display: none !important;
+            }
+
+            #mobile-menu {
+                display: none !important;
+            }
+        }
+
+        /* Hide desktop menu on mobile initially */
+        @media (max-width: 1023px) {
+            .hidden.lg\:flex {
+                display: none !important;
+            }
+        }
+
+        /* Basic layout to prevent flash */
+        body {
+            background-color: #1e202c;
+            color: white;
+            margin: 0;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 50;
+            background: rgba(0, 0, 0, 0.95);
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+    </style>
+
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link rel="stylesheet" href="css/dropdown-blue.css">
     <link rel="stylesheet" href="css/sticky-nav.css">
@@ -192,9 +235,10 @@
                         Gói cước
                     </a>
 
-                    <a href="support.html"
-                        class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white">
-                        Nuôi APhim
+                    <!-- Phim X (18+) -->
+                    <a href="phim-x.html"
+                        class="nav-item px-6 py-2.5 rounded-full text-sm font-bold uppercase tracking-wide transition-colors duration-200 text-red-400 hover:text-red-300">
+                        🔞 Phim X
                     </a>
                 </div>
             </div>
