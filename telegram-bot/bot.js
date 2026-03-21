@@ -202,8 +202,7 @@ bot.on('message', async (msg) => {
         };
 
         await bot.sendMessage(chatId, `🎬 Tìm thấy ${limitedResults.length} phim:\n\nChọn phim bạn muốn xem:`, {
-            reply_markup: keyboard,
-            reply_to_message_id: msg.message_id
+            reply_markup: keyboard
         });
 
         console.log(`✅ Gửi danh sách ${limitedResults.length} phim`);
@@ -236,8 +235,7 @@ bot.on('message', async (msg) => {
                 await bot.sendPhoto(chatId, movieInfo.posterUrl, {
                     caption: `🎬 <b>${movieName}</b>`,
                     parse_mode: 'HTML',
-                    reply_markup: keyboard,
-                    reply_to_message_id: msg.message_id
+                    reply_markup: keyboard
                 });
                 console.log(`✅ Gửi ảnh và link: ${movieUrl}`);
             } catch (error) {
@@ -245,16 +243,14 @@ bot.on('message', async (msg) => {
                 console.log(`⚠️ Không gửi được ảnh, gửi text thay thế`);
                 await bot.sendMessage(chatId, `🎬 <b>${movieName}</b>`, {
                     parse_mode: 'HTML',
-                    reply_markup: keyboard,
-                    reply_to_message_id: msg.message_id
+                    reply_markup: keyboard
                 });
             }
         } else {
             // Không có ảnh, chỉ gửi text với button
             await bot.sendMessage(chatId, `🎬 <b>${movieName}</b>`, {
                 parse_mode: 'HTML',
-                reply_markup: keyboard,
-                reply_to_message_id: msg.message_id
+                reply_markup: keyboard
             });
             console.log(`✅ Gửi link (không có ảnh): ${movieUrl}`);
         }
