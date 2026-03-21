@@ -5,6 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Phim X - Dual Server</title>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+    </script>
+
     <style>
         * {
             margin: 0;
@@ -766,6 +776,57 @@
         });
 
         console.log('🎬 Dual Server System loaded');
+
+        // Track page view
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'page_view', {
+                'page_title': 'Phim X - Dual Server',
+                'page_category': 'Adult Content',
+                'page_location': window.location.href
+            });
+        }
+
+        // Track server selection
+        const originalSelectServer = selectServer;
+        selectServer = function (serverNum) {
+            originalSelectServer(serverNum);
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'select_server', {
+                    'event_category': 'Adult Content',
+                    'event_label': `Server ${serverNum}`,
+                    'server_number': serverNum
+                });
+            }
+        };
+
+        // Track search
+        const originalSearchVideos = searchVideos;
+        searchVideos = async function () {
+            const query = document.getElementById('searchInput').value.trim();
+            if (typeof gtag !== 'undefined' && query) {
+                gtag('event', 'search', {
+                    'search_term': query,
+                    'event_category': 'Adult Content',
+                    'server_number': currentServer
+                });
+            }
+            return await originalSearchVideos();
+        };
+
+        // Track video play
+        const originalPlayVideo = playVideo;
+        playVideo = async function (index) {
+            const video = currentVideos[index];
+            if (typeof gtag !== 'undefined' && video) {
+                gtag('event', 'play_video', {
+                    'event_category': 'Adult Content',
+                    'event_label': video.title,
+                    'server_number': video.server,
+                    'video_id': video.id
+                });
+            }
+            return await originalPlayVideo(index);
+        };
     </script>
 </body>
 
