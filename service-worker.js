@@ -40,6 +40,12 @@ self.addEventListener('fetch', (event) => {
     const { request } = event;
     const url = new URL(request.url);
 
+    // ─── BYPASS PHIM-X.HTML ───────────────────────────────────────────────────
+    // Không cache phim-x.html vì có query params động và cross-origin embeds
+    if (url.pathname.includes('phim-x')) {
+        return; // Browser xử lý trực tiếp, không qua SW
+    }
+
     // ─── CACHE GOOGLE FONTS (30 ngày) ───────────────────────────────────────
     // Font chữ không bao giờ thay đổi URL nên cache lâu là an toàn.
     // Lần đầu: tải từ Google. Lần sau: dùng cache → không cần mạng.
@@ -85,9 +91,9 @@ self.addEventListener('fetch', (event) => {
     }
 
     // Network first strategy for HTML pages and API calls
-    if (request.mode === 'navigate' || 
+    if (request.mode === 'navigate' ||
         (request.headers.get('accept') && request.headers.get('accept').includes('text/html')) ||
-        url.pathname.includes('/api/') || 
+        url.pathname.includes('/api/') ||
         url.hostname.includes('ophim')) {
         event.respondWith(
             fetch(request)
@@ -123,6 +129,13 @@ self.addEventListener('fetch', (event) => {
                     });
 
                     return response;
+                }).catch(error => {
+                    // Fetch failed, return cached or error response
+                    console.log('⚠️ SW: Fetch failed for', request.url);
+                    return cachedResponse || new Response('Network error', {
+                        status: 408,
+                        statusText: 'Request Timeout'
+                    });
                 });
             })
     );

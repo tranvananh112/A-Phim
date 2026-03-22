@@ -573,10 +573,53 @@
                 padding: 12px;
             }
         }
+
+        /* Warning Banner Animation */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
     </style>
 </head>
 
 <body>
+    <!-- VNPT/ISP Warning Banner -->
+    <div id="isp-warning" style="
+        position: fixed;
+        top: 70px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, #ff6b00 0%, #ff8c00 100%);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        z-index: 9999;
+        display: none;
+        box-shadow: 0 4px 20px rgba(255, 107, 0, 0.4);
+        max-width: 90%;
+        text-align: center;
+        font-size: 14px;
+        animation: slideDown 0.3s ease-out;
+    ">
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center;">
+            <span style="font-size: 20px;">⚠️</span>
+            <span style="font-weight: 500;">
+                Video không play? Đổi DNS sang <strong>1.1.1.1</strong> hoặc dùng VPN
+            </span>
+            <button onclick="document.getElementById('isp-warning').style.display='none'"
+                style="background: white; color: #ff6b00; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                Đã hiểu
+            </button>
+        </div>
+    </div>
+
     <!-- Header -->
     <header id="site-header">
         <div class="header-inner">
@@ -1447,6 +1490,40 @@
             </div>
         </div>
     </footer>
+
+    <!-- ISP Warning Script -->
+    <script>
+        // Show warning after 8 seconds if user hasn't played any video
+        let videoPlayed = false;
+
+        // Track video play
+        const originalPlayVideo = window.playVideo;
+        window.playVideo = function (...args) {
+            videoPlayed = true;
+            if (originalPlayVideo) originalPlayVideo.apply(this, args);
+        };
+
+        // Show warning after delay
+        setTimeout(() => {
+            if (!videoPlayed) {
+                const warning = document.getElementById('isp-warning');
+                if (warning) {
+                    warning.style.display = 'block';
+                    console.log('⚠️ ISP Warning: Showing DNS/VPN suggestion');
+                }
+            }
+        }, 8000);
+
+        // Auto-hide after 15 seconds
+        setTimeout(() => {
+            const warning = document.getElementById('isp-warning');
+            if (warning && warning.style.display === 'block') {
+                warning.style.opacity = '0';
+                warning.style.transition = 'opacity 0.5s';
+                setTimeout(() => warning.style.display = 'none', 500);
+            }
+        }, 23000);
+    </script>
 </body>
 
 </html>
