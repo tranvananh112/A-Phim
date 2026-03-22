@@ -1,4 +1,5 @@
-// Mobile Menu với Dropdown Phim
+// Mobile Menu với Dropdown Phim - Version 2.0 (Có Phim X)
+// Cập nhật: 2024 - Thêm menu Phim X cho mobile
 
 function injectSimpleMobileMenu() {
     const mobileMenu = document.getElementById('mobileMenu');

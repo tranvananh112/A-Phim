@@ -623,6 +623,13 @@
     <!-- Header -->
     <header id="site-header">
         <div class="header-inner">
+            <!-- Mobile Menu Button -->
+            <button id="mobileMenuBtn" class="lg:hidden text-white p-2" onclick="toggleMobileMenu()">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+
             <a href="/" class="logo">
                 <div class="logo-badge">A</div>
                 <div class="logo-name">A<span>Phim</span></div>
@@ -637,7 +644,7 @@
                     </button>
                     <div class="server-dropdown" id="server-dropdown">
                         <div class="server-option" onclick="selectServerOption(1)">
-                            <div class="server-option-icon">🔵</div>
+                            <div class="server-option-icon">�</div>
                             <div class="server-option-info">
                                 <div class="server-option-name">Server 1</div>
                                 <div class="server-option-desc">RapidAPI Pornhub</div>
@@ -664,6 +671,11 @@
                     </button>
                 </div>
             </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="lg:hidden hidden bg-black/95 backdrop-blur-md border-t border-white/10">
+            <!-- Content will be injected by mobile-menu-simple.js -->
         </div>
     </header>
 
@@ -1523,7 +1535,18 @@
                 setTimeout(() => warning.style.display = 'none', 500);
             }
         }, 23000);
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            if (menu) {
+                menu.classList.toggle('hidden');
+            }
+        }
     </script>
+
+    <!-- Mobile Menu Script -->
+    <script src="js/mobile-menu-simple.js?v=4"></script>
 </body>
 
 </html>
