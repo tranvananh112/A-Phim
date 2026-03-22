@@ -590,7 +590,7 @@
 </head>
 
 <body>
-    <!-- VNPT/ISP Warning Banner -->
+    <!-- VNPT/ISP Warning Banner - Improved -->
     <div id="isp-warning" style="
         position: fixed;
         top: 70px;
@@ -598,26 +598,45 @@
         transform: translateX(-50%);
         background: linear-gradient(135deg, #ff6b00 0%, #ff8c00 100%);
         color: white;
-        padding: 12px 24px;
-        border-radius: 8px;
+        padding: 16px 24px;
+        border-radius: 12px;
         z-index: 9999;
         display: none;
-        box-shadow: 0 4px 20px rgba(255, 107, 0, 0.4);
-        max-width: 90%;
+        box-shadow: 0 8px 32px rgba(255, 107, 0, 0.5);
+        max-width: 95%;
+        width: 500px;
         text-align: center;
         font-size: 14px;
-        animation: slideDown 0.3s ease-out;
+        animation: slideDown 0.4s ease-out;
     ">
-        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center;">
-            <span style="font-size: 20px;">⚠️</span>
-            <span style="font-weight: 500;">
-                Video không play? Đổi DNS sang <strong>1.1.1.1</strong> hoặc dùng VPN
-            </span>
-            <button onclick="document.getElementById('isp-warning').style.display='none'"
-                style="background: white; color: #ff6b00; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 12px;">
-                Đã hiểu
+        <div style="margin-bottom: 12px;">
+            <span style="font-size: 32px;">🚫</span>
+        </div>
+        <div style="font-weight: 600; font-size: 16px; margin-bottom: 8px;">
+            VNPT/Viettel đang chặn video!
+        </div>
+        <div style="font-size: 13px; opacity: 0.95; margin-bottom: 16px; line-height: 1.5;">
+            Nhà mạng của bạn đang chặn nguồn video. Vui lòng đổi DNS hoặc dùng VPN để xem.
+        </div>
+
+        <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+            <a href="https://1.1.1.1/" target="_blank" style="background: white; color: #ff6b00; padding: 10px 20px; border-radius: 8px; 
+                      text-decoration: none; font-weight: 600; font-size: 13px; 
+                      display: inline-flex; align-items: center; gap: 6px;
+                      box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+                📱 Tải 1.1.1.1 App
+            </a>
+            <button onclick="document.getElementById('isp-warning').style.display='none'" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid white; 
+                       padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; 
+                       font-size: 13px; backdrop-filter: blur(10px);">
+                Đóng
             </button>
         </div>
+
+        <div style="margin-top: 12px; font-size: 11px; opacity: 0.8;">
+            💡 Hoặc dùng data 4G/5G thay vì WiFi
+        </div>
+    </div>
     </div>
 
     <!-- Header -->
@@ -1503,10 +1522,11 @@
         </div>
     </footer>
 
-    <!-- ISP Warning Script -->
+    <!-- ISP Warning Script - Enhanced Detection -->
     <script>
-        // Show warning after 8 seconds if user hasn't played any video
+        // Enhanced ISP blocking detection
         let videoPlayed = false;
+        let apiErrorDetected = false;
 
         // Track video play
         const originalPlayVideo = window.playVideo;
@@ -1515,18 +1535,43 @@
             if (originalPlayVideo) originalPlayVideo.apply(this, args);
         };
 
-        // Show warning after delay
+        // Function to show warning
+        function showISPWarning() {
+            const warning = document.getElementById('isp-warning');
+            if (warning && warning.style.display !== 'block') {
+                warning.style.display = 'block';
+                console.log('⚠️ ISP Warning: Showing DNS/VPN suggestion');
+            }
+        }
+
+        // Monitor fetch failures (API blocking detection)
+        const originalFetch = window.fetch;
+        window.fetch = function (...args) {
+            return originalFetch.apply(this, args).catch(err => {
+                console.error('❌ API Fetch Error - ISP may be blocking:', err);
+                apiErrorDetected = true;
+                showISPWarning();
+                throw err;
+            });
+        };
+
+        // Detect network errors
+        window.addEventListener('error', function (e) {
+            if (e.message && (e.message.includes('fetch') || e.message.includes('network') || e.message.includes('Failed to fetch'))) {
+                console.error('❌ Network Error detected:', e.message);
+                apiErrorDetected = true;
+                showISPWarning();
+            }
+        }, true);
+
+        // Show warning after delay if no video played
         setTimeout(() => {
-            if (!videoPlayed) {
-                const warning = document.getElementById('isp-warning');
-                if (warning) {
-                    warning.style.display = 'block';
-                    console.log('⚠️ ISP Warning: Showing DNS/VPN suggestion');
-                }
+            if (!videoPlayed && !apiErrorDetected) {
+                showISPWarning();
             }
         }, 8000);
 
-        // Auto-hide after 15 seconds
+        // Auto-hide after 30 seconds
         setTimeout(() => {
             const warning = document.getElementById('isp-warning');
             if (warning && warning.style.display === 'block') {
@@ -1534,7 +1579,7 @@
                 warning.style.transition = 'opacity 0.5s';
                 setTimeout(() => warning.style.display = 'none', 500);
             }
-        }, 23000);
+        }, 38000);
 
         // Mobile Menu Toggle
         function toggleMobileMenu() {
