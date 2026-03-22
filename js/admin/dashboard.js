@@ -2,7 +2,7 @@
 // Auto-detect environment
 const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:5000/api'
-    : 'https://a-phim-production.up.railway.app/api';
+    : 'https://a-phim-production-c693.up.railway.app/api';
 let statsRefreshInterval = null;
 
 document.addEventListener('DOMContentLoaded', function () {
