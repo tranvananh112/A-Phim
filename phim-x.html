@@ -356,8 +356,8 @@
             max-width: 1400px;
             margin: 0 auto;
             padding: 24px;
-            padding-top: 134px;
-            /* Header (56px) + Cat Nav (54px) + spacing (24px) */
+            padding-top: 140px;
+            /* Header (56px) + Cat Nav (54px) + spacing (30px) */
         }
 
         #video-grid {
@@ -670,6 +670,8 @@
 
             #content {
                 padding: 12px;
+                padding-top: 120px;
+                /* Mobile: Header (52px) + Cat Nav (48px) + spacing (20px) */
             }
 
             /* Video Card Mobile */
@@ -813,11 +815,6 @@
     <!-- Header -->
     <header id="site-header">
         <div class="header-inner">
-            <!-- Mobile Menu Button -->
-            <button id="mobileMenuBtn" class="lg:hidden text-white p-2">
-                <span class="material-icons-round">menu</span>
-            </button>
-
             <a href="/" class="logo">
                 <div class="logo-badge">A</div>
                 <div class="logo-name">A<span>Phim</span></div>
@@ -859,11 +856,6 @@
                     </button>
                 </div>
             </div>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div id="mobileMenu" class="lg:hidden hidden bg-black/95 backdrop-blur-md border-t border-white/10">
-            <!-- Content will be injected by mobile-menu-modern.js -->
         </div>
     </header>
 
@@ -933,26 +925,68 @@
         const RAPIDAPI_KEY = 'd486069129msh0b8da27c0be5495p1d859djsn1739664b1f9a';
         const RAPIDAPI_HOST = 'pornhub-api-xnxx.p.rapidapi.com';
 
-        // Multiple CORS Proxies for fallback (ISP blocking bypass)
+        // Advanced Multi-Proxy System with Smart Caching
         const CORS_PROXIES = [
             'https://corsproxy.io/?',
             'https://api.codetabs.com/v1/proxy?quest=',
             'https://proxy.cors.sh/',
-            'https://api.allorigins.win/raw?url='
+            'https://api.allorigins.win/raw?url=',
+            'https://cors-anywhere.herokuapp.com/',
+            'https://thingproxy.freeboard.io/fetch/',
+            'https://yacdn.org/proxy/',
+            'https://api.codetabs.com/v1/proxy?quest='
         ];
 
-        // Fetch with multiple proxy fallback
-        async function fetchWithProxy(url, options = {}, timeout = 10000) {
+        // Smart Proxy Cache
+        const ProxyCache = {
+            key: 'phimx_best_proxy',
+            get: function () {
+                try {
+                    const cached = localStorage.getItem(this.key);
+                    if (cached) {
+                        const data = JSON.parse(cached);
+                        // Cache valid for 1 hour
+                        if (Date.now() - data.timestamp < 3600000) {
+                            return data.index;
+                        }
+                    }
+                } catch (e) { }
+                return null;
+            },
+            set: function (index) {
+                try {
+                    localStorage.setItem(this.key, JSON.stringify({
+                        index: index,
+                        timestamp: Date.now()
+                    }));
+                } catch (e) { }
+            },
+            clear: function () {
+                try {
+                    localStorage.removeItem(this.key);
+                } catch (e) { }
+            }
+        };
+
+        // Advanced Fetch with Smart Proxy Selection
+        async function fetchWithProxy(url, options = {}, timeout = 8000) {
             const errors = [];
 
-            for (let i = 0; i < CORS_PROXIES.length; i++) {
-                const proxy = CORS_PROXIES[i];
+            // Get cached best proxy
+            const cachedProxy = ProxyCache.get();
+            let proxyOrder = [...Array(CORS_PROXIES.length).keys()];
+
+            // If we have a cached proxy, try it first
+            if (cachedProxy !== null && cachedProxy < CORS_PROXIES.length) {
+                proxyOrder = [cachedProxy, ...proxyOrder.filter(i => i !== cachedProxy)];
+            }
+
+            for (let i = 0; i < proxyOrder.length; i++) {
+                const proxyIndex = proxyOrder[i];
+                const proxy = CORS_PROXIES[proxyIndex];
                 const proxyUrl = proxy + encodeURIComponent(url);
 
                 try {
-                    console.log(`🔄 Trying proxy ${i + 1}/${CORS_PROXIES.length}: ${proxy.substring(0, 30)}...`);
-
-                    // Create abort controller for timeout
                     const controller = new AbortController();
                     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
@@ -964,25 +998,35 @@
                     clearTimeout(timeoutId);
 
                     if (response.ok) {
-                        console.log(`✅ Proxy ${i + 1} succeeded!`);
+                        // Cache this successful proxy
+                        ProxyCache.set(proxyIndex);
+
+                        // Only log if not the first attempt or not cached
+                        if (i > 0 || cachedProxy === null) {
+                            console.log(`✅ Proxy ${proxyIndex + 1} succeeded`);
+                        }
                         return response;
                     } else {
                         throw new Error(`HTTP ${response.status}`);
                     }
                 } catch (error) {
                     const errorMsg = error.name === 'AbortError' ? 'Timeout' : error.message;
-                    console.warn(`❌ Proxy ${i + 1} failed: ${errorMsg}`);
-                    errors.push(`Proxy ${i + 1}: ${errorMsg}`);
+                    errors.push(`Proxy ${proxyIndex + 1}: ${errorMsg}`);
 
-                    // If this is the last proxy, show ISP warning
-                    if (i === CORS_PROXIES.length - 1) {
+                    // If this was the cached proxy and it failed, clear cache
+                    if (proxyIndex === cachedProxy) {
+                        ProxyCache.clear();
+                    }
+
+                    // If this is the last proxy, show error
+                    if (i === proxyOrder.length - 1) {
+                        console.error('❌ All proxies failed:', errors.join(', '));
                         showISPWarning();
                     }
                 }
             }
 
-            // All proxies failed
-            throw new Error(`All proxies failed. Errors: ${errors.join(', ')}`);
+            throw new Error(`All proxies failed`);
         }
 
         // State
@@ -1045,7 +1089,6 @@
         // Do Search
         function doSearch() {
             if (isLoading) {
-                console.log('⏳ Already loading, please wait...');
                 return;
             }
 
@@ -1059,7 +1102,6 @@
         // Load Videos (Dual Server - Independent, NO Fallback)
         async function loadVideos(query, page = 1) {
             if (isLoading) {
-                console.log('⏳ Already loading, skipping...');
                 return;
             }
 
@@ -1068,17 +1110,14 @@
             S.currentPage = page;
 
             showSkeleton();
-            console.log('🔍 Loading:', query, '| Server:', S.currentServer, '| Page:', page);
 
             try {
                 let videos;
 
                 // Load from selected server ONLY (no fallback)
                 if (S.currentServer === 1) {
-                    console.log('🔵 Loading from Server 1 (RapidAPI Pornhub)');
                     videos = await searchServer1(query, page);
                 } else {
-                    console.log('🟢 Loading from Server 2 (Eporner)');
                     videos = await searchServer2(query, page);
                 }
 
@@ -1114,7 +1153,6 @@
         // Search Server 1 (RapidAPI)
         async function searchServer1(query, page = 1) {
             try {
-                console.log('🔵 Server 1:', query, 'Page:', page);
                 const response = await fetch(`https://pornhub-api-xnxx.p.rapidapi.com/api/search`, {
                     method: 'POST',
                     headers: {
@@ -1131,13 +1169,8 @@
                 }
 
                 const data = await response.json();
-                console.log('🔵 Server 1 raw data:', data);
 
                 const videos = Array.isArray(data) ? data : (data.videos || data.data || []);
-
-                if (videos.length > 0) {
-                    console.log('🔵 Server 1 first video sample:', videos[0]);
-                }
 
                 return videos.map(v => ({
                     id: v.id || v.video_id || v.viewkey,
@@ -1159,7 +1192,6 @@
         // Search Server 2 (Eporner)
         async function searchServer2(query, page = 1) {
             try {
-                console.log('🟢 Server 2:', query, 'Page:', page);
                 const apiUrl = `https://www.eporner.com/api/v2/video/search/?query=${encodeURIComponent(query)}&per_page=20&page=${page}&thumbsize=big&order=top-weekly&gay=0&lq=1&format=json`;
 
                 // Use multiple proxy fallback
@@ -1259,8 +1291,6 @@
 
             // Update server state
             S.currentServer = serverNum;
-
-            console.log('🔄 Switched to Server', serverNum, '-', serverNum === 1 ? 'RapidAPI Pornhub' : 'Eporner');
 
             // Reload current category
             const activeBtn = document.querySelector('.cat-btn.active');
@@ -1374,9 +1404,6 @@
                 pageNumbers.appendChild(btn);
             }
         }
-
-        console.log('🎬 Phim X loaded with Dual Server!');
-        console.log('📡 Default Server:', S.currentServer === 1 ? 'Server 1 - RapidAPI Pornhub' : 'Server 2 - Eporner');
 
         // ============================================================
         // Auto-hide Navigation on Scroll
