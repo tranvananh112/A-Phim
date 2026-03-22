@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xem Phim X - A Phim</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QYK5R13WK2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-QYK5R13WK2', {
+            'send_page_view': true
+        });
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <meta name="robots" content="noindex, nofollow">
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0f0f0f;
+            --bg2: #161616;
+            --bg3: #282a3a;
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #f1f1f1;
+            --text2: #aaa;
+            --text3: #666;
+            --orange: #f97316;
+            --purple: #9333ea;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Be Vietnam Pro', sans-serif;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+
+        /* ===== HEADER ===== */
+        #site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(15, 15, 15, 0.96);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #site-header.hidden {
+            transform: translateY(-100%);
+        }
+
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-badge {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--orange), #dc2626);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 900;
+            color: white;
+        }
+
+        .logo-name {
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--text);
+        }
+
+        .logo-name span {
+            color: var(--orange);
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text2);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            border-color: var(--orange);
+            color: var(--text);
+        }
+
+        /* ===== CONTENT ===== */
+        #content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+            padding-top: 80px;
+            /* Header height + spacing */
+        }
+
+        /* Player Container */
+        .player-container {
+            margin-bottom: 0;
+        }
+
+        #player-box {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+        }
+
+        #player-box iframe,
+        #player-box video {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-info {
+            background: linear-gradient(135deg, var(--bg2) 0%, #1a1a1a 100%);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        .video-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            color: var(--text2);
+            font-size: 14px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .video-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .video-description {
+            color: var(--text2);
+            font-size: 14px;
+            line-height: 1.7;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .action-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text2);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: rgba(249, 115, 22, 0.1);
+            border-color: var(--orange);
+            color: var(--orange);
+            transform: translateY(-2px);
+        }
+
+        .action-btn.active {
+            background: rgba(249, 115, 22, 0.15);
+            border-color: var(--orange);
+            color: var(--orange);
+        }
+
+        .action-btn svg {
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover svg {
+            transform: scale(1.1);
+        }
+
+        .action-btn.active svg {
+            fill: var(--orange);
+        }
+
+        /* Sidebar */
+        aside {
+            position: sticky;
+            top: 100px;
+            /* Adjusted for fixed header */
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+
+        aside::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        aside::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 2px;
+        }
+
+        .sidebar-header {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--orange);
+        }
+
+        /* Related Videos Grid - Vertical List for Sidebar */
+        #related-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .vc {
+            cursor: pointer;
+            transition: transform 0.15s;
+            display: flex;
+            gap: 12px;
+        }
+
+        .vc:hover {
+            transform: translateX(4px);
+        }
+
+        .vc-thumb {
+            position: relative;
+            width: 160px;
+            flex-shrink: 0;
+            aspect-ratio: 16/9;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #222;
+        }
+
+        .vc-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .vc:hover .vc-thumb img {
+            transform: scale(1.08);
+        }
+
+        .vc-dur {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            background: rgba(0, 0, 0, 0.88);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        .vc-hd {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            background: var(--orange);
+            color: #fff;
+            font-size: 8px;
+            font-weight: 800;
+            padding: 2px 4px;
+            border-radius: 3px;
+            letter-spacing: 0.5px;
+        }
+
+        .vc-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .vc-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;
+            margin-bottom: 6px;
+        }
+
+        .vc-meta {
+            font-size: 11px;
+            color: var(--text2);
+        }
+
+        /* More Videos Section */
+        .more-videos-section {
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 2px solid var(--border);
+        }
+
+        .section-header {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title svg {
+            color: var(--orange);
+        }
+
+        #more-videos-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+        }
+
+        #more-videos-grid .vc {
+            flex-direction: column;
+            gap: 0;
+        }
+
+        #more-videos-grid .vc-thumb {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        #more-videos-grid .vc-content {
+            display: block;
+        }
+
+        #more-videos-grid .vc:hover {
+            transform: translateY(-4px);
+        }
+
+        #more-videos-grid .vc-title {
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        #more-videos-grid .vc-meta {
+            font-size: 12px;
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            color: var(--text2);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .vc-thumb {
+                width: 140px;
+            }
+
+            #more-videos-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            aside {
+                position: static;
+                max-height: none;
+            }
+
+            #related-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .vc {
+                flex-direction: column;
+            }
+
+            .vc-thumb {
+                width: 100%;
+            }
+
+            .vc:hover {
+                transform: translateY(-2px);
+            }
+
+            #more-videos-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .action-buttons {
+                flex-wrap: wrap;
+            }
+
+            .action-btn {
+                flex: 1 1 calc(50% - 6px);
+                min-width: 140px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .header-inner {
+                padding: 0 12px;
+                height: 52px;
+            }
+
+            .logo-badge {
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
+            }
+
+            .logo-name {
+                font-size: 16px;
+            }
+
+            #content {
+                padding: 12px;
+            }
+
+            #player-box {
+                border-radius: 12px;
+            }
+
+            .video-info {
+                padding: 16px;
+                border-radius: 12px;
+            }
+
+            .video-title {
+                font-size: 18px;
+            }
+
+            .video-meta {
+                font-size: 12px;
+                gap: 8px;
+            }
+
+            .video-meta span {
+                padding: 4px 8px;
+                font-size: 11px;
+            }
+
+            .sidebar-header {
+                font-size: 14px;
+            }
+
+            #related-grid {
+                gap: 10px;
+            }
+
+            #more-videos-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .section-title {
+                font-size: 18px;
+            }
+
+            .action-buttons {
+                gap: 8px;
+            }
+
+            .action-btn {
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+
+            .action-btn span {
+                display: none;
+            }
+
+            .action-btn svg {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header id="site-header">
+        <div class="header-inner">
+            <a href="phim-x.html" class="back-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+                Quay lại
+            </a>
+
+            <a href="/" class="logo">
+                <div class="logo-badge">A</div>
+                <div class="logo-name">A<span>Phim</span></div>
+            </a>
+        </div>
+    </header>
+
+    <!-- Content -->
+    <div id="content">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Main Player Area (Left) -->
+            <div class="lg:col-span-9">
+                <!-- Player Container -->
+                <div class="player-container">
+                    <div id="player-box">
+                        <div class="loading">
+                            <div>Đang tải video...</div>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title" id="video-title">Loading...</div>
+                        <div class="video-meta" id="video-meta"></div>
+
+                        <!-- Action Buttons -->
+                        <div class="action-buttons">
+                            <button class="action-btn" onclick="toggleFavorite()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path
+                                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                                </svg>
+                                <span>Yêu thích</span>
+                            </button>
+                            <button class="action-btn" onclick="toggleSave()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                                </svg>
+                                <span>Lưu phim</span>
+                            </button>
+                            <button class="action-btn" onclick="shareVideo()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <circle cx="18" cy="5" r="3" />
+                                    <circle cx="6" cy="12" r="3" />
+                                    <circle cx="18" cy="19" r="3" />
+                                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                                </svg>
+                                <span>Chia sẻ</span>
+                            </button>
+                        </div>
+
+                        <div class="video-description" id="video-description"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar (Right) - Related Videos -->
+            <aside class="lg:col-span-3">
+                <div class="sidebar-header">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    Video liên quan
+                </div>
+                <div id="related-grid"></div>
+            </aside>
+        </div>
+
+        <!-- More Videos Section (Full Width) -->
+        <div class="more-videos-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon
+                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                    Có thể bạn sẽ thích
+                </h2>
+            </div>
+            <div id="more-videos-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        const RAPIDAPI_KEY = 'd486069129msh0b8da27c0be5495p1d859djsn1739664b1f9a';
+        const RAPIDAPI_HOST = 'pornhub-api-xnxx.p.rapidapi.com';
+
+        // Multiple CORS Proxies for fallback (ISP blocking bypass)
+        const CORS_PROXIES = [
+            'https://corsproxy.io/?',
+            'https://api.codetabs.com/v1/proxy?quest=',
+            'https://proxy.cors.sh/',
+            'https://api.allorigins.win/raw?url='
+        ];
+
+        // Fetch with multiple proxy fallback
+        async function fetchWithProxy(url, options = {}, timeout = 10000) {
+            const errors = [];
+
+            for (let i = 0; i < CORS_PROXIES.length; i++) {
+                const proxy = CORS_PROXIES[i];
+                const proxyUrl = proxy + encodeURIComponent(url);
+
+                try {
+                    console.log(`🔄 Trying proxy ${i + 1}/${CORS_PROXIES.length}: ${proxy.substring(0, 30)}...`);
+
+                    // Create abort controller for timeout
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+                    const response = await fetch(proxyUrl, {
+                        ...options,
+                        signal: controller.signal
+                    });
+
+                    clearTimeout(timeoutId);
+
+                    if (response.ok) {
+                        console.log(`✅ Proxy ${i + 1} succeeded!`);
+                        return response;
+                    } else {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                } catch (error) {
+                    const errorMsg = error.name === 'AbortError' ? 'Timeout' : error.message;
+                    console.warn(`❌ Proxy ${i + 1} failed: ${errorMsg}`);
+                    errors.push(`Proxy ${i + 1}: ${errorMsg}`);
+                }
+            }
+
+            // All proxies failed
+            throw new Error(`All proxies failed. Errors: ${errors.join(', ')}`);
+        }
+
+        // Get video ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const videoId = urlParams.get('id');
+        const videoServer = parseInt(urlParams.get('server')) || 2;
+        const videoTitle = urlParams.get('title') || 'Video';
+
+        // Load video on page load
+        if (videoId) {
+            loadVideo(videoId, videoServer);
+            loadRelatedVideos();
+            loadMoreVideos();
+        } else {
+            window.location.href = 'phim-x.html';
+        }
+
+        async function loadVideo(id, server) {
+            console.log('🎬 Loading video:', id, 'Server:', server);
+
+            // Set title
+            document.getElementById('video-title').textContent = decodeURIComponent(videoTitle);
+
+            const playerBox = document.getElementById('player-box');
+
+            if (server === 1) {
+                // Server 1: RapidAPI Pornhub
+                playerBox.innerHTML = `
+                    <iframe 
+                        src="https://www.pornhub.com/embed/${id}" 
+                        allowfullscreen 
+                        allow="autoplay; fullscreen"
+                        sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+                    ></iframe>
+                `;
+            } else {
+                // Server 2: Eporner
+                try {
+                    const apiUrl = `https://www.eporner.com/api/v2/video/id/?id=${id}&thumbsize=big&format=json`;
+
+                    console.log('🔄 Loading via multiple proxy fallback');
+                    const response = await fetchWithProxy(apiUrl);
+                    const data = await response.json();
+
+                    if (data && data.embed) {
+                        playerBox.innerHTML = `
+                            <iframe 
+                                src="${data.embed}" 
+                                allowfullscreen 
+                                allow="autoplay; fullscreen"
+                                sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+                            ></iframe>
+                        `;
+
+                        // Update video info
+                        document.getElementById('video-title').textContent = data.title || videoTitle;
+                        document.getElementById('video-meta').innerHTML = `
+                            <span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                                ${data.length_min || 'N/A'}
+                            </span>
+                            <span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                ${typeof data.views === 'number' ? data.views.toLocaleString() : data.views} views
+                            </span>
+                            <span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                </svg>
+                                ${data.rate || 'N/A'}
+                            </span>
+                        `;
+
+                        // Set description
+                        if (data.keywords) {
+                            document.getElementById('video-description').textContent =
+                                'Tags: ' + data.keywords;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading video:', error);
+                    playerBox.innerHTML = `
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #999;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
+                                <div>Không thể tải video</div>
+                                <div style="font-size: 12px; margin-top: 8px; color: #666;">Thử đổi DNS hoặc dùng VPN</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        async function loadRelatedVideos() {
+            const grid = document.getElementById('related-grid');
+            grid.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;">Đang tải...</div>';
+
+            try {
+                const apiUrl = `https://www.eporner.com/api/v2/video/search/?query=hot&per_page=12&page=1&thumbsize=big&order=top-weekly&gay=0&lq=1&format=json`;
+
+                const response = await fetchWithProxy(apiUrl);
+                const data = await response.json();
+
+                if (data.videos && data.videos.length > 0) {
+                    grid.innerHTML = data.videos.map(v => `
+                        <div class="vc" onclick="goToVideo('${v.id}', 2, '${encodeURIComponent(v.title)}')">
+                            <div class="vc-thumb">
+                                <img src="${v.default_thumb?.src || ''}" alt="${v.title}" loading="lazy">
+                                <div class="vc-dur">${v.length_min || 'N/A'}</div>
+                                <div class="vc-hd">HD</div>
+                            </div>
+                            <div class="vc-content">
+                                <div class="vc-title">${v.title}</div>
+                                <div class="vc-meta">${typeof v.views === 'number' ? v.views.toLocaleString() : v.views} views</div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading related videos:', error);
+                grid.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;">Không thể tải video liên quan</div>';
+            }
+        }
+
+        async function loadMoreVideos() {
+            const grid = document.getElementById('more-videos-grid');
+            grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">Đang tải...</div>';
+
+            try {
+                const apiUrl = `https://www.eporner.com/api/v2/video/search/?query=trending&per_page=20&page=1&thumbsize=big&order=top-weekly&gay=0&lq=1&format=json`;
+
+                const response = await fetchWithProxy(apiUrl);
+                const data = await response.json();
+
+                if (data.videos && data.videos.length > 0) {
+                    grid.innerHTML = data.videos.map(v => `
+                        <div class="vc" onclick="goToVideo('${v.id}', 2, '${encodeURIComponent(v.title)}')">
+                            <div class="vc-thumb">
+                                <img src="${v.default_thumb?.src || ''}" alt="${v.title}" loading="lazy">
+                                <div class="vc-dur">${v.length_min || 'N/A'}</div>
+                                <div class="vc-hd">HD</div>
+                            </div>
+                            <div class="vc-content">
+                                <div class="vc-title">${v.title}</div>
+                                <div class="vc-meta">${typeof v.views === 'number' ? v.views.toLocaleString() : v.views} views</div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading more videos:', error);
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">Không thể tải video</div>';
+            }
+        }
+
+        // Action button functions
+        function toggleFavorite() {
+            const btn = event.currentTarget;
+            btn.classList.toggle('active');
+            const isActive = btn.classList.contains('active');
+            console.log(isActive ? '❤️ Added to favorites' : '💔 Removed from favorites');
+        }
+
+        function toggleSave() {
+            const btn = event.currentTarget;
+            btn.classList.toggle('active');
+            const isActive = btn.classList.contains('active');
+            console.log(isActive ? '📌 Saved' : '🗑️ Unsaved');
+        }
+
+        function shareVideo() {
+            const url = window.location.href;
+            const title = document.getElementById('video-title').textContent;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: title,
+                    url: url
+                }).then(() => {
+                    console.log('✅ Shared successfully');
+                }).catch(err => {
+                    console.log('❌ Share failed:', err);
+                    copyToClipboard(url);
+                });
+            } else {
+                copyToClipboard(url);
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ Đã copy link vào clipboard!');
+            }).catch(err => {
+                console.error('Copy failed:', err);
+            });
+        }
+
+        function goToVideo(id, server, title) {
+            window.location.href = `phim-x-watch.html?id=${id}&server=${server}&title=${title}`;
+        }
+
+        // ============================================================
+        // Auto-hide Navigation on Scroll
+        // ============================================================
+        let lastScrollTop = 0;
+        let scrollTimeout;
+        const header = document.getElementById('site-header');
+
+        window.addEventListener('scroll', function () {
+            clearTimeout(scrollTimeout);
+
+            scrollTimeout = setTimeout(() => {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+                if (scrollTop > lastScrollTop && scrollTop > 100) {
+                    // Scrolling down & past 100px
+                    header.classList.add('hidden');
+                } else {
+                    // Scrolling up
+                    header.classList.remove('hidden');
+                }
+
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+            }, 10);
+        }, { passive: true });
+
+        console.log('🎬 Phim X Watch Page Loaded!');
+    </script>
+
+    <!-- Mobile Menu Modern -->
+    <link rel="stylesheet" href="css/mobile-menu-modern.css">
+    <script src="js/mobile-menu-modern.js?v=5"></script>
+</body>
+
+</html>

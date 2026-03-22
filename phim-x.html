@@ -75,13 +75,20 @@
 
         /* ===== HEADER ===== */
         #site-header {
-            position: sticky;
+            position: fixed;
             top: 0;
+            left: 0;
+            right: 0;
             z-index: 100;
             background: rgba(15, 15, 15, 0.96);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border);
             pointer-events: auto;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #site-header.hidden {
+            transform: translateY(-100%);
         }
 
         .header-inner {
@@ -277,10 +284,17 @@
         #cat-nav {
             background: var(--bg);
             border-bottom: 1px solid var(--border);
-            position: sticky;
+            position: fixed;
             top: 56px;
+            left: 0;
+            right: 0;
             z-index: 90;
             pointer-events: auto;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #cat-nav.hidden {
+            transform: translateY(-100%);
         }
 
         .cat-nav-inner {
@@ -342,6 +356,8 @@
             max-width: 1400px;
             margin: 0 auto;
             padding: 24px;
+            padding-top: 134px;
+            /* Header (56px) + Cat Nav (54px) + spacing (24px) */
         }
 
         #video-grid {
@@ -425,20 +441,35 @@
         /* Player Section */
         #player-section {
             display: none;
-            margin-bottom: 24px;
+            margin-bottom: 32px;
             position: relative;
             z-index: 1;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         #player-box {
             width: 100%;
             aspect-ratio: 16/9;
             background: #000;
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             position: relative;
             z-index: 1;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(249, 115, 22, 0.2);
         }
 
         #player-box iframe,
@@ -451,24 +482,67 @@
         }
 
         .video-info-block {
-            background: var(--bg2);
+            background: linear-gradient(135deg, var(--bg2) 0%, #1a1a1a 100%);
             border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 20px 24px;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
         }
 
         #vp-title {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 800;
             color: var(--text);
-            margin-bottom: 12px;
+            margin-bottom: 16px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .vp-meta {
             display: flex;
+            flex-wrap: wrap;
             gap: 16px;
             color: var(--text2);
-            font-size: 13px;
+            font-size: 14px;
+            align-items: center;
+        }
+
+        .vp-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .close-player-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 36px;
+            height: 36px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        .close-player-btn:hover {
+            background: var(--orange);
+            border-color: var(--orange);
+            transform: scale(1.1);
         }
 
         /* Skeleton Loading */
@@ -540,19 +614,42 @@
             #video-grid,
             #skeleton-grid {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
             }
 
             #search-input {
-                width: 180px;
+                width: 140px;
+                font-size: 12px;
+                padding: 6px 32px 6px 12px;
             }
 
             #search-input:focus {
-                width: 220px;
+                width: 180px;
             }
 
             .header-sep,
             #header-label {
                 display: none;
+            }
+
+            .header-inner {
+                padding: 0 12px;
+                height: 52px;
+            }
+
+            .logo-badge {
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
+            }
+
+            .logo-name {
+                font-size: 16px;
+            }
+
+            .server-btn-header {
+                font-size: 11px;
+                padding: 5px 10px;
             }
 
             #cat-nav {
@@ -562,15 +659,89 @@
             .cat-nav-inner {
                 padding: 0 12px;
                 height: 48px;
+                gap: 6px;
             }
 
             .cat-btn {
                 font-size: 12px;
                 padding: 5px 11px;
+                height: 32px;
             }
 
             #content {
                 padding: 12px;
+            }
+
+            /* Video Card Mobile */
+            .vc-title {
+                font-size: 12px;
+                line-height: 1.4;
+            }
+
+            .vc-meta {
+                font-size: 11px;
+            }
+
+            .vc-dur {
+                font-size: 10px;
+                padding: 2px 5px;
+            }
+
+            .vc-hd {
+                font-size: 8px;
+                padding: 2px 4px;
+            }
+
+            /* Pagination Mobile */
+            #pagination {
+                margin-top: 24px;
+            }
+
+            #pagination button {
+                font-size: 13px;
+                padding: 6px 12px !important;
+            }
+
+            #pageNumbers button {
+                padding: 6px 10px !important;
+                font-size: 12px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            #video-grid,
+            #skeleton-grid {
+                gap: 8px;
+            }
+
+            .header-inner {
+                gap: 8px;
+            }
+
+            #search-input {
+                width: 100px;
+            }
+
+            #search-input:focus {
+                width: 140px;
+            }
+
+            .cat-nav-inner {
+                gap: 4px;
+            }
+
+            .cat-btn {
+                font-size: 11px;
+                padding: 4px 9px;
+            }
+
+            #vp-title {
+                font-size: 14px;
+            }
+
+            .vp-meta {
+                gap: 6px;
             }
         }
 
@@ -643,10 +814,8 @@
     <header id="site-header">
         <div class="header-inner">
             <!-- Mobile Menu Button -->
-            <button id="mobileMenuBtn" class="lg:hidden text-white p-2" onclick="toggleMobileMenu()">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
+            <button id="mobileMenuBtn" class="lg:hidden text-white p-2">
+                <span class="material-icons-round">menu</span>
             </button>
 
             <a href="/" class="logo">
@@ -663,7 +832,7 @@
                     </button>
                     <div class="server-dropdown" id="server-dropdown">
                         <div class="server-option" onclick="selectServerOption(1)">
-                            <div class="server-option-icon">�</div>
+                            <div class="server-option-icon">🟢</div>
                             <div class="server-option-info">
                                 <div class="server-option-name">Server 1</div>
                                 <div class="server-option-desc">RapidAPI Pornhub</div>
@@ -694,7 +863,7 @@
 
         <!-- Mobile Menu -->
         <div id="mobileMenu" class="lg:hidden hidden bg-black/95 backdrop-blur-md border-t border-white/10">
-            <!-- Content will be injected by mobile-menu-simple.js -->
+            <!-- Content will be injected by mobile-menu-modern.js -->
         </div>
     </header>
 
@@ -720,7 +889,15 @@
     <div id="content">
         <!-- Player Section -->
         <div id="player-section">
-            <div id="player-box"></div>
+            <div style="position: relative;">
+                <div id="player-box"></div>
+                <button class="close-player-btn" onclick="closePlayer()" title="Đóng video">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round">
+                        <path d="M18 6L6 18M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
             <div class="video-info-block">
                 <div id="vp-title">Video Title</div>
                 <div class="vp-meta" id="vp-meta"></div>
@@ -755,6 +932,58 @@
         // Config
         const RAPIDAPI_KEY = 'd486069129msh0b8da27c0be5495p1d859djsn1739664b1f9a';
         const RAPIDAPI_HOST = 'pornhub-api-xnxx.p.rapidapi.com';
+
+        // Multiple CORS Proxies for fallback (ISP blocking bypass)
+        const CORS_PROXIES = [
+            'https://corsproxy.io/?',
+            'https://api.codetabs.com/v1/proxy?quest=',
+            'https://proxy.cors.sh/',
+            'https://api.allorigins.win/raw?url='
+        ];
+
+        // Fetch with multiple proxy fallback
+        async function fetchWithProxy(url, options = {}, timeout = 10000) {
+            const errors = [];
+
+            for (let i = 0; i < CORS_PROXIES.length; i++) {
+                const proxy = CORS_PROXIES[i];
+                const proxyUrl = proxy + encodeURIComponent(url);
+
+                try {
+                    console.log(`🔄 Trying proxy ${i + 1}/${CORS_PROXIES.length}: ${proxy.substring(0, 30)}...`);
+
+                    // Create abort controller for timeout
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+                    const response = await fetch(proxyUrl, {
+                        ...options,
+                        signal: controller.signal
+                    });
+
+                    clearTimeout(timeoutId);
+
+                    if (response.ok) {
+                        console.log(`✅ Proxy ${i + 1} succeeded!`);
+                        return response;
+                    } else {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                } catch (error) {
+                    const errorMsg = error.name === 'AbortError' ? 'Timeout' : error.message;
+                    console.warn(`❌ Proxy ${i + 1} failed: ${errorMsg}`);
+                    errors.push(`Proxy ${i + 1}: ${errorMsg}`);
+
+                    // If this is the last proxy, show ISP warning
+                    if (i === CORS_PROXIES.length - 1) {
+                        showISPWarning();
+                    }
+                }
+            }
+
+            // All proxies failed
+            throw new Error(`All proxies failed. Errors: ${errors.join(', ')}`);
+        }
 
         // State
         const S = {
@@ -837,9 +1066,6 @@
             isLoading = true;
             currentQuery = query;
             S.currentPage = page;
-
-            // Hide player section when loading new videos
-            document.getElementById('player-section').style.display = 'none';
 
             showSkeleton();
             console.log('🔍 Loading:', query, '| Server:', S.currentServer, '| Page:', page);
@@ -934,15 +1160,12 @@
         async function searchServer2(query, page = 1) {
             try {
                 console.log('🟢 Server 2:', query, 'Page:', page);
-                const url = `https://www.eporner.com/api/v2/video/search/?query=${encodeURIComponent(query)}&per_page=20&page=${page}&thumbsize=big&order=top-weekly&gay=0&lq=1&format=json`;
+                const apiUrl = `https://www.eporner.com/api/v2/video/search/?query=${encodeURIComponent(query)}&per_page=20&page=${page}&thumbsize=big&order=top-weekly&gay=0&lq=1&format=json`;
 
-                const response = await fetch(url);
-                if (!response.ok) {
-                    console.warn('Server 2 failed:', response.status);
-                    return null;
-                }
-
+                // Use multiple proxy fallback
+                const response = await fetchWithProxy(apiUrl);
                 const data = await response.json();
+
                 if (!data.videos || data.videos.length === 0) {
                     return null;
                 }
@@ -969,7 +1192,7 @@
             const grid = document.getElementById('video-grid');
 
             grid.innerHTML = videos.map((v, i) => `
-                <div class="vc" onclick="playVideo(${i})">
+                <div class="vc" onclick="goToWatchPage(${i})">
                     <div class="vc-thumb">
                         <img src="${v.thumbnail || 'https://via.placeholder.com/320x180'}" 
                              alt="${v.title}"
@@ -983,89 +1206,16 @@
             `).join('');
         }
 
-        // Play Video
-        function playVideo(index) {
+        // Go to watch page
+        function goToWatchPage(index) {
             const video = currentVideos[index];
             if (!video) return;
 
-            console.log('🎬 Playing video:', video);
+            const title = encodeURIComponent(video.title);
+            const id = video.id;
+            const server = video.server;
 
-            document.getElementById('player-section').style.display = 'block';
-            document.getElementById('vp-title').textContent = video.title;
-            document.getElementById('vp-meta').innerHTML = `
-                <span>⏱️ ${video.duration}</span>
-                <span>👁️ ${video.views} views</span>
-                <span>⭐ ${video.rating}</span>
-            `;
-
-            const playerBox = document.getElementById('player-box');
-
-            if (video.server === 1) {
-                // Server 1: RapidAPI Pornhub
-                let embedUrl = video.embed;
-
-                // Try different embed URL formats
-                if (!embedUrl && video.url) {
-                    // Extract video ID from URL if possible
-                    const urlMatch = video.url.match(/viewkey=([^&]+)/);
-                    if (urlMatch) {
-                        embedUrl = `https://www.pornhub.com/embed/${urlMatch[1]}`;
-                    }
-                }
-
-                if (!embedUrl && video.id) {
-                    embedUrl = `https://www.pornhub.com/embed/${video.id}`;
-                }
-
-                console.log('🔵 Server 1 embed URL:', embedUrl);
-
-                if (embedUrl) {
-                    playerBox.innerHTML = `
-                        <iframe 
-                            src="${embedUrl}" 
-                            allowfullscreen 
-                            allow="autoplay; fullscreen"
-                            sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
-                        ></iframe>
-                    `;
-                } else {
-                    playerBox.innerHTML = `
-                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #999;">
-                            <div style="text-align: center;">
-                                <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
-                                <div>Không thể phát video từ Server 1</div>
-                                <div style="margin-top: 8px; font-size: 14px;">Vui lòng thử video khác hoặc chuyển sang Server 2</div>
-                            </div>
-                        </div>
-                    `;
-                }
-            } else {
-                // Server 2: Eporner
-                console.log('🟢 Server 2 embed URL:', video.embed);
-
-                if (video.embed) {
-                    playerBox.innerHTML = `
-                        <iframe 
-                            src="${video.embed}" 
-                            allowfullscreen 
-                            allow="autoplay; fullscreen"
-                            sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
-                        ></iframe>
-                    `;
-                } else {
-                    playerBox.innerHTML = `
-                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #999;">
-                            <div style="text-align: center;">
-                                <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
-                                <div>Không thể phát video từ Server 2</div>
-                                <div style="margin-top: 8px; font-size: 14px;">Vui lòng thử video khác</div>
-                            </div>
-                        </div>
-                    `;
-                }
-            }
-
-            document.getElementById('player-section').scrollIntoView({ behavior: 'smooth' });
+            window.location.href = `phim-x-watch.html?id=${id}&server=${server}&title=${title}`;
         }
 
         // Enter key to search
@@ -1227,6 +1377,34 @@
 
         console.log('🎬 Phim X loaded with Dual Server!');
         console.log('📡 Default Server:', S.currentServer === 1 ? 'Server 1 - RapidAPI Pornhub' : 'Server 2 - Eporner');
+
+        // ============================================================
+        // Auto-hide Navigation on Scroll
+        // ============================================================
+        let lastScrollTop = 0;
+        let scrollTimeout;
+        const header = document.getElementById('site-header');
+        const catNav = document.getElementById('cat-nav');
+
+        window.addEventListener('scroll', function () {
+            clearTimeout(scrollTimeout);
+
+            scrollTimeout = setTimeout(() => {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+                if (scrollTop > lastScrollTop && scrollTop > 100) {
+                    // Scrolling down & past 100px
+                    header.classList.add('hidden');
+                    catNav.classList.add('hidden');
+                } else {
+                    // Scrolling up
+                    header.classList.remove('hidden');
+                    catNav.classList.remove('hidden');
+                }
+
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+            }, 10);
+        }, { passive: true });
 
         // ============================================================
         // 18+ Warning Modal - Check if user confirmed
