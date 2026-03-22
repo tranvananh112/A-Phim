@@ -873,17 +873,81 @@
                     }
                 } catch (error) {
                     console.error('Error loading video:', error);
-                    playerBox.innerHTML = `
-                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #999;">
-                            <div style="text-align: center;">
-                                <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
-                                <div>Không thể tải video</div>
-                                <div style="font-size: 12px; margin-top: 8px; color: #666;">Thử đổi DNS hoặc dùng VPN</div>
-                            </div>
-                        </div>
-                    `;
+                    showVideoError(error);
                 }
             }
+        }
+
+        // Function to show error message to user
+        function showVideoError(error) {
+            const playerBox = document.getElementById('player-box');
+            console.error('❌ Showing error to user:', error);
+
+            playerBox.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: center; height: 100%; 
+                            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+                            border-radius: 16px; padding: 40px;">
+                    <div style="text-align: center; max-width: 500px;">
+                        <div style="font-size: 64px; margin-bottom: 20px; animation: shake 0.5s;">⚠️</div>
+                        <h3 style="color: #ef4444; font-size: 24px; font-weight: 700; margin-bottom: 16px;">
+                            Không thể tải video
+                        </h3>
+                        <p style="color: #94a3b8; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+                            Video có thể bị chặn bởi nhà mạng của bạn (VNPT, Viettel, FPT...)
+                        </p>
+                        <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); 
+                                    border-radius: 12px; padding: 20px; margin-bottom: 24px; text-align: left;">
+                            <div style="color: #60a5fa; font-weight: 600; margin-bottom: 12px; font-size: 14px;">
+                                💡 Giải pháp:
+                            </div>
+                            <ul style="color: #cbd5e1; font-size: 14px; line-height: 1.8; margin: 0; padding-left: 20px;">
+                                <li>Đổi DNS sang 1.1.1.1 hoặc 8.8.8.8</li>
+                                <li>Sử dụng VPN (Cloudflare WARP, 1.1.1.1 App)</li>
+                                <li>Dùng data 4G/5G thay vì WiFi</li>
+                                <li>Thử lại sau vài phút</li>
+                            </ul>
+                        </div>
+                        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                            <a href="https://1.1.1.1/" target="_blank" 
+                               style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
+                                      color: white; padding: 12px 24px; border-radius: 8px; 
+                                      text-decoration: none; font-weight: 600; font-size: 14px;
+                                      display: inline-flex; align-items: center; gap: 8px;
+                                      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);">
+                                📱 Tải 1.1.1.1 App
+                            </a>
+                            <button onclick="location.reload()" 
+                                    style="background: rgba(255, 255, 255, 0.1); color: white; 
+                                           padding: 12px 24px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2);
+                                           font-weight: 600; font-size: 14px; cursor: pointer;">
+                                🔄 Thử lại
+                            </button>
+                            <button onclick="window.history.back()" 
+                                    style="background: rgba(255, 255, 255, 0.1); color: white; 
+                                           padding: 12px 24px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2);
+                                           font-weight: 600; font-size: 14px; cursor: pointer;">
+                                ← Quay lại
+                            </button>
+                        </div>
+                        <details style="margin-top: 24px; text-align: left;">
+                            <summary style="color: #64748b; font-size: 12px; cursor: pointer;">
+                                Chi tiết lỗi
+                            </summary>
+                            <pre style="background: rgba(0, 0, 0, 0.3); padding: 12px; border-radius: 8px; 
+                                        margin-top: 8px; color: #94a3b8; font-size: 11px; overflow-x: auto;">
+${error.message || 'Unknown error'}
+                            </pre>
+                        </details>
+                    </div>
+                </div>
+                <style>
+                    @keyframes shake {
+                        0%, 100% { transform: translateX(0); }
+                        25% { transform: translateX(-10px); }
+                        75% { transform: translateX(10px); }
+                    }
+                </style>
+            `;
         }
 
         async function loadRelatedVideos() {

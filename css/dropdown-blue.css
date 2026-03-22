@@ -82,11 +82,21 @@
 #mobileMenu button {
     color: #ffffff !important;
     font-weight: 700 !important;
+    border-radius: 12px !important;
+    margin: 4px 0 !important;
+    transition: all 0.3s ease !important;
 }
 
 #mobileMenu a:hover,
 #mobileMenu button:hover {
     background: rgba(255, 255, 255, 0.15) !important;
+    transform: translateX(5px);
+}
+
+/* Rounded corners for dropdown items inside mobile menu */
+#mobileMenu .pl-4 a {
+    border-radius: 10px !important;
+    margin: 2px 0 !important;
 }
 
 /* Scrollbar for dropdown */
