@@ -72,7 +72,7 @@ function renderLatestMoviesSection(movies) {
     const movieLinks = JSON.parse(localStorage.getItem('movieLinks') || '{}');
 
     const html = `
-        <section class="py-20 bg-background-dark">
+        <section class="py-20 bg-transparent">
             <div class="container mx-auto px-6">
                 <div class="flex items-center justify-between mb-8">
                     <h2 class="text-3xl font-bold text-white flex items-center gap-3">
@@ -92,7 +92,7 @@ function renderLatestMoviesSection(movies) {
 
         return `
                             <a href="${linkUrl}"
-                                class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300">
+                                class="group relative block rounded-xl overflow-hidden hover:opacity-90 transition-all duration-300">
                                 <div class="aspect-[2/3] w-full overflow-hidden relative">
                                     <img alt="${movie.name}"
                                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
@@ -180,7 +180,7 @@ function renderAllSections(sections) {
     }
 
     const html = filteredSections.map((section, index) => {
-        const bgClass = 'bg-background-dark';
+        const bgClass = 'bg-transparent';
 
         return `
             <section class="py-20 ${bgClass}">
@@ -205,7 +205,7 @@ function renderAllSections(sections) {
 
             return `
                                 <a href="${linkUrl}"
-                                    class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300">
+                                    class="group relative block rounded-xl overflow-hidden hover:opacity-90 transition-all duration-300">
                                     <div class="aspect-[2/3] w-full overflow-hidden relative">
                                         <img alt="${movie.name}"
                                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
@@ -288,7 +288,7 @@ function renderVietnameseMovies(movies) {
 
         return `
         <a href="${linkUrl}"
-            class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300 movie-card-w-sm">
+            class="group relative block rounded-xl overflow-hidden hover:opacity-90 transition-all duration-300 movie-card-w-sm">
             <div class="aspect-[2/3] w-full overflow-hidden relative">
                 <img alt="${movie.name}"
                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"

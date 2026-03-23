@@ -518,6 +518,7 @@
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="css/top-comments.css">
     <meta name="theme-color" content="#6366f1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -988,6 +989,85 @@
         </div>
     </section>
 
+    <!-- Top Comments Community Dashboard -->
+    <section class="py-6 md:py-8" id="top-comments-section">
+        <div class="container mx-auto px-6">
+            <div class="tc-container">
+                <!-- Header -->
+                <div class="tc-header">
+                    <span class="material-icons-round" style="color:#ffd700; font-size:24px;">military_tech</span>
+                    <h2 class="tc-title">Top Bình Luận</h2>
+                </div>
+                
+                <!-- Top Row: Featured Comments -->
+                <div class="relative group">
+                    <button id="tc-scroll-left" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/50 border border-white/10 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity -ml-4 hover:bg-black/80">
+                        <span class="material-icons-round text-sm">chevron_left</span>
+                    </button>
+                    <div class="tc-featured-wrapper" id="tc-featured-container">
+                        <!-- Loaded dynamically via js -->
+                    </div>
+                    <button id="tc-scroll-right" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/50 border border-white/10 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity -mr-4 hover:bg-black/80">
+                        <span class="material-icons-round text-sm">chevron_right</span>
+                    </button>
+                </div>
+                
+                <div class="tc-divider"></div>
+                
+                <!-- Bottom Grid: 4 Columns -->
+                <div class="tc-grid">
+                    <!-- Column 1: Sôi Nổi Nhất -->
+                    <div>
+                        <div class="tc-col-header">
+                            <span class="material-icons-round">forum</span>
+                            <h3>Sôi Nổi Nhất</h3>
+                        </div>
+                        <div class="tc-list" id="tc-soi-noi">
+                            <div class="text-sm text-gray-500">Đang tải...</div>
+                        </div>
+                        <div class="mt-4"><a href="search.html" class="text-xs text-gray-500 hover:text-white transition-colors">Xem thêm</a></div>
+                    </div>
+                    
+                    <!-- Column 2: Yêu Thích Nhất -->
+                    <div>
+                        <div class="tc-col-header">
+                            <span class="material-icons-round" style="color:#ef4444;">favorite</span>
+                            <h3>Yêu Thích Nhất</h3>
+                        </div>
+                        <div class="tc-list" id="tc-yeu-thich">
+                            <div class="text-sm text-gray-500">Đang tải...</div>
+                        </div>
+                        <div class="mt-4"><a href="search.html" class="text-xs text-gray-500 hover:text-white transition-colors">Xem thêm</a></div>
+                    </div>
+                    
+                    <!-- Column 3: Thể Loại Hot -->
+                    <div>
+                        <div class="tc-col-header">
+                            <span class="material-icons-round" style="color:#10b981;">local_fire_department</span>
+                            <h3>Thể Loại Hot</h3>
+                        </div>
+                        <div class="tc-genre-list" id="tc-the-loai">
+                            <!-- Loaded via js -->
+                        </div>
+                        <div class="mt-4"><a href="search.html" class="text-xs text-gray-500 hover:text-white transition-colors">Xem thêm</a></div>
+                    </div>
+                    
+                    <!-- Column 4: Bình Luận Mới (Virtual) -->
+                    <div>
+                        <div class="tc-col-header">
+                            <span class="material-icons-round" style="color:#3b82f6;">bolt</span>
+                            <h3>Bình Luận Mới</h3>
+                        </div>
+                        <div class="tc-realtime-area">
+                            <div class="tc-realtime-overlay"></div>
+                            <div id="tc-realtime-comments" class="flex flex-col gap-2 relative z-10 w-full h-full"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Action Movies Section -->
     <section class="py-6 md:py-8 bg-background-dark">
         <div class="container mx-auto px-6">
@@ -1120,7 +1200,7 @@
     </section>
 
     <!-- Dynamic Movie Sections from API -->
-    <div id="dynamicSections" class="bg-background-dark">
+    <div id="dynamicSections" class="bg-transparent">
         <!-- Loading -->
         <div id="sectionsLoading" class="py-20">
             <div class="container mx-auto px-6 text-center">
@@ -1664,6 +1744,7 @@
 
     <!-- Login Popunder -->
     <script src="js/login-popunder.js"></script>
+    <script src="js/top-comments.js"></script>
 
     <!-- PWA Service Worker Registration -->
     <script>
