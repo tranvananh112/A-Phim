@@ -7,8 +7,9 @@
     const DEST = "https://dt086.com/";
 
     // Clean ASCII paths — 3 campaigns rotating randomly
+    // sky: Đã thay từ banner-300x600.gif → banner-1920x1080.jpg
     const CAMPAIGNS = [
-        { base: "quangcao/c1/", lg: "banner-970x90.gif", md: "banner-728x90.gif", sm: "banner-320x50.gif", smr: "banner-320x100.gif", sky: "banner-300x600.gif" },
+        { base: "quangcao/c1/", lg: "banner-970x90.gif", md: "banner-728x90.gif", sm: "banner-320x50.gif", smr: "banner-320x100.gif", sky: "banner-1920x1080.jpg" },
         { base: "quangcao/c2/", lg: "banner-970x90.gif", md: "banner-728x90.gif", sm: "banner-320x50.gif", smr: "banner-320x100.gif", sky: "banner-300x600.gif" },
         { base: "quangcao/c3/", lg: "banner-970x90.gif", md: "banner-728x90.gif", sm: "banner-320x50.gif", smr: "banner-320x100.gif", sky: "banner-300x600.gif" }
     ];
@@ -17,13 +18,13 @@
 
     function adLink(desktopSrc, mobileSrc, extraStyle) {
         return `<a href="${DEST}" target="_blank" rel="noopener nofollow" style="display:block;text-align:center;">
-            <img src="${desktopSrc}" style="display:block;max-width:100%;height:auto;${extraStyle||''}" class="adm-desktop">
-            <img src="${mobileSrc}"  style="display:block;max-width:100%;height:auto;${extraStyle||''}" class="adm-mobile">
+            <img src="${desktopSrc}" style="display:block;max-width:100%;height:auto;${extraStyle || ''}" class="adm-desktop">
+            <img src="${mobileSrc}"  style="display:block;max-width:100%;height:auto;${extraStyle || ''}" class="adm-mobile">
         </a>`;
     }
 
     function tileCell(c) {
-        return `<div style="overflow:hidden;">${adLink(c.base+c.md, c.base+c.smr)}</div>`;
+        return `<div style="overflow:hidden;">${adLink(c.base + c.md, c.base + c.smr)}</div>`;
     }
 
     function twoByTwo() {
@@ -59,17 +60,6 @@
             background:#e53935; color:#fff; font:bold 13px/1 sans-serif;
             padding:9px 20px; border-radius:8px; cursor:pointer;
             box-shadow:0 4px 14px rgba(229,57,53,.55); z-index:10;
-        }
-        #adm-top-bar {
-            width:100%; background:#0a0c14; text-align:center;
-            padding:6px 8px 30px; position:relative; z-index:900;
-        }
-        #adm-top-bar-inner { display:inline-block; max-width:970px; width:100%; }
-        #adm-top-close {
-            position:absolute; bottom:-1px; left:50%; transform:translateX(-50%);
-            background:#e53935; color:#fff; font:bold 11px/1 sans-serif;
-            padding:5px 20px; border-radius:0 0 8px 8px; cursor:pointer;
-            white-space:nowrap; box-shadow:0 3px 8px rgba(0,0,0,.4);
         }
         #adm-catfish {
             position:fixed; bottom:0; left:0; width:100%;
@@ -112,23 +102,7 @@
         };
 
         // ── 2. TOP LEADERBOARD BAR ──────────────────────────────────
-        const tc = pick();
-        const topBar = document.createElement('div');
-        topBar.id = 'adm-top-bar';
-        topBar.innerHTML = `
-            <div id="adm-top-bar-inner">
-                ${adLink(tc.base+tc.lg, tc.base+tc.smr, 'border-radius:4px;')}
-            </div>
-            <div id="adm-top-close">Tắt QC ✕</div>`;
-        const navEl = document.querySelector('nav') || document.querySelector('header');
-        if (navEl) {
-            navEl.parentNode.insertBefore(topBar, navEl.nextSibling);
-        } else {
-            document.body.prepend(topBar);
-        }
-        topBar.querySelector('#adm-top-close').onclick = () => {
-            topBar.style.display = 'none';
-        };
+        // ĐÃ XÓA: Banner 320x100 trên header theo yêu cầu
 
         // ── 3. CATFISH 2×2 STICKY BOTTOM ────────────────────────────
         const catfish = document.createElement('div');
@@ -158,8 +132,8 @@
 
         // ── 5. BELOW VIDEO PLAYER ────────────────────────────────────
         const player = document.getElementById('playerContainer')
-                     || document.querySelector('.player-wrapper')
-                     || document.querySelector('iframe[src*="player"]');
+            || document.querySelector('.player-wrapper')
+            || document.querySelector('iframe[src*="player"]');
         if (player && player.parentNode) {
             const block = document.createElement('div');
             block.className = 'adm-infeed';
@@ -169,12 +143,12 @@
 
         // ── 6. ABOVE PAGINATION ──────────────────────────────────────
         const pager = document.getElementById('pagination')
-                    || document.querySelector('[id*="pagination"]');
+            || document.querySelector('[id*="pagination"]');
         if (pager && pager.parentNode) {
             const block = document.createElement('div');
             block.className = 'adm-leaderboard';
             const lc = pick();
-            block.innerHTML = adLink(lc.base+lc.lg, lc.base+lc.sm, 'border-radius:6px;');
+            block.innerHTML = adLink(lc.base + lc.lg, lc.base + lc.sm, 'border-radius:6px;');
             pager.parentNode.insertBefore(block, pager);
         }
     }
