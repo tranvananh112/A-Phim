@@ -31,6 +31,11 @@
         return `<div class="adm-2x2">${tileCell(pick())}${tileCell(pick())}${tileCell(pick())}${tileCell(pick())}</div>`;
     }
 
+    // Custom 2x2 with specific campaign order: c3, c3, c1, c2
+    function twoByTwoCustom() {
+        return `<div class="adm-2x2">${tileCell(CAMPAIGNS[2])}${tileCell(CAMPAIGNS[2])}${tileCell(CAMPAIGNS[0])}${tileCell(CAMPAIGNS[1])}</div>`;
+    }
+
     // ── CSS ─────────────────────────────────────────────────────────
     const CSS = `
         .adm-desktop { display:block !important; }
@@ -122,10 +127,16 @@
             'section, #dynamicSections > div, .movie-section, [data-section], .py-8, .py-12'
         ));
         sections.forEach((sec, i) => {
+            // Skip inserting ad after "Top Bình Luận" section
+            if (sec.id === 'top-comments-section') {
+                return;
+            }
+
             if ((i + 1) % 2 === 0 && sec.parentNode) {
                 const block = document.createElement('div');
                 block.className = 'adm-infeed';
-                block.innerHTML = twoByTwo();
+                // Use custom order (c3, c3, c1, c2) for the first in-feed block
+                block.innerHTML = (i === 1) ? twoByTwoCustom() : twoByTwo();
                 sec.parentNode.insertBefore(block, sec.nextSibling);
             }
         });
