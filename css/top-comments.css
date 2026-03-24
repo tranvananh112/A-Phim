@@ -178,10 +178,40 @@
     gap: 24px;
 }
 
+.tc-grid > div {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Đẩy nút "Xem thêm" xuống tận cùng cho thẳng hàng các cột */
+.tc-grid > div > .mt-4 {
+    margin-top: auto;
+}
+
+/* Kẻ vạch dọc ngăn cách giữa 4 cột trên Desktop chạm sát khung */
+.tc-grid > div:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: -12px; /* Dựa vào gap: 24px (chia đôi là 12) */
+    top: -24px;   /* Đâm thẳng lên vạch chia ngang bên trên */
+    bottom: -24px;/* Đâm thẳng xuống viền hộp bên dưới */
+    width: 1px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
 @media (max-width: 1024px) {
     .tc-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 32px;
+        gap: 32px 24px;
+    }
+    
+    /* Vạch trên Tablet chỉ hiện giữa 2 cột thay vì 4 */
+    .tc-grid > div::after {
+        display: none; 
+    }
+    .tc-grid > div:nth-child(odd)::after {
+        display: block;
     }
 }
 
@@ -201,6 +231,11 @@
     .tc-grid > div {
         flex: 0 0 85%;
         scroll-snap-align: center;
+    }
+    
+    /* Bỏ rãnh dọc trên Mobile vuốt ngang */
+    .tc-grid > div::after {
+        display: none !important;
     }
 }
 
