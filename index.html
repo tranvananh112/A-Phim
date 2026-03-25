@@ -456,6 +456,7 @@
     <link rel="stylesheet" href="css/search-icon-desktop.css">
     <link rel="stylesheet" href="css/search-expand-simple.css">
     <link rel="stylesheet" href="css/horror-section.css">
+    <link rel="stylesheet" href="css/coming-soon-section.css">
     <link rel="stylesheet" href="css/country-sections.css">
 
     <!-- Material Icons Loader -->
@@ -998,22 +999,24 @@
                     <span class="material-icons-round" style="color:#ffd700; font-size:24px;">military_tech</span>
                     <h2 class="tc-title">Top Bình Luận</h2>
                 </div>
-                
+
                 <!-- Top Row: Featured Comments -->
                 <div class="relative group">
-                    <button id="tc-scroll-left" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/50 border border-white/10 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity -ml-4 hover:bg-black/80">
+                    <button id="tc-scroll-left"
+                        class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/50 border border-white/10 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity -ml-4 hover:bg-black/80">
                         <span class="material-icons-round text-sm">chevron_left</span>
                     </button>
                     <div class="tc-featured-wrapper" id="tc-featured-container">
                         <!-- Loaded dynamically via js -->
                     </div>
-                    <button id="tc-scroll-right" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/50 border border-white/10 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity -mr-4 hover:bg-black/80">
+                    <button id="tc-scroll-right"
+                        class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/50 border border-white/10 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity -mr-4 hover:bg-black/80">
                         <span class="material-icons-round text-sm">chevron_right</span>
                     </button>
                 </div>
-                
+
                 <div class="tc-divider"></div>
-                
+
                 <!-- Bottom Grid: 4 Columns -->
                 <div class="tc-grid">
                     <!-- Column 1: Sôi Nổi Nhất -->
@@ -1025,9 +1028,10 @@
                         <div class="tc-list" id="tc-soi-noi">
                             <div class="text-sm text-gray-500">Đang tải...</div>
                         </div>
-                        <div class="mt-4"><a href="search.html" class="text-xs text-gray-500 hover:text-white transition-colors">Xem thêm</a></div>
+                        <div class="mt-4"><a href="search.html"
+                                class="text-xs text-gray-500 hover:text-white transition-colors">Xem thêm</a></div>
                     </div>
-                    
+
                     <!-- Column 2: Yêu Thích Nhất -->
                     <div>
                         <div class="tc-col-header">
@@ -1037,9 +1041,10 @@
                         <div class="tc-list" id="tc-yeu-thich">
                             <div class="text-sm text-gray-500">Đang tải...</div>
                         </div>
-                        <div class="mt-4"><a href="search.html" class="text-xs text-gray-500 hover:text-white transition-colors">Xem thêm</a></div>
+                        <div class="mt-4"><a href="search.html"
+                                class="text-xs text-gray-500 hover:text-white transition-colors">Xem thêm</a></div>
                     </div>
-                    
+
                     <!-- Column 3: Thể Loại Hot -->
                     <div>
                         <div class="tc-col-header">
@@ -1049,9 +1054,10 @@
                         <div class="tc-genre-list" id="tc-the-loai">
                             <!-- Loaded via js -->
                         </div>
-                        <div class="mt-4"><a href="search.html" class="text-xs text-gray-500 hover:text-white transition-colors">Xem thêm</a></div>
+                        <div class="mt-4"><a href="search.html"
+                                class="text-xs text-gray-500 hover:text-white transition-colors">Xem thêm</a></div>
                     </div>
-                    
+
                     <!-- Column 4: Bình Luận Mới (Virtual) -->
                     <div>
                         <div class="tc-col-header">
@@ -1060,7 +1066,8 @@
                         </div>
                         <div class="tc-realtime-area">
                             <div class="tc-realtime-overlay"></div>
-                            <div id="tc-realtime-comments" class="flex flex-col gap-2 relative z-10 w-full h-full"></div>
+                            <div id="tc-realtime-comments" class="flex flex-col gap-2 relative z-10 w-full h-full">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1132,6 +1139,54 @@
             <!-- Movies Horizontal Scroll -->
             <div id="vietnamMoviesGrid" class="hidden flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
                 <!-- Movies will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Coming Soon Movies Section - Top 10 Style -->
+    <section class="py-6 md:py-8 coming-soon-section">
+        <div class="container mx-auto px-6">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-8 bg-amber-500 rounded-full shadow-[0_0_10px_#f59e0b]"></div>
+                    <h2
+                        class="text-lg md:text-2xl lg:text-3xl font-extrabold uppercase tracking-tight flex items-center gap-2 text-amber-500 drop-shadow-[0_0_5px_rgba(245,158,11,0.5)]">
+                        <span class="text-white">Phim Sắp Chiếu</span>
+                    </h2>
+                </div>
+                <a href="danh-sach.html?list=phim-sap-chieu"
+                    class="text-white md:text-primary font-semibold hover:text-white transition-colors flex items-center gap-1 group">
+                    <span class="hidden md:inline text-sm">Xem tất cả</span>
+                    <span
+                        class="material-icons-round text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                </a>
+            </div>
+
+            <!-- Loading -->
+            <div id="comingSoonLoading" class="text-center py-8">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500 mx-auto mb-4"></div>
+                <p class="text-gray-400">Đang tải phim sắp chiếu...</p>
+            </div>
+
+            <!-- Top 10 Container -->
+            <div id="comingSoonContainer" class="hidden relative group">
+                <div class="flex gap-4 overflow-x-auto scrollbar-hide pb-10 cs-scroll-container snap-x snap-mandatory">
+                    <!-- Movies will be loaded here -->
+                </div>
+
+                <!-- Navigation Arrows -->
+                <button id="comingSoonScrollLeft" class="cs-nav-arrow cs-nav-arrow-left hidden md:block">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" stroke-width="2.5"
+                        viewBox="0 0 24 24">
+                        <path d="M15.75 19.5L8.25 12l7.5-7.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+                <button id="comingSoonScrollRight" class="cs-nav-arrow cs-nav-arrow-right hidden md:block">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" stroke-width="2.5"
+                        viewBox="0 0 24 24">
+                        <path d="M8.25 4.5l7.5 7.5-7.5 7.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
             </div>
         </div>
     </section>
@@ -1702,6 +1757,9 @@
     <!-- Top Movies Hot -->
     <script src="js/top-movies.js"></script>
 
+    <!-- Coming Soon Movies -->
+    <script src="js/coming-soon.js"></script>
+
     <!-- Country Sections - Phim Hàn Quốc, Trung Quốc, US-UK -->
     <script src="js/country-sections.js"></script>
 
@@ -1790,7 +1848,7 @@
     </script>
 
 
-<script src="js/ads-manager.js" defer></script>
+    <script src="js/ads-manager.js?v=2.0" defer></script>
 </body>
 
 </html>
