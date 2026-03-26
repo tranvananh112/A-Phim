@@ -1,53 +1,44 @@
 /**
- * Coming Soon Movies Section - Top 10 Style
- * Load movies from "phim-sap-chieu" and sort by highest rating
+ * Theater Movies Section - Top 20 Style
+ * Load movies from "phim-chieu-rap" and sort by highest rating
  */
 
 (function () {
     'use strict';
 
-    // Load coming soon movies
+    // Load theater movies
     async function loadComingSoonMovies() {
         const loading = document.getElementById('comingSoonLoading');
         const container = document.getElementById('comingSoonContainer');
 
         if (!loading || !container) {
-            console.warn('Coming soon section elements not found');
+            console.warn('Theater movies section elements not found');
             return;
         }
 
         try {
-            console.log('Loading coming soon movies...');
+            console.log('Loading theater movies...');
 
-            // Fetch from phim-sap-chieu API
-            const response = await fetch('https://ophim1.com/v1/api/danh-sach/phim-sap-chieu?page=1', {
+            // Fetch from phim-chieu-rap API - load 20 movies without sorting
+            const response = await fetch('https://ophim1.com/v1/api/danh-sach/phim-chieu-rap?page=1&limit=20', {
                 method: 'GET',
                 headers: { 'accept': 'application/json' }
             });
 
             const data = await response.json();
-            console.log('Coming soon movies data:', data);
+            console.log('Theater movies data:', data);
 
             if (data.status === 'success' && data.data && data.data.items) {
-                let movies = data.data.items;
+                const movies = data.data.items;
 
-                // Sort by rating (highest first)
-                movies.sort((a, b) => {
-                    const ratingA = a.tmdb?.vote_average || 0;
-                    const ratingB = b.tmdb?.vote_average || 0;
-                    return ratingB - ratingA;
-                });
-
-                // Get top 20
-                movies = movies.slice(0, 20);
-
-                renderComingSoonMovies(movies);
+                // Take first 20 movies as-is (no sorting)
+                renderComingSoonMovies(movies.slice(0, 20));
             } else {
-                loading.innerHTML = '<p class="text-gray-400">Không thể tải phim sắp chiếu</p>';
+                loading.innerHTML = '<p class="text-gray-400">Không thể tải phim chiếu rạp</p>';
             }
         } catch (error) {
-            console.error('Error loading coming soon movies:', error);
-            loading.innerHTML = '<p class="text-red-400">Lỗi khi tải phim sắp chiếu</p>';
+            console.error('Error loading theater movies:', error);
+            loading.innerHTML = '<p class="text-red-400">Lỗi khi tải phim chiếu rạp</p>';
         }
     }
 
