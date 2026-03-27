@@ -47,7 +47,7 @@ let cacheLivescores = { data: null, timestamp: 0 };
 let cacheChanges = { data: null, timestamp: 0 };
 const ISPORTS_CACHE_TTL = 30000; // 30 seconds
 
-app.get('/api/isports/livescores', async (req, res) => {
+app.get(['/api/isports/livescores', '/v1/api/isports/livescores'], async (req, res) => {
     try {
         const now = Date.now();
         if (cacheLivescores.data && (now - cacheLivescores.timestamp < ISPORTS_CACHE_TTL)) {
@@ -75,7 +75,7 @@ app.get('/api/isports/livescores', async (req, res) => {
     }
 });
 
-app.get('/api/isports/schedule', async (req, res) => {
+app.get(['/api/isports/schedule', '/v1/api/isports/schedule'], async (req, res) => {
     try {
         const date = req.query.date || '';
         const url = `http://api.isportsapi.com/sport/football/schedule?api_key=${ISPORTS_API_KEY}&date=${date}`;
@@ -87,7 +87,7 @@ app.get('/api/isports/schedule', async (req, res) => {
     }
 });
 
-app.get('/api/isports/summary', async (req, res) => {
+app.get(['/api/isports/summary', '/v1/api/isports/summary'], async (req, res) => {
     try {
         const url = `http://api.isportsapi.com/sport/football/summary?api_key=${ISPORTS_API_KEY}`;
         const response = await axios.get(url);
@@ -98,7 +98,7 @@ app.get('/api/isports/summary', async (req, res) => {
     }
 });
 
-app.get('/api/isports/livetext', async (req, res) => {
+app.get(['/api/isports/livetext', '/v1/api/isports/livetext'], async (req, res) => {
     try {
         const url = `http://api.isportsapi.com/sport/football/livetext/list?api_key=${ISPORTS_API_KEY}`;
         const response = await axios.get(url);
@@ -109,7 +109,7 @@ app.get('/api/isports/livetext', async (req, res) => {
     }
 });
 
-app.get('/api/isports/changes', async (req, res) => {
+app.get(['/api/isports/changes', '/v1/api/isports/changes'], async (req, res) => {
     try {
         const now = Date.now();
         if (cacheChanges.data && (now - cacheChanges.timestamp < 10000)) { // 10s for changes
@@ -133,7 +133,7 @@ app.get('/api/isports/changes', async (req, res) => {
     }
 });
 
-app.get('/api/isports/team/:teamId', async (req, res) => {
+app.get(['/api/isports/team/:teamId', '/v1/api/isports/team/:teamId'], async (req, res) => {
     try {
         const teamId = req.params.teamId;
         const url = `http://api.isportsapi.com/sport/football/team?api_key=${ISPORTS_API_KEY}&teamId=${teamId}`;
@@ -148,7 +148,7 @@ app.get('/api/isports/team/:teamId', async (req, res) => {
 // Image Proxy & Cache Server-side cho Logo iSports
 const isportsLogoCache = {};
 
-app.get('/api/isports/image/:teamId', async (req, res) => {
+app.get(['/api/isports/image/:teamId', '/v1/api/isports/image/:teamId'], async (req, res) => {
     try {
         const teamId = req.params.teamId;
         let logoUrl = isportsLogoCache[teamId];
@@ -197,7 +197,7 @@ const fdAxios = axios.create({
     headers: { 'X-Auth-Token': FOOTBALL_DATA_TOKEN }
 });
 
-app.get('/api/fd/standings/:league', async (req, res) => {
+app.get(['/api/fd/standings/:league', '/v1/api/fd/standings/:league'], async (req, res) => {
     try {
         const { league } = req.params;
         const response = await fdAxios.get(`competitions/${league}/standings`);
@@ -208,7 +208,7 @@ app.get('/api/fd/standings/:league', async (req, res) => {
     }
 });
 
-app.get('/api/fd/scorers/:league', async (req, res) => {
+app.get(['/api/fd/scorers/:league', '/v1/api/fd/scorers/:league'], async (req, res) => {
     try {
         const { league } = req.params;
         const response = await fdAxios.get(`competitions/${league}/scorers?limit=10`);
@@ -219,7 +219,7 @@ app.get('/api/fd/scorers/:league', async (req, res) => {
     }
 });
 
-app.get('/api/fd/matches', async (req, res) => {
+app.get(['/api/fd/matches', '/v1/api/fd/matches'], async (req, res) => {
     try {
         const response = await fdAxios.get(`matches`);
         res.status(200).json(response.data);
@@ -229,7 +229,7 @@ app.get('/api/fd/matches', async (req, res) => {
     }
 });
 
-app.get('/api/sportmonks/livescores', async (req, res) => {
+app.get(['/api/sportmonks/livescores', '/v1/api/sportmonks/livescores'], async (req, res) => {
     try {
         const url = `https://api.sportmonks.com/v3/football/livescores/inplay?api_token=${SPORTMONKS_TOKEN}&include=participants;scores;periods;events;league.country;round`;
         
@@ -241,7 +241,7 @@ app.get('/api/sportmonks/livescores', async (req, res) => {
     }
 });
 
-app.get('/api/sportmonks/h2h/:t1/:t2', async (req, res) => {
+app.get(['/api/sportmonks/h2h/:t1/:t2', '/v1/api/sportmonks/h2h/:t1/:t2'], async (req, res) => {
     try {
         const { t1, t2 } = req.params;
         const url = `https://api.sportmonks.com/v3/football/fixtures/head-to-head/${t1}/${t2}?api_token=${SPORTMONKS_TOKEN}&include=participants;league;scores;state;venue;events`;
@@ -254,7 +254,7 @@ app.get('/api/sportmonks/h2h/:t1/:t2', async (req, res) => {
     }
 });
 
-app.get('/api/sportmonks/fixture/:id', async (req, res) => {
+app.get(['/api/sportmonks/fixture/:id', '/v1/api/sportmonks/fixture/:id'], async (req, res) => {
     try {
         const { id } = req.params;
         const url = `https://api.sportmonks.com/v3/football/fixtures/${id}?api_token=${SPORTMONKS_TOKEN}&include=participants;league;venue;state;scores;lineups.player;lineups.type;lineups.details.type;metadata.type;coaches`;
