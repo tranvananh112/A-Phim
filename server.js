@@ -291,8 +291,8 @@ function queuedFetch(url, options) {
     return apiQueue;
 }
 
-// Proxy lấy dữ liệu trận đấu (Dùng RapidAPI)
-app.get('/api/sofascore/*', async (req, res) => {
+// Proxy lấy dữ liệu trận đấu (Dùng RapidAPI) - Hỗ trợ cả subpath /v1/api nếu cần
+app.get(['/api/sofascore/*', '/v1/api/sofascore/*'], async (req, res) => {
   try {
     const targetPath = req.params[0]; // VD: api/v1/sport/football/events/live
     const cacheKey = targetPath;
@@ -306,9 +306,11 @@ app.get('/api/sofascore/*', async (req, res) => {
 
     // 2. Gọi RapidAPI qua hàng đợi
     const url = `https://sportapi7.p.rapidapi.com/${targetPath}`;
+    console.log(`[Proxy] Fetching: ${url}`);
+    
     const result = await queuedFetch(url, {
         headers: {
-            'x-rapidapi-key': '8e131041e5msheef9200c98e9712p109669jsn30145b3c501d', // KEY MOI
+            'x-rapidapi-key': '8e131041e5msheef9200c98e9712p109669jsn30145b3c501d',
             'x-rapidapi-host': 'sportapi7.p.rapidapi.com',
             'Accept': 'application/json'
         }
@@ -316,12 +318,13 @@ app.get('/api/sofascore/*', async (req, res) => {
 
     // 3. Xử lý kết quả
     if (result.status === 200 && result.text) {
-        setCache(cacheKey, result.text); // Lưu cache 5 phút
+        setCache(cacheKey, result.text); 
         res.setHeader('X-Cache', 'MISS');
+        res.setHeader('Content-Type', 'application/json');
         res.status(200).send(result.text);
     } else {
-        console.error(`RapidAPI Error ${result.status}:`, result.text);
-        res.status(200).json({ events: [] }); // Tránh crash
+        console.error(`[Proxy] Error ${result.status}:`, result.text);
+        res.status(result.status || 500).json({ error: 'Upstream Error', details: result.text });
     }
   } catch (error) {
     console.error("RapidAPI Proxy Error:", error.message);

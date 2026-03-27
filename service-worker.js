@@ -69,18 +69,23 @@ self.addEventListener('fetch', (event) => {
     // Đồng thời fetch mới ở background → lần sau có data mới hơn.
     if (url.hostname.includes('ophim')) {
         event.respondWith(
-            caches.open('aphim-api-v1').then(cache =>
-                cache.match(request).then(cached => {
-                    // Background fetch để cập nhật cache
-                    const networkFetch = fetch(request).then(response => {
-                        if (response.ok) cache.put(request, response.clone());
-                        return response;
-                    }).catch(() => cached);
+            caches.open('aphim-api-v1').then(async cache => {
+                const cached = await cache.match(request);
+                
+                // Background fetch update
+                const networkFetch = fetch(request).then(response => {
+                    if (response.ok) cache.put(request, response.clone());
+                    return response;
+                }).catch(() => null);
 
-                    // Trả cache ngay nếu có, không thì chờ network
-                    return cached || networkFetch;
-                })
-            )
+                // Trả về cache nếu có, hoặc chờ network, hoặc trả về lỗi JSON hợp lệ
+                if (cached) return cached;
+                const net = await networkFetch;
+                return net || new Response(JSON.stringify({error: 'Network failure'}), {
+                    status: 503,
+                    headers: {'Content-Type': 'application/json'}
+                });
+            })
         );
         return;
     }
@@ -90,7 +95,6 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Network first strategy for HTML pages and API calls
     if (request.mode === 'navigate' ||
         (request.headers.get('accept') && request.headers.get('accept').includes('text/html')) ||
         url.pathname.includes('/api/') ||
@@ -98,13 +102,18 @@ self.addEventListener('fetch', (event) => {
         event.respondWith(
             fetch(request)
                 .then(response => {
-                    const responseClone = response.clone();
-                    caches.open(RUNTIME_CACHE).then(cache => {
-                        cache.put(request, responseClone);
-                    });
+                    if (response.ok) {
+                        const responseClone = response.clone();
+                        caches.open(RUNTIME_CACHE).then(cache => {
+                            cache.put(request, responseClone);
+                        });
+                    }
                     return response;
                 })
-                .catch(() => caches.match(request))
+                .catch(async () => {
+                    const cached = await caches.match(request);
+                    return cached || new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
+                })
         );
         return;
     }

@@ -1030,7 +1030,7 @@ const SPORTS = ['football','basketball','tennis','badminton','volleyball','table
 
 // ===== API =====
 async function apiFetch(path) {
-    const res = await fetch('/api/sofascore/' + path);
+    const res = await fetch(window.location.origin + '/api/sofascore/' + path);
     const text = await res.text();
     try { return JSON.parse(text); } catch(e) { return null; }
 }
