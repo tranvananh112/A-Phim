@@ -39,25 +39,235 @@ app.get('/the-thao', (req, res) => {
 
 
 
-// ===== PROXY: Sport Radar Live Score =====
-app.get('/api/sportradar/live-score', async (req, res) => {
+// ===== PROXY: iSportsAPI =====
+const ISPORTS_API_KEY = 'R86CxN79bK1lrAC0';
+
+// Simple in-memory cache to save API usage
+let cacheLivescores = { data: null, timestamp: 0 };
+let cacheChanges = { data: null, timestamp: 0 };
+const ISPORTS_CACHE_TTL = 30000; // 30 seconds
+
+app.get('/api/isports/livescores', async (req, res) => {
     try {
-        const { event_id } = req.query;
-        if (!event_id) return res.status(400).json({ error: 'event_id is required' });
-        const url = `https://sport-radar-api.p.rapidapi.com/live/score-ui?event_id=${event_id}`;
-        const response = await fetch(url, {
-            headers: {
-                'x-rapidapi-key': '8e131041e5msheef9200c98e9712p109669jsn30145b3c501d',
-                'x-rapidapi-host': 'sport-radar-api.p.rapidapi.com',
-                'Content-Type': 'application/json'
-            }
-        });
-        const data = await response.json();
-        res.status(response.status).json(data);
+        const now = Date.now();
+        if (cacheLivescores.data && (now - cacheLivescores.timestamp < ISPORTS_CACHE_TTL)) {
+            return res.status(200).json(cacheLivescores.data);
+        }
+
+        const url = `http://api.isportsapi.com/sport/football/livescores?api_key=${ISPORTS_API_KEY}`;
+        const response = await axios.get(url);
+        
+        // Check for limit error
+        if (response.data && response.data.code === 2) {
+            console.warn("iSports Limit Reached!");
+            return res.status(200).json({
+                code: 2,
+                message: "API iSports (Trial 200) đã hết hạn mức ngày hôm nay. Vui lòng cung cấp Key mới.",
+                data: []
+            });
+        }
+        
+        cacheLivescores = { data: response.data, timestamp: now };
+        res.status(200).json(response.data);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error("iSports Livescores Error:", error.message);
+        res.status(500).json({ error: 'Failed to fetch from iSports' });
     }
 });
+
+app.get('/api/isports/schedule', async (req, res) => {
+    try {
+        const date = req.query.date || '';
+        const url = `http://api.isportsapi.com/sport/football/schedule?api_key=${ISPORTS_API_KEY}&date=${date}`;
+        const response = await axios.get(url);
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error("iSports Schedule Error:", error.message);
+        res.status(500).json({ error: 'Failed to fetch schedule from iSports' });
+    }
+});
+
+app.get('/api/isports/summary', async (req, res) => {
+    try {
+        const url = `http://api.isportsapi.com/sport/football/summary?api_key=${ISPORTS_API_KEY}`;
+        const response = await axios.get(url);
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error("iSports Summary Error:", error.message);
+        res.status(500).json({ error: 'Failed to fetch summary from iSports' });
+    }
+});
+
+app.get('/api/isports/livetext', async (req, res) => {
+    try {
+        const url = `http://api.isportsapi.com/sport/football/livetext/list?api_key=${ISPORTS_API_KEY}`;
+        const response = await axios.get(url);
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error("iSports LiveText Error:", error.message);
+        res.status(500).json({ error: 'Failed to fetch livetext from iSports' });
+    }
+});
+
+app.get('/api/isports/changes', async (req, res) => {
+    try {
+        const now = Date.now();
+        if (cacheChanges.data && (now - cacheChanges.timestamp < 10000)) { // 10s for changes
+            return res.status(200).json(cacheChanges.data);
+        }
+
+        const url = `http://api.isportsapi.com/sport/football/livescores/changes?api_key=${ISPORTS_API_KEY}`;
+        const response = await axios.get(url);
+
+        if (response.data && response.data.code === 2) {
+             if (cacheChanges.data) return res.status(200).json(cacheChanges.data);
+        } else {
+            cacheChanges = { data: response.data, timestamp: now };
+        }
+
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error("iSports Changes Error:", error.message);
+        if (cacheChanges.data) return res.status(200).json(cacheChanges.data);
+        res.status(500).json({ error: 'Failed to fetch changes from iSports' });
+    }
+});
+
+app.get('/api/isports/team/:teamId', async (req, res) => {
+    try {
+        const teamId = req.params.teamId;
+        const url = `http://api.isportsapi.com/sport/football/team?api_key=${ISPORTS_API_KEY}&teamId=${teamId}`;
+        const response = await axios.get(url);
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error("iSports Team Error:", error.message);
+        res.status(500).json({ error: 'Failed to fetch team from iSports' });
+    }
+});
+
+// Image Proxy & Cache Server-side cho Logo iSports
+const isportsLogoCache = {};
+
+app.get('/api/isports/image/:teamId', async (req, res) => {
+    try {
+        const teamId = req.params.teamId;
+        let logoUrl = isportsLogoCache[teamId];
+        
+        // 1. Phân giải Logo URL nếu chưa có
+        if (!logoUrl) {
+            const url = `http://api.isportsapi.com/sport/football/team?api_key=${ISPORTS_API_KEY}&teamId=${teamId}`;
+            const response = await axios.get(url);
+            if (response.data && response.data.data && response.data.data[0] && response.data.data[0].logo) {
+                logoUrl = response.data.data[0].logo;
+                isportsLogoCache[teamId] = logoUrl; // Lưu vào biến RAM
+            }
+        }
+        
+        // 2. Stream ảnh về client lách CORS/403
+        if (logoUrl) {
+            const imgParams = {
+                responseType: 'arraybuffer',
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                    'Accept': 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+                    'Accept-Encoding': 'gzip, deflate',
+                    'Connection': 'keep-alive'
+                }
+            };
+            const imgResult = await axios.get(logoUrl, imgParams);
+            res.set('Content-Type', 'image/png');
+            res.set('Cache-Control', 'public, max-age=86400'); // Trình duyệt cache 1 ngày
+            res.send(imgResult.data);
+        } else {
+            res.status(404).send('No logo');
+        }
+    } catch(e) {
+        // Fallback im lặng tránh văng server
+        res.status(404).send('Error fetching proxy image');
+    }
+});
+
+
+// ===== PROXY: Sportmonks API =====
+const SPORTMONKS_TOKEN = 'x8HmVIpZZd9bz5AqazZIeygXWXnNsqLIPNokCI1M5lQ4LTzMOGTp3i8ePBCk';
+const FOOTBALL_DATA_TOKEN = '693024976693480792fe9c97125c68ca';
+
+const fdAxios = axios.create({
+    baseURL: 'https://api.football-data.org/v4/',
+    headers: { 'X-Auth-Token': FOOTBALL_DATA_TOKEN }
+});
+
+app.get('/api/fd/standings/:league', async (req, res) => {
+    try {
+        const { league } = req.params;
+        const response = await fdAxios.get(`competitions/${league}/standings`);
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error("FD Standings Error:", error.response?.data || error.message);
+        res.status(error.response?.status || 500).json(error.response?.data || { error: 'Failed' });
+    }
+});
+
+app.get('/api/fd/scorers/:league', async (req, res) => {
+    try {
+        const { league } = req.params;
+        const response = await fdAxios.get(`competitions/${league}/scorers?limit=10`);
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error("FD Scorers Error:", error.response?.data || error.message);
+        res.status(error.response?.status || 500).json(error.response?.data || { error: 'Failed' });
+    }
+});
+
+app.get('/api/fd/matches', async (req, res) => {
+    try {
+        const response = await fdAxios.get(`matches`);
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error("FD Matches Error:", error.response?.data || error.message);
+        res.status(error.response?.status || 500).json(error.response?.data || { error: 'Failed' });
+    }
+});
+
+app.get('/api/sportmonks/livescores', async (req, res) => {
+    try {
+        const url = `https://api.sportmonks.com/v3/football/livescores/inplay?api_token=${SPORTMONKS_TOKEN}&include=participants;scores;periods;events;league.country;round`;
+        
+        const response = await axios.get(url);
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error("Sportmonks Proxy Error:", error.response?.data || error.message);
+        res.status(500).json({ error: 'Failed to fetch from Sportmonks' });
+    }
+});
+
+app.get('/api/sportmonks/h2h/:t1/:t2', async (req, res) => {
+    try {
+        const { t1, t2 } = req.params;
+        const url = `https://api.sportmonks.com/v3/football/fixtures/head-to-head/${t1}/${t2}?api_token=${SPORTMONKS_TOKEN}&include=participants;league;scores;state;venue;events`;
+        
+        const response = await axios.get(url);
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error("Sportmonks H2H Error:", error.response?.data || error.message);
+        res.status(500).json({ error: 'Failed to fetch H2H from Sportmonks' });
+    }
+});
+
+app.get('/api/sportmonks/fixture/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const url = `https://api.sportmonks.com/v3/football/fixtures/${id}?api_token=${SPORTMONKS_TOKEN}&include=participants;league;venue;state;scores;lineups.player;lineups.type;lineups.details.type;metadata.type;coaches`;
+        
+        const response = await axios.get(url);
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error("Sportmonks Fixture Error:", error.response?.data || error.message);
+        res.status(500).json({ error: 'Failed to fetch fixture from Sportmonks' });
+    }
+});
+
+// ===== PROXY: Sport Radar Live Score =====
 
 // ===== CACHE: 5 phút để tránh 429 rate limit =====
 const apiCache = new Map();

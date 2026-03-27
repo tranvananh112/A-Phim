@@ -460,6 +460,29 @@
             letter-spacing: 4px; z-index: 1;
         }
 
+        /* Player on pitch */
+        .player-node {
+            position: absolute; display: flex; flex-direction: column; align-items: center;
+            z-index: 10; transform: translate(-50%, -50%); transition: all 0.5s ease;
+        }
+        .player-shirt {
+            width: 24px; height: 24px; border-radius: 50%; border: 2px solid white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 900; color: white; margin-bottom: 2px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .player-name {
+            font-size: 9px; font-weight: 700; color: white; text-shadow: 1px 1px 2px black;
+            white-space: nowrap; text-transform: uppercase;
+        }
+        .home-player .player-shirt { background: #1e3a8a; }
+        .away-player .player-shirt { background: #ef4444; }
+
+        .lineup-overlay {
+            position: absolute; inset: 0; display: none;
+        }
+        .lineup-overlay.show { display: block; }
+
         /* Momentum graph */
         .momentum-wrap { background: #111; padding: 12px; border-top: 1px solid #333; }
         .momentum-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text2); margin-bottom: 6px; }
@@ -609,6 +632,35 @@
         .form-res.D { background: #eab308; }
         .form-res.L { background: #ef4444; }
         
+        /* Stats Panel (FD API) */
+        .stats-panel {
+            background: var(--bg3); border: 1px solid #333;
+            border-radius: 14px; padding: 16px; margin-top: 24px;
+        }
+        .stats-tabs { display: flex; gap: 10px; margin-bottom: 16px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .stats-tab { 
+            font-size: 13px; font-weight: 800; color: var(--text2); cursor: pointer; 
+            padding: 4px 12px; border-radius: 6px; 
+        }
+        .stats-tab.active { background: var(--green); color: white; }
+        
+        .standing-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .standing-table th { text-align: left; padding: 8px; color: var(--text3); border-bottom: 1px solid #333; }
+        .standing-table td { padding: 8px; border-bottom: 1px solid #1a1a1a; }
+        .st-rank { font-weight: 900; color: var(--green); width: 30px; }
+        .st-team { display: flex; align-items: center; gap: 8px; font-weight: 700; color: white; }
+        .st-logo { width: 18px; height: 18px; object-fit: contain; }
+        .st-pts { font-weight: 800; color: var(--green); }
+        
+        .scorer-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 0; border-bottom: 1px solid #222;
+        }
+        .scorer-info { display: flex; align-items: center; gap: 10px; }
+        .scorer-name { font-weight: 700; color: white; font-size: 13px; }
+        .scorer-team { font-size: 11px; color: var(--text3); }
+        .scorer-goals { font-weight: 900; color: var(--green); font-size: 16px; }
+
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
         /* Responsive */
@@ -704,7 +756,28 @@
         <!-- Matches Container -->
         <div id="matches-container"></div>
 
-    </div><!-- end #matches-view -->
+            <!-- Thống kê Standings & Scorers (Football-Data.org) -->
+            <div class="stats-panel" id="stats-panel">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:15px;">
+                    <div class="stats-tabs">
+                        <div class="stats-tab active" onclick="switchStatsTab('standing', this)">BẢNG XẾP HẠNG</div>
+                        <div class="stats-tab" onclick="switchStatsTab('scorer', this)">VUA PHÁ LƯỚI</div>
+                    </div>
+                    <select class="tournament-select" id="stats-league-select" onchange="loadStatsData()" style="padding:4px 10px; font-size:11px;">
+                        <option value="PL">Ngoại hạng Anh</option>
+                        <option value="PD">La Liga</option>
+                        <option value="BL1">Bundesliga</option>
+                        <option value="SA">Serie A</option>
+                        <option value="FL1">Ligue 1</option>
+                        <option value="CL">Champions League</option>
+                    </select>
+                </div>
+                <div id="stats-content">
+                    <!-- Data loads here -->
+                </div>
+            </div>
+
+        </div><!-- end #matches-view -->
 
     <!-- ==== DETAIL VIEW ==== -->
     <div id="detail-view">
@@ -785,18 +858,20 @@
 
             <!-- Left: Pitch / Simulation -->
             <div class="sim-panel">
-                <div class="sim-tabs">
-                    <button class="sim-tab active">
-                        <span style="color:var(--green)">(( </span> TRỰC TIẾP <span style="color:var(--green)"> ))</span>
-                    </button>
-                    <button class="sim-tab active" style="background:var(--green);color:white">
-                        ⚽ MÔ PHỎNG
-                    </button>
-                    <button class="sim-tab">🔗 CHIA SẺ</button>
+                <div class="sim-tabs" id="dynamic-sim-tabs">
+                    <button class="sim-tab active" onclick="switchSimTab('live', this)">TRỰC TIẾP</button>
+                    <button class="sim-tab" onclick="switchSimTab('animation', this)">HOẠT ẢNH</button>
+                    <button class="sim-tab" onclick="switchSimTab('summary', this)">PHÂN TÍCH</button>
+                    <button class="sim-tab" onclick="switchSimTab('livetext', this)">DIỄN BIẾN</button>
+                    <button class="sim-tab" onclick="switchSimTab('lineups', this)">ĐỘI HÌNH</button>
+                    <button class="sim-tab" onclick="switchSimTab('h2h', this)">ĐỐI ĐẦU</button>
                 </div>
 
                 <!-- Pitch -->
                 <div class="pitch-area">
+                    <div class="lineup-overlay" id="lineup-overlay">
+                        <!-- Players render here -->
+                    </div>
                     <div class="pitch-lines"></div>
                     <div class="pitch-center-line"></div>
                     <div class="pitch-center-circle"></div>
@@ -960,53 +1035,308 @@ async function apiFetch(path) {
     try { return JSON.parse(text); } catch(e) { return null; }
 }
 
-async function loadEvents(silent = false) {
-    if (!silent) showLoading(true);
-
-    const today = new Date();
-    const fmt = d => d.toISOString().split('T')[0];
-    const tomorrow = new Date(today); tomorrow.setDate(today.getDate()+1);
-
-    const extract = d => (d && d.events && Array.isArray(d.events)) ? d.events : (Array.isArray(d) ? d : []);
-    const map = new Map();
-
+async function isportsFetch() {
     try {
-        // Tải tỉ lệ cược odds (1 lần cho nguyên ngày) chạy ngầm
-        apiFetch(`api/v1/sport/${currentSport}/odds/1/${fmt(today)}`).then(res => {
-            if (res && res.odds) currentOdds = res.odds;
-        });
+        const res = await fetch('/api/isports/livescores');
+        return await res.json();
+    } catch (e) {
+        console.error("iSports Fetch Error:", e);
+        return null;
+    }
+}
 
-        // Gọi tuần tự (không dùng Promise.all) để tránh 429
-        const liveData = await apiFetch(`api/v1/sport/${currentSport}/events/live`);
-        extract(liveData).forEach(e => { if (e.id) map.set(e.id, e); });
+let isportsUpdateTimer = null;
+async function startLiveUpdates() {
+    if (isportsUpdateTimer) clearInterval(isportsUpdateTimer);
+    isportsUpdateTimer = setInterval(async () => {
+        try {
+            const res = await fetch('/api/isports/changes').then(r => r.json());
+            if (res && res.data && Array.isArray(res.data)) {
+                let changed = false;
+                res.data.forEach(change => {
+                    const match = allEvents.find(e => e.id == change.matchId && e.isISports);
+                    if (match) {
+                        match.homeScore.current = change.homeScore;
+                        match.awayScore.current = change.awayScore;
+                        
+                        let code = Number(change.status) || 0;
+                        let initial = 0;
+                        let period = match.status.period || 'period1';
+                        
+                        if (code > 0) {
+                            match.status.type = 'inprogress';
+                            if (code === 1) { match.status.description = 'Hiệp 1'; match.status.code = 6; initial = 0; period = 'period1'; }
+                            else if (code === 2) { match.status.description = 'Giữa Hiệp'; match.status.code = 31; period = 'period1'; }
+                            else if (code === 3) { match.status.description = 'Hiệp 2'; match.status.code = 7; initial = 45 * 60; period = 'period2'; }
+                            else if (code === 4) { match.status.description = 'Hiệp Phụ'; match.status.code = 7; initial = 90 * 60; period = 'period2'; }
+                            else { match.status.description = 'Đang diễn ra'; match.status.code = 6; }
+                        } else if (code === 0) {
+                            match.status.type = 'notstarted';
+                            match.status.description = 'Sắp diễn ra';
+                            match.status.code = 0;
+                        } else {
+                            match.status.type = 'finished';
+                            match.status.description = 'Kết thúc';
+                            match.status.code = code;
+                        }
+                        
+                        match.status.period = period;
+                        
+                        if (match.time) {
+                            if (change.halfStartTime) match.time.currentPeriodStartTimestamp = change.halfStartTime;
+                            match.time.initial = initial;
+                        }
 
-        await new Promise(r => setTimeout(r, 300)); // delay nhỏ giữa mỗi call
+                        match.statistics = match.statistics || {};
+                        match.statistics.homeRed = change.homeRed;
+                        match.statistics.awayRed = change.awayRed;
+                        match.statistics.homeCorner = change.homeCorner;
+                        match.statistics.awayCorner = change.awayCorner;
+                        changed = true;
+                    }
+                });
+                if (changed) {
+                    updateUIForChanges();
+                }
+            }
+        } catch (e) {}
+    }, 5000); // 5 giây cập nhật 1 lần
+}
 
-        const todayData = await apiFetch(`api/v1/sport/${currentSport}/scheduled-events/${fmt(today)}`);
-        extract(todayData).forEach(e => { if (e.id) map.set(e.id, e); });
+function updateUIForChanges() {
+    renderMatches(currentFilteredEvents);
+    // Nếu đang mở detail của trận bị thay đổi
+    if (currentEvent && currentEvent.isISports) {
+        const changedMatch = allEvents.find(e => e.id == currentEvent.id);
+        if (changedMatch) {
+            const scoreBox = document.getElementById('detail-score-box');
+            if (scoreBox) {
+                scoreBox.innerHTML = `
+                    <div class="detail-score-h">${changedMatch.homeScore.current}</div>
+                    <div class="detail-score-a">${changedMatch.awayScore.current}</div>
+                `;
+            }
+        }
+    }
+}
 
-        await new Promise(r => setTimeout(r, 300));
+// Đã điều hướng ảnh qua proxy
 
-        const tomData = await apiFetch(`api/v1/sport/${currentSport}/scheduled-events/${fmt(tomorrow)}`);
-        extract(tomData).forEach(e => { if (e.id) map.set(e.id, e); });
-
-    } catch(e) {
-        console.error('Load events error:', e);
+function mapISportsToSofa(m) {
+    let statusType = 'finished';
+    let statusDesc = 'Kết thúc';
+    let code = Number(m.status) || 0;
+    let initial = 0;
+    let period = 'period1';
+    
+    if (code > 0) {
+        statusType = 'inprogress';
+        if (code === 1) { statusDesc = 'Hiệp 1'; code = 6; initial = 0; period = 'period1'; }
+        else if (code === 2) { statusDesc = 'Giữa Hiệp'; code = 31; period = 'period1'; }
+        else if (code === 3) { statusDesc = 'Hiệp 2'; code = 7; initial = 45 * 60; period = 'period2'; }
+        else if (code === 4) { statusDesc = 'Hiệp Phụ'; code = 7; initial = 90 * 60; period = 'period2'; }
+        else { statusDesc = 'Đang diễn ra'; code = 6; }
+    } else if (code === 0) {
+        statusType = 'notstarted';
+        statusDesc = 'Sắp diễn ra';
     }
 
-    allEvents = Array.from(map.values()).sort((a, b) => {
-        const aL = a.status?.type === 'inprogress';
-        const bL = b.status?.type === 'inprogress';
-        if (aL && !bL) return -1;
-        if (!aL && bL) return 1;
-        return (a.startTimestamp||0) - (b.startTimestamp||0);
-    });
-
-    updateTournamentSelect();
-    updateCounts();
-    applyFilters();
-    if (!silent) showLoading(false);
+    return {
+        id: m.matchId,
+        isISports: true,
+        startTimestamp: m.matchTime,
+        status: { type: statusType, description: statusDesc, code: code, period: period },
+        time: {
+            currentPeriodStartTimestamp: m.halfStartTime || m.matchTime,
+            initial: initial
+        },
+        homeTeam: { 
+            id: m.homeId,
+            name: m.homeName, 
+            logo: `/api/isports/image/${m.homeId}`
+        },
+        awayTeam: { 
+            id: m.awayId,
+            name: m.awayName, 
+            logo: `/api/isports/image/${m.awayId}`
+        },
+        homeScore: { display: m.homeScore, current: m.homeScore },
+        awayScore: { display: m.awayScore, current: m.awayScore },
+        tournament: { name: m.leagueName || 'Giải đấu' },
+        statistics: {
+            homeRed: m.homeRed, awayRed: m.awayRed,
+            homeYellow: m.homeYellow, awayYellow: m.awayYellow,
+            homeCorner: m.homeCorner, awayCorner: m.awayCorner
+        }
+    };
 }
+
+async function sportmonksFetch() {
+    try {
+        const res = await fetch('/api/sportmonks/livescores');
+        return await res.json();
+    } catch(e) { return null; }
+}
+function mapFDToSofa(m) {
+    let statusType = 'notstarted';
+    let statusDesc = 'Sắp diễn ra';
+    if (m.status === 'IN_PLAY' || m.status === 'LIVE') {
+        statusType = 'inprogress';
+        statusDesc = 'Trực tiếp';
+    } else if (m.status === 'FINISHED') {
+        statusType = 'finished';
+        statusDesc = 'Kết thúc';
+    }
+
+    return {
+        id: m.id,
+        isFD: true,
+        startTimestamp: Math.floor(new Date(m.utcDate).getTime() / 1000),
+        status: { type: statusType, description: statusDesc, code: m.status },
+        homeTeam: { 
+            id: m.homeTeam.id,
+            name: m.homeTeam.shortName || m.homeTeam.name, 
+            logo: m.homeTeam.crest 
+        },
+        awayTeam: { 
+            id: m.awayTeam.id,
+            name: m.awayTeam.shortName || m.awayTeam.name, 
+            logo: m.awayTeam.crest 
+        },
+        homeScore: { current: m.score.fullTime.home, currentScore: m.score.fullTime.home },
+        awayScore: { current: m.score.fullTime.away, currentScore: m.score.fullTime.away },
+        tournament: { name: m.competition?.name || 'Giải đấu' }
+    };
+}
+
+function mapFDToSofa(m) {
+    let statusType = 'notstarted';
+    let statusDesc = 'Sắp diễn ra';
+    if (m.status === 'IN_PLAY' || m.status === 'LIVE') {
+        statusType = 'inprogress';
+        statusDesc = 'Trực tiếp';
+    } else if (m.status === 'FINISHED') {
+        statusType = 'finished';
+        statusDesc = 'Kết thúc';
+    }
+    return {
+        id: m.id,
+        isFD: true,
+        startTimestamp: Math.floor(new Date(m.utcDate).getTime() / 1000),
+        status: { type: statusType, description: statusDesc, code: m.status },
+        homeTeam: { id: m.homeTeam.id, name: m.homeTeam.shortName || m.homeTeam.name, logo: m.homeTeam.crest },
+        awayTeam: { id: m.awayTeam.id, name: m.awayTeam.shortName || m.awayTeam.name, logo: m.awayTeam.crest },
+        homeScore: { current: m.score.fullTime.home, currentScore: m.score.fullTime.home },
+        awayScore: { current: m.score.fullTime.away, currentScore: m.score.fullTime.away },
+        tournament: { name: m.competition?.name || 'Giải đấu' }
+    };
+}
+
+function mapSportmonksToSofa(sm) {
+    const home = sm.participants.find(p => p.meta.location === 'home') || sm.participants[0];
+    const away = sm.participants.find(p => p.meta.location === 'away') || sm.participants[1];
+    
+    // Tìm tỉ số
+    const getScore = (pId, desc) => {
+        const s = sm.scores.find(s => s.participant_id === pId && s.description === desc);
+        return s ? s.score.goals : 0;
+    };
+
+    const homeCurrent = getScore(home.id, 'CURRENT');
+    const awayCurrent = getScore(away.id, 'CURRENT');
+    const homeHT = getScore(home.id, '1ST_HALF');
+    const awayHT = getScore(away.id, '1ST_HALF');
+
+    // Phút hiện tại từ periods
+    const currentPeriod = sm.periods && sm.periods.length > 0 ? sm.periods[sm.periods.length - 1] : null;
+    const playMinutes = currentPeriod ? currentPeriod.minutes : 0;
+    const isHT = currentPeriod && currentPeriod.description === '1st-half-ended';
+
+    // Thẻ phạt (incidents)
+    let stats = { corners: { home: 0, away: 0 }};
+    if (sm.events) {
+        // Có thể tính toán corners từ events nếu có type_id tương ứng
+    }
+
+    return {
+        id: sm.id,
+        startTimestamp: sm.starting_at_timestamp,
+        tournament: { name: sm.league?.name || 'Premier League' },
+        homeTeam: { id: home.id, name: home.name, shortName: home.short_code, logo: home.image_path },
+        awayTeam: { id: away.id, name: away.name, shortName: away.short_code, logo: away.image_path },
+        homeScore: { current: homeCurrent, period1: homeHT },
+        awayScore: { current: awayCurrent, period1: awayHT },
+        status: { 
+            type: 'inprogress', 
+            code: isHT ? 31 : 6, 
+            description: isHT ? 'Half-time' : 'Started',
+            period: (sm.periods?.length > 1) ? 'period2' : 'period1'
+        },
+        time: { currentPeriodStartTimestamp: Math.floor(Date.now()/1000) - (playMinutes * 60) },
+        isSportmonks: true,
+        playMinutes: playMinutes,
+        rawEvents: sm.events
+    };
+}
+
+let currentStatsTab = 'standing';
+
+function switchStatsTab(tab, btn) {
+    currentStatsTab = tab;
+    document.querySelectorAll('.stats-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    loadStatsData();
+}
+
+async function loadStatsData() {
+    const league = document.getElementById('stats-league-select').value;
+    const container = document.getElementById('stats-content');
+    if (!container) return;
+    container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text3); font-size:11px;">Đang tải dữ liệu giải đấu...</div>';
+
+    try {
+        const endpoint = currentStatsTab === 'standing' ? `/api/fd/standings/${league}` : `/api/fd/scorers/${league}`;
+        const res = await fetch(endpoint).then(r => r.json());
+        
+        if (currentStatsTab === 'standing') {
+            const leagueData = res.standings?.find(s => s.type === 'TOTAL');
+            const table = leagueData?.table;
+            if (!table) throw new Error("No data");
+            
+            let html = `<table class="standing-table"><thead><tr><th>#</th><th>Đội</th><th style="text-align:center">T</th><th style="text-align:center">H</th><th style="text-align:center">B</th><th style="text-align:center">Đ</th></tr></thead><tbody>`;
+            table.forEach(t => {
+                const teamName = t.team.shortName || t.team.name;
+                html += `<tr>
+                    <td class="st-rank">${t.position}</td>
+                    <td class="st-team">
+                        <img src="${t.team.crest}" class="st-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                        <span class="st-logo-fallback" style="display:none; margin-right:8px;">⚽</span>
+                        <span>${teamName}</span>
+                    </td>
+                    <td style="text-align:center">${t.won}</td>
+                    <td style="text-align:center">${t.draw}</td>
+                    <td style="text-align:center">${t.lost}</td>
+                    <td style="text-align:center" class="st-pts">${t.points}</td>
+                </tr>`;
+            });
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        } else {
+            const scorers = res.scorers;
+            if (!scorers || scorers.length === 0) throw new Error("No data");
+            let html = '<div style="display:flex; flex-direction:column; gap:2px;">';
+            scorers.forEach((s, idx) => {
+                html += `<div class="scorer-item"><div class="scorer-info"><div style="font-weight:900; color:var(--text3); width:20px;">${idx+1}</div><div><div class="scorer-name">${s.player.name}</div><div class="scorer-team">${s.team.name}</div></div></div><div class="scorer-goals">${s.goals}</div></div>`;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+    } catch(e) {
+        container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text3); font-size:11px;">API Free không hỗ trợ giải đấu này hoặc lỗi.</div>';
+    }
+}
+
+// (Đã dọn dẹp hàm loadEvents cũ để tránh xung đột)
 
 // ===== INIT =====
 loadEvents();
@@ -1091,19 +1421,28 @@ function formatTime(ts) {
 }
 
 function calcLive(event) {
+    if (!event || !event.status) return '';
     const code = event.status?.code;
-    if (code === 31) return 'Nghỉ giữa hiệp';
+    if (code === 31) return 'GIỮA HIỆP';
+    
     const pStart = event.time?.currentPeriodStartTimestamp;
     const initial = event.time?.initial || 0;
+    
     if (pStart) {
-        const diff = Math.floor(Date.now()/1000) - pStart;
-        const min = Math.floor(diff/60) + Math.floor(initial/60);
+        // Date.now() là ms, pStart là s
+        const nowSec = Math.floor(Date.now() / 1000);
+        const diff = nowSec - pStart;
+        let min = Math.floor(diff / 60) + Math.floor(initial / 60);
+        
+        if (min < 0) min = 0;
+        if (min > 120) min = 120;
+        
         if (code === 6 && min > 45) return `45+${min-45}'`;
         if (code === 7 && min > 90) return `90+${min-90}'`;
         return `${min}'`;
     }
     const desc = event.status?.description || '';
-    return desc === 'Started' ? 'Đang diễn ra' : (desc || 'Trực tiếp');
+    return desc.includes('Hiệp') ? desc : 'Đang diễn ra';
 }
 
 const COMMENTATORS = [
@@ -1115,6 +1454,131 @@ const COMMENTATORS = [
 let currentFilteredEvents = [];
 let currentRenderedCount = 0;
 const BATCH_SIZE = 35;
+
+async function loadLineups(event) {
+    if (!event) return;
+    const overlay = document.getElementById('lineup-overlay');
+    overlay.innerHTML = '<div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:white; font-size:12px; font-weight:700;">Đang tải đội hình...</div>';
+
+    if (event.isSportmonks) {
+        try {
+            const res = await fetch(`/api/sportmonks/fixture/${event.id}`).then(r => r.json());
+            if (!res || !res.data || !res.data.lineups) {
+                overlay.innerHTML = '<div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:white; font-size:12px; font-weight:700;">Chưa có đội hình chính thức</div>';
+                return;
+            }
+
+            const lineups = res.data.lineups;
+            const homeId = event.homeTeam.id;
+            const formationHome = res.data.formations?.find(f => f.team_id === homeId)?.formation || '4-3-3';
+            const formationAway = res.data.formations?.find(f => f.team_id !== homeId)?.formation || '4-3-3';
+            const coaches = res.data.coaches || [];
+
+            overlay.innerHTML = `
+                <div style="position:absolute; top:8px; left:16px; color:rgba(255,255,255,0.7); font-size:10px; font-weight:800;">FORMATION: ${formationHome}</div>
+                <div style="position:absolute; top:8px; right:16px; color:rgba(255,255,255,0.7); font-size:10px; font-weight:800;">FORMATION: ${formationAway}</div>
+            `;
+        
+            coaches.forEach(c => {
+                const isHome = c.team_id === homeId;
+                const cDiv = document.createElement('div');
+                cDiv.style.position = 'absolute'; cDiv.style.bottom = '8px';
+                cDiv.style[isHome ? 'left' : 'right'] = '16px';
+                cDiv.style.color = 'white'; cDiv.style.fontSize = '9px'; cDiv.style.fontWeight = '900';
+                cDiv.innerHTML = `HLV: ${c.coach?.common_name || c.coach?.name || 'Coach'}`;
+                overlay.appendChild(cDiv);
+            });
+
+            lineups.forEach(l => {
+                if (l.type_id !== 11) return;
+                const isHome = l.team_id === homeId;
+                const pos = l.formation_position || 1;
+                let x, y;
+                if (isHome) {
+                    x = (pos === 1) ? 8 : (pos <= 5 ? 28 : (pos <= 8 ? 48 : 68));
+                    const group = (pos === 1) ? [1] : (pos <= 5 ? [2,3,4,5] : (pos <= 8 ? [6,7,8] : [9,10,11]));
+                    const idx = group.indexOf(pos);
+                    y = 15 + (idx + 0.5) * (70 / group.length);
+                } else {
+                    x = (pos === 1) ? 92 : (pos <= 5 ? 72 : (pos <= 8 ? 52 : 32));
+                    const group = (pos === 1) ? [1] : (pos <= 5 ? [2,3,4,5] : (pos <= 8 ? [6,7,8] : [9,10,11]));
+                    const idx = group.indexOf(pos);
+                    y = 15 + (idx + 0.5) * (70 / group.length);
+                }
+                const pNode = document.createElement('div');
+                pNode.className = `player-node ${isHome ? 'home-player' : 'away-player'}`;
+                pNode.style.left = `${x}%`; pNode.style.top = `${y}%`;
+                pNode.innerHTML = `<div class="player-shirt">${l.jersey_number || ''}</div><div class="player-name">${l.player?.common_name || l.player?.name || 'Player'}</div>`;
+                overlay.appendChild(pNode);
+            });
+        } catch(e) {
+            overlay.innerHTML = '<div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:white; font-size:12px; font-weight:700;">Lỗi tải đội hình Sportmonks</div>';
+        }
+    } else {
+        overlay.innerHTML = '<div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:white; font-size:12px; font-weight:700;">Hiện tại chỉ hỗ trợ xem đội hình cho các trận từ Sportmonks.</div>';
+    }
+}
+
+async function loadEvents(silent = false) {
+    if (!silent) showLoading(true);
+    let all = [];
+
+    try {
+        if (currentSport === 'football') {
+            const isportsData = await isportsFetch();
+            if (isportsData && Array.isArray(isportsData.data) && isportsData.code !== 2) {
+                isportsData.data.forEach(m => {
+                    try { all.push(mapISportsToSofa(m)); } catch(err) {}
+                });
+            } else {
+                // Fallback FD if iSports limited
+                console.warn("iSports limit, using FD...");
+                const fdRes = await fetch('/api/fd/matches').then(r => r.json());
+                if (fdRes && fdRes.matches) {
+                    fdRes.matches.forEach(m => {
+                        try { all.push(mapFDToSofa(m)); } catch(err) {}
+                    });
+                }
+            }
+
+            const smData = await sportmonksFetch();
+            if (smData && Array.isArray(smData.data)) {
+                smData.data.forEach(m => {
+                    try {
+                        all.push(mapSportmonksToSofa(m));
+                    } catch(err) {
+                        console.error("Lỗi parse SM item:", err, m);
+                    }
+                });
+            }
+        } else {
+            // Placeholder cho bóng rổ, tennis, v.v...
+        }
+    } catch(e) {
+        console.error("Lỗi loadEvents:", e);
+    }
+
+    // Sắp xếp: Ưu tiên trận đang đá (inprogress) lên đầu, sau đó theo thời gian
+    allEvents = all.sort((a, b) => {
+        const aL = a.status?.type === 'inprogress';
+        const bL = b.status?.type === 'inprogress';
+        if (aL && !bL) return -1;
+        if (!aL && bL) return 1;
+        return (a.startTimestamp || 0) - (b.startTimestamp || 0);
+    });
+
+    updateTournamentSelect();
+    updateCounts();
+    loadStatsData();
+    applyFilters(); // applyFilters sẽ gọi renderMatches
+    if (!silent) showLoading(false);
+    
+    // Khởi động cập nhật tức thời (chỉ gọi nếu chưa chạy)
+    if (!window.liveUpdatesStarted) {
+        startLiveUpdates();
+        window.liveUpdatesStarted = true;
+    }
+}
 
 function renderMatches(events) {
     const container = document.getElementById('matches-container');
@@ -1186,8 +1650,19 @@ function createMatchCard(event) {
                        (isFinished ? 'KẾT THÚC' : (event.startTimestamp ? formatTime(event.startTimestamp) : 'SẮP TỚI')));
     
     const scoreClass = !hasScore ? 'draw' : (homeScore > awayScore ? 'home-win' : (awayScore > homeScore ? 'away-win' : 'draw'));
-    const homeLogo = `/api/image/team/${event.homeTeam?.id}`;
-    const awayLogo = `/api/image/team/${event.awayTeam?.id}`;
+    
+    // Logo logic
+    let homeLogo, awayLogo;
+    if (event.isSportmonks || event.isFD) {
+        homeLogo = event.homeTeam.logo;
+        awayLogo = event.awayTeam.logo;
+    } else if (event.isISports) {
+        homeLogo = `/api/isports/image/${event.homeTeam.id}`;
+        awayLogo = `/api/isports/image/${event.awayTeam.id}`;
+    } else {
+        homeLogo = `/api/image/team/${event.homeTeam?.id}`;
+        awayLogo = `/api/image/team/${event.awayTeam?.id}`;
+    }
 
     const homeFallback = event.homeTeam?.country?.alpha2 
         ? `<img src='https://flagcdn.com/w80/${event.homeTeam.country.alpha2.toLowerCase()}.png' style='width:100%;height:100%;object-fit:cover;'>`
@@ -1318,6 +1793,7 @@ function createMatchCard(event) {
 // ===== MATCH DETAIL =====
 async function openMatchDetail(event) {
     currentEvent = event;
+    currentEventId = event.id;
     liveScoreUrl = null;
 
     const isLive = event.status?.type === 'inprogress';
@@ -1334,8 +1810,11 @@ async function openMatchDetail(event) {
     const homeFallbackHTML = event.homeTeam?.country?.alpha2 ? `<img src='https://flagcdn.com/w80/${event.homeTeam.country.alpha2.toLowerCase()}.png' style='width:100%;height:100%;border-radius:50%;object-fit:cover;'>` : `⚽`;
     const awayFallbackHTML = event.awayTeam?.country?.alpha2 ? `<img src='https://flagcdn.com/w80/${event.awayTeam.country.alpha2.toLowerCase()}.png' style='width:100%;height:100%;border-radius:50%;object-fit:cover;'>` : `⚽`;
 
-    const homeLogoHTML = `<img id="detail-home-logo" src="/api/image/team/${event.homeTeam?.id}" alt="" data-fallback="${homeFallbackHTML.replace(/"/g, '&quot;')}" onerror="this.style.display='none'; this.parentElement.innerHTML=this.dataset.fallback;">`;
-    const awayLogoHTML = `<img id="detail-away-logo" src="/api/image/team/${event.awayTeam?.id}" alt="" data-fallback="${awayFallbackHTML.replace(/"/g, '&quot;')}" onerror="this.style.display='none'; this.parentElement.innerHTML=this.dataset.fallback;">`;
+    const homeLogoSrc = event.isISports ? `/api/isports/image/${event.homeTeam.id}` : `/api/image/team/${event.homeTeam?.id}`;
+    const awayLogoSrc = event.isISports ? `/api/isports/image/${event.awayTeam.id}` : `/api/image/team/${event.awayTeam?.id}`;
+
+    const homeLogoHTML = `<img id="detail-home-logo" src="${homeLogoSrc}" alt="" data-fallback="${homeFallbackHTML.replace(/"/g, '&quot;')}" onerror="this.style.display='none'; this.parentElement.innerHTML=this.dataset.fallback;">`;
+    const awayLogoHTML = `<img id="detail-away-logo" src="${awayLogoSrc}" alt="" data-fallback="${awayFallbackHTML.replace(/"/g, '&quot;')}" onerror="this.style.display='none'; this.parentElement.innerHTML=this.dataset.fallback;">`;
     
     const homeLogoWrap = document.querySelector('.detail-team.home .detail-logo');
     const awayLogoWrap = document.querySelector('.detail-team.away .detail-logo');
@@ -1377,6 +1856,10 @@ async function openMatchDetail(event) {
 
     document.getElementById('graph-minute').textContent = isLive ? calcLive(event) : formatTime(event.startTimestamp);
 
+    // Mặc định về tab TRỰC TIẾP khi mở detail
+    const liveTab = document.querySelector('.sim-tab[onclick*="live"]');
+    if (liveTab) switchSimTab('live', liveTab);
+
     // Show detail view
     document.getElementById('matches-view').classList.add('hidden');
     document.getElementById('detail-view').classList.add('show');
@@ -1405,6 +1888,133 @@ async function openMatchDetail(event) {
             document.getElementById('live-score-overlay').style.display = 'flex';
         }
     } catch(e) {}
+}
+
+function switchSimTab(tab, btn) {
+    document.querySelectorAll('.sim-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    
+    const lineupOverlay = document.getElementById('lineup-overlay');
+    const animationOverlay = document.getElementById('match-animation-overlay');
+    const summaryOverlay = document.getElementById('match-summary-overlay');
+    const livetextOverlay = document.getElementById('match-livetext-overlay');
+
+    if(lineupOverlay) lineupOverlay.classList.remove('show');
+    if(animationOverlay) animationOverlay.style.display = 'none';
+    if(summaryOverlay) summaryOverlay.style.display = 'none';
+    if(livetextOverlay) livetextOverlay.style.display = 'none';
+
+    if (tab === 'lineups') {
+        if(lineupOverlay) lineupOverlay.classList.add('show');
+        loadLineups(currentEvent);
+    } else if (tab === 'animation') {
+        if(!animationOverlay) {
+            const newOverlay = document.createElement('div');
+            newOverlay.id = 'match-animation-overlay';
+            newOverlay.style.cssText = 'position:absolute; inset:0; background:rgba(0,0,0,0.9); z-index:20; display:flex; flex-direction:column;';
+            document.querySelector('.pitch-area').appendChild(newOverlay);
+            renderAnimation(newOverlay);
+        } else {
+            animationOverlay.style.display = 'flex';
+        }
+    } else if (tab === 'summary') {
+        if(!summaryOverlay) {
+            const newOverlay = document.createElement('div');
+            newOverlay.id = 'match-summary-overlay';
+            newOverlay.style.cssText = 'position:absolute; inset:0; background:var(--bg3); z-index:20; overflow-y:auto; padding:15px;';
+            document.querySelector('.pitch-area').appendChild(newOverlay);
+            loadMatchSummary(newOverlay);
+        } else {
+            summaryOverlay.style.display = 'block';
+        }
+    } else if (tab === 'livetext') {
+        if(!livetextOverlay) {
+            const newOverlay = document.createElement('div');
+            newOverlay.id = 'match-livetext-overlay';
+            newOverlay.style.cssText = 'position:absolute; inset:0; background:var(--bg3); z-index:20; overflow-y:auto; padding:15px;';
+            document.querySelector('.pitch-area').appendChild(newOverlay);
+            loadLiveText(newOverlay);
+        } else {
+            livetextOverlay.style.display = 'block';
+        }
+    }
+}
+
+async function fetchAndCacheLogo(teamId, imgElement) {
+    if (logoCache[teamId]) {
+        if (imgElement) imgElement.src = logoCache[teamId];
+        return;
+    }
+    try {
+        const res = await fetch(`/api/isports/team/${teamId}`).then(r => r.json());
+        if (res && res.data && res.data[0] && res.data[0].logo) {
+            const logoUrl = res.data[0].logo;
+            logoCache[teamId] = logoUrl;
+            localStorage.setItem('isports_logos', JSON.stringify(logoCache));
+            if (imgElement) imgElement.src = logoUrl;
+        }
+    } catch (e) {}
+}
+
+async function loadMatchSummary(container) {
+    container.innerHTML = '<div style="color:white;text-align:center;padding-top:50px;">Đang tải phân tích...</div>';
+    try {
+        const res = await fetch('/api/isports/summary').then(r => r.json());
+        const matchSummary = res.data?.find(s => s.matchId == currentEventId);
+        if (matchSummary) {
+            container.innerHTML = `
+                <div style="color:white; font-size:14px; line-height:1.6;">
+                    <h3 style="color:var(--green); margin-bottom:10px; font-size:16px;">PHÂN TÍCH TRẬN ĐẤU</h3>
+                    <div style="margin-bottom:15px; padding:10px; background:rgba(255,255,255,0.05); border-radius:8px;">
+                        ${matchSummary.analysis || 'Chưa có tóm tắt phân tích chuyên sâu.'}
+                    </div>
+                    <h3 style="color:var(--orange); margin-bottom:10px; font-size:16px;">TÓM TẮT DIỄN BIẾN</h3>
+                    <div style="padding:10px; background:rgba(255,255,255,0.05); border-radius:8px;">
+                        ${matchSummary.summary || 'Trận đấu đang được cập nhật dữ liệu tóm tắt.'}
+                    </div>
+                </div>
+            `;
+        } else {
+            container.innerHTML = '<div style="color:var(--text3);text-align:center;padding-top:50px;">Chưa có dữ liệu phân tích cho trận này.</div>';
+        }
+    } catch (e) {
+        container.innerHTML = '<div style="color:red;text-align:center;padding-top:50px;">Lỗi tải dữ liệu phân tích.</div>';
+    }
+}
+
+async function loadLiveText(container) {
+    container.innerHTML = '<div style="color:white;text-align:center;padding-top:50px;">Đang tải diễn biến chi tiết...</div>';
+    try {
+        const res = await fetch('/api/isports/livetext').then(r => r.json());
+        const matchLiveText = res.data?.find(l => l.matchId == currentEventId);
+        if (matchLiveText && matchLiveText.items) {
+            let html = '<div style="display:flex; flex-direction:column; gap:12px;">';
+            matchLiveText.items.sort((a,b) => b.t - a.t).forEach(item => {
+                html += `
+                    <div style="display:flex; gap:15px; padding:10px; border-bottom:1px solid rgba(255,255,255,0.05);">
+                        <div style="color:var(--green); font-weight:800; min-width:30px;">${item.t}'</div>
+                        <div style="color:white; font-size:13px;">${item.content}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = '<div style="color:var(--text3);text-align:center;padding-top:50px;">Chưa có diễn biến văn bản cho trận này.</div>';
+        }
+    } catch (e) {
+        container.innerHTML = '<div style="color:red;text-align:center;padding-top:50px;">Lỗi tải diễn biến.</div>';
+    }
+}
+
+function renderAnimation(container) {
+    const matchId = currentEventId;
+    const accessKey = 'R86CxN79bK1lrAC0'; 
+    container.innerHTML = `
+        <iframe src="https://www.isportslive8.com/football/detail.html?matchId=${matchId}&accessKey=${accessKey}&lang=vi" 
+                style="width:100%; height:100%; border:none;" 
+                allowfullscreen></iframe>
+    `;
 }
 
 function renderSidebarMatches(current) {
@@ -1475,6 +2085,81 @@ async function loadH2HAndForm(event) {
     const h2hBox = document.getElementById('h2h-content');
     const formHome = document.getElementById('form-home');
     const formAway = document.getElementById('form-away');
+
+    if (event.isSportmonks) {
+        try {
+            const h2hData = await fetch(`/api/sportmonks/h2h/${event.homeTeam.id}/${event.awayTeam.id}`).then(r => r.json());
+            console.log("Sportmonks H2H Data:", h2hData);
+            
+            if (h2hData && h2hData.data && Array.isArray(h2hData.data) && h2hData.data.length > 0) {
+                let html = `<table class="h2h-table">`;
+                h2hData.data.slice(0, 8).forEach(m => {
+                    const date = new Date(m.starting_at_timestamp * 1000).toLocaleDateString('vi-VN');
+                    const home = m.participants?.find(p => p.meta?.location === 'home') || m.participants?.[0] || { name: 'Home' };
+                    const away = m.participants?.find(p => p.meta?.location === 'away') || m.participants?.[1] || { name: 'Away' };
+                    
+                    const getS = (pId) => {
+                        const s = m.scores?.find(s => s.participant_id === pId && s.description === 'CURRENT');
+                        return s ? s.score.goals : 0;
+                    };
+                    
+                    html += `
+                        <tr>
+                            <td style="width:100px; color:var(--text3); font-size:11px;">${date}</td>
+                            <td class="h2h-team-name home">${home.name}</td>
+                            <td style="text-align:center;"><span class="h2h-score">${getS(home.id)} - ${getS(away.id)}</span></td>
+                            <td class="h2h-team-name away">${away.name}</td>
+                        </tr>
+                    `;
+                });
+                html += `</table>`;
+                h2hBox.innerHTML = html;
+            } else {
+                h2hBox.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text3);">Không có dữ liệu đối đầu từ Sportmonks</div>';
+            }
+            
+            // Xử lý phong độ (Form) cho Sportmonks
+            const renderSMForm = async (teamId, teamName, teamLogo, container) => {
+                try {
+                    container.innerHTML = `
+                        <div class="form-team-header">
+                            <img src="${teamLogo}" class="form-team-logo" onerror="this.src='⚽'">
+                            <span>${teamName}</span>
+                        </div>
+                        <div style="text-align:center; padding:10px; color:var(--text3); font-size:11px;">Đang tải phong độ...</div>
+                    `;
+
+                    // Lấy 5 trận gần nhất (giả định dùng endpoint fixtures/between hoặc tương đương qua proxy)
+                    // Vì chưa có endpoint riêng biệt, tôi sẽ dùng một cách tiếp cận an toàn:
+                    // Thông báo cho người dùng hoặc hiển thị dữ liệu mẫu nếu API trả về rỗng.
+                    
+                    // Thử lấy dữ liệu thực tế nếu bạn có endpoint hoặc tôi sẽ tối ưu hiển thị placeholder đẹp hơn
+                    setTimeout(() => {
+                        const emptyFormHtml = `
+                            <div class="form-team-header">
+                                <img src="${teamLogo}" class="form-team-logo" onerror="this.src='⚽'">
+                                <span>${teamName}</span>
+                            </div>
+                            <div style="display:flex; flex-direction:column; gap:4px; padding:10px;">
+                                <div style="color:var(--text3); font-size:10px; text-align:center;">Dữ liệu phong độ (fixtures) của đội bóng sẽ hiển thị ở đây khi có dữ liệu từ Sportmonks.</div>
+                            </div>
+                        `;
+                        container.innerHTML = emptyFormHtml;
+                    }, 1000);
+
+                } catch(e) {
+                    container.innerHTML = '<div style="color:var(--text3); font-size:11px; text-align:center;">Lỗi tải phong độ</div>';
+                }
+            };
+
+            renderSMForm(event.homeTeam.id, event.homeTeam.name, event.homeTeam.logo, formHome);
+            renderSMForm(event.awayTeam.id, event.awayTeam.name, event.awayTeam.logo, formAway);
+            
+        } catch(e) {
+            h2hBox.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text3);">Lỗi tải dữ liệu H2H</div>';
+        }
+        return;
+    }
 
     try {
         // Fetch H2H
