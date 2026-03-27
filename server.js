@@ -29,8 +29,8 @@ app.get('/watch', (req, res) => {
     res.sendFile(path.join(__dirname, 'watch.html'));
 });
 
-app.get('/pricing', (req, res) => {
-    res.sendFile(path.join(__dirname, 'pricing.html'));
+app.get(['/pricing', '/pricing.html'], (req, res) => {
+    res.redirect(301, '/the-thao');
 });
 
 app.get('/the-thao', (req, res) => {

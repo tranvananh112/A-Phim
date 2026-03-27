@@ -58,7 +58,7 @@ function injectSimpleMobileMenu() {
             <a href="search.html" class="block py-3 ${currentPage === 'search.html' ? 'text-primary font-bold' : 'text-gray-300 hover:text-primary'} transition-colors">
                 🔍 Khám phá
             </a>
-            <a href="pricing.html" class="block py-3 ${currentPage === 'pricing.html' ? 'text-primary font-bold' : 'text-gray-300 hover:text-primary'} transition-colors">
+            <a href="the-thao.html" class="block py-3 ${currentPage === 'the-thao.html' ? 'text-primary font-bold' : 'text-gray-300 hover:text-primary'} transition-colors">
                 ⚽ Thể thao
             </a>
             
