@@ -59,7 +59,7 @@ function injectSimpleMobileMenu() {
                 🔍 Khám phá
             </a>
             <a href="pricing.html" class="block py-3 ${currentPage === 'pricing.html' ? 'text-primary font-bold' : 'text-gray-300 hover:text-primary'} transition-colors">
-                💎 Gói cước
+                ⚽ Thể thao
             </a>
             
             <!-- Phim X (18+) -->
