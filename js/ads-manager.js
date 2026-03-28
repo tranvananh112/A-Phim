@@ -67,18 +67,20 @@
             box-shadow:0 4px 14px rgba(229,57,53,.55); z-index:10;
         }
         #adm-catfish {
-            position:fixed; bottom:0; left:0; width:100%;
-            z-index:99998; background:#111;
-            transform:translateY(120%); transition:transform .45s cubic-bezier(.2,.8,.2,1);
+            position:fixed; bottom:0; left:50%;
+            z-index:99998; background:transparent;
+            width:fit-content;
+            transform:translateX(-50%) translateY(120%);
+            transition:transform .45s cubic-bezier(.2,.8,.2,1);
         }
-        #adm-catfish.show { transform:translateY(0); }
+        #adm-catfish.show { transform:translateX(-50%) translateY(0); }
         #adm-catfish-close {
             position:absolute; top:-32px; left:50%; transform:translateX(-50%);
             background:#e53935; color:#fff; font:bold 11px/1 sans-serif;
             padding:5px 22px; border-radius:8px 8px 0 0; cursor:pointer;
             white-space:nowrap; box-shadow:0 -3px 8px rgba(0,0,0,.4);
         }
-        #adm-catfish-inner { max-width:970px; margin:0 auto; }
+        #adm-catfish-inner { width:fit-content; margin:0 auto; }
         .adm-infeed    { width:100%; max-width:970px; margin:18px auto; padding:0 10px; }
         .adm-leaderboard { width:100%; max-width:970px; margin:16px auto; padding:0 10px; text-align:center; }
     `;
