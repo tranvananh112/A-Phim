@@ -2,6 +2,14 @@
 <html lang="vi">
 
 <head>
+    <style id="aphim-tawk-hide-guard">
+        /* A Phim: Decisive Tawk.to Hide Guard - Prevent FOUC on Mobile/Desktop */
+        #tawk-widget-layer, [id^="tawk-"], [class^="tawk-"], [class*=" tawk-"], [id*="tawkchat"], iframe[title*="chat widget" i], iframe[src*="tawk.to"], .tawk-min-container, .tawk-button {
+            display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important;
+            width: 0 !important; height: 0 !important; z-index: -9999 !important; position: fixed !important; left: -9999px !important;
+        }
+    </style>
+    <script src="js/chat-init-guard.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Phim X - A Phim</title>
@@ -23,7 +31,7 @@
     <script src="js/phim-x-analytics.js"></script>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     <meta name="robots" content="noindex, nofollow">
@@ -951,6 +959,7 @@
 
     <!-- Header -->
     <header id="site-header">
+    <script src="js/chat-init-guard.js"></script>
         <div class="header-inner">
             <a href="/" class="logo">
                 <div class="logo-badge">A</div>
@@ -2225,19 +2234,19 @@
     <!-- Chat Widget Logic -->
     <script src="js/chat-room.js"></script>
 
-    <!-- Tawk.to (Hỗ trợ) — widget mặc định bị ẩn, mở qua tab Hỗ trợ -->
+    
+    
+
+    <!-- Tawk.to (Ho tro) - widget mac dinh bi an, mo qua tab Ho tro -->
     <script type="text/javascript">
         var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-        // Ẩn nút mặc định của Tawk.to, chỉ mở khi user click tab Hỗ trợ
-        Tawk_API.onLoad = function () {
-            Tawk_API.hideWidget();
-        };
-        (function () {
+        Tawk_API.onLoad = function() { Tawk_API.hideWidget(); };
+        (function(){
             var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
             s1.async = true;
             s1.src = 'https://embed.tawk.to/69c7d8abf493031c356334cf/1jkqaco0t';
             s1.charset = 'UTF-8';
-            s1.setAttribute('crossorigin', '*');
+            s1.setAttribute('crossorigin','*');
             s0.parentNode.insertBefore(s1, s0);
         })();
     </script>

@@ -46,6 +46,8 @@ class APFilmChat {
         this._restoreUser();
         this._attachEvents();
         this._initDragResize();
+        this._initMobileKeyboardFix();
+        this._initMobileResize();
 
         // Init screens
         if (this.userName) {
@@ -234,12 +236,11 @@ class APFilmChat {
 
         // Support screen: nút mở Tawk.to popup
         el.supportStartTawk?.addEventListener('click', () => {
-            if (typeof Tawk_API !== 'undefined' && Tawk_API.maximize) {
+            if (typeof window.showTawkTo === 'function') {
+                window.showTawkTo();
+            } else if (typeof Tawk_API !== 'undefined' && Tawk_API.maximize) {
                 Tawk_API.showWidget();
                 Tawk_API.maximize();
-                // Ẩn lại Tawk widget sau khi thu nhỏ
-                Tawk_API.onChatMinimized = () => Tawk_API.hideWidget();
-                Tawk_API.onChatEnded    = () => Tawk_API.hideWidget();
             } else {
                 window.open('https://tawk.to/chat/69c7d8abf493031c356334cf/1jkqaco0t', '_blank');
             }
@@ -765,6 +766,187 @@ class APFilmChat {
         document.body.style.userSelect     = on ? 'none' : '';
         document.body.style.pointerEvents  = on ? 'none' : '';
         this.el.window.style.pointerEvents = 'all';
+    }
+
+    /* ── Mobile: Fix keyboard zoom ────────────────────────────────── */
+    _initMobileKeyboardFix() {
+        if (window.innerWidth > 768) return;
+        const win = this.el.window;
+        if (!win) return;
+
+        // Lưu chiều cao viewport ban đầu
+        let initialVH = window.innerHeight;
+        let keyboardOpen = false;
+
+        const onResize = () => {
+            const currentVH = window.innerHeight;
+            const diff = initialVH - currentVH;
+
+            if (diff > 150) {
+                // Keyboard đang mở
+                if (!keyboardOpen) {
+                    keyboardOpen = true;
+                    win.classList.add('keyboard-open');
+                    // Giữ window cố định, chỉ điều chỉnh chiều cao
+                    win.style.height = (currentVH - 90) + 'px';
+                    // Scroll to bottom
+                    setTimeout(() => this._scrollToBottom(), 100);
+                }
+            } else {
+                // Keyboard đóng
+                if (keyboardOpen) {
+                    keyboardOpen = false;
+                    win.classList.remove('keyboard-open');
+                    win.style.height = '';
+                    initialVH = window.innerHeight;
+                }
+            }
+        };
+
+        // Dùng visualViewport API (tốt hơn trên iOS)
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', () => {
+                const currentVH = window.visualViewport.height;
+                const diff = initialVH - currentVH;
+
+                if (diff > 150) {
+                    if (!keyboardOpen) {
+                        keyboardOpen = true;
+                        win.classList.add('keyboard-open');
+                        win.style.bottom = '8px';
+                        win.style.height = (currentVH - 90) + 'px';
+                        setTimeout(() => this._scrollToBottom(), 100);
+                    }
+                } else {
+                    if (keyboardOpen) {
+                        keyboardOpen = false;
+                        win.classList.remove('keyboard-open');
+                        win.style.bottom = '';
+                        win.style.height = '';
+                        initialVH = window.visualViewport.height;
+                    }
+                }
+            });
+        } else {
+            window.addEventListener('resize', onResize);
+        }
+    }
+
+    /* ── Mobile: Touch Resize 8 hướng + header drag ────────────── */
+    _initMobileResize() {
+        if (window.innerWidth > 768) return;
+        const win = this.el.window;
+        if (!win) return;
+
+        const MIN_W = 240, MIN_H = 200;
+        const MARGIN = 8;
+
+        // ── Tạo 8 resize handles ──────────────────────────────────
+        const dirs = ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'];
+        dirs.forEach(d => {
+            const h = document.createElement('div');
+            h.className = `cr-resize-handle cr-resize-${d} cr-touch-handle`;
+            h.dataset.dir = d;
+            win.appendChild(h);
+        });
+
+        // ── Helper: anchor window tại vị trí tuyệt đối ───────────
+        const snapToAbsolute = () => {
+            const r = win.getBoundingClientRect();
+            win.style.left   = r.left + 'px';
+            win.style.top    = r.top  + 'px';
+            win.style.right  = '';
+            win.style.bottom = '';
+            win.style.width  = r.width  + 'px';
+            win.style.height = r.height + 'px';
+        };
+
+        // ── Touch resize ──────────────────────────────────────────
+        let resizing = false, rDir = '';
+        let rsx = 0, rsy = 0, rsw = 0, rsh = 0, rsl = 0, rst = 0;
+
+        win.addEventListener('touchstart', (e) => {
+            const h = e.target.closest('.cr-resize-handle');
+            if (!h) return;
+            e.preventDefault();
+            e.stopPropagation();
+            snapToAbsolute();
+            rDir = h.dataset.dir;
+            const t = e.touches[0];
+            rsx = t.clientX; rsy = t.clientY;
+            rsw = win.offsetWidth;  rsh = win.offsetHeight;
+            rsl = parseFloat(win.style.left) || 0;
+            rst = parseFloat(win.style.top)  || 0;
+            resizing = true;
+            win.querySelectorAll('.cr-resize-handle').forEach(el => el.classList.remove('active'));
+            h.classList.add('active');
+        }, { passive: false });
+
+        document.addEventListener('touchmove', (e) => {
+            if (!resizing) return;
+            e.preventDefault();
+            const t = e.touches[0];
+            const dx = t.clientX - rsx;
+            const dy = t.clientY - rsy;
+            let nw = rsw, nh = rsh, nl = rsl, nt = rst;
+            const maxW = window.innerWidth  - MARGIN * 2;
+            const maxH = window.innerHeight - MARGIN * 2;
+
+            if (rDir.includes('e'))  nw = Math.min(maxW, Math.max(MIN_W, rsw + dx));
+            if (rDir.includes('s'))  nh = Math.min(maxH, Math.max(MIN_H, rsh + dy));
+            if (rDir.includes('w')) { nw = Math.min(maxW, Math.max(MIN_W, rsw - dx)); nl = rsl + (rsw - nw); }
+            if (rDir.includes('n')) { nh = Math.min(maxH, Math.max(MIN_H, rsh - dy)); nt = rst + (rsh - nh); }
+
+            nl = Math.max(MARGIN, Math.min(nl, window.innerWidth  - nw - MARGIN));
+            nt = Math.max(MARGIN, Math.min(nt, window.innerHeight - nh - MARGIN));
+
+            win.style.width  = nw + 'px';
+            win.style.height = nh + 'px';
+            win.style.left   = nl + 'px';
+            win.style.top    = nt + 'px';
+        }, { passive: false });
+
+        document.addEventListener('touchend', () => {
+            if (!resizing) return;
+            resizing = false; rDir = '';
+            win.querySelectorAll('.cr-resize-handle').forEach(el => el.classList.remove('active'));
+        });
+
+        // ── Header drag (touch) ───────────────────────────────────
+        const header = this.el.header;
+        if (!header) return;
+
+        let dragging = false;
+        let dgx = 0, dgy = 0, dgl = 0, dgt = 0;
+
+        header.addEventListener('touchstart', (e) => {
+            if (e.target.closest('button')) return;
+            snapToAbsolute();
+            const t = e.touches[0];
+            dgx = t.clientX; dgy = t.clientY;
+            dgl = parseFloat(win.style.left) || 0;
+            dgt = parseFloat(win.style.top)  || 0;
+            dragging = true;
+            win.classList.add('cr-dragging');
+        }, { passive: true });
+
+        document.addEventListener('touchmove', (e) => {
+            if (!dragging || resizing) return;
+            e.preventDefault();
+            const t = e.touches[0];
+            let nx = dgl + (t.clientX - dgx);
+            let ny = dgt + (t.clientY - dgy);
+            nx = Math.max(MARGIN, Math.min(nx, window.innerWidth  - win.offsetWidth  - MARGIN));
+            ny = Math.max(MARGIN, Math.min(ny, window.innerHeight - win.offsetHeight - MARGIN));
+            win.style.left = nx + 'px';
+            win.style.top  = ny + 'px';
+        }, { passive: false });
+
+        document.addEventListener('touchend', () => {
+            if (!dragging) return;
+            dragging = false;
+            win.classList.remove('cr-dragging');
+        });
     }
 }
 

@@ -386,10 +386,17 @@
     border: 2px solid var(--c-border);
     border-radius: 12px;
     padding: 12px 42px 12px 14px;
-    font-size: 14px; color: var(--c-text);
+    font-size: 16px; /* ≥16px: ngăn iOS auto-zoom */
+    color: var(--c-text);
     outline: none; transition: all 0.25s;
     font-family: 'Manrope', sans-serif;
     box-sizing: border-box;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+}
+
+@media (min-width: 769px) {
+    .name-input { font-size: 14px; }
 }
 
 .name-input::placeholder { color: var(--c-text-faint); }
@@ -699,10 +706,19 @@
 
 #chatMessageInput {
     flex: 1; background: transparent; border: none; outline: none;
-    color: var(--c-text); font-size: 13.5px;
+    color: var(--c-text); font-size: 16px; /* ≥16px: ngăn iOS auto-zoom */
     font-family: 'Manrope', sans-serif; min-width: 0;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
 }
 #chatMessageInput::placeholder { color: var(--c-text-faint); }
+
+/* Trên desktop giữ font nhỏ hơn */
+@media (min-width: 769px) {
+    #chatMessageInput {
+        font-size: 13.5px;
+    }
+}
 
 .send-btn {
     width: 36px; height: 36px;
@@ -777,14 +793,26 @@
    RESPONSIVE
    ============================================ */
 @media (max-width: 480px) {
-    /* Chat window chiếm gần trọn màn hình */
+    /* Chat window — dùng position fixed, không bị ảnh hưởng bởi keyboard */
     .chat-window {
+        position: fixed;
         width: calc(100vw - 16px);
         right: 8px;
+        left: 8px;
         bottom: 76px;
+        top: auto;
         height: calc(100vh - 100px);
-        max-height: 560px;
+        max-height: none;
+        min-height: 200px;
         border-radius: 16px;
+        /* Quan trọng: đặt transform-origin để resize đúng hướng */
+        transform-origin: bottom center;
+    }
+
+    /* Khi keyboard mở, đẩy window lên để input vẫn thấy */
+    .chat-window.keyboard-open {
+        bottom: 8px;
+        height: calc(100vh - 90px);
     }
 
     /* FAB nhỏ hơn trên mobile */
@@ -808,6 +836,115 @@
 
     /* Pulse ring nhỏ lại */
     .chat-fab::before { inset: -3px; }
+
+    /* ══════════════════════════════════════════════════
+       MOBILE: 8-direction touch resize handles
+       Hit area ≥ 44px (WCAG touch target guideline)
+       ══════════════════════════════════════════════════ */
+
+    /* Cạnh trên/dưới — dải ngang */
+    .cr-touch-handle.cr-resize-n  { top: -12px;    left: 24px;  right: 24px; height: 24px; cursor: n-resize; }
+    .cr-touch-handle.cr-resize-s  { bottom: -12px; left: 24px;  right: 24px; height: 24px; cursor: s-resize; }
+
+    /* Cạnh trái/phải — dải dọc */
+    .cr-touch-handle.cr-resize-e  { top: 24px; right: -12px;  bottom: 24px; width: 24px; cursor: e-resize; }
+    .cr-touch-handle.cr-resize-w  { top: 24px; left: -12px;   bottom: 24px; width: 24px; cursor: w-resize; }
+
+    /* Góc — ô vuông lớn */
+    .cr-touch-handle.cr-resize-ne { top: -12px;    right: -12px;  width: 40px; height: 40px; cursor: ne-resize; }
+    .cr-touch-handle.cr-resize-nw { top: -12px;    left: -12px;   width: 40px; height: 40px; cursor: nw-resize; }
+    .cr-touch-handle.cr-resize-se { bottom: -12px; right: -12px;  width: 40px; height: 40px; cursor: se-resize; }
+    .cr-touch-handle.cr-resize-sw { bottom: -12px; left: -12px;   width: 40px; height: 40px; cursor: sw-resize; }
+
+    /* ── Visual grip: cạnh S (dải ngang) ── */
+    .cr-touch-handle.cr-resize-s::before {
+        content: '';
+        position: absolute;
+        bottom: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 44px;
+        height: 5px;
+        background: #cbd5e1;
+        border-radius: 3px;
+        transition: background 0.2s, width 0.2s;
+        pointer-events: none;
+    }
+    .cr-touch-handle.cr-resize-s:active::before,
+    .cr-touch-handle.cr-resize-s.active::before { background: var(--c-gold-dim); width: 58px; }
+
+    /* ── Visual grip: cạnh N (dải ngang) ── */
+    .cr-touch-handle.cr-resize-n::before {
+        content: '';
+        position: absolute;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 44px;
+        height: 5px;
+        background: #cbd5e1;
+        border-radius: 3px;
+        transition: background 0.2s, width 0.2s;
+        pointer-events: none;
+    }
+    .cr-touch-handle.cr-resize-n:active::before,
+    .cr-touch-handle.cr-resize-n.active::before { background: var(--c-gold-dim); width: 58px; }
+
+    /* ── Visual grip: cạnh E/W (dải dọc) ── */
+    .cr-touch-handle.cr-resize-e::before,
+    .cr-touch-handle.cr-resize-w::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 5px;
+        height: 34px;
+        background: #cbd5e1;
+        border-radius: 3px;
+        pointer-events: none;
+        transition: background 0.2s;
+    }
+    .cr-touch-handle.cr-resize-e::before { right: 12px; }
+    .cr-touch-handle.cr-resize-w::before { left: 12px; }
+    .cr-touch-handle.cr-resize-e:active::before,
+    .cr-touch-handle.cr-resize-e.active::before,
+    .cr-touch-handle.cr-resize-w:active::before,
+    .cr-touch-handle.cr-resize-w.active::before { background: var(--c-gold-dim); }
+
+    /* ── Visual chấm dot ở 4 góc ── */
+    .cr-touch-handle.cr-resize-se::after,
+    .cr-touch-handle.cr-resize-sw::after,
+    .cr-touch-handle.cr-resize-ne::after,
+    .cr-touch-handle.cr-resize-nw::after {
+        content: '';
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        background: radial-gradient(circle, #94a3b8 1.8px, transparent 1.8px);
+        background-size: 5px 5px;
+        background-repeat: repeat;
+        border-radius: 3px;
+        opacity: 0.75;
+        pointer-events: none;
+        transition: opacity 0.2s;
+    }
+    .cr-touch-handle.cr-resize-se::after { bottom: 12px; right: 12px; }
+    .cr-touch-handle.cr-resize-sw::after { bottom: 12px; left:  12px; }
+    .cr-touch-handle.cr-resize-ne::after { top:    12px; right: 12px; }
+    .cr-touch-handle.cr-resize-nw::after { top:    12px; left:  12px; }
+
+    .cr-touch-handle.active::after {
+        opacity: 1;
+        background: radial-gradient(circle, var(--c-gold-dim) 1.8px, transparent 1.8px) !important;
+        background-size: 5px 5px !important;
+    }
+
+    /* Header grab cursor trên mobile */
+    .chat-header { cursor: grab; }
+    .chat-window.cr-dragging .chat-header { cursor: grabbing; }
+    .chat-window.cr-dragging {
+        box-shadow: 0 32px 80px rgba(0,0,0,0.26), 0 0 0 2px var(--c-gold-glow);
+    }
 }
 
 /* ============================================
@@ -886,6 +1023,16 @@
 .support-start-btn .material-icons { font-size: 20px; }
 
 .support-note { font-size: 11px; color: var(--c-text-faint); margin: 0; }
+
+/* ============================================
+   DRAG & RESIZE — Base (áp dụng cả mobile + desktop)
+   ============================================ */
+.cr-resize-handle {
+    position: absolute;
+    z-index: 10001;
+    user-select: none;
+    touch-action: none; /* Quan trọng: ngăn scroll khi kéo handle */
+}
 
 /* ============================================
    DRAG & RESIZE — Desktop Only

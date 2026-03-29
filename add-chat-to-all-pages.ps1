@@ -44,8 +44,17 @@ if ($startIdx -lt 0 -or $endIdx -lt 0) {
 $chatBlock = $indexContent.Substring($startIdx, $endIdx - $startIdx + $endMarker.Length)
 Write-Host "Da trich xuat chat widget ($($chatBlock.Length) ky tu)" -ForegroundColor Green
 
-# CSS link
-$cssLink = '    <link rel="stylesheet" href="css/chat-room.css">'
+# Tawk Guard + CSS link
+$cssLink = @"
+    <style id="aphim-tawk-hide-guard">
+        /* A Phim: Decisive Tawk.to Hide Guard - Prevent FOUC on Mobile/Desktop */
+        #tawk-widget-layer, [id^="tawk-"], [class^="tawk-"], [class*=" tawk-"], [id*="tawkchat"], iframe[title*="chat widget" i], iframe[src*="tawk.to"], .tawk-min-container, .tawk-button {
+            display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important;
+            width: 0 !important; height: 0 !important; z-index: -9999 !important; position: fixed !important; left: -9999px !important;
+        }
+    </style>
+    <link rel="stylesheet" href="css/chat-room.css">
+"@
 
 $added   = 0
 $skipped = 0
