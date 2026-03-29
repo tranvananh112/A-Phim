@@ -772,64 +772,46 @@ class APFilmChat {
     _initMobileKeyboardFix() {
         if (window.innerWidth > 768) return;
         const win = this.el.window;
-        if (!win) return;
+        if (!win || !window.visualViewport) return;
 
-        // Lưu chiều cao viewport ban đầu
-        let initialVH = window.innerHeight;
-        let keyboardOpen = false;
+        const onVVResize = () => {
+            if (!this.isOpen || this.isMinimized) return;
 
-        const onResize = () => {
-            const currentVH = window.innerHeight;
-            const diff = initialVH - currentVH;
+            const vv = window.visualViewport;
+            const keyboardHeight = window.innerHeight - vv.height;
+            const isOpen = keyboardHeight > 150;
 
-            if (diff > 150) {
-                // Keyboard đang mở
-                if (!keyboardOpen) {
-                    keyboardOpen = true;
-                    win.classList.add('keyboard-open');
-                    // Giữ window cố định, chỉ điều chỉnh chiều cao
-                    win.style.height = (currentVH - 90) + 'px';
-                    // Scroll to bottom
-                    setTimeout(() => this._scrollToBottom(), 100);
-                }
+            if (isOpen) {
+                win.classList.add('keyboard-open');
+                // Tính toán vị trí top dể không bị lún xuống dưới bàn phím
+                // bottom: bàn phím + 8px margin
+                win.style.bottom = (keyboardHeight + 8) + 'px';
+                // Chiều cao tối đa là phần viewport còn lại - margin top (60px cho header trang)
+                win.style.height = (vv.height - 70) + 'px';
+                
+                setTimeout(() => this._scrollToBottom(), 100);
             } else {
-                // Keyboard đóng
-                if (keyboardOpen) {
-                    keyboardOpen = false;
-                    win.classList.remove('keyboard-open');
-                    win.style.height = '';
-                    initialVH = window.innerHeight;
-                }
+                win.classList.remove('keyboard-open');
+                win.style.bottom = '';
+                win.style.height = '';
             }
         };
 
-        // Dùng visualViewport API (tốt hơn trên iOS)
-        if (window.visualViewport) {
-            window.visualViewport.addEventListener('resize', () => {
-                const currentVH = window.visualViewport.height;
-                const diff = initialVH - currentVH;
+        window.visualViewport.addEventListener('resize', onVVResize);
+        window.visualViewport.addEventListener('scroll', onVVResize);
 
-                if (diff > 150) {
-                    if (!keyboardOpen) {
-                        keyboardOpen = true;
-                        win.classList.add('keyboard-open');
-                        win.style.bottom = '8px';
-                        win.style.height = (currentVH - 90) + 'px';
-                        setTimeout(() => this._scrollToBottom(), 100);
-                    }
-                } else {
-                    if (keyboardOpen) {
-                        keyboardOpen = false;
-                        win.classList.remove('keyboard-open');
-                        win.style.bottom = '';
-                        win.style.height = '';
-                        initialVH = window.visualViewport.height;
-                    }
-                }
-            });
-        } else {
-            window.addEventListener('resize', onResize);
-        }
+        // Chặn scroll body khi đang chat trên mobile để tránh lệch viewport
+        this.el.messageInput?.addEventListener('focus', () => {
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
+        });
+        this.el.messageInput?.addEventListener('blur', () => {
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
+            // Restore scroll position nếu cần
+        });
     }
 
     /* ── Mobile: Touch Resize 8 hướng + header drag ────────────── */

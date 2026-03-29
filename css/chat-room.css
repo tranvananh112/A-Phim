@@ -809,10 +809,9 @@
         transform-origin: bottom center;
     }
 
-    /* Khi keyboard mở, đẩy window lên để input vẫn thấy */
+    /* Khi keyboard mở, JS sẽ tự tính toán bottom và height dựa trên visualViewport */
     .chat-window.keyboard-open {
-        bottom: 8px;
-        height: calc(100vh - 90px);
+        transition: bottom 0.3s ease, height 0.3s ease;
     }
 
     /* FAB nhỏ hơn trên mobile */
