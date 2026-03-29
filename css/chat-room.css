@@ -705,7 +705,7 @@
 .input-icon-btn .material-icons { font-size: 20px; }
 
 #chatMessageInput {
-    flex: 1; background: transparent; border: none; outline: none;
+    flex: 1; background: transparent; border: none; outline: none !important; box-shadow: none !important;
     color: var(--c-text); font-size: 16px; /* ≥16px: ngăn iOS auto-zoom */
     font-family: 'Manrope', sans-serif; min-width: 0;
     -webkit-text-size-adjust: none;
