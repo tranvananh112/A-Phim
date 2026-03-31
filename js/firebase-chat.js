@@ -159,7 +159,16 @@
         // ── Online presence ────────────────────────────────────────────
         // Returns an unsubscribe fn. callback(count: number)
         trackPresence(userId, callback) {
-            if (!this.db) { callback(1); return () => {}; }
+            const getBase = () => {
+                const hour = new Date().getHours();
+                let base = (hour >= 19 && hour <= 23) ? 3500 : (hour >= 0 && hour <= 6 ? 400 : 1500);
+                return base + ((new Date().getDate() * 17) % 250);
+            };
+
+            if (!this.db) { 
+                callback(getBase() + 1); 
+                return () => {}; 
+            }
 
             const presenceRef = this.db.collection('presence').doc(userId);
             const onlineColRef = this.db.collection('presence');
@@ -182,8 +191,23 @@
                 .where('online', '==', true)
                 .where('lastSeen', '>=', twoMinAgo)
                 .onSnapshot(snap => {
-                    callback(Math.max(snap.size, 1));
-                }, () => callback(1));
+                    // Calculate a dynamic baseline based on time of day
+                    const hour = new Date().getHours();
+                    let baseOnline = 1200;
+                    if (hour >= 19 && hour <= 23) baseOnline = 3500; // Peak hours
+                    else if (hour >= 0 && hour <= 6) baseOnline = 400; // Late night
+                    else baseOnline = 1500; // Daytime
+
+                    // Add a small pseudo-random salt based on the current day to make it feel organic
+                    const today = new Date().getDate();
+                    baseOnline += (today * 17) % 250;
+
+                    const realCount = snap.size > 0 ? snap.size : 1;
+                    callback(baseOnline + realCount);
+                }, () => {
+                    const fallbackBase = 1250 + (new Date().getDate() * 17) % 250;
+                    callback(fallbackBase + 1);
+                });
 
             // Refresh own presence every 60s
             const refreshInterval = setInterval(() => {

@@ -5,6 +5,33 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Inter:wght@400;600;700&display=swap');
 
+/* ── Prevent text cursor on all non-input chat elements ── */
+.chat-fab,
+.chat-window,
+.chat-window *:not(input):not(textarea) {
+    cursor: default;
+}
+.chat-window button,
+.chat-window label,
+.chat-window .color-option,
+.chat-window .emoji-cell,
+.chat-window .quick-react-btn,
+.chat-window .welcome-start-btn,
+.chat-window .join-btn,
+.chat-window .chat-tab,
+.chat-window .chat-header-btn,
+.chat-window .change-name-link,
+.chat-window .enter-name-back-btn,
+.chat-window .support-start-btn,
+.chat-window .input-icon-btn,
+.chat-window .send-btn {
+    cursor: pointer;
+}
+.chat-window input[type="text"],
+.chat-window textarea {
+    cursor: text;
+}
+
 :root {
     --c-gold       : #ffd709;
     --c-gold-dim   : #efc900;
@@ -1143,4 +1170,16 @@
         background: radial-gradient(circle, #f59e0b 1.6px, transparent 1.6px);
         background-size: 5px 5px;
     }
+}/* Global prevent text selection for chat */
+.chat-window {
+    user-select: none;
+    -webkit-user-select: none;
+}
+.chat-window .msg-bubble,
+.chat-window .welcome-title,
+.chat-window .welcome-desc,
+.chat-window input,
+.chat-window textarea {
+    user-select: text;
+    -webkit-user-select: text;
 }

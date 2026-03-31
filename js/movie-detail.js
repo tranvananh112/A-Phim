@@ -340,6 +340,11 @@ function setupRatingSystem() {
 function setupRatingStars() {
     const stars = document.querySelectorAll('.rating-star');
     const ratingValue = document.getElementById('ratingValue');
+    const ratingStarsEl = document.getElementById('ratingStars');
+
+    // Guard: nếu không có element rating stars thì bỏ qua
+    if (!ratingStarsEl || stars.length === 0) return;
+
     let selectedRating = 0;
 
     // Load user's existing rating
@@ -386,6 +391,9 @@ function setupRatingSubmit() {
     const submitBtn = document.getElementById('submitRating');
     const commentInput = document.getElementById('commentInput');
     const ratingValue = document.getElementById('ratingValue');
+
+    // Guard: firebase-comments.js đã xử lý submit rồi, bỏ qua nếu thiếu element
+    if (!submitBtn || !ratingValue) return;
 
     submitBtn.addEventListener('click', () => {
         const rating = parseInt(ratingValue.textContent.split('/')[0]);

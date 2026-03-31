@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html class="dark" lang="vi">
 
 <head>
@@ -19,9 +19,6 @@
         gtag('config', 'G-QYK5R13WK2');
     </script>
 
-    <!-- PopAds Anti-AdBlock -->
-
-
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport" />
     <title>Đăng ký - A Phim</title>
@@ -41,8 +38,8 @@
                 extend: {
                     colors: {
                         "primary": "#f2f20d",
-                        "background-dark": "#222210",
-                        "surface-dark": "#1a1a0d",
+                        "background-dark": "#1e202c",
+                        "surface-dark": "#282a3a",
                     },
                     fontFamily: {
                         "display": ["Space Grotesk", "sans-serif"]
@@ -57,7 +54,7 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: #222210;
+            background: #1e202c;
         }
 
         ::-webkit-scrollbar-thumb {
@@ -70,20 +67,18 @@
 </head>
 
 <body class="bg-background-dark font-display text-white min-h-screen flex flex-col relative overflow-x-hidden">
-    <div class="fixed inset-0 z-0">
-        <img alt="Background" class="w-full h-full object-cover opacity-60"
-            src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1920" />
-        <div class="absolute inset-0 bg-background-dark/80 backdrop-blur-sm"></div>
-        <div
-            class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-background-dark via-transparent to-primary/10">
-        </div>
+    <!-- Background styling to match homepage -->
+    <div class="fixed inset-0 z-0 bg-background-dark">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-surface-dark/40 via-background-dark to-background-dark"></div>
     </div>
 
     <nav class="relative z-50 w-full bg-background-dark/80 backdrop-blur-md border-b border-white/10 sticky top-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
-                <a href="index.html" class="flex-shrink-0 flex items-center gap-2">
-                    <span class="material-icons-outlined text-primary text-3xl">movie_filter</span>
+                <a href="index.html" class="flex-shrink-0 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full border-2 border-primary flex items-center justify-center bg-black/50 shadow-[0_0_15px_rgba(242,242,13,0.3)] overflow-hidden">
+                        <img src="/favicon.png" alt="A Phim Logo" class="w-7 h-7 object-contain hover:scale-110 transition-transform" />
+                    </div>
                     <span class="text-2xl font-bold tracking-tighter">
                         <span class="text-white">A</span> <span class="text-primary">Phim</span>
                     </span>
@@ -92,171 +87,81 @@
         </div>
     </nav>
 
-    <div class="relative z-10 flex-grow flex items-center justify-center w-full px-4 py-12">
-        <div
-            class="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-0 bg-surface-dark border border-white/10 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-md">
-            <div class="hidden md:block relative h-full min-h-[700px] overflow-hidden">
-                <img alt="Movie Poster" class="absolute inset-0 w-full h-full object-cover"
-                    src="https://images.unsplash.com/photo-1594908900066-3f47337549d8?w=800" />
-                <div
-                    class="absolute inset-0 bg-gradient-to-t from-surface-dark via-surface-dark/40 to-transparent opacity-90">
-                </div>
-                <div class="absolute bottom-0 left-0 p-8 z-10">
-                    <h3 class="text-3xl font-bold text-white mb-2 leading-tight">Tham gia cộng đồng yêu phim</h3>
-                    <p class="text-gray-300 text-sm mb-4">Trải nghiệm xem phim không giới hạn với hàng ngàn bộ phim chất
-                        lượng cao.</p>
-                    <div class="space-y-3 mt-6">
-                        <div class="flex items-center gap-3">
-                            <span class="material-icons-round text-primary">check_circle</span>
-                            <span class="text-sm text-gray-300">Xem phim không quảng cáo</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="material-icons-round text-primary">check_circle</span>
-                            <span class="text-sm text-gray-300">Chất lượng 4K HDR</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="material-icons-round text-primary">check_circle</span>
-                            <span class="text-sm text-gray-300">Tải xuống xem offline</span>
-                        </div>
+    <div class="relative z-10 flex-grow flex items-center justify-center w-full px-4 py-8">
+        <div class="w-full max-w-[750px] flex flex-col sm:flex-row bg-[#1e2030] rounded-[20px] overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.6)] ring-1 ring-white/5 animate-[ap-modal-slidein_0.3s_ease] m-auto relative">
+            <!-- Left Panel -->
+            <div id="auth-left-panel" class="hidden sm:flex flex-col items-center justify-end w-[280px] shrink-0 p-8 pt-10 rounded-l-[20px] relative overflow-hidden transition-all duration-500 ease-in-out">
+                <div class="relative z-10 flex flex-col items-center gap-2.5">
+                    <div class="w-[52px] h-[52px] rounded-full border-2 border-primary overflow-hidden bg-black flex items-center justify-center shadow-lg">
+                        <img src="/favicon.png" alt="A Phim" class="w-9 h-9 object-contain">
                     </div>
+                    <div class="text-[22px] font-[800] text-white tracking-[0.5px]">A <span class="text-primary">Phim</span></div>
+                    <div class="text-xs text-white/50 text-center font-medium">Bắt đầu trải nghiệm ngay</div>
                 </div>
             </div>
 
-            <div class="p-8 md:p-12 flex flex-col justify-center w-full">
-                <div class="mb-6">
-                    <h2 class="text-2xl font-bold text-white mb-2">Tạo tài khoản mới</h2>
-                    <p class="text-gray-400 text-sm">Điền thông tin để bắt đầu trải nghiệm</p>
-                </div>
+            <!-- Right Panel -->
+            <div class="flex-1 p-6 sm:p-8 flex flex-col relative bg-[#1e2030] rounded-r-[20px] rounded-l-[20px] sm:rounded-l-none">
+                <h2 class="text-2xl font-[800] text-white mb-1.5">Đăng ký</h2>
+                <p class="text-[13px] text-gray-400 mb-5">
+                    Nếu bạn đã có tài khoản? <a href="login.html" class="text-primary font-semibold hover:underline">Đăng nhập ngay</a>
+                </p>
 
-                <!-- Social Login -->
-                <div class="space-y-3 mb-6">
-                    <button onclick="loginWithGoogle()"
-                        class="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold rounded-lg transition-all transform active:scale-[0.98]">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24">
-                            <path fill="#4285F4"
-                                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                            <path fill="#34A853"
-                                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                            <path fill="#FBBC05"
-                                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-                            <path fill="#EA4335"
-                                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-                        </svg>
-                        Đăng ký với Google
-                    </button>
-                    <button onclick="loginWithFacebook()"
-                        class="w-full flex items-center justify-center gap-3 py-3 px-4 bg-[#1877F2] hover:bg-[#166FE5] text-white font-semibold rounded-lg transition-all transform active:scale-[0.98]">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path
-                                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                        </svg>
-                        Đăng ký với Facebook
-                    </button>
-                </div>
-
-                <div class="relative mb-6">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-white/10"></div>
+                <form id="registerForm" class="space-y-3.5 flex flex-col">
+                    <div>
+                        <input class="block w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-3 text-white text-[14px] focus:ring-1 focus:ring-primary/60 focus:border-primary/60 outline-none placeholder-gray-500 transition-colors" id="name" placeholder="Họ và tên hiển thị" type="text" required />
                     </div>
-                    <div class="relative flex justify-center text-sm">
-                        <span class="px-2 bg-surface-dark text-gray-400">Hoặc đăng ký với email</span>
-                    </div>
-                </div>
 
-                <form id="registerForm" class="space-y-4">
-                    <div class="space-y-1.5">
-                        <label class="block text-sm font-medium text-gray-300" for="name">Họ và tên</label>
+                    <div>
+                        <input class="block w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-white text-[14px] focus:ring-1 focus:ring-primary/60 focus:border-primary/60 outline-none placeholder-gray-500 transition-colors" id="email" placeholder="Email của bạn" type="email" required />
+                    </div>
+
+                    <div>
+                        <input class="block w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-white text-[14px] focus:ring-1 focus:ring-primary/60 focus:border-primary/60 outline-none placeholder-gray-500 transition-colors" id="phone" placeholder="Số điện thoại" type="tel" required />
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
                         <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="material-icons-outlined text-gray-500 text-xl">person_outline</span>
-                            </div>
-                            <input
-                                class="block w-full pl-10 pr-3 py-3 bg-background-dark/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-white placeholder-gray-500 sm:text-sm transition-all"
-                                id="name" placeholder="Nguyễn Văn A" type="text" required />
-                        </div>
-                    </div>
-
-                    <div class="space-y-1.5">
-                        <label class="block text-sm font-medium text-gray-300" for="email">Email</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="material-icons-outlined text-gray-500 text-xl">email</span>
-                            </div>
-                            <input
-                                class="block w-full pl-10 pr-3 py-3 bg-background-dark/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-white placeholder-gray-500 sm:text-sm transition-all"
-                                id="email" placeholder="name@example.com" type="email" required />
-                        </div>
-                    </div>
-
-                    <div class="space-y-1.5">
-                        <label class="block text-sm font-medium text-gray-300" for="phone">Số điện thoại</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="material-icons-outlined text-gray-500 text-xl">phone</span>
-                            </div>
-                            <input
-                                class="block w-full pl-10 pr-3 py-3 bg-background-dark/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-white placeholder-gray-500 sm:text-sm transition-all"
-                                id="phone" placeholder="0912345678" type="tel" required />
-                        </div>
-                    </div>
-
-                    <div class="space-y-1.5">
-                        <label class="block text-sm font-medium text-gray-300" for="password">Mật khẩu</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="material-icons-outlined text-gray-500 text-xl">lock_outline</span>
-                            </div>
-                            <input
-                                class="block w-full pl-10 pr-10 py-3 bg-background-dark/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-white placeholder-gray-500 sm:text-sm transition-all"
-                                id="password" placeholder="••••••••" type="password" required />
-                            <button type="button" onclick="togglePassword('password')"
-                                class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                <span class="material-icons-outlined text-gray-500 text-xl"
-                                    id="password-icon">visibility_off</span>
+                            <input class="block w-full bg-white/5 border border-white/10 rounded-xl pl-3.5 pr-9 py-2.5 text-white text-[14px] focus:ring-1 focus:ring-primary/60 focus:border-primary/60 outline-none placeholder-gray-500 transition-colors" id="password" placeholder="Mật khẩu" type="password" required />
+                            <button type="button" onclick="togglePassword('password')" class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-gray-500 hover:text-white transition-colors">
+                                <span class="material-icons-outlined text-lg focus:outline-none" id="password-icon">visibility_off</span>
                             </button>
                         </div>
-                        <p class="text-xs text-gray-500 mt-1">Tối thiểu 8 ký tự, bao gồm chữ hoa, chữ thường và số</p>
-                    </div>
-
-                    <div class="space-y-1.5">
-                        <label class="block text-sm font-medium text-gray-300" for="confirmPassword">Xác nhận mật
-                            khẩu</label>
                         <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="material-icons-outlined text-gray-500 text-xl">lock_outline</span>
-                            </div>
-                            <input
-                                class="block w-full pl-10 pr-10 py-3 bg-background-dark/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-white placeholder-gray-500 sm:text-sm transition-all"
-                                id="confirmPassword" placeholder="••••••••" type="password" required />
-                            <button type="button" onclick="togglePassword('confirmPassword')"
-                                class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                <span class="material-icons-outlined text-gray-500 text-xl"
-                                    id="confirmPassword-icon">visibility_off</span>
+                            <input class="block w-full bg-white/5 border border-white/10 rounded-xl pl-3.5 pr-9 py-2.5 text-white text-[14px] focus:ring-1 focus:ring-primary/60 focus:border-primary/60 outline-none placeholder-gray-500 transition-colors" id="confirmPassword" placeholder="Nhập lại mật khẩu" type="password" required />
+                            <button type="button" onclick="togglePassword('confirmPassword')" class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-gray-500 hover:text-white transition-colors">
+                                <span class="material-icons-outlined text-lg focus:outline-none" id="confirmPassword-icon">visibility_off</span>
                             </button>
                         </div>
                     </div>
 
-                    <div class="flex items-start">
-                        <input
-                            class="h-4 w-4 mt-1 text-primary focus:ring-primary border-gray-600 rounded bg-background-dark/50"
-                            id="terms" type="checkbox" required />
-                        <label class="ml-2 block text-sm text-gray-400" for="terms">
-                            Tôi đồng ý với <a href="#" class="text-primary hover:underline">Điều khoản sử dụng</a> và <a
-                                href="#" class="text-primary hover:underline">Chính sách bảo mật</a>
+                    <div class="flex items-start mt-2">
+                        <input class="h-4 w-4 mt-0.5 text-primary focus:ring-primary border-gray-600 rounded bg-background-dark/50" id="terms" type="checkbox" required />
+                        <label class="ml-2.5 block text-xs text-gray-400" for="terms">
+                            Tôi đồng ý với <a href="#" class="text-primary hover:underline">Điều khoản</a> và <a href="#" class="text-primary hover:underline">Bảo mật</a>
                         </label>
                     </div>
 
-                    <button type="submit"
-                        class="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-background-dark bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all transform active:scale-[0.98]">
-                        ĐĂNG KÝ NGAY
+                    <button class="w-full py-3 mt-1 rounded-xl text-[#1a1200] font-[800] text-[15px] bg-primary hover:bg-[#e8c15a] transition-all transform hover:-translate-y-0.5 tracking-wide shadow-[0_4px_14px_rgba(242,242,13,0.3)]" type="submit">
+                        ĐĂNG KÝ
                     </button>
                 </form>
 
-                <div class="mt-6 text-center">
-                    <p class="text-sm text-gray-400">
-                        Đã có tài khoản?
-                        <a class="font-medium text-primary hover:underline ml-1" href="login.html">Đăng nhập</a>
-                    </p>
+                <div class="flex items-center gap-3 my-4 text-gray-500 text-xs">
+                    <div class="flex-1 h-px bg-white/5"></div>
+                    <span>Hoặc tiếp tục với</span>
+                    <div class="flex-1 h-px bg-white/5"></div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="loginWithGoogle()" class="flex items-center justify-center gap-2 py-2.5 bg-white hover:bg-gray-100 rounded-xl transition-all shadow-sm">
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-4 h-4" />
+                        <span class="text-sm font-bold text-gray-800">Google</span>
+                    </button>
+                    <button onclick="loginWithFacebook()" class="flex items-center justify-center gap-2 py-2.5 bg-[#1877F2] hover:bg-[#166FE5] rounded-xl transition-all shadow-sm">
+                        <svg class="w-4 h-4 text-white fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        <span class="text-sm font-bold text-white">Facebook</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -264,24 +169,32 @@
 
     <!-- Scripts -->
     <script src="js/analytics.js"></script>
-    <!-- <script src="js/navigation-danh-sach.js"></script> -->
     <script src="js/config.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/register.js"></script>
-
-    <!-- Sticky Navigation -->
     <script src="js/sticky-nav.js"></script>
+    <script>
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(inputId + '-icon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.textContent = 'visibility';
+            } else {
+                input.type = 'password';
+                icon.textContent = 'visibility_off';
+            }
+        }
+    </script>
+
     <!-- Footer -->
     <footer class="bg-[#1e202c] border-t border-white/5 py-12 relative overflow-hidden">
-        <!-- Background pattern/logo graphic -->
         <div class="absolute right-0 top-1/2 -translate-y-1/2 opacity-5 pointer-events-none scale-150">
             <span class="material-icons-round text-[400px]">play_circle_outline</span>
         </div>
 
         <div class="container mx-auto px-6 relative z-10">
-            <!-- Top row: Logo & Social -->
             <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 border-b border-white/5 pb-8">
-                <!-- Logo -->
                 <a href="index.html" class="flex items-center gap-3">
                     <div class="w-12 h-12 rounded-full border-2 border-primary flex items-center justify-center bg-black/50 shadow-[0_0_15px_rgba(242,242,13,0.3)] overflow-hidden">
                         <img src="/favicon.png" alt="A Phim Logo" class="w-8 h-8 object-contain group-hover:scale-110 transition-transform" />
@@ -292,38 +205,14 @@
                     </div>
                 </a>
 
-                <!-- Social Icons -->
                 <div class="flex flex-wrap justify-center gap-3">
-                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
                         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.11.03-1.84 1.18-5.18 3.44-.49.34-.93.5-1.33.49-.44-.01-1.29-.25-1.92-.45-.73-.24-1.31-.36-1.26-.77.03-.21.32-.42.87-.64 3.41-1.48 5.68-2.46 6.83-2.94 3.25-1.36 3.93-1.59 4.37-1.59.1 0 .31.02.43.09.1.06.18.14.2.25.01.12.01.19.01.37z"/></svg>
-                    </a>
-                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg>
-                    </a>
-                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 1200 1227" xmlns="http://www.w3.org/2000/svg"><path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z"/></svg>
-                    </a>
-                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>
-                    </a>
-                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 448 512"><path d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/></svg>
-                    </a>
-                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M21.582 6.186a2.6 2.6 0 0 0-1.83-1.844C18.14 4 12 4 12 4s-6.14 0-7.752.342a2.6 2.6 0 0 0-1.83 1.844C2 7.82 2 12 2 12s0 4.18.418 5.814a2.6 2.6 0 0 0 1.83 1.844C5.86 20 12 20 12 20s6.14 0 7.752-.342a2.6 2.6 0 0 0 1.83-1.844C22 16.18 22 12 22 12s0-4.18-.418-5.814zM9.8 15.116V8.884L15.352 12 9.8 15.116z"/></svg>
-                    </a>
-                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all font-bold text-lg leading-none">
-                        @
-                    </a>
-                    <a href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                     </a>
                 </div>
             </div>
 
-            <!-- Bottom half: Links, text, copyright -->
             <div class="mt-8">
-                <!-- Links -->
                 <div class="flex flex-wrap text-center justify-center md:justify-start gap-6 mb-6 text-sm font-semibold text-gray-300">
                     <a href="#" class="hover:text-primary transition-colors">Hỏi-Đáp</a>
                     <a href="#" class="hover:text-primary transition-colors">Chính sách bảo mật</a>
@@ -332,30 +221,24 @@
                     <a href="#" class="hover:text-primary transition-colors">Liên hệ</a>
                 </div>
 
-                <!-- Text block -->
                 <p class="text-sm text-gray-400 leading-relaxed max-w-5xl text-center md:text-left mb-6">
                     A Phim - Phim hay cả rổ - trang xem phim online miễn phí Full HD Vietsub, thuyết minh + lồng tiếng. Kho phim mới khổng lồ, phim chiếu rạp, phim bộ, phim lẻ từ nhiều quốc gia như Việt Nam, Hàn Quốc, Trung Quốc, Thái Lan, Nhật Bản, Âu Mỹ... đa dạng thể loại. Khám phá nền tảng phim trực tuyến hay nhất năm 2025 chất lượng 4K!
                 </p>
 
-                <!-- Copyright -->
                 <div class="text-xs text-gray-500 font-medium text-center md:text-left">
                     Copyright ©2025 A Phim
                 </div>
             </div>
         </div>
     </footer>
-<script src="js/ads-manager.js" defer></script>
-<!-- ====== Chat Widget A Phim ====== -->
-    <!-- CSS -->
+
+    <!-- ====== Chat Widget A Phim ====== -->
     <link rel="stylesheet" href="css/chat-room.css">
-    <!-- FAB Button -->
     <button id="chatFab" class="chat-fab" aria-label="Mở chat cộng đồng" title="Chat Cộng Đồng">
         <span class="fab-icon material-icons">forum</span>
         <span class="chat-fab-badge" id="chatFabBadge">0</span>
     </button>
-    <!-- Chat Window -->
     <div id="chatWindow" class="chat-window" role="dialog" aria-label="Chat cộng đồng A Phim">
-        <!-- HEADER -->
         <div class="chat-header" id="chatHeader">
             <div class="chat-header-info">
                 <div class="chat-header-avatar">
@@ -374,174 +257,15 @@
                 <button class="chat-header-btn" id="chatCloseBtn" title="Đóng"><span class="material-icons">close</span></button>
             </div>
         </div>
-        <!-- BODY -->
-        <div class="chat-body" id="chatBody">
-            <!-- SCREEN 1: WELCOME -->
-            <div class="chat-screen chat-screen-welcome active" id="screenWelcome">
-                <div class="welcome-glow"><img src="/favicon.png" alt="A Phim" style="width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.15));"></div>
-                <div>
-                    <h2 class="welcome-title">Chào mừng đến <span>Kênh A Phim</span></h2>
-                    <p class="welcome-desc" style="margin-top:8px;">Kết nối, thảo luận và tận hưởng điện ảnh cùng hàng ngàn tín đồ phim ảnh.</p>
-                </div>
-                <div class="welcome-stats">
-                    <div class="welcome-stat"><div class="welcome-stat-num" id="welcomeOnline">1,284</div><div class="welcome-stat-label">Trực tuyến</div></div>
-                    <div class="welcome-stat"><div class="welcome-stat-num">50K+</div><div class="welcome-stat-label">Thành viên</div></div>
-                    <div class="welcome-stat"><div class="welcome-stat-num">24/7</div><div class="welcome-stat-label">Hoạt động</div></div>
-                </div>
-                <div class="welcome-features">
-                    <div class="welcome-feature"><span class="material-icons">movie</span><div class="welcome-feature-text"><strong>Thảo luận phim</strong><span>Review, rating và khám phá phim mới</span></div></div>
-                    <div class="welcome-feature"><span class="material-icons">groups</span><div class="welcome-feature-text"><strong>Cộng đồng sôi nổi</strong><span>Kết nối với người xem cùng sở thích</span></div></div>
-                    <div class="welcome-feature"><span class="material-icons">bolt</span><div class="welcome-feature-text"><strong>Chat thời gian thực</strong><span>Nhắn tin ngay lập tức, không độ trễ</span></div></div>
-                </div>
-                <button class="welcome-start-btn" id="welcomeStartBtn">Bắt đầu chat ngay <span class="material-icons">arrow_forward</span></button>
-            </div>
-            <!-- SCREEN 2: ENTER NAME -->
-            <div class="chat-screen chat-screen-name" id="screenEnterName">
-                <div class="enter-name-header">
-                    <button class="enter-name-back-btn" id="enterNameBackBtn"><span class="material-icons">arrow_back</span></button>
-                    <div class="enter-name-title-wrap"><h2>Tạo hồ sơ</h2><p>Chọn biệt danh và màu sắc của bạn</p></div>
-                </div>
-                <div>
-                    <span class="name-color-label">Màu đại diện</span>
-                    <div class="color-picker-row" id="colorPickerRow">
-                        <div class="color-option selected" data-color="#ffd709" style="background:#ffd709"></div>
-                        <div class="color-option" data-color="#22c55e" style="background:#22c55e"></div>
-                        <div class="color-option" data-color="#3b82f6" style="background:#3b82f6"></div>
-                        <div class="color-option" data-color="#ef4444" style="background:#ef4444"></div>
-                        <div class="color-option" data-color="#a855f7" style="background:#a855f7"></div>
-                        <div class="color-option" data-color="#f97316" style="background:#f97316"></div>
-                        <div class="color-option" data-color="#06b6d4" style="background:#06b6d4"></div>
-                        <div class="color-option" data-color="#ec4899" style="background:#ec4899"></div>
-                    </div>
-                </div>
-                <div class="name-input-group">
-                    <div class="name-input-label">
-                        <span>Biệt danh của bạn</span>
-                        <span class="name-char-count" id="nameCharCount">0 / 20</span>
-                    </div>
-                    <div class="name-input-wrapper">
-                        <input type="text" id="chatNameInput" class="name-input" placeholder="VD: MovieLover_99" maxlength="20" autocomplete="off">
-                        <span class="name-input-icon material-icons">person</span>
-                    </div>
-                    <div class="name-error-msg" id="nameErrorMsg">Tên phải từ 3–20 ký tự, không chứa ký tự đặc biệt.</div>
-                </div>
-                <div class="name-preview">
-                    <div class="name-preview-avatar" id="previewAvatar" style="background:#ffd709;">A</div>
-                    <div class="name-preview-info"><strong id="previewName">Biệt danh của bạn</strong><span>Thành viên mới · Hôm nay</span></div>
-                </div>
-                <div class="online-preview">
-                    <div class="online-avatars">
-                        <div class="online-avatar-mini" style="background:#ffd709;color:#1a1200;font-weight:700;">K</div>
-                        <div class="online-avatar-mini" style="background:#22c55e;color:#fff;font-weight:700;">L</div>
-                        <div class="online-avatar-mini" style="background:#3b82f6;color:#fff;font-weight:700;">M</div>
-                        <div class="online-avatar-mini more">+39</div>
-                    </div>
-                    <div class="online-info"><strong><span style="display:inline-block;width:7px;height:7px;background:#22c55e;border-radius:50%;margin-right:5px;vertical-align:middle;"></span>42 trực tuyến</strong><span>Đang thảo luận sôi nổi</span></div>
-                </div>
-                <button class="join-btn" id="chatJoinBtn" disabled><span class="material-icons">login</span>Tham gia phòng chat</button>
-            </div>
-            <!-- SCREEN 3: CHAT ROOM -->
-            <div class="chat-screen chat-screen-room" id="screenRoom">
-                <div class="messages-area" id="messagesArea">
-                    <div class="date-separator"><span>Hôm Nay</span></div>
-                    <div class="sys-msg"><span>🎬 Chào mừng đến với Kênh A Phim!</span></div>
-                    <div class="msg-group">
-                        <div class="msg-avatar" style="background:#3b82f6;color:#fff;">M</div>
-                        <div class="msg-content">
-                            <div class="msg-name">MovieFan</div>
-                            <div class="msg-bubble">Mọi người thấy Dune: Part Two thế nào? Hình ảnh choáng ngợp luôn! 🤩</div>
-                            <div class="msg-meta"><span class="msg-time">20:20</span></div>
-                        </div>
-                    </div>
-                    <div class="msg-group">
-                        <div class="msg-avatar" style="background:#22c55e;color:#fff;">L</div>
-                        <div class="msg-content">
-                            <div class="msg-name">LinhChi</div>
-                            <div class="msg-bubble">Nhạc phim của Hans Zimmer nữa, nghe mà rung động cả phòng chiếu 🎵</div>
-                            <div class="msg-meta"><span class="msg-time">20:21</span></div>
-                        </div>
-                    </div>
-                    <div class="typing-indicator" id="typingIndicator">
-                        <div class="typing-avatar" style="background:#a855f7;border-radius:50%;"></div>
-                        <div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
-                    </div>
-                </div>
-                <div class="quick-reactions" id="quickReactions">
-                    <button class="quick-react-btn" data-text="👍 Tuyệt vời!">👍 Tuyệt vời</button>
-                    <button class="quick-react-btn" data-text="🔥 Quá đỉnh!">🔥 Quá đỉnh</button>
-                    <button class="quick-react-btn" data-text="🍿 Đang xem">🍿 Đang xem</button>
-                    <button class="quick-react-btn" data-text="⭐ 10/10">⭐ 10/10</button>
-                    <button class="quick-react-btn" data-text="🎬 Rất nghệ">🎬 Rất nghệ</button>
-                    <button class="quick-react-btn" data-text="😍 Cực hay!">😍 Cực hay</button>
-                </div>
-            </div>
-            <!-- SCREEN 4: HỖ TRỢ -->
-            <div class="chat-screen chat-screen-support" id="screenSupport">
-                <div class="support-inner">
-                    <div class="support-icon-wrap">
-                        <span class="material-icons">support_agent</span>
-                    </div>
-                    <h3 class="support-title">Hỗ trợ trực tuyến</h3>
-                    <p class="support-desc">Đội ngũ hỗ trợ của A Phim luôn sẵn sàng giải đáp mọi thắc mắc của bạn.</p>
-                    <div class="support-info-cards">
-                        <div class="support-info-card">
-                            <span class="material-icons">schedule</span>
-                            <div><strong>Giờ hoạt động</strong><span>24/7 — Phản hồi nhanh</span></div>
-                        </div>
-                        <div class="support-info-card">
-                            <span class="material-icons">translate</span>
-                            <div><strong>Ngôn ngữ</strong><span>Tiếng Việt — Tiếng Anh</span></div>
-                        </div>
-                        <div class="support-info-card">
-                            <span class="material-icons">verified</span>
-                            <div><strong>Chuyên nghiệp</strong><span>Được đào tạo bài bản</span></div>
-                        </div>
-                    </div>
-                    <button class="support-start-btn" id="supportStartTawk">
-                        <span class="material-icons">chat</span>
-                        Bắt đầu chat hỗ trợ
-                    </button>
-                    <p class="support-note">Nhấn để mở cửa sổ chat với nhân viên hỗ trợ</p>
-                </div>
-            </div>
-        </div>
-        <!-- INPUT AREA -->
-        <div class="chat-input-area" id="chatInputArea">
-            <div class="chat-tabs-bar">
-                <button class="chat-tab active" data-tab="general" id="tabGeneral"><span class="material-icons">public</span>Chung</button>
-                <button class="chat-tab" data-tab="movies" id="tabMovies"><span class="material-icons">movie</span>Phim</button>
-                <button class="chat-tab" data-tab="support" id="tabSupport"><span class="material-icons">help</span>Hỗ trợ</button>
-            </div>
-            <div class="input-row">
-                <button class="input-icon-btn" id="emojiToggleBtn" title="Emoji"><span class="material-icons">mood</span></button>
-                <input type="text" id="chatMessageInput" placeholder="Viết tin nhắn..." maxlength="500" autocomplete="off">
-                <button class="send-btn" id="chatSendBtn" disabled><span class="material-icons">send</span></button>
-            </div>
-            <div class="input-footer">
-                <div class="current-user-tag">
-                    <div class="current-user-avatar" id="currentUserAvatar" style="background:#ffd709;">A</div>
-                    <span id="currentUserName">Khách</span>
-                </div>
-                <span class="change-name-link" id="changeNameLink">Đổi tên</span>
-            </div>
-        </div>
-        <!-- Emoji picker -->
-        <div class="emoji-picker-panel" id="emojiPickerPanel">
-            <div class="emoji-grid" id="emojiGrid"></div>
-        </div>
+        <div class="chat-body" id="chatBody"></div>
+        <div class="chat-input-area" id="chatInputArea"></div>
     </div>
 
-    <!-- ====== Firebase SDK (Compat CDN) ====== -->
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script>
-    <!-- Firebase Chat Service -->
     <script src="js/firebase-chat.js"></script>
-    <!-- Chat Widget Logic -->
     <script src="js/chat-room.js"></script>
-
-    
-    
 
     <!-- Tawk.to (Ho tro) - widget mac dinh bi an, mo qua tab Ho tro -->
     <script type="text/javascript">
@@ -555,8 +279,22 @@
             s1.setAttribute('crossorigin','*');
             s0.parentNode.insertBefore(s1, s0);
         })();
-    </script>
-    <!-- ====== End Chat Widget ====== -->
-</body>
 
+        // Fetch dynamic background for the Left Panel (Latest Vietnamese Movie)
+        (async function() {
+            try {
+                const res = await fetch('https://ophim1.com/v1/api/quoc-gia/viet-nam');
+                const data = await res.json();
+                if (data?.data?.items?.length > 0) {
+                    const latestMovie = data.data.items[0];
+                    const url = `https://img.ophim.live/uploads/movies/${latestMovie.thumb_url || latestMovie.poster_url}`;
+                    const panel = document.getElementById('auth-left-panel');
+                    if (panel) {
+                        panel.style.background = `linear-gradient(to bottom, rgba(15,15,30,0.15) 0%, rgba(15,15,30,0.95) 100%), url('${url}') center / cover no-repeat`;
+                    }
+                }
+            } catch(e) { console.error('Failed to load dynamic background:', e); }
+        })();
+    </script>
+</body>
 </html>

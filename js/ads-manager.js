@@ -55,7 +55,7 @@
         #adm-popup-overlay {
             position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:999999;
             display:flex; align-items:center; justify-content:center; padding:12px;
-            opacity:0; transition:opacity .35s; pointer-events:none;
+            opacity:0; transition:opacity .15s ease-out; pointer-events:none;
         }
         #adm-popup-overlay.show { opacity:1; pointer-events:auto; }
         #adm-popup-box { position:relative; max-width:320px; width:100%; }
@@ -71,7 +71,7 @@
             z-index:99998; background:transparent;
             width:fit-content;
             transform:translateX(-50%) translateY(120%);
-            transition:transform .45s cubic-bezier(.2,.8,.2,1);
+            transition:transform .2s cubic-bezier(.2,.8,.2,1);
         }
         #adm-catfish.show { transform:translateX(-50%) translateY(0); }
         #adm-catfish-close {
@@ -102,10 +102,10 @@
             </a>
         </div>`;
         document.body.appendChild(overlay);
-        setTimeout(() => overlay.classList.add('show'), 700);
+        setTimeout(() => overlay.classList.add('show'), 200);
         overlay.querySelector('#adm-popup-close').onclick = () => {
-            overlay.classList.remove('show');
-            setTimeout(() => overlay.remove(), 350);
+            overlay.style.opacity = '0';
+            setTimeout(() => overlay.remove(), 150);
         };
 
         // ── 2. TOP LEADERBOARD BAR ──────────────────────────────────
@@ -118,10 +118,10 @@
             <div id="adm-catfish-close">Tắt QC ✕</div>
             <div id="adm-catfish-inner">${twoByTwo()}</div>`;
         document.body.appendChild(catfish);
-        setTimeout(() => catfish.classList.add('show'), 1600);
+        setTimeout(() => catfish.classList.add('show'), 400);
         catfish.querySelector('#adm-catfish-close').onclick = () => {
-            catfish.classList.remove('show');
-            setTimeout(() => catfish.remove(), 450);
+            catfish.style.transform = 'translateX(-50%) translateY(120%)';
+            setTimeout(() => catfish.remove(), 200);
         };
 
         // ── 4. IN-FEED BLOCKS after every 2 major sections ─────────

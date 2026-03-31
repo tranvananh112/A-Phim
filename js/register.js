@@ -59,9 +59,14 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     const result = await authService.register(email, password, name, phone);
 
     if (result.success) {
-        showMessage('Đăng ký thành công! Đang chuyển hướng...', 'success');
+        showMessage('Đăng ký thành công! Vui lòng đăng nhập để tiếp tục...', 'success');
         setTimeout(() => {
-            window.location.href = 'index.html';
+            // Chuyển về trang login, giữ nguyên ?redirect= để sau khi login quay lại phim
+            const redirectParam = new URLSearchParams(window.location.search).get('redirect');
+            const loginUrl = redirectParam
+                ? `login.html?redirect=${encodeURIComponent(redirectParam)}`
+                : 'login.html';
+            window.location.href = loginUrl;
         }, 1500);
     } else {
         showMessage(result.message || 'Đăng ký thất bại', 'error');

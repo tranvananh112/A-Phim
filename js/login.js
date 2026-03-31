@@ -36,7 +36,9 @@ function setupLoginForm() {
             if (result.success) {
                 showMessage('Đăng nhập thành công!', 'success');
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    // Quay về trang phim nếu có ?redirect=
+                    const redirectUrl = new URLSearchParams(window.location.search).get('redirect');
+                    window.location.href = redirectUrl ? decodeURIComponent(redirectUrl) : 'index.html';
                 }, 1000);
             } else {
                 showMessage(result.message, 'error');
@@ -157,7 +159,9 @@ function showRegisterModal() {
                 showMessage('Đăng ký thành công!', 'success');
                 modal.remove();
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    // Quay về trang phim nếu có ?redirect=
+                    const redirectUrl = new URLSearchParams(window.location.search).get('redirect');
+                    window.location.href = redirectUrl ? decodeURIComponent(redirectUrl) : 'index.html';
                 }, 1000);
             } else {
                 showMessage(result.message, 'error');
