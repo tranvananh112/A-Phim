@@ -228,3 +228,90 @@ nav+* {
         white-space: nowrap !important;
     }
 }
+/* === RESTORE A-PHIM ORIGINAL NAVIGATION EFFECTS === */
+
+/* 1. Global Navbar Items active & hover color */
+nav .nav-item:hover, nav .nav-pill:hover, nav .btn-pill:hover {
+    background: rgba(242, 242, 13, 0.08) !important;
+    border-color: rgba(242, 242, 13, 0.3) !important;
+    box-shadow: 0 0 20px rgba(242, 242, 13, 0.2), inset 0 0 10px rgba(242, 242, 13, 0.1) !important;
+    transform: translateY(-2px);
+    color: #f2f20d !important;
+}
+
+nav .nav-item {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* 2. Dropdown Container - "viền trong trắng" (màu đen + viền trắng mỏng) */
+nav .group:hover > div[class*="absolute"], 
+#categoryDropdown {
+    background: rgba(0, 0, 0, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(242, 242, 13, 0.1) !important;
+    border-radius: 1rem !important;
+    overflow: hidden !important;
+}
+
+/* 3. Dropdown Links Hover - "màu xanh" gradient (yellow/olive effect in dark mode) */
+nav .group > div[class*="absolute"] a,
+#categoryDropdown a {
+    position: relative !important;
+    overflow: hidden !important;
+    transition: all 0.3s ease !important;
+}
+
+nav .group > div[class*="absolute"] a::before,
+#categoryDropdown a::before {
+    content: '' !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    height: 100% !important;
+    width: 3px !important;
+    background: linear-gradient(180deg, #f2f20d, #ffd700) !important;
+    transform: scaleY(0) !important;
+    transition: transform 0.3s ease !important;
+    box-shadow: 0 0 10px rgba(242, 242, 13, 0.5) !important;
+}
+
+nav .group > div[class*="absolute"] a:hover::before,
+#categoryDropdown a:hover::before {
+    transform: scaleY(1) !important;
+}
+
+nav .group > div[class*="absolute"] a:hover,
+#categoryDropdown a:hover {
+    background: linear-gradient(90deg, rgba(242, 242, 13, 0.15), transparent) !important;
+    color: #f2f20d !important;
+    padding-left: 2rem !important; 
+}
+
+/* 4. Ensure Desktop Icons rotate properly inside nav */
+nav .group:hover .group-hover\:rotate-180 {
+    transform: rotate(180deg) !important;
+}
+
+/* === MOBILE: Also add green/yellow pill style to mobile nav items on hover/active === */
+#mobileMenu a:hover {
+    background: rgba(242, 242, 13, 0.15) !important;
+    color: #f2f20d !important;
+    box-shadow: inset 0 0 15px rgba(242, 242, 13, 0.1) !important;
+    border-radius: 0.5rem !important;
+    padding-left: 1.5rem !important;
+}
+
+/* Ensure nav-item stays highlighted while its dropdown is open */
+nav .group:hover .nav-item {
+    background: rgba(242, 242, 13, 0.08) !important;
+    border-color: rgba(242, 242, 13, 0.3) !important;
+    box-shadow: 0 0 20px rgba(242, 242, 13, 0.2), inset 0 0 10px rgba(242, 242, 13, 0.1) !important;
+    color: #f2f20d !important;
+}
+
+/* Ensure mobile menu links transition smoothly */
+#mobileMenu a {
+    transition: all 0.3s ease;
+}
