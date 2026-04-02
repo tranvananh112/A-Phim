@@ -24,6 +24,15 @@
         '#f97316','#06b6d4','#ec4899','#84cc16','#6366f1'
     ];
 
+    const AVATAR_LIST = [
+        "https://i.ex-cdn.com/giadinhmoi.vn/files/content/2024/12/13/470107535_1156674079362932_3220600486106282952_n-0953.jpg",
+        "https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/07/anh-son-tung-2.jpg",
+        "https://cdn2.fptshop.com.vn/unsafe/800x0/anh_lisa_6_d83ab4e404.jpg",
+        "https://img.tripi.vn/cdn-cgi/image/width=700,height=700/https://gcs.tripi.vn/public-tripi/tripi-feed/img/482756agE/anh-mo-ta.png",
+        "https://tophinhanh.net/wp-content/uploads/2023/12/anh-kim-jisoo-cute-1.jpg",
+        "https://i.pinimg.com/736x/3c/d7/24/3cd724dd754d0b42bd6599efe18ceff0.jpg"
+    ];
+
     function getAvatarColor(name) {
         let hash = 0;
         for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
@@ -97,7 +106,7 @@
         
         _col(slug) { return this.db.collection('comments').doc(slug).collection('items'); }
 
-        async add(slug, { name, text, isSpoiler, parentId, userEmail }) {
+        async add(slug, { name, text, isSpoiler, parentId, userEmail, avatarUrl }) {
             if (!this.db || !slug) return { ok: false, msg: 'Lỗi kết nối' };
             text = (text || '').trim();
             name = (name || 'Người dùng').trim() || 'Người dùng';
@@ -109,6 +118,7 @@
                     name, text,
                     email    : userEmail || '',
                     color    : getAvatarColor(name || userEmail || 'U'),
+                    avatarUrl: avatarUrl || '',
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                     isSpoiler: !!isSpoiler,
                     parentId : parentId || null,
@@ -173,6 +183,7 @@
                             email: d.email || '',
                             text: d.text || '',
                             color: d.color || '#f59e0b', 
+                            avatarUrl: d.avatarUrl || '',
                             timestamp: d.timestamp,
                             isSpoiler: !!d.isSpoiler,
                             parentId: d.parentId || null,
@@ -310,6 +321,30 @@
         .ap-send-btn:hover { background: #e0b84e; transform: scale(1.02); }
         .ap-send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         
+        /* ── AVATAR SELECTOR ── */
+        .ap-ava-select { position: relative; margin-left: auto; display: flex; align-items: center; }
+        .ap-btn-ava {
+            display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #d1d5db;
+            font-size: 13px; cursor: pointer; transition: background 0.2s;
+        }
+        .ap-btn-ava:hover { background: rgba(255,255,255,0.1); }
+        .ap-ava-preview { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; }
+        .ap-ava-dropdown {
+            position: absolute; bottom: 120%; right: 0; background: #282a3a;
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 220px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); opacity: 0; pointer-events: none;
+            transform: translateY(10px); transition: all 0.2s ease; z-index: 100;
+        }
+        .ap-ava-dropdown.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .ap-ava-option {
+            width: 56px; height: 56px; border-radius: 50%; object-fit: cover; cursor: pointer;
+            border: 2px solid transparent; transition: border-color 0.2s, transform 0.2s;
+        }
+        .ap-ava-option:hover { transform: scale(1.1); }
+        .ap-ava-option.selected { border-color: #fcd576; transform: scale(1.1); }
+
         /* ── GIAO DIỆN BÌNH LUẬN TRẢ LỜI ĐẸP & THANH LỊCH NHƯ TIKTOK/YOUTUBE ── */
         .ap-cmt-list { display: flex; flex-direction: column; text-align: left; }
         .ap-cmt-item { display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.05); animation: ap-in 0.3s ease; position:relative; align-items: flex-start; text-align: left; }
@@ -422,11 +457,20 @@
         const color   = getAvatarColor(user.name || user.email || 'U');
         const initial = sanitize((user.name || user.email || 'U').charAt(0).toUpperCase());
         const displayName = sanitize(user.name || user.email || 'Người dùng');
+        const savedAva = localStorage.getItem('ap_chosen_avatar') || '';
+
+        const avaHtml = savedAva ? `<img src="${savedAva}" class="ap-form-user-ava" id="ap-user-ava-${pid}" style="object-fit:cover;">` : `<div class="ap-form-user-ava" id="ap-user-ava-${pid}" style="background:${color}">${initial}</div>`;
+        const previewHtml = savedAva ? `<img src="${savedAva}" class="ap-ava-preview" id="ap-preview-${pid}">` : `<span class="material-icons-round" style="font-size:18px" id="ap-preview-${pid}">account_circle</span>`;
+
+        let optionsHtml = '';
+        AVATAR_LIST.forEach(link => {
+            optionsHtml += `<img src="${link}" class="ap-ava-option ${savedAva === link ? 'selected' : ''}" onclick="window.selectAvatar('${link}', '${pid}')">`;
+        });
 
         return `
         <div class="ap-cmt-form-logged">
             <div class="ap-form-user-bar">
-                <div class="ap-form-user-ava" style="background:${color}">${initial}</div>
+                ${avaHtml}
                 <span class="ap-form-user-name">${displayName}</span>
                 <span class="ap-form-user-badge">✓ Đã đăng nhập</span>
                 <button class="ap-form-logout-btn" onclick="try{ authService.logout(); } catch(e){ window.location.href = 'login.html'; }">Đăng xuất</button>
@@ -444,7 +488,15 @@
             </div>
             <div class="ap-form-footer">
                 <span class="ap-char-count" id="ap-count-${pid}">0 / 1000</span>
-                <button class="ap-send-btn" onclick="window.submitComment('${submitPid}', '${pid}')" id="ap-btn-${pid}" disabled>
+                <div class="ap-ava-select" id="ap-ava-select-${pid}">
+                    <button class="ap-btn-ava" onclick="document.getElementById('ap-ava-drop-${pid}').classList.toggle('show')">
+                        ${previewHtml} Chọn đổi ảnh
+                    </button>
+                    <div class="ap-ava-dropdown" id="ap-ava-drop-${pid}">
+                        ${optionsHtml}
+                    </div>
+                </div>
+                <button class="ap-send-btn" onclick="window.submitComment('${submitPid}', '${pid}')" id="ap-btn-${pid}" disabled style="margin-left:12px;">
                     Gửi <span class="material-icons-round" style="font-size:16px">send</span>
                 </button>
             </div>
@@ -471,10 +523,11 @@
 
         // Like count
         const likeCountStr = c.likedBy.length > 0 ? c.likedBy.length : '';
+        const userAva = c.avatarUrl ? `<img src="${sanitize(c.avatarUrl)}" class="ap-cmt-avatar" style="object-fit:cover;">` : `<div class="ap-cmt-avatar" style="background:${sanitize(c.color)}">${initial}</div>`;
 
         return `
         <div class="ap-cmt-item" data-id="${c.id}">
-            <div class="ap-cmt-avatar" style="background:${sanitize(c.color)}">${initial}</div>
+            ${userAva}
             <div class="ap-cmt-body">
                 <div class="ap-cmt-info">
                     ${badgeHtml}
@@ -554,9 +607,37 @@
         if (m) m.classList.toggle('show');
     }
 
+    window.selectAvatar = function(url, pid) {
+        localStorage.setItem('ap_chosen_avatar', url);
+        document.querySelectorAll(`#ap-ava-drop-${pid} .ap-ava-option`).forEach(img => img.classList.remove('selected'));
+        event.target.classList.add('selected');
+        
+        const preview = document.getElementById(`ap-preview-${pid}`);
+        if(preview) {
+            if(preview.tagName === 'SPAN') {
+                preview.outerHTML = `<img src="${url}" class="ap-ava-preview" id="ap-preview-${pid}">`;
+            } else {
+                preview.src = url;
+            }
+        }
+        document.getElementById(`ap-ava-drop-${pid}`).classList.remove('show');
+        
+        // Cập nhật DOM ảnh đại diện ở bar góc trên (Bar User) cho tất cả các form hiện tại
+        document.querySelectorAll('div[id^="ap-user-ava-"], img[id^="ap-user-ava-"]').forEach(barAva => {
+            if(barAva.tagName === 'DIV') {
+                barAva.outerHTML = `<img src="${url}" class="ap-form-user-ava" id="${barAva.id}" style="object-fit:cover;">`;
+            } else {
+                barAva.src = url;
+            }
+        });
+    }
+
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.ap-dropdown-wrap')) {
             document.querySelectorAll('.ap-dropdown-menu.show').forEach(m => m.classList.remove('show'));
+        }
+        if (!e.target.closest('.ap-ava-select')) {
+            document.querySelectorAll('.ap-ava-dropdown.show').forEach(m => m.classList.remove('show'));
         }
     });
 
@@ -582,6 +663,7 @@
         if (!user) return;
         const slug = window.firebaseComments.currentSlug;
         const pid = boxId || 'main';
+        const avatarUrl = localStorage.getItem('ap_chosen_avatar') || '';
         
         const ta = document.getElementById(`ap-input-${pid}`);
         const text = ta.value.trim();
@@ -592,7 +674,7 @@
         if(btn) { btn.disabled = true; btn.innerHTML = 'Đang gửi...'; }
 
         const res = await window.firebaseComments.add(slug, {
-            name: user.name, userEmail: user.email, text, isSpoiler, parentId: submitParentId || null
+            name: user.name, userEmail: user.email, text, isSpoiler, parentId: submitParentId || null, avatarUrl
         });
 
         if (res.ok) {
