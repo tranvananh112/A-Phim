@@ -288,7 +288,7 @@
         }
         .ap-cmt-textarea::placeholder { color: #6b7280; }
 
-        .ap-form-footer {
+        .ap-form-footer { flex-wrap: wrap; gap: 8px;
             display: flex; align-items: center; justify-content: space-between;
             padding: 10px 16px; border-top: 1px solid rgba(255,255,255,0.06);
         }
@@ -311,7 +311,7 @@
         .ap-spoiler-label.active { color: #fcd576; font-weight: 600; }
 
         .ap-char-count { font-size: 11px; color: #6b7280; }
-        .ap-send-btn {
+        .ap-send-btn { white-space: nowrap; flex-shrink: 0;
             display: flex; align-items: center; gap: 6px;
             padding: 8px 20px; border-radius: 20px;
             background: #fcd576; color: #1a1200;
@@ -323,7 +323,7 @@
         
         /* ── AVATAR SELECTOR ── */
         .ap-ava-select { position: relative; margin-left: auto; display: flex; align-items: center; }
-        .ap-btn-ava {
+        .ap-btn-ava { white-space: nowrap; flex-shrink: 0;
             display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px;
             background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #d1d5db;
             font-size: 13px; cursor: pointer; transition: background 0.2s;
@@ -344,6 +344,16 @@
         }
         .ap-ava-option:hover { transform: scale(1.1); }
         .ap-ava-option.selected { border-color: #fcd576; transform: scale(1.1); }
+
+        @media (max-width: 480px) {
+            .ap-ava-dropdown { width: 180px; right: -10px; padding: 10px; gap: 6px; }
+            .ap-ava-option { width: 44px; height: 44px; }
+            .ap-btn-ava { font-size: 11px; padding: 4px 10px; }
+            .ap-ava-preview { width: 16px; height: 16px; }
+            .ap-send-btn { padding: 6px 16px; font-size: 12px; }
+            .ap-char-count { width: 100%; text-align: right; margin-bottom: 4px; }
+            .ap-ava-select { margin-left: auto; }
+        }
 
         /* ── GIAO DIỆN BÌNH LUẬN TRẢ LỜI ĐẸP & THANH LỊCH NHƯ TIKTOK/YOUTUBE ── */
         .ap-cmt-list { display: flex; flex-direction: column; text-align: left; }
