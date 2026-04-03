@@ -1,1826 +1,268 @@
 ﻿<!DOCTYPE html>
-<html lang="vi">
+<html class="dark" lang="vi">
+
 <head>
-    <style id="aphim-tawk-hide-guard">
-        /* A Phim: Decisive Tawk.to Hide Guard - Prevent FOUC on Mobile/Desktop */
-        #tawk-widget-layer, [id^="tawk-"], [class^="tawk-"], [class*=" tawk-"], [id*="tawkchat"], iframe[title*="chat widget" i], iframe[src*="tawk.to"], .tawk-min-container, .tawk-button {
-            display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important;
-            width: 0 !important; height: 0 !important; z-index: -9999 !important; position: fixed !important; left: -9999px !important;
-        }
-    </style>
-    <script src="js/chat-init-guard.js"></script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thể Thao Trực Tiếp - A Phim</title>
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        :root {
-            --bg: #1e202c;
-            --bg2: #282a3a;
-            --bg3: #1a1a1c;
-            --bg4: #222224;
-            --border: rgba(255,255,255,0.1);
-            --text: #ffffff;
-            --text2: #e5e7eb;
-            --text3: #9ca3af;
-            --green: #22c55e;
-            --green2: #16a34a;
-            --blue: #2563eb;
-            --orange: #f97316;
-            --red: #ef4444;
-            --primary: #facc15;
-        }
-
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Be Vietnam Pro', sans-serif;
-            min-height: 100vh;
-        }
-
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* ===== HEADER ===== */
-        #site-header {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-            background: rgba(30,32,44,0.8); backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
-        }
-        .header-inner {
-            max-width: 1400px; margin: 0 auto;
-            padding: 0 24px; height: 60px;
-            display: flex; align-items: center; gap: 16px;
-        }
-        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-        .logo-badge {
-            width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--primary);
-            background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
-            overflow: hidden; box-shadow: 0 0 15px rgba(242,242,13,0.3);
-        }
-        .logo-badge img { width: 26px; height: 26px; object-fit: contain; }
-        .logo-name { font-weight: 800; font-size: 24px; color: var(--text); display: flex; align-items: center;}
-        .logo-name span { color: var(--primary); }
-        .header-sep { width: 1px; height: 24px; background: var(--border); }
-        .header-tag { font-size: 13px; font-weight: 700; color: var(--green); }
-        .header-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
-        .back-link {
-            display: flex; align-items: center; gap: 6px;
-            padding: 6px 14px; background: var(--bg3); border: 1px solid var(--border);
-            border-radius: 20px; color: var(--text2); font-size: 13px; font-weight: 600;
-            cursor: pointer; transition: all 0.2s; text-decoration: none;
-        }
-        .back-link:hover { border-color: var(--orange); color: var(--text); }
-
-        /* ===== MAIN CONTENT ===== */
-        #main {
-            max-width: 1400px; margin: 0 auto;
-            padding: 80px 16px 48px;
-        }
-
-        /* ===== SPORT TABS ===== */
-        .sport-tabs-container { 
-            background: #111; border-radius: 12px; margin-bottom: 20px; 
-            border: 1px solid var(--border); overflow: hidden;
-        }
-        .sport-tabs-row {
-            display: flex; align-items: center; overflow-x: auto; gap: 0;
-            border-bottom: 1px solid var(--border); padding: 4px;
-        }
-        .sport-tab {
-            display: flex; align-items: center; white-space: nowrap;
-            padding: 12px 24px; font-weight: 800; font-size: 13px;
-            transition: 0.2s; cursor: pointer; border: none;
-            background: transparent; color: #9ca3af; gap: 10px;
-            border-right: 1px solid rgba(255,255,255,0.05);
-            text-transform: uppercase; letter-spacing: 0.5px;
-        }
-        .sport-tab:hover { color: white; background: rgba(255,255,255,0.03); }
-        .sport-tab.active { 
-            background: linear-gradient(135deg, #1e3a8a, #2563eb); 
-            color: white; border-radius: 8px; 
-        }
-        .sport-tab .live-badge {
-            background: #ef4444; color: white; font-size: 8px; 
-            padding: 1px 5px; border-radius: 10px; font-weight: 900;
-            margin-left: -5px; margin-top: -15px; border: 1px solid #111;
-        }
-        
-        /* Sub filters (Tất cả, Live, Hot...) */
-        .sub-filters-row {
-            display: flex; align-items: center; gap: 10px; padding: 12px;
-            overflow-x: auto;
-        }
-        .filter-pill {
-            display: flex; align-items: center; gap: 8px; padding: 8px 16px;
-            background: #1c1c1f; border-radius: 8px; font-size: 12px; 
-            font-weight: 800; color: white; cursor: pointer; transition: 0.2s;
-            border: 1px solid transparent; text-transform: uppercase;
-        }
-        .filter-pill:hover { background: #2a2a2d; }
-        .filter-pill.active { background: var(--green); }
-        .filter-count { 
-            background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;
-            font-size: 10px; min-width: 20px; text-align: center;
-        }
-        .sport-icon { font-size: 18px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
-
-        /* ===== FILTER ROW ===== */
-        .filter-row {
-            display: flex; align-items: center; gap: 10px;
-            margin-bottom: 24px; flex-wrap: wrap;
-        }
-        .filter-btn {
-            display: flex; align-items: center; gap: 6px;
-            padding: 8px 16px; border-radius: 8px;
-            font-weight: 700; font-size: 13px; cursor: pointer;
-            border: 1px solid var(--border); transition: all 0.2s; white-space: nowrap;
-            background: var(--bg3); color: var(--text2);
-        }
-        .filter-btn:hover { background: var(--bg4); color: var(--text); }
-        .filter-btn.active { background: var(--green); color: white; border-color: var(--green); }
-        .filter-count {
-            font-size: 10px; padding: 2px 6px; border-radius: 4px;
-            background: rgba(255,255,255,0.1);
-        }
-        .filter-btn.active .filter-count { background: var(--green2); }
-        .tournament-select {
-            background: #1c1c1f; color: white; border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px; padding: 6px 14px; font-size: 13px; font-weight: 700;
-            outline: none; cursor: pointer; transition: 0.2s; font-family: inherit;
-        }
-        .tournament-select:hover { border-color: var(--green); background: #2a2a2d; }
-        .tournament-select option { background: #1a1a1c; color: white; }
-
-        /* ===== LOADING ===== */
-        #loading-state {
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            min-height: 300px; gap: 16px; color: var(--text2);
-        }
-        .spinner {
-            width: 48px; height: 48px; border: 4px solid rgba(0,168,89,0.2);
-            border-top-color: var(--green); border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        #empty-state {
-            display: none; text-align: center; padding: 60px 20px;
-            color: var(--text3); background: var(--bg3);
-            border-radius: 14px; border: 1px solid var(--border);
-            font-size: 16px;
-        }
-
-        /* ===== MATCH GRID ===== */
-        #matches-container { display: block; }
-        .tournament-group { margin-bottom: 28px; }
-        .tournament-name {
-            font-size: 16px; font-weight: 800; color: var(--text);
-            margin-bottom: 12px; padding-left: 12px;
-            border-left: 4px solid var(--green);
-            display: flex; align-items: center; gap: 8px;
-        }
-        .matches-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-        @media (max-width: 900px) { .matches-grid { grid-template-columns: 1fr; } }
-
-        .load-more-btn {
-            display: block; width: fit-content; margin: 32px auto;
-            padding: 12px 32px; background: var(--green); color: white;
-            border: none; border-radius: 30px; font-weight: 800; font-size: 14px;
-            cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 4px 15px rgba(0,168,89,0.3); letter-spacing: 0.5px;
-        }
-        .load-more-btn:hover { 
-            background: #10b981; transform: scale(1.05); 
-            box-shadow: 0 8px 25px rgba(0,168,89,0.4); 
-        }
-        .load-more-btn:active { transform: scale(0.95); }
-
-        /* ===== MATCH CARD ===== */
-        .match-card {
-            background: rgba(26,26,28,0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 20px; padding: 18px 24px;
-            cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            background-image: linear-gradient(rgba(26,26,28,0.8), rgba(26,26,28,0.8)), 
-                              linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.01));
-            background-origin: border-box; background-clip: padding-box, border-box;
-            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
-        }
-        .match-card:hover { 
-            transform: translateY(-6px) scale(1.01); 
-            border-color: rgba(34,197,94,0.4);
-            box-shadow: 0 15px 35px rgba(0,168,89,0.25);
-            background-image: linear-gradient(rgba(30,30,32,0.95), rgba(30,30,32,0.95)), 
-                              linear-gradient(135deg, var(--green), var(--blue));
-        }
-
-        /* Hiệu ứng viền LED chạy vàng rực rỡ (chế độ Live) */
-        .match-card.is-live {
-            background-image: linear-gradient(rgba(26,26,28,0.9), rgba(26,26,28,0.9)), 
-                              conic-gradient(from var(--angle), transparent 25%, #00ff87, #60efff, transparent 75%);
-            animation: rotate-border 4s linear infinite;
-        }
-        @property --angle {
-            syntax: '<angle>'; initial-value: 0deg; inherits: false;
-        }
-        @keyframes rotate-border {
-            to { --angle: 360deg; }
-        }
-        
-        .card-top {
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 20px; position: relative;
-        }
-        .card-league {
-            display: flex; align-items: center; gap: 6px; flex: 1;
-            font-size: 11px; font-weight: 700; color: #9ca3af; 
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            text-transform: uppercase;
-        }
-        /* Status Pill sáng hơn theo Screenshot 1 */
-        .card-status {
-            padding: 4px 12px; border-radius: 20px; font-size: 11px;
-            font-weight: 800; background: #222; color: #aaa;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .card-status.live-pill {
-            background: #22c55e; color: #000;
-            box-shadow: 0 0 15px rgba(34,197,94,0.6);
-            animation: pulse-glow 2s infinite;
-        }
-        @keyframes pulse-glow {
-            0% { box-shadow: 0 0 5px rgba(34,197,94,0.4); }
-            50% { box-shadow: 0 0 20px rgba(34,197,94,0.8); }
-            100% { box-shadow: 0 0 5px rgba(34,197,94,0.4); }
-        }
-        .card-status.ht { background: #3b82f6; color: white; }
-        .card-status.delayed { background: #6b7280; color: white; }
-        
-        .card-time { font-size: 12px; color: var(--text3); display: flex; align-items: center; gap: 4px; }
-
-        .match-main {
-            display: flex; align-items: center; justify-content: center; gap: 12px;
-            margin: 20px 0;
-        }
-        .team-side { display: flex; align-items: center; flex: 1; min-width: 0; gap: 16px; }
-        .team-side.home { justify-content: flex-end; }
-        .team-side.away { flex-direction: row-reverse; justify-content: flex-end; }
-        
-        .team-name {
-            font-size: 16px; font-weight: 850; color: #ffffff; 
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-        .team-side.home .team-name { text-align: right; }
-        .team-side.away .team-name { text-align: left; }
-        
-        .team-logo {
-            width: 48px; height: 48px; border-radius: 50%; background: #222;
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden;
-            border: 2px solid rgba(255,255,255,0.15); box-shadow: 0 6px 15px rgba(0,0,0,0.6);
-        }
-        .team-logo img { width: 85%; height: 85%; object-fit: contain; }
-        .no-logo { font-size: 18px; opacity: 0.8; }
-        
-        .score-pill {
-            position: relative; width: 72px; height: 34px; border-radius: 17px; overflow: hidden;
-            font-weight: 900; font-size: 17px; flex-shrink: 0; color: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5); margin: 0 12px; border: 1px solid rgba(255,255,255,0.1);
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        /* Hiển thị tỷ số đội nảo nhiều hơn: Tạo một HÌNH TRÒN lấn cong vào trung tâm */
-        .score-pill.home-win { background: linear-gradient(135deg, #1e3a8a, #3b82f6); } 
-        .score-pill.home-win::before {
-            content: ''; position: absolute; left: -2px; top: -2px; bottom: -2px; width: 36px;
-            background: linear-gradient(135deg, #4c1d95, #7c3aed); border-radius: 50%; box-shadow: 4px 0 8px rgba(0,0,0,0.5); z-index: 1;
-        }
-        .score-pill.away-win { background: linear-gradient(135deg, #4c1d95, #7c3aed); } 
-        .score-pill.away-win::before {
-            content: ''; position: absolute; right: -2px; top: -2px; bottom: -2px; width: 36px;
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6); border-radius: 50%; box-shadow: -4px 0 8px rgba(0,0,0,0.5); z-index: 1;
-        }
-        .score-pill.draw { background: linear-gradient(135deg, #1e3a8a, #2563eb); } 
-        
-        .score-pill span { position: relative; z-index: 2; flex: 1; text-align: center; }
-        .score-pill .score-sep { flex: 0.5; color: rgba(255,255,255,0.6); font-size: 14px; }
-        
-        .commentator-mini { 
-            display: flex; align-items: center; gap: 14px; 
-            margin: 14px -24px -18px -24px; padding: 8px 24px;
-            background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.1);
-            border-radius: 0 0 20px 20px;
-        }
-        .mini-comm-item { 
-            display: flex; align-items: center; gap: 6px; 
-            font-size: 10px; font-weight: 800; color: #d1d5db;
-        }
-        .mini-comm-icon { 
-            width: 18px; height: 18px; border-radius: 50%; border: 1px solid #444; 
-        }
-        .mini-comm-name { letter-spacing: 0.5px; text-transform: uppercase; }
-
-        .card-header-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-        .tournament-name { font-size: 11px; font-weight: 800; color: var(--text2); opacity: 0.8; text-transform: uppercase; }
-        .card-status { background: var(--green); color: white; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 900; box-shadow: 0 2px 6px rgba(34,197,94,0.3); }
-        
-        .commentator-mini {
-            display: flex; align-items: center; gap: 10px; flex-grow: 1;
-        }
-        .commentator-mini img { width: 18px; height: 18px; border-radius: 50%; opacity: 0.9; }
-        .commentator-mini span { font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; white-space: nowrap; }
-        
-        .card-odds { display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 600; color: #9ca3af; line-height: 1.2; text-align: center; }
-        .odds-col { display: flex; flex-direction: column; }
-        .odds-val { color: #d1d5db; }
-        .xbet-logo { font-weight: 900; font-style: italic; color: #38bdf8; font-size: 16px; letter-spacing: -0.5px; margin-left: 6px; text-shadow: 0 2px 4px rgba(56,189,248,0.4); }
-
-        /* ===== MATCH DETAIL VIEW ===== */
-        #detail-view { display: none; }
-        #detail-view.show { display: block; }
-        #matches-view.hidden { display: none; }
-
-        .detail-header {
-            background: var(--bg3); border-radius: 14px;
-            padding: 16px; margin-bottom: 12px;
-            border: 1px solid #333; position: relative;
-        }
-        .back-btn {
-            display: inline-flex; align-items: center; gap: 6px;
-            color: var(--text2); font-size: 13px; font-weight: 600;
-            cursor: pointer; background: none; border: none;
-            margin-bottom: 12px; padding: 0; font-family: inherit;
-        }
-        .back-btn:hover { color: var(--text); }
-
-        .detail-teams {
-            display: flex; align-items: center; justify-content: center;
-            gap: 24px; margin: 12px 0;
-        }
-        .detail-team {
-            display: flex; align-items: center; gap: 12px;
-        }
-        .detail-team.home { flex-direction: row-reverse; }
-        .detail-logo {
-            width: 56px; height: 56px; border-radius: 50%;
-            background: var(--bg4); overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
-            border: 1px solid var(--border);
-        }
-        .detail-logo img { width: 100%; height: 100%; object-fit: contain; }
-        .detail-name { font-weight: 800; font-size: 18px; }
-        .detail-score-box { display: flex; align-items: center; }
-        .detail-score-h { background: #1e3a8a; color: white; font-weight: 900; font-size: 28px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 50% 0 0 50%; }
-        .detail-score-a { background: #5b21b6; color: white; font-weight: 900; font-size: 28px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 0 50% 50% 0; }
-        .detail-vs { background: #1e3a8a; color: white; font-weight: 800; font-size: 16px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 0 12px rgba(30,58,138,0.4); }
-
-        .detail-live-indicator {
-            display: flex; align-items: center; justify-content: center;
-            gap: 8px; color: var(--green); font-weight: 700; font-size: 13px; margin-bottom: 8px;
-        }
-        .live-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-        /* Detail Stats Row */
-        .detail-stats-row {
-            display: flex; gap: 8px; margin-bottom: 12px; overflow-x: auto;
-        }
-        .stat-chip {
-            background: var(--bg4); border: 1px solid #333;
-            border-radius: 8px; padding: 6px 12px;
-            font-size: 12px; color: var(--text2); white-space: nowrap; font-family: monospace;
-        }
-
-        /* Odds table */
-        .odds-table-wrap {
-            background: var(--bg3); border: 1px solid #333;
-            border-radius: 14px; margin-bottom: 12px; overflow: hidden;
-            overflow-x: auto;
-        }
-        .odds-table { width: 100%; font-size: 12px; text-align: center; border-collapse: collapse; }
-        .odds-table thead tr { background: var(--bg4); }
-        .odds-table th {
-            padding: 10px 8px; font-weight: 600; color: var(--text2);
-            border-bottom: 1px solid #333;
-        }
-        .odds-table td { padding: 8px; border-bottom: 1px solid #1a1a1a; color: var(--text2); }
-        .odds-table tr:hover td { background: var(--bg4); }
-        .odds-table .label { color: #666; font-weight: 700; font-size: 10px; }
-
-        /* Main content split */
-        .detail-content-grid {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 12px; margin-bottom: 48px;
-        }
-        @media (max-width: 1024px) { .detail-content-grid { grid-template-columns: 1fr; } }
-
-        /* Simulation panel */
-        .sim-panel {
-            background: var(--bg3); border: 1px solid #333;
-            border-radius: 14px; overflow: hidden;
-        }
-        .sim-tabs {
-            display: flex; border-bottom: 1px solid #333;
-        }
-        .sim-tab {
-            flex: 1; padding: 12px; text-align: center;
-            font-weight: 700; font-size: 13px; cursor: pointer;
-            transition: all 0.2s; border: none; background: none;
-            color: var(--text2); font-family: inherit;
-        }
-        .sim-tab:hover { background: var(--bg4); color: var(--text); }
-        .sim-tab.active { background: var(--green); color: white; }
-
-        .pitch-area {
-            position: relative; width: 100%; aspect-ratio: 16/9;
-            background: #4ade80; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; overflow: hidden;
-        }
-        .pitch-lines {
-            position: absolute; inset: 16px;
-            border: 2px solid rgba(255,255,255,0.5);
-        }
-        .pitch-center-line {
-            position: absolute; top: 0; bottom: 0; left: 50%;
-            width: 1px; background: rgba(255,255,255,0.5);
-        }
-        .pitch-center-circle {
-            position: absolute; top: 50%; left: 50%;
-            width: 80px; height: 80px; border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.5);
-            transform: translate(-50%,-50%);
-        }
-        .pitch-watermark {
-            font-size: 28px; font-weight: 900; color: rgba(255,255,255,0.25);
-            letter-spacing: 4px; z-index: 1;
-        }
-
-        /* Momentum graph */
-        .momentum-wrap { background: #111; padding: 12px; border-top: 1px solid #333; }
-        .momentum-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text2); margin-bottom: 6px; }
-        .momentum-graph { height: 60px; width: 100%; position: relative; border-bottom: 1px solid #555; }
-        .momentum-times { display: flex; justify-content: space-between; font-size: 9px; color: var(--text3); margin-top: 4px; }
-
-        /* Chat panel */
-        .chat-panel {
-            background: var(--bg3); border: 1px solid #333;
-            border-radius: 14px; overflow: hidden;
-            display: flex; flex-direction: column;
-        }
-        .chat-header {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 8px 12px; border-bottom: 1px solid #333;
-        }
-        .chat-btns { display: flex; gap: 8px; }
-        .chat-btn {
-            padding: 6px 12px; border-radius: 6px; font-size: 11px;
-            font-weight: 800; cursor: pointer; border: none; color: white;
-            font-family: inherit;
-        }
-        .chat-btn.tg { background: #0088cc; }
-        .chat-btn.fb { background: #3b5998; }
-        .chat-btn.off { background: var(--bg4); color: var(--text2); }
-        .chat-messages {
-            flex: 1; overflow-y: auto; padding: 12px;
-            display: flex; flex-direction: column; gap: 10px;
-            height: 340px; font-size: 13px;
-        }
-        .chat-msg { display: flex; gap: 8px; align-items: flex-start; }
-        .chat-avatar {
-            width: 24px; height: 24px; border-radius: 50%;
-            flex-shrink: 0; overflow: hidden; display: flex;
-            align-items: center; justify-content: center;
-            font-size: 11px; font-weight: 800; color: white;
-        }
-        .chat-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .chat-user { color: #fbbf24; font-weight: 700; margin-right: 6px; }
-        .chat-text { color: var(--text2); }
-        .chat-input-row {
-            display: flex; align-items: center; gap: 8px;
-            padding: 10px 12px; border-top: 1px solid #333; background: var(--bg4);
-        }
-        .chat-input {
-            flex: 1; background: var(--bg2); border: 1px solid #333;
-            border-radius: 20px; padding: 6px 16px; font-size: 13px;
-            color: var(--text); outline: none; font-family: inherit;
-        }
-        .chat-input:focus { border-color: var(--green); }
-        .chat-send { background: none; border: none; color: var(--green); cursor: pointer; padding: 4px; }
-
-        /* Bookmaker panel */
-        .bookie-panel {
-            background: var(--bg3); border: 1px solid #333;
-            border-radius: 14px; padding: 16px; margin-top: 12px;
-        }
-        .bookie-title {
-            color: var(--green); font-weight: 800; margin-bottom: 12px;
-            padding-left: 8px; border-left: 4px solid var(--green);
-        }
-
-        /* Sidebar Matches */
-        .sidebar-matches-wrap {
-            background: var(--bg3); border: 1px solid #333;
-            border-radius: 14px; overflow: hidden; display: flex; flex-direction: column;
-            max-height: 800px;
-        }
-        .sidebar-title {
-            padding: 12px 16px; font-weight: 800; font-size: 14px; color: white;
-            border-bottom: 1px solid #333; display: flex; align-items: center; gap: 8px;
-            text-transform: uppercase;
-        }
-        .sidebar-title::before { content: ""; width: 3px; height: 16px; background: var(--green); display: block; }
-        .sidebar-scroll { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 12px; }
-        .mini-card {
-            background: #111; border: 1px solid #222; border-radius: 12px; padding: 12px;
-            cursor: pointer; transition: 0.2s; position: relative;
-        }
-        .mini-card:hover { border-color: rgba(74, 179, 30, 0.5); background: #161618; }
-        .mini-top { display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: var(--text3); margin-bottom: 12px; }
-        .mini-league { max-width: 45%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .mini-status-pill {
-            background: var(--green); color: white; padding: 2px 8px; border-radius: 4px;
-            font-weight: 800; font-size: 9px; position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-        }
-        .mini-main { display: flex; align-items: center; justify-content: space-between; margin: 10px 0; gap: 4px; }
-        .mini-team-side { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; overflow: hidden; min-width: 0; }
-        .mini-logo-wrap { 
-            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; 
-            background: #222; border-radius: 50%; overflow: hidden; flex-shrink: 0;
-        }
-        .mini-logo { width: 100%; height: 100%; object-fit: contain; }
-        .mini-name { 
-            font-size: 10px; font-weight: 700; text-align: center; color: var(--text2); 
-            width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-        }
-        .mini-score-box { 
-            background: #1e3a8a; color: white; padding: 4px 8px; border-radius: 12px; 
-            font-weight: 900; font-size: 14px; min-width: 45px; text-align: center; flex-shrink: 0;
-        }
-        
-        .mini-bottom { 
-            display: flex; align-items: center; justify-content: space-between; 
-            margin-top: 10px; padding-top: 8px; border-top: 1px solid #222;
-        }
-        .mini-ht { font-size: 10px; color: var(--text3); font-weight: 700; }
-        .mini-comms { display: flex; align-items: center; gap: 4px; }
-        .mini-comm-icon { width: 14px; height: 14px; border-radius: 50%; border: 1px solid #444; }
-
-        /* H2H & Form Sections */
-        .detail-footer-stats { margin-top: 24px; display: flex; flex-direction: column; gap: 24px; }
-        .stat-section-title {
-            font-size: 16px; font-weight: 800; color: white; margin-bottom: 16px;
-            display: flex; align-items: center; gap: 8px; text-transform: uppercase;
-        }
-        .stat-section-title::before { content: ""; width: 4px; height: 20px; background: var(--green); display: block; }
-        
-        .h2h-table { width: 100%; border-collapse: collapse; background: var(--bg3); border-radius: 12px; overflow: hidden; font-size: 13px; }
-        .h2h-table tr { border-bottom: 1px solid #222; }
-        .h2h-table td { padding: 12px 16px; color: var(--text2); }
-        .h2h-score { 
-            background: var(--green); color: white; font-weight: 800; padding: 2px 8px; 
-            border-radius: 4px; min-width: 40px; text-align: center; display: inline-block;
-        }
-        .h2h-team-name { font-weight: 600; width: 35%; }
-        .h2h-team-name.home { text-align: right; }
-        .h2h-team-name.away { text-align: left; }
-        
-        .form-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        @media (max-width: 768px) { .form-container { grid-template-columns: 1fr; } }
-        .form-box { background: var(--bg3); border-radius: 12px; padding: 16px; }
-        .form-team-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; font-weight: 700; color: white; }
-        .form-team-logo { width: 24px; height: 24px; object-fit: contain; }
-        
-        .form-item { 
-            display: flex; align-items: center; justify-content: space-between; 
-            padding: 10px 0; border-bottom: 1px solid #222; font-size: 12px;
-        }
-        .form-res {
-            width: 20px; height: 20px; border-radius: 4px; display: flex; 
-            align-items: center; justify-content: center; color: white; 
-            font-weight: 800; font-size: 11px;
-        }
-        .form-res.W { background: #22c55e; }
-        .form-res.D { background: #eab308; }
-        .form-res.L { background: #ef4444; }
-        
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-        /* Responsive */
-        @media (max-width: 640px) {
-            #main { padding: 72px 10px 48px; }
-            .header-inner { padding: 0 12px; }
-            .detail-name { font-size: 14px; }
-            .team-name { font-size: 12px; }
-            .form-container { grid-template-columns: 1fr; }
-        }
-    </style>
-    <link rel="stylesheet" href="css/chat-room.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons" rel="stylesheet">
-<link rel="stylesheet" href="css/mobile-viewport-fix.css">
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Gói Thành Viên - CineStream</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2f20d",
+                        "background-dark": "#222210",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+<link rel="stylesheet" href="css/mobile-viewport-fix.css">`n<link rel="stylesheet" href="css/mobile-menu-modern.css">
 </head>
-<body>
 
-<!-- HEADER -->
-    <header id="site-header">
-    <script src="js/chat-init-guard.js"></script>
-        <div class="header-inner">
-            <a href="index.html" class="logo">
-                <div class="logo-badge">
-                    <img src="/favicon.png" alt="A Phim Logo">
+<body class="bg-background-dark text-white font-display min-h-screen flex flex-col">
+    <nav class="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-md border-b border-white/10">
+        <div class="container mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2 group">
+                <div
+                    class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-105 transition-transform">
+                    <span class="material-icons text-black text-2xl">play_arrow</span>
                 </div>
-                <div class="logo-name">A<span>Phim</span></div>
+                <span class="text-2xl font-bold tracking-tight">
+                    <span class="text-white">A</span> <span class="text-primary">Phim</span>
+                </span>
             </a>
-            <div style="width: 1px; height: 24px; background: var(--border); margin: 0 8px;"></div>
-            <div style="color: var(--green); font-weight: bold; display: flex; align-items: center; gap: 6px;">
-                <span style="font-size:18px;">⚽</span> Thể Thao Trực Tiếp
+
+            <!-- Desktop Menu -->
+            <div class="hidden lg:flex items-center gap-6">
+                <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
+                    href="index.html">Trang chủ</a>
+
+                <!-- Phim Dropdown -->
+                <div class="relative group">
+                    <button
+                        class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide flex items-center gap-1">
+                        Phim
+                        <span class="material-icons text-sm">expand_more</span>
+                    </button>
+                    <div
+                        class="absolute top-full left-0 mt-2 w-48 bg-black/95 backdrop-blur-md border border-white/10 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                        <a href="search.html?type=series"
+                            class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-colors">
+                            📺 Phim Bộ
+                        </a>
+                        <a href="search.html?type=single"
+                            class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-colors">
+                            🎬 Phim Lẻ
+                        </a>
+                        <a href="phim-viet-nam.html"
+                            class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-colors">
+                            🇻🇳 Phim Việt Nam
+                        </a>
+                    </div>
+                </div>
+
+                <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
+                    href="categories.html">Thể Loại</a>
+                <a class="text-gray-300 hover:text-primary font-medium transition-colors text-sm uppercase tracking-wide"
+                    href="search.html">Khám phá</a>
+                <a class="text-primary font-bold transition-colors text-sm uppercase tracking-wide"
+                    href="pricing.html">Gói cước</a>
             </div>
-            <div style="flex: 1;"></div>
-            <a href="index.html" style="color: var(--text2); text-decoration: none; font-size: 13px; border: 1px solid var(--border); padding: 6px 16px; border-radius: 20px; transition: 0.2s;">
-                &larr; Trang Chủ
-            </a>
-        </div>
-    </header>
-<!-- MAIN -->
-<div id="main">
 
-    <!-- ==== MATCHES VIEW ==== -->
-    <div id="matches-view">
-
-        <!-- Header Banner -->
-        <div style="display:flex;justify-content:center;margin-bottom:20px;">
-            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:12px 28px;font-size:15px;font-weight:800;color:var(--text2);">
-                📺 LỊCH THI ĐẤU TRỰC TIẾP · CẬP NHẬT TỰ ĐỘNG MỖI 30 GIÂY
+            <div class="flex items-center gap-4">
+                <a href="search.html" class="text-gray-300 hover:text-primary transition-colors">
+                    <span class="material-icons">search</span>
+                </a>
+                <a href="login.html"
+                    class="px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary/90 transition-colors">Đăng
+                    nhập</a>
             </div>
-        </div>
 
-        <!-- Sport Tabs Premium (2 Rows) -->
-        <div class="sport-tabs-container">
-            <div class="sport-tabs-row hide-scrollbar">
-                <button class="sport-tab active" data-sport="football" onclick="selectSport(this)">
-                    <span class="sport-icon">⚽</span> BÓNG ĐÁ <span class="live-badge">Live</span>
-                </button>
-                <button class="sport-tab" data-sport="basketball" onclick="selectSport(this)">
-                    <span class="sport-icon">🏀</span> BÓNG RỔ <span class="live-badge">Live</span>
-                </button>
-                <button class="sport-tab" data-sport="tennis" onclick="selectSport(this)">
-                    <span class="sport-icon">🎾</span> TENNIS <span class="live-badge">Live</span>
-                </button>
-                <button class="sport-tab" data-sport="badminton" onclick="selectSport(this)">
-                    <span class="sport-icon">🏸</span> CẦU LÔNG
-                </button>
-                <button class="sport-tab" data-sport="volleyball" onclick="selectSport(this)">
-                    <span class="sport-icon">🏐</span> BÓNG CHUYỀN <span class="live-badge">Live</span>
-                </button>
-                <button class="sport-tab" data-sport="pingpong" onclick="selectSport(this)">
-                    <span class="sport-icon">🏓</span> BÓNG BÀN
-                </button>
-            </div>
-            <div class="sub-filters-row hide-scrollbar">
-                <div class="filter-pill active" onclick="selectFilter(this)" data-filter="all">TẤT CẢ <span class="filter-count" id="count-all">...</span></div>
-                <div class="filter-pill" onclick="selectFilter(this)" data-filter="live"><span style="color:#ef4444; margin-right:4px;">((</span> LIVE <span style="color:#ef4444; margin-left:4px;">))</span> <span class="filter-count" id="count-live">...</span></div>
-                <div class="filter-pill" onclick="selectFilter(this)" data-filter="hot">🔥 HOT <span class="filter-count" id="count-hot">...</span></div>
-                <div class="filter-pill" onclick="selectFilter(this)" data-filter="today">📅 NAY <span class="filter-count" id="count-today">...</span></div>
-                <div class="filter-pill" onclick="selectFilter(this)" data-filter="tomorrow">📅 MAI <span class="filter-count" id="count-tomorrow">...</span></div>
-                
-                <div style="flex:1;"></div>
-                
-                <select class="tournament-select" id="tournament-select" onchange="applyFilters()">
-                    <option value="all">Tất cả giải đấu</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Loading State -->
-        <div id="loading-state">
-            <div class="spinner"></div>
-            <div>Đang tải lịch thi đấu...</div>
-        </div>
-
-        <!-- Empty State -->
-        <div id="empty-state">😕 Không có trận đấu nào phù hợp</div>
-
-        <!-- Matches Container -->
-        <div id="matches-container"></div>
-
-    </div><!-- end #matches-view -->
-
-    <!-- ==== DETAIL VIEW ==== -->
-    <div id="detail-view">
-        
-        <!-- Detail Header -->
-        <div class="detail-header">
-            <button class="back-btn" onclick="showMatchesList()">
-                ← Trở lại danh sách
+            <!-- Mobile Menu Button -->
+            <button id="mobileMenuBtn" class="lg:hidden text-white">
+                <span class="material-icons">menu</span>
             </button>
-
-            <div id="detail-live-indicator" class="detail-live-indicator" style="display:none;">
-                <span class="live-dot"></span>
-                <span id="detail-live-min">Trực tiếp</span>
-            </div>
-
-            <div class="detail-teams">
-                <div class="detail-team home">
-                    <span class="detail-name" id="detail-home-name">-</span>
-                    <div class="detail-logo">
-                        <img id="detail-home-logo" src="" alt="" onerror="this.style.display='none';this.parentElement.innerHTML='⚽';">
-                    </div>
-                </div>
-
-                <div id="detail-score-box" class="detail-score-box">
-                    <div class="detail-vs" id="det-vs">VS</div>
-                </div>
-
-                <div class="detail-team away">
-                    <div class="detail-logo">
-                        <img id="detail-away-logo" src="" alt="" onerror="this.style.display='none';this.parentElement.innerHTML='⚽';">
-                    </div>
-                    <span class="detail-name" id="detail-away-name">-</span>
-                </div>
-            </div>
-
-            <!-- Stats Row -->
-            <div class="detail-stats-row">
-                <div class="stat-chip" id="stat-ht">HT: - / -</div>
-                <div class="stat-chip" id="stat-ft">FT: - / -</div>
-                <div class="stat-chip" id="stat-league">-</div>
-            </div>
         </div>
 
-        <!-- Odds Table -->
-        <div class="odds-table-wrap">
-            <table class="odds-table">
-                <thead>
-                    <tr>
-                        <th>Nhà cái</th>
-                        <th colspan="3" style="border-left:1px solid #333">CHÂU Á</th>
-                        <th colspan="3" style="border-left:1px solid #333">CHÂU ÂU</th>
-                        <th colspan="3" style="border-left:1px solid #333">TÀI XỈU</th>
-                        <th colspan="3" style="border-left:1px solid #333">PHẠT GÓC</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td rowspan="2" style="font-weight:800;color:#60a5fa;">8XBET</td>
-                        <td style="border-left:1px solid #333;" class="label">H1</td>
-                        <td>0.94</td><td>-3</td><td>0.78</td>
-                        <td style="border-left:1px solid #333;">20</td><td>11</td><td>1.02</td>
-                        <td style="border-left:1px solid #333;">0.86</td><td>3.5/4</td><td>0.86</td>
-                        <td style="border-left:1px solid #333;" class="label">SỚM</td><td>1.08</td><td>1.11</td>
-                    </tr>
-                    <tr>
-                        <td style="border-left:1px solid #333;" class="label">FT</td>
-                        <td>0.78</td><td>-0.5</td><td>1.06</td>
-                        <td style="border-left:1px solid #333;">23</td><td>11.5</td><td>1.01</td>
-                        <td style="border-left:1px solid #333;">0.75</td><td>1.5/2</td><td>1.07</td>
-                        <td style="border-left:1px solid #333;" class="label">FT</td><td>0.81</td><td>1.01</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Main Content Grid -->
-        <div class="detail-content-grid">
-
-            <!-- Left: Pitch / Simulation -->
-            <div class="sim-panel">
-                <div class="sim-tabs">
-                    <button class="sim-tab active">
-                        <span style="color:var(--green)">(( </span> TRỰC TIẾP <span style="color:var(--green)"> ))</span>
-                    </button>
-                    <button class="sim-tab active" style="background:var(--green);color:white">
-                        ⚽ MÔ PHỎNG
-                    </button>
-                    <button class="sim-tab">🔗 CHIA SẺ</button>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="lg:hidden hidden bg-black/95 backdrop-blur-md border-t border-white/10">
+            <div class="container mx-auto px-6 py-4">
+                <a href="index.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
+                    🏠 Trang chủ
+                </a>
+                <div class="py-3">
+                    <div class="text-gray-400 text-sm font-bold mb-2">PHIM</div>
+                    <a href="search.html?type=series"
+                        class="block py-2 pl-4 text-gray-300 hover:text-primary transition-colors">
+                        📺 Phim Bộ
+                    </a>
+                    <a href="search.html?type=single"
+                        class="block py-2 pl-4 text-gray-300 hover:text-primary transition-colors">
+                        🎬 Phim Lẻ
+                    </a>
+                    <a href="phim-viet-nam.html"
+                        class="block py-2 pl-4 text-gray-300 hover:text-primary transition-colors">
+                        🇻🇳 Phim Việt Nam
+                    </a>
                 </div>
-
-                <!-- Pitch -->
-                <div class="pitch-area">
-                    <div class="pitch-lines"></div>
-                    <div class="pitch-center-line"></div>
-                    <div class="pitch-center-circle"></div>
-                    <div id="live-score-overlay" class="live-score-btn" style="display:none;">
-                        <button onclick="openLiveScore()">🔴 Xem mô phỏng trực tiếp</button>
-                    </div>
-                    <div class="pitch-watermark">APHIM.IO.VN</div>
-                </div>
-
-                <!-- Momentum Graph -->
-                <div class="momentum-wrap">
-                    <div class="momentum-labels">
-                        <span style="display:flex;align-items:center;gap:6px;">
-                            <span style="width:8px;height:8px;background:var(--green);border-radius:50%;display:inline-block;"></span>
-                            <span id="graph-home">Home</span>
-                        </span>
-                        <span id="graph-minute" style="font-weight:700;color:white;">-</span>
-                        <span style="display:flex;align-items:center;gap:6px;">
-                            <span id="graph-away">Away</span>
-                            <span style="width:8px;height:8px;background:#3b82f6;border-radius:50%;display:inline-block;"></span>
-                        </span>
-                    </div>
-                    <div class="momentum-graph">
-                        <svg id="momentum-svg" width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100">
-                            <line x1="0" y1="50" x2="100" y2="50" stroke="#555" stroke-width="0.5"/>
-                            <text x="50" y="55" text-anchor="middle" font-size="8" fill="#444">Đang tải dữ liệu...</text>
-                        </svg>
-                    </div>
-                    <div class="momentum-times">
-                        <span>0'</span><span>15'</span><span>30'</span>
-                        <span>HT</span><span>60'</span><span>75'</span><span>90'</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right: Chat + Sidebar Matches + Bookmaker -->
-            <div style="display:flex;flex-direction:column;gap:12px;">
-                <!-- New: Sidebar Matches -->
-                <div class="sidebar-matches-wrap">
-                    <div class="sidebar-title">Xem các trận đấu khác</div>
-                    <div class="sidebar-scroll" id="sidebar-matches">
-                        <!-- Mini cards load here -->
-                    </div>
-                </div>
-
-                <div class="chat-panel">
-                    <div class="chat-header">
-                        <div class="chat-btns">
-                            <button class="chat-btn tg">✈ TELEGRAM</button>
-                            <button class="chat-btn fb">f FACEBOOK</button>
-                        </div>
-                        <button class="chat-btn off">TẮT CHAT</button>
-                    </div>
-                    <div class="chat-messages" id="chat-messages">
-                        <div class="chat-msg">
-                            <div class="chat-avatar" style="background:#ec4899;">E</div>
-                            <div><span class="chat-user">Enjoy</span><span class="chat-text">Mấy trận hôm nay hot quá mn ơi 🔥</span></div>
-                        </div>
-                    </div>
-                    <div class="chat-input-row">
-                        <span style="color:var(--text3);font-size:18px;cursor:pointer;">👤</span>
-                        <input class="chat-input" type="text" placeholder="Nhập tin nhắn...">
-                        <button class="chat-send">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="bookie-panel">
-                    <div class="bookie-title">🏆 NHÀ CÁI UY TÍN</div>
-                    <div style="background:var(--bg4);border:1px solid #333;border-radius:10px;padding:12px;display:flex;align-items:center;justify-content:space-between;">
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div style="background:#fbbf24;color:#000;font-weight:800;width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:6px;">1</div>
-                            <div style="background:white;padding:4px 10px;border-radius:6px;">
-                                <span style="color:#0055a4;font-weight:800;font-style:italic;">8XBET</span>
-                            </div>
-                        </div>
-                        <div style="text-align:right;">
-                            <div style="font-size:11px;color:var(--text2);margin-bottom:6px;">BH thể thao cược đầu hoàn 100%</div>
-                            <button style="background:#0088cc;color:white;border:none;border-radius:6px;padding:6px 16px;font-weight:800;font-size:12px;cursor:pointer;font-family:inherit;">CƯỢC NGAY</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div><!-- end detail-content-grid -->
-
-        <!-- New: Footer Stats -->
-        <div class="detail-footer-stats">
-            <div id="h2h-section">
-                <div class="stat-section-title">Thành tích đối đầu</div>
-                <div id="h2h-content">
-                    <!-- H2H table load here -->
-                    <div style="text-align:center; padding:20px; color:var(--text3);">Đang tải dữ liệu đối đầu...</div>
-                </div>
-            </div>
-
-            <div id="form-section">
-                <div class="stat-section-title">Phong độ gần đây</div>
-                <div class="form-container">
-                    <div class="form-box" id="form-home">
-                         <div style="text-align:center; padding:20px; color:var(--text3);">Đang tải phong độ...</div>
-                    </div>
-                    <div class="form-box" id="form-away">
-                         <div style="text-align:center; padding:20px; color:var(--text3);">Đang tải phong độ...</div>
-                    </div>
-                </div>
+                <a href="categories.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
+                    🎭 Thể Loại
+                </a>
+                <a href="search.html" class="block py-3 text-gray-300 hover:text-primary transition-colors">
+                    🔍 Khám phá
+                </a>
+                <a href="pricing.html" class="block py-3 text-primary font-bold transition-colors">
+                    💎 Gói cước
+                </a>
             </div>
         </div>
-    </div><!-- end #detail-view -->
+    </nav>
 
-</div><!-- end #main -->
+    <script>
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+    </script>
 
-</div>
+    <main class="flex-grow pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full relative">
+        <div
+            class="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[128px] pointer-events-none -z-10">
+        </div>
 
-    <footer style="background: var(--bg); border-top: 1px solid var(--border); padding: 48px 0; margin-top: 40px; position:relative; z-index:10;">
-        <div style="max-width: 1400px; margin: 0 auto; padding: 0 24px;">
-            <div style="display: flex; align-items: center; gap: 15px; border-bottom: 1px solid var(--border); padding-bottom: 30px; margin-bottom: 30px;">
-                <div class="logo-badge" style="width:48px;height:48px;box-shadow: 0 0 15px rgba(242,242,13,0.3);">
-                    <img src="/favicon.png" alt="A Phim Logo" style="width:32px;height:32px;">
-                </div>
-                <div style="display: flex; flex-direction: column;">
-                    <span style="font-size: 24px; font-weight: bold; color: white;">A<span style="color: var(--primary);">Phim</span></span>
-                    <span style="color: var(--text2); font-size: 14px;">Xem Phim Mới Nhất</span>
-                </div>
-            </div>
-            
-            <div style="display: flex; gap: 24px; margin-bottom: 24px; font-weight: 600; font-size: 14px; color: var(--text2);">
-                <a href="#" style="color: inherit; text-decoration: none;">Hỏi-Đáp</a>
-                <a href="#" style="color: inherit; text-decoration: none;">Chính sách bảo mật</a>
-                <a href="#" style="color: inherit; text-decoration: none;">Điều khoản sử dụng</a>
-                <a href="#" style="color: inherit; text-decoration: none;">Liên hệ</a>
-            </div>
-            <p style="color: var(--text3); font-size: 14px; line-height: 1.6; max-width: 800px; margin-bottom: 24px;">
-                A Phim - Phim hay cả rổ - trang xem phim online miễn phí Full HD Vietsub, thuyết minh + lồng tiếng. Kho phim khổng lồ chiếu rạp, phim bộ đa quốc gia. Trực tiếp bóng đá Euro, C1 đỉnh cao năm 2025!
+        <div class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Nâng Cấp Trải Nghiệm Điện Ảnh</h1>
+            <p class="text-gray-400 max-w-2xl mx-auto text-lg">
+                Chọn gói thành viên phù hợp để mở khóa kho phim 4K không giới hạn và xem phim không quảng cáo ngay hôm
+                nay.
             </p>
-            <div style="color: var(--text3); font-size: 12px; font-weight: 500;">
-                Copyright ©2025 A Phim
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+            <!-- Free Plan -->
+            <div
+                class="relative group rounded-2xl border border-white/10 bg-white/5 p-8 transition-transform duration-300 hover:-translate-y-2">
+                <div class="mb-6">
+                    <h3 class="text-xl font-medium text-gray-400 mb-2">Miễn Phí</h3>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-4xl font-bold">0</span>
+                        <span class="text-xl font-medium text-gray-500">đ</span>
+                        <span class="text-sm text-gray-500">/tháng</span>
+                    </div>
+                </div>
+                <ul class="space-y-4 mb-8 text-sm text-gray-300">
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-gray-400 text-lg">check_circle</span>
+                        <span>Truy cập kho phim giới hạn</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-gray-400 text-lg">check_circle</span>
+                        <span>Chất lượng SD (480p)</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-gray-400 text-lg">check_circle</span>
+                        <span>Xem trên 1 thiết bị</span>
+                    </li>
+                </ul>
+                <button
+                    class="w-full py-3 rounded-lg border border-white/20 font-medium hover:bg-white/10 transition-colors">
+                    Đang sử dụng
+                </button>
             </div>
+
+            <!-- Premium Plan -->
+            <div
+                class="relative group rounded-2xl border-2 border-primary bg-primary/5 p-8 transform md:-translate-y-4 shadow-xl shadow-primary/10">
+                <div
+                    class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-primary text-black px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">
+                    Phổ biến nhất
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xl font-medium text-primary mb-2">Cao Cấp</h3>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-4xl font-bold">69.000</span>
+                        <span class="text-xl font-medium text-gray-500">đ</span>
+                        <span class="text-sm text-gray-500">/tháng</span>
+                    </div>
+                    <p class="text-xs text-primary mt-2">Dùng thử miễn phí 7 ngày</p>
+                </div>
+                <ul class="space-y-4 mb-8 text-sm text-white font-medium">
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-primary text-lg">check_circle</span>
+                        <span>Truy cập toàn bộ kho phim</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-primary text-lg">check_circle</span>
+                        <span>Chất lượng Full HD & 4K</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-primary text-lg">check_circle</span>
+                        <span>Không quảng cáo</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-primary text-lg">check_circle</span>
+                        <span>Xem trên 2 thiết bị</span>
+                    </li>
+                </ul>
+                <a href="payment.html?plan=premium" class="block text-center w-full py-3 rounded-lg bg-primary text-black font-bold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">Chọn Gói Cao Cấp</a>
+            </div>
+
+            <!-- Family Plan -->
+            <div
+                class="relative group rounded-2xl border border-white/10 bg-white/5 p-8 transition-transform duration-300 hover:-translate-y-2">
+                <div
+                    class="absolute top-4 right-4 bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-bold">
+                    Tiết kiệm 20%
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xl font-medium text-white mb-2">Gia Đình</h3>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-4xl font-bold">699.000</span>
+                        <span class="text-xl font-medium text-gray-500">đ</span>
+                        <span class="text-sm text-gray-500">/năm</span>
+                    </div>
+                </div>
+                <ul class="space-y-4 mb-8 text-sm text-gray-300">
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-primary text-lg">check_circle</span>
+                        <span>Tất cả quyền lợi Cao Cấp</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-primary text-lg">check_circle</span>
+                        <span>Xem trên 4 thiết bị cùng lúc</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-primary text-lg">check_circle</span>
+                        <span>Tải xuống xem offline</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-primary text-lg">check_circle</span>
+                        <span>Hồ sơ trẻ em an toàn</span>
+                    </li>
+                </ul>
+                <a href="payment.html?plan=family" class="block text-center w-full py-3 rounded-lg border border-white/20 font-medium hover:bg-white/10 hover:text-primary hover:border-primary transition-all">Chọn Gói Gia Đình</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-t border-gray-800 py-8 text-center text-sm text-gray-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>© 2023 CineStream Vietnam. All rights reserved.</p>
         </div>
     </footer>
-
-<script>
-// ===== STATE =====
-let allEvents = [];
-let currentOdds = {}; // Tỉ lệ cược odds lưu qua ID trận
-let currentSport = 'football';
-let currentFilter = 'all';
-let selectedTournament = 'all';
-let refreshInterval = null;
-let currentEvent = null;
-let liveScoreUrl = null;
-let liveMinInterval = null;
-
-const SPORTS = ['football','basketball','tennis','badminton','volleyball','table-tennis'];
-
-// ===== API =====
-async function apiFetch(path) {
-    const res = await fetch('/api/sofascore/' + path);
-    const text = await res.text();
-    try { return JSON.parse(text); } catch(e) { return null; }
-}
-
-async function loadEvents(silent = false) {
-    if (!silent) showLoading(true);
-
-    const today = new Date();
-    const fmt = d => d.toISOString().split('T')[0];
-    const tomorrow = new Date(today); tomorrow.setDate(today.getDate()+1);
-
-    const extract = d => (d && d.events && Array.isArray(d.events)) ? d.events : (Array.isArray(d) ? d : []);
-    const map = new Map();
-
-    try {
-        // Tải tỉ lệ cược odds (1 lần cho nguyên ngày) chạy ngầm
-        apiFetch(`api/v1/sport/${currentSport}/odds/1/${fmt(today)}`).then(res => {
-            if (res && res.odds) currentOdds = res.odds;
-        });
-
-        // Gọi tuần tự (không dùng Promise.all) để tránh 429
-        const liveData = await apiFetch(`api/v1/sport/${currentSport}/events/live`);
-        extract(liveData).forEach(e => { if (e.id) map.set(e.id, e); });
-
-        await new Promise(r => setTimeout(r, 300)); // delay nhỏ giữa mỗi call
-
-        const todayData = await apiFetch(`api/v1/sport/${currentSport}/scheduled-events/${fmt(today)}`);
-        extract(todayData).forEach(e => { if (e.id) map.set(e.id, e); });
-
-        await new Promise(r => setTimeout(r, 300));
-
-        const tomData = await apiFetch(`api/v1/sport/${currentSport}/scheduled-events/${fmt(tomorrow)}`);
-        extract(tomData).forEach(e => { if (e.id) map.set(e.id, e); });
-
-    } catch(e) {
-        console.error('Load events error:', e);
-    }
-
-    allEvents = Array.from(map.values()).sort((a, b) => {
-        const aL = a.status?.type === 'inprogress';
-        const bL = b.status?.type === 'inprogress';
-        if (aL && !bL) return -1;
-        if (!aL && bL) return 1;
-        return (a.startTimestamp||0) - (b.startTimestamp||0);
-    });
-
-    updateTournamentSelect();
-    updateCounts();
-    applyFilters();
-    if (!silent) showLoading(false);
-}
-
-// ===== INIT =====
-loadEvents();
-// Refresh mỗi 5 phút (cache server 5 phút, không cần refresh nhanh hơn)
-refreshInterval = setInterval(() => loadEvents(true), 5 * 60 * 1000);
-
-function selectSport(btn) {
-    document.querySelectorAll('.sport-tab').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentSport = btn.dataset.sport;
-    currentFilter = 'all';
-    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-    const allPill = document.querySelector('.filter-pill[data-filter="all"]');
-    if (allPill) allPill.classList.add('active');
-    loadEvents();
-}
-
-// ===== FILTERS =====
-function selectFilter(el) {
-    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-    el.classList.add('active');
-    currentFilter = el.dataset.filter;
-    applyFilters();
-}
-
-function applyFilters() {
-    let filtered = allEvents;
-    
-    // Filter by Status/Time
-    const nowStr = new Date().toDateString();
-    const tomStr = new Date(Date.now() + 86400000).toDateString();
-    
-    filtered = filtered.filter(e => {
-        if (currentFilter === 'live') return e.status?.type === 'inprogress';
-        if (currentFilter === 'hot') return e.id % 2 === 0; // Giả lập HOT
-        if (currentFilter === 'today') return new Date(e.startTimestamp * 1000).toDateString() === nowStr;
-        if (currentFilter === 'tomorrow') return new Date(e.startTimestamp * 1000).toDateString() === tomStr;
-        return true;
-    });
-
-    renderMatches(filtered);
-}
-
-function updateCounts() {
-    const total = allEvents.length;
-    const live = allEvents.filter(e => e.status?.type === 'inprogress').length;
-    const vn = allEvents.filter(e => {
-        const s = JSON.stringify(e).toLowerCase();
-        return s.includes('vietnam') || s.includes('việt nam') || s.includes('v-league');
-    }).length;
-    const todayCount = allEvents.filter(e => {
-        if (!e.startTimestamp) return false;
-        return new Date(e.startTimestamp*1000).toDateString() === new Date().toDateString();
-    }).length;
-
-    if (document.getElementById('count-all')) document.getElementById('count-all').textContent = total;
-    if (document.getElementById('count-live')) document.getElementById('count-live').textContent = live;
-    if (document.getElementById('count-hot')) document.getElementById('count-hot').textContent = vn;
-    if (document.getElementById('count-vietnam')) document.getElementById('count-vietnam').textContent = vn;
-    if (document.getElementById('count-today')) document.getElementById('count-today').textContent = todayCount;
-}
-
-function updateTournamentSelect() {
-    const sel = document.getElementById('tournament-select');
-    const current = sel.value;
-    const tournaments = [...new Set(allEvents.map(e => e.tournament?.name).filter(Boolean))];
-    sel.innerHTML = '<option value="all">Tất cả giải đấu</option>';
-    tournaments.forEach(t => {
-        const opt = document.createElement('option');
-        opt.value = t; opt.textContent = t;
-        sel.appendChild(opt);
-    });
-    if (tournaments.includes(current)) sel.value = current;
-}
-
-// ===== RENDER =====
-function formatTime(ts) {
-    if (!ts) return '';
-    const d = new Date(ts * 1000);
-    return d.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }) + ' ' +
-           d.toLocaleDateString('en-GB', { day:'2-digit', month:'2-digit' });
-}
-
-function calcLive(event) {
-    const code = event.status?.code;
-    if (code === 31) return 'Nghỉ giữa hiệp';
-    const pStart = event.time?.currentPeriodStartTimestamp;
-    const initial = event.time?.initial || 0;
-    if (pStart) {
-        const diff = Math.floor(Date.now()/1000) - pStart;
-        const min = Math.floor(diff/60) + Math.floor(initial/60);
-        if (code === 6 && min > 45) return `45+${min-45}'`;
-        if (code === 7 && min > 90) return `90+${min-90}'`;
-        return `${min}'`;
-    }
-    const desc = event.status?.description || '';
-    return desc === 'Started' ? 'Đang diễn ra' : (desc || 'Trực tiếp');
-}
-
-const COMMENTATORS = [
-    {name:'TẠ BIÊN GIỚI', avatar:'https://i.pravatar.cc/40?u=1'},
-    {name:'RÔSI', avatar:'https://i.pravatar.cc/40?u=2'},
-    {name:'DECO', avatar:'https://i.pravatar.cc/40?u=3'},
-];
-
-let currentFilteredEvents = [];
-let currentRenderedCount = 0;
-const BATCH_SIZE = 35;
-
-function renderMatches(events) {
-    const container = document.getElementById('matches-container');
-    const empty = document.getElementById('empty-state');
-    container.innerHTML = '';
-
-    currentFilteredEvents = events;
-    currentRenderedCount = Math.min(BATCH_SIZE, events.length);
-
-    if (events.length === 0) {
-        empty.style.display = 'block';
-        return;
-    }
-    empty.style.display = 'none';
-
-    const grid = document.createElement('div');
-    grid.className = 'matches-grid';
-    grid.id = 'matches-grid-content';
-
-    for(let i=0; i<currentRenderedCount; i++) {
-        const card = createMatchCard(events[i]);
-        grid.appendChild(card);
-    }
-
-    container.appendChild(grid);
-
-    if (currentRenderedCount < events.length) {
-        const btn = document.createElement('button');
-        btn.className = 'load-more-btn';
-        btn.textContent = 'XEM THÊM TRẬN ĐẤU';
-        btn.onclick = loadMoreMatches;
-        container.appendChild(btn);
-    }
-}
-
-function loadMoreMatches() {
-    const grid = document.getElementById('matches-grid-content');
-    const container = document.getElementById('matches-container');
-    const btn = document.querySelector('.load-more-btn');
-    
-    const nextCount = Math.min(currentRenderedCount + BATCH_SIZE, currentFilteredEvents.length);
-    
-    for(let i=currentRenderedCount; i<nextCount; i++) {
-        const card = createMatchCard(currentFilteredEvents[i]);
-        grid.appendChild(card);
-    }
-    
-    currentRenderedCount = nextCount;
-    
-    if (currentRenderedCount >= currentFilteredEvents.length) {
-        if (btn) btn.remove();
-    }
-}
-
-function createMatchCard(event) {
-    const isLive = event.status?.type === 'inprogress';
-    const isFinished = event.status?.type === 'finished';
-    const homeScore = event.homeScore?.current;
-    const awayScore = event.awayScore?.current;
-    const hasScore = homeScore !== undefined && awayScore !== undefined;
-    
-    const card = document.createElement('div');
-    card.className = 'match-card';
-    if (isLive) card.classList.add('is-live');
-    card.onclick = () => openMatchDetail(event);
-
-    const statusText = event.status?.description === 'Half-time' ? 'GIỮA HIỆP' : 
-                       (isLive ? `HIỆP ${event.status?.period === 'period2' ? '2' : '1'}: ${calcLive(event)}` : 
-                       (isFinished ? 'KẾT THÚC' : (event.startTimestamp ? formatTime(event.startTimestamp) : 'SẮP TỚI')));
-    
-    const scoreClass = !hasScore ? 'draw' : (homeScore > awayScore ? 'home-win' : (awayScore > homeScore ? 'away-win' : 'draw'));
-    const homeLogo = `/api/image/team/${event.homeTeam?.id}`;
-    const awayLogo = `/api/image/team/${event.awayTeam?.id}`;
-
-    const homeFallback = event.homeTeam?.country?.alpha2 
-        ? `<img src='https://flagcdn.com/w80/${event.homeTeam.country.alpha2.toLowerCase()}.png' style='width:100%;height:100%;object-fit:cover;'>`
-        : `<span class='no-logo'>⚽</span>`;
-    const awayFallback = event.awayTeam?.country?.alpha2 
-        ? `<img src='https://flagcdn.com/w80/${event.awayTeam.country.alpha2.toLowerCase()}.png' style='width:100%;height:100%;border-radius:50%;object-fit:cover;'>`
-        : `<span class='no-logo'>⚽</span>`;
-
-    // Lấy tỉ số HT và HT Corner
-    const htScoreStr = (event.homeScore?.period1 !== undefined && event.awayScore?.period1 !== undefined) 
-                       ? `${event.homeScore.period1} - ${event.awayScore.period1}` : null;
-    const cornersStr = (event.stats?.corners) ? `${event.stats.corners.home} - ${event.stats.corners.away}` : null;
-
-    const comms = [
-        { name: 'LÃO LÂM', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Rick' },
-        { name: 'HỘI GYM', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Tap' },
-        { name: 'BÉO', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Mia' },
-        { name: 'ENZO', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Tommy' },
-        { name: 'NGƯỜI CÁ', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Fish' }
-    ].slice(0, 1 + (event.id % 4));
-
-    const formatShortDate = (ts) => {
-        if (!ts) return '';
-        const d = new Date(ts * 1000);
-        const hh = d.getHours().toString().padStart(2,'0');
-        const mm = d.getMinutes().toString().padStart(2,'0');
-        const dd = d.getDate().toString().padStart(2,'0');
-        const mon = (d.getMonth()+1).toString().padStart(2,'0');
-        return `<span style="color:var(--green); font-weight:850; font-size:12px;">${hh}:${mm}</span> <span style="color:var(--text3); font-size:11px; font-weight:700;">${dd}/${mon}</span>`;
-    };
-
-    card.innerHTML = `
-        <div class="card-header-info" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:10px;">
-            <div class="tournament-name" style="font-size:11px; font-weight:850; color:white; opacity:0.8; text-transform:uppercase; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-                ${event.tournament?.name || 'GIẢI ĐẤU'}
-            </div>
-            <div style="display:flex; align-items:center; gap:10px;">
-                <div class="card-status" style="background:${isLive ? 'var(--green)' : (isFinished ? '#4b5563' : '#1e3a8a')}; color:white; padding:4px 12px; border-radius:20px; font-size:10px; font-weight:900; box-shadow:0 0 10px rgba(34,197,94,0.3); white-space:nowrap;">
-                    ${statusText}
-                </div>
-                <div class="card-time" style="background:rgba(0,0,0,0.3); padding:4px 10px; border-radius:15px; border:1px solid rgba(34,197,94,0.3);">
-                    ${formatShortDate(event.startTimestamp)}
-                </div>
-            </div>
-        </div>
-        
-        <div class="match-main" style="margin:20px 0;">
-            <div class="team-side home">
-                <span class="team-name">${event.homeTeam?.name || 'Home'}</span>
-                <div class="team-logo">
-                    <img src="${homeLogo}" data-fallback="${homeFallback.replace(/"/g, '&quot;')}" onerror="this.style.display='none'; this.parentElement.innerHTML=this.dataset.fallback;">
-                </div>
-            </div>
-            
-            <div class="score-pill ${scoreClass}">
-                <span>${homeScore !== undefined ? homeScore : '-'}</span>
-                <span class="score-sep">:</span>
-                <span>${awayScore !== undefined ? awayScore : '-'}</span>
-            </div>
-
-            <div class="team-side away">
-                <div class="team-logo">
-                    <img src="${awayLogo}" data-fallback="${awayFallback.replace(/"/g, '&quot;')}" onerror="this.style.display='none'; this.parentElement.innerHTML=this.dataset.fallback;">
-                </div>
-                <span class="team-name">${event.awayTeam?.name || 'Away'}</span>
-            </div>
-        </div>
-
-        ${isLive || isFinished ? `
-        <div class="sub-stats-pill" style="display:flex; align-items:center; justify-content:center; margin-bottom:16px;">
-            <div style="background:rgba(255,255,255,0.08); padding:4px 16px; border-radius:15px; font-size:12px; font-weight:800; color:#9ca3af; display:flex; align-items:center; gap:12px;">
-                ${htScoreStr ? `<span><span style="color:var(--green);">HT</span> ${htScoreStr}</span>` : ''}
-                ${cornersStr ? `<span style="display:flex; align-items:center; gap:4px;"><span style="color:var(--orange);">🚩</span> ${cornersStr}</span>` : ''}
-            </div>
-        </div>` : ''}
-
-        <div class="commentator-mini" style="display:flex; align-items:center; gap:12px; margin:14px -24px -18px -24px; padding:10px 24px; background:rgba(0,0,0,0.3); border-top:1px solid rgba(34,197,94,0.3); border-radius:0 0 20px 20px;">
-            <div style="display:flex; align-items:center; gap:12px; overflow:hidden;">
-                ${comms.map(c => `
-                    <div class="mini-comm-item" style="display:flex; align-items:center; gap:6px;">
-                        <img src="${c.avatar}" style="width:18px; height:18px; border-radius:50%; border:1px solid var(--green);">
-                        <span style="font-size:10px; font-weight:850; color:#ffffff; text-transform:uppercase; white-space:nowrap;">${c.name}</span>
-                    </div>
-                `).join('')}
-            </div>
-            <div style="flex:1;"></div>
-            <div style="color:var(--text3); font-size:10px; font-weight:900; opacity:0.6;">8Xbet</div>
-        </div>
-    `;
-
-    // Tắt chặn cập nhật phút live
-    if (isLive) {
-        setInterval(() => {
-            const bar = card.querySelector('.card-status');
-            if (bar && bar.id) bar.textContent = `Hiệp 1: ${calcLive(event)}`;
-        }, 10000);
-    }
-
-    // Lazy load (Tải nền) thẻ phạt API Incidents -> ĐÃ TẠM TẮT ĐỂ TRÁNH CHÁY KEY
-    /*
-    if ((isLive || isFinished) && currentSport === 'football') {
-        const yEl = card.querySelector('.y-text');
-        const rEl = card.querySelector('.r-text');
-        apiFetch(`api/v1/event/${event.id}/incidents`).then(res => {
-            if (res && res.incidents && Array.isArray(res.incidents)) {
-                let hy = 0, hr = 0, ay = 0, ar = 0;
-                res.incidents.forEach(i => {
-                    if (i.incidentType === 'card') {
-                        if (i.isHome) {
-                            if (i.incidentClass === 'yellow') hy++;
-                            else if (i.incidentClass.includes('red')) hr++;
-                        } else {
-                            if (i.incidentClass === 'yellow') ay++;
-                            else if (i.incidentClass.includes('red')) ar++;
-                        }
-                    }
-                });
-                if (yEl) yEl.textContent = `${hy}-${ay}`;
-                if (rEl) rEl.textContent = `${hr}-${ar}`;
-            }
-        });
-    }
-    */
-
-    return card;
-}
-
-// ===== MATCH DETAIL =====
-async function openMatchDetail(event) {
-    currentEvent = event;
-    liveScoreUrl = null;
-
-    const isLive = event.status?.type === 'inprogress';
-    const homeScore = event.homeScore?.current;
-    const awayScore = event.awayScore?.current;
-    const hasScore = homeScore !== undefined && awayScore !== undefined;
-
-    // Populate detail view
-    const homeFlag = event.homeTeam?.country?.alpha2 ? `<img src="https://flagcdn.com/w20/${event.homeTeam.country.alpha2.toLowerCase()}.png" style="width:16px; height:12px; border-radius:2px; margin-right:6px; display:inline-block; vertical-align:middle;">` : '';
-    const awayFlag = event.awayTeam?.country?.alpha2 ? `<img src="https://flagcdn.com/w20/${event.awayTeam.country.alpha2.toLowerCase()}.png" style="width:16px; height:12px; border-radius:2px; margin-left:6px; display:inline-block; vertical-align:middle;">` : '';
-
-    document.getElementById('detail-home-name').innerHTML = homeFlag + (event.homeTeam?.name || 'Home');
-    document.getElementById('detail-away-name').innerHTML = (event.awayTeam?.name || 'Away') + awayFlag;
-    const homeFallbackHTML = event.homeTeam?.country?.alpha2 ? `<img src='https://flagcdn.com/w80/${event.homeTeam.country.alpha2.toLowerCase()}.png' style='width:100%;height:100%;border-radius:50%;object-fit:cover;'>` : `⚽`;
-    const awayFallbackHTML = event.awayTeam?.country?.alpha2 ? `<img src='https://flagcdn.com/w80/${event.awayTeam.country.alpha2.toLowerCase()}.png' style='width:100%;height:100%;border-radius:50%;object-fit:cover;'>` : `⚽`;
-
-    const homeLogoHTML = `<img id="detail-home-logo" src="/api/image/team/${event.homeTeam?.id}" alt="" data-fallback="${homeFallbackHTML.replace(/"/g, '&quot;')}" onerror="this.style.display='none'; this.parentElement.innerHTML=this.dataset.fallback;">`;
-    const awayLogoHTML = `<img id="detail-away-logo" src="/api/image/team/${event.awayTeam?.id}" alt="" data-fallback="${awayFallbackHTML.replace(/"/g, '&quot;')}" onerror="this.style.display='none'; this.parentElement.innerHTML=this.dataset.fallback;">`;
-    
-    const homeLogoWrap = document.querySelector('.detail-team.home .detail-logo');
-    const awayLogoWrap = document.querySelector('.detail-team.away .detail-logo');
-    if (homeLogoWrap) homeLogoWrap.innerHTML = homeLogoHTML;
-    if (awayLogoWrap) awayLogoWrap.innerHTML = awayLogoHTML;
-
-    const scoreBox = document.getElementById('detail-score-box');
-    if (hasScore) {
-        scoreBox.innerHTML = `
-            <div class="detail-score-h">${homeScore}</div>
-            <div class="detail-score-a">${awayScore}</div>
-        `;
-    } else {
-        scoreBox.innerHTML = `<div class="detail-vs">VS</div>`;
-    }
-
-    document.getElementById('stat-ht').textContent =
-        `HT: ${event.homeScore?.period1 ?? '-'} - ${event.awayScore?.period1 ?? '-'}`;
-    document.getElementById('stat-ft').textContent =
-        `FT: ${event.homeScore?.normaltime ?? '-'} - ${event.awayScore?.normaltime ?? '-'}`;
-    document.getElementById('stat-league').textContent = event.tournament?.name || '-';
-
-    document.getElementById('graph-home').textContent = event.homeTeam?.name || 'Home';
-    document.getElementById('graph-away').textContent = event.awayTeam?.name || 'Away';
-
-    const liveInd = document.getElementById('detail-live-indicator');
-    const liveMin = document.getElementById('detail-live-min');
-    if (isLive) {
-        liveInd.style.display = 'flex';
-        liveMin.textContent = calcLive(event);
-        if (liveMinInterval) clearInterval(liveMinInterval);
-        liveMinInterval = setInterval(() => {
-            liveMin.textContent = calcLive(event);
-        }, 10000);
-    } else {
-        liveInd.style.display = 'none';
-        if (liveMinInterval) clearInterval(liveMinInterval);
-    }
-
-    document.getElementById('graph-minute').textContent = isLive ? calcLive(event) : formatTime(event.startTimestamp);
-
-    // Show detail view
-    document.getElementById('matches-view').classList.add('hidden');
-    document.getElementById('detail-view').classList.add('show');
-    window.scrollTo(0, 0);
-
-    // Sidebar: Other matches
-    renderSidebarMatches(event);
-
-    // H2H & Form
-    loadH2HAndForm(event);
-
-    // Load graph data
-    try {
-        const graphData = await apiFetch(`event/${event.id}/graph`);
-        if (graphData && graphData.graphPoints && graphData.graphPoints.length > 0) {
-            renderMomentumGraph(graphData.graphPoints);
-        }
-    } catch(e) {}
-
-    // Load live score URL
-    try {
-        const sr = await fetch(`/api/sportradar/live-score?event_id=${event.id}`);
-        const srData = await sr.json();
-        if (srData && srData.live_score_url) {
-            liveScoreUrl = srData.live_score_url.replace('http://', 'https://');
-            document.getElementById('live-score-overlay').style.display = 'flex';
-        }
-    } catch(e) {}
-}
-
-function renderSidebarMatches(current) {
-    const sideBox = document.getElementById('sidebar-matches');
-    sideBox.innerHTML = '';
-    
-    const others = allEvents.filter(e => e.id !== current.id).slice(0, 10);
-    
-    others.forEach(e => {
-        const card = document.createElement('div');
-        card.className = 'mini-card';
-        card.onclick = (ev) => {
-            ev.stopPropagation();
-            openMatchDetail(e);
-        };
-        
-        const hScore = e.homeScore?.current ?? 0;
-        const aScore = e.awayScore?.current ?? 0;
-        const time = new Date(e.startTimestamp * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        const dateStr = new Date(e.startTimestamp * 1000).toLocaleDateString('vi-VN', {day:'2-digit', month:'2-digit'});
-        
-        const isLive = e.status?.type === 'inprogress';
-        const stext = isLive ? `Hiệp 1: ${calcLive(e)}` : (e.status?.type === 'finished' ? 'HT' : '');
-        const stColor = e.status?.type === 'finished' ? 'background:#444' : '';
-
-        const hFallback = e.homeTeam?.country?.alpha2 
-            ? `<img src='https://flagcdn.com/w40/${e.homeTeam.country.alpha2.toLowerCase()}.png' style='width:18px;height:14px;border-radius:2px;'>`
-            : `⚽`;
-        const aFallback = e.awayTeam?.country?.alpha2 
-            ? `<img src='https://flagcdn.com/w40/${e.awayTeam.country.alpha2.toLowerCase()}.png' style='width:18px;height:14px;border-radius:2px;'>`
-            : `⚽`;
-
-        const comms = COMMENTATORS.slice(0, 3);
-
-        card.innerHTML = `
-            ${stext ? `<div class="mini-status-pill" style="${stColor}">${stext}</div>` : ''}
-            <div class="mini-top">
-                <span class="mini-league">${e.tournament?.name || 'Giải đấu'}</span>
-                <span>${time} ${dateStr}</span>
-            </div>
-            <div class="mini-main">
-                <div class="mini-team-side">
-                    <div class="mini-logo-wrap">
-                        <img src="/api/image/team/${e.homeTeam?.id}" class="mini-logo" data-fallback="${hFallback.replace(/"/g, '&quot;')}" onerror="this.style.display='none'; this.parentElement.innerHTML=this.dataset.fallback;">
-                    </div>
-                    <div class="mini-name">${e.homeTeam?.name}</div>
-                </div>
-                <div class="mini-score-box">${hScore}:${aScore}</div>
-                <div class="mini-team-side">
-                    <div class="mini-logo-wrap">
-                        <img src="/api/image/team/${e.awayTeam?.id}" class="mini-logo" data-fallback="${aFallback.replace(/"/g, '&quot;')}" onerror="this.style.display='none'; this.parentElement.innerHTML=this.dataset.fallback;">
-                    </div>
-                    <div class="mini-name">${e.awayTeam?.name}</div>
-                </div>
-            </div>
-            <div class="mini-bottom">
-                <div class="mini-ht">HT ${e.homeScore?.period1 ?? 0} - ${e.awayScore?.period1 ?? 0}</div>
-                <div class="mini-comms">
-                    ${comms.map(c => `<img src="${c.avatar}" class="mini-comm-icon" title="${c.name}">`).join('')}
-                </div>
-            </div>
-        `;
-        sideBox.appendChild(card);
-    });
-}
-
-async function loadH2HAndForm(event) {
-    const h2hBox = document.getElementById('h2h-content');
-    const formHome = document.getElementById('form-home');
-    const formAway = document.getElementById('form-away');
-
-    try {
-        // Fetch H2H
-        const h2hData = await apiFetch(`api/v1/event/${event.id}/h2h`);
-        if (h2hData && h2hData.matches) {
-            let html = `<table class="h2h-table">`;
-            h2hData.matches.slice(0, 8).forEach(m => {
-                const date = new Date(m.startTimestamp * 1000).toLocaleDateString('vi-VN');
-                const hScore = m.homeScore?.current ?? 0;
-                const aScore = m.awayScore?.current ?? 0;
-                html += `
-                    <tr>
-                        <td style="width:100px; color:var(--text3); font-size:11px;">${date}</td>
-                        <td class="h2h-team-name home">${m.homeTeam.name}</td>
-                        <td style="text-align:center;"><span class="h2h-score">${hScore} - ${aScore}</span></td>
-                        <td class="h2h-team-name away">${m.awayTeam.name}</td>
-                    </tr>
-                `;
-            });
-            html += `</table>`;
-            h2hBox.innerHTML = html;
-        } else {
-            h2hBox.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text3);">Không có dữ liệu đối đầu</div>';
-        }
-
-        // Fetch Form
-        const renderForm = async (team, container) => {
-            const data = await apiFetch(`api/v1/team/${team.id}/events/last/10`);
-            if (data && data.events) {
-                let html = `
-                    <div class="form-team-header">
-                        <img src="/api/image/team/${team.id}" class="form-team-logo" onerror="this.src='⚽'">
-                        <span>${team.name}</span>
-                    </div>
-                `;
-                data.events.forEach(e => {
-                    const hScore = e.homeScore?.current ?? 0;
-                    const aScore = e.awayScore?.current ?? 0;
-                    let res = 'D';
-                    if (e.homeTeam.id === team.id) {
-                        res = hScore > aScore ? 'W' : (hScore < aScore ? 'L' : 'D');
-                    } else {
-                        res = aScore > hScore ? 'W' : (aScore < hScore ? 'L' : 'D');
-                    }
-                    const date = new Date(e.startTimestamp * 1000).toLocaleDateString('vi-VN');
-                    
-                    html += `
-                        <div class="form-item">
-                            <span style="color:var(--text3); min-width:80px;">${date}</span>
-                            <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin:0 8px;">
-                                ${e.homeTeam.id === team.id ? e.awayTeam.name : e.homeTeam.name}
-                            </span>
-                            <div style="display:flex; align-items:center; gap:8px;">
-                                <span style="font-weight:700;">${hScore}-${aScore}</span>
-                                <div class="form-res ${res}">${res}</div>
-                            </div>
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
-            } else {
-                container.innerHTML = '<div>Không có dữ liệu phong độ</div>';
-            }
-        };
-
-        renderForm(event.homeTeam, formHome);
-        renderForm(event.awayTeam, formAway);
-
-    } catch (e) {
-        console.error('H2H/Form load error:', e);
-    }
-}
-
-function showMatchesList() {
-    document.getElementById('matches-view').classList.remove('hidden');
-    document.getElementById('detail-view').classList.remove('show');
-    if (liveMinInterval) clearInterval(liveMinInterval);
-    liveScoreUrl = null;
-    document.getElementById('live-score-overlay').style.display = 'none';
-    const svg = document.getElementById('momentum-svg');
-    svg.innerHTML = `<line x1="0" y1="50" x2="100" y2="50" stroke="#555" stroke-width="0.5"/>
-        <text x="50" y="55" text-anchor="middle" font-size="8" fill="#444">Đang tải dữ liệu...</text>`;
-}
-
-function openLiveScore() {
-    if (liveScoreUrl) window.open(liveScoreUrl, '_blank');
-}
-
-function renderMomentumGraph(points) {
-    const svg = document.getElementById('momentum-svg');
-    if (!points || points.length === 0) return;
-
-    const maxMin = Math.max(90, ...points.map(p => p.minute));
-    const pathD = points.map((p, i) => {
-        const x = (p.minute / maxMin) * 100;
-        const y = 50 - (p.value / 2);
-        return `${i === 0 ? 'M' : 'L'}${x},${y}`;
-    }).join(' ');
-
-    const lastX = (points[points.length-1].minute / maxMin) * 100;
-
-    svg.innerHTML = `
-        <defs>
-            <linearGradient id="mg" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#00a859" stop-opacity="0.8"/>
-                <stop offset="50%" stop-color="#00a859" stop-opacity="0.1"/>
-                <stop offset="50%" stop-color="#3b82f6" stop-opacity="0.1"/>
-                <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.8"/>
-            </linearGradient>
-        </defs>
-        <path d="${pathD} L${lastX},50 Z" fill="url(#mg)"/>
-        <path d="${pathD}" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="0.5"/>
-        <line x1="0" y1="50" x2="100" y2="50" stroke="#555" stroke-width="0.5"/>
-    `;
-}
-
-// ===== UI HELPERS =====
-function showLoading(show) {
-    document.getElementById('loading-state').style.display = show ? 'flex' : 'none';
-    document.getElementById('matches-container').style.display = show ? 'none' : 'block';
-}
-
-</script>
-<!-- ====== Chat Widget A Phim ====== -->
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/chat-room.css">
-    <!-- FAB Button -->
-    <button id="chatFab" class="chat-fab" aria-label="Mở chat cộng đồng" title="Chat Cộng Đồng">
-        <span class="fab-icon material-icons">forum</span>
-        <span class="chat-fab-badge" id="chatFabBadge">0</span>
-    </button>
-    <!-- Chat Window -->
-    <div id="chatWindow" class="chat-window" role="dialog" aria-label="Chat cộng đồng A Phim">
-        <!-- HEADER -->
-        <div class="chat-header" id="chatHeader">
-            <div class="chat-header-info">
-                <div class="chat-header-avatar">
-                    <span class="material-icons">forum</span>
-                </div>
-                <div class="chat-header-text">
-                    <div class="chat-header-title">Cộng Đồng A Phim</div>
-                    <div class="chat-header-status">
-                        <div class="online-dot"></div>
-                        <span class="chat-header-online-text" id="headerOnlineCount">42 người trực tuyến</span>
-                    </div>
-                </div>
-            </div>
-            <div class="chat-header-actions">
-                <button class="chat-header-btn" id="chatMinimizeBtn" title="Thu nhỏ"><span class="material-icons">remove</span></button>
-                <button class="chat-header-btn" id="chatCloseBtn" title="Đóng"><span class="material-icons">close</span></button>
-            </div>
-        </div>
-        <!-- BODY -->
-        <div class="chat-body" id="chatBody">
-            <!-- SCREEN 1: WELCOME -->
-            <div class="chat-screen chat-screen-welcome active" id="screenWelcome">
-                <div class="welcome-glow"><img src="/favicon.png" alt="A Phim" style="width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.15));"></div>
-                <div>
-                    <h2 class="welcome-title">Chào mừng đến <span>Kênh A Phim</span></h2>
-                    <p class="welcome-desc" style="margin-top:8px;">Kết nối, thảo luận và tận hưởng điện ảnh cùng hàng ngàn tín đồ phim ảnh.</p>
-                </div>
-                <div class="welcome-stats">
-                    <div class="welcome-stat"><div class="welcome-stat-num" id="welcomeOnline">1,284</div><div class="welcome-stat-label">Trực tuyến</div></div>
-                    <div class="welcome-stat"><div class="welcome-stat-num">50K+</div><div class="welcome-stat-label">Thành viên</div></div>
-                    <div class="welcome-stat"><div class="welcome-stat-num">24/7</div><div class="welcome-stat-label">Hoạt động</div></div>
-                </div>
-                <div class="welcome-features">
-                    <div class="welcome-feature"><span class="material-icons">movie</span><div class="welcome-feature-text"><strong>Thảo luận phim</strong><span>Review, rating và khám phá phim mới</span></div></div>
-                    <div class="welcome-feature"><span class="material-icons">groups</span><div class="welcome-feature-text"><strong>Cộng đồng sôi nổi</strong><span>Kết nối với người xem cùng sở thích</span></div></div>
-                    <div class="welcome-feature"><span class="material-icons">bolt</span><div class="welcome-feature-text"><strong>Chat thời gian thực</strong><span>Nhắn tin ngay lập tức, không độ trễ</span></div></div>
-                </div>
-                <button class="welcome-start-btn" id="welcomeStartBtn">Bắt đầu chat ngay <span class="material-icons">arrow_forward</span></button>
-            </div>
-            <!-- SCREEN 2: ENTER NAME -->
-            <div class="chat-screen chat-screen-name" id="screenEnterName">
-                <div class="enter-name-header">
-                    <button class="enter-name-back-btn" id="enterNameBackBtn"><span class="material-icons">arrow_back</span></button>
-                    <div class="enter-name-title-wrap"><h2>Tạo hồ sơ</h2><p>Chọn biệt danh và màu sắc của bạn</p></div>
-                </div>
-                <div>
-                    <span class="name-color-label">Màu đại diện</span>
-                    <div class="color-picker-row" id="colorPickerRow">
-                        <div class="color-option selected" data-color="#ffd709" style="background:#ffd709"></div>
-                        <div class="color-option" data-color="#22c55e" style="background:#22c55e"></div>
-                        <div class="color-option" data-color="#3b82f6" style="background:#3b82f6"></div>
-                        <div class="color-option" data-color="#ef4444" style="background:#ef4444"></div>
-                        <div class="color-option" data-color="#a855f7" style="background:#a855f7"></div>
-                        <div class="color-option" data-color="#f97316" style="background:#f97316"></div>
-                        <div class="color-option" data-color="#06b6d4" style="background:#06b6d4"></div>
-                        <div class="color-option" data-color="#ec4899" style="background:#ec4899"></div>
-                    </div>
-                </div>
-                <div class="name-input-group">
-                    <div class="name-input-label">
-                        <span>Biệt danh của bạn</span>
-                        <span class="name-char-count" id="nameCharCount">0 / 20</span>
-                    </div>
-                    <div class="name-input-wrapper">
-                        <input type="text" id="chatNameInput" class="name-input" placeholder="VD: MovieLover_99" maxlength="20" autocomplete="off">
-                        <span class="name-input-icon material-icons">person</span>
-                    </div>
-                    <div class="name-error-msg" id="nameErrorMsg">Tên phải từ 3–20 ký tự, không chứa ký tự đặc biệt.</div>
-                </div>
-                <div class="name-preview">
-                    <div class="name-preview-avatar" id="previewAvatar" style="background:#ffd709;">A</div>
-                    <div class="name-preview-info"><strong id="previewName">Biệt danh của bạn</strong><span>Thành viên mới · Hôm nay</span></div>
-                </div>
-                <div class="online-preview">
-                    <div class="online-avatars">
-                        <div class="online-avatar-mini" style="background:#ffd709;color:#1a1200;font-weight:700;">K</div>
-                        <div class="online-avatar-mini" style="background:#22c55e;color:#fff;font-weight:700;">L</div>
-                        <div class="online-avatar-mini" style="background:#3b82f6;color:#fff;font-weight:700;">M</div>
-                        <div class="online-avatar-mini more">+39</div>
-                    </div>
-                    <div class="online-info"><strong><span style="display:inline-block;width:7px;height:7px;background:#22c55e;border-radius:50%;margin-right:5px;vertical-align:middle;"></span>42 trực tuyến</strong><span>Đang thảo luận sôi nổi</span></div>
-                </div>
-                <button class="join-btn" id="chatJoinBtn" disabled><span class="material-icons">login</span>Tham gia phòng chat</button>
-            </div>
-            <!-- SCREEN 3: CHAT ROOM -->
-            <div class="chat-screen chat-screen-room" id="screenRoom">
-                <div class="messages-area" id="messagesArea">
-                    <div class="date-separator"><span>Hôm Nay</span></div>
-                    <div class="sys-msg"><span>🎬 Chào mừng đến với Kênh A Phim!</span></div>
-                    <div class="msg-group">
-                        <div class="msg-avatar" style="background:#3b82f6;color:#fff;">M</div>
-                        <div class="msg-content">
-                            <div class="msg-name">MovieFan</div>
-                            <div class="msg-bubble">Mọi người thấy Dune: Part Two thế nào? Hình ảnh choáng ngợp luôn! 🤩</div>
-                            <div class="msg-meta"><span class="msg-time">20:20</span></div>
-                        </div>
-                    </div>
-                    <div class="msg-group">
-                        <div class="msg-avatar" style="background:#22c55e;color:#fff;">L</div>
-                        <div class="msg-content">
-                            <div class="msg-name">LinhChi</div>
-                            <div class="msg-bubble">Nhạc phim của Hans Zimmer nữa, nghe mà rung động cả phòng chiếu 🎵</div>
-                            <div class="msg-meta"><span class="msg-time">20:21</span></div>
-                        </div>
-                    </div>
-                    <div class="typing-indicator" id="typingIndicator">
-                        <div class="typing-avatar" style="background:#a855f7;border-radius:50%;"></div>
-                        <div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
-                    </div>
-                </div>
-                <div class="quick-reactions" id="quickReactions">
-                    <button class="quick-react-btn" data-text="👍 Tuyệt vời!">👍 Tuyệt vời</button>
-                    <button class="quick-react-btn" data-text="🔥 Quá đỉnh!">🔥 Quá đỉnh</button>
-                    <button class="quick-react-btn" data-text="🍿 Đang xem">🍿 Đang xem</button>
-                    <button class="quick-react-btn" data-text="⭐ 10/10">⭐ 10/10</button>
-                    <button class="quick-react-btn" data-text="🎬 Rất nghệ">🎬 Rất nghệ</button>
-                    <button class="quick-react-btn" data-text="😍 Cực hay!">😍 Cực hay</button>
-                </div>
-            </div>
-            <!-- SCREEN 4: HỖ TRỢ -->
-            <div class="chat-screen chat-screen-support" id="screenSupport">
-                <div class="support-inner">
-                    <div class="support-icon-wrap">
-                        <span class="material-icons">support_agent</span>
-                    </div>
-                    <h3 class="support-title">Hỗ trợ trực tuyến</h3>
-                    <p class="support-desc">Đội ngũ hỗ trợ của A Phim luôn sẵn sàng giải đáp mọi thắc mắc của bạn.</p>
-                    <div class="support-info-cards">
-                        <div class="support-info-card">
-                            <span class="material-icons">schedule</span>
-                            <div><strong>Giờ hoạt động</strong><span>24/7 — Phản hồi nhanh</span></div>
-                        </div>
-                        <div class="support-info-card">
-                            <span class="material-icons">translate</span>
-                            <div><strong>Ngôn ngữ</strong><span>Tiếng Việt — Tiếng Anh</span></div>
-                        </div>
-                        <div class="support-info-card">
-                            <span class="material-icons">verified</span>
-                            <div><strong>Chuyên nghiệp</strong><span>Được đào tạo bài bản</span></div>
-                        </div>
-                    </div>
-                    <button class="support-start-btn" id="supportStartTawk">
-                        <span class="material-icons">chat</span>
-                        Bắt đầu chat hỗ trợ
-                    </button>
-                    <p class="support-note">Nhấn để mở cửa sổ chat với nhân viên hỗ trợ</p>
-                </div>
-            </div>
-        </div>
-        <!-- INPUT AREA -->
-        <div class="chat-input-area" id="chatInputArea">
-            <div class="chat-tabs-bar">
-                <button class="chat-tab active" data-tab="general" id="tabGeneral"><span class="material-icons">public</span>Chung</button>
-                <button class="chat-tab" data-tab="movies" id="tabMovies"><span class="material-icons">movie</span>Phim</button>
-                <button class="chat-tab" data-tab="support" id="tabSupport"><span class="material-icons">help</span>Hỗ trợ</button>
-            </div>
-            <div class="input-row">
-                <button class="input-icon-btn" id="emojiToggleBtn" title="Emoji"><span class="material-icons">mood</span></button>
-                <input type="text" id="chatMessageInput" placeholder="Viết tin nhắn..." maxlength="500" autocomplete="off">
-                <button class="send-btn" id="chatSendBtn" disabled><span class="material-icons">send</span></button>
-            </div>
-            <div class="input-footer">
-                <div class="current-user-tag">
-                    <div class="current-user-avatar" id="currentUserAvatar" style="background:#ffd709;">A</div>
-                    <span id="currentUserName">Khách</span>
-                </div>
-                <span class="change-name-link" id="changeNameLink">Đổi tên</span>
-            </div>
-        </div>
-        <!-- Emoji picker -->
-        <div class="emoji-picker-panel" id="emojiPickerPanel">
-            <div class="emoji-grid" id="emojiGrid"></div>
-        </div>
-    </div>
-
-    <!-- ====== Firebase SDK (Compat CDN) ====== -->
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script>
-    <!-- Firebase Chat Service -->
-    <script src="js/firebase-chat.js"></script>
-    <!-- Chat Widget Logic -->
-    <script src="js/chat-room.js"></script>
-
-    
-    
-
-    <!-- Tawk.to (Ho tro) - widget mac dinh bi an, mo qua tab Ho tro -->
-    <script type="text/javascript">
-        var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-        Tawk_API.onLoad = function() { Tawk_API.hideWidget(); };
-        (function(){
-            var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-            s1.async = true;
-            s1.src = 'https://embed.tawk.to/69c7d8abf493031c356334cf/1jkqaco0t';
-            s1.charset = 'UTF-8';
-            s1.setAttribute('crossorigin','*');
-            s0.parentNode.insertBefore(s1, s0);
-        })();
-    </script>
-    <!-- ====== End Chat Widget ====== -->
+<script src="js/mobile-menu-modern.js"></script>
 </body>
+
 </html>
