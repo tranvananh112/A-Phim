@@ -74,7 +74,7 @@
             </a>
 
             <!-- 2. Phim dropdown -->
-            <button class="mm-nav-full mm-glass" id="mmPhimBtn">
+            <button class="mm-nav-full mm-glass mm-phim-btn" id="mmPhimBtn">
                 ${icon('movie', 'font-size:24px;color:#aaabad;')}
                 <span class="mm-nav-full-text">Phim</span>
                 <div style="margin-left:auto;">${icon('expand_more', 'font-size:22px;color:rgba(255,255,255,0.3);transition:transform 0.25s;' )}</div>

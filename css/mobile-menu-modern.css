@@ -24,8 +24,8 @@
     top: 0;
     right: 0;
     bottom: 0;
-    width: 82%;
-    max-width: 340px;
+    width: 72%;
+    max-width: 290px;
     z-index: 9995;
     background: linear-gradient(160deg, rgba(6, 6, 12, 0.98) 0%, rgba(12, 10, 22, 0.99) 100%);
     backdrop-filter: blur(40px) saturate(200%);
@@ -219,6 +219,23 @@
 }
 .mm-nav-full.mm-active .mm-nav-icon { color: #FFD700 !important; }
 .mm-nav-full:hover .mm-nav-icon { color: #FFD700 !important; }
+
+/* Nút Phim nổi bật để gợi ý mở dropdown */
+.mm-phim-btn {
+    background: linear-gradient(135deg, rgba(236,72,153,0.12) 0%, rgba(168,85,247,0.12) 100%);
+    border: 1px solid rgba(236,72,153,0.3) !important;
+    box-shadow: inset 0 0 15px rgba(236,72,153,0.05);
+}
+.mm-phim-btn .mm-nav-full-text {
+    color: #fbcfe8 !important; /* pink-200 */
+}
+.mm-phim-btn .material-icons-round:first-child {
+    color: #f472b6 !important; /* pink-400 */
+}
+.mm-phim-btn:hover {
+    border-color: rgba(236,72,153,0.6) !important;
+    box-shadow: 0 0 20px rgba(236,72,153,0.2) !important;
+}
 
 /* Phim X special */
 .mm-nav-filmx {
