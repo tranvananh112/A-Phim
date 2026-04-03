@@ -1,33 +1,26 @@
 /* ============================================================
-   MOBILE VIEWPORT FIX - A Phim v2
-   Ngăn chặn scroll ngang và zoom textarea trên iOS/Android
+   MOBILE VIEWPORT FIX - A Phim v4 (FINAL)
    ============================================================ */
 
-/* 1. Chỉ khóa overflow trên HTML, KHÔNG trên body
-   Lý do: overflow-x:hidden trên body phá vỡ position:fixed trên iOS Safari
-   → Mobile menu, navbar fixed sẽ không hoạt động nếu body bị hidden */
-html {
-    overflow-x: hidden;
-    max-width: 100%;
-}
+/* 1. Dùng wrapper approach thay vì overflow trên html/body
+   Không đụng đến html/body overflow để tránh phá fixed positioning iOS */
 
-/* Body chỉ giới hạn width, KHÔNG hidden overflow */
-body {
-    max-width: 100%;
-    width: 100%;
-    overscroll-behavior-x: none;
-}
-
-/* 2. Box sizing an toàn cho tất cả phần tử */
+/* 2. Box sizing toàn trang - an toàn */
 *,
 *::before,
 *::after {
     box-sizing: border-box !important;
 }
 
-/* 3. FIX CHÍNH: Textarea, input iOS tự zoom khi font-size < 16px
-   Safari/iOS auto-zoom khi focus vào input có font-size < 16px
-   → Ép font-size tối thiểu 16px để KHÔNG trigger zoom */
+/* 3. FIX QUAN TRỌNG: ngăn iOS Safari tự zoom khi focus input/textarea
+   iOS tự zoom khi font-size < 16px → ép lên 16px */
+@supports (-webkit-touch-callout: none) {
+    /* Chỉ áp dụng trên iOS Safari */
+    input, textarea, select {
+        font-size: 16px !important;
+    }
+}
+
 @media screen and (max-width: 768px) {
     input[type="text"],
     input[type="email"],
@@ -41,35 +34,71 @@ body {
         font-size: 16px !important;
     }
 
-    /* Fix riêng cho textarea bình luận A Phim */
     .ap-cmt-textarea {
         font-size: 16px !important;
         line-height: 1.5 !important;
     }
 }
 
-/* 4. Ngăn container ngang tràn - KHÔNG áp dụng cho fixed/absolute elements */
-.container {
-    max-width: 100% !important;
-    overflow-x: hidden;
-}
-
-/* 5. Fix ảnh không tràn khỏi container */
+/* 4. Fix ảnh không tràn */
 img, video {
-    max-width: 100% !important;
+    max-width: 100%;
+    height: auto;
 }
 
-/* 6. Fix word wrap - text dài không tràn */
-p, h1, h2, h3, h4, h5, h6, li, td, th {
+/* 5. Text wrap */
+p, h1, h2, h3, h4, h5, h6, li {
     overflow-wrap: break-word;
     word-break: break-word;
 }
 
-/* 7. Đặc biệt: Dropdown avatar không tràn ra ngoài viewport */
+/* 6. Dropdown avatar mobile không tràn */
 @media (max-width: 480px) {
     .ap-ava-dropdown {
         right: 0 !important;
         left: auto !important;
         max-width: calc(100vw - 32px) !important;
     }
+}
+
+/* 7. QUAN TRỌNG: Mobile menu fix cho iOS */
+#mobileMenu {
+    /* Force GPU layer để tránh bị clip bởi iOS */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    will-change: transform;
+    background: rgba(0, 0, 0, 0.97) !important;
+}
+
+/* Fix text màu trắng rõ trong mobile menu */
+#mobileMenu a,
+#mobileMenu button,
+#mobileMenu span,
+#mobileMenu p {
+    color: #e5e7eb !important;   /* gray-200 */
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+#mobileMenu a:hover {
+    color: #fcd576 !important;   /* primary yellow */
+}
+
+/* Đảm bảo sub-menu dropdown cũng hiện đúng */
+#mobileMenu .hidden {
+    display: none !important;
+}
+
+#mobileMenu div:not(.hidden) {
+    display: block;
+    visibility: visible;
+}
+
+/* 8. Ngăn nội dung tràn ngang mà KHÔNG phá fixed elements
+   Dùng pseudo-element wrapper thay vì overflow trực tiếp */
+body::before {
+    content: '';
+    display: block;
+    overflow: hidden;
+    /* Không có width/height → không ảnh hưởng layout */
 }
