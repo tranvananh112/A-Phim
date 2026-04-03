@@ -1,0 +1,379 @@
+/* ============================================================
+   A PHIM - Mobile Menu Modern CSS (theo thiết kế Stitch)
+   Right-side drawer, cinematic glassmorphism
+   ============================================================ */
+
+/* OVERLAY */
+#mm-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9990;
+    background: rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+#mm-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* DRAWER - trượt từ bên PHẢI vào */
+#mm-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 420px;
+    z-index: 9995;
+    /* Cinematic glassmorphism */
+    background: rgba(10, 10, 16, 0.6);
+    backdrop-filter: blur(60px) saturate(150%);
+    -webkit-backdrop-filter: blur(60px) saturate(150%);
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: -20px 0 60px rgba(0, 0, 0, 0.8);
+
+    display: flex;
+    flex-direction: column;
+    padding: 48px 24px 32px;
+    overflow: hidden;
+
+    transform: translateX(100%);
+    -webkit-transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+    -webkit-overflow-scrolling: touch;
+}
+#mm-drawer.open {
+    transform: translateX(0);
+    -webkit-transform: translateX(0);
+}
+
+/* Scrollbar tùy chỉnh */
+#mm-drawer-scroll::-webkit-scrollbar { width: 3px; }
+#mm-drawer-scroll::-webkit-scrollbar-track { background: transparent; }
+#mm-drawer-scroll::-webkit-scrollbar-thumb { background: rgba(255, 215, 0, 0.15); border-radius: 10px; }
+
+/* HEADER USER */
+.mm-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 36px;
+    flex-shrink: 0;
+}
+.mm-user-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+}
+.mm-avatar-wrap {
+    position: relative;
+}
+.mm-avatar-glow {
+    position: absolute;
+    inset: -4px;
+    background: rgba(255, 215, 0, 0.2);
+    border-radius: 18px;
+    filter: blur(8px);
+    transition: background 0.3s;
+}
+.mm-avatar-wrap:hover .mm-avatar-glow { background: rgba(255, 215, 0, 0.4); }
+.mm-avatar-img {
+    position: relative;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    object-fit: cover;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.08);
+    font-weight: 800;
+    font-size: 22px;
+    color: #fff;
+}
+.mm-avatar-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
+.mm-avatar-dot {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    width: 14px;
+    height: 14px;
+    background: #5bef90;
+    border-radius: 50%;
+    border: 2px solid #000;
+}
+.mm-user-name-text {
+    font-family: 'Epilogue', 'Be Vietnam Pro', sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+    font-style: italic;
+    color: #fff;
+    letter-spacing: -0.3px;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+    line-height: 1.2;
+}
+.mm-user-badge {
+    font-size: 10px;
+    font-weight: 700;
+    color: #FFD700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.9;
+    margin-top: 2px;
+}
+.mm-close-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+.mm-close-btn:hover { background: rgba(255, 255, 255, 0.1); }
+
+/* NAV SCROLL AREA */
+#mm-drawer-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* GLASS CARD base */
+.mm-glass {
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+}
+
+/* Full-width nav item */
+.mm-nav-full {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 16px 20px;
+    border-radius: 16px;
+    text-decoration: none;
+    color: rgba(255,255,255,0.9);
+    font-family: 'Epilogue', 'Be Vietnam Pro', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    width: 100%;
+    text-align: left;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+.mm-nav-full.mm-active {
+    background: linear-gradient(90deg, rgba(255,215,0,0.15) 0%, transparent 100%);
+    border-left: 4px solid #FFD700 !important;
+    box-shadow: inset 10px 0 20px -10px rgba(255,215,0,0.2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.mm-nav-full:hover { background: rgba(255,255,255,0.05); }
+
+.mm-nav-icon {
+    font-size: 24px !important;
+    color: rgba(170, 171, 173, 1);
+    transition: color 0.2s;
+}
+.mm-nav-full.mm-active .mm-nav-icon { color: #FFD700 !important; }
+.mm-nav-full:hover .mm-nav-icon { color: #FFD700 !important; }
+
+/* Phim X special */
+.mm-nav-filmx {
+    background: rgba(255, 115, 81, 0.05);
+    border: 1px solid rgba(255, 115, 81, 0.1) !important;
+}
+.mm-nav-filmx:hover { background: rgba(255, 115, 81, 0.1) !important; }
+.mm-filmx-icon-wrap {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    background: rgba(255, 115, 81, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.mm-filmx-icon-wrap .material-symbols-outlined { color: #ff7351 !important; font-size: 20px !important; }
+.mm-nav-filmx .mm-nav-full-text { color: rgba(255, 115, 81, 0.9) !important; }
+
+/* GRID 2 cột */
+.mm-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.mm-card-item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    border-radius: 16px;
+    text-decoration: none;
+    color: rgba(255,255,255,0.8);
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+}
+.mm-card-item:hover {
+    border-color: rgba(255,215,0,0.3) !important;
+    background: rgba(255,255,255,0.05) !important;
+}
+.mm-card-item:hover .mm-card-icon { color: #FFD700; }
+.mm-card-icon {
+    font-size: 24px !important;
+    color: rgba(170, 171, 173, 1);
+    transition: color 0.2s;
+}
+.mm-card-label {
+    font-family: 'Epilogue', 'Be Vietnam Pro', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: rgba(255,255,255,0.8);
+}
+.mm-badge-new {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(91, 239, 144, 0.2);
+    color: #5bef90;
+    font-size: 8px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/* UPGRADE BANNER */
+.mm-upgrade-banner {
+    position: relative;
+    padding: 24px;
+    border-radius: 24px;
+    overflow: hidden;
+    margin-top: 12px;
+}
+.mm-upgrade-glow {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,215,0,0.1) 0%, transparent 100%);
+    pointer-events: none;
+}
+.mm-upgrade-title {
+    font-family: 'Epilogue', 'Be Vietnam Pro', sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+    font-style: italic;
+    color: #fff;
+    letter-spacing: -0.3px;
+}
+.mm-upgrade-desc {
+    font-size: 12px;
+    color: rgba(170,171,173,1);
+    line-height: 1.6;
+    margin-top: 4px;
+}
+.mm-upgrade-btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 14px;
+    background: #FFD700;
+    color: #000;
+    font-weight: 900;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(255,215,0,0.2);
+    transition: filter 0.2s, transform 0.1s;
+}
+.mm-upgrade-btn:hover { filter: brightness(1.1); }
+.mm-upgrade-btn:active { transform: scale(0.98); }
+
+/* FOOTER */
+.mm-footer {
+    margin-top: 24px;
+    flex-shrink: 0;
+}
+.mm-footer-div { height: 1px; background: rgba(255,255,255,0.05); margin-bottom: 20px; }
+.mm-footer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.mm-footer-version {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(170,171,173,0.4);
+    font-weight: 700;
+}
+.mm-footer-links { display: flex; gap: 24px; }
+.mm-footer-link {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(170,171,173,1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    transition: color 0.2s;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+.mm-footer-link:hover { color: #FFD700; }
+.mm-footer-link.danger { color: rgba(255,115,81,0.6); }
+.mm-footer-link.danger:hover { color: #ff7351; }
+.mm-footer-link .material-symbols-outlined { font-size: 16px !important; }
+
+/* HAMBURGER → X */
+.mm-burger-btn {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+}
+.mm-burger-lines {
+    width: 22px;
+    height: 16px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.mm-burger-lines span {
+    display: block;
+    height: 2px;
+    background: #fff;
+    border-radius: 2px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+}
+.mm-burger-btn.open .mm-burger-lines span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.mm-burger-btn.open .mm-burger-lines span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.mm-burger-btn.open .mm-burger-lines span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
