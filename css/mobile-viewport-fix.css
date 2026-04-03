@@ -12,6 +12,41 @@
     box-sizing: border-box !important;
 }
 
+/* ====================================================
+   300ms TAP DELAY FIX - Loại bỏ độ trễ click trên mobile
+   touch-action: manipulation báo browser không cần đợi
+   double-tap → click events bắn ngay lập tức
+   ==================================================== */
+a,
+button,
+[role="button"],
+input[type="submit"],
+input[type="button"],
+input[type="reset"],
+label,
+select,
+summary,
+.mm-card-item,
+.mm-nav-full,
+.mm-upgrade-btn,
+.mm-burger-btn,
+.mm-close-btn,
+.nav-item,
+[onclick],
+[tabindex] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: pointer;
+}
+
+/* Giữ user-select cho input/textarea */
+input, textarea, select, [contenteditable] {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
 /* 3. FIX QUAN TRỌNG: ngăn iOS Safari tự zoom khi focus input/textarea
    iOS tự zoom khi font-size < 16px → ép lên 16px */
 @supports (-webkit-touch-callout: none) {
