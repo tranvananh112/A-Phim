@@ -1,21 +1,27 @@
 /* ============================================================
-   MOBILE VIEWPORT FIX - A Phim
+   MOBILE VIEWPORT FIX - A Phim v2
    Ngăn chặn scroll ngang và zoom textarea trên iOS/Android
    ============================================================ */
 
-/* 1. Khóa chiều ngang - KHÔNG cho phép kéo ra ngoài viewport */
-html, body {
-    overflow-x: hidden !important;
-    max-width: 100vw !important;
-    /* Ngăn bounce scroll ngang trên iOS */
+/* 1. Chỉ khóa overflow trên HTML, KHÔNG trên body
+   Lý do: overflow-x:hidden trên body phá vỡ position:fixed trên iOS Safari
+   → Mobile menu, navbar fixed sẽ không hoạt động nếu body bị hidden */
+html {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+/* Body chỉ giới hạn width, KHÔNG hidden overflow */
+body {
+    max-width: 100%;
+    width: 100%;
     overscroll-behavior-x: none;
 }
 
-/* 2. Tất cả phần tử không được vượt 100% chiều ngang */
+/* 2. Box sizing an toàn cho tất cả phần tử */
 *,
 *::before,
 *::after {
-    max-width: 100%;
     box-sizing: border-box !important;
 }
 
@@ -33,8 +39,6 @@ html, body {
     textarea,
     select {
         font-size: 16px !important;
-        /* Ngăn iOS zoom nhưng vẫn giữ giao diện đẹp */
-        transform-origin: left top;
     }
 
     /* Fix riêng cho textarea bình luận A Phim */
@@ -44,44 +48,24 @@ html, body {
     }
 }
 
-/* 4. Ngăn các container tràn ngang */
-.container,
-nav,
-main,
-footer,
-section,
-article,
-aside,
-header {
+/* 4. Ngăn container ngang tràn - KHÔNG áp dụng cho fixed/absolute elements */
+.container {
     max-width: 100% !important;
     overflow-x: hidden;
 }
 
 /* 5. Fix ảnh không tràn khỏi container */
-img, video, iframe {
+img, video {
     max-width: 100% !important;
-    height: auto;
 }
 
-/* 6. Fix bảng (table) không tràn màn hình */
-table {
-    table-layout: fixed;
-    max-width: 100%;
-}
-
-/* 7. Fix word wrap - text dài không tràn */
-p, span, h1, h2, h3, h4, h5, h6, li, td, th {
+/* 6. Fix word wrap - text dài không tràn */
+p, h1, h2, h3, h4, h5, h6, li, td, th {
     overflow-wrap: break-word;
     word-break: break-word;
 }
 
-/* 8. Ngăn phần tử có position absolute/fixed tràn ngang */
-[class*="absolute"],
-[class*="fixed"] {
-    max-width: 100vw;
-}
-
-/* 9. Đặc biệt: Dropdown avatar picket không tràn ra ngoài viewport */
+/* 7. Đặc biệt: Dropdown avatar không tràn ra ngoài viewport */
 @media (max-width: 480px) {
     .ap-ava-dropdown {
         right: 0 !important;
