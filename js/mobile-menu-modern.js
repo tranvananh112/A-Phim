@@ -110,21 +110,21 @@
 
             <!-- 3-6. Grid 2 cột -->
             <div class="mm-grid-2">
-                <a href="danh-sach.html" class="mm-card-item mm-glass">
-                    ${icon('view_list', 'font-size:24px;color:#aaabad;')}
+                <a href="danh-sach.html" class="mm-card-item mm-glass color-blue">
+                    ${icon('view_list', 'font-size:22px;')}
                     <span class="mm-card-label">Danh Sách</span>
                 </a>
-                <a href="categories.html" class="mm-card-item mm-glass">
-                    ${icon('theaters', 'font-size:24px;color:#aaabad;')}
+                <a href="categories.html" class="mm-card-item mm-glass color-purple">
+                    ${icon('theaters', 'font-size:22px;')}
                     <span class="mm-card-label">Thể Loại</span>
                 </a>
-                <a href="search.html" class="mm-card-item mm-glass" style="position:relative;">
+                <a href="search.html" class="mm-card-item mm-glass color-green" style="position:relative;">
                     <div class="mm-badge-new">Mới</div>
-                    ${icon('explore', 'font-size:24px;color:#aaabad;')}
+                    ${icon('explore', 'font-size:22px;')}
                     <span class="mm-card-label">Khám Phá</span>
                 </a>
-                <a href="the-thao.html" class="mm-card-item mm-glass">
-                    ${icon('sports_soccer', 'font-size:24px;color:#aaabad;')}
+                <a href="the-thao.html" class="mm-card-item mm-glass color-orange">
+                    ${icon('sports_soccer', 'font-size:22px;')}
                     <span class="mm-card-label">Thể Thao</span>
                 </a>
             </div>
