@@ -60,6 +60,7 @@ app.use('/api/supporters', require('./routes/supporters'));
 app.use('/api/banners', require('./routes/banners'));
 app.use('/api/adult', require('./routes/adultContent')); // Adult content proxy
 app.use('/api/phimx-proxy', require('./routes/phimXProxy')); // Phim X Proxy to bypass ISP blocking
+app.use('/api/partner', require('./routes/partner')); // Partner DT99 session tracking
 
 // Health check
 app.get('/health', (req, res) => {
