@@ -2,6 +2,9 @@
 <html class="dark" lang="vi">
 <head>
 <meta charset="utf-8"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>A Phim Partner Analytics – DT99</title>
 <meta name="description" content="Dashboard phân tích quảng cáo realtime – A Phim Partner DT99"/>
@@ -1134,9 +1137,9 @@ function setVal(id,n,r){if(window._SV)window._SV(id,n,r);}
     var weightSum = 0;
     for (var h = 0; h <= currentHour; h++) { weightSum += hourlyMult[h]; }
     
-    // Dùng số click đã tính xong (đã qua lọc rác) đang hiển thị ở thẻ m-today làm target.
+    // Dùng số click đã tính xong đang hiển thị ở thẻ m-today làm target (đã lược bỏ định dạng dấu phẩy/chấm)
     var elToday = document.getElementById('m-today');
-    var targetModeClicks = elToday ? parseInt(elToday.textContent.replace(/\./g, ''), 10) : 0;
+    var targetModeClicks = elToday ? parseInt(elToday.textContent.replace(/\D/g, ''), 10) : 0;
     if (isNaN(targetModeClicks)) targetModeClicks = 0;
 
     var scaledHourly = new Array(24).fill(0);
@@ -1168,9 +1171,13 @@ function setVal(id,n,r){if(window._SV)window._SV(id,n,r);}
     // topPages might be an array of objects or an object mapping page to views.
     if (!Array.isArray(state.topPages)) scaleObj('topPages');
 
+    var elTotal = document.getElementById('m-total');
+    var targetModeTotal = elTotal ? parseInt(elTotal.textContent.replace(/\D/g, ''), 10) : 0;
+    if (isNaN(targetModeTotal)) targetModeTotal = 0;
+
     scaledState.todayClicks = _orgState.displayedToday;
     scaledState.modeClicks = targetModeClicks;
-    scaledState.totalClicks = realTotal;
+    scaledState.totalClicks = targetModeTotal;
     scaledState.hourlyData = scaledHourly;
     if(state.tImp) scaledState.tImp = Math.round(state.tImp * tMult);
 
