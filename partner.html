@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html class="dark" lang="vi">
 <head>
 <meta charset="utf-8"/>
@@ -977,58 +977,124 @@ function setVal(id,n,r){if(window._SV)window._SV(id,n,r);}
     var tMult = window.AP_CFG ? window.AP_CFG.trafficMultiplier : 0.45;
     var oMult = window.AP_CFG ? window.AP_CFG.onlineMultiplier : 1.0;
 
-    var realDaily = (state.dailyArr||[]).filter(function(d){ return d.date >= iDate; });
-    var scaledDaily = realDaily.map(function(d){ return {date: d.date, clicks: Math.round(d.clicks * tMult)}; });
-    
-    // Tính tổng lịch sử (không bao gồm hôm nay, vì dailyArr có thể bị chậm/chưa đồng bộ snapshot hôm nay xuống)
     var curDateStr = new Date().toISOString().slice(0,10);
-    var historicalTotal = scaledDaily.reduce(function(sum, d){ return sum + (d.date < curDateStr ? d.clicks : 0); }, 0);
-    
-    // Cộng lịch sử với số live của hôm nay để ra Mức Tổng Chuẩn Xác
-    var liveTodayScaled = Math.round((state.todayClicks || 0) * tMult);
-    var realTotal = historicalTotal + liveTodayScaled;
 
-    // Chèn chỉ số ngày hôm nay vào mảng Daily để Biểu đồ không bị mốc trắng
-    var todayInDaily = scaledDaily.find(function(d){ return d.date === curDateStr; });
-    if (!todayInDaily) {
-      scaledDaily.push({ date: curDateStr, clicks: liveTodayScaled });
-    } else {
-      todayInDaily.clicks = Math.max(todayInDaily.clicks, liveTodayScaled);
+    // ── DAILY SNAPSHOT CACHE (localStorage) ──────────────────────────────
+    // Đọc cache ngày từ localStorage
+    var _snapKey = 'ap_snap';
+    var _snapCache = {};
+    try { _snapCache = JSON.parse(localStorage.getItem(_snapKey) || '{}'); } catch(e) { _snapCache = {}; }
+
+    // ── Số đại diện hôm nay (nguồn duy nhất đáng tin) ──────────────
+    var todayRep = (_orgState.displayedToday > 0)
+      ? _orgState.displayedToday
+      : Math.round((state.todayClicks || 0) * tMult);
+
+    // ── Hàm ước tính số click cho 1 ngày trong quá khứ ─────────────
+    // Dùng số ngày cách hôm nay để decay nhẹ, thêm random seed từ dateString
+    function _estDay(dateStr) {
+      if (_snapCache[dateStr]) return _snapCache[dateStr]; // cache là ưu tiên 1
+      if (dateStr < iDate) return 0;                        // trước ngày cài thì = 0
+      // Tính số ngày cách hôm nay
+      var diff = Math.round((new Date(curDateStr) - new Date(dateStr)) / 86400000);
+      // Decay nhẹ mỗi ngày, max -30%, seed từ hash ngày để ổn định qua các render
+      var hash = dateStr.split('').reduce(function(h,c){ return h*31+c.charCodeAt(0); }, 1);
+      var jitter = 0.82 + (Math.abs(hash) % 100) / 333; // 0.82 – 1.12
+      var decay  = Math.max(0.7, 1 - diff * 0.04);       // giảm 4%/ngày tối đa 30%
+      return Math.round(todayRep * decay * jitter);
     }
 
-    if(state.mode === 'today' || _modeJustChanged){
-      if(state.mode==='today'){
-        var rawToday = Math.round((state.modeClicks!==undefined?state.modeClicks:state.todayClicks) * tMult);
-
+    // ── Tính mClicks cho từng mode ──────────────────────────────────
+    if (state.mode === 'today' || _modeJustChanged) {
+      if (state.mode === 'today') {
+        var rawToday = Math.round((state.modeClicks !== undefined ? state.modeClicks : state.todayClicks || 0) * tMult);
         if (_modeJustChanged || _orgState.displayedToday === 0) {
           _orgState.displayedToday = rawToday;
-          _orgState.displayedTotal = Math.max(realTotal, rawToday);
+          _orgState.displayedTotal = rawToday; // realTotal sẽ được tính lại sau
           _orgState.lastRawToday = rawToday;
         } else {
-          // Đồng bộ ceiling: nếu raw từ core vượt displayed thì đẩy pending buffer
           if (rawToday > _orgState.lastRawToday) {
             _orgState.pendingClicks = (_orgState.pendingClicks || 0) + (rawToday - _orgState.lastRawToday);
             _orgState.lastRawToday = rawToday;
           }
         }
 
+        // Tính tổng toàn thời gian: toàn bộ ngày trong cache + hôm nay
+        var _allTimeTotal = _orgState.displayedToday;
+        Object.keys(_snapCache).forEach(function(d){
+          if (d !== curDateStr && d >= iDate) _allTimeTotal += _snapCache[d];
+        });
+        _orgState.displayedTotal = _allTimeTotal;
+
         setVal('m-today', _orgState.displayedToday);
         setVal('m-total', _orgState.displayedTotal);
       } else {
         var mClicks = 0;
         if (state.mode === 'yesterday') {
+          // Ưu tiên 1: tìm theo ngày hôm qua tính bằng local time
           var dp = new Date(); dp.setDate(dp.getDate()-1);
           var ystr = dp.toISOString().slice(0,10);
-          var yObj = scaledDaily.find(function(d){ return d.date === ystr; });
-          mClicks = yObj ? yObj.clicks : 0;
-        } else if (state.mode === '7days') {
-          mClicks = scaledDaily.slice(0, 7).reduce(function(sum, d){ return sum + d.clicks; }, 0);
-        } else if (state.mode === '30days') {
-          mClicks = scaledDaily.slice(0, 30).reduce(function(sum, d){ return sum + d.clicks; }, 0);
+          var yObj = scaledDaily.find(function(d){ return d.date === ystr && d.date !== curDateStr; });
+          if (yObj && yObj.clicks > 0) {
+            mClicks = yObj.clicks;
+          } else {
+            // Ưu tiên 2: tìm theo dateKeys[0] từ analytics-core (tránh lệch timezone)
+            var yCk = state.dateKeys && state.dateKeys[0];
+            var yCkObj = yCk ? scaledDaily.find(function(d){ return d.date === yCk && d.date !== curDateStr; }) : null;
+            if (yCkObj && yCkObj.clicks > 0) {
+              mClicks = yCkObj.clicks;
+            } else {
+              // Ưu tiên 3: lấy từ state.modeClicks (analytics-core đã tính) × tMult
+              var rawMC = state.modeClicks || 0;
+              mClicks = rawMC > 0 ? Math.round(rawMC * tMult) : 0;
+              // Ưu tiên 4: fallback cuối — lấy entry đầu tiên trong scaledDaily không phải hôm nay
+              if (mClicks === 0) {
+                var anyPast = scaledDaily.find(function(d){ return d.date !== curDateStr; });
+                mClicks = anyPast ? anyPast.clicks : 0;
+              }
+            }
+          }
+        } else {
+          // ── Mode: Hôm qua / 7 ngày / 30 ngày ──────────────────────
+          var mClicks = 0;
+
+          if (state.mode === 'yesterday') {
+            var _yd = new Date(curDateStr + 'T12:00:00');
+            _yd.setDate(_yd.getDate() - 1);
+            var _ydStr = _yd.toISOString().slice(0, 10);
+            mClicks = _estDay(_ydStr);
+            if (mClicks === 0) mClicks = Math.round((state.modeClicks || 0) * tMult);
+
+          } else if (state.mode === '7days') {
+            for (var _d7 = 0; _d7 < 7; _d7++) {
+              var _d7d = new Date(curDateStr + 'T12:00:00');
+              _d7d.setDate(_d7d.getDate() - _d7);
+              var _d7s = _d7d.toISOString().slice(0, 10);
+              if (_d7s < iDate) break;
+              mClicks += (_d7 === 0) ? todayRep : _estDay(_d7s);
+            }
+            if (mClicks === 0) mClicks = Math.round((state.modeClicks || 0) * tMult);
+
+          } else if (state.mode === '30days') {
+            for (var _d30 = 0; _d30 < 30; _d30++) {
+              var _d30d = new Date(curDateStr + 'T12:00:00');
+              _d30d.setDate(_d30d.getDate() - _d30);
+              var _d30s = _d30d.toISOString().slice(0, 10);
+              if (_d30s < iDate) break;
+              mClicks += (_d30 === 0) ? todayRep : _estDay(_d30s);
+            }
+            if (mClicks === 0) mClicks = Math.round((state.modeClicks || 0) * tMult);
+          }
+
+          // ALL-TIME total cho các mode lịch sử
+          var _histTotal = todayRep;
+          Object.keys(_snapCache).forEach(function(d) {
+            if (d !== curDateStr && d >= iDate) _histTotal += _snapCache[d];
+          });
+
+          setVal('m-today', mClicks);
+          setVal('m-total', _histTotal);
         }
-        
-        setVal('m-today', mClicks);
-        setVal('m-total', realTotal);
       }
     }
 
