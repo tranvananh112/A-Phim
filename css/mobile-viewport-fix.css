@@ -140,3 +140,25 @@ body {
     position: relative;
     width: 100%;
 }
+
+/* 9. SAFE AREA INSET SUPPORT (iOS Notch/Edge-to-Edge) */
+.pt-safe {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+}
+
+.pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+}
+
+.pb-safe-bottom {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+.mt-safe {
+    margin-top: env(safe-area-inset-top, 0px) !important;
+}
+
+/* Padding an toàn cho Main Content không bị lấp bởi Nav bar trên Mobile (5rem tương đương h-20) */
+.pt-safe-main {
+    padding-top: calc(5rem + env(safe-area-inset-top, 0px)) !important;
+}
