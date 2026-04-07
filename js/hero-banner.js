@@ -5,21 +5,39 @@ let vietnamMoviesForThumbnails = [];
 async function loadHeroBanner() {
     let isInitialLoad = true;
 
+    // 1. NGAY LẬP TỨC: Load từ cache LocalStorage để hiện ngay trong chớp mắt
+    try {
+        const cachedBanners = JSON.parse(localStorage.getItem('cinestream_banners') || '[]');
+        const activeCached = cachedBanners.find(b => b.isActive);
+        if (activeCached) {
+            currentHeroMovie = convertBannerToMovie(activeCached);
+            // Render tức thì không cần chờ mạng
+            renderHeroBanner(currentHeroMovie, true);
+        }
+    } catch (e) {
+        console.warn('Cache read error:', e);
+    }
+
+    // 2. BACKGROUND: Load Firebase và đồng bộ dữ liệu mới nhất
     try {
         // Dùng dynamic import để kết nối Cấu hình Firebase
         const fb = await import('/js/firebase-banners.js');
         
         fb.listenToBanners(async (banners) => {
-            // Lưu dự phòng về mảng máy con
+            // Lưu dữ liệu mới về bộ nhớ đệm
             if (banners && banners.length > 0) {
                 localStorage.setItem('cinestream_banners', JSON.stringify(banners));
             }
             
-            // Xử lý Active Banner
+            // Cập nhật giao diện nếu có thay đổi từ Firebase
             const activeBanner = banners?.find(b => b.isActive);
             if (activeBanner) {
-                currentHeroMovie = convertBannerToMovie(activeBanner);
-                renderHeroBanner(currentHeroMovie);
+                // Kiểm tra xem có khác với cái đã render không để tránh chớp giật
+                const newMovie = convertBannerToMovie(activeBanner);
+                if (!currentHeroMovie || currentHeroMovie.slug !== newMovie.slug || isInitialLoad) {
+                    currentHeroMovie = newMovie;
+                    renderHeroBanner(currentHeroMovie, false);
+                }
             } else {
                 // Không có banner được chọn, load fallback từ API
                 if (isInitialLoad) await loadFallbackBanner();
@@ -27,29 +45,17 @@ async function loadHeroBanner() {
             isInitialLoad = false;
         });
     } catch (error) {
-        console.error('Error with Firebase Banners, fallback to localStorage:', error);
-        
-        // Mất mạng Firebase hoặc lỗi import -> Quay về logic cũ
-        try {
-            const banners = JSON.parse(localStorage.getItem('cinestream_banners') || '[]');
-            const activeBanner = banners.find(b => b.isActive);
-
-            if (activeBanner) {
-                currentHeroMovie = convertBannerToMovie(activeBanner);
-                renderHeroBanner(currentHeroMovie);
-            } else {
-                await loadFallbackBanner();
-            }
-        } catch (localError) {
+        console.error('Error with Firebase Banners, fallback to localStorage/API:', error);
+        if (!currentHeroMovie) {
             await loadFallbackBanner();
         }
     }
 
-    // Load phim Việt Nam cho thumbnails
-    loadVietnameseThumbnails();
+    // Load phim Việt Nam cho thumbnails mượt mà chạy ngầm
+    setTimeout(loadVietnameseThumbnails, 100);
 }
 
-// Fallback: Load từ API nếu không có banner trong MongoDB
+// Fallback: Load từ API nếu không có banner trong DB
 async function loadFallbackBanner() {
     try {
         const response = await fetch('https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=1', {
@@ -61,13 +67,13 @@ async function loadFallbackBanner() {
 
         if (data.status === 'success' && data.data && data.data.items && data.data.items.length > 0) {
             currentHeroMovie = data.data.items[0];
-            renderHeroBanner(currentHeroMovie);
+            renderHeroBanner(currentHeroMovie, false);
         } else {
-            showHeroContent();
+            if (!currentHeroMovie) showHeroContent();
         }
     } catch (error) {
         console.error('Error loading fallback banner:', error);
-        showHeroContent();
+        if (!currentHeroMovie) showHeroContent();
     }
 }
 
@@ -108,14 +114,14 @@ async function loadVietnameseThumbnails() {
     }
 }
 
-function showHeroContent() {
-    // Fade in content
+function showHeroText() {
     const heroContent = document.getElementById('heroContent');
     if (heroContent) {
         heroContent.style.opacity = '1';
     }
+}
 
-    // Fade in image and hide skeleton
+function showHeroImage() {
     const heroImage = document.getElementById('heroImage');
     const skeleton = document.getElementById('heroImageSkeleton');
     if (heroImage) {
@@ -124,11 +130,11 @@ function showHeroContent() {
     if (skeleton) {
         setTimeout(() => {
             skeleton.style.display = 'none';
-        }, 700);
+        }, 300);
     }
 }
 
-function renderHeroBanner(movie) {
+function renderHeroBanner(movie, isInstant = false) {
     const heroImage = document.getElementById('heroImage');
     const heroTitle = document.getElementById('heroTitle');
     const heroSubtitle = document.getElementById('heroSubtitle');
@@ -137,17 +143,10 @@ function renderHeroBanner(movie) {
     const heroDescription = document.getElementById('heroDescription');
     const heroPlayBtn = document.getElementById('heroPlayBtn');
 
-    // Update title first (instant)
-    if (heroTitle) {
-        heroTitle.textContent = movie.name;
-    }
+    // Update text content immediately
+    if (heroTitle) heroTitle.textContent = movie.name;
+    if (heroSubtitle) heroSubtitle.textContent = movie.origin_name || '';
 
-    // Update subtitle (origin name)
-    if (heroSubtitle) {
-        heroSubtitle.textContent = movie.origin_name || '';
-    }
-
-    // Update badges
     if (heroBadges) {
         const rating = movie.tmdb?.vote_average ? movie.tmdb.vote_average.toFixed(1) : 'N/A';
         heroBadges.innerHTML = `
@@ -158,7 +157,6 @@ function renderHeroBanner(movie) {
         `;
     }
 
-    // Update genres
     if (heroGenres && movie.category) {
         heroGenres.innerHTML = movie.category.slice(0, 5).map(cat => `
             <button class="px-4 py-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-lg text-sm text-gray-200 transition-colors border border-white/10">
@@ -167,39 +165,43 @@ function renderHeroBanner(movie) {
         `).join('');
     }
 
-    // Update description
     if (heroDescription) {
         heroDescription.textContent = movie.content ?
             movie.content.replace(/<[^>]*>/g, '').substring(0, 250) + '...' :
             'Khám phá bộ phim đặc sắc này ngay hôm nay!';
     }
 
-    // Update play button link
-    if (heroPlayBtn) {
-        heroPlayBtn.href = `movie-detail.html?slug=${movie.slug}`;
-    }
+    if (heroPlayBtn) heroPlayBtn.href = `movie-detail.html?slug=${movie.slug}`;
 
-    // Preload image and wait for it to load before showing
+    // Hiển thị chữ ngay lập tức, không chờ ảnh
+    showHeroText();
+
     if (heroImage) {
         const newImageUrl = `https://img.ophim.live/uploads/movies/${movie.poster_url || movie.thumb_url}`;
 
-        // Create a new image to preload
-        const img = new Image();
-        img.onload = () => {
-            // Image loaded successfully, now update and show
-            heroImage.src = newImageUrl;
-            showHeroContent();
-        };
-        img.onerror = () => {
-            // If image fails to load, still show content with fallback
-            heroImage.src = 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1920';
-            showHeroContent();
-        };
-        // Start loading the image
-        img.src = newImageUrl;
-    } else {
-        // No image element, just show content
-        showHeroContent();
+        if (heroImage.src !== newImageUrl) {
+            heroImage.style.opacity = '0'; // Chuẩn bị fade in
+            
+            if (isInstant) {
+                // Nếu là load từ cache, gán link luôn (nếu ảnh đã có trong cache trình duyệt sẽ lên ngay)
+                heroImage.src = newImageUrl;
+                showHeroImage();
+            } else {
+                // Preload ảnh mới
+                const img = new Image();
+                img.onload = () => {
+                    heroImage.src = newImageUrl;
+                    showHeroImage();
+                };
+                img.onerror = () => {
+                    heroImage.src = 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1920';
+                    showHeroImage();
+                };
+                img.src = newImageUrl;
+            }
+        } else {
+            showHeroImage();
+        }
     }
 }
 
