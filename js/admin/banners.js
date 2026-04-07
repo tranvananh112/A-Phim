@@ -7,10 +7,29 @@ document.addEventListener('DOMContentLoaded', () => {
     // Use adminAuthService to check auth
     adminAuthService.checkAuth();
 
-    // If we get here, user is authenticated
+    // Listen to Firebase for Realtime Updates from other admins
+    import('/js/firebase-banners.js').then(fb => {
+        fb.listenToBanners((remoteBanners) => {
+            if (remoteBanners) {
+                localStorage.setItem('cinestream_banners', JSON.stringify(remoteBanners));
+                loadBanners();
+                loadActiveBanner();
+            }
+        });
+    }).catch(e => console.log('Không tải được firebase-banners', e));
+
+    // Initial load from local
     loadBanners();
     loadActiveBanner();
 });
+
+// Helper to save to local and sync to cloud
+function saveBanners(banners) {
+    localStorage.setItem('cinestream_banners', JSON.stringify(banners));
+    import('/js/firebase-banners.js').then(fb => {
+        fb.syncBannersToFirebase(banners);
+    }).catch(e => console.log('Lỗi sync firebase:', e));
+}
 
 // Load all banners from localStorage
 function loadBanners() {
@@ -112,9 +131,31 @@ function loadActiveBanner() {
     }
 }
 
-// Show load movies modal
+// Thêm event listener cho ô tìm kiếm với debounce 600ms
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('searchBannerInput');
+    if (searchInput) {
+        let timeout = null;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                loadMoviesFromOphim(e.target.value.trim());
+            }, 600);
+        });
+    }
+});
+
+// Show load movies modal & auto fetch
 function showLoadMoviesModal() {
     document.getElementById('loadMoviesModal').classList.remove('hidden');
+    const searchInput = document.getElementById('searchBannerInput');
+    if (searchInput) {
+        searchInput.value = '';
+        searchInput.focus();
+    }
+    
+    // Auto load phim mới nhất khi mở lên
+    loadMoviesFromOphim('');
 }
 
 // Close load movies modal
@@ -122,70 +163,147 @@ function closeLoadMoviesModal() {
     document.getElementById('loadMoviesModal').classList.add('hidden');
     document.getElementById('moviesGrid').classList.add('hidden');
     document.getElementById('loadingMovies').classList.add('hidden');
-    document.getElementById('loadMoviesBtn').classList.remove('hidden');
 }
 
-// Load movies from Ophim API
-async function loadMoviesFromAPI() {
-    const startPage = parseInt(document.getElementById('startPage').value);
-    const endPage = parseInt(document.getElementById('endPage').value);
+let isModalFullScreen = false;
 
-    if (startPage < 1 || endPage < startPage || endPage > 20) {
-        alert('Vui lòng nhập khoảng trang hợp lệ (1-20)');
-        return;
+// Toggle fullname screen modal
+function toggleModalFullScreen() {
+    const container = document.getElementById('loadMoviesModalContainer');
+    const icon = document.getElementById('fullscreenIcon');
+    const modalWrapper = document.getElementById('loadMoviesModal');
+    
+    isModalFullScreen = !isModalFullScreen;
+    
+    if (isModalFullScreen) {
+        container.classList.remove('max-w-4xl', 'rounded-xl', 'max-h-[90vh]');
+        container.classList.add('w-screen', 'h-screen', 'max-w-none', 'max-h-screen', 'rounded-none');
+        modalWrapper.classList.remove('p-4');
+        icon.textContent = 'fullscreen_exit';
+    } else {
+        container.classList.add('max-w-4xl', 'rounded-xl', 'max-h-[90vh]');
+        container.classList.remove('w-screen', 'h-screen', 'max-w-none', 'max-h-screen', 'rounded-none');
+        modalWrapper.classList.add('p-4');
+        icon.textContent = 'fullscreen';
     }
+}
 
+let currentOphimSearchPage = 1;
+let currentOphimSearchKeyword = '';
+let currentOphimTotalPages = 1;
+
+// Load / Search movies from Ophim API
+async function loadMoviesFromOphim(keyword = '', isLoadMore = false) {
     const loadingDiv = document.getElementById('loadingMovies');
-    const btn = document.getElementById('loadMoviesBtn');
+    const loadingText = document.getElementById('loadingText');
     const grid = document.getElementById('moviesGrid');
+    const gridTitle = document.getElementById('gridTitle');
+    const resultCount = document.getElementById('resultCount');
+    const loadMoreSection = document.getElementById('loadMoreSection');
+    const nextPageNum = document.getElementById('nextPageNum');
 
-    btn.classList.add('hidden');
-    loadingDiv.classList.remove('hidden');
+    if (!isLoadMore) {
+        currentOphimSearchKeyword = keyword;
+        currentOphimSearchPage = 1;
+        // Reset view
+        grid.classList.add('hidden');
+        loadingDiv.classList.remove('hidden');
+        if (loadMoreSection) loadMoreSection.classList.add('hidden');
+    } else {
+        currentOphimSearchPage++;
+        const btn = document.getElementById('loadMoreBtn');
+        if (btn) btn.innerHTML = `<span class="animate-spin material-icons-outlined">refresh</span> Đang tải...`;
+    }
+    
+    let apiUrl = `https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=${currentOphimSearchPage}`;
+    if (currentOphimSearchKeyword !== '') {
+        apiUrl = `https://ophim1.com/v1/api/tim-kiem?keyword=${encodeURIComponent(currentOphimSearchKeyword)}&limit=24&page=${currentOphimSearchPage}`;
+        if (!isLoadMore) {
+            if (loadingText) loadingText.textContent = `Đang tìm "${currentOphimSearchKeyword}"...`;
+            if (gridTitle) gridTitle.textContent = 'Kết quả tìm kiếm';
+        }
+    } else {
+        if (!isLoadMore) {
+            if (loadingText) loadingText.textContent = 'Đang tải danh sách phim mới...';
+            if (gridTitle) gridTitle.textContent = 'Phim mới nổi bật';
+        }
+    }
 
     try {
-        const allMovies = [];
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: { 'accept': 'application/json' }
+        });
 
-        // Load movies from Ophim API directly
-        for (let page = startPage; page <= endPage; page++) {
-            try {
-                const response = await fetch(
-                    `https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=${page}`,
-                    {
-                        method: 'GET',
-                        headers: { 'accept': 'application/json' }
-                    }
-                );
+        const data = await response.json();
 
-                const data = await response.json();
-
-                if (data.status === 'success' && data.data?.items) {
-                    const movies = data.data.items.map(movie => ({
-                        ...movie,
-                        sourcePage: page
-                    }));
-                    allMovies.push(...movies);
-                }
-            } catch (error) {
-                console.error(`Error loading page ${page}:`, error);
+        if (data.status === 'success' && data.data?.items) {
+            let newMovies = data.data.items;
+            
+            const pagination = data.data.params?.pagination;
+            const totalItems = pagination?.totalItems || 0;
+            const perPage = pagination?.totalItemsPerPage || 24;
+            
+            currentOphimTotalPages = pagination?.totalPages || Math.ceil(totalItems / perPage) || 1;
+            
+            if (!isLoadMore) {
+                loadedMovies = newMovies;
+            } else {
+                loadedMovies = [...loadedMovies, ...newMovies];
             }
-        }
+            
+            if (loadedMovies.length > 0) {
+                displayMovies(loadedMovies);
+                
+                // Show result counts
+                if (resultCount) {
+                    if (data.data.params?.pagination?.totalItems) {
+                        resultCount.textContent = `Hiển thị ${loadedMovies.length} / ${data.data.params.pagination.totalItems} kết quả`;
+                    } else {
+                        resultCount.textContent = `${loadedMovies.length} kết quả`;
+                    }
+                }
+                
+                // Show/hide load more button
+                if (currentOphimSearchPage < currentOphimTotalPages) {
+                    if (loadMoreSection) loadMoreSection.classList.remove('hidden');
+                    if (nextPageNum) nextPageNum.textContent = currentOphimSearchPage + 1;
+                    const btn = document.getElementById('loadMoreBtn');
+                    if (btn) btn.innerHTML = `<span class="material-icons-outlined">expand_more</span> Tải Thêm (Trang <span id="nextPageNum">${currentOphimSearchPage + 1}</span>)`;
+                } else {
+                    if (loadMoreSection) loadMoreSection.classList.add('hidden');
+                }
 
-        if (allMovies.length > 0) {
-            loadedMovies = allMovies;
-            displayMovies(loadedMovies);
-            loadingDiv.classList.add('hidden');
-            grid.classList.remove('hidden');
+                if (!isLoadMore) {
+                    loadingDiv.classList.add('hidden');
+                    grid.classList.remove('hidden');
+                }
+            } else {
+                if (!isLoadMore) throw new Error('Không tìm thấy phim nào phù hợp');
+            }
         } else {
-            throw new Error('Không tải được phim nào');
+            if (!isLoadMore) throw new Error('Lỗi truy xuất API Ophim');
         }
     } catch (error) {
-        console.error('Error loading movies:', error);
-        alert('Không thể tải phim từ API: ' + error.message);
-        loadingDiv.classList.add('hidden');
-        btn.classList.remove('hidden');
+        console.error('Error fetching movies:', error);
+        if (!isLoadMore) {
+            loadingDiv.classList.add('hidden');
+            grid.classList.remove('hidden');
+            document.getElementById('moviesGridContent').innerHTML = `
+                <div class="col-span-full py-8 text-center text-gray-400 border border-white/5 rounded-xl bg-black/20">
+                    <span class="material-icons-outlined text-4xl mb-2 text-gray-500">search_off</span>
+                    <p>Không tìm thấy dữ liệu hoặc có lỗi xảy ra.</p>
+                </div>
+            `;
+            if (resultCount) resultCount.textContent = "0";
+            if (loadMoreSection) loadMoreSection.classList.add('hidden');
+        }
     }
 }
 
+function loadMoreOphimMovies() {
+    loadMoviesFromOphim(currentOphimSearchKeyword, true);
+}
 // Display movies in grid
 function displayMovies(movies) {
     const gridContent = document.getElementById('moviesGridContent');
@@ -246,7 +364,7 @@ function addMovieToBanner(movie) {
         };
 
         banners.push(newBanner);
-        localStorage.setItem('cinestream_banners', JSON.stringify(banners));
+        saveBanners(banners);
 
         alert('Đã thêm phim vào danh sách banner!');
         closeLoadMoviesModal();
@@ -269,7 +387,7 @@ function activateBanner(slug) {
             b.isActive = (b.slug === slug);
         });
 
-        localStorage.setItem('cinestream_banners', JSON.stringify(banners));
+        saveBanners(banners);
 
         alert('Đã kích hoạt banner!');
         loadBanners();
@@ -292,7 +410,7 @@ function deactivateBanner(slug) {
             banner.isActive = false;
         }
 
-        localStorage.setItem('cinestream_banners', JSON.stringify(banners));
+        saveBanners(banners);
 
         alert('Đã tắt banner!');
         loadBanners();
@@ -311,7 +429,7 @@ function deleteBanner(slug) {
         let banners = JSON.parse(localStorage.getItem('cinestream_banners') || '[]');
 
         banners = banners.filter(b => b.slug !== slug);
-        localStorage.setItem('cinestream_banners', JSON.stringify(banners));
+        saveBanners(banners);
 
         alert('Đã xóa banner!');
         loadBanners();

@@ -59,8 +59,8 @@
     function hideSplashScreen() {
         const splash = document.getElementById('splashLoader');
         if (splash) {
-            // Add a minimum display time of 800ms for better UX
-            const minDisplayTime = 800;
+            // Reduce minimum display time for instant feeling since banner loads via Firebase/LocalStorage
+            const minDisplayTime = 100;
             const startTime = window.splashStartTime || Date.now();
             const elapsedTime = Date.now() - startTime;
             const remainingTime = Math.max(0, minDisplayTime - elapsedTime);

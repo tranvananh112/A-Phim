@@ -3,24 +3,46 @@ let currentHeroMovie = null;
 let vietnamMoviesForThumbnails = [];
 
 async function loadHeroBanner() {
-    try {
-        // Load banner từ localStorage (được chọn bởi admin)
-        const banners = JSON.parse(localStorage.getItem('cinestream_banners') || '[]');
-        const activeBanner = banners.find(b => b.isActive);
+    let isInitialLoad = true;
 
-        if (activeBanner) {
-            // Có banner được chọn từ admin
-            currentHeroMovie = convertBannerToMovie(activeBanner);
-            renderHeroBanner(currentHeroMovie);
-        } else {
-            // Không có banner được chọn, load fallback từ API
-            console.log('No active banner in localStorage, loading from API...');
+    try {
+        // Dùng dynamic import để kết nối Cấu hình Firebase
+        const fb = await import('/js/firebase-banners.js');
+        
+        fb.listenToBanners(async (banners) => {
+            // Lưu dự phòng về mảng máy con
+            if (banners && banners.length > 0) {
+                localStorage.setItem('cinestream_banners', JSON.stringify(banners));
+            }
+            
+            // Xử lý Active Banner
+            const activeBanner = banners?.find(b => b.isActive);
+            if (activeBanner) {
+                currentHeroMovie = convertBannerToMovie(activeBanner);
+                renderHeroBanner(currentHeroMovie);
+            } else {
+                // Không có banner được chọn, load fallback từ API
+                if (isInitialLoad) await loadFallbackBanner();
+            }
+            isInitialLoad = false;
+        });
+    } catch (error) {
+        console.error('Error with Firebase Banners, fallback to localStorage:', error);
+        
+        // Mất mạng Firebase hoặc lỗi import -> Quay về logic cũ
+        try {
+            const banners = JSON.parse(localStorage.getItem('cinestream_banners') || '[]');
+            const activeBanner = banners.find(b => b.isActive);
+
+            if (activeBanner) {
+                currentHeroMovie = convertBannerToMovie(activeBanner);
+                renderHeroBanner(currentHeroMovie);
+            } else {
+                await loadFallbackBanner();
+            }
+        } catch (localError) {
             await loadFallbackBanner();
         }
-    } catch (error) {
-        console.error('Error loading hero banner from localStorage:', error);
-        // Fallback to API if localStorage fails
-        await loadFallbackBanner();
     }
 
     // Load phim Việt Nam cho thumbnails

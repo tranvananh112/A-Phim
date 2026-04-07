@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Quản Lý Banner - Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
@@ -69,8 +72,8 @@
                     </div>
                     <button onclick="showLoadMoviesModal()"
                         class="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/80 transition-colors flex items-center gap-2">
-                        <span class="material-icons-outlined">download</span>
-                        Tải Phim Mới
+                        <span class="material-icons-outlined">add_circle</span>
+                        Thêm Banner Mới
                     </button>
                 </div>
 
@@ -120,60 +123,63 @@
 
     <!-- Load Movies Modal -->
     <div id="loadMoviesModal"
-        class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-surface-dark rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-white/10">
-            <div class="p-6 border-b border-white/10 flex items-center justify-between">
-                <h3 class="text-2xl font-bold text-white">Tải Phim Mới Từ API</h3>
-                <button onclick="closeLoadMoviesModal()" class="text-gray-400 hover:text-white">
-                    <span class="material-icons-outlined">close</span>
-                </button>
+        class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-all duration-300">
+        <div id="loadMoviesModalContainer" class="bg-surface-dark rounded-xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-white/10 transition-all duration-300">
+            <div class="p-6 border-b border-white/10 flex items-center justify-between shrink-0">
+                <h3 class="text-2xl font-bold text-white">Tìm kiếm & Thêm Banner</h3>
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleModalFullScreen()" class="text-gray-400 hover:text-white transition-colors" title="Phóng to/Thu nhỏ">
+                        <span class="material-icons-outlined" id="fullscreenIcon">fullscreen</span>
+                    </button>
+                    <button onclick="closeLoadMoviesModal()" class="text-gray-400 hover:text-red-500 transition-colors" title="Đóng">
+                        <span class="material-icons-outlined">close</span>
+                    </button>
+                </div>
             </div>
 
-            <div class="p-6">
-                <!-- Page Range Selection -->
-                <div class="mb-6">
-                    <label class="block text-gray-300 mb-2">Chọn khoảng trang (1-20)</label>
-                    <div class="flex gap-4">
-                        <div class="flex-1">
-                            <label class="block text-sm text-gray-400 mb-1">Từ trang</label>
-                            <input type="number" id="startPage" min="1" max="20" value="1"
-                                class="w-full px-4 py-2 bg-background-dark border border-white/10 rounded-lg text-white">
-                        </div>
-                        <div class="flex-1">
-                            <label class="block text-sm text-gray-400 mb-1">Đến trang</label>
-                            <input type="number" id="endPage" min="1" max="20" value="3"
-                                class="w-full px-4 py-2 bg-background-dark border border-white/10 rounded-lg text-white">
-                        </div>
+            <div class="p-6 flex-1 min-h-0 flex flex-col">
+                <!-- Search Bar -->
+                <div class="mb-6 relative shrink-0">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-icons-outlined text-gray-400">search</span>
                     </div>
-                    <p class="text-sm text-gray-400 mt-2">Mỗi trang có khoảng 24 phim</p>
+                    <input type="text" id="searchBannerInput" placeholder="Nhập tên phim để tìm kiếm lập tức..."
+                        class="w-full pl-10 pr-4 py-4 bg-background-dark border border-white/10 rounded-xl text-white text-lg focus:border-primary focus:ring-1 focus:ring-primary transition-colors">
                 </div>
 
-                <button onclick="loadMoviesFromAPI()" id="loadMoviesBtn"
-                    class="w-full px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/80 transition-colors">
-                    Tải Phim
-                </button>
-
                 <!-- Loading -->
-                <div id="loadingMovies" class="hidden text-center py-8">
+                <div id="loadingMovies" class="hidden text-center py-12 shrink-0">
                     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-                    <p class="text-gray-400">Đang tải phim từ API...</p>
+                    <p class="text-gray-400 font-semibold" id="loadingText">Đang tìm phim...</p>
                 </div>
 
                 <!-- Movies Grid -->
-                <div id="moviesGrid" class="hidden mt-6 max-h-[500px] overflow-y-auto">
-                    <h4 class="text-lg font-bold text-white mb-4">Chọn phim để thêm vào Banner</h4>
-                    <div id="moviesGridContent" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div id="moviesGrid" class="hidden flex-1 overflow-y-auto pr-2">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-lg font-bold text-white" id="gridTitle">Phim mới nổi bật</h4>
+                        <span class="text-sm text-gray-400" id="resultCount"></span>
+                    </div>
+                    <div id="moviesGridContent" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
                         <!-- Will be populated by JS -->
+                    </div>
+                    
+                    <!-- Load More Section -->
+                    <div id="loadMoreSection" class="hidden text-center mt-6 mb-4">
+                        <button onclick="loadMoreOphimMovies()" id="loadMoreBtn" 
+                            class="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-xl transition-colors flex items-center justify-center gap-2 mx-auto disabled:opacity-50">
+                            <span class="material-icons-outlined">expand_more</span>
+                            Tải Thêm (Trang <span id="nextPageNum">2</span>)
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="../js/config.js"></script>
-    <script src="../js/admin/config.js"></script>
-    <script src="../js/admin/auth.js"></script>
-    <script src="../js/admin/banners.js"></script>
+    <script src="../js/config.js?v=5"></script>
+    <script src="../js/admin/config.js?v=5"></script>
+    <script src="../js/admin/auth.js?v=5"></script>
+    <script src="../js/admin/banners.js?v=5"></script>
 </body>
 
 </html>
