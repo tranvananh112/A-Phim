@@ -45,11 +45,13 @@
     function renderComingSoonMovies(movies) {
         const loading = document.getElementById('comingSoonLoading');
         const container = document.getElementById('comingSoonContainer');
+        
+        if (!container) return;
         const scrollContainer = container.querySelector('.flex');
 
         if (!scrollContainer) return;
 
-        loading.classList.add('hidden');
+        if (loading) loading.classList.add('hidden');
         container.classList.remove('hidden');
 
         // Get movie links from localStorage

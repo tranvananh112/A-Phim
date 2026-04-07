@@ -29,8 +29,10 @@ function renderTopMovies(movies) {
     const loading = document.getElementById('topMoviesLoading');
     const container = document.getElementById('topMoviesContainer');
 
-    loading.classList.add('hidden');
-    container.classList.remove('hidden');
+    if (loading) loading.classList.add('hidden');
+    if (container) container.classList.remove('hidden');
+
+    if (!container) return;
 
     const movieLinks = JSON.parse(localStorage.getItem('movieLinks') || '{}');
 
