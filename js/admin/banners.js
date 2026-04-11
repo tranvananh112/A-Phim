@@ -96,7 +96,7 @@ function loadBanners() {
 }
 
 // Load active banner from localStorage
-function loadActiveBanner() {
+async function loadActiveBanner() {
     const content = document.getElementById('activeBannerContent');
 
     try {
@@ -104,24 +104,29 @@ function loadActiveBanner() {
         const activeBanner = banners.find(b => b.isActive);
 
         if (activeBanner) {
-            content.innerHTML = `
-                <div class="flex gap-6">
-                    <img src="https://img.ophim.live/uploads/movies/${activeBanner.thumb_url}" 
-                         alt="${activeBanner.name}"
-                         class="w-32 h-48 object-cover rounded-lg"
-                         onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
-                    <div class="flex-1">
-                        <h4 class="text-2xl font-bold text-white mb-2">${activeBanner.name}</h4>
-                        <p class="text-gray-400 mb-4">${activeBanner.origin_name || ''}</p>
-                        <div class="flex gap-4 text-sm">
-                            <span class="text-gray-300">Năm: ${activeBanner.year || 'N/A'}</span>
-                            <span class="text-gray-300">Chất lượng: ${activeBanner.quality || 'HD'}</span>
-                            <span class="text-gray-300">Ngôn ngữ: ${activeBanner.lang || 'Vietsub'}</span>
-                        </div>
-                        <p class="text-gray-400 mt-4 line-clamp-3">${activeBanner.content || 'Không có mô tả'}</p>
-                    </div>
-                </div>
-            `;
+            // Hiển thị tạm thời từ local
+            renderActiveBannerHTML(activeBanner, true);
+
+            // Fetch dữ liệu mới nhất từ API để cập nhật số tập
+            try {
+                const response = await fetch(`https://ophim1.com/v1/api/phim/${activeBanner.slug}`, {
+                    method: 'GET',
+                    headers: { 'accept': 'application/json' }
+                });
+                const data = await response.json();
+                if (data.status === true && data.movie) {
+                    const latestMovie = data.movie;
+                    // Nếu số tập khác biệt, cập nhật lại giao diện
+                    if (latestMovie.episode_current !== activeBanner.episode_current) {
+                        console.log(`Cập nhật tập mới cho Admin: ${activeBanner.episode_current} -> ${latestMovie.episode_current}`);
+                        activeBanner.episode_current = latestMovie.episode_current;
+                        activeBanner.quality = latestMovie.quality;
+                        renderActiveBannerHTML(activeBanner, false);
+                    }
+                }
+            } catch (apiErr) {
+                console.warn("Could not refresh active banner data from API:", apiErr);
+            }
         } else {
             content.innerHTML = '<p class="text-gray-400">Chưa có banner nào được kích hoạt</p>';
         }
@@ -129,6 +134,35 @@ function loadActiveBanner() {
         console.error('Error loading active banner:', error);
         content.innerHTML = '<p class="text-red-400">Không thể tải banner đang hiển thị</p>';
     }
+}
+
+// Helper function to render active banner HTML
+function renderActiveBannerHTML(activeBanner, isLoading) {
+    const content = document.getElementById('activeBannerContent');
+    content.innerHTML = `
+        <div class="flex gap-6 relative">
+            ${isLoading ? '<div class="absolute top-0 right-0 text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded animate-pulse">Đang kiểm tra tập mới...</div>' : ''}
+            <img src="https://img.ophim.live/uploads/movies/${activeBanner.thumb_url}" 
+                 alt="${activeBanner.name}"
+                 class="w-32 h-48 object-cover rounded-lg"
+                 onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
+            <div class="flex-1">
+                <div class="flex items-center gap-3 mb-2">
+                    <h4 class="text-2xl font-bold text-white">${activeBanner.name}</h4>
+                    <span class="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded border border-primary/20">
+                        ${activeBanner.episode_current || 'Full'}
+                    </span>
+                </div>
+                <p class="text-gray-400 mb-4">${activeBanner.origin_name || ''}</p>
+                <div class="flex gap-4 text-sm">
+                    <span class="text-gray-300">Năm: ${activeBanner.year || 'N/A'}</span>
+                    <span class="text-gray-300">Chất lượng: ${activeBanner.quality || 'HD'}</span>
+                    <span class="text-gray-300">Ngôn ngữ: ${activeBanner.lang || 'Vietsub'}</span>
+                </div>
+                <p class="text-gray-400 mt-4 line-clamp-3">${activeBanner.content || 'Không có mô tả'}</p>
+            </div>
+        </div>
+    `;
 }
 
 // Thêm event listener cho ô tìm kiếm với debounce 600ms

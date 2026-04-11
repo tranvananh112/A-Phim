@@ -32,8 +32,19 @@ async function loadHeroBanner() {
             // Cập nhật giao diện nếu có thay đổi từ Firebase
             const activeBanner = banners?.find(b => b.isActive);
             if (activeBanner) {
-                // Kiểm tra xem có khác với cái đã render không để tránh chớp giật
                 const newMovie = convertBannerToMovie(activeBanner);
+                
+                // KIỂM TRA TẬP MỚI NHẤT TRƯỚC KHI RENDER
+                try {
+                    const latestData = await fetchLatestEpisode(newMovie.slug);
+                    if (latestData) {
+                        newMovie.episode_current = latestData.episode_current;
+                        newMovie.quality = latestData.quality; // Cập nhật cả chất lượng nếu có
+                    }
+                } catch (err) {
+                    console.warn("Could not fetch latest episode for banner:", err);
+                }
+
                 if (!currentHeroMovie || currentHeroMovie.slug !== newMovie.slug || isInitialLoad) {
                     currentHeroMovie = newMovie;
                     renderHeroBanner(currentHeroMovie, false);
@@ -94,6 +105,26 @@ function convertBannerToMovie(banner) {
         tmdb: banner.tmdb || {},
         imdb: banner.imdb || {}
     };
+}
+
+// Fetch latest episode info for a given slug
+async function fetchLatestEpisode(slug) {
+    try {
+        const response = await fetch(`https://ophim1.com/v1/api/phim/${slug}`, {
+            method: 'GET',
+            headers: { 'accept': 'application/json' }
+        });
+        const data = await response.json();
+        if (data.status === true && data.movie) {
+            return {
+                episode_current: data.movie.episode_current,
+                quality: data.movie.quality
+            };
+        }
+    } catch (error) {
+        console.error('Error checking latest episode:', error);
+    }
+    return null;
 }
 
 async function loadVietnameseThumbnails() {
