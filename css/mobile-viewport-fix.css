@@ -162,3 +162,10 @@ body {
 .pt-safe-main {
     padding-top: calc(5rem + env(safe-area-inset-top, 0px)) !important;
 }
+
+/* Desktop: thêm khoảng thở bên dưới nav bar (h-20 = 5rem, + 2rem đệm thêm) */
+@media (min-width: 1024px) {
+    .pt-safe-main {
+        padding-top: 7rem !important;
+    }
+}
