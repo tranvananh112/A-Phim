@@ -30,11 +30,11 @@ app.get('/watch', (req, res) => {
 });
 
 app.get(['/pricing', '/pricing.html'], (req, res) => {
-    res.redirect(301, '/the-thao');
+    res.sendFile(path.join(__dirname, 'pricing.html'));
 });
 
-app.get('/the-thao', (req, res) => {
-    res.sendFile(path.join(__dirname, 'the-thao.html'));
+app.get(['/the-thao', '/the-thao.html'], (req, res) => {
+    res.redirect(301, '/pricing');
 });
 
 

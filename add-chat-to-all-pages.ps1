@@ -11,7 +11,6 @@ $mainPages = @(
     "search.html",
     "categories.html",
     "danh-sach.html",
-    "the-thao.html",
     "login.html",
     "register.html",
     "profile.html",

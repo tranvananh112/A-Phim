@@ -115,6 +115,24 @@
     </script>
 <link rel="stylesheet" href="css/mobile-viewport-fix.css">
 <link rel="stylesheet" href="css/mobile-menu-modern.css">
+
+    <!-- A Phim: Hardcode Dropdown Blue Override inside HTML to bypass all cache/specificity -->
+    <style id="dropdown-blue-override">
+        @media (min-width: 1024px) {
+            nav .relative.group > .absolute.top-full {
+                background-color: #3d5a96 !important;
+                background-image: linear-gradient(145deg, #3d5a96 0%, #25385e 100%) !important;
+                backdrop-filter: blur(16px) !important;
+                -webkit-backdrop-filter: blur(16px) !important;
+                border: 1px solid rgba(255, 255, 255, 0.15) !important;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+            }
+            nav .relative.group > .absolute.top-full * {
+                /* Ensure no child elements are painting a black background covering the blue */
+            }
+        }
+    </style>
+
 </head>
 
 <body class="bg-background-dark text-gray-100 font-display min-h-screen">

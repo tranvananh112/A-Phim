@@ -123,9 +123,9 @@
                     ${icon('explore', 'font-size:22px;')}
                     <span class="mm-card-label">Khám Phá</span>
                 </a>
-                <a href="the-thao.html" class="mm-card-item mm-glass color-orange">
-                    ${icon('sports_soccer', 'font-size:22px;')}
-                    <span class="mm-card-label">Thể Thao</span>
+                <a href="pricing.html" class="mm-card-item mm-glass color-orange">
+                    ${icon('payments', 'font-size:22px;')}
+                    <span class="mm-card-label">Gói Cước</span>
                 </a>
             </div>
 

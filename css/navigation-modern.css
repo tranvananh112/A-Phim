@@ -302,3 +302,28 @@ html {
 .stagger-item:nth-child(6) {
     animation-delay: 0.3s;
 }
+
+/* =========================================================
+   A Phim: Desktop Dropdown Modern Blue Override 
+   Restores the expected blue aesthetic for all dropdown menus
+   ========================================================= */
+@media (min-width: 1024px) {
+    .group > div.absolute.top-full {
+        background-color: #2a3b5e !important;
+        background-image: linear-gradient(145deg, #2a3b5e 0%, #1e2c4a 100%) !important;
+        backdrop-filter: blur(12px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5) !important;
+    }
+    
+    .group > div.absolute.top-full a {
+        border-color: rgba(255, 255, 255, 0.08) !important;
+        color: #e2e8f0 !important;
+        font-weight: 600 !important;
+    }
+    
+    .group > div.absolute.top-full a:hover {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        color: #fff !important;
+    }
+}

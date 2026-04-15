@@ -8,7 +8,7 @@ const targetFiles = [
     'search.html',
     'phim-theo-quoc-gia.html',
     'ngon-ngu.html',
-    'the-thao.html',
+    'pricing.html',
     'watch.html',
     'watch-simple.html',
     'watch-direct.html',

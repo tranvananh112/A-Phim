@@ -103,8 +103,8 @@
                 href="categories.html">Thể Loại</a>
             <a class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 ${currentPage === 'search.html' ? 'text-primary' : 'text-white hover:text-primary'}"
                 href="search.html">Khám phá</a>
-            <a class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 ${currentPage === 'the-thao.html' ? 'text-primary' : 'text-white hover:text-primary'}"
-                href="the-thao.html">Thể thao</a>
+            <a class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 ${currentPage === 'pricing.html' ? 'text-primary' : 'text-white hover:text-primary'}"
+                href="pricing.html">Gói cước</a>
             <a class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 ${currentPage === 'support.html' ? 'text-primary' : 'text-white hover:text-primary'}"
                 href="support.html">Nuôi APhim</a>
         `;

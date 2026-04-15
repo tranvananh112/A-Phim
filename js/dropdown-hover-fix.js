@@ -1,4 +1,4 @@
-// Fix dropdown hover behavior - prevent dropdown from closing when moving mouse
+// Fix dropdown hover behavior - prevent dropdown from closing when moving mouse and prevent overlapping
 (function () {
     'use strict';
 
@@ -11,7 +11,7 @@
 
     function initDropdownHover() {
         // Find all dropdown groups
-        const dropdownGroups = document.querySelectorAll('.relative.group');
+        const dropdownGroups = document.querySelectorAll('nav .relative.group');
 
         dropdownGroups.forEach(group => {
             const button = group.querySelector('button');
@@ -23,9 +23,22 @@
 
             // Show dropdown on button hover
             button.addEventListener('mouseenter', () => {
+                // Instantly hide ALL other dropdowns to prevent overlapping
+                dropdownGroups.forEach(g => {
+                    if (g !== group) {
+                        const d = g.querySelector('.absolute.top-full');
+                        if (d) {
+                            d.classList.remove('opacity-100', 'visible');
+                            d.classList.add('opacity-0', 'invisible');
+                        }
+                    }
+                });
+
                 clearTimeout(hideTimeout);
                 dropdown.classList.remove('opacity-0', 'invisible');
                 dropdown.classList.add('opacity-100', 'visible');
+                // Ensure tailwind group-hover glitch doesn't flash black
+                dropdown.style.background = 'linear-gradient(145deg, #3d5a96 0%, #25385e 100%)';
             });
 
             // Keep dropdown visible when hovering over it
@@ -52,6 +65,6 @@
             });
         });
 
-        console.log('✅ Dropdown hover behavior fixed');
+        console.log('✅ Dropdown hover behavior fixed + overlap resolved');
     }
 })();
