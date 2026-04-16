@@ -1,6 +1,3 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-app.js";
-import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-firestore.js";
-
 // Banner Firebase configuration (a-phim-config)
 const firebaseConfig = {
   apiKey: "AIzaSyCbI3KnCvfDQdFISYZ9qDj48D2yx-xjtkY",
@@ -16,18 +13,34 @@ const firebaseConfig = {
 let app;
 let db;
 
-try {
-    app = initializeApp(firebaseConfig, "aphim-config-banners");
-    db = getFirestore(app);
-} catch (error) {
-    console.error("Firebase Initialization Error:", error);
+function initFirebase() {
+    if (app && db) return true;
+    if (typeof firebase === 'undefined') {
+        console.error("Firebase SDK chưa được tải (compat version)!");
+        return false;
+    }
+    
+    try {
+        // Find if it was already initialized
+        const existingApp = firebase.apps.find(a => a.name === "aphim-config-banners");
+        if (existingApp) {
+            app = existingApp;
+        } else {
+            app = firebase.initializeApp(firebaseConfig, "aphim-config-banners");
+        }
+        db = app.firestore();
+        return true;
+    } catch (error) {
+        console.error("Firebase Initialization Error:", error);
+        return false;
+    }
 }
 
 // Push mảng banner lên Firebase
 export async function syncBannersToFirebase(banners) {
-    if (!db) return;
+    if (!initFirebase()) return;
     try {
-        await setDoc(doc(db, "site_config", "hero_banners"), {
+        await db.collection("site_config").doc("hero_banners").set({
             list: banners,
             updatedAt: new Date().toISOString()
         });
@@ -39,13 +52,13 @@ export async function syncBannersToFirebase(banners) {
 
 // Lắng nghe thay đổi banner realtime
 export function listenToBanners(callback) {
-    if (!db) {
+    if (!initFirebase()) {
         callback([]);
         return () => {};
     }
     
-    return onSnapshot(doc(db, "site_config", "hero_banners"), (docSnap) => {
-        if (docSnap.exists()) {
+    return db.collection("site_config").doc("hero_banners").onSnapshot((docSnap) => {
+        if (docSnap.exists) {
             const data = docSnap.data();
             console.log("Firebase Banners Update Received!");
             callback(data.list || []);
