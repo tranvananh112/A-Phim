@@ -537,7 +537,7 @@
 <link rel="stylesheet" href="css/mobile-menu-modern.css?v=2">
 
     <!-- A Phim: Hardcode Dropdown Blue Override inside HTML to bypass all cache/specificity -->
-    <style id="dropdown-blue-override">
+            <style id="dropdown-blue-override">
         @media (min-width: 1024px) {
             nav .relative.group > .absolute.top-full {
                 background-color: #3d5a96 !important;
@@ -546,6 +546,16 @@
                 -webkit-backdrop-filter: blur(16px) !important;
                 border: 1px solid rgba(255, 255, 255, 0.15) !important;
                 box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+            }
+            nav .relative.group > .absolute.top-full a {
+                color: #eff6ff !important;
+                font-weight: 500 !important;
+                text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+            }
+            nav .relative.group > .absolute.top-full a:hover {
+                color: #f2f20d !important;
+                background-color: rgba(255, 255, 255, 0.1) !important;
+                text-shadow: 0 0 10px rgba(242,242,13,0.5);
             }
             nav .relative.group > .absolute.top-full * {
                 /* Ensure no child elements are painting a black background covering the blue */
@@ -1833,48 +1843,8 @@
     <script src="js/login-popunder.js?v=2"></script>
     <script src="js/top-comments.js?v=2"></script>
 
-    <!-- PWA Service Worker Registration -->
-    <script>
-        // Register Service Worker for PWA
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(registration => {
-                        console.log('✅ PWA: Service Worker đã đăng ký thành công!', registration.scope);
-
-                        // Check for updates
-                        registration.addEventListener('updatefound', () => {
-                            const newWorker = registration.installing;
-                            newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    console.log('🔄 PWA: Có phiên bản mới! Tải lại trang để cập nhật.');
-                                }
-                            });
-                        });
-                    })
-                    .catch(error => {
-                        console.log('❌ PWA: Lỗi đăng ký Service Worker:', error);
-                    });
-            });
-
-            // Show install prompt
-            let deferredPrompt;
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                console.log('📱 PWA: Sẵn sàng cài đặt! User có thể thêm vào màn hình chính.');
-
-                // Optional: Show custom install button
-                // You can create a button and trigger: deferredPrompt.prompt();
-            });
-
-            // Track installation
-            window.addEventListener('appinstalled', () => {
-                console.log('🎉 PWA: App đã được cài đặt thành công!');
-                deferredPrompt = null;
-            });
-        }
-    </script>
+    <!-- PWA Service Worker + Auto Update Detection -->
+    <script src="js/sw-updater.js" defer></script>
 
 
     <script src="js/ads-manager.js?v=2.0" defer></script>

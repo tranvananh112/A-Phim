@@ -1,158 +1,134 @@
-const CACHE_NAME = 'aphim-v2';
-const RUNTIME_CACHE = 'aphim-runtime-v2';
+// =====================================================
+// A Phim Service Worker — v5
+// Chiến lược:
+//   HTML / CSS / JS  → Network-First (luôn lấy mới nhất)
+//   Ảnh / Media       → Cache-First (ít thay đổi)
+//   Fonts Google      → Cache-First (bất biến)
+//   API OPhim         → Stale-While-Revalidate
+// =====================================================
 
-// Files to cache immediately
-const PRECACHE_URLS = [
-    '/',
-    '/index.html',
-    '/css/navigation-smooth.css',
-    '/css/skeleton-loading.css',
-    '/js/auth.js',
-    '/js/api.js',
-    '/logo_aphim1.png',
-    '/favicon.png'
-];
+const CACHE_VERSION  = 'aphim-v5';
+const FONT_CACHE     = 'aphim-fonts-v1';
+const IMAGE_CACHE    = 'aphim-images-v5';
+const API_CACHE      = 'aphim-api-v2';
 
-// Install event - cache essential files
-self.addEventListener('install', (event) => {
+const ALL_CACHES = [CACHE_VERSION, FONT_CACHE, IMAGE_CACHE, API_CACHE];
+
+// ── Install ──────────────────────────────────────────
+self.addEventListener('install', event => {
+    // Kích hoạt ngay, không chờ tab cũ đóng
+    self.skipWaiting();
+});
+
+// ── Activate: xóa TOÀN BỘ cache cũ ──────────────────
+self.addEventListener('activate', event => {
     event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then(cache => cache.addAll(PRECACHE_URLS))
-            .then(() => self.skipWaiting())
+        caches.keys().then(keys =>
+            Promise.all(
+                keys
+                    .filter(k => !ALL_CACHES.includes(k))
+                    .map(k => {
+                        console.log('[SW] Xóa cache cũ:', k);
+                        return caches.delete(k);
+                    })
+            )
+        ).then(() => self.clients.claim())
     );
 });
 
-// Activate event - clean old caches
-self.addEventListener('activate', (event) => {
-    event.waitUntil(
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames
-                    .filter(name => name !== CACHE_NAME && name !== RUNTIME_CACHE)
-                    .map(name => caches.delete(name))
-            );
-        }).then(() => self.clients.claim())
-    );
-});
-
-// Fetch event - network first, fallback to cache
-self.addEventListener('fetch', (event) => {
+// ── Fetch ─────────────────────────────────────────────
+self.addEventListener('fetch', event => {
     const { request } = event;
     const url = new URL(request.url);
 
-    // ─── BYPASS PHIM-X.HTML ───────────────────────────────────────────────────
-    // Không cache phim-x.html vì có query params động và cross-origin embeds
-    if (url.pathname.includes('phim-x')) {
-        return; // Browser xử lý trực tiếp, không qua SW
-    }
+    // Bỏ qua non-GET
+    if (request.method !== 'GET') return;
 
-    // ─── CACHE GOOGLE FONTS (30 ngày) ───────────────────────────────────────
-    // Font chữ không bao giờ thay đổi URL nên cache lâu là an toàn.
-    // Lần đầu: tải từ Google. Lần sau: dùng cache → không cần mạng.
+    // Bỏ qua phim-x (cross-origin embeds)
+    if (url.pathname.includes('phim-x')) return;
+
+    // ── 1. Google Fonts — Cache First (bất biến) ──────
     if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
-        event.respondWith(
-            caches.open('aphim-fonts-v1').then(cache =>
-                cache.match(request).then(cached => {
-                    if (cached) return cached; // Có cache → trả ngay
-                    return fetch(request).then(response => {
-                        if (response.ok) cache.put(request, response.clone());
-                        return response;
-                    });
-                })
-            )
-        );
+        event.respondWith(cacheFirst(request, FONT_CACHE));
         return;
     }
 
-    // ─── STALE-WHILE-REVALIDATE CHO API OPHIM ────────────────────────────────
-    // Trả về cache ngay (nếu có) → người dùng thấy phim tức thì.
-    // Đồng thời fetch mới ở background → lần sau có data mới hơn.
-    if (url.hostname.includes('ophim')) {
-        event.respondWith(
-            caches.open('aphim-api-v1').then(async cache => {
-                const cached = await cache.match(request);
-                
-                // Background fetch update
-                const networkFetch = fetch(request).then(response => {
-                    if (response.ok) cache.put(request, response.clone());
-                    return response;
-                }).catch(() => null);
-
-                // Trả về cache nếu có, hoặc chờ network, hoặc trả về lỗi JSON hợp lệ
-                if (cached) return cached;
-                const net = await networkFetch;
-                return net || new Response(JSON.stringify({error: 'Network failure'}), {
-                    status: 503,
-                    headers: {'Content-Type': 'application/json'}
-                });
-            })
-        );
+    // ── 2. OPhim API — Stale-While-Revalidate ─────────
+    if (url.hostname.includes('ophim') || url.hostname.includes('img.ophim')) {
+        event.respondWith(staleWhileRevalidate(request, API_CACHE));
         return;
     }
 
-    // Skip các cross-origin khác (quảng cáo, analytics...)
-    if (url.origin !== location.origin) {
+    // ── 3. Cross-origin (ads, analytics...) — bỏ qua ─
+    if (url.origin !== location.origin) return;
+
+    // ── 4. Ảnh gốc — Cache First (ít thay đổi) ────────
+    if (/\.(webp|png|jpg|jpeg|gif|svg|ico)(\?.*)?$/.test(url.pathname)) {
+        event.respondWith(cacheFirst(request, IMAGE_CACHE));
         return;
     }
 
-    if (request.mode === 'navigate' ||
-        (request.headers.get('accept') && request.headers.get('accept').includes('text/html')) ||
-        url.pathname.includes('/api/') ||
-        url.hostname.includes('ophim')) {
-        event.respondWith(
-            fetch(request)
-                .then(response => {
-                    if (response.ok) {
-                        const responseClone = response.clone();
-                        caches.open(RUNTIME_CACHE).then(cache => {
-                            cache.put(request, responseClone);
-                        });
-                    }
-                    return response;
-                })
-                .catch(async () => {
-                    const cached = await caches.match(request);
-                    return cached || new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
-                })
-        );
-        return;
-    }
-
-    // Cache first strategy for static assets
-    event.respondWith(
-        caches.match(request)
-            .then(cachedResponse => {
-                if (cachedResponse) {
-                    return cachedResponse;
-                }
-
-                return fetch(request).then(response => {
-                    // Don't cache non-successful responses
-                    if (!response || response.status !== 200 || response.type === 'error') {
-                        return response;
-                    }
-
-                    const responseClone = response.clone();
-                    caches.open(RUNTIME_CACHE).then(cache => {
-                        cache.put(request, responseClone);
-                    });
-
-                    return response;
-                }).catch(error => {
-                    // Fetch failed, return cached or error response
-                    console.log('⚠️ SW: Fetch failed for', request.url);
-                    return cachedResponse || new Response('Network error', {
-                        status: 408,
-                        statusText: 'Request Timeout'
-                    });
-                });
-            })
-    );
+    // ── 5. HTML / CSS / JS — Network First ────────────
+    // Luôn lấy từ mạng để nhận bản cập nhật mới nhất.
+    // Nếu offline → dùng cache dự phòng.
+    event.respondWith(networkFirst(request, CACHE_VERSION));
 });
 
-// Handle messages from clients
-self.addEventListener('message', (event) => {
-    if (event.data && event.data.type === 'SKIP_WAITING') {
+// ─────────────────────────────────────────────────────
+// Các hàm chiến lược cache
+// ─────────────────────────────────────────────────────
+
+/** Network First: thử mạng → cache nếu offline */
+async function networkFirst(request, cacheName) {
+    const cache = await caches.open(cacheName);
+    try {
+        const response = await fetch(request);
+        if (response.ok) {
+            cache.put(request, response.clone());
+        }
+        return response;
+    } catch {
+        const cached = await cache.match(request);
+        return cached || new Response('Offline', { status: 503 });
+    }
+}
+
+/** Cache First: trả cache ngay → nếu không có thì fetch và lưu */
+async function cacheFirst(request, cacheName) {
+    const cache  = await caches.open(cacheName);
+    const cached = await cache.match(request);
+    if (cached) return cached;
+    try {
+        const response = await fetch(request);
+        if (response.ok) cache.put(request, response.clone());
+        return response;
+    } catch {
+        return new Response('Offline', { status: 503 });
+    }
+}
+
+/** Stale-While-Revalidate: trả cache ngay & cập nhật ngầm */
+async function staleWhileRevalidate(request, cacheName) {
+    const cache  = await caches.open(cacheName);
+    const cached = await cache.match(request);
+
+    const networkFetch = fetch(request).then(response => {
+        if (response.ok) cache.put(request, response.clone());
+        return response;
+    }).catch(() => null);
+
+    return cached || await networkFetch || new Response(
+        JSON.stringify({ error: 'Network failure' }),
+        { status: 503, headers: { 'Content-Type': 'application/json' } }
+    );
+}
+
+// ── Nhận lệnh từ client ───────────────────────────────
+self.addEventListener('message', event => {
+    if (event.data?.type === 'SKIP_WAITING') {
         self.skipWaiting();
+    }
+    if (event.data?.type === 'CLEAR_CACHE') {
+        caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))));
     }
 });

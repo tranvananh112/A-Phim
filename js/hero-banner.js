@@ -13,12 +13,16 @@ async function loadHeroBanner() {
             currentHeroMovie = convertBannerToMovie(activeCached);
             // Render tức thì không cần chờ mạng
             renderHeroBanner(currentHeroMovie, true);
+        } else {
+            // Nếu cache trống, gọi ngay fallback để trang không bị đơ chờ Firebase
+            loadFallbackBanner();
         }
     } catch (e) {
         console.warn('Cache read error:', e);
+        loadFallbackBanner();
     }
 
-    // 2. BACKGROUND: Load Firebase và đồng bộ dữ liệu mới nhất
+    // 2. BACKGROUND: Load Firebase và đồng bộ dữ liệu mới nhất (chạy ngầm)
     try {
         // Dùng dynamic import để kết nối Cấu hình Firebase
         const fb = await import('/js/firebase-banners.js');
@@ -32,15 +36,15 @@ async function loadHeroBanner() {
             // Cập nhật giao diện nếu có thay đổi từ Firebase
             const activeBanner = banners?.find(b => b.isActive);
             if (activeBanner) {
-                // Kiểm tra xem có khác với cái đã render không để tránh chớp giật
+                // Kiểm tra xem có khác với cái đã render (từ cache) không để tránh chớp giật
                 const newMovie = convertBannerToMovie(activeBanner);
-                if (!currentHeroMovie || currentHeroMovie.slug !== newMovie.slug || isInitialLoad) {
+                if (!currentHeroMovie || currentHeroMovie.slug !== newMovie.slug) {
                     currentHeroMovie = newMovie;
                     renderHeroBanner(currentHeroMovie, false);
                 }
             } else {
                 // Không có banner được chọn, load fallback từ API
-                if (isInitialLoad) await loadFallbackBanner();
+                if (isInitialLoad && !currentHeroMovie) await loadFallbackBanner();
             }
             isInitialLoad = false;
         });
@@ -152,7 +156,7 @@ function renderHeroBanner(movie, isInstant = false) {
         heroBadges.innerHTML = `
             <span class="border border-primary text-primary px-3 py-1 rounded bg-black/40 backdrop-blur-sm font-semibold">IMDb ${rating}</span>
             <span class="border border-white/30 px-3 py-1 rounded bg-black/20 backdrop-blur-sm">${movie.year || '2024'}</span>
-            ${movie.episode_current ? `<span class="border border-white/30 px-3 py-1 rounded bg-black/20 backdrop-blur-sm">${movie.episode_current}</span>` : ''}
+            ${movie.episode_current ? `<span data-ep-badge class="border border-white/30 px-3 py-1 rounded bg-black/20 backdrop-blur-sm">${movie.episode_current}</span>` : '<span data-ep-badge class="border border-white/30 px-3 py-1 rounded bg-black/20 backdrop-blur-sm"></span>'}
             <span class="bg-red-600 text-white px-3 py-1 rounded font-bold text-xs uppercase ml-2">${movie.quality || 'HD'}</span>
         `;
     }
@@ -175,6 +179,9 @@ function renderHeroBanner(movie, isInstant = false) {
 
     // Hiển thị chữ ngay lập tức, không chờ ảnh
     showHeroText();
+
+    // Fetch số tập mới nhất từ API chi tiết (chạy ngầm, không block UI)
+    fetchLatestEpisodeCount(movie);
 
     if (heroImage) {
         const newImageUrl = `https://img.ophim.live/uploads/movies/${movie.poster_url || movie.thumb_url}`;
@@ -202,6 +209,47 @@ function renderHeroBanner(movie, isInstant = false) {
         } else {
             showHeroImage();
         }
+    }
+}
+
+// Fetch số tập mới nhất từ API chi tiết phim để cập nhật badge
+async function fetchLatestEpisodeCount(movie) {
+    if (!movie || !movie.slug) return;
+    try {
+        const res = await fetch(`https://ophim1.com/v1/api/phim/${movie.slug}`, {
+            headers: { 'accept': 'application/json' }
+        });
+        const data = await res.json();
+        if (data.status !== 'success' || !data.data?.item) return;
+
+        const item = data.data.item;
+
+        // Lấy số tập thực tế từ danh sách tập (lấy server đầu tiên)
+        let latestEpLabel = item.episode_current || '';
+        const episodes = item.episodes;
+        if (Array.isArray(episodes) && episodes.length > 0) {
+            const serverData = episodes[0]?.server_data;
+            if (Array.isArray(serverData) && serverData.length > 0) {
+                const count = serverData.length;
+                // Nếu API trả về số tập nhiều hơn episode_current → dùng số tập thực
+                const match = latestEpLabel.match(/\d+/);
+                const storedNum = match ? parseInt(match[0]) : 0;
+                if (count > storedNum) {
+                    latestEpLabel = `Tập ${count}`;
+                }
+            }
+        }
+
+        if (!latestEpLabel) return;
+
+        // Cập nhật badge tập phim trực tiếp (không re-render toàn bộ)
+        const badge = document.querySelector('#heroBadges [data-ep-badge]');
+        if (badge && badge.textContent !== latestEpLabel) {
+            badge.textContent = latestEpLabel;
+            badge.style.display = ''; // Đảm bảo hiển thị
+        }
+    } catch (e) {
+        // Silent fail — không ảnh hưởng giao diện
     }
 }
 

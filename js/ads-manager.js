@@ -91,22 +91,8 @@
         s.textContent = CSS;
         document.head.appendChild(s);
 
-        // ── 1. POPUP MODAL ──────────────────────────────────────────
-        // Use the 1920x1080 landscape JPG from c1 — most impactful for full-screen overlay
-        const overlay = document.createElement('div');
-        overlay.id = 'adm-popup-overlay';
-        overlay.innerHTML = `<div id="adm-popup-box">
-            <div id="adm-popup-close">Đóng QC ✕</div>
-            <a href="${DEST}" target="_blank" rel="noopener nofollow" style="display:block;">
-                <img src="quangcao/c1/banner-1920x1080.jpg" style="display:block;width:100%;border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.7);">
-            </a>
-        </div>`;
-        document.body.appendChild(overlay);
-        setTimeout(() => overlay.classList.add('show'), 200);
-        overlay.querySelector('#adm-popup-close').onclick = () => {
-            overlay.style.opacity = '0';
-            setTimeout(() => overlay.remove(), 150);
-        };
+        // ── 1. POPUP MODAL ──────────────────────────────────────────────
+        // ĐÃ XÓA: Popup quảng cáo (banner 1920x1080) theo yêu cầu của người dùng
 
         // ── 2. TOP LEADERBOARD BAR ──────────────────────────────────
         // ĐÃ XÓA: Banner 320x100 trên header theo yêu cầu

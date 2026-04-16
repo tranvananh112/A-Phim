@@ -11,21 +11,37 @@ async function loadCategoriesDropdown() {
             const categories = data.data.items;
             const dropdown = document.getElementById('categoryDropdown');
             if (dropdown && categories.length > 0) {
-                // Render as grid 4 columns
-                const gridHTML = '<div class="grid grid-cols-4 gap-0">' +
-                    categories.map((cat, index) => {
-                        const isLastRow = index >= categories.length - (categories.length % 4 || 4);
-                        const isRightEdge = (index + 1) % 4 === 0;
-                        const borderClasses = `${!isRightEdge ? 'border-r' : ''} ${!isLastRow ? 'border-b' : ''} border-white/5`;
+                // Tính toán số ô bị thiếu để grid đầy đủ (đang dùng 4 cột)
+                const totalCells = Math.ceil(categories.length / 4) * 4;
+                const missingCells = totalCells - categories.length;
 
-                        return `
-                            <a href="categories.html?category=${cat.slug}" 
-                               class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all ${borderClasses}">
-                                ${cat.name}
-                            </a>
-                        `;
-                    }).join('') +
-                    '</div>';
+                // Render as grid 4 columns
+                let gridHTML = '<div class="grid grid-cols-4 gap-0">';
+                
+                gridHTML += categories.map((cat, index) => {
+                    const isLastRow = index >= totalCells - 4;
+                    const isRightEdge = (index + 1) % 4 === 0;
+                    const borderClasses = `${!isRightEdge ? 'border-r' : ''} ${!isLastRow ? 'border-b' : ''} border-white/5`;
+
+                    return `
+                        <a href="categories.html?category=${cat.slug}" 
+                           class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all ${borderClasses}">
+                            ${cat.name}
+                        </a>
+                    `;
+                }).join('');
+
+                // Render các ô trống để lấp đầy grid vớt border chuẩn (cho đủ cái trống lưới do user yêu cầu)
+                for (let i = 0; i < missingCells; i++) {
+                    const index = categories.length + i;
+                    const isLastRow = true; // Chắc chắn ở hàng cuối
+                    const isRightEdge = (index + 1) % 4 === 0;
+                    const borderClasses = `${!isRightEdge ? 'border-r' : ''} ${!isLastRow ? 'border-b' : ''} border-white/5`;
+                    
+                    gridHTML += `<div class="block px-4 py-3 pointer-events-none ${borderClasses}"></div>`;
+                }
+
+                gridHTML += '</div>';
                 dropdown.innerHTML = gridHTML;
             }
         }
