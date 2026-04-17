@@ -14,13 +14,17 @@ function updateUserUI() {
     console.log('👤 Updating user UI:', { user: user ? user.name : 'Not logged in', loginBtn: !!loginBtn });
 
     if (user && loginBtn) {
+        const avatarHtml = user.avatar
+            ? `<img src="${user.avatar}" class="w-9 h-9 md:w-10 md:h-10 rounded-full object-cover border-2 border-primary shadow-[0_0_12px_rgba(242,242,13,0.4)] hover:shadow-[0_0_20px_rgba(242,242,13,0.6)] transition-all" alt="Tài khoản cá nhân" />`
+            : `<div class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-primary flex items-center justify-center text-black font-bold border-2 border-primary shadow-[0_0_12px_rgba(242,242,13,0.4)]">
+                   ${user.name.charAt(0).toUpperCase()}
+               </div>`;
+
         loginBtn.outerHTML = `
             <div class="flex items-center gap-4">
-                <a href="profile.html" class="flex items-center gap-2 hover:text-primary transition-colors">
-                    <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-black font-bold">
-                        ${user.name.charAt(0).toUpperCase()}
-                    </div>
-                    <span class="hidden md:inline text-sm">${user.name}</span>
+                <a href="profile.html" class="flex items-center gap-2 hover:text-primary transition-colors group">
+                    ${avatarHtml}
+                    <span class="hidden md:inline text-sm font-semibold group-hover:text-primary">${user.name}</span>
                 </a>
             </div>
         `;

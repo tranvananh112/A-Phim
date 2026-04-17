@@ -35,17 +35,17 @@
         }
         // MOBILE: Auto-hide khi scroll xuống
         else {
-            // Ở đầu trang - luôn hiện
-            if (scrollTop < 50) {
+            // Ở đầu trang (nhỏ hơn 5px) - luôn hiện rõ
+            if (scrollTop <= 5) {
                 nav.classList.remove('scrolled', 'nav-hidden');
                 nav.classList.add('nav-visible');
             }
-            // Scroll xuống - ẨN
-            else if (scrollTop > lastScrollTop && scrollTop > 50) {
+            // Vuốt xuống dù chỉ 1px - ẨN LẬP TỨC
+            else if (scrollTop > lastScrollTop) {
                 nav.classList.add('scrolled', 'nav-hidden');
                 nav.classList.remove('nav-visible');
             }
-            // Scroll lên - HIỆN (với một chút debounce nhẹ 2px để tránh nhảy lung tung do ngón tay rung)
+            // Vuốt lên - HIỆN (debounce nhẹ 2px để mượt)
             else if (scrollTop < lastScrollTop - 2) {
                 nav.classList.add('scrolled', 'nav-visible');
                 nav.classList.remove('nav-hidden');

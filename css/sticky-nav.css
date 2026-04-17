@@ -20,7 +20,7 @@ nav {
 /* Container bên trong nav cần điều chỉnh */
 nav>div {
     /* Đảm bảo nội dung không bị che bởi notch */
-    min-height: 80px;
+    min-height: 64px;
 }
 
 /* Scrolled state - thêm background đậm và shadow */
@@ -72,11 +72,11 @@ nav .container {
 /* Mobile menu - điều chỉnh cho safe area */
 #mobileMenu {
     position: fixed;
-    top: calc(80px + env(safe-area-inset-top));
+    top: calc(64px + env(safe-area-inset-top));
     left: 0;
     right: 0;
     z-index: 9998;
-    max-height: calc(100vh - 80px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    max-height: calc(100vh - 64px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     overflow-y: auto;
     /* Thêm padding cho safe area bên trái/phải */
     padding-left: env(safe-area-inset-left);

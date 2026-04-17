@@ -6,6 +6,52 @@
 (function () {
     'use strict';
 
+    // 0. TĂNG TỐC ĐỘ MPA (Giả SPA) VÀ AUTH GUARD CHỐNG CHỚP NHÁY
+    try {
+        // A. Cài cắm Instant Page tốc độ cao
+        if (!document.getElementById('instant-page-script')) {
+            var script = document.createElement('script');
+            script.id = 'instant-page-script';
+            script.src = 'https://unpkg.com/instant.page@5.2.0/instantpage.js';
+            script.type = 'module';
+            script.defer = true;
+            document.head.appendChild(script);
+        }
+
+        // B. Xử lý đồng bộ thay thế Avatar chống nháy (FOUC)
+        var userStr = localStorage.getItem('cinestream_user'); // STORAGE_KEYS.USER
+        if (userStr) {
+            var userObj = JSON.parse(userStr);
+            if (userObj) {
+                // Chặn hiển thị nút login bằng CSS cứng để tuyệt đối ko flash
+                var authStyle = document.createElement('style');
+                authStyle.innerHTML = 'a[href="login.html"] { display: none !important; opacity: 0 !important; visibility: hidden !important; }';
+                document.head.appendChild(authStyle);
+                
+                // Cài đặc vụ ngầm theo dõi lúc trình duyệt Parse HTML
+                var authObserver = new MutationObserver(function() {
+                    var loginBtn = document.querySelector('a[href="login.html"]');
+                    if (loginBtn && !loginBtn.dataset.authReplaced) {
+                        loginBtn.dataset.authReplaced = 'true';
+                        
+                        var avatarUrl = userObj.avatar;
+                        var avatarHtml = avatarUrl 
+                            ? '<img src="' + avatarUrl + '" class="w-9 h-9 md:w-10 md:h-10 rounded-full object-cover border-2 border-primary shadow-[0_0_12px_rgba(242,242,13,0.4)] hover:shadow-[0_0_20px_rgba(242,242,13,0.6)] transition-all" alt="User" />'
+                            : '<div class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-primary flex items-center justify-center text-black font-bold border-2 border-primary shadow-[0_0_12px_rgba(242,242,13,0.4)]">' + (userObj.name ? userObj.name.charAt(0).toUpperCase() : 'U') + '</div>';
+
+                        var div = document.createElement('div');
+                        div.className = 'flex items-center gap-4';
+                        div.innerHTML = '<a href="profile.html" class="flex items-center gap-2 hover:text-primary transition-colors group">' + avatarHtml + '<span class="hidden md:inline text-sm font-semibold group-hover:text-primary">' + (userObj.name || '') + '</span></a>';
+                        
+                        loginBtn.parentNode.replaceChild(div, loginBtn);
+                        authObserver.disconnect(); // Tắt theo dõi sau khi hoàn thành
+                    }
+                });
+                authObserver.observe(document.documentElement, { childList: true, subtree: true });
+            }
+        }
+    } catch (e) {}
+
     // 1. Khai báo Tawk_API ngay lập tức
     window.Tawk_API = window.Tawk_API || {};
     window.Tawk_LoadStart = new Date();

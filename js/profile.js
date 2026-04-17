@@ -25,7 +25,13 @@ function loadBasicUserInfo() {
     if (!user) return;
 
     // Update sidebar only
-    document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+    const avatarContainer = document.getElementById('userAvatar');
+    if (user.avatar) {
+        avatarContainer.innerHTML = `<img src="${user.avatar}" class="w-full h-full object-cover" />`;
+    } else {
+        avatarContainer.innerHTML = user.name.charAt(0).toUpperCase();
+    }
+    
     document.getElementById('userName').textContent = user.name;
     document.getElementById('userEmail').textContent = user.email;
 }
@@ -316,4 +322,86 @@ function showMessage(message, type = 'info') {
     setTimeout(() => {
         toast.remove();
     }, 3000);
+}
+
+// Avatar selection for profile
+const PROFILE_AVATAR_LIST = [
+    "https://i.ex-cdn.com/giadinhmoi.vn/files/content/2024/12/13/470107535_1156674079362932_3220600486106282952_n-0953.jpg",
+    "https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/07/anh-son-tung-2.jpg",
+    "https://cdn2.fptshop.com.vn/unsafe/800x0/anh_lisa_6_d83ab4e404.jpg",
+    "https://img.tripi.vn/cdn-cgi/image/width=700,height=700/https://gcs.tripi.vn/public-tripi/tripi-feed/img/482756agE/anh-mo-ta.png",
+    "https://tophinhanh.net/wp-content/uploads/2023/12/anh-kim-jisoo-cute-1.jpg",
+    "https://i.pinimg.com/736x/3c/d7/24/3cd724dd754d0b42bd6599efe18ceff0.jpg"
+];
+
+function toggleAvatarSelect(e) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    const dropdown = document.getElementById('avatarSelectDropdown');
+    if (!dropdown) return;
+
+    if (dropdown.classList.contains('hidden')) {
+        // Initialize avatars UI if empty
+        const grid = document.getElementById('avatarGrid');
+        if (grid && grid.children.length === 0) {
+            let html = '';
+            PROFILE_AVATAR_LIST.forEach(url => {
+                html += `<img src="${url}" class="relative w-12 h-12 rounded-full object-cover cursor-pointer hover:scale-[1.35] hover:z-50 transition-all duration-300 hover:border-primary border-2 border-transparent shadow-[0_0_10px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(242,242,13,0.5)]" onclick="selectAvatar(event, '${url}')">`;
+            });
+            grid.innerHTML = html;
+        }
+        dropdown.classList.remove('hidden');
+        
+        // Hide when clicking outside
+        const outsideClickListener = (event) => {
+            if (!event.target.closest('#profileAvatarSection')) {
+                dropdown.classList.add('hidden');
+                document.removeEventListener('click', outsideClickListener);
+            }
+        };
+        setTimeout(() => document.addEventListener('click', outsideClickListener), 10);
+    } else {
+        dropdown.classList.add('hidden');
+    }
+}
+
+async function selectAvatar(e, url) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    document.getElementById('avatarSelectDropdown').classList.add('hidden');
+    
+    // Check authService
+    if (!authService.isLoggedIn()) {
+        showMessage('Vui lòng đăng nhập để thay đổi hình đại diện', 'error');
+        return;
+    }
+    
+    const userAvatar = document.getElementById('userAvatar');
+    if (userAvatar) {
+        userAvatar.innerHTML = `<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>`;
+    }
+
+    try {
+        const result = await authService.updateProfile({ avatar: url });
+        if (result.success) {
+            showMessage('Cập nhật hình đại diện thành công!', 'success');
+            // Ghi đè cả localstorage cho phần comment
+            localStorage.setItem('ap_chosen_avatar', url);
+            
+            // Reload UI
+            loadBasicUserInfo();
+            if (typeof updateUserUI === 'function') setTimeout(updateUserUI, 100);
+        } else {
+            showMessage(result.message || 'Cập nhật thất bại', 'error');
+            loadBasicUserInfo(); // revert visual
+        }
+    } catch (error) {
+        showMessage('Lỗi kết nối server', 'error');
+        loadBasicUserInfo(); // revert visual
+    }
 }

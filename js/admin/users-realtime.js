@@ -361,6 +361,9 @@ function renderUsers() {
                         <button onclick="sendNotificationToUser('${user.id}')" class="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors" title="Gửi thông báo">
                             <span class="material-icons-outlined text-lg">notifications</span>
                         </button>
+                        <button onclick="deleteUser('${user.id}')" class="p-2 text-gray-400 hover:text-white hover:bg-red-500/20 rounded-lg transition-colors" title="Xóa tài khoản">
+                            <span class="material-icons-outlined text-lg hover:text-red-500">delete</span>
+                        </button>
                     </div>
                 </td>
             </tr>
@@ -527,6 +530,9 @@ function viewUserDetail(userId) {
                     Gửi thông báo
                 </button>
             </div>
+            <button onclick="deleteUser('${userId}')" class="w-full mt-3 py-2.5 bg-red-600/20 text-red-500 hover:bg-red-600 hover:text-white font-semibold rounded-lg transition-colors border border-red-500/50 hover:border-transparent">
+                Xóa vĩnh viễn tài khoản
+            </button>
         </div>
     `);
 }
@@ -581,6 +587,63 @@ async function toggleUserStatus(userId) {
     } catch (error) {
         console.error('❌ Error toggling user status:', error);
         showToast(`Lỗi: ${error.message}`, 'error');
+    }
+}
+
+// Delete user from MongoDB
+async function deleteUser(userId) {
+    const user = allUsers.find(u => u.id === userId);
+    if (!user) return;
+
+    if (!confirm(`⚠️ CẢNH BÁO: Bạn có chắc chắn muốn xóa vĩnh viễn tài khoản "${user.name}" không?\nHành động này không thể hoàn tác và sẽ xóa toàn bộ dữ liệu của người dùng này trên cơ sở dữ liệu MongoDB.`)) {
+        return;
+    }
+
+    const token = getAdminToken();
+    if (!token) {
+        showToast('Vui lòng đăng nhập lại', 'error');
+        return;
+    }
+
+    try {
+        console.log(`🗑️ Deleting user ${userId}...`);
+
+        const response = await fetch(`${API_URL}/users/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // The endpoint may return 204 No Content, in which case we shouldn't attempt to parse JSON.
+        // Let's handle generic HTTP errors.
+        if (!response.ok) {
+            let errorMsg = 'Lỗi không xác định';
+            try {
+                const data = await response.json();
+                if (data.message) errorMsg = data.message;
+            } catch(e) {}
+            throw new Error(errorMsg);
+        }
+        
+        let data = { success: true };
+        try {
+            data = await response.json();
+        } catch(e) {} // Ignore if no json body
+
+        if (data.success || response.status === 200 || response.status === 204 || response.status === 201) {
+            closeModal();
+            showToast(`✅ Đã xóa tài khoản thành công`, 'success');
+
+            // Reload to sync with database
+            setTimeout(() => loadUsers(true), 1000);
+        } else {
+            throw new Error(data.message || 'Lỗi không xác định');
+        }
+    } catch (error) {
+        console.error('❌ Error deleting user:', error);
+        showToast(`Lỗi xóa tài khoản: ${error.message}`, 'error');
     }
 }
 
@@ -695,6 +758,7 @@ window.resetFilters = resetFilters;
 window.goToPage = goToPage;
 window.viewUserDetail = viewUserDetail;
 window.toggleUserStatus = toggleUserStatus;
+window.deleteUser = deleteUser;
 window.sendNotificationToUser = sendNotificationToUser;
 window.sendNotification = sendNotification;
 window.closeModal = closeModal;

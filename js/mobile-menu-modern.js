@@ -9,7 +9,7 @@
 
     function getCurrentUser() {
         try {
-            if (typeof authService !== 'undefined' && authService.isLoggedIn()) {
+            if (typeof authService !== 'undefined') {
                 return authService.getCurrentUser();
             }
         } catch (e) {}
@@ -34,9 +34,10 @@
         const drawer = document.createElement('div');
         drawer.id = 'mm-drawer';
 
+        const userAvatar = user ? (user.avatar || user.photoURL) : null;
         const avatarHtml = user
-            ? (user.photoURL
-                ? `<img src="${escHtml(user.photoURL)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:16px;">`
+            ? (userAvatar
+                ? `<img src="${escHtml(userAvatar)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:16px;">`
                 : escHtml((user.name || user.email || 'U').charAt(0).toUpperCase()))
             : icon('person', 'font-size:26px;color:rgba(255,255,255,0.3)');
 
