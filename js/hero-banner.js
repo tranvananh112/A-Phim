@@ -14,12 +14,11 @@ async function loadHeroBanner() {
             // Render tức thì không cần chờ mạng
             renderHeroBanner(currentHeroMovie, true);
         } else {
-            // Nếu cache trống, gọi ngay fallback để trang không bị đơ chờ Firebase
-            loadFallbackBanner();
+            // Không gọi fallback ngay, để skeleton hiển thị tránh load 2 lần (double load) khi đợi Firebase
+            console.log('Chờ Firebase nạp banner...');
         }
     } catch (e) {
         console.warn('Cache read error:', e);
-        loadFallbackBanner();
     }
 
     // 2. BACKGROUND: Load Firebase và đồng bộ dữ liệu mới nhất (chạy ngầm)

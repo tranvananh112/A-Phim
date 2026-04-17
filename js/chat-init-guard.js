@@ -10,12 +10,19 @@
     try {
         // A. Cài cắm Instant Page tốc độ cao
         if (!document.getElementById('instant-page-script')) {
-            var script = document.createElement('script');
-            script.id = 'instant-page-script';
-            script.src = 'https://unpkg.com/instant.page@5.2.0/instantpage.js';
-            script.type = 'module';
-            script.defer = true;
-            document.head.appendChild(script);
+            var initInstantPage = function() {
+                var script = document.createElement('script');
+                script.id = 'instant-page-script';
+                script.src = 'https://unpkg.com/instant.page@5.2.0/instantpage.js';
+                script.type = 'module';
+                script.defer = true;
+                document.body.appendChild(script);
+            };
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initInstantPage);
+            } else {
+                initInstantPage();
+            }
         }
 
         // B. Xử lý đồng bộ thay thế Avatar chống nháy (FOUC)
