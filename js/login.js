@@ -422,17 +422,17 @@ function showTelegramPopup(redirectUrl) {
                 <!-- Subtitle -->
                 <p style="color:rgba(255,255,255,0.5);font-size:12px;margin:0 0 20px;font-weight:500;">Telegram Group · Bot tìm phim tự động</p>
 
-                <!-- Feature pills -->
-                <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:22px;">
-                    <span style="background:rgba(41,168,224,0.12);border:1px solid rgba(41,168,224,0.25);color:#29A8E0;border-radius:50px;padding:5px 12px;font-size:11px;font-weight:600;">🎬 Xem phim cùng nhau</span>
-                    <span style="background:rgba(41,168,224,0.12);border:1px solid rgba(41,168,224,0.25);color:#29A8E0;border-radius:50px;padding:5px 12px;font-size:11px;font-weight:600;">🤖 Bot tìm phim siêu nhanh</span>
-                    <span style="background:rgba(41,168,224,0.12);border:1px solid rgba(41,168,224,0.25);color:#29A8E0;border-radius:50px;padding:5px 12px;font-size:11px;font-weight:600;">🔥 Phim mới cập nhật liên tục</span>
-                    <span style="background:rgba(41,168,224,0.12);border:1px solid rgba(41,168,224,0.25);color:#29A8E0;border-radius:50px;padding:5px 12px;font-size:11px;font-weight:600;">💬 Chia sẻ & review phim hay</span>
+                <!-- Feature pills - grid 2 cột đồng đều -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:22px;">
+                    <span style="background:rgba(41,168,224,0.12);border:1px solid rgba(41,168,224,0.25);color:#29A8E0;border-radius:50px;padding:7px 10px;font-size:11px;font-weight:600;text-align:center;">🎬 Xem phim cùng nhau</span>
+                    <span style="background:rgba(41,168,224,0.12);border:1px solid rgba(41,168,224,0.25);color:#29A8E0;border-radius:50px;padding:7px 10px;font-size:11px;font-weight:600;text-align:center;">🤖 Bot tìm phim siêu nhanh</span>
+                    <span style="background:rgba(41,168,224,0.12);border:1px solid rgba(41,168,224,0.25);color:#29A8E0;border-radius:50px;padding:7px 10px;font-size:11px;font-weight:600;text-align:center;">🔥 Phim mới cập nhật liên tục</span>
+                    <span style="background:rgba(41,168,224,0.12);border:1px solid rgba(41,168,224,0.25);color:#29A8E0;border-radius:50px;padding:7px 10px;font-size:11px;font-weight:600;text-align:center;">💬 Chia sẻ & review phim hay</span>
                 </div>
 
                 <!-- Description -->
-                <p style="color:rgba(255,255,255,0.65);font-size:13px;line-height:1.6;margin-bottom:24px;">
-                    Tham gia ngay để <strong style="color:#f2f20d;">tìm kiếm phim siêu tốc</strong> với bot thông minh,<br>cập nhật phim mới mỗi ngày và chia sẻ cùng cộng đồng phim ảnh sôi động!
+                <p style="color:rgba(255,255,255,0.65);font-size:13px;line-height:1.6;margin-bottom:24px;text-align:justify;text-align-last:center;">
+                    Tham gia ngay để <strong style="color:#f2f20d;">tìm kiếm phim siêu tốc</strong> với bot thông minh, cập nhật phim mới mỗi ngày và chia sẻ cùng cộng đồng phim ảnh sôi động!
                 </p>
 
                 <!-- Join button -->
