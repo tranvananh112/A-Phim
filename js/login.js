@@ -35,11 +35,10 @@ function setupLoginForm() {
 
             if (result.success) {
                 showMessage('Đăng nhập thành công!', 'success');
-                setTimeout(() => {
-                    // Quay về trang phim nếu có ?redirect=
-                    const redirectUrl = new URLSearchParams(window.location.search).get('redirect');
-                    window.location.href = redirectUrl ? decodeURIComponent(redirectUrl) : 'index.html';
-                }, 1000);
+                // Hiện popup mời vào nhóm Telegram sau mỗi lần đăng nhập
+                const redirectUrl = new URLSearchParams(window.location.search).get('redirect');
+                const finalUrl = redirectUrl ? decodeURIComponent(redirectUrl) : 'index.html';
+                setTimeout(() => { showTelegramPopup(finalUrl); }, 800);
             } else {
                 showMessage(result.message, 'error');
                 submitBtn.disabled = false;
@@ -323,4 +322,145 @@ function loginWithFacebook() {
     setTimeout(() => {
         window.location.href = 'register.html?highlight=true';
     }, 1500);
+}
+
+// ====== Telegram Community Popup ======
+function showTelegramPopup(redirectUrl) {
+    // Inject styles
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes tg-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes tg-card-in { from { opacity: 0; transform: translateY(40px) scale(0.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes tg-pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(41, 168, 224, 0.5); }
+            70% { box-shadow: 0 0 0 14px rgba(41, 168, 224, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(41, 168, 224, 0); }
+        }
+        @keyframes tg-float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+        @keyframes tg-shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        @keyframes tg-badge-pop {
+            0% { transform: scale(0); }
+            70% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        #tg-popup-overlay {
+            animation: tg-backdrop-in 0.3s ease forwards;
+        }
+        #tg-popup-card {
+            animation: tg-card-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        #tg-popup-icon-wrap {
+            animation: tg-float 3s ease-in-out infinite;
+        }
+        .tg-join-btn {
+            background: linear-gradient(135deg, #29A8E0 0%, #1a7fc4 100%);
+            box-shadow: 0 4px 20px rgba(41,168,224,0.4);
+            transition: all 0.25s ease;
+            animation: tg-pulse-ring 2s ease-out infinite;
+        }
+        .tg-join-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(41,168,224,0.55);
+        }
+        .tg-skip-btn {
+            transition: all 0.2s ease;
+            color: rgba(255,255,255,0.45);
+        }
+        .tg-skip-btn:hover { color: rgba(255,255,255,0.75); }
+        .tg-badge {
+            animation: tg-badge-pop 0.5s 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+        .tg-shimmer-text {
+            background: linear-gradient(90deg, #29A8E0, #fff, #29A8E0);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: tg-shimmer 2.5s linear infinite;
+        }
+    `;
+    document.head.appendChild(style);
+
+    const overlay = document.createElement('div');
+    overlay.id = 'tg-popup-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);padding:16px;';
+
+    overlay.innerHTML = `
+        <div id="tg-popup-card" style="
+            width:100%;max-width:360px;border-radius:24px;overflow:hidden;
+            background:linear-gradient(160deg,#1a2540 0%,#0f1829 100%);
+            border:1px solid rgba(41,168,224,0.25);
+            box-shadow:0 30px 80px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.07);
+            font-family:'Space Grotesk',sans-serif;
+        ">
+            <!-- Top gradient band -->
+            <div style="height:4px;background:linear-gradient(90deg,#29A8E0,#1a7fc4,#29A8E0);background-size:200%;animation:tg-shimmer 2s linear infinite;"></div>
+
+            <div style="padding:32px 28px 28px;text-align:center;">
+
+                <!-- Icon -->
+                <div id="tg-popup-icon-wrap" style="display:inline-flex;align-items:center;justify-content:center;margin-bottom:20px;position:relative;">
+                    <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#29A8E0,#1a7fc4);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(41,168,224,0.35);">
+                        <svg width="42" height="42" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.18.18 0 0 0-.07-.19c-.08-.05-.19-.02-.27 0-.11.03-1.84 1.18-5.18 3.44-.49.34-.93.5-1.33.49-.44-.01-1.29-.25-1.92-.45-.73-.24-1.31-.36-1.26-.77.03-.21.32-.42.87-.64 3.41-1.48 5.68-2.46 6.83-2.94 3.25-1.36 3.93-1.59 4.37-1.59.1 0 .31.02.43.09.1.06.18.14.2.25.01.12.01.28.01.37z"/>
+                        </svg>
+                    </div>
+                    <div class="tg-badge" style="position:absolute;top:-4px;right:-4px;background:#f2f20d;color:#1a1200;border-radius:50px;padding:3px 8px;font-size:10px;font-weight:800;letter-spacing:0.5px;white-space:nowrap;">MỚI ✨</div>
+                </div>
+
+                <!-- Title -->
+                <div style="margin-bottom:6px;">
+                    <span class="tg-shimmer-text" style="font-size:20px;font-weight:800;letter-spacing:-0.3px;">Cộng Đồng A Phim</span>
+                </div>
+
+                <!-- Subtitle -->
+                <p style="color:rgba(255,255,255,0.5);font-size:12px;margin:0 0 20px;font-weight:500;">Telegram Group · Bot tìm phim tự động</p>
+
+                <!-- Feature pills -->
+                <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:22px;">
+                    <span style="background:rgba(41,168,224,0.12);border:1px solid rgba(41,168,224,0.25);color:#29A8E0;border-radius:50px;padding:5px 12px;font-size:11px;font-weight:600;">🎬 Xem phim cùng nhau</span>
+                    <span style="background:rgba(41,168,224,0.12);border:1px solid rgba(41,168,224,0.25);color:#29A8E0;border-radius:50px;padding:5px 12px;font-size:11px;font-weight:600;">🤖 Bot tìm phim siêu nhanh</span>
+                    <span style="background:rgba(41,168,224,0.12);border:1px solid rgba(41,168,224,0.25);color:#29A8E0;border-radius:50px;padding:5px 12px;font-size:11px;font-weight:600;">🔥 Phim mới cập nhật liên tục</span>
+                    <span style="background:rgba(41,168,224,0.12);border:1px solid rgba(41,168,224,0.25);color:#29A8E0;border-radius:50px;padding:5px 12px;font-size:11px;font-weight:600;">💬 Chia sẻ & review phim hay</span>
+                </div>
+
+                <!-- Description -->
+                <p style="color:rgba(255,255,255,0.65);font-size:13px;line-height:1.6;margin-bottom:24px;">
+                    Tham gia ngay để <strong style="color:#f2f20d;">tìm kiếm phim siêu tốc</strong> với bot thông minh,<br>cập nhật phim mới mỗi ngày và chia sẻ cùng cộng đồng phim ảnh sôi động!
+                </p>
+
+                <!-- Join button -->
+                <a id="tg-join-btn" href="https://t.me/+VsCfrulXuXw1NTE9" target="_blank" rel="noopener"
+                    class="tg-join-btn"
+                    style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;border-radius:14px;color:white;font-weight:800;font-size:15px;text-decoration:none;letter-spacing:0.3px;margin-bottom:12px;box-sizing:border-box;"
+                    onclick="setTimeout(function(){ document.getElementById('tg-popup-overlay').remove(); window.location.href='${redirectUrl}'; }, 1200);"
+                >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.18.18 0 0 0-.07-.19c-.08-.05-.19-.02-.27 0-.11.03-1.84 1.18-5.18 3.44-.49.34-.93.5-1.33.49-.44-.01-1.29-.25-1.92-.45-.73-.24-1.31-.36-1.26-.77.03-.21.32-.42.87-.64 3.41-1.48 5.68-2.46 6.83-2.94 3.25-1.36 3.93-1.59 4.37-1.59.1 0 .31.02.43.09.1.06.18.14.2.25.01.12.01.28.01.37z"/></svg>
+                    VÀO NHÓM TELEGRAM NGAY
+                </a>
+
+                <!-- Skip -->
+                <button class="tg-skip-btn" onclick="document.getElementById('tg-popup-overlay').remove();window.location.href='${redirectUrl}';"
+                    style="background:none;border:none;cursor:pointer;font-size:12px;font-family:inherit;padding:4px 8px;display:block;margin:0 auto;">
+                    Bỏ qua, xem phim thôi →
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    // Close on backdrop click
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) {
+            overlay.remove();
+            window.location.href = redirectUrl;
+        }
+    });
 }

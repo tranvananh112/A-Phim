@@ -61,11 +61,11 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     if (result.success) {
         showMessage('Đăng ký thành công! Vui lòng đăng nhập để tiếp tục...', 'success');
         setTimeout(() => {
-            // Chuyển về trang login, giữ nguyên ?redirect= để sau khi login quay lại phim
+            // Chuyển về trang login, thêm from_register=1 để hiện popup Telegram
             const redirectParam = new URLSearchParams(window.location.search).get('redirect');
-            const loginUrl = redirectParam
-                ? `login.html?redirect=${encodeURIComponent(redirectParam)}`
-                : 'login.html';
+            let loginUrl = redirectParam
+                ? `login.html?from_register=1&redirect=${encodeURIComponent(redirectParam)}`
+                : 'login.html?from_register=1';
             window.location.href = loginUrl;
         }, 1500);
     } else {
