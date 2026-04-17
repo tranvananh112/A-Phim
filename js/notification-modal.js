@@ -142,7 +142,7 @@
                 API_URL = 'http://localhost:5000/api';
             } else {
                 // Production - use Railway backend
-                API_URL = 'https://a-phim-production-c693.up.railway.app/api';
+                API_URL = 'https://a-phim-production-c87b.up.railway.app/api';
             }
 
             console.log('Fetching donation data from:', API_URL);

@@ -175,7 +175,7 @@ class RealtimeSync {
 // Auto-detect environment
 const realtimeApiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:5000/api'
-    : 'https://a-phim-production-c693.up.railway.app/api';
+    : 'https://a-phim-production-c87b.up.railway.app/api';
 const realtimeSync = new RealtimeSync(realtimeApiUrl);
 
 // Export for use in other scripts
