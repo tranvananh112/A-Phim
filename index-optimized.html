@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html class="dark" lang="vi">
 
 <head>
@@ -66,7 +66,7 @@
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <!-- Load Tailwind CSS async -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries" async></script>
+    <link rel="stylesheet" href="css/tailwind.min.css?v=1">
 
     <!-- Load fonts with display=swap -->
     <link
@@ -76,25 +76,6 @@
     <!-- Defer Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" media="print"
         onload="this.media='all'">
-
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#f2f20d",
-                        "background-dark": "#1e202c",
-                        "surface-dark": "#282a3a",
-                    },
-                    fontFamily: {
-                        "display": ["Space Grotesk", "sans-serif"],
-                        "vietnam": ["Be Vietnam Pro", "sans-serif"]
-                    }
-                }
-            }
-        }
-    </script>
 
     <!-- Critical CSS only -->
     <link rel="stylesheet" href="css/navigation-modern.css">

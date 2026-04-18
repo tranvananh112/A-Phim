@@ -50,15 +50,16 @@
                     this.app = firebase.apps[0];
                 }
 
+                // Dùng FirestoreSettings.cache (API mới, không deprecated)
+                if (firebase.firestore.setLogLevel) {
+                    firebase.firestore.setLogLevel('silent');
+                }
                 this.db = firebase.firestore();
-
-                // Enable offline persistence for faster loads
-                this.db.enablePersistence({ synchronizeTabs: true })
-                    .catch(err => {
-                        if (err.code !== 'failed-precondition' && err.code !== 'unimplemented') {
-                            console.warn('[APFilmChat] Persistence error:', err.code);
-                        }
-                    });
+                // Offline cache qua localCache settings (compat SDK)
+                this.db.settings({
+                    cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
+                    merge: true
+                });
 
                 // Analytics (optional)
                 if (typeof firebase.analytics === 'function') {

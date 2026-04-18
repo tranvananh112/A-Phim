@@ -406,25 +406,25 @@
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/favicon.png">
 
-    <!-- Preload critical resources -->
+    <!-- Preconnect: tăng tốc kết nối đến external resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://ophim1.com" crossorigin>
     <link rel="preconnect" href="https://img.ophim.live" crossorigin>
     <link rel="dns-prefetch" href="https://ophim1.com">
     <link rel="dns-prefetch" href="https://img.ophim.live">
-    <link rel="dns-prefetch" href="https://www.highperformanceformat.com">
-    <link rel="dns-prefetch" href="https://pl28791542.effectivegatecpm.com">
 
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons"
-        rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-        rel="stylesheet">
+    <!-- Tailwind local build (không CDN - không còn warning) -->
+    <link rel="stylesheet" href="css/tailwind.min.css?v=1">
+
+    <!-- Google Fonts: load non-blocking qua media=print trick -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Be+Vietnam+Pro:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Be+Vietnam+Pro:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
+
+    <!-- Material Icons: load async (non-blocking) -->
+    <link rel="preload" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons" rel="stylesheet"></noscript>
 
     <!-- Firebase SDK (Compat CDN) - Load SYNC để banner sẵn sàng ngay -->
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
@@ -433,28 +433,6 @@
     <!-- Load firebase-banners.js ngay sau SDK để không phải retry -->
     <script src="js/firebase-banners.js?v=3"></script>
 
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#f2f20d",
-                        "primary-dim": "#b3b30a",
-                        "primary-red": "#ec1313",
-                        "background-light": "#f8f8f5",
-                        "background-dark": "#1e202c",
-                        "surface-dark": "#282a3a",
-                    },
-                    fontFamily: {
-                        "display": ["Space Grotesk", "sans-serif"],
-                        "vietnam": ["Be Vietnam Pro", "sans-serif"]
-                    },
-                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
-                },
-            },
-        }
-    </script>
     <link rel="stylesheet" href="css/navigation-modern.css?v=3">
     <link rel="stylesheet" href="css/navigation-pill-v2.css?v=2">
     <link rel="stylesheet" href="css/navigation-smooth.css?v=2">
@@ -536,7 +514,7 @@
     <link rel="manifest" href="/manifest.json">
     <link rel="stylesheet" href="css/top-comments.css?v=5">
     <meta name="theme-color" content="#6366f1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="APhim">
     <link rel="apple-touch-icon" href="/logo_aphim1.png">
