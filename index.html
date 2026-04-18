@@ -426,10 +426,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet">
 
-    <!-- Firebase SDK (Compat CDN) - Pre-load for speed -->
-    <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script>
+    <!-- Firebase SDK (Compat CDN) - Load SYNC để banner sẵn sàng ngay -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script>
+    <!-- Load firebase-banners.js ngay sau SDK để không phải retry -->
+    <script src="js/firebase-banners.js?v=3"></script>
 
     <script>
         tailwind.config = {
@@ -538,7 +540,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="APhim">
     <link rel="apple-touch-icon" href="/logo_aphim1.png">
-<link rel="stylesheet" href="css/mobile-viewport-fix.css?v=4">
+<link rel="stylesheet" href="css/mobile-viewport-fix.css?v=5">
 <link rel="stylesheet" href="css/mobile-menu-modern.css?v=2">
 
     <!-- A Phim: Hardcode Dropdown Blue Override inside HTML to bypass all cache/specificity -->
@@ -732,10 +734,13 @@
                     </button>
                 </div>
 
-                <a href="login.html"
-                    class="px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors text-sm uppercase tracking-wide">
-                    Đăng nhập
-                </a>
+                <!-- authContainer: user-ui.js thay avatar/tên khi đăng nhập; auth-modal.js intercept khi chưa đăng nhập -->
+                <div id="authContainer" class="flex items-center">
+                    <a href="login.html"
+                        class="px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors text-sm uppercase tracking-wide">
+                        Đăng nhập
+                    </a>
+                </div>
             </div>
 
             <!-- Mobile Menu Button -->
@@ -1431,7 +1436,7 @@
     <script src="js/auth-modal.js?v=2"></script>
     <script src="js/user.js?v=2"></script>
     <script src="js/rating.js?v=2"></script>
-    <script src="js/user-ui.js?v=2"></script>
+    <script src="js/user-ui.js?v=3"></script>
     <script src="js/mobile-menu-modern.js?v=2"></script>
     <script src="js/home.js?v=2"></script>
     <script src="js/home-sections.js?v=2"></script>
@@ -1796,9 +1801,8 @@
     <!-- Dropdown Hover Fix -->
     <script src="js/dropdown-hover-fix.js?v=2"></script>
 
-    <!-- Dynamic Config & Hero Banner - Load as soon as possible -->
-    <script src="js/firebase-banners.js?v=2"></script>
-    <script src="js/hero-banner.js?v=4"></script>
+    <!-- Hero Banner - Firebase SDK + banners đã load ở head, chỉ cần hero-banner.js -->
+    <script src="js/hero-banner.js?v=5"></script>
 
     <!-- Top Movies Hot -->
     <script src="js/top-movies.js?v=2"></script>
@@ -1846,8 +1850,6 @@
         });
     </script>
 
-    <!-- Login Popunder -->
-    <script src="js/login-popunder.js?v=2"></script>
     <script src="js/top-comments.js?v=2"></script>
 
     <!-- PWA Service Worker + Auto Update Detection -->

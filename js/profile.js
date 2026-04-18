@@ -327,21 +327,139 @@ window.showTab = function (tabName) {
     }
 };
 
-// Show message
-function showMessage(message, type = 'info') {
-    const toast = document.createElement('div');
-    toast.className = `fixed top-4 right-4 z-[200] px-6 py-4 rounded-lg shadow-lg ${type === 'success' ? 'bg-green-600' :
-        type === 'error' ? 'bg-red-600' :
-            'bg-blue-600'
-        } text-white font-medium`;
-    toast.textContent = message;
+// ─── Premium Toast Notification ──────────────────────────────────────────
+const TOAST_ICONS = {
+    success : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+    error   : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
+    info    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/></svg>`,
+    warning : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+};
 
-    document.body.appendChild(toast);
+// Inject toast styles once
+(function injectToastCSS() {
+    if (document.getElementById('ap-toast-css')) return;
+    const s = document.createElement('style');
+    s.id = 'ap-toast-css';
+    s.textContent = `
+        #ap-toast-stack {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+        .ap-toast {
+            pointer-events: all;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            border-radius: 14px;
+            min-width: 260px;
+            max-width: 360px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.2);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            font-family: 'Be Vietnam Pro','Space Grotesk',sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            transform: translateX(120%);
+            opacity: 0;
+            transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .ap-toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        .ap-toast::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            height: 3px;
+            width: 100%;
+            background: rgba(255,255,255,0.4);
+            animation: ap-toast-bar var(--toast-duration, 3s) linear forwards;
+            transform-origin: left;
+        }
+        @keyframes ap-toast-bar {
+            from { transform: scaleX(1); }
+            to   { transform: scaleX(0); }
+        }
+        .ap-toast-success { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
+        .ap-toast-error   { background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); }
+        .ap-toast-info    { background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); }
+        .ap-toast-warning { background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); }
+        .ap-toast-icon {
+            flex-shrink: 0;
+            width: 22px; height: 22px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .ap-toast-icon svg { width: 100%; height: 100%; }
+        .ap-toast-close {
+            margin-left: auto;
+            flex-shrink: 0;
+            width: 20px; height: 20px;
+            opacity: 0.6;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%;
+            transition: opacity 0.2s, background 0.2s;
+        }
+        .ap-toast-close:hover { opacity: 1; background: rgba(255,255,255,0.2); }
+        .ap-toast-close svg { width: 14px; height: 14px; }
+        @media (max-width: 480px) {
+            #ap-toast-stack { top: auto; bottom: 80px; right: 10px; left: 10px; }
+            .ap-toast { min-width: unset; max-width: unset; width: 100%; }
+        }
+    `;
+    document.head.appendChild(s);
+})();
 
-    setTimeout(() => {
-        toast.remove();
-    }, 3000);
+function getToastStack() {
+    let stack = document.getElementById('ap-toast-stack');
+    if (!stack) {
+        stack = document.createElement('div');
+        stack.id = 'ap-toast-stack';
+        document.body.appendChild(stack);
+    }
+    return stack;
 }
+
+function showMessage(message, type = 'info', duration = 3500) {
+    const stack = getToastStack();
+    const icon = TOAST_ICONS[type] || TOAST_ICONS.info;
+    const closeIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+
+    const toast = document.createElement('div');
+    toast.className = `ap-toast ap-toast-${type}`;
+    toast.style.setProperty('--toast-duration', duration + 'ms');
+    toast.innerHTML = `
+        <span class="ap-toast-icon">${icon}</span>
+        <span style="flex:1;line-height:1.4">${message}</span>
+        <span class="ap-toast-close" onclick="this.closest('.ap-toast')._dismiss()">${closeIcon}</span>
+    `;
+
+    const dismiss = () => {
+        toast.style.transform = 'translateX(120%)';
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 350);
+    };
+    toast._dismiss = dismiss;
+    toast.addEventListener('click', dismiss);
+
+    stack.appendChild(toast);
+    requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('show')));
+
+    setTimeout(dismiss, duration);
+}
+
 
 // Avatar selection for profile
 const PROFILE_AVATAR_LIST = [
@@ -424,10 +542,7 @@ async function selectAvatar(e, url) {
         }
 
         if (result && result.success) {
-            const detail = result.sources
-                ? ` (${[result.sources.local?'Local':'',result.sources.firestore?'Cloud':'',result.sources.backend?'Server':''].filter(Boolean).join('+')})`
-                : '';
-            showMessage('✅ Cập nhật hình đại diện thành công!' + detail, 'success');
+            showMessage('Cập nhật hình đại diện thành công!', 'success');
 
             // Refresh UI with final state
             loadBasicUserInfo();

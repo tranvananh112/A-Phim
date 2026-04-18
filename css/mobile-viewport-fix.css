@@ -75,10 +75,31 @@ input, textarea, select, [contenteditable] {
     }
 }
 
-/* 4. Fix ảnh không tràn */
-img, video {
+/* 4. Fix ảnh không tràn - Chỉ áp dụng cho ảnh nội dung, KHÔNG áp dụng cho ảnh trong container có kích thước cố định */
+img {
     max-width: 100%;
+}
+/* height: auto chỉ cho ảnh tự do (không bị overflow:hidden container quản lý) */
+img:not([class*="h-"]):not([style*="height"]) {
     height: auto;
+}
+/* Ảnh trong nav logo và welcome-glow PHẢI giữ nguyên kích thước */
+.welcome-glow img,
+nav a img,
+nav .logo img,
+.chat-header-avatar img {
+    max-width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+/* Ảnh trong nav link: KHÔNG cho phép navigate tới ảnh khi click - fix lỗi phóng to logo */
+nav a img,
+a img[alt*="Logo"],
+a img[alt*="logo"],
+a > div > img {
+    pointer-events: none !important;
+    -webkit-user-drag: none !important;
+    user-drag: none !important;
 }
 
 /* 5. Text wrap */

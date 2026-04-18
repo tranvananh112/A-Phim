@@ -1,46 +1,62 @@
-// User UI Update - Common script for all pages
-// This script updates the user interface to show logged-in user info
+/**
+ * User UI - Cập nhật giao diện nav theo trạng thái đăng nhập
+ * - Đã đăng nhập: hiện avatar + tên user
+ * - Chưa đăng nhập: hiện nút "Đăng nhập" → mở auth modal
+ */
 
 function updateUserUI() {
-    // Check if authService is available
     if (typeof authService === 'undefined') {
-        console.warn('⚠️ authService not loaded yet');
+        setTimeout(updateUserUI, 150);
         return;
     }
 
     const user = authService.getCurrentUser();
-    const loginBtn = document.querySelector('a[href="login.html"]');
+    const authContainer = document.getElementById('authContainer');
+    if (!authContainer) return;
 
-    console.log('👤 Updating user UI:', { user: user ? user.name : 'Not logged in', loginBtn: !!loginBtn });
+    if (user) {
+        // ── Đã đăng nhập: hiện avatar + tên ──
+        const savedAvatar = localStorage.getItem('user_avatar') || user.avatar || '';
+        const initial = (user.name || 'U').charAt(0).toUpperCase();
 
-    if (user && loginBtn) {
-        const avatarHtml = user.avatar
-            ? `<img src="${user.avatar}" class="w-9 h-9 md:w-10 md:h-10 rounded-full object-cover border-2 border-primary shadow-[0_0_12px_rgba(242,242,13,0.4)] hover:shadow-[0_0_20px_rgba(242,242,13,0.6)] transition-all" alt="Tài khoản cá nhân" />`
-            : `<div class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-primary flex items-center justify-center text-black font-bold border-2 border-primary shadow-[0_0_12px_rgba(242,242,13,0.4)]">
-                   ${user.name.charAt(0).toUpperCase()}
-               </div>`;
+        const avatarHtml = savedAvatar
+            ? `<img src="${savedAvatar}" class="w-9 h-9 md:w-10 md:h-10 rounded-full object-cover border-2 border-primary shadow-[0_0_12px_rgba(242,242,13,0.4)] hover:shadow-[0_0_20px_rgba(242,242,13,0.6)] transition-all" alt="Tài khoản" style="pointer-events:none" />`
+            : `<div class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-primary flex items-center justify-center text-black font-bold border-2 border-primary shadow-[0_0_12px_rgba(242,242,13,0.4)]">${initial}</div>`;
 
-        loginBtn.outerHTML = `
-            <div class="flex items-center gap-4">
-                <a href="profile.html" class="flex items-center gap-2 hover:text-primary transition-colors group">
-                    ${avatarHtml}
-                    <span class="hidden md:inline text-sm font-semibold group-hover:text-primary">${user.name}</span>
-                </a>
-            </div>
+        authContainer.innerHTML = `
+            <a href="profile.html" class="flex items-center gap-2 hover:text-primary transition-colors group">
+                ${avatarHtml}
+                <span class="hidden md:inline text-sm font-semibold text-white group-hover:text-primary">${user.name}</span>
+            </a>
         `;
-        console.log('✅ User UI updated successfully');
-    } else if (!user) {
-        console.log('ℹ️ No user logged in');
-    } else if (!loginBtn) {
-        console.log('⚠️ Login button not found in DOM');
+    } else {
+        // ── Chưa đăng nhập: hiện nút Đăng nhập → mở modal ──
+        authContainer.innerHTML = `
+            <a href="login.html" id="navLoginBtn"
+               class="px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors text-sm uppercase tracking-wide">
+                Đăng nhập
+            </a>
+        `;
+
+        // Gắn onclick trực tiếp phòng trường hợp auth-modal.js chưa intercept kịp
+        const loginBtn = document.getElementById('navLoginBtn');
+        if (loginBtn) {
+            loginBtn.addEventListener('click', function (e) {
+                if (window.showAuthModal) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    window.showAuthModal('login');
+                }
+            }, true); // capture phase
+        }
     }
 }
 
-// Auto-update UI when DOM is ready
-document.addEventListener('DOMContentLoaded', function () {
-    console.log('🔄 DOM loaded, updating user UI...');
-    updateUserUI();
-});
+// Khởi chạy khi DOM ready
+document.addEventListener('DOMContentLoaded', updateUserUI);
 
-// Also try to update after a short delay (in case auth.js loads late)
-setTimeout(updateUserUI, 100);
+// Retry sau 300ms phòng auth.js load chậm
+setTimeout(updateUserUI, 300);
+
+// Export để các script khác gọi khi trạng thái thay đổi
+window.updateUserUI = updateUserUI;

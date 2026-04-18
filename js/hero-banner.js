@@ -177,25 +177,24 @@ function renderHeroBanner(movie, isInstant = false) {
         const newImageUrl = `https://img.ophim.live/uploads/movies/${movie.poster_url || movie.thumb_url}`;
 
         if (heroImage.src !== newImageUrl) {
-            heroImage.style.opacity = '0'; // Chuẩn bị fade in
-            
-            if (isInstant) {
-                // Nếu là load từ cache, gán link luôn (nếu ảnh đã có trong cache trình duyệt sẽ lên ngay)
+            heroImage.style.opacity = '0';
+
+            // Luôn preload ảnh trước khi show để tránh flash trắng
+            // (cache hit từ trình duyệt vẫn trả về ngay lập tức)
+            const img = new Image();
+            img.fetchPriority = 'high';
+            img.onload = () => {
                 heroImage.src = newImageUrl;
                 showHeroImage();
-            } else {
-                // Preload ảnh mới
-                const img = new Image();
-                img.onload = () => {
-                    heroImage.src = newImageUrl;
-                    showHeroImage();
-                };
-                img.onerror = () => {
-                    heroImage.src = 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1920';
-                    showHeroImage();
-                };
-                img.src = newImageUrl;
-            }
+            };
+            img.onerror = () => {
+                heroImage.src = 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1920';
+                showHeroImage();
+            };
+            img.src = newImageUrl;
+
+            // Nếu ảnh đã có trong browser cache, onload bắn ngay lập tức (0ms)
+            // không cần phân biệt isInstant nữa
         } else {
             showHeroImage();
         }
