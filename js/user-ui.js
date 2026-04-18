@@ -1,7 +1,7 @@
 /**
- * User UI - Cập nhật giao diện nav theo trạng thái đăng nhập
- * - Đã đăng nhập: hiện avatar + tên user
- * - Chưa đăng nhập: hiện nút "Đăng nhập" → mở auth modal
+ * User UI - Cập nhật nav theo trạng thái đăng nhập
+ * - Đã đăng nhập: thay #authContainer bằng avatar + tên
+ * - Chưa đăng nhập: KHÔNG thay gì cả, để button gốc với onclick/auth-modal.js xử lý
  */
 
 function updateUserUI() {
@@ -15,7 +15,7 @@ function updateUserUI() {
     if (!authContainer) return;
 
     if (user) {
-        // ── Đã đăng nhập: hiện avatar + tên ──
+        // ── Đã đăng nhập: thay bằng avatar + tên ──
         const savedAvatar = localStorage.getItem('user_avatar') || user.avatar || '';
         const initial = (user.name || 'U').charAt(0).toUpperCase();
 
@@ -29,34 +29,13 @@ function updateUserUI() {
                 <span class="hidden md:inline text-sm font-semibold text-white group-hover:text-primary">${user.name}</span>
             </a>
         `;
-    } else {
-        // ── Chưa đăng nhập: hiện nút Đăng nhập → mở modal ──
-        authContainer.innerHTML = `
-            <a href="login.html" id="navLoginBtn"
-               class="px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors text-sm uppercase tracking-wide">
-                Đăng nhập
-            </a>
-        `;
-
-        // Gắn onclick trực tiếp phòng trường hợp auth-modal.js chưa intercept kịp
-        const loginBtn = document.getElementById('navLoginBtn');
-        if (loginBtn) {
-            loginBtn.addEventListener('click', function (e) {
-                if (window.showAuthModal) {
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-                    window.showAuthModal('login');
-                }
-            }, true); // capture phase
-        }
     }
+    // Chưa đăng nhập: KHÔNG làm gì - button gốc html có onclick + auth-modal.js xử lý
 }
 
-// Khởi chạy khi DOM ready
+// Khởi chạy
 document.addEventListener('DOMContentLoaded', updateUserUI);
-
-// Retry sau 300ms phòng auth.js load chậm
 setTimeout(updateUserUI, 300);
 
-// Export để các script khác gọi khi trạng thái thay đổi
+// Export để các script khác gọi sau khi login/logout
 window.updateUserUI = updateUserUI;

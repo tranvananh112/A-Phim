@@ -433,6 +433,12 @@
     <!-- Load firebase-banners.js ngay sau SDK để không phải retry -->
     <script src="js/firebase-banners.js?v=3"></script>
 
+    <!-- Auth + Modal: load sớm bằng defer để ready trước khi user click -->
+    <script src="js/config.js?v=2" defer></script>
+    <script src="js/auth.js?v=2" defer></script>
+    <script src="js/auth-modal.js?v=2" defer></script>
+    <script src="js/user-ui.js?v=4" defer></script>
+
     <link rel="stylesheet" href="css/navigation-modern.css?v=3">
     <link rel="stylesheet" href="css/navigation-pill-v2.css?v=2">
     <link rel="stylesheet" href="css/navigation-smooth.css?v=2">
@@ -715,6 +721,7 @@
                 <!-- authContainer: user-ui.js thay avatar/tên khi đăng nhập; auth-modal.js intercept khi chưa đăng nhập -->
                 <div id="authContainer" class="flex items-center">
                     <a href="login.html"
+                        onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');return false;}"
                         class="px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors text-sm uppercase tracking-wide">
                         Đăng nhập
                     </a>
@@ -1404,17 +1411,13 @@
         </div>
     </footer>
 
-    <!-- Scripts - Optimized loading -->
-    <script src="js/config.js?v=2"></script>
+    <!-- Scripts - Optimized loading (config/auth/modal/user-ui da defer trong head) -->
     <script src="js/api.js?v=2"></script>
     <script src="js/data-cache.js?v=2"></script>
     <script src="js/api-optimization.js?v=2"></script>
     <script src="js/image-optimization.js?v=2"></script>
-    <script src="js/auth.js?v=2"></script>
-    <script src="js/auth-modal.js?v=2"></script>
     <script src="js/user.js?v=2"></script>
     <script src="js/rating.js?v=2"></script>
-    <script src="js/user-ui.js?v=3"></script>
     <script src="js/mobile-menu-modern.js?v=2"></script>
     <script src="js/home.js?v=2"></script>
     <script src="js/home-sections.js?v=2"></script>
