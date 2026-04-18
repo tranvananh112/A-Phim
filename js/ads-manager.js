@@ -98,17 +98,7 @@
         // ĐÃ XÓA: Banner 320x100 trên header theo yêu cầu
 
         // ── 3. CATFISH 2×2 STICKY BOTTOM ────────────────────────────
-        const catfish = document.createElement('div');
-        catfish.id = 'adm-catfish';
-        catfish.innerHTML = `
-            <div id="adm-catfish-close">Tắt QC ✕</div>
-            <div id="adm-catfish-inner">${twoByTwo()}</div>`;
-        document.body.appendChild(catfish);
-        setTimeout(() => catfish.classList.add('show'), 400);
-        catfish.querySelector('#adm-catfish-close').onclick = () => {
-            catfish.style.transform = 'translateX(-50%) translateY(120%)';
-            setTimeout(() => catfish.remove(), 200);
-        };
+        // ĐÃ XÓA: 4 banner catfish dưới màn hình theo yêu cầu của người dùng
 
         // ── 4. IN-FEED BLOCKS after every 2 major sections ─────────
         const sections = Array.from(document.querySelectorAll(

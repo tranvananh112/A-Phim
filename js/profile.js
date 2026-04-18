@@ -24,14 +24,33 @@ function loadBasicUserInfo() {
     const user = authService.getCurrentUser();
     if (!user) return;
 
-    // Update sidebar only
+    const userId = user._id || user.id || user.email;
     const avatarContainer = document.getElementById('userAvatar');
-    if (user.avatar) {
-        avatarContainer.innerHTML = `<img src="${user.avatar}" class="w-full h-full object-cover" />`;
-    } else {
-        avatarContainer.innerHTML = user.name.charAt(0).toUpperCase();
+
+    // Helper: render avatar
+    function renderAvatar(url) {
+        if (url) {
+            avatarContainer.innerHTML = `<img src="${url}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML=user.name.charAt(0).toUpperCase()" />`;
+        } else {
+            avatarContainer.innerHTML = user.name.charAt(0).toUpperCase();
+        }
     }
-    
+
+    // 1. Render backend avatar instantly (from localStorage user object)
+    renderAvatar(user.avatar);
+
+    // 2. Use avatarService to load per-user avatar (local then Firestore sync)
+    if (typeof avatarService !== 'undefined') {
+        avatarService.loadAvatar(userId, function(avatarUrl) {
+            renderAvatar(avatarUrl);
+            // Sync back into user object so auth module stays consistent
+            if (avatarUrl && user.avatar !== avatarUrl) {
+                user.avatar = avatarUrl;
+                try { localStorage.setItem('cinestream_user', JSON.stringify(user)); } catch(e) {}
+            }
+        });
+    }
+
     document.getElementById('userName').textContent = user.name;
     document.getElementById('userEmail').textContent = user.email;
 }
@@ -372,36 +391,54 @@ async function selectAvatar(e, url) {
         e.preventDefault();
         e.stopPropagation();
     }
-    
+
     document.getElementById('avatarSelectDropdown').classList.add('hidden');
-    
-    // Check authService
+
     if (!authService.isLoggedIn()) {
         showMessage('Vui lòng đăng nhập để thay đổi hình đại diện', 'error');
         return;
     }
-    
+
+    const user    = authService.getCurrentUser();
+    const userId  = user._id || user.id || user.email;
     const userAvatar = document.getElementById('userAvatar');
+
+    // Optimistic UI: show chosen avatar immediately
     if (userAvatar) {
-        userAvatar.innerHTML = `<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>`;
+        userAvatar.innerHTML = `<img src="${url}" class="w-full h-full object-cover" />`;
     }
+    // Show saving indicator
+    showMessage('Đang lưu hình đại diện...', 'info');
 
     try {
-        const result = await authService.updateProfile({ avatar: url });
-        if (result.success) {
-            showMessage('Cập nhật hình đại diện thành công!', 'success');
-            // Ghi đè cả localstorage cho phần comment
-            localStorage.setItem('ap_chosen_avatar', url);
-            
-            // Reload UI
+        // Use dual-storage avatarService (local + Firestore + backend)
+        let result;
+        if (typeof avatarService !== 'undefined') {
+            result = await avatarService.saveAvatar(userId, url);
+        } else {
+            // Fallback: only backend + legacy localStorage
+            result = await authService.updateProfile({ avatar: url });
+            if (result.success) {
+                localStorage.setItem('ap_chosen_avatar', url);
+            }
+        }
+
+        if (result && result.success) {
+            const detail = result.sources
+                ? ` (${[result.sources.local?'Local':'',result.sources.firestore?'Cloud':'',result.sources.backend?'Server':''].filter(Boolean).join('+')})`
+                : '';
+            showMessage('✅ Cập nhật hình đại diện thành công!' + detail, 'success');
+
+            // Refresh UI with final state
             loadBasicUserInfo();
             if (typeof updateUserUI === 'function') setTimeout(updateUserUI, 100);
         } else {
-            showMessage(result.message || 'Cập nhật thất bại', 'error');
-            loadBasicUserInfo(); // revert visual
+            showMessage('⚠️ ' + (result && result.message ? result.message : 'Cập nhật thất bại'), 'error');
+            loadBasicUserInfo(); // revert
         }
     } catch (error) {
-        showMessage('Lỗi kết nối server', 'error');
-        loadBasicUserInfo(); // revert visual
+        console.error('[profile] selectAvatar error:', error);
+        showMessage('Lỗi kết nối', 'error');
+        loadBasicUserInfo(); // revert
     }
 }

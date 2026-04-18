@@ -11,50 +11,41 @@ async function loadHeroBanner() {
         const activeCached = cachedBanners.find(b => b.isActive);
         if (activeCached) {
             currentHeroMovie = convertBannerToMovie(activeCached);
-            // Render tức thì không cần chờ mạng
+            // Render tức thì từ cache
             renderHeroBanner(currentHeroMovie, true);
         } else {
-            // Không gọi fallback ngay, để skeleton hiển thị tránh load 2 lần (double load) khi đợi Firebase
             console.log('Chờ Firebase nạp banner...');
         }
     } catch (e) {
         console.warn('Cache read error:', e);
     }
 
-    // 2. BACKGROUND: Load Firebase và đồng bộ dữ liệu mới nhất (chạy ngầm)
-    try {
-        // Dùng dynamic import để kết nối Cấu hình Firebase
-        const fb = await import('/js/firebase-banners.js');
-        
-        fb.listenToBanners(async (banners) => {
+    // 2. BACKGROUND: Load Firebase (nạp trực tiếp từ script tag trong index.html)
+    if (window.firebaseBanners) {
+        window.firebaseBanners.listen(async (banners) => {
             // Lưu dữ liệu mới về bộ nhớ đệm
             if (banners && banners.length > 0) {
                 localStorage.setItem('cinestream_banners', JSON.stringify(banners));
             }
             
-            // Cập nhật giao diện nếu có thay đổi từ Firebase
             const activeBanner = banners?.find(b => b.isActive);
             if (activeBanner) {
-                // Kiểm tra xem có khác với cái đã render (từ cache) không để tránh chớp giật
                 const newMovie = convertBannerToMovie(activeBanner);
                 if (!currentHeroMovie || currentHeroMovie.slug !== newMovie.slug) {
                     currentHeroMovie = newMovie;
                     renderHeroBanner(currentHeroMovie, false);
                 }
             } else {
-                // Không có banner được chọn, load fallback từ API
                 if (isInitialLoad && !currentHeroMovie) await loadFallbackBanner();
             }
             isInitialLoad = false;
         });
-    } catch (error) {
-        console.error('Error with Firebase Banners, fallback to localStorage/API:', error);
-        if (!currentHeroMovie) {
-            await loadFallbackBanner();
-        }
+    } else {
+        // Fallback phòng khi script firebase-banners.js chưa nạp kịp
+        setTimeout(loadHeroBanner, 200);
     }
 
-    // Load phim Việt Nam cho thumbnails mượt mà chạy ngầm
+    // Load phim Việt Nam cho thumbnails chạy ngầm
     setTimeout(loadVietnameseThumbnails, 100);
 }
 

@@ -566,7 +566,12 @@
     <script src="js/auth-modal.js?v=2"></script>
     <script src="js/user.js?v=2"></script>
     <script src="js/rating.js?v=2"></script>
-    <script src="js/profile.js?v=2"></script>
+    <!-- Firebase SDK (shared: chat + avatar) -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script>
+    <script src="js/avatar-service.js?v=1"></script>
+    <script src="js/profile.js?v=3"></script>
     <script src="js/categories-dropdown.js?v=2"></script>
     <script src="js/dropdown-hover-fix.js?v=2"></script>
 
@@ -764,10 +769,6 @@
         </div>
     </div>
 
-    <!-- ====== Firebase SDK (Compat CDN) ====== -->
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script>
     <!-- Firebase Chat Service -->
     <script src="js/firebase-chat.js?v=2"></script>
     <!-- Chat Widget Logic -->

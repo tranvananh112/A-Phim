@@ -467,7 +467,12 @@
         const color   = getAvatarColor(user.name || user.email || 'U');
         const initial = sanitize((user.name || user.email || 'U').charAt(0).toUpperCase());
         const displayName = sanitize(user.name || user.email || 'Người dùng');
-        const savedAva = localStorage.getItem('ap_chosen_avatar') || '';
+        // Get per-user avatar: use avatarService if available, else legacy key
+        const userId = user._id || user.id || user.email;
+        const savedAva = (typeof avatarService !== 'undefined' ? avatarService.getAvatar(userId) : null)
+                      || user.avatar
+                      || localStorage.getItem('ap_chosen_avatar')
+                      || '';
 
         const avaHtml = savedAva ? `<img src="${savedAva}" class="ap-form-user-ava" id="ap-user-ava-${pid}" style="object-fit:cover;">` : `<div class="ap-form-user-ava" id="ap-user-ava-${pid}" style="background:${color}">${initial}</div>`;
         const previewHtml = savedAva ? `<img src="${savedAva}" class="ap-ava-preview" id="ap-preview-${pid}">` : `<span class="material-icons-round" style="font-size:18px" id="ap-preview-${pid}">account_circle</span>`;
@@ -618,6 +623,15 @@
     }
 
     window.selectAvatar = function(url, pid) {
+        // Save with avatarService (per-user) OR fallback to legacy key
+        const user = getCurrentUser();
+        if (user && typeof avatarService !== 'undefined') {
+            const userId = user._id || user.id || user.email;
+            avatarService.saveAvatar(userId, url).catch(()=>{});
+        } else {
+            localStorage.setItem('ap_chosen_avatar', url);
+        }
+        // Legacy key for backward compat
         localStorage.setItem('ap_chosen_avatar', url);
         document.querySelectorAll(`#ap-ava-drop-${pid} .ap-ava-option`).forEach(img => img.classList.remove('selected'));
         event.target.classList.add('selected');
@@ -673,7 +687,13 @@
         if (!user) return;
         const slug = window.firebaseComments.currentSlug;
         const pid = boxId || 'main';
-        const avatarUrl = localStorage.getItem('ap_chosen_avatar') || '';
+        // Get per-user avatar
+        const userId2 = user._id || user.id || user.email;
+        const avatarUrl = (typeof avatarService !== 'undefined' ? avatarService.getAvatar(userId2) : null)
+                       || user.avatar
+                       || localStorage.getItem('ap_chosen_avatar')
+                       || '';
+
         
         const ta = document.getElementById(`ap-input-${pid}`);
         const text = ta.value.trim();

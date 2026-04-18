@@ -426,6 +426,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet">
 
+    <!-- Firebase SDK (Compat CDN) - Pre-load for speed -->
+    <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script>
+
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -892,7 +897,8 @@
         <div class="absolute inset-0 z-0">
             <img id="heroImage" alt="Hero Movie Background"
                 class="w-full h-full object-cover object-center scale-105 opacity-0 transition-opacity duration-700"
-                src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1920" />
+                src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1920"
+                loading="eager" fetchpriority="high" />
             <!-- Loading Skeleton -->
             <div id="heroImageSkeleton"
                 class="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-900 to-black animate-pulse"></div>
@@ -1790,8 +1796,9 @@
     <!-- Dropdown Hover Fix -->
     <script src="js/dropdown-hover-fix.js?v=2"></script>
 
-    <!-- Hero Banner -->
-    <script src="js/hero-banner.js?v=3"></script>
+    <!-- Dynamic Config & Hero Banner - Load as soon as possible -->
+    <script src="js/firebase-banners.js?v=2"></script>
+    <script src="js/hero-banner.js?v=4"></script>
 
     <!-- Top Movies Hot -->
     <script src="js/top-movies.js?v=2"></script>
@@ -2035,10 +2042,6 @@
         </div>
     </div>
 
-    <!-- ====== Firebase SDK (Compat CDN) ====== -->
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script>
     <!-- Firebase Chat Service -->
     <script src="js/firebase-chat.js?v=2"></script>
     <!-- Chat Widget Logic -->
