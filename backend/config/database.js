@@ -2,11 +2,14 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
     try {
-        // Support both MONGO_URI and MONGODB_URI for flexibility
-        const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI;
+        // Support multiple environment variable names for flexibility across different hosting platforms (Railway, Heroku, etc.)
+        const mongoUri = process.env.MONGO_URI || 
+                         process.env.MONGODB_URI || 
+                         process.env.DATABASE_URL || 
+                         process.env.MONGODB_URL;
 
         if (!mongoUri) {
-            throw new Error('MongoDB URI is not defined. Please set MONGO_URI or MONGODB_URI environment variable.');
+            throw new Error('MongoDB URI is not defined. Please check your Environment Variables (MONGO_URI, MONGODB_URI, etc.)');
         }
 
         const conn = await mongoose.connect(mongoUri, {
