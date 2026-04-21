@@ -66,7 +66,7 @@
                 <img 
                     alt="${title}" 
                     class="absolute inset-0 w-full h-full object-cover object-center scale-105" 
-                    src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(mainMovie.poster_url || mainMovie.thumb_url, 1200, 80) : posterUrl}"
+                    src="${movieAPI.getImageURL(mainMovie.poster_url || mainMovie.thumb_url, 1200, 90, true)}"
                     onerror="this.src='https://via.placeholder.com/1920x1080?text=No+Image'"
                     loading="eager"
                 />

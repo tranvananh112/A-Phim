@@ -6,7 +6,7 @@ class ImageOptimizer {
     }
 
     // Optimize image URL with CDN parameters
-    optimizeImageUrl(url, width = 400, quality = 80) {
+    optimizeImageUrl(url, width = 400, quality = 80, isPriority = false) {
         if (!url) return 'https://via.placeholder.com/400x600?text=No+Image';
         
         // Ensure absolute URL
@@ -18,8 +18,21 @@ class ImageOptimizer {
         // This dramatically reduces image size from MBs to KBs
         if (url.includes('ophim.live')) {
             const isMobile = window.innerWidth <= 768;
-            const targetWidth = isMobile ? Math.min(width, 800) : width;
-            const targetQuality = isMobile ? 75 : quality;
+            
+            let targetWidth = width;
+            let targetQuality = quality;
+
+            if (isMobile) {
+                if (isPriority) {
+                    // Cấu hình riêng cho banner chính trên Mobile để đảm bảo độ nét
+                    targetWidth = Math.min(width, 1200); 
+                    targetQuality = Math.max(quality, 85);
+                } else {
+                    // Cấu hình mặc định cho thumbnail để tiết kiệm data
+                    targetWidth = Math.min(width, 800);
+                    targetQuality = Math.min(quality, 75);
+                }
+            }
             
             // Format: https://wsrv.nl/?url=URL&w=WIDTH&q=QUALITY&output=webp
             return `https://wsrv.nl/?url=${encodeURIComponent(url)}&w=${targetWidth}&q=${targetQuality}&output=webp&il`;

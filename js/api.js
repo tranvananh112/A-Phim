@@ -200,7 +200,7 @@ class MovieAPI {
     }
 
     // Get image URL
-    getImageURL(imagePath, width = 400, quality = 80) {
+    getImageURL(imagePath, width = 400, quality = 80, isPriority = false) {
         if (!imagePath) return 'https://via.placeholder.com/400x600?text=No+Image';
         
         let fullUrl = imagePath;
@@ -210,7 +210,7 @@ class MovieAPI {
 
         // Use global imageOptimizer if available to compress image
         if (typeof imageOptimizer !== 'undefined' && typeof imageOptimizer.optimizeImageUrl === 'function') {
-            return imageOptimizer.optimizeImageUrl(fullUrl, width, quality);
+            return imageOptimizer.optimizeImageUrl(fullUrl, width, quality, isPriority);
         }
 
         return fullUrl;

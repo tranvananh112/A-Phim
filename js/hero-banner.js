@@ -228,9 +228,7 @@ function renderHeroBanner(movie, isInstant = false) {
     if (heroImage) {
         // Use optimized image URL (1200px width for hero)
         const rawImageUrl = movie.poster_url || movie.thumb_url;
-        const optimizedUrl = typeof imageOptimizer !== 'undefined' ? 
-            imageOptimizer.optimizeImageUrl(rawImageUrl, 1200, 85) : 
-            `https://img.ophim.live/uploads/movies/${rawImageUrl}`;
+        const optimizedUrl = movieAPI.getImageURL(rawImageUrl, 1200, 90, true);
 
         if (heroImage.src !== optimizedUrl) {
             // Set priority high for current hero image
