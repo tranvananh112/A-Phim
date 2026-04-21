@@ -29,7 +29,6 @@ exports.addComment = async (req, res) => {
              validMovieId = movieId;
         } else {
              const movie = await Movie.findOne({ slug: movieSlug });
-             movie = await Movie.findOne({ slug: movieSlug });
              if (movie) {
                  validMovieId = movie._id;
              }

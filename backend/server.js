@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/database');
 const { apiLimiter } = require('./middleware/rateLimit');
+const socketUtil = require('./utils/socket');
 
 // Connect to database
 connectDB();
@@ -59,8 +60,8 @@ app.get('/api/health', (req, res) => {
     res.json({ 
         status: 'ok', 
         timestamp: new Date(),
-        version: '1.2.0',
-        realtime: !!socketUtil.getIO()
+        version: '1.2.1',
+        realtime: socketUtil.isInitialized()
     });
 });
 
@@ -125,7 +126,6 @@ app.use((req, res) => {
 
 const PORT = process.env.PORT || 5000;
 const http = require('http');
-const socketUtil = require('./utils/socket');
 
 const httpServer = http.createServer(app);
 
