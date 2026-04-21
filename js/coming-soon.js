@@ -71,10 +71,11 @@
                         <a href="${linkUrl}">
                             <div class="cs-poster-container">
                                 <!-- Poster Image -->
-                                <img src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.poster_url || movie.thumb_url, 400, 75) : posterUrl}" 
+                                <img data-src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.poster_url || movie.thumb_url, 400, 75) : posterUrl}" 
+                                     src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 3'%3E%3C/svg%3E"
                                      alt="${movie.name}"
                                      onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'"
-                                     loading="lazy" />
+                                     class="absolute top-0 left-0 w-full h-full object-cover z-0 transition-transform duration-500 group-hover:scale-110" />
                                 
                                 <!-- Badges on Poster -->
                                 <div class="cs-badges-container">

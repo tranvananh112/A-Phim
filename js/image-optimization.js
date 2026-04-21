@@ -19,19 +19,22 @@ class ImageOptimizer {
         if (url.includes('ophim.live')) {
             const isMobile = window.innerWidth <= 768;
             
+            // Trên desktop (viewport lớn), bỏ qua Proxy, load ảnh gốc để đảm bảo độ sắc nét tốt nhất
+            if (!isMobile) {
+                return url;
+            }
+            
             let targetWidth = width;
             let targetQuality = quality;
 
-            if (isMobile) {
-                if (isPriority) {
-                    // Cấu hình riêng cho banner chính trên Mobile để đảm bảo độ nét
-                    targetWidth = Math.min(width, 1200); 
-                    targetQuality = Math.max(quality, 85);
-                } else {
-                    // Cấu hình mặc định cho thumbnail để tiết kiệm data
-                    targetWidth = Math.min(width, 800);
-                    targetQuality = Math.min(quality, 75);
-                }
+            if (isPriority) {
+                // Cấu hình riêng cho banner chính / hình ảnh lớn trên Mobile để đảm bảo độ nét
+                targetWidth = Math.max(width, 1200); // Ưu tiên banner to, sắc nét trên mobile
+                targetQuality = Math.max(quality, 90); // Quality ít nhất là 90
+            } else {
+                // Cấu hình mặc định cho thumbnail để tiết kiệm data dung lượng
+                targetWidth = Math.min(width, 600);
+                targetQuality = Math.min(quality, 75);
             }
             
             // Format: https://wsrv.nl/?url=URL&w=WIDTH&q=QUALITY&output=webp

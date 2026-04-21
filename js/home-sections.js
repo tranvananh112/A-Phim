@@ -96,11 +96,11 @@ function renderLatestMoviesSection(movies) {
                             <a href="${linkUrl}"
                                 class="group relative block rounded-xl overflow-hidden hover:opacity-90 transition-all duration-300 ${hiddenUI.containerClass}">
                                 <div class="aspect-[2/3] w-full overflow-hidden relative">
-                                    <img alt="${movie.name}"
-                                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${hiddenUI.imgClass}"
-                                        src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url, 350, 75) : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`}"
-                                        onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'"
-                                        loading="lazy" />
+                                            <img alt="${movie.name}"
+                                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${hiddenUI.imgClass}"
+                                                data-src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url, 350, 75) : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`}"
+                                                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 3'%3E%3C/svg%3E"
+                                                onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
                                     ${hiddenUI.badge}
                                     ${!hiddenUI.badge ? `
                                     <div class="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-2 py-0.5 rounded">
@@ -215,9 +215,9 @@ function renderAllSections(sections) {
                                     <div class="aspect-[2/3] w-full overflow-hidden relative">
                                         <img alt="${movie.name}"
                                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${hiddenUI.imgClass}"
-                                            src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url, 350, 75) : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`}"
-                                            onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'"
-                                            loading="lazy" />
+                                            data-src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url, 350, 75) : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`}"
+                                            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 3'%3E%3C/svg%3E"
+                                            onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
                                         ${hiddenUI.badge}
                                         ${!hiddenUI.badge ? `
                                         <div class="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-2 py-0.5 rounded">

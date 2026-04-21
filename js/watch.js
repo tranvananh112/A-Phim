@@ -149,7 +149,7 @@ function initializePlayer(episode) {
             class="w-full h-full bg-black" 
             controls 
             controlsList="nodownload"
-            poster="${movieAPI.getImageURL(currentMovie.thumb_url)}">
+            poster="${movieAPI.getImageURL(currentMovie.thumb_url, 1200, 90, true)}">
             Trình duyệt của bạn không hỗ trợ video.
         </video>
     `;
