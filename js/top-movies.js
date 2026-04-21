@@ -48,24 +48,28 @@ function renderTopMovies(movies) {
         const posterClass = isTop3 ? 'poster-top-glow' : 'border border-slate-800';
         const titleClass = isTop3 ? 'text-primary drop-shadow-[0_0_2px_rgba(255,215,0,0.5)]' : 'group-hover:text-primary';
 
+        const hiddenUI = window.getHiddenMovieOverlay ? window.getHiddenMovieOverlay(movie.slug) : { badge: '', imgClass: '', containerClass: '' };
+        
         return `
-            <div class="flex-none ${cardWidth} group snap-start relative transform hover:-translate-y-2 transition-transform duration-300">
+            <div class="flex-none ${cardWidth} group snap-start relative transform hover:-translate-y-2 transition-transform duration-300 ${hiddenUI.containerClass}">
                 <a href="${linkUrl}">
                     <div class="relative aspect-[2/3] overflow-hidden rounded-xl mb-4 cursor-pointer ${posterClass}">
                         <img alt="${movie.name}" 
-                            class="w-full h-full object-cover" 
+                            class="w-full h-full object-cover ${hiddenUI.imgClass}" 
                             src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
                             onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
                         <div class="absolute inset-0 poster-overlay"></div>
                         
+                        ${hiddenUI.badge}
+                        
                         <!-- Top Badge -->
-                        <div class="absolute top-0 right-0 ${isTop3 ? 'bg-primary' : 'bg-primary/80'} text-black font-black px-3 py-1 rounded-bl-xl text-base shadow-lg">
+                        <div class="absolute top-0 right-0 ${isTop3 ? 'bg-primary' : 'bg-primary/80'} text-black font-black px-3 py-1 rounded-bl-xl text-base shadow-lg ${hiddenUI.badge ? 'opacity-30' : ''}">
                             TOP ${rank}
                         </div>
                         
                         <!-- Episode Info -->
                         <div class="absolute bottom-3 left-3 flex gap-2">
-                            ${movie.quality ? `
+                            ${movie.quality && !hiddenUI.badge ? `
                             <span class="bg-black/60 backdrop-blur-md px-2 py-0.5 rounded text-[10px] font-bold border ${isTop3 ? 'border-primary/50 text-primary' : 'border-white/10'} uppercase">
                                 ${movie.quality}
                             </span>` : ''}

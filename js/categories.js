@@ -122,21 +122,24 @@ function renderMovies(movies) {
         const posterUrl = `https://img.ophim.live/uploads/movies/${movie.poster_url}`;
         const quality = movie.quality || 'HD';
         const year = movie.year || '';
+        const hiddenUI = window.getHiddenMovieOverlay ? window.getHiddenMovieOverlay(movie.slug) : { badge: '', imgClass: '', containerClass: '' };
 
         return `
             <a href="movie-detail.html?slug=${movie.slug}" 
-               class="group relative block rounded-lg overflow-hidden bg-surface-dark hover:scale-105 transition-transform duration-300">
+               class="group relative block rounded-lg overflow-hidden bg-surface-dark hover:scale-105 transition-transform duration-300 ${hiddenUI.containerClass}">
                 <div class="relative aspect-[2/3]">
                     <img src="${posterUrl}" 
                          alt="${movie.name}"
-                         class="w-full h-full object-cover"
+                         class="w-full h-full object-cover ${hiddenUI.imgClass}"
                          loading="lazy"
                          onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'">
                     
+                    ${hiddenUI.badge}
                     <!-- Quality Badge -->
+                    ${!hiddenUI.badge ? `
                     <div class="absolute top-2 left-2 bg-primary text-black text-xs font-bold px-2 py-1 rounded">
                         ${quality}
-                    </div>
+                    </div>` : ''}
                     
                     <!-- Year Badge -->
                     ${year ? `<div class="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">${year}</div>` : ''}
@@ -316,3 +319,11 @@ function renderCategories(categories) {
 
     container.innerHTML = html;
 }
+
+// Re-render when hidden movies are synced from backend to ensure badges appear correctly
+window.addEventListener('hiddenMoviesSynced', () => {
+    console.log('Hidden movies synced, re-rendering categories...');
+    if (currentCategory) {
+        loadCategoryMovies(currentCategory, currentPage);
+    }
+});

@@ -1,31 +1,22 @@
 /* Navigation Smooth Performance Optimization */
 
-/* Force GPU acceleration for navigation */
+/* Avoid forcing GPU acceleration on navigation as it conflicts with backdrop-filter causing white flashes */
 nav {
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    perspective: 1000px;
-    will-change: transform;
+    /* Removed will-change to prevent premature layer allocation causing white flash on load */
 }
 
 /* Optimize navigation container */
 nav .container {
-    transform: translateZ(0);
 }
 
 /* Smooth dropdown transitions with GPU acceleration */
 .nav-item,
 .relative.group button {
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    will-change: color, background-color;
+    /* Removed translateZ(0) to prevent layout artifacts and white streak on load */
 }
 
 /* Optimize dropdown containers */
 .relative.group>div[class*="absolute"] {
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    will-change: opacity, visibility, transform;
     /* Prevent layout shift */
     pointer-events: none;
     /* Remove gap and add padding instead for continuous hover area */
@@ -63,9 +54,6 @@ nav .container {
 /* Optimize dropdown content rendering */
 .relative.group>div[class*="absolute"] a,
 .relative.group>div[class*="absolute"] .block {
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    will-change: color, background-color;
 }
 
 /* Smooth hover effects */
@@ -85,9 +73,6 @@ nav .container {
 
 /* Optimize icon rotations */
 .material-icons-round {
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    will-change: transform;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -99,8 +84,7 @@ nav .container {
 
 /* Optimize pill container */
 .bg-white\/5.backdrop-blur-md.rounded-full {
-    transform: translateZ(0);
-    backface-visibility: hidden;
+    /* Removed to prevent white flash artifact on load */
     isolation: isolate;
 }
 
@@ -108,19 +92,16 @@ nav .container {
 .backdrop-blur-md {
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
-    transform: translateZ(0);
+    /* Removed to prevent white flash artifact on load */
 }
 
 /* Prevent dropdown flicker */
 .relative.group>div[class*="absolute"] {
-    transform: translate3d(0, 0, 0);
-    -webkit-transform: translate3d(0, 0, 0);
+    -webkit-
 }
 
 /* Optimize grid layouts in dropdowns */
 .grid {
-    transform: translateZ(0);
-    backface-visibility: hidden;
 }
 
 /* Smooth border transitions */
@@ -131,8 +112,6 @@ nav .container {
 
 /* Optimize shadow rendering */
 .shadow-2xl {
-    transform: translateZ(0);
-    backface-visibility: hidden;
 }
 
 /* Prevent reflow on hover */
@@ -164,28 +143,20 @@ nav .container {
 /* Prevent dropdown content from causing reflow */
 #categoryDropdown {
     min-height: 100px;
-    transform: translateZ(0);
-    backface-visibility: hidden;
 }
 
 /* Optimize mobile menu button */
 #mobileMenuBtn {
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    will-change: transform;
 }
 
 /* Smooth mobile menu transitions */
 #mobileMenu {
-    transform: translateZ(0);
-    backface-visibility: hidden;
     transition: opacity 0.2s ease, max-height 0.3s ease;
 }
 
 /* Performance optimization for fixed navigation */
 nav.fixed {
-    transform: translate3d(0, 0, 0);
-    -webkit-transform: translate3d(0, 0, 0);
+    -webkit-
 }
 
 /* Reduce paint areas */
@@ -198,7 +169,6 @@ nav.fixed {
 
 /* Prevent unnecessary repaints */
 .relative.group>div[class*="absolute"]>div {
-    transform: translateZ(0);
 }
 
 /* Smooth scale transitions for hover effects */
@@ -209,7 +179,6 @@ nav.fixed {
 /* Optimize border rendering */
 .border-primary,
 .border-white\/10 {
-    transform: translateZ(0);
 }
 
 /* Prevent text selection during hover */
@@ -224,7 +193,6 @@ nav.fixed {
 .rounded-full,
 .rounded-xl,
 .rounded-lg {
-    transform: translateZ(0);
 }
 
 /* Smooth visibility transitions */
@@ -239,8 +207,6 @@ nav.fixed {
 
 /* Optimize overflow handling */
 .overflow-hidden {
-    transform: translateZ(0);
-    backface-visibility: hidden;
 }
 
 /* Optimize z-index stacking */

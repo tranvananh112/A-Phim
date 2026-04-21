@@ -4,7 +4,7 @@ const API_URL = window.location.hostname === 'localhost' || window.location.host
     ? 'http://localhost:5000/api'
     : 'https://a-phim-production-c87b.up.railway.app/api';
 let currentPage = 1;
-let itemsPerPage = 10;
+let itemsPerPage = 50;
 let allUsers = [];
 let filteredUsers = [];
 let selectedUsers = [];
@@ -166,6 +166,7 @@ async function loadUsers(silent = false) {
             }));
 
             filteredUsers = [...allUsers];
+            updateStats();
             renderUsers();
 
             const message = `✅ Đã tải ${allUsers.length} người dùng từ MongoDB`;
@@ -188,8 +189,8 @@ async function loadUsers(silent = false) {
             tbody.innerHTML = `
                 <tr>
                     <td colspan="8" class="p-8 text-center">
-                        <div class="text-red-400 mb-4">
-                            <span class="material-icons-outlined text-4xl">error</span>
+                        <div class="text-danger mb-4">
+                            <i data-lucide="alert-circle" style="width: 2.5rem; height: 2.5rem;"></i>
                         </div>
                         <p class="text-white font-semibold mb-2">Không thể tải dữ liệu từ MongoDB</p>
                         <p class="text-gray-400 text-sm mb-4">${error.message}</p>
@@ -352,17 +353,17 @@ function renderUsers() {
                 <td class="p-4">${statusBadge}</td>
                 <td class="p-4 text-right">
                     <div class="flex items-center justify-end gap-2">
-                        <button onclick="viewUserDetail('${user.id}')" class="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors" title="Xem chi tiết">
-                            <span class="material-icons-outlined text-lg">visibility</span>
+                        <button onclick="viewUserDetail('${user.id}')" class="btn btn-secondary btn-icon btn-sm" title="Xem chi tiết">
+                            <i data-lucide="eye"></i>
                         </button>
-                        <button onclick="toggleUserStatus('${user.id}')" class="p-2 ${user.status === 'active' ? 'text-red-400 hover:bg-red-500/10' : 'text-green-400 hover:bg-green-500/10'} hover:text-white rounded-lg transition-colors" title="${user.status === 'active' ? 'Khóa tài khoản' : 'Mở khóa'}">
-                            <span class="material-icons-outlined text-lg">${user.status === 'active' ? 'block' : 'check_circle'}</span>
+                        <button onclick="toggleUserStatus('${user.id}')" class="btn btn-icon btn-sm ${user.status === 'active' ? 'btn-danger' : 'btn-success'}" title="${user.status === 'active' ? 'Khóa tài khoản' : 'Mở khóa'}">
+                            <i data-lucide="${user.status === 'active' ? 'ban' : 'check-circle'}"></i>
                         </button>
-                        <button onclick="sendNotificationToUser('${user.id}')" class="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors" title="Gửi thông báo">
-                            <span class="material-icons-outlined text-lg">notifications</span>
+                        <button onclick="sendNotificationToUser('${user.id}')" class="btn btn-secondary btn-icon btn-sm" title="Gửi thông báo">
+                            <i data-lucide="bell"></i>
                         </button>
-                        <button onclick="deleteUser('${user.id}')" class="p-2 text-gray-400 hover:text-white hover:bg-red-500/20 rounded-lg transition-colors" title="Xóa tài khoản">
-                            <span class="material-icons-outlined text-lg hover:text-red-500">delete</span>
+                        <button onclick="deleteUser('${user.id}')" class="btn btn-secondary btn-sm btn-icon hover:bg-danger hover:text-white" title="Xóa tài khoản">
+                            <i data-lucide="trash-2"></i>
                         </button>
                     </div>
                 </td>
@@ -444,14 +445,14 @@ function renderPagination() {
     let html = '';
 
     if (currentPage > 1) {
-        html += `<button onclick="goToPage(${currentPage - 1})" class="px-3 py-1.5 bg-white/5 text-gray-300 rounded-lg hover:bg-white/10 transition-colors">
-            <span class="material-icons-outlined text-sm">chevron_left</span>
+        html += `<button onclick="goToPage(${currentPage - 1})" class="page-btn">
+            <i data-lucide="chevron-left" style="width: 1.25rem; height: 1.25rem;"></i>
         </button>`;
     }
 
     for (let i = 1; i <= totalPages; i++) {
         if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-            html += `<button onclick="goToPage(${i})" class="px-3 py-1.5 ${i === currentPage ? 'bg-primary text-black font-bold' : 'bg-white/5 text-gray-300'} rounded-lg hover:bg-primary/80 transition-colors">
+            html += `<button onclick="goToPage(${i})" class="page-btn ${i === currentPage ? 'active' : ''}">
                 ${i}
             </button>`;
         } else if (i === currentPage - 2 || i === currentPage + 2) {
@@ -460,8 +461,8 @@ function renderPagination() {
     }
 
     if (currentPage < totalPages) {
-        html += `<button onclick="goToPage(${currentPage + 1})" class="px-3 py-1.5 bg-white/5 text-gray-300 rounded-lg hover:bg-white/10 transition-colors">
-            <span class="material-icons-outlined text-sm">chevron_right</span>
+        html += `<button onclick="goToPage(${currentPage + 1})" class="page-btn">
+            <i data-lucide="chevron-right" style="width: 1.25rem; height: 1.25rem;"></i>
         </button>`;
     }
 
@@ -486,53 +487,55 @@ function viewUserDetail(userId) {
     if (!user) return;
 
     showModal(`
-        <div class="bg-surface-dark border border-white/10 rounded-2xl p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-start justify-between mb-6">
-                <div class="flex items-center gap-4">
-                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-2xl">
+        <div class="modal-box modal-box-lg">
+            <div class="modal-header">
+                <h3>Chi tiết người dùng</h3>
+                <button onclick="closeModal()" class="modal-close"><i data-lucide="x"></i></button>
+            </div>
+            
+            <div class="modal-body">
+                <div style="display: flex; align-items: start; gap: 16px; margin-bottom: 24px;">
+                    <div style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 24px; flex-shrink: 0;">
                         ${user.name.split(' ').map(n => n[0]).join('').substring(0, 2)}
                     </div>
                     <div>
-                        <h2 class="text-2xl font-bold text-white">${user.name}</h2>
-                        <p class="text-gray-400">${user.email}</p>
-                        <p class="text-gray-400 text-sm">${user.phone || 'Chưa có SĐT'}</p>
+                        <h2 style="font-size: 24px; font-weight: bold; color: var(--text-primary); margin:0;">${user.name}</h2>
+                        <p style="color: var(--text-muted); margin: 4px 0;">${user.email}</p>
+                        <p style="font-size: 14px; color: var(--text-muted); margin:0;">${user.phone || 'Chưa có SĐT'}</p>
                     </div>
                 </div>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-white">
-                    <span class="material-icons-outlined">close</span>
-                </button>
-            </div>
-            
-            <div class="grid grid-cols-2 gap-4 mb-6">
-                <div class="bg-white/5 rounded-lg p-4">
-                    <p class="text-gray-400 text-sm mb-1">Gói dịch vụ</p>
-                    <p class="text-white font-bold">${user.subscription.plan}</p>
-                </div>
-                <div class="bg-white/5 rounded-lg p-4">
-                    <p class="text-gray-400 text-sm mb-1">Trạng thái</p>
-                    <p class="text-white font-bold">${user.status === 'active' ? 'Hoạt động' : 'Bị khóa'}</p>
-                </div>
-                <div class="bg-white/5 rounded-lg p-4">
-                    <p class="text-gray-400 text-sm mb-1">Ngày đăng ký</p>
-                    <p class="text-white font-bold">${formatDate(user.createdAt)}</p>
-                </div>
-                <div class="bg-white/5 rounded-lg p-4">
-                    <p class="text-gray-400 text-sm mb-1">Lần cuối hoạt động</p>
-                    <p class="text-white font-bold">${formatRelativeTime(user.lastActive)}</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+                    <div style="background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 16px;">
+                        <p style="color: var(--text-muted); font-size: 12px; margin: 0 0 4px 0;">Gói dịch vụ</p>
+                        <p style="color: var(--text-primary); font-weight: bold; margin:0;">${user.subscription.plan}</p>
+                    </div>
+                    <div style="background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 16px;">
+                        <p style="color: var(--text-muted); font-size: 12px; margin: 0 0 4px 0;">Trạng thái</p>
+                        <p style="color: var(--text-primary); font-weight: bold; margin:0;">${user.status === 'active' ? 'Hoạt động' : 'Bị khóa'}</p>
+                    </div>
+                    <div style="background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 16px;">
+                        <p style="color: var(--text-muted); font-size: 12px; margin: 0 0 4px 0;">Ngày đăng ký</p>
+                        <p style="color: var(--text-primary); font-weight: bold; margin:0;">${formatDate(user.createdAt)}</p>
+                    </div>
+                    <div style="background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 16px;">
+                        <p style="color: var(--text-muted); font-size: 12px; margin: 0 0 4px 0;">Lần cuối hoạt động</p>
+                        <p style="color: var(--text-primary); font-weight: bold; margin:0;">${formatRelativeTime(user.lastActive)}</p>
+                    </div>
                 </div>
             </div>
-            
-            <div class="flex gap-3 mt-6">
-                <button onclick="toggleUserStatus('${userId}')" class="flex-1 py-2.5 ${user.status === 'active' ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} text-white font-semibold rounded-lg transition-colors">
+
+            <div class="modal-footer" style="flex-wrap: wrap;">
+                <button onclick="toggleUserStatus('${userId}')" class="btn ${user.status === 'active' ? 'btn-danger' : 'btn-success'}">
                     ${user.status === 'active' ? 'Khóa tài khoản' : 'Mở khóa tài khoản'}
                 </button>
-                <button onclick="sendNotificationToUser('${userId}')" class="flex-1 py-2.5 bg-primary text-black font-semibold rounded-lg hover:bg-primary/90 transition-colors">
+                <button onclick="sendNotificationToUser('${userId}')" class="btn btn-primary">
                     Gửi thông báo
                 </button>
+                <button onclick="deleteUser('${userId}')" class="btn btn-secondary" style="border-color: var(--danger); color: var(--danger); width: 100%; margin-top: 8px;">
+                    Xóa vĩnh viễn tài khoản
+                </button>
             </div>
-            <button onclick="deleteUser('${userId}')" class="w-full mt-3 py-2.5 bg-red-600/20 text-red-500 hover:bg-red-600 hover:text-white font-semibold rounded-lg transition-colors border border-red-500/50 hover:border-transparent">
-                Xóa vĩnh viễn tài khoản
-            </button>
         </div>
     `);
 }
@@ -655,27 +658,27 @@ function sendNotificationToUser(userId) {
     closeModal();
 
     showModal(`
-        <div class="bg-surface-dark border border-white/10 rounded-2xl p-8 max-w-md w-full mx-4">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold text-white">Gửi thông báo</h2>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-white">
-                    <span class="material-icons-outlined">close</span>
-                </button>
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Gửi thông báo</h3>
+                <button onclick="closeModal()" class="modal-close"><i data-lucide="x"></i></button>
             </div>
             
-            <p class="text-gray-400 mb-4">Gửi đến: <span class="text-white font-semibold">${user.name}</span></p>
-            
             <form onsubmit="sendNotification(event, '${userId}')">
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Tiêu đề</label>
-                        <input type="text" id="notifTitle" required class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:ring-2 focus:ring-primary" placeholder="Nhập tiêu đề..." />
+                <div class="modal-body">
+                    <p style="color: var(--text-muted); margin-bottom: 16px;">Gửi đến: <span style="color: var(--text-primary); font-weight: bold;">${user.name}</span></p>
+                    
+                    <div style="margin-bottom: 16px;">
+                        <label class="form-label" style="display:block; margin-bottom: 8px;">Tiêu đề</label>
+                        <input type="text" id="notifTitle" required class="form-control-dark" placeholder="Nhập tiêu đề..." />
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Nội dung</label>
-                        <textarea id="notifMessage" required rows="4" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:ring-2 focus:ring-primary" placeholder="Nhập nội dung thông báo..."></textarea>
+                        <label class="form-label" style="display:block; margin-bottom: 8px;">Nội dung</label>
+                        <textarea id="notifMessage" required rows="4" class="form-control-dark" placeholder="Nhập nội dung thông báo..."></textarea>
                     </div>
-                    <button type="submit" class="w-full py-2.5 bg-primary text-black font-semibold rounded-lg hover:bg-primary/90 transition-colors">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
                         Gửi thông báo
                     </button>
                 </div>
@@ -715,9 +718,12 @@ function sendNotification(event, userId) {
 function showModal(html) {
     const modal = document.createElement('div');
     modal.id = 'modal';
-    modal.className = 'fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm';
+    modal.className = 'modal-overlay show';
     modal.innerHTML = html;
     document.body.appendChild(modal);
+    if (window.lucide) {
+        lucide.createIcons();
+    }
 }
 
 // Close modal
@@ -740,6 +746,21 @@ function showToast(message, type = 'info') {
     setTimeout(() => {
         toast.remove();
     }, 3000);
+}
+
+// Update stat cards
+function updateStats() {
+    const el = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+    
+    const total = allUsers.length;
+    const free = allUsers.filter(u => !u.subscription || !u.subscription.plan || u.subscription.plan.toUpperCase() === 'FREE').length;
+    const premium = allUsers.filter(u => u.subscription && (u.subscription.plan.toUpperCase() === 'PREMIUM' || u.subscription.plan.toUpperCase() === 'FAMILY')).length;
+    const blocked = allUsers.filter(u => u.status === 'blocked').length;
+
+    el('statTotalUsers', total);
+    el('statFreeUsers', free);
+    el('statPremiumUsers', premium);
+    el('statBlockedUsers', blocked);
 }
 
 // Logout

@@ -79,141 +79,134 @@
         return null;
     }
 
-    // ── FIREBASE SERVICE ──────────────────────────────────────────────
-    class FirebaseComments {
+    // ── API SERVICE (Replaced Firebase) ──────────────────────────────────────────────
+    const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:5000/api'
+        : 'https://a-phim-production-c87b.up.railway.app/api';
+
+    function getUserToken() {
+        if (typeof STORAGE_KEYS !== 'undefined') {
+            return localStorage.getItem(STORAGE_KEYS.TOKEN) || sessionStorage.getItem(STORAGE_KEYS.TOKEN);
+        }
+        return localStorage.getItem('A Phim_token') || sessionStorage.getItem('A Phim_token');
+    }
+
+    class APIComments {
         constructor() {
-            this.app = null; this.db = null;
-            this.ready = false; this._onReady = [];
-            this._unsub = null;
+            this.ready = true;
+            this._onReady = [];
             this.currentSlug = null;
-            this._init();
+            this.pollInterval = null;
         }
-        _init() {
-            const wait = () => {
-                if (typeof firebase === 'undefined') { setTimeout(wait, 300); return; }
-                try {
-                    const ex = firebase.apps.find(a => a.name === COMMENTS_APP_NAME);
-                    this.app = ex || firebase.initializeApp(COMMENTS_CONFIG, COMMENTS_APP_NAME);
-                    this.db  = this.app.firestore();
-                    this.ready = true;
-                    this._onReady.forEach(fn => fn());
-                    this._onReady = [];
-                } catch (e) { console.error('[APComments]', e); }
-            };
-            wait();
+
+        onReady(fn) { fn(); }
+
+        async getMovieIdFromSlug(slug) {
+            // Because the Comment API needs movieId, but we only have slug from URL.
+            // Let's modify the addComment backend later, or fetch movie details first.
+            // For now, we will pass slug only, our backend handles it if we modify it!
+            return slug;
         }
-        onReady(fn) { this.ready ? fn() : this._onReady.push(fn); }
-        
-        _col(slug) { return this.db.collection('comments').doc(slug).collection('items'); }
 
         async add(slug, { name, text, isSpoiler, parentId, userEmail, avatarUrl }) {
-            if (!this.db || !slug) return { ok: false, msg: 'Lỗi kết nối' };
             text = (text || '').trim();
-            name = (name || 'Người dùng').trim() || 'Người dùng';
             if (text.length < 2)    return { ok: false, msg: 'Bình luận quá ngắn!' };
             if (text.length > 1000) return { ok: false, msg: 'Tối đa 1000 ký tự!' };
             
+            const token = getUserToken();
+            if(!token) return { ok: false, msg: 'Vui lòng đăng nhập để bình luận!' };
+
             try {
-                await this._col(slug).add({
-                    name, text,
-                    email    : userEmail || '',
-                    color    : getAvatarColor(name || userEmail || 'U'),
-                    avatarUrl: avatarUrl || '',
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    isSpoiler: !!isSpoiler,
-                    parentId : parentId || null,
-                    episodeInfo: getEpisodeInfo(),
-                    likes    : 0,
-                    likedBy  : [],
-                    dislikedBy: []
+                // Fetch movie info to get MovieId based on slug (The backend requires movieId)
+                // We'll just pass slug to backend, and let backend resolve it to ID
+                // Alternatively, the website usually stores window.currentMovie.
+                let movieId = window.currentMovie ? window.currentMovie._id : slug;
+
+                const res = await fetch(`${API_URL}/comments`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        movieId: movieId,
+                        movieSlug: slug,
+                        content: text,
+                        avatar: avatarUrl
+                    })
                 });
-                return { ok: true };
+
+                const data = await res.json();
+                if (data.success) {
+                    // Trigger a re-fetch manually
+                    if(this._lastCb) this.fetchData(slug, this._lastCb);
+                    return { ok: true };
+                }
+                return { ok: false, msg: data.message || 'Gửi thất bại, thử lại!' };
             } catch (e) {
-                return { ok: false, msg: 'Gửi thất bại, thử lại!' };
+                console.error(e);
+                return { ok: false, msg: 'Lỗi mạng, thử lại!' };
             }
         }
 
         async vote(slug, commentId, type, userEmail) {
-            if (!this.db || !userEmail) return;
-            const docRef = this._col(slug).doc(commentId);
-            const { arrayUnion, arrayRemove } = firebase.firestore.FieldValue;
-            
-            try {
-                if (type === 'up') {
-                    await docRef.update({
-                        likedBy: arrayUnion(userEmail),
-                        dislikedBy: arrayRemove(userEmail)
-                    });
-                } else if (type === 'down') {
-                    await docRef.update({
-                        dislikedBy: arrayUnion(userEmail),
-                        likedBy: arrayRemove(userEmail)
-                    });
-                } else if (type === 'removeUp') {
-                    await docRef.update({ likedBy: arrayRemove(userEmail) });
-                } else if (type === 'removeDown') {
-                    await docRef.update({ dislikedBy: arrayRemove(userEmail) });
-                }
-            } catch (e) {}
+            // To be implemented in backend, ignoring gracefully for now
         }
 
         async toggleSpoiler(slug, commentId, currentState) {
-            if (!this.db) return;
+            // To be implemented in backend, ignoring gracefully for now
+        }
+
+        async fetchData(slug, cb) {
             try {
-                await this._col(slug).doc(commentId).update({
-                    isSpoiler: !currentState
-                });
-            } catch (e) {}
+                const res = await fetch(`${API_URL}/comments/movie/${slug}`);
+                const data = await res.json();
+                
+                if(data.success) {
+                    const rawList = data.data.map(d => ({
+                        id: d._id,
+                        name: d.user ? d.user.name : 'Khách',
+                        email: d.user ? d.user.email : '',
+                        text: d.content,
+                        color: getAvatarColor(d.user ? d.user.name : 'U'),
+                        avatarUrl: d.user ? (d.user.avatarUrl || d.user.avatar) : '',
+                        timestamp: new Date(d.createdAt),
+                        isSpoiler: d.isSpoiler || false,
+                        parentId: null, // Since we don't have replies backend logic fully implemented yet
+                        episodeInfo: '',
+                        likedBy: d.likes || [],
+                        dislikedBy: []
+                    }));
+                    
+                    // In the future: handle parent/children mapping here
+                    cb({ comments: rawList, count: data.count || data.total || rawList.length });
+                }
+            } catch(e) {
+                console.error("Lỗi fetch comment", e);
+                cb({ comments: [], count: 0 });
+            }
         }
 
         listen(slug, cb) {
-            if (!this.db) { cb({ comments: [], count: 0 }); return; }
             this.currentSlug = slug;
-            if (this._unsub) this._unsub();
+            this._lastCb = cb;
+            this.fetchData(slug, cb);
             
-            this._unsub = this._col(slug)
-                .orderBy('timestamp', 'asc').limit(COMMENT_LIMIT)
-                .onSnapshot(snap => {
-                    const rawList = [];
-                    snap.forEach(doc => {
-                        const d = doc.data();
-                        rawList.push({ 
-                            id: doc.id, 
-                            name: d.name || 'Khách', 
-                            email: d.email || '',
-                            text: d.text || '',
-                            color: d.color || '#f59e0b', 
-                            avatarUrl: d.avatarUrl || '',
-                            timestamp: d.timestamp,
-                            isSpoiler: !!d.isSpoiler,
-                            parentId: d.parentId || null,
-                            episodeInfo: d.episodeInfo || '',
-                            likedBy: d.likedBy || [],
-                            dislikedBy: d.dislikedBy || []
-                        });
-                    });
-                    
-                    const parents = [];
-                    const childrenMap = {};
-                    
-                    rawList.forEach(c => {
-                        if (c.parentId) {
-                            if (!childrenMap[c.parentId]) childrenMap[c.parentId] = [];
-                            childrenMap[c.parentId].push(c);
-                        } else {
-                            parents.unshift(c); 
-                        }
-                    });
-                    
-                    parents.forEach(p => { p.replies = childrenMap[p.id] || []; });
-                    cb({ comments: parents, count: snap.size });
-                }, err => { cb({ comments:[], count:0 }); });
+            // Poll every 10 seconds
+            if(this.pollInterval) clearInterval(this.pollInterval);
+            this.pollInterval = setInterval(() => this.fetchData(slug, cb), 10000);
         }
-        stopListen() { if (this._unsub) { this._unsub(); this._unsub = null; } }
+
+        stopListen() { 
+            if(this.pollInterval) {
+                clearInterval(this.pollInterval);
+                this.pollInterval = null;
+            }
+        }
     }
 
     if(!window.firebaseComments) {
-        window.firebaseComments = new FirebaseComments();
+        window.firebaseComments = new APIComments();
     }
 
     // ════════════════════════════════════════════════════════════════════
@@ -329,7 +322,7 @@
             font-size: 13px; cursor: pointer; transition: background 0.2s;
         }
         .ap-btn-ava:hover { background: rgba(255,255,255,0.1); }
-        .ap-ava-preview { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; }
+        .ap-ava-preview { width: 20px !important; height: 20px !important; border-radius: 50% !important; object-fit: cover !important; }
         .ap-ava-dropdown {
             position: absolute; bottom: 120%; right: 0; background: #282a3a;
             border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px;
@@ -339,8 +332,9 @@
         }
         .ap-ava-dropdown.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
         .ap-ava-option {
-            width: 56px; height: 56px; border-radius: 50%; object-fit: cover; cursor: pointer;
+            width: 56px !important; height: 56px !important; border-radius: 50% !important; object-fit: cover !important; cursor: pointer;
             border: 2px solid transparent; transition: border-color 0.2s, transform 0.2s;
+            display: block !important;
         }
         .ap-ava-option:hover { transform: scale(1.1); }
         .ap-ava-option.selected { border-color: #fcd576; transform: scale(1.1); }
@@ -465,7 +459,7 @@
         }
         
         const color   = getAvatarColor(user.name || user.email || 'U');
-        const initial = sanitize((user.name || user.email || 'U').charAt(0).toUpperCase());
+        let initial = (user.name || user.email || 'U').charAt(0).toUpperCase();
         const displayName = sanitize(user.name || user.email || 'Người dùng');
         // Get per-user avatar: use avatarService if available, else legacy key
         const userId = user._id || user.id || user.email;
@@ -474,7 +468,7 @@
                       || localStorage.getItem('ap_chosen_avatar')
                       || '';
 
-        const avaHtml = savedAva ? `<img src="${savedAva}" class="ap-form-user-ava" id="ap-user-ava-${pid}" style="object-fit:cover;">` : `<div class="ap-form-user-ava" id="ap-user-ava-${pid}" style="background:${color}">${initial}</div>`;
+        const avaHtml = savedAva ? `<div class="ap-form-user-ava" id="ap-user-ava-${pid}"><img src="${savedAva}" style="width:100% !important; height:100% !important; border-radius:50% !important; object-fit:cover !important; display:block !important;"></div>` : `<div class="ap-form-user-ava" id="ap-user-ava-${pid}" style="background:${color}">${initial}</div>`;
         const previewHtml = savedAva ? `<img src="${savedAva}" class="ap-ava-preview" id="ap-preview-${pid}">` : `<span class="material-icons-round" style="font-size:18px" id="ap-preview-${pid}">account_circle</span>`;
 
         let optionsHtml = '';
@@ -538,7 +532,7 @@
 
         // Like count
         const likeCountStr = c.likedBy.length > 0 ? c.likedBy.length : '';
-        const userAva = c.avatarUrl ? `<img src="${sanitize(c.avatarUrl)}" class="ap-cmt-avatar" style="object-fit:cover;">` : `<div class="ap-cmt-avatar" style="background:${sanitize(c.color)}">${initial}</div>`;
+        const userAva = c.avatarUrl ? `<div class="ap-cmt-avatar"><img src="${sanitize(c.avatarUrl)}" style="width:100% !important; height:100% !important; border-radius:50% !important; object-fit:cover !important; display:block !important;"></div>` : `<div class="ap-cmt-avatar" style="background:${sanitize(c.color)}">${initial}</div>`;
 
         return `
         <div class="ap-cmt-item" data-id="${c.id}">

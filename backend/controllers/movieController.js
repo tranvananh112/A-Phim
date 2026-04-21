@@ -1,4 +1,5 @@
 const Movie = require('../models/Movie');
+const HiddenMovie = require('../models/HiddenMovie');
 const ophimService = require('../services/ophimService');
 
 // @desc    Get all movies
@@ -391,6 +392,57 @@ exports.getStreamURL = async (req, res) => {
                 subtitles: [] // Add subtitles if available
             }
         });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// @desc    Get all hidden movies slugs
+// @route   GET /api/movies/hidden/list
+// @access  Public
+exports.getHiddenMovies = async (req, res) => {
+    try {
+        const hiddenList = await HiddenMovie.find().select('slug -_id');
+        const slugs = hiddenList.map(item => item.slug);
+        
+        res.json({
+            success: true,
+            data: slugs
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// @desc    Toggle hide movie
+// @route   POST /api/movies/hidden/toggle/:slug
+// @access  Private/Admin
+exports.toggleHiddenMovie = async (req, res) => {
+    try {
+        const { slug } = req.params;
+        const exists = await HiddenMovie.findOne({ slug });
+        
+        if (exists) {
+            await HiddenMovie.findOneAndDelete({ slug });
+            res.json({
+                success: true,
+                message: 'Phim đã được hiện lại',
+                isHidden: false
+            });
+        } else {
+            await HiddenMovie.create({ slug });
+            res.json({
+                success: true,
+                message: 'Phim đã bị ẩn',
+                isHidden: true
+            });
+        }
     } catch (error) {
         res.status(500).json({
             success: false,

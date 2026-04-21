@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html class="dark" lang="vi">
 
 <head>
     <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport" />
     <title>Gói Thành Viên - A Phim</title>
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon.png">
@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="css/tailwind.min.css?v=1">
     <link rel="stylesheet" href="css/mobile-viewport-fix.css?v=5">
     <link rel="stylesheet" href="css/mobile-menu-modern.css?v=2">
-    <link rel="stylesheet" href="css/sticky-nav.css?v=5">
+    <link rel="stylesheet" href="css/sticky-nav.css?v=6">
     <link rel="stylesheet" href="css/search-icon-desktop.css?v=2">
     <link rel="stylesheet" href="css/navigation-modern.css?v=3">
     <link rel="stylesheet" href="css/navigation-pill-v2.css?v=2">
@@ -192,11 +192,8 @@
                         Gói cước
                     </a>
 
-                    <!-- Phim X (18+) -->
-                    <a href="phim-x.html"
-                        class="nav-item px-6 py-2.5 rounded-full text-sm font-bold uppercase tracking-wide transition-colors duration-200 text-red-400 hover:text-red-300">
-                        🔞 Phim X
-                    </a>
+                    <!-- Phim X (18+) - controlled by settings -->
+                    <span id="pricing-nav-phimx"></span>
                 </div>
             </div>
 
@@ -221,15 +218,6 @@
         </div>
     </nav>
 
-    <script>
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        if (mobileMenuBtn && mobileMenu) {
-            mobileMenuBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
-    </script>
 
     <main class="flex-grow pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full relative">
         <div
@@ -285,7 +273,7 @@
                 <div class="mb-4">
                     <h3 class="text-lg font-medium text-primary mb-1">Cao Cấp</h3>
                     <div class="flex items-baseline gap-1">
-                        <span class="text-3xl font-bold">69.000</span>
+                        <span class="text-3xl font-bold" id="price-premium">69.000</span>
                         <span class="text-lg font-medium text-gray-500">đ</span>
                         <span class="text-xs text-gray-500">/tháng</span>
                     </div>
@@ -309,7 +297,7 @@
                         <span>Xem trên 2 thiết bị</span>
                     </li>
                 </ul>
-                <a href="payment.html?plan=premium" class="block text-center w-full py-3 rounded-lg bg-primary text-black font-bold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">Chọn Gói Cao Cấp</a>
+                <a href="payment.html?plan=premium" data-plan="premium" class="pricing-plan-btn block text-center w-full py-3 rounded-lg bg-primary text-black font-bold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">Chọn Gói Cao Cấp</a>
             </div>
 
             <!-- Family Plan -->
@@ -322,7 +310,7 @@
                 <div class="mb-4">
                     <h3 class="text-lg font-medium text-white mb-1">Gia Đình</h3>
                     <div class="flex items-baseline gap-1">
-                        <span class="text-3xl font-bold">699.000</span>
+                        <span class="text-3xl font-bold" id="price-premium-year">699.000</span>
                         <span class="text-lg font-medium text-gray-500">đ</span>
                         <span class="text-xs text-gray-500">/năm</span>
                     </div>
@@ -345,7 +333,7 @@
                         <span>Hồ sơ trẻ em an toàn</span>
                     </li>
                 </ul>
-                <a href="payment.html?plan=family" class="block text-center w-full py-3 rounded-lg border border-white/20 font-medium hover:bg-white/10 hover:text-primary hover:border-primary transition-all">Chọn Gói Gia Đình</a>
+                <a href="payment.html?plan=family" data-plan="family" class="pricing-plan-btn block text-center w-full py-3 rounded-lg border border-white/20 font-medium hover:bg-white/10 hover:text-primary hover:border-primary transition-all">Chọn Gói Gia Đình</a>
             </div>
         </div>
     </main>
@@ -462,11 +450,97 @@
 
     <script src="js/categories-dropdown.js?v=2"></script>
     <script src="js/dropdown-hover-fix.js?v=2"></script>
-
+    <script src="js/config.js?v=3"></script>
     <script src="js/mobile-menu-modern.js?v=2"></script>
-
     <!-- Sticky Navigation -->
     <script src="js/sticky-nav.js?v=2"></script>
-</body>
+    <script src="js/nav-active-indicator.js?v=1"></script>
 
+    <script>
+    // ── Sync pricing from backend settings ──────────────────────────────────
+    (async function syncPricing() {
+        function fmtVND(num) {
+            if (!num || isNaN(num)) return null;
+            return Number(num).toLocaleString('vi-VN');
+        }
+
+        function applyPrices(payment) {
+            const premium     = fmtVND(payment?.pricePremium);
+            const premiumYear = fmtVND(payment?.pricePremiumYear);
+            if (premium)     {
+                const el = document.getElementById('price-premium');
+                if (el) el.textContent = premium;
+            }
+            if (premiumYear) {
+                const el = document.getElementById('price-premium-year');
+                if (el) el.textContent = premiumYear;
+            }
+
+            // Update PLANS in payment.js if it's loaded
+            if (typeof PLANS !== 'undefined') {
+                if (payment?.pricePremium)     PLANS.premium.amount = payment.pricePremium;
+                if (payment?.pricePremiumYear) PLANS.family.amount  = payment.pricePremiumYear;
+                // Update bank info
+                if (payment?.bankAccount && typeof PAYMENT_CONFIG !== 'undefined') {
+                    PAYMENT_CONFIG.accountNo   = payment.bankAccount;
+                    PAYMENT_CONFIG.accountName = payment.bankOwner || PAYMENT_CONFIG.accountName;
+                }
+            }
+        }
+
+        function applyPhimXNav(enablePhimX) {
+            const slot = document.getElementById('pricing-nav-phimx');
+            if (!slot) return;
+            if (enablePhimX) {
+                slot.outerHTML = `<a href="phim-x.html"
+                    class="nav-item px-6 py-2.5 rounded-full text-sm font-bold uppercase tracking-wide transition-colors duration-200 text-red-400 hover:text-red-300">
+                    🔞 Phim X</a>`;
+            }
+        }
+
+        // Check cache first for instant render
+        try {
+            const cached = JSON.parse(localStorage.getItem('cinestream_public_settings') || '{}');
+            if (cached.pricePremium) applyPrices(cached);
+            applyPhimXNav(cached.enablePhimX);
+        } catch(e) {}
+
+        // Then fetch fresh from backend
+        try {
+            const BACKEND = (typeof API_CONFIG !== 'undefined')
+                ? API_CONFIG.BACKEND_URL
+                : (location.hostname === 'localhost' ? 'http://localhost:5000/api' : 'https://a-phim-production-c87b.up.railway.app/api');
+
+            const [settingsRes, paymentRes] = await Promise.allSettled([
+                fetch(`${BACKEND}/settings/public`),
+                fetch(`${BACKEND}/settings/payment-public`)
+            ]);
+
+            // Try /settings/public first (has content & general)
+            if (settingsRes.status === 'fulfilled' && settingsRes.value.ok) {
+                const data = await settingsRes.value.json();
+                if (data?.success && data?.data) {
+                    applyPhimXNav(data.data.content?.enablePhimX);
+                }
+            }
+
+            // Try /settings/payment-public for payment data
+            if (paymentRes.status === 'fulfilled' && paymentRes.value.ok) {
+                const data = await paymentRes.value.json();
+                if (data?.success && data?.data) {
+                    applyPrices(data.data);
+                    // Cache it
+                    try {
+                        const cached = JSON.parse(localStorage.getItem('cinestream_public_settings') || '{}');
+                        Object.assign(cached, data.data);
+                        localStorage.setItem('cinestream_public_settings', JSON.stringify(cached));
+                    } catch(e) {}
+                }
+            }
+        } catch(e) {
+            console.warn('Pricing sync failed, using defaults', e);
+        }
+    })();
+    </script>
+</body>
 </html>

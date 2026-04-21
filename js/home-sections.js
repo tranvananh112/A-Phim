@@ -70,6 +70,7 @@ function renderLatestMoviesSection(movies) {
     }
 
     const movieLinks = JSON.parse(localStorage.getItem('movieLinks') || '{}');
+    const filteredMovies = movies; // Don't filter anymore, show with "Hidden" badge instead
 
     const html = `
         <section class="py-20 bg-transparent">
@@ -86,21 +87,24 @@ function renderLatestMoviesSection(movies) {
                 </div>
 
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-                    ${movies.slice(0, 18).map(movie => {
+                    ${filteredMovies.slice(0, 18).map(movie => {
+        const hiddenUI = window.getHiddenMovieOverlay ? window.getHiddenMovieOverlay(movie.slug) : { badge: '', imgClass: '', containerClass: '' };
         const hasCustomLink = !!movieLinks[movie.slug];
         const linkUrl = hasCustomLink ? `watch-simple.html?slug=${movie.slug}` : `movie-detail.html?slug=${movie.slug}`;
 
         return `
                             <a href="${linkUrl}"
-                                class="group relative block rounded-xl overflow-hidden hover:opacity-90 transition-all duration-300">
+                                class="group relative block rounded-xl overflow-hidden hover:opacity-90 transition-all duration-300 ${hiddenUI.containerClass}">
                                 <div class="aspect-[2/3] w-full overflow-hidden relative">
                                     <img alt="${movie.name}"
-                                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${hiddenUI.imgClass}"
                                         src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
                                         onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
+                                    ${hiddenUI.badge}
+                                    ${!hiddenUI.badge ? `
                                     <div class="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-2 py-0.5 rounded">
                                         ${movie.quality || 'HD'}
-                                    </div>
+                                    </div>` : ''}
                                     ${movie.episode_current ? `
                                     <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
                                         ${movie.episode_current}
@@ -202,18 +206,21 @@ function renderAllSections(sections) {
                         ${(section.items || []).slice(0, 10).map(movie => {
             const hasCustomLink = !!movieLinks[movie.slug];
             const linkUrl = hasCustomLink ? `watch-simple.html?slug=${movie.slug}` : `movie-detail.html?slug=${movie.slug}`;
+            const hiddenUI = window.getHiddenMovieOverlay ? window.getHiddenMovieOverlay(movie.slug) : { badge: '', imgClass: '', containerClass: '' };
 
             return `
                                 <a href="${linkUrl}"
-                                    class="group relative block rounded-xl overflow-hidden hover:opacity-90 transition-all duration-300">
+                                    class="group relative block rounded-xl overflow-hidden hover:opacity-90 transition-all duration-300 ${hiddenUI.containerClass}">
                                     <div class="aspect-[2/3] w-full overflow-hidden relative">
                                         <img alt="${movie.name}"
-                                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${hiddenUI.imgClass}"
                                             src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
                                             onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
+                                        ${hiddenUI.badge}
+                                        ${!hiddenUI.badge ? `
                                         <div class="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-2 py-0.5 rounded">
                                             ${movie.quality || 'HD'}
-                                        </div>
+                                        </div>` : ''}
                                         ${movie.episode_current ? `
                                         <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
                                             ${movie.episode_current}
@@ -285,18 +292,21 @@ function renderVietnameseMovies(movies) {
     grid.innerHTML = movies.map(movie => {
         const hasCustomLink = !!movieLinks[movie.slug];
         const linkUrl = hasCustomLink ? `watch-simple.html?slug=${movie.slug}` : `movie-detail.html?slug=${movie.slug}`;
+        const hiddenUI = window.getHiddenMovieOverlay ? window.getHiddenMovieOverlay(movie.slug) : { badge: '', imgClass: '', containerClass: '' };
 
         return `
         <a href="${linkUrl}"
-            class="group relative block rounded-xl overflow-hidden hover:opacity-90 transition-all duration-300 movie-card-w-sm">
+            class="group relative block rounded-xl overflow-hidden hover:opacity-90 transition-all duration-300 movie-card-w-sm ${hiddenUI.containerClass}">
             <div class="aspect-[2/3] w-full overflow-hidden relative">
                 <img alt="${movie.name}"
-                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${hiddenUI.imgClass}"
                     src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
                     onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
+                ${hiddenUI.badge}
+                ${!hiddenUI.badge ? `
                 <div class="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-2 py-0.5 rounded">
                     ${movie.quality || 'HD'}
-                </div>
+                </div>` : ''}
                 ${movie.episode_current ? `
                 <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
                     ${movie.episode_current}
@@ -332,3 +342,9 @@ if (document.readyState === 'loading') {
 } else {
     loadHomeMovies();
 }
+
+// Re-render when hidden movies are synced from backend to ensure badges appear correctly
+window.addEventListener('hiddenMoviesSynced', () => {
+    console.log('Hidden movies synced, re-rendering home sections...');
+    loadHomeMovies();
+});

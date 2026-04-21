@@ -1,5 +1,7 @@
 const User = require('../models/User');
 const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
+const socketUtil = require('../utils/socket');
 
 // @desc    Register user
 // @route   POST /api/auth/register
@@ -23,6 +25,16 @@ exports.register = async (req, res) => {
             email,
             password,
             phone
+        });
+
+        // Emit realtime event
+        socketUtil.emitEvent('new_activity', {
+            type: 'user',
+            icon: 'user-plus',
+            color: 'info',
+            message: `Người dùng mới: <strong>${user.name}</strong> vừa tham gia hệ thống`,
+            time: new Date(),
+            user: { name: user.name, email: user.email }
         });
 
         sendTokenResponse(user, 201, res);

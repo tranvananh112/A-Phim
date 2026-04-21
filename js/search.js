@@ -319,36 +319,42 @@ async function loadAllMovies() {
 function renderResults(movies) {
     const resultsGrid = document.getElementById('resultsGrid');
 
-    resultsGrid.innerHTML = movies.map(movie => `
-        <a href="movie-detail.html?slug=${movie.slug}"
-            class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300">
-            <div class="aspect-[2/3] w-full overflow-hidden relative">
-                <img alt="${movie.name}"
-                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    src="${movieAPI.getImageURL(movie.thumb_url)}"
-                    onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
-                <div class="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-2 py-0.5 rounded">
-                    ${movie.quality || 'HD'}
+    resultsGrid.innerHTML = movies.map(movie => {
+        const hiddenUI = window.getHiddenMovieOverlay ? window.getHiddenMovieOverlay(movie.slug) : { badge: '', imgClass: '', containerClass: '' };
+
+        return `
+            <a href="movie-detail.html?slug=${movie.slug}"
+                class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300 ${hiddenUI.containerClass}">
+                <div class="aspect-[2/3] w-full overflow-hidden relative">
+                    <img alt="${movie.name}"
+                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${hiddenUI.imgClass}"
+                        src="${movieAPI.getImageURL(movie.thumb_url)}"
+                        onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
+                    ${hiddenUI.badge}
+                    ${!hiddenUI.badge ? `
+                    <div class="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-2 py-0.5 rounded">
+                        ${movie.quality || 'HD'}
+                    </div>` : ''}
+                    ${movie.episode_current ? `
+                    <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                        ${movie.episode_current}
+                    </div>` : ''}
                 </div>
-                ${movie.episode_current ? `
-                <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                    ${movie.episode_current}
-                </div>` : ''}
-            </div>
-            <div class="p-4">
-                <h3 class="text-white font-semibold truncate group-hover:text-primary transition-colors">
-                    ${movie.name}
-                </h3>
-                <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
-                    <span>${movie.year || 'N/A'}</span>
-                    <span class="flex items-center gap-1 text-yellow-500 font-bold">
-                        <span class="material-icons-round text-[10px]">star</span> 
-                        ${movie.tmdb?.vote_average?.toFixed(1) || 'N/A'}
-                    </span>
+                <div class="p-4">
+                    <h3 class="text-white font-semibold truncate group-hover:text-primary transition-colors">
+                        ${movie.name}
+                    </h3>
+                    <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+                        <span>${movie.year || 'N/A'}</span>
+                        <span class="flex items-center gap-1 text-yellow-500 font-bold">
+                            <span class="material-icons-round text-[10px]">star</span> 
+                            ${movie.tmdb?.vote_average?.toFixed(1) || 'N/A'}
+                        </span>
+                    </div>
                 </div>
-            </div>
-        </a>
-    `).join('');
+            </a>
+        `;
+    }).join('');
 }
 
 // Show no results
@@ -493,3 +499,11 @@ window.goToPage = function (page) {
     performSearch();
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
+
+// Re-render when hidden movies are synced from backend to ensure badges appear correctly
+window.addEventListener('hiddenMoviesSynced', () => {
+    console.log('Hidden movies synced, re-rendering search...');
+    if (currentKeyword) {
+        performSearch();
+    }
+});

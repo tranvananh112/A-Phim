@@ -47,10 +47,25 @@ app.use(cors({
 }));
 
 // Rate limiting
-app.use('/api/', apiLimiter);
+// Exempt hidden movies list from rate limiting since it's polled every 3 seconds by clients
+app.use('/api/', (req, res, next) => {
+    if (req.path === '/movies/hidden/list') return next();
+    return apiLimiter(req, res, next);
+});
 
 // Routes
+// API Health Check
+app.get('/api/health', (req, res) => {
+    res.json({ 
+        status: 'ok', 
+        timestamp: new Date(),
+        version: '1.2.0',
+        realtime: !!socketUtil.getIO()
+    });
+});
+
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/dashboard', require('./routes/dashboard')); // Admin Dashboard stats
 app.use('/api/movies', require('./routes/movies')); // Use MongoDB version
 app.use('/api/ratings', require('./routes/ratings'));
 app.use('/api/comments', require('./routes/comments'));
@@ -61,6 +76,7 @@ app.use('/api/banners', require('./routes/banners'));
 app.use('/api/adult', require('./routes/adultContent')); // Adult content proxy
 app.use('/api/phimx-proxy', require('./routes/phimXProxy')); // Phim X Proxy to bypass ISP blocking
 app.use('/api/partner', require('./routes/partner')); // Partner DT99 session tracking
+app.use('/api/settings', require('./routes/settings')); // System settings
 
 // Health check
 app.get('/health', (req, res) => {
@@ -108,28 +124,26 @@ app.use((req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
+const http = require('http');
+const socketUtil = require('./utils/socket');
 
-const server = app.listen(PORT, () => {
+const httpServer = http.createServer(app);
+
+// Initialize Socket.io
+socketUtil.init(httpServer, {
+    origin: allowedOrigins,
+    methods: ["GET", "POST"]
+});
+
+httpServer.listen(PORT, () => {
     console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
-║   🎬 CineStream Backend API                              ║
+║   🎬 CineStream Backend API & Realtime                   ║
 ║                                                           ║
 ║   🌐 Server: http://localhost:${PORT}                     ║
-║   📊 Environment: ${process.env.NODE_ENV || 'development'}                        ║
+║   📊 Realtime: Socket.io Enabled                         ║
 ║   💾 Database: MongoDB Connected                         ║
-║                                                           ║
-║   📄 API Endpoints:                                      ║
-║   • POST   /api/auth/register                           ║
-║   • POST   /api/auth/login                              ║
-║   • GET    /api/movies                                  ║
-║   • GET    /api/movies/:slug                            ║
-║   • GET    /api/movies/search?q=keyword                 ║
-║   • POST   /api/movies/sync/:slug (Admin)              ║
-║   • GET    /api/movies/:slug/stream/:episode            ║
-║                                                           ║
-║   📚 Documentation: /api/docs                           ║
-║   ❤️  Health Check: /health                             ║
 ║                                                           ║
 ╚═══════════════════════════════════════════════════════════╝
     `);
@@ -138,7 +152,8 @@ const server = app.listen(PORT, () => {
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
     console.log(`❌ Error: ${err.message}`);
-    server.close(() => process.exit(1));
+    if (httpServer) httpServer.close(() => process.exit(1));
+    else process.exit(1);
 });
 
 module.exports = app;

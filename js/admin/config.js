@@ -1,29 +1,45 @@
 // Admin Configuration
-const ADMIN_CONFIG = {
-    ADMIN_CREDENTIALS: {
-        username: 'admin',
-        password: 'admin123' // In production, use proper authentication
-    },
-    ITEMS_PER_PAGE: 20,
-    CHART_COLORS: {
-        primary: '#197fe6',
-        success: '#10b981',
-        warning: '#f59e0b',
-        danger: '#ef4444',
-        info: '#06b6d4'
-    }
-};
+if (typeof ADMIN_CONFIG === 'undefined') {
+    window.ADMIN_CONFIG = {
+        ADMIN_CREDENTIALS: {
+            username: 'admin',
+            password: 'admin123' // In production, use proper authentication
+        },
+        ITEMS_PER_PAGE: 20,
+        CHART_COLORS: {
+            primary: '#197fe6',
+            success: '#10b981',
+            warning: '#f59e0b',
+            danger: '#ef4444',
+            info: '#06b6d4'
+        }
+    };
+} else {
+    // Merge or override specific admin fields if needed
+    Object.assign(ADMIN_CONFIG, {
+        ITEMS_PER_PAGE: 20,
+        CHART_COLORS: {
+            primary: '#197fe6',
+            success: '#10b981',
+            warning: '#f59e0b',
+            danger: '#ef4444',
+            info: '#06b6d4'
+        }
+    });
+}
 
 // Admin Storage Keys
-const ADMIN_STORAGE_KEYS = {
-    ADMIN_TOKEN: 'cinestream_admin_token',
-    MOVIES: 'cinestream_admin_movies',
-    CATEGORIES: 'cinestream_admin_categories',
-    COUNTRIES: 'cinestream_admin_countries',
-    BANNERS: 'cinestream_admin_banners',
-    SETTINGS: 'cinestream_admin_settings',
-    NOTIFICATIONS: 'cinestream_admin_notifications'
-};
+if (typeof ADMIN_STORAGE_KEYS === 'undefined') {
+    window.ADMIN_STORAGE_KEYS = {
+        ADMIN_TOKEN: 'cinestream_admin_token',
+        MOVIES: 'cinestream_admin_movies',
+        CATEGORIES: 'cinestream_admin_categories',
+        COUNTRIES: 'cinestream_admin_countries',
+        BANNERS: 'cinestream_admin_banners',
+        SETTINGS: 'cinestream_admin_settings',
+        NOTIFICATIONS: 'cinestream_admin_notifications'
+    };
+}
 
 // Initialize default data
 function initializeAdminData() {

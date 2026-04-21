@@ -255,13 +255,13 @@ function renderUsers() {
                 <td class="p-4 text-right">
                     <div class="flex items-center justify-end gap-2">
                         <button onclick="viewUserDetail('${user.id}')" class="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors" title="Xem chi tiết">
-                            <span class="material-icons-outlined text-lg">visibility</span>
+                            <i data-lucide="eye"   class="-outlined text-lg"  style="width: 1em; height: 1em;"></i>
                         </button>
                         <button onclick="toggleUserStatus('${user.id}')" class="p-2 ${user.status === 'active' ? 'text-red-400 hover:bg-red-500/10' : 'text-green-400 hover:bg-green-500/10'} hover:text-white rounded-lg transition-colors" title="${user.status === 'active' ? 'Khóa tài khoản' : 'Mở khóa'}">
-                            <span class="material-icons-outlined text-lg">${user.status === 'active' ? 'block' : 'check_circle'}</span>
+                            <i data-lucide="${user.status === 'active' ? 'block' : 'check_circle'}"   class="-outlined text-lg"  style="width: 1em; height: 1em;"></i>
                         </button>
                         <button onclick="sendNotificationToUser('${user.id}')" class="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors" title="Gửi thông báo">
-                            <span class="material-icons-outlined text-lg">notifications</span>
+                            <i data-lucide="bell"   class="-outlined text-lg"  style="width: 1em; height: 1em;"></i>
                         </button>
                     </div>
                 </td>
@@ -343,7 +343,7 @@ function renderPagination() {
     // Previous button
     if (currentPage > 1) {
         html += `<button onclick="goToPage(${currentPage - 1})" class="px-3 py-1.5 bg-white/5 text-gray-300 rounded-lg hover:bg-white/10 transition-colors">
-            <span class="material-icons-outlined text-sm">chevron_left</span>
+            <i data-lucide="help-circle"   class="-outlined text-sm"  style="width: 1em; height: 1em;"></i>
         </button>`;
     }
 
@@ -361,7 +361,7 @@ function renderPagination() {
     // Next button
     if (currentPage < totalPages) {
         html += `<button onclick="goToPage(${currentPage + 1})" class="px-3 py-1.5 bg-white/5 text-gray-300 rounded-lg hover:bg-white/10 transition-colors">
-            <span class="material-icons-outlined text-sm">chevron_right</span>
+            <i data-lucide="help-circle"   class="-outlined text-sm"  style="width: 1em; height: 1em;"></i>
         </button>`;
     }
 
@@ -405,7 +405,7 @@ function viewUserDetail(userId) {
                     </div>
                 </div>
                 <button onclick="closeModal()" class="text-gray-400 hover:text-white">
-                    <span class="material-icons-outlined">close</span>
+                    <i data-lucide="x"   class="-outlined"  style="width: 1em; height: 1em;"></i>
                 </button>
             </div>
             
@@ -533,7 +533,7 @@ function sendNotificationToUser(userId) {
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl font-bold text-white">Gửi thông báo</h2>
                 <button onclick="closeModal()" class="text-gray-400 hover:text-white">
-                    <span class="material-icons-outlined">close</span>
+                    <i data-lucide="x"   class="-outlined"  style="width: 1em; height: 1em;"></i>
                 </button>
             </div>
             
@@ -565,7 +565,7 @@ function showSendNotificationModal() {
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl font-bold text-white">Gửi thông báo hàng loạt</h2>
                 <button onclick="closeModal()" class="text-gray-400 hover:text-white">
-                    <span class="material-icons-outlined">close</span>
+                    <i data-lucide="x"   class="-outlined"  style="width: 1em; height: 1em;"></i>
                 </button>
             </div>
             

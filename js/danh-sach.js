@@ -110,6 +110,7 @@ async function loadMoviesList(listSlug, page = 1) {
             } else {
                 throw new Error('No movies found');
             }
+
         } else {
             throw new Error('Invalid data format');
         }
@@ -157,22 +158,24 @@ function renderMoviesTable(movies) {
         const quality = movie.quality || movie.lang || '';
         const episodeCurrent = movie.episode_current || 'N/A';
         const tmdbRating = movie.tmdb?.vote_average || 'N/A';
+        const hiddenUI = window.getHiddenMovieOverlay ? window.getHiddenMovieOverlay(movie.slug) : { badge: '', imgClass: '', containerClass: '' };
 
         gridHTML += `
             <a href="movie-detail.html?slug=${movie.slug}" 
-               class="group relative block rounded-xl overflow-hidden bg-surface-dark hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl">
+               class="group relative block rounded-xl overflow-hidden bg-surface-dark hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl ${hiddenUI.containerClass}">
                 <!-- Poster -->
                 <div class="relative aspect-[2/3]">
                     <img src="${posterUrl}" 
                          alt="${movie.name}"
-                         class="w-full h-full object-cover"
+                         class="w-full h-full object-cover ${hiddenUI.imgClass}"
                          onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
                     
+                    ${hiddenUI.badge}
                     <!-- Overlay gradient -->
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     
                     <!-- Quality badge -->
-                    ${quality ? `
+                    ${quality && !hiddenUI.badge ? `
                         <div class="absolute top-2 left-2">
                             <span class="px-2 py-1 bg-primary text-black text-xs font-bold rounded shadow-lg">
                                 ${quality}
@@ -357,5 +360,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (categoriesGrid) categoriesGrid.classList.remove('hidden');
         pageTitle.textContent = 'Danh Sách Phim';
         pageSubtitle.textContent = 'Khám phá phim ảnh từ 13 loại phim';
+    }
+});
+
+// Re-render when hidden movies are synced from backend to ensure badges appear correctly
+window.addEventListener('hiddenMoviesSynced', () => {
+    console.log('Hidden movies synced, re-rendering danh-sach...');
+    const urlParams = new URLSearchParams(window.location.search);
+    const typeParam = urlParams.get('type');
+    const pageParam = parseInt(urlParams.get('page')) || 1;
+    if (typeParam) {
+        loadMoviesList(typeParam, pageParam);
     }
 });

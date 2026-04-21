@@ -259,18 +259,20 @@ function renderMovies(movies) {
         const posterUrl = movie.thumb_url || movie.poster_url || 'https://via.placeholder.com/300x450?text=No+Image';
         const year = movie.year || 'N/A';
         const quality = movie.quality || movie.lang || '';
+        const hiddenUI = window.getHiddenMovieOverlay ? window.getHiddenMovieOverlay(movie.slug) : { badge: '', imgClass: '', containerClass: '' };
 
         return `
             <a href="movie-detail.html?slug=${movie.slug}" 
-               class="group relative block rounded-xl overflow-hidden bg-surface-dark hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-primary/20">
+               class="group relative block rounded-xl overflow-hidden bg-surface-dark hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-primary/20 ${hiddenUI.containerClass}">
                 <div class="aspect-[2/3] relative overflow-hidden">
                     <img src="${posterUrl}" 
                          alt="${movie.name}"
-                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ${hiddenUI.imgClass}"
                          onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'">
                     
+                    ${hiddenUI.badge}
                     <!-- Quality Badge -->
-                    ${quality ? `
+                    ${quality && !hiddenUI.badge ? `
                         <div class="absolute top-2 left-2 bg-primary text-black text-xs font-bold px-2 py-1 rounded">
                             ${quality}
                         </div>
@@ -418,3 +420,9 @@ function showError(message) {
     resultsInfo.classList.add('hidden');
     pagination.classList.add('hidden');
 }
+
+// Re-render when hidden movies are synced from backend to ensure badges appear correctly
+window.addEventListener('hiddenMoviesSynced', () => {
+    console.log('Hidden movies synced, re-rendering filter-v2...');
+    loadMovies();
+});

@@ -2,12 +2,29 @@
 (function () {
     'use strict';
 
+    // ── Feature flag helpers ─────────────────────────────────────────────────
+    function isPhimXEnabled() {
+        if (typeof API_CONFIG !== 'undefined' && typeof API_CONFIG.ENABLE_PHIM_X === 'boolean') {
+            return API_CONFIG.ENABLE_PHIM_X;
+        }
+        try {
+            const cached = JSON.parse(localStorage.getItem('cinestream_public_settings') || '{}');
+            if (typeof cached.enablePhimX === 'boolean') return cached.enablePhimX;
+        } catch (e) {}
+        return false;
+    }
+
     // Wait for DOM to be ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', injectDesktopNavigation);
     } else {
         injectDesktopNavigation();
     }
+
+    // Re-inject when settings sync (e.g. admin toggled Phim X)
+    window.addEventListener('configSynced', () => {
+        injectDesktopNavigation();
+    });
 
     function injectDesktopNavigation() {
         // Find desktop menu container (hidden on mobile, visible on lg+)
@@ -107,6 +124,8 @@
                 href="pricing.html">Gói cước</a>
             <a class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 ${currentPage === 'support.html' ? 'text-primary' : 'text-white hover:text-primary'}"
                 href="support.html">Nuôi APhim</a>
+            ${isPhimXEnabled() ? `<a class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 ${currentPage === 'phim-x.html' ? 'text-[#ff7351]' : 'text-[#ff7351]/70 hover:text-[#ff7351]'} flex items-center gap-1"
+                href="phim-x.html"><span style="font-size:12px;background:rgba(255,115,81,0.15);border:1px solid rgba(255,115,81,0.4);padding:1px 5px;border-radius:4px;font-size:10px;">18+</span> Phim X</a>` : ''}
         `;
 
         // Replace content

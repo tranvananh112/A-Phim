@@ -3,6 +3,13 @@ let currentPage = 1;
 let moviesData = [];
 
 document.addEventListener('DOMContentLoaded', function () {
+    const backendToken = localStorage.getItem('cinestream_admin_token');
+    const localToken = sessionStorage.getItem('cinestream_admin_token');
+    if (!backendToken && !localToken) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     loadMovies();
     setupSearch();
     setupFilters();
@@ -84,7 +91,7 @@ function renderMoviesTable(movies) {
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center gap-1">
-                    <span class="material-icons-round text-yellow-500 text-sm">star</span>
+                    <i data-lucide="star"   class="text-yellow-500 text-sm"  style="width: 1em; height: 1em;"></i>
                     <span class="text-sm text-gray-900">${movie.tmdb?.vote_average?.toFixed(1) || 'N/A'}</span>
                 </div>
             </td>
@@ -93,17 +100,17 @@ function renderMoviesTable(movies) {
                     <button onclick="viewMovie('${movie.slug}')" 
                         class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                         title="Xem chi tiết">
-                        <span class="material-icons-round text-lg">visibility</span>
+                        <i data-lucide="eye"   class="text-lg"  style="width: 1em; height: 1em;"></i>
                     </button>
                     <button onclick="editMovie('${movie.slug}')" 
                         class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                         title="Chỉnh sửa">
-                        <span class="material-icons-round text-lg">edit</span>
+                        <i data-lucide="help-circle"   class="text-lg"  style="width: 1em; height: 1em;"></i>
                     </button>
                     <button onclick="deleteMovie('${movie.slug}')" 
                         class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                         title="Xóa">
-                        <span class="material-icons-round text-lg">delete</span>
+                        <i data-lucide="trash-2"   class="text-lg"  style="width: 1em; height: 1em;"></i>
                     </button>
                 </div>
             </td>
@@ -130,7 +137,7 @@ function renderPagination(params) {
         html += `
             <button onclick="loadMovies(${currentPage - 1})" 
                 class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                <span class="material-icons-round text-sm">chevron_left</span>
+                <i data-lucide="help-circle"   class="text-sm"  style="width: 1em; height: 1em;"></i>
             </button>
         `;
     }
@@ -158,7 +165,7 @@ function renderPagination(params) {
         html += `
             <button onclick="loadMovies(${currentPage + 1})" 
                 class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                <span class="material-icons-round text-sm">chevron_right</span>
+                <i data-lucide="help-circle"   class="text-sm"  style="width: 1em; height: 1em;"></i>
             </button>
         `;
     }
@@ -294,7 +301,7 @@ function showError(container, message) {
     container.innerHTML = `
         <tr>
             <td colspan="7" class="px-6 py-12 text-center">
-                <span class="material-icons-round text-red-500 text-4xl">error_outline</span>
+                <i data-lucide="help-circle"   class="text-red-500 text-4xl"  style="width: 1em; height: 1em;"></i>
                 <p class="text-red-500 mt-2">${message}</p>
             </td>
         </tr>

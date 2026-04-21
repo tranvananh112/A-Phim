@@ -45,9 +45,9 @@ function closeModal() {
 function showToast(message, type = 'info') {
     const toast = document.createElement('div');
     const icons = {
-        success: 'check_circle',
-        error: 'error',
-        warning: 'warning',
+        success: 'check-circle',
+        error: 'alert-circle',
+        warning: 'alert-triangle',
         info: 'info'
     };
 
@@ -60,7 +60,7 @@ function showToast(message, type = 'info') {
 
     toast.className = `fixed top-4 right-4 z-[200] px-6 py-4 rounded-lg shadow-lg ${colors[type] || colors.info} text-white font-medium flex items-center gap-3 animate-slide-in`;
     toast.innerHTML = `
-        <span class="material-icons-outlined">${icons[type] || icons.info}</span>
+        <i data-lucide="${icons[type] || icons.info}"   class="-outlined"  style="width: 1em; height: 1em;"></i>
         <span>${message}</span>
     `;
 
@@ -158,7 +158,7 @@ function confirmDialog(message, onConfirm, onCancel) {
         <div class="bg-white dark:bg-surface-darker border border-gray-200 dark:border-white/10 rounded-2xl p-8 max-w-md w-full mx-4">
             <div class="flex items-center gap-4 mb-6">
                 <div class="w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-500/20 flex items-center justify-center">
-                    <span class="material-icons-outlined text-yellow-600 dark:text-yellow-500 text-2xl">warning</span>
+                    <i data-lucide="alert-triangle"   class="-outlined text-yellow-600 dark:text-yellow-500 text-2xl"  style="width: 1em; height: 1em;"></i>
                 </div>
                 <h2 class="text-xl font-bold text-gray-900 dark:text-white">Xác nhận</h2>
             </div>

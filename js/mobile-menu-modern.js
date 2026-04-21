@@ -7,6 +7,20 @@
 
     const CURRENT_PAGE = window.location.pathname.split('/').pop() || 'index.html';
 
+    // ── Read feature flags from config/cache ───────────────────────────────────
+    function isPhimXEnabled() {
+        // Priority 1: runtime API_CONFIG (set by config.js)
+        if (typeof API_CONFIG !== 'undefined' && typeof API_CONFIG.ENABLE_PHIM_X === 'boolean') {
+            return API_CONFIG.ENABLE_PHIM_X;
+        }
+        // Priority 2: localStorage cache
+        try {
+            const cached = JSON.parse(localStorage.getItem('cinestream_public_settings') || '{}');
+            if (typeof cached.enablePhimX === 'boolean') return cached.enablePhimX;
+        } catch (e) {}
+        return false; // default: hidden
+    }
+
     function getCurrentUser() {
         try {
             if (typeof authService !== 'undefined') {
@@ -130,13 +144,14 @@
                 </a>
             </div>
 
-            <!-- 7. Phim X -->
+            <!-- 7. Phim X (conditional) -->
+            ${isPhimXEnabled() ? `
             <a href="phim-x.html" class="mm-nav-full mm-nav-filmx" style="gap:16px;">
                 <div class="mm-filmx-icon-wrap">
                     ${icon('18_up_rating', 'font-size:20px;color:#ff7351;')}
                 </div>
                 <span style="font-family:inherit;font-size:18px;font-weight:700;color:rgba(255,115,81,0.9);">Phim X</span>
-            </a>
+            </a>` : ''}
 
             <!-- UPGRADE BANNER -->
             <div class="mm-upgrade-banner mm-glass">

@@ -9,11 +9,15 @@ const CommentSchema = new mongoose.Schema({
     movie: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Movie',
-        required: true
+        required: false
     },
     movieSlug: {
         type: String,
         required: true
+    },
+    movieName: {
+        type: String,
+        default: ''
     },
     content: {
         type: String,

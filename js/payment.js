@@ -1,26 +1,58 @@
-// Cấu hình thanh toán
+// ── Cấu hình thanh toán (default — sẽ bị override bởi backend) ──────────────
 const PAYMENT_CONFIG = {
-    bankId: '970422',
-    accountNo: '048889019999',
+    bankId:      '970422',          // MB Bank default
+    accountNo:   '048889019999',
     accountName: 'TRAN VAN ANH',
-    template: 'compact'
+    template:    'compact'
 };
 
-// Thông tin các gói
-const PLANS = {
-    premium: {
-        name: 'Gói Cao Cấp',
-        amount: 69000,
-        duration: '1 tháng',
-        code: 'PREMIUM'
-    },
-    family: {
-        name: 'Gói Gia Đình',
-        amount: 699000,
-        duration: '1 năm',
-        code: 'FAMILY'
-    }
+// Map tên ngân hàng → bank ID cho VietQR
+const BANK_ID_MAP = {
+    'Vietcombank': '970436', 'Techcombank': '970407', 'MB Bank':    '970422',
+    'VPBank':      '970432', 'Agribank':    '970405', 'BIDV':       '970418',
+    'ACB':         '970416', 'TPBank':      '970423', 'VietinBank': '970415',
+    'Sacombank':   '970403', 'HDBank':      '970437', 'SHB':        '970443',
+    'OCB':         '970448', 'MSB':         '970426', 'SeABank':    '970440'
 };
+
+// ── Thông tin các gói (default — sẽ bị override bởi backend) ─────────────────
+const PLANS = {
+    premium: { name: 'Gói Cao Cấp',  amount: 69000,  duration: '1 tháng', code: 'PREMIUM' },
+    family:  { name: 'Gói Gia Đình', amount: 699000, duration: '1 năm',   code: 'FAMILY'  }
+};
+
+// ── Fetch cấu hình từ backend và override defaults ────────────────────────────
+async function initPaymentConfig() {
+    try {
+        const BACKEND_URL = (typeof API_CONFIG !== 'undefined')
+            ? API_CONFIG.BACKEND_URL
+            : (location.hostname === 'localhost'
+                ? 'http://localhost:5000/api'
+                : 'https://a-phim-production-c87b.up.railway.app/api');
+
+        const res = await fetch(`${BACKEND_URL}/settings/payment-public`);
+        if (!res.ok) return;
+        const json = await res.json();
+        if (!json.success || !json.data) return;
+
+        const d = json.data;
+
+        // Override bank config
+        if (d.bankAccount) PAYMENT_CONFIG.accountNo   = d.bankAccount;
+        if (d.bankOwner)   PAYMENT_CONFIG.accountName = d.bankOwner;
+        if (d.bankName && BANK_ID_MAP[d.bankName]) {
+            PAYMENT_CONFIG.bankId = BANK_ID_MAP[d.bankName];
+        }
+
+        // Override prices
+        if (d.pricePremium)     PLANS.premium.amount = d.pricePremium;
+        if (d.pricePremiumYear) PLANS.family.amount  = d.pricePremiumYear;
+
+    } catch (e) {
+        console.warn('payment.js: backend config fetch failed, using defaults', e);
+    }
+}
+
 
 // Lấy thông tin gói từ URL
 function getPlanFromURL() {
@@ -220,5 +252,8 @@ function showSuccessMessage(plan) {
     }, 5000);
 }
 
-// Khởi tạo khi trang load
-document.addEventListener('DOMContentLoaded', initPaymentPage);
+// Khởi tạo khi trang load — fetch backend config trước, rồi mới render
+document.addEventListener('DOMContentLoaded', async () => {
+    await initPaymentConfig();   // override PAYMENT_CONFIG + PLANS từ backend
+    initPaymentPage();           // render với config mới nhất
+});

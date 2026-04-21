@@ -58,22 +58,25 @@ function renderMoviesGrid(movies) {
         // Get backdrop image (landscape) - use thumb_url or poster_url
         const backdropUrl = movieAPI.getImageURL(movie.thumb_url || movie.poster_url);
         const posterUrl = movieAPI.getImageURL(movie.poster_url || movie.thumb_url);
+        const hiddenUI = window.getHiddenMovieOverlay ? window.getHiddenMovieOverlay(movie.slug) : { badge: '', imgClass: '', containerClass: '' };
 
         return `
-            <div class="group relative flex flex-col">
+            <div class="group relative flex flex-col ${hiddenUI.containerClass}">
                 <!-- Landscape backdrop image -->
                 <div class="relative w-full aspect-video rounded-lg overflow-hidden mb-12 shadow-lg">
                     <a href="movie-detail.html?slug=${movie.slug}">
                         <img alt="${movie.name}" 
-                            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${hiddenUI.imgClass}"
                             src="${backdropUrl}"
                             onerror="this.src='https://via.placeholder.com/640x360?text=No+Image'" />
                     </a>
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-80"></div>
                     
+                    ${hiddenUI.badge}
+                    
                     <!-- Tags -->
                     <div class="absolute bottom-3 right-3 flex gap-2">
-                        ${movie.quality ? `
+                        ${movie.quality && !hiddenUI.badge ? `
                         <span class="bg-gray-600/90 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-sm">
                             ${movie.quality}
                         </span>` : ''}
@@ -88,7 +91,7 @@ function renderMoviesGrid(movies) {
                 <a href="movie-detail.html?slug=${movie.slug}"
                     class="absolute top-[40%] left-4 w-24 md:w-28 aspect-[2/3] rounded-md overflow-hidden shadow-2xl border border-gray-700/50 z-10 transition-transform duration-300 group-hover:-translate-y-2">
                     <img alt="Poster ${movie.name}" 
-                        class="w-full h-full object-cover"
+                        class="w-full h-full object-cover ${hiddenUI.imgClass}"
                         src="${posterUrl}"
                         onerror="this.src='https://via.placeholder.com/300x450?text=No+Poster'" />
                 </a>

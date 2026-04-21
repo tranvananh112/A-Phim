@@ -12,9 +12,12 @@ nav {
     backdrop-filter: none;
 
     /* Tràn lên vùng notch/Dynamic Island */
-    padding-top: env(safe-area-inset-top);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+
+    /* Cho phép #mobileMenu (position:absolute) visible ra ngoài nav */
+    overflow: visible;
 }
 
 /* Container bên trong nav cần điều chỉnh */
@@ -23,12 +26,12 @@ nav>div {
     min-height: 64px;
 }
 
-/* Scrolled state - thêm background đậm và shadow */
+/* Scrolled state - làm thanh điều hướng trong suốt hoàn toàn khi cuộn */
 nav.scrolled {
-    background: rgba(0, 0, 0, 0.95) !important;
-    backdrop-filter: blur(20px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    border-bottom: 1px solid rgba(242, 242, 13, 0.2);
+    background: transparent !important;
+    backdrop-filter: blur(10px);
+    box-shadow: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* Hidden state - ẩn khi scroll xuống (MOBILE ONLY) */
@@ -69,19 +72,20 @@ nav .container {
     position: static;
 }
 
-/* Mobile menu - điều chỉnh cho safe area */
+/* Mobile menu - dùng top:100% để luôn theo sát nav kể cả khi nav đang transition/transform
+   Tránh khoảng trống xuất hiện khi nav slide lên/xuống trên mobile */
 #mobileMenu {
-    position: fixed;
-    top: calc(64px + env(safe-area-inset-top));
+    position: absolute;
+    top: 100%;
     left: 0;
     right: 0;
     z-index: 9998;
-    max-height: calc(100vh - 64px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    max-height: calc(100svh - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
     overflow-y: auto;
     /* Thêm padding cho safe area bên trái/phải */
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* Smooth scroll behavior */
@@ -201,10 +205,21 @@ nav+* {
         white-space: nowrap !important;
     }
 
-    /* Thu nhỏ gap trong pill container */
+    /* Thu nhỏ vertical height của pill để không bị khít vào 2 thanh */
     nav .hidden.lg\:flex > div {
-        gap: 0.1rem !important;
-        padding: 0.2rem !important;
+        gap: 0rem !important;
+        padding: 0.25rem 0.35rem !important;
+        transform: scale(0.92); /* Thu nhỏ nhẹ toàn bộ cụm pill */
+        transform-origin: center;
+    }
+
+    /* Thu nhỏ padding của từng item để pill thanh thoát hơn */
+    nav .nav-item {
+        padding-left: 0.8rem !important;
+        padding-right: 0.8rem !important;
+        padding-top: 0.35rem !important;
+        padding-bottom: 0.35rem !important;
+        font-size: 0.72rem !important;
     }
 
     /* Đảm bảo logo không bị thu nhỏ */
@@ -320,4 +335,32 @@ nav .group:hover .nav-item {
 /* Ensure mobile menu links transition smoothly */
 #mobileMenu a {
     transition: all 0.3s ease;
+}
+
+/* === GLOBAL PILL REFINEMENT (Shrink for more breathing room) === */
+@media (min-width: 1024px) {
+    /* Reduce overall vertical thickness of the pill container */
+    nav .hidden.lg\:flex > div {
+        padding-top: 0.25rem !important;
+        padding-bottom: 0.25rem !important;
+        padding-left: 0.4rem !important;
+        padding-right: 0.4rem !important;
+        gap: 0.15rem !important;
+        transform: scale(0.95); /* Subtly shrink the whole pill for a more elegant look */
+        transition: transform 0.3s ease, padding 0.3s ease;
+    }
+
+    /* Shrink the items inside to match */
+    nav .nav-item {
+        padding-top: 0.4rem !important;
+        padding-bottom: 0.4rem !important;
+        padding-left: 1.25rem !important; 
+        padding-right: 1.25rem !important;
+        font-size: 0.8rem !important;
+    }
+    
+    /* Slightly lower the entire nav height feel by centering better */
+    nav .container {
+        height: 60px !important; /* Shrunk from 64px to give more outside air */
+    }
 }

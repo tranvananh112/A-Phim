@@ -136,14 +136,18 @@
             }
             const isActive = index === activeIndex;
             return `
-                                <div class="flex-shrink-0 ${isActive ? 'w-24 h-32 md:w-28 md:h-40 horror-thumbnail-active' : 'w-20 h-28 md:w-24 md:h-36 opacity-60'} rounded-xl overflow-hidden horror-thumbnail cursor-pointer transition-all duration-300"
+                                <div class="flex-shrink-0 ${isActive ? 'w-24 h-32 md:w-28 md:h-40 horror-thumbnail-active' : 'w-20 h-28 md:w-24 md:h-36 opacity-60'} rounded-xl overflow-hidden horror-thumbnail cursor-pointer transition-all duration-300 relative"
                                      data-movie-index="${index}">
                                     <img 
                                         alt="${movie.name || 'Phim'}" 
-                                        class="w-full h-full object-cover" 
+                                        class="w-full h-full object-cover ${hiddenUI.imgClass}" 
                                         src="${movieThumb}"
                                         onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'"
                                     />
+                                    ${hiddenUI.badge ? `
+                                    <div class="absolute inset-0 bg-black/40 pointer-events-none flex items-center justify-center">
+                                        <div class="bg-red-500 scale-50 p-1 rounded-full shadow-lg"></div>
+                                    </div>` : ''}
                                 </div>
                             `;
         }).join('')}

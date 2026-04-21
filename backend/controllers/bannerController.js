@@ -1,5 +1,15 @@
 const Banner = require('../models/Banner');
+const Setting = require('../models/Setting');
 const axios = require('axios');
+
+// Helper to ensure a single settings document exists
+const getOrCreateSettings = async () => {
+    let settings = await Setting.findOne();
+    if (!settings) {
+        settings = await Setting.create({});
+    }
+    return settings;
+};
 
 // @desc    Get all banners (for admin)
 // @route   GET /api/banners
@@ -50,6 +60,79 @@ exports.getActiveBanner = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Không thể tải banner'
+        });
+    }
+};
+
+// @desc    Get thumbnail strip movies (for homepage - 10 phim nhỏ dưới hero)
+// @route   GET /api/banners/thumbnails
+// @access  Public
+exports.getThumbnailBanners = async (req, res) => {
+    try {
+        const settings = await getOrCreateSettings();
+        if (!settings) {
+            return res.json({ success: true, count: 0, data: [] });
+        }
+        
+        const thumbnails = (settings.content && settings.content.heroThumbnails) || [];
+
+        res.json({
+            success: true,
+            count: thumbnails.length,
+            data: thumbnails
+        });
+    } catch (error) {
+        console.error('CRITICAL ERROR: getThumbnailBanners failed:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Không thể tải thumbnail: ' + error.message
+        });
+    }
+};
+
+// @desc    Update thumbnail list (set which movies appear in thumbnail strip & their order)
+// @route   PUT /api/banners/thumbnails
+// @access  Private (Admin)
+// Body: { movies: [{movieSlug, name, thumbUrl, ...}, ...] }  ordered array, max 10
+exports.updateThumbnailList = async (req, res) => {
+    try {
+        const { movies } = req.body;
+
+        if (!Array.isArray(movies)) {
+            return res.status(400).json({
+                success: false,
+                message: 'movies phải là mảng các đối tượng phim'
+            });
+        }
+
+        if (movies.length > 10) {
+            return res.status(400).json({
+                success: false,
+                message: 'Tối đa 10 thumbnail'
+            });
+        }
+
+        // Cập nhật mảng vào model Setting
+        const settings = await Setting.findOneAndUpdate(
+            {},
+            { $set: { 'content.heroThumbnails': movies } },
+            { new: true, upsert: true, setDefaultsOnInsert: true }
+        );
+
+        if (!settings || !settings.content) {
+            throw new Error('Không thể cập nhật cấu hình nội dung');
+        }
+
+        res.json({
+            success: true,
+            count: settings.content.heroThumbnails ? settings.content.heroThumbnails.length : 0,
+            data: settings.content.heroThumbnails || []
+        });
+    } catch (error) {
+        console.error('CRITICAL ERROR: updateThumbnailList failed:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Không thể cập nhật thumbnail: ' + error.message
         });
     }
 };

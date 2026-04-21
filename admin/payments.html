@@ -1,478 +1,389 @@
 <!DOCTYPE html>
-<html class="dark" lang="vi"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Admin: Quản lý Thanh toán &amp; Báo cáo - CineStream</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#137fec",
-                        "primary-dark": "#0e60b5",
-                        "background-light": "#f6f7f8",
-                        "background-dark": "#101922",
-                        "surface-dark": "#182430",
-                        "border-dark": "#233140",
-                    },
-                    fontFamily: {
-                        "display": ["Inter", "sans-serif"]
-                    },
-                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
-                },
-            },
-        }
-    </script>
-<style>::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #101922; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #233140; 
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #137fec; 
-        }
-    </style>
+<html lang="vi">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport"content="width=device-width, initial-scale=1.0">
+ <title>Thanh toán - A Phim Admin</title>
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"rel="stylesheet">
+ 
+ <link rel="stylesheet"href="admin.css">
+ <style>
+ .trx-id {
+ font-family: 'Courier New', monospace;
+ font-size: 12.5px;
+ color: var(--text-muted);
+ }
+ .trx-user-av {
+ width: 30px; height: 30px; border-radius: 50%;
+ background: linear-gradient(135deg, var(--info), #60a5fa);
+ display: flex; align-items: center; justify-content: center;
+ font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+ }
+ .chart-bar-wrap {
+ display: flex;
+ align-items: flex-end;
+ justify-content: space-between;
+ gap: 8px;
+ height: 180px;
+ padding: 0 4px;
+ }
+ .chart-bar-col {
+ flex: 1;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: 6px;
+ height: 100%;
+ justify-content: flex-end;
+ }
+ .chart-bar {
+ width: 100%;
+ background: var(--primary-20);
+ border-radius: 4px 4px 0 0;
+ transition: var(--transition);
+ position: relative;
+ cursor: pointer;
+ }
+ .chart-bar:hover { background: var(--primary); }
+ .chart-bar-label {
+ font-size: 11px;
+ color: var(--text-muted);
+ white-space: nowrap;
+ }
+ </style>
+ <link rel="icon"type="image/png"href="../favicon.png"> 
+ <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 font-display antialiased min-h-screen flex">
-<aside class="w-64 bg-white dark:bg-surface-dark border-r border-slate-200 dark:border-border-dark flex-shrink-0 fixed h-full z-20 hidden lg:flex flex-col">
-<div class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-border-dark">
-<div class="flex items-center gap-2 text-primary font-bold text-xl">
-<span class="material-symbols-outlined text-3xl">movie_filter</span>
-<span>CineStream</span>
-</div>
-</div>
-<nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
-<p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Menu chính</p>
-<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/10 hover:text-primary dark:hover:text-primary rounded-lg transition-colors group" href="#">
-<span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">dashboard</span>
-<span class="font-medium">Tổng quan</span>
-</a>
-<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/10 hover:text-primary dark:hover:text-primary rounded-lg transition-colors group" href="#">
-<span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">movie</span>
-<span class="font-medium">Quản lý phim</span>
-</a>
-<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/10 hover:text-primary dark:hover:text-primary rounded-lg transition-colors group" href="#">
-<span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">people</span>
-<span class="font-medium">Người dùng</span>
-</a>
-<a class="flex items-center gap-3 px-3 py-2 bg-primary/10 text-primary rounded-lg transition-colors group relative" href="#">
-<span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">payments</span>
-<span class="font-medium">Thanh toán</span>
-<div class="absolute right-2 w-1.5 h-1.5 rounded-full bg-primary"></div>
-</a>
-<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/10 hover:text-primary dark:hover:text-primary rounded-lg transition-colors group" href="#">
-<span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">analytics</span>
-<span class="font-medium">Báo cáo</span>
-</a>
-<div class="pt-4 mt-4 border-t border-slate-200 dark:border-border-dark">
-<p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Hệ thống</p>
-<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/10 hover:text-primary dark:hover:text-primary rounded-lg transition-colors group" href="#">
-<span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">settings</span>
-<span class="font-medium">Cài đặt chung</span>
-</a>
-<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/10 hover:text-primary dark:hover:text-primary rounded-lg transition-colors group" href="#">
-<span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">admin_panel_settings</span>
-<span class="font-medium">Phân quyền</span>
-</a>
-<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/10 hover:text-primary dark:hover:text-primary rounded-lg transition-colors group" href="#">
-<span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">help</span>
-<span class="font-medium">Trợ giúp</span>
-</a>
-</div>
-</nav>
-<div class="p-4 border-t border-slate-200 dark:border-border-dark">
-<div class="flex items-center gap-3">
-<img alt="Admin Avatar" class="h-9 w-9 rounded-full object-cover ring-2 ring-primary/20" data-alt="Profile picture of the admin user" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAeq4gGHFaM6IeecrGy25TI19-0aD6G5DHS2L4kBVyJsEne2bCcW2DWGjqtWDx4PAhzTorXeFgSoc-BqlAtW0eoUkBvg7XAiSO0hXKFgg605cvaR0yvRzbqeDg20DuSBf_keJi-8UQGOYU7qsOnwqslH_Og_Nx1O6g9qIe9M6sAm_SXb6mjMulH5nBCqCRxzxhyMJOzI-ZxjRwkNIoDfrT_HWQNL600T032cq3iLS0lT6rw9vJyaxRNXxyrstN-3wf8aHVLXcPHfMs"/>
-<div class="flex-1 min-w-0">
-<p class="text-sm font-medium text-slate-900 dark:text-white truncate">Admin CineStream</p>
-<p class="text-xs text-slate-500 dark:text-slate-400 truncate">admin@cinestream.vn</p>
-</div>
-<button class="text-slate-400 hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-[20px]">logout</span>
-</button>
-</div>
-</div>
-</aside>
-<main class="lg:pl-64 flex-1 flex flex-col min-h-screen">
-<header class="h-16 bg-white dark:bg-surface-dark border-b border-slate-200 dark:border-border-dark flex items-center justify-between px-6 sticky top-0 z-10">
-<div class="flex items-center gap-4">
-<button class="lg:hidden p-2 text-slate-500 hover:text-primary">
-<span class="material-icons">menu</span>
-</button>
-<h1 class="text-xl font-semibold text-slate-800 dark:text-white">Quản lý Thanh toán &amp; Doanh thu</h1>
-</div>
-<div class="flex items-center gap-3">
-<div class="relative hidden sm:block">
-<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-<span class="material-icons text-slate-400 text-lg">calendar_today</span>
-</span>
-<input class="pl-10 pr-4 py-2 bg-slate-50 dark:bg-background-dark border border-slate-200 dark:border-border-dark rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent w-40 text-slate-700 dark:text-slate-200" placeholder="Tháng 10, 2023" type="text"/>
-</div>
-<div class="relative group">
-<button class="flex items-center gap-2 bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-primary/20">
-<span class="material-icons text-lg">download</span>
-<span>Xuất báo cáo</span>
-</button>
-<div class="absolute right-0 mt-2 w-48 bg-white dark:bg-surface-dark rounded-lg shadow-xl border border-slate-200 dark:border-border-dark hidden group-hover:block z-50">
-<a class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-primary/10 hover:text-primary" href="#">Xuất Excel (.xlsx)</a>
-<a class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-primary/10 hover:text-primary" href="#">Xuất PDF (.pdf)</a>
-</div>
-</div>
-</div>
-</header>
-<div class="p-6 space-y-6">
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-<div class="bg-white dark:bg-surface-dark p-5 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
-<div class="flex justify-between items-start">
-<div>
-<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Tổng doanh thu (Tháng)</p>
-<h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-1">1.25 Tỷ VNĐ</h3>
-</div>
-<div class="p-2 bg-green-100 dark:bg-green-500/10 rounded-lg">
-<span class="material-icons text-green-600 dark:text-green-500">trending_up</span>
-</div>
-</div>
-<div class="mt-4 flex items-center text-sm">
-<span class="text-green-500 flex items-center font-medium">
-<span class="material-icons text-sm mr-1">arrow_upward</span> 12.5%
-                        </span>
-<span class="text-slate-400 ml-2">so với tháng trước</span>
-</div>
-</div>
-<div class="bg-white dark:bg-surface-dark p-5 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
-<div class="flex justify-between items-start">
-<div>
-<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Giao dịch thành công</p>
-<h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-1">4,320</h3>
-</div>
-<div class="p-2 bg-primary/10 rounded-lg">
-<span class="material-icons text-primary">check_circle</span>
-</div>
-</div>
-<div class="mt-4 flex items-center text-sm">
-<span class="text-slate-900 dark:text-white font-medium">98.2%</span>
-<span class="text-slate-400 ml-2">tỷ lệ hoàn thành</span>
-</div>
-</div>
-<div class="bg-white dark:bg-surface-dark p-5 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
-<div class="flex justify-between items-start">
-<div>
-<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Gói đăng ký mới</p>
-<h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-1">856</h3>
-</div>
-<div class="p-2 bg-purple-100 dark:bg-purple-500/10 rounded-lg">
-<span class="material-icons text-purple-600 dark:text-purple-500">card_membership</span>
-</div>
-</div>
-<div class="mt-4 flex items-center text-sm">
-<span class="text-green-500 flex items-center font-medium">
-<span class="material-icons text-sm mr-1">arrow_upward</span> 5.2%
-                        </span>
-<span class="text-slate-400 ml-2">so với tuần trước</span>
-</div>
-</div>
-<div class="bg-white dark:bg-surface-dark p-5 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
-<div class="flex justify-between items-start">
-<div>
-<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Yêu cầu hoàn tiền</p>
-<h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-1">12</h3>
-</div>
-<div class="p-2 bg-red-100 dark:bg-red-500/10 rounded-lg">
-<span class="material-icons text-red-600 dark:text-red-500">assignment_return</span>
-</div>
-</div>
-<div class="mt-4 flex items-center text-sm">
-<span class="text-red-500 flex items-center font-medium">
-<span class="material-icons text-sm mr-1">arrow_downward</span> -2%
-                        </span>
-<span class="text-slate-400 ml-2">cần xử lý ngay</span>
-</div>
-</div>
-</div>
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-<div class="lg:col-span-2 bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
-<div class="flex items-center justify-between mb-6">
-<h2 class="text-lg font-bold text-slate-800 dark:text-white">Biểu đồ doanh thu</h2>
-<select class="bg-slate-50 dark:bg-background-dark border border-slate-200 dark:border-border-dark text-slate-700 dark:text-slate-300 text-sm rounded-lg focus:ring-primary focus:border-primary p-2">
-<option>7 ngày qua</option>
-<option>30 ngày qua</option>
-<option>Năm nay</option>
-</select>
-</div>
-<div class="relative h-64 w-full flex items-end justify-between gap-2 px-2">
-<div class="w-full bg-primary/20 hover:bg-primary/30 rounded-t-sm h-[40%] transition-all relative group" title="T2: 40tr">
-<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">40tr</div>
-</div>
-<div class="w-full bg-primary/30 hover:bg-primary/40 rounded-t-sm h-[65%] transition-all relative group" title="T3: 65tr">
-<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">65tr</div>
-</div>
-<div class="w-full bg-primary/40 hover:bg-primary/50 rounded-t-sm h-[50%] transition-all relative group" title="T4: 50tr">
-<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">50tr</div>
-</div>
-<div class="w-full bg-primary/60 hover:bg-primary/70 rounded-t-sm h-[80%] transition-all relative group" title="T5: 80tr">
-<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">80tr</div>
-</div>
-<div class="w-full bg-primary hover:bg-primary-dark rounded-t-sm h-[95%] transition-all relative group" title="T6: 95tr">
-<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">95tr</div>
-</div>
-<div class="w-full bg-primary/80 hover:bg-primary/90 rounded-t-sm h-[70%] transition-all relative group" title="T7: 70tr">
-<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">70tr</div>
-</div>
-<div class="w-full bg-primary/50 hover:bg-primary/60 rounded-t-sm h-[55%] transition-all relative group" title="CN: 55tr">
-<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">55tr</div>
-</div>
-</div>
-<div class="flex justify-between mt-4 text-xs text-slate-500 dark:text-slate-400 font-medium px-2">
-<span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
-</div>
-</div>
-<div class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm flex flex-col">
-<h2 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Tỷ lệ gói thành viên</h2>
-<div class="flex-1 flex items-center justify-center relative">
-<div class="w-48 h-48 rounded-full border-[1.5rem] border-primary/20 relative flex items-center justify-center" style="background: conic-gradient(var(--tw-gradient-stops)); --tw-gradient-from: #137fec; --tw-gradient-to: #137fec; --tw-gradient-stops: var(--tw-gradient-from) 0deg, var(--tw-gradient-from) 140deg, transparent 140deg, transparent 360deg);">
-<div class="absolute inset-0 rounded-full border-[1.5rem] border-transparent" style="background: conic-gradient(transparent 140deg, #a855f7 140deg, #a855f7 260deg, transparent 260deg);"></div>
-<div class="absolute inset-0 rounded-full border-[1.5rem] border-transparent" style="background: conic-gradient(transparent 260deg, #e2e8f0 260deg, #e2e8f0 360deg);"></div>
-<div class="bg-white dark:bg-surface-dark w-32 h-32 rounded-full absolute flex flex-col items-center justify-center z-10">
-<span class="text-2xl font-bold text-slate-800 dark:text-white">4.3k</span>
-<span class="text-xs text-slate-500">Tổng gói</span>
-</div>
-</div>
-</div>
-<div class="mt-6 space-y-3">
-<div class="flex items-center justify-between text-sm">
-<div class="flex items-center gap-2">
-<span class="w-3 h-3 rounded-full bg-primary"></span>
-<span class="text-slate-600 dark:text-slate-300">Premium (4K HDR)</span>
-</div>
-<span class="font-semibold text-slate-800 dark:text-white">39%</span>
-</div>
-<div class="flex items-center justify-between text-sm">
-<div class="flex items-center gap-2">
-<span class="w-3 h-3 rounded-full bg-purple-500"></span>
-<span class="text-slate-600 dark:text-slate-300">Standard (FHD)</span>
-</div>
-<span class="font-semibold text-slate-800 dark:text-white">33%</span>
-</div>
-<div class="flex items-center justify-between text-sm">
-<div class="flex items-center gap-2">
-<span class="w-3 h-3 rounded-full bg-slate-200 dark:bg-slate-600"></span>
-<span class="text-slate-600 dark:text-slate-300">Basic (HD)</span>
-</div>
-<span class="font-semibold text-slate-800 dark:text-white">28%</span>
-</div>
-</div>
-</div>
-</div>
-<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark shadow-sm overflow-hidden">
-<div class="p-5 border-b border-slate-200 dark:border-border-dark flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-<h2 class="text-lg font-bold text-slate-800 dark:text-white">Lịch sử giao dịch</h2>
-<div class="flex gap-3">
-<div class="relative">
-<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-<span class="material-icons text-slate-400 text-lg">search</span>
-</span>
-<input class="pl-10 pr-4 py-2 bg-slate-50 dark:bg-background-dark border border-slate-200 dark:border-border-dark rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent w-full sm:w-64 text-slate-700 dark:text-slate-200" placeholder="Tìm User, Mã GD..." type="text"/>
-</div>
-<button class="flex items-center gap-2 px-3 py-2 bg-slate-100 dark:bg-background-dark hover:bg-slate-200 dark:hover:bg-border-dark text-slate-600 dark:text-slate-300 rounded-lg text-sm transition-colors border border-slate-200 dark:border-border-dark">
-<span class="material-icons text-lg">filter_list</span>
-<span class="hidden sm:inline">Bộ lọc</span>
-</button>
-</div>
-</div>
-<div class="overflow-x-auto">
-<table class="w-full text-left border-collapse">
-<thead>
-<tr class="bg-slate-50 dark:bg-background-dark/50 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold border-b border-slate-200 dark:border-border-dark">
-<th class="p-4 w-4">
-<input class="rounded border-slate-300 text-primary focus:ring-primary bg-transparent" type="checkbox"/>
-</th>
-<th class="p-4">Mã giao dịch</th>
-<th class="p-4">Ngày giờ</th>
-<th class="p-4">Người dùng</th>
-<th class="p-4">Gói dịch vụ</th>
-<th class="p-4 text-right">Số tiền</th>
-<th class="p-4 text-center">Trạng thái</th>
-<th class="p-4"></th>
-</tr>
-</thead>
-<tbody class="divide-y divide-slate-200 dark:divide-border-dark text-sm">
-<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors group">
-<td class="p-4">
-<input class="rounded border-slate-300 dark:border-slate-600 text-primary focus:ring-primary bg-transparent" type="checkbox"/>
-</td>
-<td class="p-4 font-mono text-slate-600 dark:text-slate-400">#TRX-88291</td>
-<td class="p-4 text-slate-700 dark:text-slate-300">
-<div>24/10/2023</div>
-<div class="text-xs text-slate-500">14:30 PM</div>
-</td>
-<td class="p-4">
-<div class="flex items-center gap-3">
-<div class="h-8 w-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-xs">
-                                            NV
-                                        </div>
-<div>
-<div class="font-medium text-slate-900 dark:text-white">Nguyễn Văn A</div>
-<div class="text-xs text-slate-500">user@example.com</div>
-</div>
-</div>
-</td>
-<td class="p-4">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
-                                        Premium 1 Năm
-                                    </span>
-</td>
-<td class="p-4 text-right font-medium text-slate-900 dark:text-white">2.400.000 đ</td>
-<td class="p-4 text-center">
-<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-500/10 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-500/20">
-<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Thành công
-                                    </span>
-</td>
-<td class="p-4 text-right">
-<button class="text-slate-400 hover:text-primary transition-colors">
-<span class="material-icons text-lg">more_vert</span>
-</button>
-</td>
-</tr>
-<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors group">
-<td class="p-4">
-<input class="rounded border-slate-300 dark:border-slate-600 text-primary focus:ring-primary bg-transparent" type="checkbox"/>
-</td>
-<td class="p-4 font-mono text-slate-600 dark:text-slate-400">#TRX-88290</td>
-<td class="p-4 text-slate-700 dark:text-slate-300">
-<div>24/10/2023</div>
-<div class="text-xs text-slate-500">12:15 PM</div>
-</td>
-<td class="p-4">
-<div class="flex items-center gap-3">
-<img alt="User Avatar" class="h-8 w-8 rounded-full object-cover" data-alt="Avatar of user Tran Thi B" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBE-9Bj1iy5qS85PuPog4qTf7SXCy3Mv9smMT-XU_OMArNMEAIQBVCZZkGF42FxXl_8HKsxXYLwt5ghG45siGoZFoZyOyUvPtErpCVHNR47gnsCq8yLXfDDm1AJra1KJFGnRFDCuAlY1kOSYLKawKKO0HF1a5pOZv9o9am8A9rpV6Y5zf3axAyYrmOhJuGwuHMsKvgnnWo1UvyZHslFEZY2cyKwPPKPvRJcv68JC11YGp2spavRs6NWTjhReNmzGBJ9P15vFAU9TYc"/>
-<div>
-<div class="font-medium text-slate-900 dark:text-white">Trần Thị B</div>
-<div class="text-xs text-slate-500">b.tran@gmail.com</div>
-</div>
-</div>
-</td>
-<td class="p-4">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-500/20">
-                                        Standard Tháng
-                                    </span>
-</td>
-<td class="p-4 text-right font-medium text-slate-900 dark:text-white">220.000 đ</td>
-<td class="p-4 text-center">
-<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-500/10 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-500/20">
-<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Thành công
-                                    </span>
-</td>
-<td class="p-4 text-right">
-<button class="text-slate-400 hover:text-primary transition-colors">
-<span class="material-icons text-lg">more_vert</span>
-</button>
-</td>
-</tr>
-<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors group">
-<td class="p-4">
-<input class="rounded border-slate-300 dark:border-slate-600 text-primary focus:ring-primary bg-transparent" type="checkbox"/>
-</td>
-<td class="p-4 font-mono text-slate-600 dark:text-slate-400">#TRX-88289</td>
-<td class="p-4 text-slate-700 dark:text-slate-300">
-<div>23/10/2023</div>
-<div class="text-xs text-slate-500">09:45 AM</div>
-</td>
-<td class="p-4">
-<div class="flex items-center gap-3">
-<div class="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-300 font-bold text-xs">
-                                            LH
-                                        </div>
-<div>
-<div class="font-medium text-slate-900 dark:text-white">Lê Hoàng</div>
-<div class="text-xs text-slate-500">hoang.le@outlook.com</div>
-</div>
-</div>
-</td>
-<td class="p-4">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600">
-                                        Basic Tháng
-                                    </span>
-</td>
-<td class="p-4 text-right font-medium text-slate-900 dark:text-white">109.000 đ</td>
-<td class="p-4 text-center">
-<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-500/10 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-500/20">
-<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Thất bại
-                                    </span>
-</td>
-<td class="p-4 text-right">
-<button class="text-slate-400 hover:text-primary transition-colors">
-<span class="material-icons text-lg">more_vert</span>
-</button>
-</td>
-</tr>
-<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors group">
-<td class="p-4">
-<input class="rounded border-slate-300 dark:border-slate-600 text-primary focus:ring-primary bg-transparent" type="checkbox"/>
-</td>
-<td class="p-4 font-mono text-slate-600 dark:text-slate-400">#TRX-88288</td>
-<td class="p-4 text-slate-700 dark:text-slate-300">
-<div>23/10/2023</div>
-<div class="text-xs text-slate-500">08:10 AM</div>
-</td>
-<td class="p-4">
-<div class="flex items-center gap-3">
-<img alt="User Avatar" class="h-8 w-8 rounded-full object-cover" data-alt="Avatar of user Pham Minh" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4--tEn68t1CAwNhKaHve_RnMsnYiZzaN9atv-aX2oq4U8wpa9f6s6UMsw0khSdnoUmUMMGK57A2rAI0feEyLWLQ70olk2ZrRZurQQ8Ho5EryptXuLmdrk2u-QrSfywvdh4ZPrpCvsCjXjuCzmhKXDJ8nFG56h7JuxApB2lF1BzpCEp64DpjK0MtegyM3VQ5ZQCrgzfqW5mSOYph4QI-QyqIFwBvr1Wd3srmwibKsnvK9YS-MJzlnfxvfFpbBXMAIPLM2SHKH11jI"/>
-<div>
-<div class="font-medium text-slate-900 dark:text-white">Phạm Minh</div>
-<div class="text-xs text-slate-500">minh.pham@tech.com</div>
-</div>
-</div>
-</td>
-<td class="p-4">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
-                                        Premium Tháng
-                                    </span>
-</td>
-<td class="p-4 text-right font-medium text-slate-900 dark:text-white">260.000 đ</td>
-<td class="p-4 text-center">
-<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-500/20">
-<span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span> Đang xử lý
-                                    </span>
-</td>
-<td class="p-4 text-right">
-<button class="text-slate-400 hover:text-primary transition-colors">
-<span class="material-icons text-lg">more_vert</span>
-</button>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="p-4 border-t border-slate-200 dark:border-border-dark flex items-center justify-between">
-<div class="text-sm text-slate-500 dark:text-slate-400">
-                        Hiển thị <span class="font-medium text-slate-900 dark:text-white">1</span> đến <span class="font-medium text-slate-900 dark:text-white">4</span> trong số <span class="font-medium text-slate-900 dark:text-white">128</span> giao dịch
-                    </div>
-<div class="flex items-center gap-2">
-<button class="p-2 rounded-lg border border-slate-200 dark:border-border-dark text-slate-500 hover:bg-slate-50 dark:hover:bg-primary/10 disabled:opacity-50 transition-colors">
-<span class="material-icons text-lg">chevron_left</span>
-</button>
-<button class="px-3 py-1 rounded-lg bg-primary text-white text-sm font-medium">1</button>
-<button class="px-3 py-1 rounded-lg border border-slate-200 dark:border-border-dark text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-primary/10 text-sm font-medium transition-colors">2</button>
-<button class="px-3 py-1 rounded-lg border border-slate-200 dark:border-border-dark text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-primary/10 text-sm font-medium transition-colors">3</button>
-<span class="text-slate-400">...</span>
-<button class="p-2 rounded-lg border border-slate-200 dark:border-border-dark text-slate-500 hover:bg-slate-50 dark:hover:bg-primary/10 transition-colors">
-<span class="material-icons text-lg">chevron_right</span>
-</button>
-</div>
-</div>
-</div>
-</div>
-</main>
+<body>
+<div class="admin-layout">
 
-</body></html>
+ <!-- SIDEBAR -->
+ <aside class="admin-sidebar">
+ <div class="sidebar-logo">
+ <div class="sidebar-logo-icon"style="background:transparent; border: 2px solid var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 4px;">
+ <img src="../favicon.png"alt="A Phim"style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 4px rgba(139, 92, 246, 0.5));"/>
+ </div>
+ <div class="sidebar-logo-text"><h1 style="letter-spacing: 0.5px;">A Phim</h1><p style="color: var(--primary);">Admin Panel</p></div>
+ </div>
+ <nav class="sidebar-nav">
+ <div class="sidebar-nav-section">
+ <p class="sidebar-nav-label">Tổng quan</p>
+ <a href="dashboard.html"class="sidebar-nav-item"><i data-lucide="layout-dashboard"style="width: 1em; height: 1em;"></i><span>Dashboard</span></a>
+ </div>
+ <div class="sidebar-nav-section">
+ <p class="sidebar-nav-label">nội dung</p>
+ <a href="movies.html"class="sidebar-nav-item"><i data-lucide="film"style="width: 1em; height: 1em;"></i><span>Quản lý phim</span></a>
+ <a href="categories.html"class="sidebar-nav-item"><i data-lucide="list-tree"style="width: 1em; height: 1em;"></i><span>Danh mục</span></a>
+ <a href="banners.html"class="sidebar-nav-item"><i data-lucide="image"style="width: 1em; height: 1em;"></i><span>Banner &amp; Ads</span></a>
+ </div>
+ <div class="sidebar-nav-section">
+ <p class="sidebar-nav-label">Người dùng</p>
+ <a href="users.html"class="sidebar-nav-item"><i data-lucide="users"style="width: 1em; height: 1em;"></i><span>Người dùng</span></a>
+ <a href="comments.html"class="sidebar-nav-item"><i data-lucide="message-circle"style="width: 1em; height: 1em;"></i><span>Bình luận</span></a>
+ <a href="subscriptions.html"class="sidebar-nav-item"><i data-lucide="credit-card"style="width: 1em; height: 1em;"></i><span>Gói thành viên</span></a>
+ </div>
+ <div class="sidebar-nav-section">
+ <p class="sidebar-nav-label">Tài chính</p>
+ <a href="payments.html"class="sidebar-nav-item active"><i data-lucide="circle-dollar-sign"style="width: 1em; height: 1em;"></i><span>Thanh toán</span></a>
+ <a href="supporters.html"class="sidebar-nav-item"><i data-lucide="heart"style="width: 1em; height: 1em;"></i><span>Ủng hộ</span></a>
+ </div>
+ <div class="sidebar-nav-section">
+ <p class="sidebar-nav-label">hệ thống</p>
+ <a href="settings.html"class="sidebar-nav-item"><i data-lucide="settings"style="width: 1em; height: 1em;"></i><span>Cài đặt</span></a>
+ <a href="partner.html"class="sidebar-nav-item"><i data-lucide="handshake"style="width: 1em; height: 1em;"></i><span>Partner DT99</span></a>
+ </div>
+ </nav>
+ <div class="sidebar-footer">
+ <button class="sidebar-logout"onclick="location.href='dashboard.html'">
+ <i data-lucide="log-out"style="width: 1em; height: 1em;"></i><span>Đăng xuất</span>
+ </button>
+ </div>
+ </aside>
+
+ <!-- MAIN -->
+ <main class="admin-main">
+ <header class="admin-header">
+ <div class="header-left">
+ <h2>Thanh toán &amp; Doanh thu</h2>
+ <p>Lịch sử giao d9ch và báo cáo tài chính</p>
+ </div>
+ <div class="header-right">
+ <button class="btn btn-primary">
+  <i data-lucide="download"style="width: 1em; height: 1em;"></i>
+  Xuất báo cáo
+ </button>
+ <div class="header-separator"></div>
+ <div class="header-admin">
+  <div class="header-admin-avatar">A</div>
+  <div class="header-admin-info"><p>Admin</p><span>Quản trị viên</span></div>
+ </div>
+ </div>
+ </header>
+
+ <div class="admin-content">
+
+ <!-- Stats -->
+ <div class="stats-grid"style="margin-bottom: 24px;">
+ <div class="stat-card green">
+  <div class="stat-card-header"><div class="stat-card-icon green"><i data-lucide="trending-up"style="width: 1em; height: 1em;"></i></div><span class="stat-badge positive">+12.5%</span></div>
+  <div class="stat-number">1.25 Tỷ</div>
+  <div class="stat-label">Tổng doanh thu (tháng)</div>
+ </div>
+ <div class="stat-card indigo">
+  <div class="stat-card-header"><div class="stat-card-icon indigo"><i data-lucide="check-circle"style="width: 1em; height: 1em;"></i></div><span class="stat-badge positive">98.2%</span></div>
+  <div class="stat-number">4,320</div>
+  <div class="stat-label">Giao d9ch thành công</div>
+ </div>
+ <div class="stat-card violet">
+  <div class="stat-card-header"><div class="stat-card-icon violet"><i data-lucide="credit-card"style="width: 1em; height: 1em;"></i></div><span class="stat-badge positive">+5.2%</span></div>
+  <div class="stat-number">856</div>
+  <div class="stat-label">Gói ăng ký mới</div>
+ </div>
+ <div class="stat-card red">
+  <div class="stat-card-header"><div class="stat-card-icon red"><i data-lucide="corner-down-left"style="width: 1em; height: 1em;"></i></div><span class="stat-badge negative">-2%</span></div>
+  <div class="stat-number">12</div>
+  <div class="stat-label">Yêu cầu hoàn tiền</div>
+ </div>
+ </div>
+
+ <!-- Charts row -->
+ <div class="grid-2 mb-28"style="margin-bottom: 24px;">
+ <!-- Revenue chart -->
+ <div class="admin-card">
+  <div class="admin-card-header">
+  <span class="admin-card-title">Doanh thu 7 ngày</span>
+  <select class="form-select"style="width: auto; padding: 6px 32px 6px 12px; font-size: 12.5px;">
+  <option>7 ngày qua</option>
+  <option>30 ngày qua</option>
+  <option>Năm nay</option>
+  </select>
+  </div>
+  <div class="admin-card-body">
+  <div class="chart-bar-wrap">
+  <div class="chart-bar-col">
+  <div class="chart-bar"style="height: 40%;"title="T2: 40tr"></div>
+  <span class="chart-bar-label">T2</span>
+  </div>
+  <div class="chart-bar-col">
+  <div class="chart-bar"style="height: 65%;"title="T3: 65tr"></div>
+  <span class="chart-bar-label">T3</span>
+  </div>
+  <div class="chart-bar-col">
+  <div class="chart-bar"style="height: 50%;"title="T4: 50tr"></div>
+  <span class="chart-bar-label">T4</span>
+  </div>
+  <div class="chart-bar-col">
+  <div class="chart-bar"style="height: 80%;"title="T5: 80tr"></div>
+  <span class="chart-bar-label">T5</span>
+  </div>
+  <div class="chart-bar-col">
+  <div class="chart-bar"style="height: 95%; background: var(--primary);"title="T6: 95tr"></div>
+  <span class="chart-bar-label">T6</span>
+  </div>
+  <div class="chart-bar-col">
+  <div class="chart-bar"style="height: 70%;"title="T7: 70tr"></div>
+  <span class="chart-bar-label">T7</span>
+  </div>
+  <div class="chart-bar-col">
+  <div class="chart-bar"style="height: 55%;"title="CN: 55tr"></div>
+  <span class="chart-bar-label">CN</span>
+  </div>
+  </div>
+  </div>
+ </div>
+
+ <!-- Plan distribution -->
+ <div class="admin-card">
+  <div class="admin-card-header">
+  <span class="admin-card-title">Tỷ lệ gói thành viên</span>
+  </div>
+  <div class="admin-card-body">
+  <div style="display: flex; flex-direction: column; gap: 14px;">
+  <div>
+  <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+   <span style="font-size: 13px; color: var(--text-secondary);">Premium (4K HDR)</span>
+   <span style="font-size: 13px; font-weight: 700; color: var(--warning);">39%</span>
+  </div>
+  <div style="height: 8px; background: var(--surface-3); border-radius: 99px; overflow: hidden;">
+   <div style="height: 100%; width: 39%; background: var(--warning); border-radius: 99px;"></div>
+  </div>
+  </div>
+  <div>
+  <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+   <span style="font-size: 13px; color: var(--text-secondary);">Standard (FHD)</span>
+   <span style="font-size: 13px; font-weight: 700; color: var(--primary-light);">33%</span>
+  </div>
+  <div style="height: 8px; background: var(--surface-3); border-radius: 99px; overflow: hidden;">
+   <div style="height: 100%; width: 33%; background: var(--primary); border-radius: 99px;"></div>
+  </div>
+  </div>
+  <div>
+  <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+   <span style="font-size: 13px; color: var(--text-secondary);">Basic (HD)</span>
+   <span style="font-size: 13px; font-weight: 700; color: var(--success);">28%</span>
+  </div>
+  <div style="height: 8px; background: var(--surface-3); border-radius: 99px; overflow: hidden;">
+   <div style="height: 100%; width: 28%; background: var(--success); border-radius: 99px;"></div>
+  </div>
+  </div>
+  <div style="margin-top: 8px; padding-top: 14px; border-top: 1px solid var(--border); text-align: center;">
+  <div style="font-size: 28px; font-weight: 800; color: var(--text-primary);">4.3k</div>
+  <div style="font-size: 12px; color: var(--text-muted);">Tổng gói ang hoạt động</div>
+  </div>
+  </div>
+  </div>
+ </div>
+ </div>
+
+ <!-- Transaction table -->
+ <div class="admin-card">
+ <div class="admin-card-header">
+  <span class="admin-card-title">Lịch sử giao d9ch</span>
+  <div style="display: flex; gap: 8px;">
+  <div class="filter-search"style="min-width: 220px;">
+  <i data-lucide="search"class="search-icon"style="width: 1em; height: 1em;"></i>
+  <input type="text"placeholder="Tìm User, Mã GD...">
+  </div>
+  <button class="btn btn-secondary">
+  <i data-lucide="filter"style="width: 1em; height: 1em;"></i> Bộ lọc
+  </button>
+  </div>
+ </div>
+ <div class="admin-table-wrap">
+  <table class="admin-table">
+  <thead>
+  <tr>
+  <th style="width: 40px;"><input type="checkbox"style="accent-color: var(--primary);"></th>
+  <th>Mã giao d9ch</th>
+  <th>Ngày giờ</th>
+  <th>Người dùng</th>
+  <th>Gói d9ch vụ</th>
+  <th style="text-align: right;">Số tiền</th>
+  <th style="text-align: center;">Trạng thái</th>
+  <th></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+  <td><input type="checkbox"style="accent-color: var(--primary);"></td>
+  <td><span class="trx-id">#TRX-88291</span></td>
+  <td>
+   <div style="font-size: 13px; color: var(--text-secondary);">24/10/2025</div>
+   <div style="font-size: 11px; color: var(--text-muted);">14:30 PM</div>
+  </td>
+  <td>
+   <div style="display: flex; align-items: center; gap: 10px;">
+   <div class="trx-user-av">NV</div>
+   <div>
+   <div style="font-size:13px; font-weight:600; color: var(--text-primary);">Nguyễn Văn A</div>
+   <div style="font-size:11px; color: var(--text-muted);">user@example.com</div>
+   </div>
+   </div>
+  </td>
+  <td><span class="badge badge-warning">Premium 1 Năm</span></td>
+  <td style="text-align:right; font-size:13.5px; font-weight:700; color: var(--text-primary);">2.400.000 </td>
+  <td style="text-align:center;"><span class="badge badge-success">Thành công</span></td>
+  <td><button class="btn btn-secondary btn-icon btn-sm"><i data-lucide="more-vertical"style="width: 1em; height: 1em;"></i></button></td>
+  </tr>
+  <tr>
+  <td><input type="checkbox"style="accent-color: var(--primary);"></td>
+  <td><span class="trx-id">#TRX-88290</span></td>
+  <td>
+   <div style="font-size: 13px; color: var(--text-secondary);">24/10/2025</div>
+   <div style="font-size: 11px; color: var(--text-muted);">12:15 PM</div>
+  </td>
+  <td>
+   <div style="display: flex; align-items: center; gap: 10px;">
+   <div class="trx-user-av"style="background: linear-gradient(135deg, var(--accent), #c084fc);">TT</div>
+   <div>
+   <div style="font-size:13px; font-weight:600; color: var(--text-primary);">Trần Thị B</div>
+   <div style="font-size:11px; color: var(--text-muted);">b.tran@gmail.com</div>
+   </div>
+   </div>
+  </td>
+  <td><span class="badge badge-primary">Standard Tháng</span></td>
+  <td style="text-align:right; font-size:13.5px; font-weight:700; color: var(--text-primary);">220.000 </td>
+  <td style="text-align:center;"><span class="badge badge-success">Thành công</span></td>
+  <td><button class="btn btn-secondary btn-icon btn-sm"><i data-lucide="more-vertical"style="width: 1em; height: 1em;"></i></button></td>
+  </tr>
+  <tr>
+  <td><input type="checkbox"style="accent-color: var(--primary);"></td>
+  <td><span class="trx-id">#TRX-88289</span></td>
+  <td>
+   <div style="font-size: 13px; color: var(--text-secondary);">23/10/2025</div>
+   <div style="font-size: 11px; color: var(--text-muted);">09:45 AM</div>
+  </td>
+  <td>
+   <div style="display: flex; align-items: center; gap: 10px;">
+   <div class="trx-user-av"style="background: linear-gradient(135deg, var(--success), #34d399);">LH</div>
+   <div>
+   <div style="font-size:13px; font-weight:600; color: var(--text-primary);">Lê Hoàng</div>
+   <div style="font-size:11px; color: var(--text-muted);">hoang.le@outlook.com</div>
+   </div>
+   </div>
+  </td>
+  <td><span class="badge badge-gray">Basic Tháng</span></td>
+  <td style="text-align:right; font-size:13.5px; font-weight:700; color: var(--text-primary);">109.000 </td>
+  <td style="text-align:center;"><span class="badge badge-danger">Thất bại</span></td>
+  <td><button class="btn btn-secondary btn-icon btn-sm"><i data-lucide="more-vertical"style="width: 1em; height: 1em;"></i></button></td>
+  </tr>
+  <tr>
+  <td><input type="checkbox"style="accent-color: var(--primary);"></td>
+  <td><span class="trx-id">#TRX-88288</span></td>
+  <td>
+   <div style="font-size: 13px; color: var(--text-secondary);">23/10/2025</div>
+   <div style="font-size: 11px; color: var(--text-muted);">08:10 AM</div>
+  </td>
+  <td>
+   <div style="display: flex; align-items: center; gap: 10px;">
+   <div class="trx-user-av"style="background: linear-gradient(135deg, var(--warning), #fbbf24);">PM</div>
+   <div>
+   <div style="font-size:13px; font-weight:600; color: var(--text-primary);">Phạm Minh</div>
+   <div style="font-size:11px; color: var(--text-muted);">minh.pham@tech.com</div>
+   </div>
+   </div>
+  </td>
+  <td><span class="badge badge-warning">Premium Tháng</span></td>
+  <td style="text-align:right; font-size:13.5px; font-weight:700; color: var(--text-primary);">260.000 </td>
+  <td style="text-align:center;"><span class="badge badge-warning"style="background: rgba(245,158,11,0.12);">Đang xử lý</span></td>
+  <td><button class="btn btn-secondary btn-icon btn-sm"><i data-lucide="more-vertical"style="width: 1em; height: 1em;"></i></button></td>
+  </tr>
+  </tbody>
+  </table>
+ </div>
+ <div style="padding: 14px 20px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;">
+  <span style="font-size: 12.5px; color: var(--text-muted);">Hiển thị 1 4 trong số <strong style="color: var(--text-primary);">128</strong> giao d9ch</span>
+  <div class="pagination">
+  <button class="page-btn"disabled><i data-lucide="chevron-left"style="width: 1em; height: 1em;"></i></button>
+  <button class="page-btn active">1</button>
+  <button class="page-btn">2</button>
+  <button class="page-btn">3</button>
+  <span style="color: var(--text-muted); padding: 0 4px;">...</span>
+  <button class="page-btn"><i data-lucide="chevron-right"style="width: 1em; height: 1em;"></i></button>
+  </div>
+ </div>
+ </div>
+
+ </div>
+ </main>
+</div>
+ <script>lucide.createIcons();</script>
+
+ <script>
+ // Tự động render Lucide Icons khi DOM thay đổi (tải dữ liệu bảng/động)
+ document.addEventListener("DOMContentLoaded", () => {
+  if (window.lucide) lucide.createIcons();
+  let isUpdating = false;
+  const observer = new MutationObserver(() => {
+  if (isUpdating) return;
+  isUpdating = true;
+  if (window.lucide) {
+   try { lucide.createIcons(); } catch(e){}
+  }
+  setTimeout(() => { isUpdating = false; }, 100);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+ });
+ </script>
+</body>
+</html> 

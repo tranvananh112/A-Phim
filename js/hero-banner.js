@@ -1,4 +1,4 @@
-// Hero Banner Dynamic Content
+// Hero Banner Dynamic Content - MongoDB API Version
 let currentHeroMovie = null;
 let vietnamMoviesForThumbnails = [];
 
@@ -7,46 +7,50 @@ async function loadHeroBanner() {
 
     // 1. NGAY LẬP TỨC: Load từ cache LocalStorage để hiện ngay trong chớp mắt
     try {
-        const cachedBanners = JSON.parse(localStorage.getItem('cinestream_banners') || '[]');
-        const activeCached = cachedBanners.find(b => b.isActive);
-        if (activeCached) {
+        const cachedBanner = localStorage.getItem('cinestream_active_banner');
+        if (cachedBanner) {
+            const activeCached = JSON.parse(cachedBanner);
             currentHeroMovie = convertBannerToMovie(activeCached);
             // Render tức thì từ cache
             renderHeroBanner(currentHeroMovie, true);
         } else {
-            console.log('Chờ Firebase nạp banner...');
+            console.log('Chờ Backend MongoDB nạp banner...');
         }
     } catch (e) {
         console.warn('Cache read error:', e);
     }
 
-    // 2. BACKGROUND: Load Firebase (nạp trực tiếp từ script tag trong index.html)
-    if (window.firebaseBanners) {
-        window.firebaseBanners.listen(async (banners) => {
-            // Lưu dữ liệu mới về bộ nhớ đệm
-            if (banners && banners.length > 0) {
-                localStorage.setItem('cinestream_banners', JSON.stringify(banners));
-            }
-            
-            const activeBanner = banners?.find(b => b.isActive);
-            if (activeBanner) {
-                const newMovie = convertBannerToMovie(activeBanner);
-                if (!currentHeroMovie || currentHeroMovie.slug !== newMovie.slug) {
-                    currentHeroMovie = newMovie;
-                    renderHeroBanner(currentHeroMovie, false);
-                }
-            } else {
-                if (isInitialLoad && !currentHeroMovie) await loadFallbackBanner();
-            }
-            isInitialLoad = false;
+    // 2. BACKGROUND: Load từ API Backend
+    try {
+        const apiUrl = window.config?.apiUrl || 'http://localhost:5000';
+        const response = await fetch(`${apiUrl}/api/banners/active`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
         });
-    } else {
-        // Fallback phòng khi script firebase-banners.js chưa nạp kịp
-        setTimeout(loadHeroBanner, 200);
+        
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+            const activeBanner = data.data;
+            localStorage.setItem('cinestream_active_banner', JSON.stringify(activeBanner));
+            
+            const newMovie = convertBannerToMovie(activeBanner);
+            if (!currentHeroMovie || currentHeroMovie.slug !== newMovie.slug) {
+                currentHeroMovie = newMovie;
+                renderHeroBanner(currentHeroMovie, false);
+            }
+        } else {
+            // Không có banner nào được kích hoạt
+            localStorage.removeItem('cinestream_active_banner');
+            if (!currentHeroMovie) await loadFallbackBanner();
+        }
+    } catch (error) {
+        console.error('Lỗi khi fetch active banner từ backend:', error);
+        if (!currentHeroMovie) await loadFallbackBanner();
     }
 
-    // Load phim Việt Nam cho thumbnails chạy ngầm
-    setTimeout(loadVietnameseThumbnails, 100);
+    // Load thumbnail movies cho dải phim nhỏ, chạy ngầm
+    setTimeout(loadThumbnailMovies, 100);
 }
 
 // Fallback: Load từ API nếu không có banner trong DB
@@ -71,26 +75,76 @@ async function loadFallbackBanner() {
     }
 }
 
-// Convert banner from localStorage to movie format
+// Convert banner from backend API format to movie format
 function convertBannerToMovie(banner) {
     return {
-        slug: banner.slug,
+        slug: banner.movieSlug || banner.slug,
         name: banner.name,
-        origin_name: banner.origin_name,
-        thumb_url: banner.thumb_url,
-        poster_url: banner.poster_url,
+        origin_name: banner.originName || banner.origin_name,
+        thumb_url: banner.thumbUrl || banner.thumb_url,
+        poster_url: banner.posterUrl || banner.poster_url,
         content: banner.content,
         year: banner.year,
         quality: banner.quality,
         lang: banner.lang,
-        episode_current: banner.episode_current,
+        episode_current: banner.episodeCurrent || banner.episode_current,
         category: banner.category || [],
         tmdb: banner.tmdb || {},
         imdb: banner.imdb || {}
     };
 }
 
-async function loadVietnameseThumbnails() {
+async function loadThumbnailMovies() {
+    const apiUrl = window.config?.apiUrl || 'http://localhost:5000';
+
+    // 1. Instant render từ cache
+    try {
+        const cached = localStorage.getItem('cinestream_thumbnail_movies');
+        if (cached) {
+            const movies = JSON.parse(cached);
+            if (Array.isArray(movies) && movies.length > 0) {
+                renderThumbnails(convertThumbnailsFromAPI(movies));
+            }
+        }
+    } catch (e) {}
+
+    // 2. Fetch fresh từ backend
+    try {
+        const apiUrl = (window.API_CONFIG && window.API_CONFIG.BACKEND_URL) 
+                    ? window.API_CONFIG.BACKEND_URL.replace(/\/api$/, '') 
+                    : 'http://localhost:5000';
+                    
+        const res = await fetch(`${apiUrl}/api/banners/thumbnails`);
+        const data = await res.json();
+
+        if (data.success && data.data && data.data.length > 0) {
+            const movies = convertThumbnailsFromAPI(data.data);
+            localStorage.setItem('cinestream_thumbnail_movies', JSON.stringify(data.data));
+            renderThumbnails(movies);
+            return;
+        }
+    } catch (error) {
+        console.warn('Không thể tải thumbnail từ API, dùng fallback VN:', error);
+    }
+
+    // 3. Fallback: 10 phim Việt Nam nếu admin chưa cấu hình
+    loadVietnameseThumbnailsFallback();
+}
+
+// Chuyển format thumbnail từ API (Banner model) sang format phim Ophim
+function convertThumbnailsFromAPI(banners) {
+    return banners.map(b => ({
+        slug: b.movieSlug,
+        name: b.name,
+        origin_name: b.originName,
+        thumb_url: b.thumbUrl,
+        poster_url: b.posterUrl,
+        year: b.year,
+        tmdb: b.tmdb || {}
+    }));
+}
+
+async function loadVietnameseThumbnailsFallback() {
     try {
         const response = await fetch('https://ophim1.com/v1/api/quoc-gia/viet-nam?page=1', {
             method: 'GET',
@@ -100,11 +154,10 @@ async function loadVietnameseThumbnails() {
         const data = await response.json();
 
         if (data.status === 'success' && data.data && data.data.items) {
-            vietnamMoviesForThumbnails = data.data.items.slice(0, 10);
-            renderThumbnails();
+            renderThumbnails(data.data.items.slice(0, 10));
         }
     } catch (error) {
-        console.error('Error loading Vietnamese movies:', error);
+        console.error('Error loading Vietnamese movies fallback:', error);
     }
 }
 
@@ -180,7 +233,6 @@ function renderHeroBanner(movie, isInstant = false) {
             heroImage.style.opacity = '0';
 
             // Luôn preload ảnh trước khi show để tránh flash trắng
-            // (cache hit từ trình duyệt vẫn trả về ngay lập tức)
             const img = new Image();
             img.fetchPriority = 'high';
             img.onload = () => {
@@ -192,9 +244,6 @@ function renderHeroBanner(movie, isInstant = false) {
                 showHeroImage();
             };
             img.src = newImageUrl;
-
-            // Nếu ảnh đã có trong browser cache, onload bắn ngay lập tức (0ms)
-            // không cần phân biệt isInstant nữa
         } else {
             showHeroImage();
         }
@@ -213,14 +262,12 @@ async function fetchLatestEpisodeCount(movie) {
 
         const item = data.data.item;
 
-        // Lấy số tập thực tế từ danh sách tập (lấy server đầu tiên)
         let latestEpLabel = item.episode_current || '';
         const episodes = item.episodes;
         if (Array.isArray(episodes) && episodes.length > 0) {
             const serverData = episodes[0]?.server_data;
             if (Array.isArray(serverData) && serverData.length > 0) {
                 const count = serverData.length;
-                // Nếu API trả về số tập nhiều hơn episode_current → dùng số tập thực
                 const match = latestEpLabel.match(/\d+/);
                 const storedNum = match ? parseInt(match[0]) : 0;
                 if (count > storedNum) {
@@ -231,22 +278,21 @@ async function fetchLatestEpisodeCount(movie) {
 
         if (!latestEpLabel) return;
 
-        // Cập nhật badge tập phim trực tiếp (không re-render toàn bộ)
         const badge = document.querySelector('#heroBadges [data-ep-badge]');
         if (badge && badge.textContent !== latestEpLabel) {
             badge.textContent = latestEpLabel;
-            badge.style.display = ''; // Đảm bảo hiển thị
+            badge.style.display = ''; 
         }
     } catch (e) {
-        // Silent fail — không ảnh hưởng giao diện
+        // Silent fail
     }
 }
 
-function renderThumbnails() {
+function renderThumbnails(movies) {
     const thumbnailsContainer = document.getElementById('heroThumbnails');
-    if (!thumbnailsContainer || vietnamMoviesForThumbnails.length === 0) return;
+    if (!thumbnailsContainer || !Array.isArray(movies) || movies.length === 0) return;
 
-    thumbnailsContainer.innerHTML = vietnamMoviesForThumbnails.map((movie, index) => `
+    thumbnailsContainer.innerHTML = movies.map((movie, index) => `
         <div class="relative flex-shrink-0 group cursor-pointer ${index === 0 ? 'opacity-100' : 'opacity-70'} hover:opacity-100 transition-all hover:scale-105 snap-start">
             <a href="movie-detail.html?slug=${movie.slug}" class="flex items-center gap-2 md:gap-3">
                 <!-- Poster Image -->

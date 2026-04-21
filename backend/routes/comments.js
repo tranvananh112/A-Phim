@@ -1,14 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const { protect } = require('../middleware/auth');
+const { protect, authorize } = require('../middleware/auth');
+const {
+    addComment,
+    getMovieComments,
+    getAdminComments,
+    updateCommentStatus,
+    deleteComment
+} = require('../controllers/commentController');
 
-// Placeholder for comments routes
-router.get('/:movieId', (req, res) => {
-    res.json({ success: true, data: [] });
-});
+// Public routes
+router.get('/movie/:movieSlug', getMovieComments);
 
-router.post('/:movieId', protect, (req, res) => {
-    res.json({ success: true, message: 'Comment added' });
-});
+// Protected user routes
+router.post('/', protect, addComment);
+
+// Admin routes
+router.get('/admin', protect, authorize('admin'), getAdminComments);
+router.put('/:id/status', protect, authorize('admin'), updateCommentStatus);
+router.delete('/:id', protect, authorize('admin'), deleteComment);
 
 module.exports = router;

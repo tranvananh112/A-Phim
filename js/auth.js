@@ -1,4 +1,10 @@
 // Authentication Service with Backend Integration
+const STORAGE_KEYS = {
+    USER: 'cinestream_user',
+    TOKEN: 'cinestream_token',
+    THEME: 'cinestream_theme'
+};
+
 class AuthService {
     constructor() {
         this.backendURL = typeof API_CONFIG !== 'undefined' ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api';

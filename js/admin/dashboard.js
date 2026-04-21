@@ -1,286 +1,328 @@
-// Admin Dashboard Script - Real-time MongoDB Connection
-// Auto-detect environment
-const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:5000/api'
-    : 'https://a-phim-production-c87b.up.railway.app/api';
-let statsRefreshInterval = null;
+// Admin Dashboard Script - Modernized with Auto-discovery & Real-time hooks
+let API_URL = (typeof API_CONFIG !== 'undefined' && API_CONFIG.BACKEND_URL) ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api';
+let SOCKET_URL = window.location.origin;
+let socket;
+let charts = {};
 
-document.addEventListener('DOMContentLoaded', function () {
-    checkAdminAuth();
-    loadDashboardStats();
-    loadRevenueChart();
-    loadViewsChart();
-    loadRecentActivities();
-    startAutoRefresh();
+// Auto-discovery logic for API
+async function discoverAPI() {
+    const host = window.location.hostname;
+    const protocol = window.location.protocol;
+    const potentialUrls = [
+        `${protocol}//${host}:5000/api`,
+        `http://localhost:5000/api`,
+        `http://127.0.0.1:5000/api`,
+        API_URL // Use current from config as fallback
+    ];
+
+    for (const url of potentialUrls) {
+        try {
+            console.log(`🔍 Checking Dashboard API at: ${url}`);
+            const resp = await fetch(`${url}/health`, { 
+                method: 'GET',
+                signal: AbortSignal.timeout(1500) 
+            });
+            if (resp.ok) {
+                API_URL = url;
+                if (url.includes(':5000')) SOCKET_URL = url.replace('/api', '');
+                console.log(`✅ API Found & Selected: ${API_URL}`);
+                updateConnectionStatus(true, url);
+                return url;
+            }
+        } catch (e) { /* silent fail */ }
+    }
+    updateConnectionStatus(false);
+    return API_URL;
+}
+
+document.addEventListener('DOMContentLoaded', async function () {
+    if (checkAdminAuth()) {
+        await discoverAPI();
+        initSocket();
+        loadDashboardStats();
+        
+        // Start a slow heartbeat for health status
+        setInterval(checkHealth, 30000);
+    }
 });
 
-// Check admin authentication
 function checkAdminAuth() {
-    // Check both backend token and local token
-    const backendToken = localStorage.getItem('cinestream_admin_token');
-    const localToken = localStorage.getItem('cinestream_admin_token');
-
-    if (!backendToken && !localToken) {
+    const tokenKey = (typeof ADMIN_STORAGE_KEYS !== 'undefined') ? ADMIN_STORAGE_KEYS.ADMIN_TOKEN : 'cinestream_admin_token';
+    const token = localStorage.getItem(tokenKey) || sessionStorage.getItem(tokenKey) || localStorage.getItem('cinestream_admin_token');
+    if (!token) {
         window.location.href = 'login.html';
         return false;
     }
     return true;
 }
 
-// Start auto refresh every 30 seconds
-function startAutoRefresh() {
-    statsRefreshInterval = setInterval(() => {
-        loadDashboardStats(true); // Silent refresh
-    }, 30000);
+async function checkHealth() {
+    try {
+        const resp = await fetch(`${API_URL}/health`);
+        updateConnectionStatus(resp.ok, API_URL);
+    } catch (e) {
+        updateConnectionStatus(false);
+    }
 }
 
-// Load dashboard statistics from MongoDB
+function updateConnectionStatus(isOnline, url = '') {
+    const statusDot = document.getElementById('apiStatusDot');
+    const statusText = document.getElementById('apiStatusText');
+    if (!statusDot || !statusText) return;
+
+    if (isOnline) {
+        statusDot.style.background = '#10b981';
+        statusDot.classList.add('online');
+        statusText.textContent = 'API Connected';
+        statusText.title = `Connected to ${url}`;
+    } else {
+        statusDot.style.background = '#ef4444';
+        statusText.textContent = 'API Offline';
+        statusDot.classList.remove('online');
+    }
+}
+
+// --- Real-time Socket.io Integration ---
+function initSocket() {
+    try {
+        if (socket) socket.disconnect();
+        
+        socket = io(SOCKET_URL, {
+            path: '/socket.io/',
+            transports: ['polling', 'websocket']
+        });
+        
+        socket.on('connect', () => {
+            console.log('✅ Connected to Dashboard Realtime Server');
+            updateConnectionStatus(true, API_URL);
+        });
+
+        socket.on('new_activity', (activity) => {
+            console.log('🚀 Real-time Activity:', activity);
+            addNewActivityUI(activity);
+            loadDashboardStats(true); // Refresh stats on any activity
+        });
+
+        socket.on('disconnect', () => {
+            console.warn('❌ Disconnected from Realtime Server');
+        });
+    } catch (e) {
+        console.error('Socket.io Error:', e);
+    }
+}
+
+// --- Data Loading ---
 async function loadDashboardStats(silent = false) {
     try {
-        const token = localStorage.getItem('cinestream_admin_token') || sessionStorage.getItem('cinestream_admin_token');
-
-        // Fetch user stats
-        const usersResponse = await fetch(`${API_URL}/users/stats`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
+        const statusText = document.getElementById('apiStatusText');
+        const tokenKey = (typeof ADMIN_STORAGE_KEYS !== 'undefined') ? ADMIN_STORAGE_KEYS.ADMIN_TOKEN : 'cinestream_admin_token';
+        const token = localStorage.getItem(tokenKey) || sessionStorage.getItem(tokenKey) || localStorage.getItem('cinestream_admin_token');
+        
+        console.log(`📊 Fetching stats from: ${API_URL}/dashboard/stats`);
+        const response = await fetch(`${API_URL}/dashboard/stats`, {
+            headers: { 'Authorization': `Bearer ${token}` }
         });
 
-        // Fetch movies count
-        const moviesResponse = await fetch(`${API_URL}/movies?limit=1`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (usersResponse.ok && moviesResponse.ok) {
-            const usersData = await usersResponse.json();
-            const moviesData = await moviesResponse.json();
-
-            if (usersData.success) {
-                const stats = usersData.data;
-
-                // Update UI with real data
-                updateStatCard('totalUsers', stats.totalUsers || 0, '+12%');
-                updateStatCard('totalMovies', moviesData.total || 0, '+8%');
-                updateStatCard('totalViews', formatNumber((stats.activeUsers || 0) * 150), '+23%');
-
-                // Calculate estimated revenue (Premium users * 99,000đ)
-                const estimatedRevenue = (stats.premiumUsers || 0) * 99000;
-                updateStatCard('totalRevenue', formatCurrency(estimatedRevenue), '+15%');
-
-                if (!silent) {
-                    console.log('Dashboard stats updated from MongoDB:', stats);
-                }
+        if (response.ok) {
+            const result = await response.json();
+            if (result.success) {
+                console.log('📊 Dashboard Data Received:', result.data);
+                updateOverviewUI(result.data.overview);
+                renderCharts(result.data.charts);
+                renderRecentActivities(result.data.recentActivities);
+                if (statusText) statusText.textContent = 'API Connected & Data Loaded';
             }
         } else {
-            throw new Error('Failed to fetch stats');
+            console.error('Failed to load stats:', response.status);
+            if (statusText) statusText.textContent = `API Error: ${response.status}`;
         }
     } catch (error) {
-        console.error('Error loading dashboard stats:', error);
+        console.error('loadDashboardStats Error:', error);
+        const statusText = document.getElementById('apiStatusText');
+        if (statusText) statusText.textContent = `Conn Error: ${error.message}`;
+    }
+}
 
-        if (!silent) {
-            // Fallback to demo data
-            updateStatCard('totalUsers', 0, '+12%');
-            updateStatCard('totalMovies', 0, '+8%');
-            updateStatCard('totalViews', '0', '+23%');
-            updateStatCard('totalRevenue', '0đ', '+15%');
+function updateOverviewUI(overview) {
+    if (!overview) return;
+    const { totalUsers, totalMovies, globalMovieCount, totalRevenue, growth } = overview;
+    
+    // Update main numbers with animation
+    if (totalUsers !== undefined) animateValue('totalUsers', totalUsers);
+    if (totalMovies !== undefined) animateValue('totalMovies', totalMovies);
+    if (globalMovieCount !== undefined) animateValue('globalMovieCount', globalMovieCount);
+    if (totalRevenue !== undefined) document.getElementById('totalRevenue').textContent = formatCurrency(totalRevenue);
+    
+    // Update top hero welcome numbers
+    const heroMovies = document.getElementById('heroTotalMovies');
+    const heroUsers = document.getElementById('heroTotalUsers');
+    if (heroMovies && totalMovies !== undefined) heroMovies.textContent = totalMovies.toLocaleString();
+    if (heroUsers && totalUsers !== undefined) heroUsers.textContent = totalUsers.toLocaleString();
+
+    // Growth Badges
+    if (growth) {
+        if (growth.users !== undefined) updateGrowthBadge('totalUsersChange', growth.users);
+        if (growth.revenue !== undefined) updateGrowthBadge('totalRevenueChange', growth.revenue);
+    }
+}
+
+function updateGrowthBadge(id, value) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const isPositive = value >= 0;
+    el.textContent = (isPositive ? '+' : '') + value + '%';
+    el.className = `stat-badge ${isPositive ? 'positive' : 'negative'}`;
+}
+
+// --- Charting ---
+function renderCharts(chartData) {
+    if (!chartData) return;
+    renderLineChart('revenueChart', chartData.revenue.labels, chartData.revenue.data, '#10b981');
+    renderLineChart('viewsChart', chartData.views.labels, chartData.views.data, '#6366f1');
+
+    // Sparklines for visual pulse
+    renderSparkline('usersSparkline', [30, 45, 35, 50, 65, 60, 75], '#3b82f6');
+    renderSparkline('moviesSparkline', [15, 20, 18, 25, 22, 28, 30], '#6366f1');
+    renderSparkline('globalSparkline', [120, 140, 130, 150, 140, 170, 190], '#8b5cf6');
+    renderSparkline('revenueSparkline', [40, 60, 50, 80, 70, 100, 110], '#10b981');
+}
+
+function renderLineChart(id, labels, data, color) {
+    const ctx = document.getElementById(id);
+    if (!ctx) return;
+    if (charts[id]) charts[id].destroy();
+    charts[id] = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                borderColor: color,
+                backgroundColor: color + '15',
+                fill: true,
+                tension: 0.4,
+                borderWidth: 3,
+                pointRadius: 4,
+                pointBackgroundColor: color,
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+                x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } }
+            }
         }
-    }
+    });
 }
 
-// Update stat card
-function updateStatCard(id, value, change) {
-    const element = document.getElementById(id);
-    if (element) {
-        element.textContent = value;
-    }
-
-    const changeElement = document.getElementById(id + 'Change');
-    if (changeElement) {
-        changeElement.textContent = change;
-    }
-}
-
-// Load revenue chart
-function loadRevenueChart() {
-    const ctx = document.getElementById('revenueChart');
+function renderSparkline(id, data, color) {
+    const ctx = document.getElementById(id);
     if (!ctx) return;
-
-    // Simulated data
-    const data = {
-        labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
-        datasets: [{
-            label: 'Doanh thu (triệu đồng)',
-            data: [45, 52, 48, 65, 72, 68, 85, 92, 88, 95, 102, 110],
-            borderColor: ADMIN_CONFIG.CHART_COLORS.primary,
-            backgroundColor: ADMIN_CONFIG.CHART_COLORS.primary + '20',
-            tension: 0.4,
-            fill: true
-        }]
-    };
-
-    // Simple chart rendering (you can use Chart.js for better charts)
-    renderSimpleLineChart(ctx, data);
-}
-
-// Load views chart
-function loadViewsChart() {
-    const ctx = document.getElementById('viewsChart');
-    if (!ctx) return;
-
-    // Simulated data
-    const data = {
-        labels: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
-        datasets: [{
-            label: 'Lượt xem',
-            data: [12500, 15200, 14800, 16500, 18200, 17800, 19500],
-            borderColor: ADMIN_CONFIG.CHART_COLORS.success,
-            backgroundColor: ADMIN_CONFIG.CHART_COLORS.success + '20',
-            tension: 0.4,
-            fill: true
-        }]
-    };
-
-    renderSimpleLineChart(ctx, data);
-}
-
-// Simple line chart renderer
-function renderSimpleLineChart(canvas, data) {
-    const ctx = canvas.getContext('2d');
-    const width = canvas.width;
-    const height = canvas.height;
-    const padding = 40;
-
-    // Clear canvas
-    ctx.clearRect(0, 0, width, height);
-
-    // Get max value
-    const maxValue = Math.max(...data.datasets[0].data);
-    const minValue = Math.min(...data.datasets[0].data);
-    const range = maxValue - minValue;
-
-    // Draw grid
-    ctx.strokeStyle = '#e5e7eb';
-    ctx.lineWidth = 1;
-    for (let i = 0; i <= 5; i++) {
-        const y = padding + (height - padding * 2) * i / 5;
-        ctx.beginPath();
-        ctx.moveTo(padding, y);
-        ctx.lineTo(width - padding, y);
-        ctx.stroke();
-    }
-
-    // Draw line
-    ctx.strokeStyle = data.datasets[0].borderColor;
-    ctx.fillStyle = data.datasets[0].backgroundColor;
-    ctx.lineWidth = 2;
-
-    const points = data.datasets[0].data.map((value, index) => {
-        const x = padding + (width - padding * 2) * index / (data.datasets[0].data.length - 1);
-        const y = height - padding - ((value - minValue) / range) * (height - padding * 2);
-        return { x, y };
-    });
-
-    // Fill area
-    ctx.beginPath();
-    ctx.moveTo(points[0].x, height - padding);
-    points.forEach(point => ctx.lineTo(point.x, point.y));
-    ctx.lineTo(points[points.length - 1].x, height - padding);
-    ctx.closePath();
-    ctx.fill();
-
-    // Draw line
-    ctx.beginPath();
-    ctx.moveTo(points[0].x, points[0].y);
-    points.forEach(point => ctx.lineTo(point.x, point.y));
-    ctx.stroke();
-
-    // Draw points
-    ctx.fillStyle = data.datasets[0].borderColor;
-    points.forEach(point => {
-        ctx.beginPath();
-        ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
-        ctx.fill();
-    });
-
-    // Draw labels
-    ctx.fillStyle = '#6b7280';
-    ctx.font = '12px sans-serif';
-    ctx.textAlign = 'center';
-    data.labels.forEach((label, index) => {
-        const x = padding + (width - padding * 2) * index / (data.labels.length - 1);
-        ctx.fillText(label, x, height - padding + 20);
+    if (charts[id]) charts[id].destroy();
+    charts[id] = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: new Array(data.length).fill(''),
+            datasets: [{
+                data: data,
+                borderColor: color,
+                borderWidth: 2,
+                pointRadius: 0,
+                tension: 0.4,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: { enabled: false } },
+            scales: { x: { display: false }, y: { display: false } }
+        }
     });
 }
 
-// Load recent activities
-function loadRecentActivities() {
+// --- Activities ---
+function renderRecentActivities(activities) {
     const container = document.getElementById('recentActivities');
     if (!container) return;
+    if (!activities || activities.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding: 30px; color: var(--text-muted);">Hệ thống chưa có hoạt động mới</div>';
+        return;
+    }
+    container.innerHTML = activities.map(act => createActivityHTML(act)).join('');
+    if (window.lucide) lucide.createIcons();
+}
 
-    // Get recent data
-    const users = JSON.parse(localStorage.getItem('cinestream_all_users') || '[]');
-    const payments = JSON.parse(localStorage.getItem('cinestream_payment_history') || '[]');
-    const comments = JSON.parse(localStorage.getItem('cinestream_comments') || '{}');
-
-    const activities = [];
-
-    // Add recent users
-    users.slice(-5).forEach(user => {
-        activities.push({
-            type: 'user',
-            icon: 'person_add',
-            color: 'text-blue-500',
-            message: `Người dùng mới: ${user.name}`,
-            time: new Date(user.createdAt).toLocaleString('vi-VN')
-        });
-    });
-
-    // Add recent payments
-    payments.slice(-5).forEach(payment => {
-        activities.push({
-            type: 'payment',
-            icon: 'payments',
-            color: 'text-green-500',
-            message: `Thanh toán: ${formatCurrency(payment.amount)}`,
-            time: new Date(payment.createdAt).toLocaleString('vi-VN')
-        });
-    });
-
-    // Sort by time
-    activities.sort((a, b) => new Date(b.time) - new Date(a.time));
-
-    // Render
-    container.innerHTML = activities.slice(0, 10).map(activity => `
-        <div class="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
-            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-                <span class="material-icons-round ${activity.color} text-lg">${activity.icon}</span>
+function createActivityHTML(act) {
+    const time = new Date(act.time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    const date = new Date(act.time).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+    return `
+        <div class="activity-card-new ${act.type}">
+            <div style="width:40px; height:40px; border-radius:10px; background:var(--${act.color}-bg); color:var(--${act.color}); display:flex; align-items:center; justify-content:center; flex-shrink: 0;">
+                <i data-lucide="${act.icon}"></i>
             </div>
-            <div class="flex-1 min-w-0">
-                <p class="text-sm text-gray-900">${activity.message}</p>
-                <p class="text-xs text-gray-500 mt-1">${activity.time}</p>
+            <div style="flex:1; min-width:0">
+                <p style="font-size: 13px; color: var(--text-primary); line-height: 1.5; margin-bottom: 4px;">${act.message}</p>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <span style="font-size: 11px; color: var(--text-muted);"><i data-lucide="clock" style="width:10px; height:10px; display:inline-block; margin-right:3px"></i>${time} - ${date}</span>
+                    ${act.user ? `<span style="font-size: 10px; background: var(--surface-3); padding: 1px 6px; border-radius: 4px; color: var(--text-secondary)">${act.user.name}</span>` : ''}
+                </div>
             </div>
         </div>
-    `).join('');
+    `;
 }
 
-// Format number
-function formatNumber(num) {
-    if (num >= 1000000) {
-        return (num / 1000000).toFixed(1) + 'M';
-    } else if (num >= 1000) {
-        return (num / 1000).toFixed(1) + 'K';
+function addNewActivityUI(activity) {
+    const container = document.getElementById('recentActivities');
+    if (!container) return;
+    
+    // Remove placeholder empty state if exists
+    if (container.innerHTML.includes('chưa có hoạt động mới')) container.innerHTML = '';
+
+    const div = document.createElement('div');
+    div.innerHTML = createActivityHTML(activity);
+    const newEl = div.firstElementChild;
+    newEl.style.opacity = '0';
+    newEl.style.transform = 'translateY(-10px)';
+    
+    container.insertBefore(newEl, container.firstChild);
+    setTimeout(() => {
+        newEl.style.transition = 'all 0.4s ease';
+        newEl.style.opacity = '1';
+        newEl.style.transform = 'translateY(0)';
+        if (window.lucide) lucide.createIcons();
+    }, 50);
+
+    if (container.children.length > 20) container.removeChild(container.lastChild);
+}
+
+// --- Utilities ---
+function animateValue(id, endValue) {
+    const obj = document.getElementById(id);
+    if (!obj) return;
+    const currentText = obj.textContent.replace(/,/g, '');
+    const startValue = parseInt(currentText) || 0;
+    if (startValue === endValue) {
+        obj.textContent = endValue.toLocaleString();
+        return;
     }
-    return num.toString();
+    const duration = 1200;
+    let startTimestamp = null;
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const current = Math.floor(progress * (endValue - startValue) + startValue);
+        obj.textContent = current.toLocaleString();
+        if (progress < 1) window.requestAnimationFrame(step);
+    };
+    window.requestAnimationFrame(step);
 }
 
-// Format currency
 function formatCurrency(amount) {
-    return new Intl.NumberFormat('vi-VN', {
-        style: 'currency',
-        currency: 'VND'
-    }).format(amount);
+    return new Intl.NumberFormat('vi-VN').format(amount) + 'đ';
 }

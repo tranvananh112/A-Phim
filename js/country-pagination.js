@@ -97,19 +97,22 @@ function renderMovies(movies, countryName) {
     moviesList.innerHTML = movies.map(movie => {
         const hasCustomLink = !!movieLinks[movie.slug];
         const linkUrl = hasCustomLink ? `watch-simple.html?slug=${movie.slug}` : `movie-detail.html?slug=${movie.slug}`;
+        const hiddenUI = window.getHiddenMovieOverlay ? window.getHiddenMovieOverlay(movie.slug) : { badge: '', imgClass: '', containerClass: '' };
 
         return `
             <a href="${linkUrl}"
-                class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300">
+                class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300 ${hiddenUI.containerClass}">
                 <div class="aspect-[2/3] w-full overflow-hidden relative">
                     <img alt="${movie.name}"
-                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${hiddenUI.imgClass}"
                         src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
                         loading="lazy"
                         onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
+                    ${hiddenUI.badge}
+                    ${!hiddenUI.badge ? `
                     <div class="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-2 py-0.5 rounded">
                         ${movie.quality || 'HD'}
-                    </div>
+                    </div>` : ''}
                     ${movie.episode_current ? `
                     <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
                         ${movie.episode_current}
@@ -264,5 +267,13 @@ window.addEventListener('DOMContentLoaded', () => {
         moviesGrid.classList.remove('hidden');
         countryTitle.textContent = 'Chọn quốc gia để xem phim';
         movieCount.textContent = 'Vui lòng chọn quốc gia từ menu "Phim" ở trên';
+    }
+});
+
+// Re-render when hidden movies are synced from backend to ensure badges appear correctly
+window.addEventListener('hiddenMoviesSynced', () => {
+    console.log('Hidden movies synced, re-rendering countries...');
+    if (currentCountry && currentCountryName) {
+        loadCountryMovies(currentCountry, currentCountryName, currentPage);
     }
 });

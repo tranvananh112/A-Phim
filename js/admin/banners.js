@@ -1,232 +1,389 @@
-// Banner Management Script - localStorage Version
+// Banner Management Script - MongoDB API Version
 
 let loadedMovies = [];
+let localCurrentPage = 1;
+let localItemsPerPage = 10;
+let localFilters = {
+    search: '',
+    status: ''
+};
+let allBanners = []; // Cache from API
 
 // Check authentication
 document.addEventListener('DOMContentLoaded', () => {
-    // Use adminAuthService to check auth
-    adminAuthService.checkAuth();
+    // Safely check auth early
+    const backendToken = localStorage.getItem('cinestream_admin_token');
+    if (!backendToken) {
+        window.location.href = 'login.html';
+        return; // Prevent further execution
+    }
+    
+    if (typeof adminAuthService !== 'undefined') {
+        adminAuthService.checkAuth();
+    }
 
-    // Listen to Firebase for Realtime Updates from other admins
-    import('/js/firebase-banners.js').then(fb => {
-        fb.listenToBanners((remoteBanners) => {
-            if (remoteBanners) {
-                localStorage.setItem('cinestream_banners', JSON.stringify(remoteBanners));
-                loadBanners();
-                loadActiveBanner();
-            }
-        });
-    }).catch(e => console.log('Không tải được firebase-banners', e));
-
-    // Initial load from local
-    loadBanners();
-    loadActiveBanner();
+    // Initial load from API
+    fetchBannersFromAPI();
+    setupLocalFilters();
+    fetchThumbnailList();
 });
 
-// Helper to save to local and sync to cloud
-function saveBanners(banners) {
-    localStorage.setItem('cinestream_banners', JSON.stringify(banners));
-    import('/js/firebase-banners.js').then(fb => {
-        fb.syncBannersToFirebase(banners);
-    }).catch(e => console.log('Lỗi sync firebase:', e));
+function setupLocalFilters() {
+    const searchInput = document.getElementById('localSearchInput');
+    const statusFilter = document.getElementById('localStatusFilter');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            localFilters.search = e.target.value.trim().toLowerCase();
+            localCurrentPage = 1;
+            renderBanners();
+        });
+    }
+
+    if (statusFilter) {
+        statusFilter.addEventListener('change', (e) => {
+            localFilters.status = e.target.value;
+            localCurrentPage = 1;
+            renderBanners();
+        });
+    }
 }
 
-// Load all banners from localStorage
-function loadBanners() {
+// Fetch all banners from API
+async function fetchBannersFromAPI() {
+    const loading = document.getElementById('bannersLoading');
+    const table = document.getElementById('bannersTable');
+    
+    if (loading) loading.classList.remove('hidden');
+    if (table) table.classList.add('hidden');
+
+    try {
+        const token = localStorage.getItem('cinestream_admin_token');
+        const apiUrl = (window.API_CONFIG && window.API_CONFIG.BACKEND_URL) 
+                    ? window.API_CONFIG.BACKEND_URL.replace(/\/api$/, '') 
+                    : 'http://localhost:5000';
+        
+        const response = await fetch(`${apiUrl}/api/banners`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.status === 401 || response.status === 403) {
+            if (typeof adminAuthService !== 'undefined') {
+                return adminAuthService.logout();
+            }
+            localStorage.removeItem('cinestream_admin_token');
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const data = await response.json();
+        
+        if (data.success) {
+            allBanners = data.data || [];
+            // Optional: save active banner to local storage for quick load on public site
+            const activeBanner = allBanners.find(b => b.isActive);
+            if (activeBanner) {
+                localStorage.setItem('cinestream_active_banner', JSON.stringify(activeBanner));
+            } else {
+                localStorage.removeItem('cinestream_active_banner');
+            }
+            
+            renderBanners();
+            renderActiveBanner();
+        } else {
+            throw new Error(data.message || 'Không thể tải danh sách banner');
+        }
+    } catch (error) {
+        console.error('Error fetching banners:', error);
+        if (loading) {
+            loading.innerHTML = '<div class="empty-state" style="padding:40px; text-align:center;"><i data-lucide="alert-circle" style="width:3rem; height:3rem; color:var(--danger); margin-bottom:12px;"></i><h3 style="color:var(--text-primary);">Không thể tải danh sách banner</h3></div>';
+        }
+    }
+}
+
+// Render banners from cached API data
+function renderBanners() {
     const loading = document.getElementById('bannersLoading');
     const table = document.getElementById('bannersTable');
     const tbody = document.getElementById('bannersTableBody');
 
-    try {
-        // Get banners from localStorage
-        const banners = JSON.parse(localStorage.getItem('cinestream_banners') || '[]');
+    if (!tbody) return;
 
-        loading.classList.add('hidden');
-        table.classList.remove('hidden');
+    let filteredBanners = [...allBanners];
 
-        if (banners.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-400">Chưa có banner nào. Click "Tải Phim Mới" để thêm.</td></tr>';
-            return;
-        }
-
-        tbody.innerHTML = banners.map(banner => `
-            <tr class="border-b border-white/5 hover:bg-white/5">
-                <td class="py-3 px-4">
-                    <img src="https://img.ophim.live/uploads/movies/${banner.thumb_url}" 
-                         alt="${banner.name}"
-                         class="w-16 h-24 object-cover rounded"
-                         onerror="this.src='https://via.placeholder.com/100x150?text=No+Image'">
-                </td>
-                <td class="py-3 px-4">
-                    <div class="font-semibold text-white">${banner.name}</div>
-                    <div class="text-sm text-gray-400">${banner.origin_name || ''}</div>
-                </td>
-                <td class="py-3 px-4 text-gray-300">${banner.year || 'N/A'}</td>
-                <td class="py-3 px-4">
-                    ${banner.isActive
-                ? '<span class="px-2 py-1 bg-green-500/20 text-green-500 rounded text-sm font-semibold">Đang hiển thị</span>'
-                : '<span class="px-2 py-1 bg-gray-500/20 text-gray-400 rounded text-sm">Không hiển thị</span>'
-            }
-                </td>
-                <td class="py-3 px-4 text-gray-300">${banner.priority || 0}</td>
-                <td class="py-3 px-4 text-right">
-                    <div class="flex items-center justify-end gap-2">
-                        ${!banner.isActive
-                ? `<button onclick="activateBanner('${banner.slug}')" 
-                                 class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm">
-                                 Kích hoạt
-                               </button>`
-                : `<button onclick="deactivateBanner('${banner.slug}')" 
-                                 class="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm">
-                                 Tắt
-                               </button>`
-            }
-                        <button onclick="deleteBanner('${banner.slug}')" 
-                                class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm">
-                            Xóa
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `).join('');
-    } catch (error) {
-        console.error('Error loading banners:', error);
-        loading.innerHTML = '<p class="text-red-400">Không thể tải danh sách banner</p>';
+    // Apply filters
+    if (localFilters.search) {
+        filteredBanners = filteredBanners.filter(b => 
+            (b.name && b.name.toLowerCase().includes(localFilters.search)) || 
+            (b.originName && b.originName.toLowerCase().includes(localFilters.search))
+        );
     }
-}
+    if (localFilters.status) {
+        filteredBanners = filteredBanners.filter(b => 
+            localFilters.status === 'active' ? b.isActive : !b.isActive
+        );
+    }
 
-// Load active banner from localStorage
-function loadActiveBanner() {
-    const content = document.getElementById('activeBannerContent');
+    if (loading) loading.classList.add('hidden');
+    if (table) table.classList.remove('hidden');
 
-    try {
-        const banners = JSON.parse(localStorage.getItem('cinestream_banners') || '[]');
-        const activeBanner = banners.find(b => b.isActive);
+    if (filteredBanners.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state" style="padding:40px; text-align:center;"><i data-lucide="image-off" style="width: 3rem; height: 3rem; color:var(--text-muted); margin-bottom:12px;"></i><h3 style="color:var(--text-primary);">Không tìm thấy banner nào</h3><p style="color:var(--text-muted);">Thử thay đổi bộ lọc hoặc thêm banner mới.</p></div></td></tr>`;
+        updatePagInfo(0, 0, 0);
+        renderLocalPagination(0, 1);
+        if (window.lucide) lucide.createIcons();
+        return;
+    }
 
-        if (activeBanner) {
-            content.innerHTML = `
-                <div class="flex gap-6">
-                    <img src="https://img.ophim.live/uploads/movies/${activeBanner.thumb_url}" 
-                         alt="${activeBanner.name}"
-                         class="w-32 h-48 object-cover rounded-lg"
-                         onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
-                    <div class="flex-1">
-                        <h4 class="text-2xl font-bold text-white mb-2">${activeBanner.name}</h4>
-                        <p class="text-gray-400 mb-4">${activeBanner.origin_name || ''}</p>
-                        <div class="flex gap-4 text-sm">
-                            <span class="text-gray-300">Năm: ${activeBanner.year || 'N/A'}</span>
-                            <span class="text-gray-300">Chất lượng: ${activeBanner.quality || 'HD'}</span>
-                            <span class="text-gray-300">Ngôn ngữ: ${activeBanner.lang || 'Vietsub'}</span>
-                        </div>
-                        <p class="text-gray-400 mt-4 line-clamp-3">${activeBanner.content || 'Không có mô tả'}</p>
-                    </div>
+    // Pagination
+    const totalItems = filteredBanners.length;
+    const totalPages = Math.ceil(totalItems / localItemsPerPage);
+    const start = (localCurrentPage - 1) * localItemsPerPage;
+    const end = start + localItemsPerPage;
+    const pageItems = filteredBanners.slice(start, end);
+
+    tbody.innerHTML = pageItems.map(banner => `
+        <tr class="hover:bg-white/5 transition-colors">
+            <td>
+                <img src="https://img.ophim.live/uploads/movies/${banner.thumbUrl}"
+                     alt="${banner.name}"
+                     class="banner-thumb"
+                     onerror="this.src='https://via.placeholder.com/80x120?text=No+Image'">
+            </td>
+            <td>
+                <div class="movie-title" style="font-size:13.5px;font-weight:600; color:var(--text-primary);">${banner.name}</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:2px">${banner.originName || ''}</div>
+            </td>
+            <td style="color:var(--text-secondary);font-size:13px">${banner.year || 'N/A'}</td>
+            <td>
+                ${banner.isActive
+                    ? '<span class="badge badge-success">Đang hiển thị</span>'
+                    : '<span class="badge badge-gray">Ẩn</span>'
+                }
+            </td>
+            <td style="color:var(--text-secondary);font-size:13px">
+               <div class="flex items-center gap-2">
+                   <i data-lucide="layers" style="width:14px; height:14px; color:var(--primary);"></i>
+                   ${banner.priority || 0}
+               </div>
+            </td>
+            <td style="text-align:right">
+                <div class="flex items-center justify-end gap-2">
+                    ${!banner.isActive
+                        ? `<button onclick="activateBanner('${banner._id}')" class="btn btn-success btn-sm"><i data-lucide="play-circle"></i> Kích hoạt</button>`
+                        : `<button onclick="deactivateBanner('${banner._id}')" class="btn btn-secondary btn-sm"><i data-lucide="pause-circle"></i> Tắt</button>`
+                    }
+                    <button onclick="deleteBanner('${banner._id}')" class="btn btn-secondary btn-sm btn-icon hover:bg-danger hover:text-white" title="Xóa">
+                        <i data-lucide="trash-2"></i>
+                    </button>
                 </div>
-            `;
+            </td>
+        </tr>
+    `).join('');
+
+    updatePagInfo(start + 1, Math.min(end, totalItems), totalItems);
+    renderLocalPagination(totalPages, localCurrentPage);
+    if (window.lucide) lucide.createIcons();
+}
+
+function updatePagInfo(start, end, total) {
+    const info = document.getElementById('localPagInfo');
+    if (info) {
+        if (total === 0) {
+            info.textContent = 'Đang hiển thị 0 banner';
         } else {
-            content.innerHTML = '<p class="text-gray-400">Chưa có banner nào được kích hoạt</p>';
+            info.textContent = `Đang hiển thị ${start}-${end} trong tổng số ${total} banner`;
         }
-    } catch (error) {
-        console.error('Error loading active banner:', error);
-        content.innerHTML = '<p class="text-red-400">Không thể tải banner đang hiển thị</p>';
     }
 }
 
-// Thêm event listener cho ô tìm kiếm với debounce 600ms
+function renderLocalPagination(totalPages, currentPage) {
+    const container = document.getElementById('localPagination');
+    if (!container) return;
+
+    if (totalPages <= 1) { 
+        container.innerHTML = ''; 
+        return; 
+    }
+
+    let html = '';
+    
+    html += `<button onclick="goToLocalPage(${currentPage - 1})" class="page-btn" ${currentPage === 1 ? 'disabled style="opacity:0.5; cursor:default;"' : ''}>
+        <i data-lucide="chevron-left" style="width:16px; height:16px;"></i>
+    </button>`;
+
+    for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+            html += `<button onclick="goToLocalPage(${i})" class="page-btn ${i === currentPage ? 'active' : ''}">${i}</button>`;
+        } else if (i === currentPage - 2 || i === currentPage + 2) {
+            html += `<span style="color:var(--text-muted); padding:0 4px;">...</span>`;
+        }
+    }
+
+    html += `<button onclick="goToLocalPage(${currentPage + 1})" class="page-btn" ${currentPage === totalPages ? 'disabled style="opacity:0.5; cursor:default;"' : ''}>
+        <i data-lucide="chevron-right" style="width:16px; height:16px;"></i>
+    </button>`;
+
+    container.innerHTML = html;
+    if (window.lucide) lucide.createIcons();
+}
+
+function goToLocalPage(page) {
+    const totalPages = Math.ceil(allBanners.length / localItemsPerPage);
+    if (page < 1 || page > totalPages) return;
+    localCurrentPage = page;
+    renderBanners();
+}
+
+// Load active banner from cached API data
+function renderActiveBanner() {
+    const content = document.getElementById('activeBannerContent');
+    if (!content) return;
+
+    const activeBanner = allBanners.find(b => b.isActive);
+
+    if (activeBanner) {
+        const cleanContent = activeBanner.content ? activeBanner.content.replace(/<[^>]*>/g, '') : 'Không có mô tả';
+        content.innerHTML = `
+            <div style="display:flex;gap:24px;align-items:flex-start">
+                <img src="https://img.ophim.live/uploads/movies/${activeBanner.thumbUrl}"
+                     alt="${activeBanner.name}"
+                     class="banner-active-poster"
+                     onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
+                <div style="flex:1; min-width: 0;">
+                    <h3 style="font-size:20px;font-weight:800;color:var(--text-primary);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${activeBanner.name}</h3>
+                    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${activeBanner.originName || activeBanner.origin_name || ''}</p>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+                        <span class="badge badge-gray"><i data-lucide="calendar" style="width:14px; height:14px;"></i> ${activeBanner.year || 'N/A'}</span>
+                        <span class="badge badge-primary"><i data-lucide="monitor" style="width:14px; height:14px;"></i> ${activeBanner.quality || 'HD'}</span>
+                        <span class="badge badge-info"><i data-lucide="captions" style="width:14px; height:14px;"></i> ${activeBanner.lang || 'Vietsub'}</span>
+                    </div>
+                    <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${cleanContent}</p>
+                </div>
+            </div>
+        `;
+        if (window.lucide) lucide.createIcons();
+    } else {
+        content.innerHTML = '<div style="color:var(--text-muted);font-size:13.5px;padding:8px 0"><i data-lucide="alert-triangle"    style="vertical-align:middle;margin-right:6px;color:var(--warning)" style="width: 1em; height: 1em;"></i>Chưa có banner nào được kích hoạt. Hãy thêm phim và kích hoạt.</div>';
+        if (window.lucide) lucide.createIcons();
+    }
+}
+
+// Thêm event listener cho ô tìm kiếm và bộ lọc
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchBannerInput');
+    const filterCategory = document.getElementById('filterCategory');
+
     if (searchInput) {
         let timeout = null;
         searchInput.addEventListener('input', (e) => {
             clearTimeout(timeout);
             timeout = setTimeout(() => {
-                loadMoviesFromOphim(e.target.value.trim());
+                loadMoviesFromOphim(e.target.value.trim(), 1);
             }, 600);
+        });
+    }
+
+    if (filterCategory) {
+        filterCategory.addEventListener('change', (e) => {
+            if (searchInput) searchInput.value = ''; // Xoá search khi dùng filter
+            currentOphimSearchKeyword = '';
+            loadMoviesFromOphim('', 1);
         });
     }
 });
 
-// Show load movies modal & auto fetch
 function showLoadMoviesModal() {
-    document.getElementById('loadMoviesModal').classList.remove('hidden');
+    // Reset mode mặc định là thêm Banner lớn
+    if (typeof thumbnailModalMode !== 'undefined' && !arguments.callee.caller?.name?.includes('Thumbnail')) {
+        thumbnailModalMode = false; 
+    }
+    
+    const modal = document.getElementById('loadMoviesModal');
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
     const searchInput = document.getElementById('searchBannerInput');
     if (searchInput) {
         searchInput.value = '';
         searchInput.focus();
     }
-    
-    // Auto load phim mới nhất khi mở lên
-    loadMoviesFromOphim('');
+    if (document.getElementById('filterCategory')) {
+        document.getElementById('filterCategory').value = 'danh-sach/phim-moi-cap-nhat';
+    }
+    loadMoviesFromOphim('', 1);
 }
 
-// Close load movies modal
 function closeLoadMoviesModal() {
-    document.getElementById('loadMoviesModal').classList.add('hidden');
-    document.getElementById('moviesGrid').classList.add('hidden');
-    document.getElementById('loadingMovies').classList.add('hidden');
+    const modal = document.getElementById('loadMoviesModal');
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
+    const grid = document.getElementById('moviesGrid');
+    const loading = document.getElementById('loadingMovies');
+    if (grid)    grid.classList.add('hidden'), grid.style.display = 'none';
+    if (loading) loading.classList.add('hidden'), loading.style.display = 'none';
+    // Reset thumbnail modal mode
+    if (typeof thumbnailModalMode !== 'undefined') thumbnailModalMode = false;
 }
 
 let isModalFullScreen = false;
 
-// Toggle fullname screen modal
 function toggleModalFullScreen() {
-    const container = document.getElementById('loadMoviesModalContainer');
-    const icon = document.getElementById('fullscreenIcon');
-    const modalWrapper = document.getElementById('loadMoviesModal');
-    
+    const icon = document.querySelector('button[title="Phóng to/Thu nhỏ"] i');
+    const modalWrapper = document.getElementById('loadMoviesModalContainer'); // Changed from loadMoviesModal
     isModalFullScreen = !isModalFullScreen;
-    
     if (isModalFullScreen) {
-        container.classList.remove('max-w-4xl', 'rounded-xl', 'max-h-[90vh]');
-        container.classList.add('w-screen', 'h-screen', 'max-w-none', 'max-h-screen', 'rounded-none');
-        modalWrapper.classList.remove('p-4');
-        icon.textContent = 'fullscreen_exit';
+        modalWrapper.style.height = '100vh';
+        modalWrapper.style.width = '100vw';
+        modalWrapper.style.maxWidth = '100vw';
+        modalWrapper.style.borderRadius = '0';
+        if (icon) icon.setAttribute('data-lucide', 'minimize');
     } else {
-        container.classList.add('max-w-4xl', 'rounded-xl', 'max-h-[90vh]');
-        container.classList.remove('w-screen', 'h-screen', 'max-w-none', 'max-h-screen', 'rounded-none');
-        modalWrapper.classList.add('p-4');
-        icon.textContent = 'fullscreen';
+        modalWrapper.style.height = '85vh';
+        modalWrapper.style.width = '';
+        modalWrapper.style.maxWidth = '920px';
+        modalWrapper.style.borderRadius = 'var(--radius-lg)';
+        if (icon) icon.setAttribute('data-lucide', 'maximize');
     }
+    if (window.lucide) lucide.createIcons();
 }
 
 let currentOphimSearchPage = 1;
 let currentOphimSearchKeyword = '';
 let currentOphimTotalPages = 1;
 
-// Load / Search movies from Ophim API
-async function loadMoviesFromOphim(keyword = '', isLoadMore = false) {
+async function loadMoviesFromOphim(keyword = '', page = 1) {
     const loadingDiv = document.getElementById('loadingMovies');
     const loadingText = document.getElementById('loadingText');
     const grid = document.getElementById('moviesGrid');
     const gridTitle = document.getElementById('gridTitle');
     const resultCount = document.getElementById('resultCount');
-    const loadMoreSection = document.getElementById('loadMoreSection');
-    const nextPageNum = document.getElementById('nextPageNum');
+    const filterCategory = document.getElementById('filterCategory');
 
-    if (!isLoadMore) {
-        currentOphimSearchKeyword = keyword;
-        currentOphimSearchPage = 1;
-        // Reset view
-        grid.classList.add('hidden');
-        loadingDiv.classList.remove('hidden');
-        if (loadMoreSection) loadMoreSection.classList.add('hidden');
-    } else {
-        currentOphimSearchPage++;
-        const btn = document.getElementById('loadMoreBtn');
-        if (btn) btn.innerHTML = `<span class="animate-spin material-icons-outlined">refresh</span> Đang tải...`;
-    }
+    currentOphimSearchKeyword = keyword;
+    currentOphimSearchPage = page;
+    
+    grid.classList.add('hidden');
+    loadingDiv.classList.remove('hidden');
+    loadingDiv.style.display = 'block';
+    grid.style.display = 'none';
     
     let apiUrl = `https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=${currentOphimSearchPage}`;
+    
     if (currentOphimSearchKeyword !== '') {
         apiUrl = `https://ophim1.com/v1/api/tim-kiem?keyword=${encodeURIComponent(currentOphimSearchKeyword)}&limit=24&page=${currentOphimSearchPage}`;
-        if (!isLoadMore) {
-            if (loadingText) loadingText.textContent = `Đang tìm "${currentOphimSearchKeyword}"...`;
-            if (gridTitle) gridTitle.textContent = 'Kết quả tìm kiếm';
-        }
+        if (loadingText) loadingText.textContent = `Đang tìm "${currentOphimSearchKeyword}"...`;
+        if (gridTitle) gridTitle.textContent = 'Kết quả tìm kiếm';
     } else {
-        if (!isLoadMore) {
-            if (loadingText) loadingText.textContent = 'Đang tải danh sách phim mới...';
-            if (gridTitle) gridTitle.textContent = 'Phim mới nổi bật';
-        }
+        const filterVal = filterCategory ? filterCategory.value : 'danh-sach/phim-moi-cap-nhat';
+        apiUrl = `https://ophim1.com/v1/api/${filterVal}?page=${currentOphimSearchPage}`;
+        
+        let filterName = filterCategory ? filterCategory.options[filterCategory.selectedIndex].text : 'Phim mới';
+        if (loadingText) loadingText.textContent = `Đang tải ${filterName}...`;
+        if (gridTitle) gridTitle.textContent = filterName;
     }
 
     try {
@@ -240,202 +397,517 @@ async function loadMoviesFromOphim(keyword = '', isLoadMore = false) {
         if (data.status === 'success' && data.data?.items) {
             let newMovies = data.data.items;
             
-            const pagination = data.data.params?.pagination;
-            const totalItems = pagination?.totalItems || 0;
+            const pagination = data.data.params?.pagination || data.data.paginate || data.data.pagination || {};
+            const totalItems = pagination?.totalItems || pagination?.total_items || newMovies.length;
             const perPage = pagination?.totalItemsPerPage || 24;
             
-            currentOphimTotalPages = pagination?.totalPages || Math.ceil(totalItems / perPage) || 1;
+            currentOphimTotalPages = pagination?.totalPages || pagination?.total_pages || Math.ceil(totalItems / perPage) || 1;
             
-            if (!isLoadMore) {
-                loadedMovies = newMovies;
-            } else {
-                loadedMovies = [...loadedMovies, ...newMovies];
-            }
+            loadedMovies = newMovies; 
             
             if (loadedMovies.length > 0) {
                 displayMovies(loadedMovies);
                 
-                // Show result counts
                 if (resultCount) {
-                    if (data.data.params?.pagination?.totalItems) {
-                        resultCount.textContent = `Hiển thị ${loadedMovies.length} / ${data.data.params.pagination.totalItems} kết quả`;
-                    } else {
-                        resultCount.textContent = `${loadedMovies.length} kết quả`;
-                    }
+                    resultCount.textContent = `Tổng ${totalItems.toLocaleString('vi-VN')} phim`;
                 }
                 
-                // Show/hide load more button
-                if (currentOphimSearchPage < currentOphimTotalPages) {
-                    if (loadMoreSection) loadMoreSection.classList.remove('hidden');
-                    if (nextPageNum) nextPageNum.textContent = currentOphimSearchPage + 1;
-                    const btn = document.getElementById('loadMoreBtn');
-                    if (btn) btn.innerHTML = `<span class="material-icons-outlined">expand_more</span> Tải Thêm (Trang <span id="nextPageNum">${currentOphimSearchPage + 1}</span>)`;
-                } else {
-                    if (loadMoreSection) loadMoreSection.classList.add('hidden');
-                }
+                renderModalPagination(currentOphimTotalPages, currentOphimSearchPage);
 
-                if (!isLoadMore) {
-                    loadingDiv.classList.add('hidden');
-                    grid.classList.remove('hidden');
-                }
+                loadingDiv.classList.add('hidden'); loadingDiv.style.display = 'none';
+                grid.classList.remove('hidden'); grid.style.display = 'block';
             } else {
-                if (!isLoadMore) throw new Error('Không tìm thấy phim nào phù hợp');
+                throw new Error('Không tìm thấy phim nào phù hợp');
             }
         } else {
-            if (!isLoadMore) throw new Error('Lỗi truy xuất API Ophim');
+            throw new Error('Lỗi truy xuất API Ophim');
         }
     } catch (error) {
         console.error('Error fetching movies:', error);
-        if (!isLoadMore) {
-            loadingDiv.classList.add('hidden');
-            grid.classList.remove('hidden');
-            document.getElementById('moviesGridContent').innerHTML = `
-                <div class="col-span-full py-8 text-center text-gray-400 border border-white/5 rounded-xl bg-black/20">
-                    <span class="material-icons-outlined text-4xl mb-2 text-gray-500">search_off</span>
-                    <p>Không tìm thấy dữ liệu hoặc có lỗi xảy ra.</p>
-                </div>
-            `;
-            if (resultCount) resultCount.textContent = "0";
-            if (loadMoreSection) loadMoreSection.classList.add('hidden');
-        }
+        loadingDiv.classList.add('hidden'); loadingDiv.style.display = 'none';
+        grid.classList.remove('hidden'); grid.style.display = 'block';
+        document.getElementById('moviesGridContent').innerHTML = `
+            <div class="empty-state" style="grid-column:1/-1; padding: 40px;">
+                <i data-lucide="help-circle"    style="color:var(--text-muted)" style="width: 1em; height: 1em;"></i>
+                <p>Không tìm thấy dữ liệu hoặc có lỗi xảy ra.</p>
+            </div>
+        `;
+        if (resultCount) resultCount.textContent = "0";
+        const pag = document.getElementById('modalPagination');
+        if (pag) pag.innerHTML = '';
+        if (window.lucide) lucide.createIcons();
     }
 }
 
-function loadMoreOphimMovies() {
-    loadMoviesFromOphim(currentOphimSearchKeyword, true);
+function renderModalPagination(totalPages, currentPage) {
+    const container = document.getElementById('modalPagination');
+    if (!container) return;
+
+    if (totalPages <= 1) { 
+        container.innerHTML = ''; 
+        return; 
+    }
+
+    let html = '';
+    const visiblePages = 5;
+
+    if (currentPage > 1) {
+        html += `<button onclick="loadMoviesFromOphim(currentOphimSearchKeyword, ${currentPage - 1})" class="page-btn">
+            <i data-lucide="chevron-left" style="width:16px; height:16px;"></i>
+        </button>`;
+    }
+
+    const start = Math.max(1, currentPage - Math.floor(visiblePages / 2));
+    const end = Math.min(totalPages, start + visiblePages - 1);
+
+    if (start > 1) {
+        html += `<button onclick="loadMoviesFromOphim(currentOphimSearchKeyword, 1)" class="page-btn">1</button>`;
+        if (start > 2) html += `<span style="color:var(--text-muted);padding:0 4px;">…</span>`;
+    }
+
+    for (let i = start; i <= end; i++) {
+        if (i === currentPage) {
+            html += `<button class="page-btn active">${i}</button>`;
+        } else {
+            html += `<button onclick="loadMoviesFromOphim(currentOphimSearchKeyword, ${i})" class="page-btn">${i}</button>`;
+        }
+    }
+
+    if (end < totalPages) {
+        if (end < totalPages - 1) html += `<span style="color:var(--text-muted);padding:0 4px;">…</span>`;
+        html += `<button onclick="loadMoviesFromOphim(currentOphimSearchKeyword, ${totalPages})" class="page-btn">${totalPages}</button>`;
+    }
+
+    if (currentPage < totalPages) {
+        html += `<button onclick="loadMoviesFromOphim(currentOphimSearchKeyword, ${currentPage + 1})" class="page-btn">
+            <i data-lucide="chevron-right" style="width:16px; height:16px;"></i>
+        </button>`;
+    }
+    
+    html += `<span style="margin-left: 12px; font-size: 13.5px; color: var(--text-muted); white-space:nowrap; display:flex; align-items:center;">Trang ${currentPage}/${totalPages}</span>`;
+
+    container.innerHTML = html;
+    if (window.lucide) lucide.createIcons();
 }
-// Display movies in grid
+
 function displayMovies(movies) {
     const gridContent = document.getElementById('moviesGridContent');
 
     gridContent.innerHTML = movies.map(movie => `
-        <div class="bg-background-dark rounded-lg overflow-hidden border border-white/10 hover:border-primary/50 transition-all">
-            <img src="https://img.ophim.live/uploads/movies/${movie.thumb_url}" 
+        <div class="movie-pick-card">
+            <img src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
                  alt="${movie.name}"
-                 class="w-full h-48 object-cover"
+                 class="movie-pick-thumb"
                  onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
-            <div class="p-3">
-                <h5 class="text-white font-semibold text-sm mb-1 truncate">${movie.name}</h5>
-                <p class="text-gray-400 text-xs mb-2 truncate">${movie.origin_name || ''}</p>
-                <div class="flex items-center justify-between text-xs text-gray-400 mb-3">
+            <div class="movie-pick-body">
+                <div class="movie-pick-title">${movie.name}</div>
+                <div class="movie-pick-meta">
                     <span>${movie.year || 'N/A'}</span>
-                    <span>${movie.quality || 'HD'}</span>
+                    <span class="badge badge-primary" style="padding:1px 6px;font-size:10px">${movie.quality || 'HD'}</span>
                 </div>
-                <button onclick='addMovieToBanner(${JSON.stringify(movie).replace(/'/g, "&apos;")})' 
-                        class="w-full px-3 py-2 bg-primary text-black font-semibold rounded hover:bg-primary/80 transition-colors text-sm">
-                    Thêm vào Banner
-                </button>
+                <div class="movie-pick-actions" style="display:flex;gap:6px;margin-top:auto">
+                 ${!thumbnailModalMode ? `<button onclick='addMovieToBanner(${JSON.stringify(movie).replace(/'/g, "&apos;")})' class="btn btn-primary btn-sm" style="flex:1;justify-content:center"><i data-lucide="plus-circle"></i> Thêm Banner</button>` : ''}${thumbnailModalMode ? `<button onclick='addMovieToThumbnail(${JSON.stringify(movie).replace(/'/g, "&apos;")})' class="btn btn-primary btn-sm" style="flex:1;justify-content:center"><i data-lucide="layout-list"></i> Thêm Thumbnail</button>` : `<button onclick='addMovieToThumbnail(${JSON.stringify(movie).replace(/'/g, "&apos;")})' class="btn btn-secondary btn-sm" style="flex:1;justify-content:center" title="Thêm vào Thumbnail"><i data-lucide="layout-list"></i> Thumbnail</button>`}
+                </div>
             </div>
         </div>
     `).join('');
+    if (window.lucide) lucide.createIcons();
 }
 
-// Add movie to banner
-function addMovieToBanner(movie) {
+// Add movie to banner via API
+async function addMovieToBanner(movie) {
     try {
-        // Get existing banners
-        const banners = JSON.parse(localStorage.getItem('cinestream_banners') || '[]');
-
-        // Check if already exists
-        if (banners.find(b => b.slug === movie.slug)) {
+        if (allBanners.find(b => b.movieSlug === movie.slug)) {
             alert('Phim này đã có trong danh sách banner!');
             return;
         }
 
-        // Add new banner
-        const newBanner = {
-            slug: movie.slug,
+        const token = localStorage.getItem('cinestream_admin_token');
+        const apiUrl = (window.API_CONFIG && window.API_CONFIG.BACKEND_URL) 
+                    ? window.API_CONFIG.BACKEND_URL.replace(/\/api$/, '') 
+                    : 'http://localhost:5000';
+
+        const payload = {
+            movieSlug: movie.slug,
             name: movie.name,
-            origin_name: movie.origin_name,
-            thumb_url: movie.thumb_url,
-            poster_url: movie.poster_url,
+            originName: movie.origin_name,
+            thumbUrl: movie.thumb_url,
+            posterUrl: movie.poster_url,
             content: movie.content,
             year: movie.year,
             quality: movie.quality,
             lang: movie.lang,
-            episode_current: movie.episode_current,
+            episodeCurrent: movie.episode_current,
             category: movie.category,
             tmdb: movie.tmdb,
             imdb: movie.imdb,
-            sourcePage: movie.sourcePage,
-            isActive: false,
-            priority: 0,
-            addedAt: new Date().toISOString()
+            sourcePage: typeof currentOphimSearchPage !== 'undefined' ? currentOphimSearchPage : 1,
+            priority: 0
         };
 
-        banners.push(newBanner);
-        saveBanners(banners);
+        const response = await fetch(`${apiUrl}/api/banners`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
 
-        alert('Đã thêm phim vào danh sách banner!');
-        closeLoadMoviesModal();
-        loadBanners();
+        const data = await response.json();
+
+        if (data.success) {
+            alert('Đã thêm phim vào danh sách banner!');
+            closeLoadMoviesModal();
+            fetchBannersFromAPI(); // Refresh data
+        } else {
+            throw new Error(data.message || 'Lỗi thêm banner');
+        }
     } catch (error) {
         console.error('Error adding banner:', error);
         alert('Không thể thêm banner: ' + error.message);
     }
 }
 
-// Activate banner
-function activateBanner(slug) {
+// Activate banner via API
+async function activateBanner(id) {
     if (!confirm('Kích hoạt banner này? Banner hiện tại sẽ bị tắt.')) return;
 
     try {
-        const banners = JSON.parse(localStorage.getItem('cinestream_banners') || '[]');
+        const token = localStorage.getItem('cinestream_admin_token');
+        const apiUrl = window.config?.apiUrl || 'http://localhost:5000';
 
-        // Deactivate all, activate selected
-        banners.forEach(b => {
-            b.isActive = (b.slug === slug);
+        const response = await fetch(`${apiUrl}/api/banners/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ isActive: true })
         });
 
-        saveBanners(banners);
+        const data = await response.json();
 
-        alert('Đã kích hoạt banner!');
-        loadBanners();
-        loadActiveBanner();
+        if (data.success) {
+            alert('Đã kích hoạt banner!');
+            fetchBannersFromAPI(); // Refresh
+        } else {
+            throw new Error(data.message || 'Lỗi cập nhật banner');
+        }
     } catch (error) {
         console.error('Error activating banner:', error);
-        alert('Không thể kích hoạt banner');
+        alert('Không thể kích hoạt banner: ' + error.message);
     }
 }
 
-// Deactivate banner
-function deactivateBanner(slug) {
+// Deactivate banner via API
+async function deactivateBanner(id) {
     if (!confirm('Tắt banner này?')) return;
 
     try {
-        const banners = JSON.parse(localStorage.getItem('cinestream_banners') || '[]');
+        const token = localStorage.getItem('cinestream_admin_token');
+        const apiUrl = window.config?.apiUrl || 'http://localhost:5000';
 
-        const banner = banners.find(b => b.slug === slug);
-        if (banner) {
-            banner.isActive = false;
+        const response = await fetch(`${apiUrl}/api/banners/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ isActive: false })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert('Đã tắt banner!');
+            fetchBannersFromAPI(); // Refresh
+        } else {
+            throw new Error(data.message || 'Lỗi cập nhật banner');
         }
-
-        saveBanners(banners);
-
-        alert('Đã tắt banner!');
-        loadBanners();
-        loadActiveBanner();
     } catch (error) {
         console.error('Error deactivating banner:', error);
-        alert('Không thể tắt banner');
+        alert('Không thể tắt banner: ' + error.message);
     }
 }
 
-// Delete banner
-function deleteBanner(slug) {
-    if (!confirm('Xóa banner này?')) return;
+// Delete banner via API
+async function deleteBanner(id) {
+    if (!confirm('Xóa banner này khỏi danh sách?')) return;
 
     try {
-        let banners = JSON.parse(localStorage.getItem('cinestream_banners') || '[]');
+        const token = localStorage.getItem('cinestream_admin_token');
+        const apiUrl = window.config?.apiUrl || 'http://localhost:5000';
 
-        banners = banners.filter(b => b.slug !== slug);
-        saveBanners(banners);
+        const response = await fetch(`${apiUrl}/api/banners/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
 
-        alert('Đã xóa banner!');
-        loadBanners();
-        loadActiveBanner();
+        const data = await response.json();
+
+        if (data.success) {
+            alert('Đã xóa banner!');
+            fetchBannersFromAPI(); // Refresh
+        } else {
+            throw new Error(data.message || 'Lỗi xóa banner');
+        }
     } catch (error) {
         console.error('Error deleting banner:', error);
-        alert('Không thể xóa banner');
+        alert('Không thể xóa banner: ' + error.message);
     }
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// THUMBNAIL STRIP MANAGEMENT
+// ═══════════════════════════════════════════════════════════════
+
+let thumbnailList = []; // { movieSlug, name, originName, thumbUrl, year }
+let thumbnailDirty = false; // true khi có thay đổi chưa lưu
+let thumbnailModalMode = false; // true = modal đang ở mode "thêm thumbnail"
+
+// ── Fetch & render thumbnail list ──────────────────────────────
+async function fetchThumbnailList() {
+    const grid = document.getElementById('thumbnailStripGrid');
+    const loading = document.getElementById('thumbnailStripLoading');
+    const empty = document.getElementById('thumbnailStripEmpty');
+
+    if (loading) { loading.style.display = 'block'; }
+    if (grid) grid.style.display = 'none';
+    if (empty) empty.style.display = 'none';
+
+    try {
+        const token = localStorage.getItem('cinestream_admin_token');
+        const apiUrl = window.config?.apiUrl || 'http://localhost:5000';
+        const res = await fetch(`${apiUrl}/api/banners/thumbnails`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            thumbnailList = data.data.map(b => ({
+                movieSlug: b.movieSlug,
+                name: b.name,
+                originName: b.originName,
+                thumbUrl: b.thumbUrl,
+                year: b.year
+            }));
+        } else {
+            thumbnailList = [];
+        }
+    } catch (e) {
+        console.warn('fetchThumbnailList error:', e);
+        thumbnailList = [];
+    }
+
+    if (loading) loading.style.display = 'none';
+    renderThumbnailGrid();
+    thumbnailDirty = false;
+    updateSaveBtn();
+}
+
+// ── Render grid ────────────────────────────────────────────────
+function renderThumbnailGrid() {
+    const grid = document.getElementById('thumbnailStripGrid');
+    const empty = document.getElementById('thumbnailStripEmpty');
+    const countEl = document.getElementById('thumbCount');
+
+    if (!grid) return;
+
+    const count = thumbnailList.length;
+    if (countEl) countEl.textContent = `${count}/10 phim`;
+
+    if (count === 0) {
+        grid.style.display = 'none';
+        if (empty) empty.style.display = 'block';
+        return;
+    }
+
+    if (empty) empty.style.display = 'none';
+    grid.style.display = 'flex';
+
+    grid.innerHTML = thumbnailList.map((item, idx) => `
+        <div class="thumb-card" draggable="true"
+             data-slug="${item.movieSlug}" data-idx="${idx}"
+             ondragstart="onThumbDragStart(event)"
+             ondragover="onThumbDragOver(event)"
+             ondrop="onThumbDrop(event)"
+             ondragend="onThumbDragEnd(event)">
+            <span class="thumb-card-order">${idx + 1}</span>
+            <button class="thumb-card-remove" onclick="removeFromThumbnail('${item.movieSlug}')" title="Xóa">✕</button>
+            <img src="https://img.ophim.live/uploads/movies/${item.thumbUrl}"
+                 alt="${item.name}"
+                 onerror="this.src='https://via.placeholder.com/100x140?text=No+Img'">
+            <div class="thumb-card-body">
+                <div class="thumb-card-name" title="${item.name}">${item.name}</div>
+                <div style="font-size:10px;color:var(--text-muted)">${item.year || ''}</div>
+            </div>
+        </div>
+    `).join('');
+
+    if (window.lucide) lucide.createIcons();
+}
+
+function updateSaveBtn() {
+    const btn = document.getElementById('btnSaveThumb');
+    if (btn) btn.style.display = thumbnailDirty ? 'inline-flex' : 'none';
+}
+
+// ── Remove from thumbnail ──────────────────────────────────────
+function removeFromThumbnail(slug) {
+    thumbnailList = thumbnailList.filter(t => t.movieSlug !== slug);
+    thumbnailDirty = true;
+    renderThumbnailGrid();
+    updateSaveBtn();
+    
+    // Tự động lưu để đồng bộ
+    saveThumbnailOrder();
+}
+
+// ── Save order to API ──────────────────────────────────────────
+async function saveThumbnailOrder() {
+    const btn = document.getElementById('btnSaveThumb');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i data-lucide="loader"></i> Đang lưu...'; if (window.lucide) lucide.createIcons(); }
+
+    try {
+        const token = localStorage.getItem('cinestream_admin_token');
+        const apiUrl = (window.API_CONFIG && window.API_CONFIG.BACKEND_URL) 
+                    ? window.API_CONFIG.BACKEND_URL.replace(/\/api$/, '') 
+                    : 'http://localhost:5000';
+        
+        const res = await fetch(`${apiUrl}/api/banners/thumbnails`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ movies: thumbnailList })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            thumbnailDirty = false;
+            updateSaveBtn();
+            // Toast
+            showThumbToast('Đã lưu thứ tự thumbnail!', 'success');
+        } else {
+            showThumbToast(data.message || 'Lỗi lưu thumbnail', 'error');
+        }
+    } catch (e) {
+        console.error('saveThumbnailOrder error:', e);
+        showThumbToast('Không thể lưu thumbnail: ' + e.message, 'error');
+    } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i data-lucide="save"></i> Lưu thứ tự'; if (window.lucide) lucide.createIcons(); }
+    }
+}
+
+async function fetchThumbnailList() {
+    const loading = document.getElementById('thumbnailStripLoading');
+    if (loading) loading.classList.remove('hidden');
+
+    try {
+        const apiUrl = (window.API_CONFIG && window.API_CONFIG.BACKEND_URL) 
+                    ? window.API_CONFIG.BACKEND_URL.replace(/\/api$/, '') 
+                    : 'http://localhost:5000';
+        
+        const res = await fetch(`${apiUrl}/api/banners/thumbnails`);
+        const data = await res.json();
+        
+        if (data.success) {
+            thumbnailList = data.data || [];
+            renderThumbnailGrid();
+        }
+    } catch (e) {
+        console.error('fetchThumbnailList error:', e);
+    } finally {
+        if (loading) loading.classList.add('hidden');
+    }
+}
+
+function showThumbToast(msg, type) {
+    const existing = document.getElementById('thumbToast');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.id = 'thumbToast';
+    toast.style.cssText = `position:fixed;bottom:24px;right:24px;z-index:99999;
+        padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;
+        color:#fff;background:${type==='success'?'var(--success)':'var(--danger)'};
+        box-shadow:0 4px 20px rgba(0,0,0,0.3);transition:opacity 0.3s;`;
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 2500);
+}
+
+// ── Add to thumbnail from modal ────────────────────────────────
+function showAddThumbnailModal() {
+    thumbnailModalMode = true;
+    showLoadMoviesModal();
+}
+
+function addMovieToThumbnail(movie) {
+    if (thumbnailList.length >= 10) {
+        showThumbToast('Đã đủ 10 phim thumbnail!', 'error');
+        return;
+    }
+    if (thumbnailList.find(t => t.movieSlug === movie.slug)) {
+        showThumbToast('Phim này đã có trong danh sách!', 'error');
+        return;
+    }
+    thumbnailList.push({
+        movieSlug: movie.slug,
+        name: movie.name,
+        originName: movie.origin_name,
+        thumbUrl: movie.thumb_url,
+        posterUrl: movie.poster_url,
+        year: movie.year,
+        tmdb: movie.tmdb || {}
+    });
+    thumbnailDirty = true;
+    renderThumbnailGrid();
+    updateSaveBtn();
+    
+    // Tự động lưu luôn để đồng bộ với cách hoạt động của Banner lớn
+    saveThumbnailOrder();
+    
+    closeLoadMoviesModal();
+    thumbnailModalMode = false;
+    showThumbToast(`Đã thêm "${movie.name}" vào thumbnail!`, 'success');
+}
+
+// ── Drag-and-drop logic ────────────────────────────────────────
+let dragSrcIdx = null;
+
+function onThumbDragStart(e) {
+    dragSrcIdx = parseInt(e.currentTarget.dataset.idx);
+    e.currentTarget.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+}
+
+function onThumbDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    document.querySelectorAll('.thumb-card').forEach(c => c.classList.remove('drag-over'));
+    e.currentTarget.classList.add('drag-over');
+}
+
+function onThumbDrop(e) {
+    e.preventDefault();
+    const targetIdx = parseInt(e.currentTarget.dataset.idx);
+    if (dragSrcIdx === null || dragSrcIdx === targetIdx) return;
+
+    const moved = thumbnailList.splice(dragSrcIdx, 1)[0];
+    thumbnailList.splice(targetIdx, 0, moved);
+
+    thumbnailDirty = true;
+    renderThumbnailGrid();
+    updateSaveBtn();
+}
+
+function onThumbDragEnd(e) {
+    e.currentTarget.classList.remove('dragging');
+    document.querySelectorAll('.thumb-card').forEach(c => c.classList.remove('drag-over'));
+    dragSrcIdx = null;
 }
