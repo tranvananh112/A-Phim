@@ -22,7 +22,9 @@ async function loadHeroBanner() {
 
     // 2. BACKGROUND: Load từ API Backend
     try {
-        const apiUrl = (typeof getBackendBaseURL === 'function') ? window.getBackendBaseURL() : (window.config?.apiUrl || 'http://localhost:5000');
+        const apiUrl = (typeof getBackendBaseURL === 'function') ? window.getBackendBaseURL() : '';
+        if (!apiUrl) throw new Error('API Base URL not defined');
+        
         const response = await fetch(`${apiUrl}/api/banners/active`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
@@ -95,9 +97,7 @@ function convertBannerToMovie(banner) {
 }
 
 async function loadThumbnailMovies() {
-    const apiUrl = window.config?.apiUrl || 'http://localhost:5000';
-
-    // 1. Instant render từ cache
+    // 1. Instant render từ cache để tránh màn hình trắng
     try {
         const cached = localStorage.getItem('cinestream_thumbnail_movies');
         if (cached) {
@@ -110,9 +110,8 @@ async function loadThumbnailMovies() {
 
     // 2. Fetch fresh từ backend
     try {
-        const apiUrl = (window.API_CONFIG && window.API_CONFIG.BACKEND_URL) 
-                    ? window.API_CONFIG.BACKEND_URL.replace(/\/api$/, '') 
-                    : 'http://localhost:5000';
+        const apiUrl = (typeof getBackendBaseURL === 'function') ? window.getBackendBaseURL() : '';
+        if (!apiUrl) throw new Error('API Base URL not defined');
                     
         const res = await fetch(`${apiUrl}/api/banners/thumbnails`);
         const data = await res.json();
