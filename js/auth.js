@@ -7,7 +7,7 @@ const STORAGE_KEYS = {
 
 class AuthService {
     constructor() {
-        this.backendURL = typeof API_CONFIG !== 'undefined' ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api';
+        this.backendURL = (typeof API_CONFIG !== 'undefined' && API_CONFIG.BACKEND_URL) ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api';
         // Always use backend for authentication
         this.useBackend = typeof API_CONFIG !== 'undefined' ? API_CONFIG.USE_BACKEND_FOR_AUTH : true;
         this.currentUser = this.loadUser();

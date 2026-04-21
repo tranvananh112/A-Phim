@@ -3,7 +3,7 @@
  * Requires: config.js (ADMIN_STORAGE_KEYS, API_CONFIG) loaded before this file
  */
 
-const API_BASE = (typeof API_CONFIG !== 'undefined') ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api';
+const API_BASE = (typeof API_CONFIG !== 'undefined' && API_CONFIG.BACKEND_URL) ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api';
 
 // ── Bootstrap ───────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {

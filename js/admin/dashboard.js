@@ -1,6 +1,6 @@
 // Admin Dashboard Script - Modernized with Auto-discovery & Real-time hooks
 let API_URL = (typeof API_CONFIG !== 'undefined' && API_CONFIG.BACKEND_URL) ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api';
-let SOCKET_URL = window.location.origin;
+let SOCKET_URL = (typeof getBackendBaseURL === 'function') ? window.getBackendBaseURL() : window.location.origin;
 let socket;
 let charts = {};
 
@@ -8,11 +8,21 @@ let charts = {};
 async function discoverAPI() {
     const host = window.location.hostname;
     const protocol = window.location.protocol;
+    
+    // In production (aphim.io.vn), always prioritize the config URL
+    if (host !== 'localhost' && host !== '127.0.0.1' && typeof API_CONFIG !== 'undefined') {
+        API_URL = API_CONFIG.BACKEND_URL;
+        SOCKET_URL = window.getBackendBaseURL();
+        console.log(`🚀 Production Domain detected, using API: ${API_URL}`);
+        updateConnectionStatus(true, API_URL);
+        return API_URL;
+    }
+
     const potentialUrls = [
+        API_URL, // Try the one from config.js first
         `${protocol}//${host}:5000/api`,
         `http://localhost:5000/api`,
-        `http://127.0.0.1:5000/api`,
-        API_URL // Use current from config as fallback
+        `http://127.0.0.1:5000/api`
     ];
 
     for (const url of potentialUrls) {

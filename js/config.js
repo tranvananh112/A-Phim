@@ -14,7 +14,7 @@ const ADMIN_CONFIG = {
 // Default Fallback configuration
 const API_CONFIG = {
     // Backend API - Auto-detect environment
-    BACKEND_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    BACKEND_URL: (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
         ? 'http://localhost:5000/api'
         : 'https://a-phim-production-c87b.up.railway.app/api',
 
@@ -114,10 +114,18 @@ const APP_CONFIG = {
     PLAYBACK_SPEEDS: [0.5, 0.75, 1, 1.25, 1.5, 2]
 };
 
-// Backward compatibility
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+// Backward compatibility and Global Helper
+const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:5000'
     : 'https://a-phim-production-c87b.up.railway.app';
+
+// Global helper to get base URL without /api suffix
+window.getBackendBaseURL = function() {
+    if (window.API_CONFIG && window.API_CONFIG.BACKEND_URL) {
+        return window.API_CONFIG.BACKEND_URL.replace(/\/api$/, '');
+    }
+    return API_BASE_URL;
+};
 
 // Global Sync for Hidden Movies
 // We dispatch 'hiddenMoviesSynced' event when done

@@ -59,9 +59,7 @@ async function fetchBannersFromAPI() {
 
     try {
         const token = localStorage.getItem('cinestream_admin_token');
-        const apiUrl = (window.API_CONFIG && window.API_CONFIG.BACKEND_URL) 
-                    ? window.API_CONFIG.BACKEND_URL.replace(/\/api$/, '') 
-                    : 'http://localhost:5000';
+        const apiUrl = window.getBackendBaseURL();
         
         const response = await fetch(`${apiUrl}/api/banners`, {
             method: 'GET',
@@ -523,9 +521,7 @@ async function addMovieToBanner(movie) {
         }
 
         const token = localStorage.getItem('cinestream_admin_token');
-        const apiUrl = (window.API_CONFIG && window.API_CONFIG.BACKEND_URL) 
-                    ? window.API_CONFIG.BACKEND_URL.replace(/\/api$/, '') 
-                    : 'http://localhost:5000';
+        const apiUrl = window.getBackendBaseURL();
 
         const payload = {
             movieSlug: movie.slug,
@@ -575,7 +571,7 @@ async function activateBanner(id) {
 
     try {
         const token = localStorage.getItem('cinestream_admin_token');
-        const apiUrl = window.config?.apiUrl || 'http://localhost:5000';
+        const apiUrl = window.getBackendBaseURL();
 
         const response = await fetch(`${apiUrl}/api/banners/${id}`, {
             method: 'PUT',
@@ -606,7 +602,7 @@ async function deactivateBanner(id) {
 
     try {
         const token = localStorage.getItem('cinestream_admin_token');
-        const apiUrl = window.config?.apiUrl || 'http://localhost:5000';
+        const apiUrl = window.getBackendBaseURL();
 
         const response = await fetch(`${apiUrl}/api/banners/${id}`, {
             method: 'PUT',
@@ -637,7 +633,7 @@ async function deleteBanner(id) {
 
     try {
         const token = localStorage.getItem('cinestream_admin_token');
-        const apiUrl = window.config?.apiUrl || 'http://localhost:5000';
+        const apiUrl = window.getBackendBaseURL();
 
         const response = await fetch(`${apiUrl}/api/banners/${id}`, {
             method: 'DELETE',
@@ -681,7 +677,7 @@ async function fetchThumbnailList() {
 
     try {
         const token = localStorage.getItem('cinestream_admin_token');
-        const apiUrl = window.config?.apiUrl || 'http://localhost:5000';
+        const apiUrl = window.getBackendBaseURL();
         const res = await fetch(`${apiUrl}/api/banners/thumbnails`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -774,9 +770,7 @@ async function saveThumbnailOrder() {
 
     try {
         const token = localStorage.getItem('cinestream_admin_token');
-        const apiUrl = (window.API_CONFIG && window.API_CONFIG.BACKEND_URL) 
-                    ? window.API_CONFIG.BACKEND_URL.replace(/\/api$/, '') 
-                    : 'http://localhost:5000';
+        const apiUrl = window.getBackendBaseURL();
         
         const res = await fetch(`${apiUrl}/api/banners/thumbnails`, {
             method: 'PUT',
@@ -804,28 +798,7 @@ async function saveThumbnailOrder() {
     }
 }
 
-async function fetchThumbnailList() {
-    const loading = document.getElementById('thumbnailStripLoading');
-    if (loading) loading.classList.remove('hidden');
 
-    try {
-        const apiUrl = (window.API_CONFIG && window.API_CONFIG.BACKEND_URL) 
-                    ? window.API_CONFIG.BACKEND_URL.replace(/\/api$/, '') 
-                    : 'http://localhost:5000';
-        
-        const res = await fetch(`${apiUrl}/api/banners/thumbnails`);
-        const data = await res.json();
-        
-        if (data.success) {
-            thumbnailList = data.data || [];
-            renderThumbnailGrid();
-        }
-    } catch (e) {
-        console.error('fetchThumbnailList error:', e);
-    } finally {
-        if (loading) loading.classList.add('hidden');
-    }
-}
 
 function showThumbToast(msg, type) {
     const existing = document.getElementById('thumbToast');

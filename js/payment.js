@@ -24,9 +24,9 @@ const PLANS = {
 // ── Fetch cấu hình từ backend và override defaults ────────────────────────────
 async function initPaymentConfig() {
     try {
-        const BACKEND_URL = (typeof API_CONFIG !== 'undefined')
+        const BACKEND_URL = (typeof API_CONFIG !== 'undefined' && API_CONFIG.BACKEND_URL)
             ? API_CONFIG.BACKEND_URL
-            : (location.hostname === 'localhost'
+            : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
                 ? 'http://localhost:5000/api'
                 : 'https://a-phim-production-c87b.up.railway.app/api');
 

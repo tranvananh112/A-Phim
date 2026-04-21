@@ -2,9 +2,11 @@
  * A Phim - Admin Comments Management (MongoDB Backend)
  */
 
-const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:5000/api'
-    : 'https://a-phim-production-c87b.up.railway.app/api';
+const API_URL = (typeof API_CONFIG !== 'undefined' && API_CONFIG.BACKEND_URL) 
+    ? API_CONFIG.BACKEND_URL 
+    : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:5000/api'
+        : 'https://a-phim-production-c87b.up.railway.app/api');
 
 let currentPage = 1;
 let itemsPerPage = 20;

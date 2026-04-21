@@ -22,7 +22,7 @@ async function loadHeroBanner() {
 
     // 2. BACKGROUND: Load từ API Backend
     try {
-        const apiUrl = window.config?.apiUrl || 'http://localhost:5000';
+        const apiUrl = (typeof getBackendBaseURL === 'function') ? window.getBackendBaseURL() : (window.config?.apiUrl || 'http://localhost:5000');
         const response = await fetch(`${apiUrl}/api/banners/active`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }

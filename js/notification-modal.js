@@ -136,12 +136,11 @@
 
             if (window.API_CONFIG && window.API_CONFIG.BACKEND_URL) {
                 API_URL = window.API_CONFIG.BACKEND_URL;
-            } else if (window.API_BASE_URL) {
-                API_URL = `${window.API_BASE_URL}/api`;
+            } else if (window.getBackendBaseURL && typeof window.getBackendBaseURL === 'function') {
+                API_URL = window.getBackendBaseURL() + '/api';
             } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
                 API_URL = 'http://localhost:5000/api';
             } else {
-                // Production - use Railway backend
                 API_URL = 'https://a-phim-production-c87b.up.railway.app/api';
             }
 

@@ -1,8 +1,9 @@
 // Phim X với Proxy Server - Bypass ISP Blocking
 // Version: 1.0 - Sử dụng backend proxy thay vì gọi trực tiếp API
 
-const PROXY_API = 'https://your-backend-url.railway.app/api/phimx-proxy'; // Thay bằng URL backend của bạn
-// Hoặc dùng local: const PROXY_API = 'http://localhost:5000/api/phimx-proxy';
+const PROXY_API = (typeof API_CONFIG !== 'undefined' && API_CONFIG.BACKEND_URL) 
+    ? API_CONFIG.BACKEND_URL + '/phimx-proxy' 
+    : 'https://a-phim-production-c87b.up.railway.app/api/phimx-proxy';
 
 const S = {
     currentServer: 2, // 1 = Pornhub, 2 = Eporner
