@@ -352,6 +352,7 @@
             const criticalDomains = [
                 'https://ophim1.com',
                 'https://img.ophim.live',
+                'https://wsrv.nl',
                 'https://cdn.tailwindcss.com'
             ];
 
@@ -412,8 +413,10 @@
     <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://ophim1.com" crossorigin>
     <link rel="preconnect" href="https://img.ophim.live" crossorigin>
+    <link rel="preconnect" href="https://wsrv.nl" crossorigin>
     <link rel="dns-prefetch" href="https://ophim1.com">
     <link rel="dns-prefetch" href="https://img.ophim.live">
+    <link rel="dns-prefetch" href="https://wsrv.nl">
 
     <!-- Tailwind local build (không CDN - không còn warning) -->
     <link rel="stylesheet" href="css/tailwind.min.css?v=1">
@@ -817,10 +820,10 @@
     <!-- Hero Section -->
     <main class="relative h-screen w-full overflow-hidden">
         <!-- Background Image with Loading State -->
-        <div class="absolute inset-0 z-0">
+        <div class="absolute inset-0 z-0 bg-background-dark">
             <img id="heroImage" alt="Hero Movie Background"
                 class="w-full h-full object-cover object-center scale-105 opacity-0 transition-opacity duration-700"
-                src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1920"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
                 loading="eager" fetchpriority="high" />
             <!-- Loading Skeleton -->
             <div id="heroImageSkeleton"
@@ -1440,8 +1443,9 @@
                     <div class="aspect-[2/3] w-full overflow-hidden relative">
                         <img alt="${movie.name}"
                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${hiddenUI.imgClass}"
-                            src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
-                            onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
+                            src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url, 350, 70) : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`}"
+                            onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'"
+                            loading="lazy" />
                         
                         ${hiddenUI.badge}
                         
@@ -1532,8 +1536,9 @@
                     <div class="aspect-[2/3] w-full overflow-hidden relative">
                         <img alt="${movie.name}"
                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${hiddenUI.imgClass}"
-                            src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
-                            onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
+                            src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url, 350, 70) : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`}"
+                            onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'"
+                            loading="lazy" />
                         
                         ${hiddenUI.badge}
                         
@@ -1631,8 +1636,9 @@
                             <a href="${linkUrl}">
                                 <img alt="${movie.name}" 
                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${hiddenUI.imgClass}"
-                                    src="${backdropUrl}"
-                                    onerror="this.src='https://via.placeholder.com/640x360?text=No+Image'" />
+                                    src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url || movie.poster_url, 640, 75) : backdropUrl}"
+                                    onerror="this.src='https://via.placeholder.com/640x360?text=No+Image'"
+                                    loading="lazy" />
                             </a>
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-80"></div>
                             
@@ -1655,8 +1661,9 @@
                         <a href="${linkUrl}" class="absolute top-[calc(100%-10rem)] left-4 w-24 md:w-28 aspect-[2/3] rounded-md overflow-hidden shadow-2xl border-2 border-gray-700/50 z-10 transition-transform duration-300 group-hover:scale-105 group-hover:-translate-y-1">
                             <img alt="Poster ${movie.name}" 
                                 class="w-full h-full object-cover"
-                                src="${posterUrl}"
-                                onerror="this.src='https://via.placeholder.com/300x450?text=No+Poster'" />
+                                src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.poster_url || movie.thumb_url, 150, 60) : posterUrl}"
+                                onerror="this.src='https://via.placeholder.com/300x450?text=No+Poster'"
+                                loading="lazy" />
                         </a>
 
                         <!-- Movie info below, next to poster -->

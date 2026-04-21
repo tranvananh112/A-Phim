@@ -71,9 +71,10 @@
                         <a href="${linkUrl}">
                             <div class="cs-poster-container">
                                 <!-- Poster Image -->
-                                <img src="${posterUrl}" 
+                                <img src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.poster_url || movie.thumb_url, 400, 75) : posterUrl}" 
                                      alt="${movie.name}"
-                                     onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
+                                     onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'"
+                                     loading="lazy" />
                                 
                                 <!-- Badges on Poster -->
                                 <div class="cs-badges-container">

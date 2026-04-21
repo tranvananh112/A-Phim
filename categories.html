@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 
 <head>
@@ -32,6 +32,8 @@
     <link rel="apple-touch-icon" href="/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://wsrv.nl">
+    <link rel="dns-prefetch" href="https://wsrv.nl">
 
     <!-- Critical CSS inline to prevent FOUC -->
     <style>
@@ -753,7 +755,7 @@
             movies.forEach((movie, index) => {
                 // Fix poster URL with CDN prefix
                 const thumbUrl = movie.thumb_url || movie.poster_url || '';
-                const posterUrl = thumbUrl ? `https://img.ophim.live/uploads/movies/${thumbUrl}` : 'https://via.placeholder.com/300x450?text=No+Image';
+                const posterUrl = movieAPI.getImageURL(thumbUrl);
                 const year = movie.year || 'N/A';
                 const quality = movie.quality || movie.lang || '';
                 const episodeCurrent = movie.episode_current || '';

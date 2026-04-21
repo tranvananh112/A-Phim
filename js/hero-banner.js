@@ -226,23 +226,31 @@ function renderHeroBanner(movie, isInstant = false) {
     fetchLatestEpisodeCount(movie);
 
     if (heroImage) {
-        const newImageUrl = `https://img.ophim.live/uploads/movies/${movie.poster_url || movie.thumb_url}`;
+        // Use optimized image URL (1200px width for hero)
+        const rawImageUrl = movie.poster_url || movie.thumb_url;
+        const optimizedUrl = typeof imageOptimizer !== 'undefined' ? 
+            imageOptimizer.optimizeImageUrl(rawImageUrl, 1200, 85) : 
+            `https://img.ophim.live/uploads/movies/${rawImageUrl}`;
 
-        if (heroImage.src !== newImageUrl) {
-            heroImage.style.opacity = '0';
-
-            // Luôn preload ảnh trước khi show để tránh flash trắng
-            const img = new Image();
-            img.fetchPriority = 'high';
-            img.onload = () => {
-                heroImage.src = newImageUrl;
-                showHeroImage();
-            };
-            img.onerror = () => {
-                heroImage.src = 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1920';
-                showHeroImage();
-            };
-            img.src = newImageUrl;
+        if (heroImage.src !== optimizedUrl) {
+            // Set priority high for current hero image
+            heroImage.fetchPriority = 'high';
+            
+            // Set source immediately to start loading ASAP
+            // We keep the old image until next one is ready to avoid flash,
+            // or show skeleton if it's the first load
+            if (isInstant) {
+                heroImage.src = optimizedUrl;
+                heroImage.onload = () => showHeroImage();
+            } else {
+                heroImage.style.opacity = '0.3'; // Subtle fade while switching
+                const transitionImg = new Image();
+                transitionImg.onload = () => {
+                    heroImage.src = optimizedUrl;
+                    showHeroImage();
+                };
+                transitionImg.src = optimizedUrl;
+            }
         } else {
             showHeroImage();
         }
@@ -298,8 +306,9 @@ function renderThumbnails(movies) {
                 <div class="flex-shrink-0 w-20 sm:w-24 md:w-28 aspect-[2/3] rounded-md md:rounded-lg overflow-hidden border-2 ${index === 0 ? 'border-primary shadow-[0_0_15px_rgba(252,211,77,0.3)]' : 'border-white/20'} bg-gray-800 relative">
                     <img alt="${movie.name}"
                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
-                        onerror="this.src='https://via.placeholder.com/320x180?text=No+Image'" />
+                        src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url, 300, 70) : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`}"
+                        onerror="this.src='https://via.placeholder.com/320x180?text=No+Image'"
+                        loading="lazy" />
                     ${index === 0 ? `
                     <!-- Trailer Badge -->
                     <div class="absolute top-1 left-1 md:top-1.5 md:left-1.5 bg-primary text-black text-[8px] md:text-[9px] font-black px-1.5 md:px-2 py-0.5 rounded shadow-lg z-20 uppercase tracking-wider">

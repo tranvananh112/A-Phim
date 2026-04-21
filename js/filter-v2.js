@@ -256,7 +256,7 @@ async function loadMovies() {
 // Render Movies
 function renderMovies(movies) {
     moviesGrid.innerHTML = movies.map(movie => {
-        const posterUrl = movie.thumb_url || movie.poster_url || 'https://via.placeholder.com/300x450?text=No+Image';
+        const posterUrl = movieAPI.getImageURL(movie.thumb_url);
         const year = movie.year || 'N/A';
         const quality = movie.quality || movie.lang || '';
         const hiddenUI = window.getHiddenMovieOverlay ? window.getHiddenMovieOverlay(movie.slug) : { badge: '', imgClass: '', containerClass: '' };

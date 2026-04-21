@@ -56,8 +56,9 @@ function renderTopMovies(movies) {
                     <div class="relative aspect-[2/3] overflow-hidden rounded-xl mb-4 cursor-pointer ${posterClass}">
                         <img alt="${movie.name}" 
                             class="w-full h-full object-cover ${hiddenUI.imgClass}" 
-                            src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
-                            onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
+                            src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url, 400, 75) : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`}"
+                            onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'"
+                            loading="lazy" />
                         <div class="absolute inset-0 poster-overlay"></div>
                         
                         ${hiddenUI.badge}

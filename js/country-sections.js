@@ -75,9 +75,10 @@ function createMovieCard(movie) {
     return `
         <div class="country-movie-card">
             <div class="country-movie-poster" onclick="window.location.href='${detailUrl}'">
-                <img src="${posterUrl}" 
+                <img src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url, 320, 70) : posterUrl}" 
                      alt="${movie.name}" 
-                     onerror="this.src='https://via.placeholder.com/240x135?text=No+Image'" />
+                     onerror="this.src='https://via.placeholder.com/240x135?text=No+Image'"
+                     loading="lazy" />
                 ${episodeInfo ? `
                     <div class="country-movie-badge">
                         ${episodeInfo}

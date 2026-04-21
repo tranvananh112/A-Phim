@@ -8,14 +8,21 @@ class ImageOptimizer {
     // Optimize image URL with CDN parameters
     optimizeImageUrl(url, width = 400, quality = 80) {
         if (!url) return 'https://via.placeholder.com/400x600?text=No+Image';
+        
+        // Ensure absolute URL
         if (!url.startsWith('http')) {
             url = `https://img.ophim.live/uploads/movies/${url}`;
         }
 
-        // Add CDN optimization parameters if supported
-        // Most CDNs support ?w=width&q=quality
+        // Use wsrv.nl proxy for advanced compression and resizing
+        // This dramatically reduces image size from MBs to KBs
         if (url.includes('ophim.live')) {
-            return `${url}?w=${width}&q=${quality}`;
+            const isMobile = window.innerWidth <= 768;
+            const targetWidth = isMobile ? Math.min(width, 800) : width;
+            const targetQuality = isMobile ? 75 : quality;
+            
+            // Format: https://wsrv.nl/?url=URL&w=WIDTH&q=QUALITY&output=webp
+            return `https://wsrv.nl/?url=${encodeURIComponent(url)}&w=${targetWidth}&q=${targetQuality}&output=webp&il`;
         }
 
         return url;

@@ -98,8 +98,9 @@ function renderLatestMoviesSection(movies) {
                                 <div class="aspect-[2/3] w-full overflow-hidden relative">
                                     <img alt="${movie.name}"
                                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${hiddenUI.imgClass}"
-                                        src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
-                                        onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
+                                        src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url, 350, 75) : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`}"
+                                        onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'"
+                                        loading="lazy" />
                                     ${hiddenUI.badge}
                                     ${!hiddenUI.badge ? `
                                     <div class="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-2 py-0.5 rounded">
@@ -214,8 +215,9 @@ function renderAllSections(sections) {
                                     <div class="aspect-[2/3] w-full overflow-hidden relative">
                                         <img alt="${movie.name}"
                                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${hiddenUI.imgClass}"
-                                            src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
-                                            onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
+                                            src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url, 350, 75) : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`}"
+                                            onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'"
+                                            loading="lazy" />
                                         ${hiddenUI.badge}
                                         ${!hiddenUI.badge ? `
                                         <div class="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-2 py-0.5 rounded">
@@ -300,8 +302,9 @@ function renderVietnameseMovies(movies) {
             <div class="aspect-[2/3] w-full overflow-hidden relative">
                 <img alt="${movie.name}"
                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${hiddenUI.imgClass}"
-                    src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
-                    onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
+                    src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url, 350, 75) : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`}"
+                    onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'"
+                    loading="lazy" />
                 ${hiddenUI.badge}
                 ${!hiddenUI.badge ? `
                 <div class="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-2 py-0.5 rounded">

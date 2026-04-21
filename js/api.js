@@ -200,10 +200,20 @@ class MovieAPI {
     }
 
     // Get image URL
-    getImageURL(imagePath) {
+    getImageURL(imagePath, width = 400, quality = 80) {
         if (!imagePath) return 'https://via.placeholder.com/400x600?text=No+Image';
-        if (imagePath.startsWith('http')) return imagePath;
-        return `${API_CONFIG.IMAGE_BASE}${imagePath}`;
+        
+        let fullUrl = imagePath;
+        if (!imagePath.startsWith('http')) {
+            fullUrl = `${API_CONFIG.IMAGE_BASE}${imagePath}`;
+        }
+
+        // Use global imageOptimizer if available to compress image
+        if (typeof imageOptimizer !== 'undefined' && typeof imageOptimizer.optimizeImageUrl === 'function') {
+            return imageOptimizer.optimizeImageUrl(fullUrl, width, quality);
+        }
+
+        return fullUrl;
     }
 
     // Get list of categories

@@ -66,8 +66,9 @@
                 <img 
                     alt="${title}" 
                     class="absolute inset-0 w-full h-full object-cover object-center scale-105" 
-                    src="${posterUrl}"
+                    src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(mainMovie.poster_url || mainMovie.thumb_url, 1200, 80) : posterUrl}"
                     onerror="this.src='https://via.placeholder.com/1920x1080?text=No+Image'"
+                    loading="eager"
                 />
                 
                 <div class="absolute inset-0 horror-banner-gradient"></div>
@@ -142,8 +143,9 @@
                                     <img 
                                         alt="${movie.name || 'Phim'}" 
                                         class="w-full h-full object-cover ${hiddenUI.imgClass}" 
-                                        src="${movieThumb}"
+                                        src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url || movie.poster_url, 300, 70) : movieThumb}"
                                         onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'"
+                                        loading="lazy"
                                     />
                                     ${hiddenUI.badge}
                                 </div>
@@ -165,7 +167,7 @@
             const isActiveMobile = index === activeIndex;
             return `
                             <div class="flex-shrink-0 ${isActiveMobile ? 'w-14 h-20 horror-thumbnail-active' : 'w-12 h-16 opacity-50'} rounded-lg overflow-hidden horror-thumbnail cursor-pointer transition-all duration-300" data-movie-index="${index}">
-                                <img alt="${movie.name || 'Phim'}" class="w-full h-full object-cover" src="${mobileThumb}" onerror="this.src='https://via.placeholder.com/60x90?text=No'">
+                                <img alt="${movie.name || 'Phim'}" class="w-full h-full object-cover" src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url || movie.poster_url, 150, 65) : mobileThumb}" onerror="this.src='https://via.placeholder.com/60x90?text=No'">
                             </div>`;
         }).join('')}
                     </div>
