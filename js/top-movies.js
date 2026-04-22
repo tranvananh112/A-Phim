@@ -50,15 +50,22 @@ function renderTopMovies(movies) {
 
         const hiddenUI = window.getHiddenMovieOverlay ? window.getHiddenMovieOverlay(movie.slug) : { badge: '', imgClass: '', containerClass: '' };
         
+        const imgTag = typeof imageOptimizer !== 'undefined'
+            ? imageOptimizer.createProgressiveImgTag({
+                originalUrl: movie.thumb_url
+                    ? (movie.thumb_url.startsWith('http') ? movie.thumb_url : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`)
+                    : '',
+                altText: movie.name,
+                extraClasses: `w-full h-full object-cover ${hiddenUI.imgClass}`,
+                extraAttrs: ''
+              })
+            : `<img alt="${movie.name}" class="w-full h-full object-cover ${hiddenUI.imgClass}" src="https://img.ophim.live/uploads/movies/${movie.thumb_url}" onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" loading="lazy" />`;
+
         return `
             <div class="flex-none ${cardWidth} group snap-start relative transform hover:-translate-y-2 transition-transform duration-300 ${hiddenUI.containerClass}">
                 <a href="${linkUrl}">
-                    <div class="relative aspect-[2/3] overflow-hidden rounded-xl mb-4 cursor-pointer ${posterClass}">
-                        <img alt="${movie.name}" 
-                            class="w-full h-full object-cover ${hiddenUI.imgClass}" 
-                            src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url, 400, 75) : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`}"
-                            onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'"
-                            loading="lazy" />
+                    <div class="relative aspect-[2/3] overflow-hidden rounded-xl mb-4 cursor-pointer ${posterClass} img-progressive-wrap">
+                        ${imgTag}
                         <div class="absolute inset-0 poster-overlay"></div>
                         
                         ${hiddenUI.badge}

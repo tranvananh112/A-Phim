@@ -70,12 +70,16 @@
                     <div class="cs-poster-perspective">
                         <a href="${linkUrl}">
                             <div class="cs-poster-container">
-                                <!-- Poster Image -->
-                                <img data-src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.poster_url || movie.thumb_url, 400, 75) : posterUrl}" 
-                                     src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 3'%3E%3C/svg%3E"
-                                     alt="${movie.name}"
-                                     onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'"
-                                     class="absolute top-0 left-0 w-full h-full object-cover z-0 transition-transform duration-500 group-hover:scale-110" />
+                                <!-- Poster Image - Progressive Loading -->
+                                ${typeof imageOptimizer !== 'undefined'
+                                    ? imageOptimizer.createProgressiveImgTag({
+                                        originalUrl: posterUrl,
+                                        altText: movie.name,
+                                        extraClasses: 'absolute top-0 left-0 w-full h-full object-cover z-0 transition-transform duration-500 group-hover:scale-110',
+                                        extraAttrs: ''
+                                      })
+                                    : `<img src="${posterUrl}" alt="${movie.name}" onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" class="absolute top-0 left-0 w-full h-full object-cover z-0" loading="lazy" />`
+                                }
                                 
                                 <!-- Badges on Poster -->
                                 <div class="cs-badges-container">
