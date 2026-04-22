@@ -8,10 +8,10 @@
 //   API OPhim           → Stale-While-Revalidate
 // =====================================================
 
-const CACHE_VERSION  = 'aphim-v6';
+const CACHE_VERSION  = 'aphim-v10';
 const FONT_CACHE     = 'aphim-fonts-v1';
-const IMAGE_CACHE    = 'aphim-images-v6';
-const API_CACHE      = 'aphim-api-v3';
+const IMAGE_CACHE    = 'aphim-images-v10';
+const API_CACHE      = 'aphim-api-v4';
 
 const ALL_CACHES = [CACHE_VERSION, FONT_CACHE, IMAGE_CACHE, API_CACHE];
 

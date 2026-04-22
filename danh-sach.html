@@ -100,7 +100,7 @@
 
     <link rel="stylesheet" href="css/chat-room.css?v=2">
 <link rel="stylesheet" href="css/mobile-viewport-fix.css?v=5">
-<link rel="stylesheet" href="css/mobile-menu-modern.css?v=2">
+<link rel="stylesheet" href="css/mobile-menu-modern.css?v=4">
 
     <!-- A Phim: Hardcode Dropdown Blue Override inside HTML to bypass all cache/specificity -->
             <style id="dropdown-blue-override">
@@ -170,38 +170,8 @@
                             <span
                                 class="material-icons-round text-sm group-hover:rotate-180 transition-transform duration-300">expand_more</span>
                         </button>
-                        <div
-                            class="absolute top-full left-0 mt-2 w-64 bg-gradient-to-br from-[#3d5a96]/95 to-[#25385e]/95 backdrop-blur-md border border-white/15 rounded-xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden z-50">
-                            <div class="grid grid-cols-1 gap-0">
-                                <a href="phim-theo-quoc-gia.html"
-                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5 font-semibold">
-                                    🌍 Tất Cả Quốc Gia
-                                </a>
-                                <a href="phim-theo-quoc-gia.html?country=viet-nam"
-                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
-                                    🇻🇳 Phim Việt Nam
-                                </a>
-                                <a href="phim-theo-quoc-gia.html?country=han-quoc"
-                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
-                                    🇰🇷 Phim Hàn Quốc
-                                </a>
-                                <a href="phim-theo-quoc-gia.html?country=trung-quoc"
-                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
-                                    🇨🇳 Phim Trung Quốc
-                                </a>
-                                <a href="phim-theo-quoc-gia.html?country=nhat-ban"
-                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
-                                    🇯🇵 Phim Nhật Bản
-                                </a>
-                                <a href="phim-theo-quoc-gia.html?country=thai-lan"
-                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
-                                    🇹🇭 Phim Thái Lan
-                                </a>
-                                <a href="phim-theo-quoc-gia.html?country=au-my"
-                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all">
-                                    🇺🇸 Phim Âu Mỹ
-                                </a>
-                            </div>
+                        <div id="countryDropdown" class="absolute top-full left-0 mt-2 w-[700px] bg-gradient-to-br from-[#3d5a96]/95 to-[#25385e]/95 backdrop-blur-md border border-white/15 rounded-xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden z-50">
+                            <div class="p-4 text-center text-gray-400">Đang tải...</div>
                         </div>
                     </div>
 
@@ -609,9 +579,11 @@
     <script src="js/auth.js?v=2"></script>
     <script src="js/auth-modal.js?v=2"></script>
     <script src="js/user-ui.js?v=4"></script>
-    <script src="js/mobile-menu-modern.js?v=2"></script>
+    <script src="js/mobile-menu-modern.js?v=3"></script>
     <script src="js/categories-dropdown.js?v=2"></script>
-    <script src="js/sticky-nav.js?v=2"></script>
+    <script src="js/countries-dropdown.js?v=3"></script>
+    
+    <script src="js/sticky-nav.js?v=6"></script>
     <script src="js/danh-sach.js?v=2"></script>
     <script src="js/dropdown-hover-fix.js?v=2"></script>
 

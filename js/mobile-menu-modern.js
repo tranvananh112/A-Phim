@@ -95,43 +95,32 @@
                 <div style="margin-left:auto;">${icon('expand_more', 'font-size:22px;color:rgba(255,255,255,0.3);transition:transform 0.25s;' )}</div>
             </button>
             <div id="mmPhimDrop" style="display:none;padding:0 4px 4px;">
-                <div class="mm-grid-2">
+                <div class="mm-grid-2" id="mmPhimDropGrid">
                     <a href="phim-theo-quoc-gia.html" class="mm-card-item mm-glass">
                         ${icon('public', 'font-size:24px;color:#aaabad;')}
                         <span class="mm-card-label">Tất Cả</span>
                     </a>
-                    <a href="phim-theo-quoc-gia.html?country=viet-nam" class="mm-card-item mm-glass">
-                        <img src="https://flagcdn.com/32x24/vn.png" alt="VN" style="width:32px;height:24px;border-radius:3px;object-fit:cover;">
-                        <span class="mm-card-label">Việt Nam</span>
-                    </a>
-                    <a href="phim-theo-quoc-gia.html?country=han-quoc" class="mm-card-item mm-glass">
-                        <img src="https://flagcdn.com/32x24/kr.png" alt="KR" style="width:32px;height:24px;border-radius:3px;object-fit:cover;">
-                        <span class="mm-card-label">Hàn Quốc</span>
-                    </a>
-                    <a href="phim-theo-quoc-gia.html?country=trung-quoc" class="mm-card-item mm-glass">
-                        <img src="https://flagcdn.com/32x24/cn.png" alt="CN" style="width:32px;height:24px;border-radius:3px;object-fit:cover;">
-                        <span class="mm-card-label">Trung Quốc</span>
-                    </a>
-                    <a href="phim-theo-quoc-gia.html?country=nhat-ban" class="mm-card-item mm-glass">
-                        <img src="https://flagcdn.com/32x24/jp.png" alt="JP" style="width:32px;height:24px;border-radius:3px;object-fit:cover;">
-                        <span class="mm-card-label">Nhật Bản</span>
-                    </a>
-                    <a href="phim-theo-quoc-gia.html?country=au-my" class="mm-card-item mm-glass">
-                        <img src="https://flagcdn.com/32x24/us.png" alt="US" style="width:32px;height:24px;border-radius:3px;object-fit:cover;">
-                        <span class="mm-card-label">Âu Mỹ</span>
-                    </a>
+                    <!-- Danh sách quốc gia loading -->
                 </div>
             </div>
 
-            <!-- 3-6. Grid 2 cột -->
+            <!-- 2.5 Thể Loại dropdown -->
+            <button class="mm-nav-full mm-glass mm-phim-btn" id="mmLoaiBtn">
+                ${icon('theaters', 'font-size:24px;color:#aaabad;')}
+                <span class="mm-nav-full-text">Thể Loại</span>
+                <div style="margin-left:auto;">${icon('expand_more', 'font-size:22px;color:rgba(255,255,255,0.3);transition:transform 0.25s;' )}</div>
+            </button>
+            <div id="mmLoaiDrop" style="display:none;padding:0 4px 4px;">
+                <div class="mm-grid-2" id="mmLoaiDropGrid">
+                    <!-- Danh sách thể loại loading -->
+                </div>
+            </div>
+
+            <!-- 3-6. Grid cột -->
             <div class="mm-grid-2">
                 <a href="danh-sach.html" class="mm-card-item mm-glass color-blue">
                     ${icon('view_list', 'font-size:22px;')}
                     <span class="mm-card-label">Danh Sách</span>
-                </a>
-                <a href="categories.html" class="mm-card-item mm-glass color-purple">
-                    ${icon('theaters', 'font-size:22px;')}
-                    <span class="mm-card-label">Thể Loại</span>
                 </a>
                 <a href="search.html" class="mm-card-item mm-glass color-green" style="position:relative;">
                     <div class="mm-badge-new">Mới</div>
@@ -194,16 +183,125 @@
 
         document.getElementById('mmCloseBtn').addEventListener('click', closeMenu);
 
-        // Phim dropdown
+        // 1. Phim dropdown toggle
         const phimBtn     = document.getElementById('mmPhimBtn');
         const phimDrop    = document.getElementById('mmPhimDrop');
-        const expandIcon  = phimBtn.querySelector('.material-icons-round:last-of-type');
+        const expandIconPhim  = phimBtn?.querySelector('.material-icons-round:last-of-type');
         let phimOpen = false;
-        phimBtn.addEventListener('click', () => {
-            phimOpen = !phimOpen;
-            phimDrop.style.display = phimOpen ? 'block' : 'none';
-            if (expandIcon) expandIcon.style.transform = phimOpen ? 'rotate(180deg)' : 'rotate(0deg)';
-        });
+        if (phimBtn) {
+            phimBtn.addEventListener('click', () => {
+                phimOpen = !phimOpen;
+                phimDrop.style.display = phimOpen ? 'block' : 'none';
+                if (expandIconPhim) expandIconPhim.style.transform = phimOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+            });
+        }
+
+        // 2. Thể Loại dropdown toggle
+        const loaiBtn     = document.getElementById('mmLoaiBtn');
+        const loaiDrop    = document.getElementById('mmLoaiDrop');
+        const expandIconLoai  = loaiBtn?.querySelector('.material-icons-round:last-of-type');
+        let loaiOpen = false;
+        if (loaiBtn) {
+            loaiBtn.addEventListener('click', () => {
+                loaiOpen = !loaiOpen;
+                loaiDrop.style.display = loaiOpen ? 'block' : 'none';
+                if (expandIconLoai) expandIconLoai.style.transform = loaiOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+            });
+        }
+
+        // --- Load động Quốc Gia vào menu mobile (Hardcoded Zero-latency) ---
+        const mmPhimDropGrid = document.getElementById('mmPhimDropGrid');
+        if (mmPhimDropGrid) {
+            const countries = [
+                { slug: 'viet-nam', name: 'Việt Nam' }, { slug: 'trung-quoc', name: 'Trung Quốc' },
+                { slug: 'han-quoc', name: 'Hàn Quốc' }, { slug: 'nhat-ban', name: 'Nhật Bản' },
+                { slug: 'thai-lan', name: 'Thái Lan' }, { slug: 'au-my', name: 'Âu Mỹ' },
+                { slug: 'dai-loan', name: 'Đài Loan' }, { slug: 'hong-kong', name: 'Hồng Kông' },
+                { slug: 'an-do', name: 'Ấn Độ' }, { slug: 'anh', name: 'Anh' },
+                { slug: 'phap', name: 'Pháp' }, { slug: 'canada', name: 'Canada' },
+                { slug: 'duc', name: 'Đức' }, { slug: 'tay-ban-nha', name: 'Tây Ban Nha' },
+                { slug: 'tho-nhi-ky', name: 'Thổ Nhĩ Kỳ' }, { slug: 'ha-lan', name: 'Hà Lan' },
+                { slug: 'indonesia', name: 'Indonesia' }, { slug: 'nga', name: 'Nga' },
+                { slug: 'mexico', name: 'Mexico' }, { slug: 'ba-lan', name: 'Ba Lan' },
+                { slug: 'uc', name: 'Úc' }, { slug: 'thuy-dien', name: 'Thụy Điển' },
+                { slug: 'malaysia', name: 'Malaysia' }, { slug: 'brazil', name: 'Brazil' },
+                { slug: 'philippines', name: 'Philippines' }, { slug: 'bo-dao-nha', name: 'Bồ Đào Nha' },
+                { slug: 'y', name: 'Ý' }, { slug: 'dan-mach', name: 'Đan Mạch' },
+                { slug: 'uae', name: 'UAE' }, { slug: 'na-uy', name: 'Na Uy' },
+                { slug: 'thuy-si', name: 'Thụy Sĩ' }, { slug: 'chau-phi', name: 'Châu Phi' },
+                { slug: 'nam-phi', name: 'Nam Phi' }, { slug: 'ukraina', name: 'Ukraina' },
+                { slug: 'a-rap-xe-ut', name: 'Ả Rập Xê Út' }
+            ];
+
+            const flagCodes = {
+                'viet-nam': 'vn', 'trung-quoc': 'cn', 'han-quoc': 'kr', 'nhat-ban': 'jp',
+                'thai-lan': 'th', 'au-my': 'us', 'dai-loan': 'tw', 'hong-kong': 'hk',
+                'an-do': 'in', 'anh': 'gb', 'phap': 'fr', 'canada': 'ca', 'duc': 'de',
+                'tay-ban-nha': 'es', 'tho-nhi-ky': 'tr', 'ha-lan': 'nl', 'indonesia': 'id',
+                'nga': 'ru', 'mexico': 'mx', 'ba-lan': 'pl', 'uc': 'au', 'thuy-dien': 'se',
+                'malaysia': 'my', 'brazil': 'br', 'philippines': 'ph', 'bo-dao-nha': 'pt',
+                'y': 'it', 'dan-mach': 'dk', 'uae': 'ae', 'na-uy': 'no', 'thuy-si': 'ch',
+                'chau-phi': 'globe', 'nam-phi': 'za', 'ukraina': 'ua', 'a-rap-xe-ut': 'sa'
+            };
+
+            let html = `
+                <a href="phim-theo-quoc-gia.html" class="mm-card-item mm-glass">
+                    <span style="font-size: 20px; line-height: 1;">🌍</span>
+                    <span class="mm-card-label" style="margin-left: 4px;">Tất Cả</span>
+                </a>
+            `;
+            
+            html += countries.map(c => {
+                const code = flagCodes[c.slug] || 'globe';
+                const iconHtml = (code === 'globe') 
+                    ? `<span style="font-size: 20px; line-height: 1;">🌍</span>`
+                    : `<img src="https://flagcdn.com/16x12/${code}.png" alt="${code}" style="width:16px;height:12px;object-fit:cover;border-radius:2px;">`;
+
+                return `
+                    <a href="phim-theo-quoc-gia.html?country=${c.slug}" class="mm-card-item mm-glass">
+                        ${iconHtml}
+                        <span class="mm-card-label" style="margin-left: 4px;">${c.name}</span>
+                    </a>
+                `;
+            }).join('');
+            
+            mmPhimDropGrid.innerHTML = html;
+        }
+
+        // --- Load động Thể Loại vào menu mobile (Hardcoded Zero-latency) ---
+        const mmLoaiDropGrid = document.getElementById('mmLoaiDropGrid');
+        if (mmLoaiDropGrid) {
+            const categories = [
+                { slug: 'hanh-dong', name: 'Hành Động' }, { slug: 'tinh-cam', name: 'Tình Cảm' },
+                { slug: 'hai-huoc', name: 'Hài Hước' }, { slug: 'co-trang', name: 'Cổ Trang' },
+                { slug: 'tam-ly', name: 'Tâm Lý' }, { slug: 'hinh-su', name: 'Hình Sự' },
+                { slug: 'chien-tranh', name: 'Chiến Tranh' }, { slug: 'the-thao', name: 'Thể Thao' },
+                { slug: 'vo-thuat', name: 'Võ Thuật' }, { slug: 'vien-tuong', name: 'Viễn Tưởng' },
+                { slug: 'phieu-luu', name: 'Phiêu Lưu' }, { slug: 'khoa-hoc', name: 'Khoa Học' },
+                { slug: 'kinh-di', name: 'Kinh Dị' }, { slug: 'am-nhac', name: 'Âm Nhạc' },
+                { slug: 'than-thoai', name: 'Thần Thoại' }, { slug: 'tai-lieu', name: 'Tài Liệu' },
+                { slug: 'gia-dinh', name: 'Gia Đình' }, { slug: 'chinh-kich', name: 'Chính kịch' },
+                { slug: 'bi-an', name: 'Bí ẩn' }, { slug: 'hoc-duong', name: 'Học Đường' },
+                { slug: 'kinh-dien', name: 'Kinh Điển' }, { slug: 'phim-18', name: 'Phim 18+' },
+                { slug: 'short-drama', name: 'Short Drama' }
+            ];
+
+            let htmlLoai = `
+                <a href="categories.html" class="mm-card-item mm-glass">
+                    <span class="mm-card-label" style="font-weight: 700;">Tất Cả Thể Loại</span>
+                </a>
+            `;
+
+            htmlLoai += categories.map(c => {
+                return `
+                    <a href="categories.html?category=${c.slug}" class="mm-card-item mm-glass">
+                        <span class="mm-card-label">${c.name}</span>
+                    </a>
+                `;
+            }).join('');
+
+            mmLoaiDropGrid.innerHTML = htmlLoai;
+        }
     }
 
     /* ── OPEN / CLOSE ── */

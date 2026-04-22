@@ -86,18 +86,6 @@
         }
     });
 
-    // Prevent body scroll when mobile menu is open
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-
-    if (mobileMenuBtn && mobileMenu) {
-        mobileMenuBtn.addEventListener('click', function () {
-            const isHidden = mobileMenu.classList.contains('hidden');
-            if (isHidden) {
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.body.style.overflow = '';
-            }
-        });
-    }
+    // Prevent body scroll when mobile menu is open - DISABLED (now handled by mobile-menu-modern.js)
+    // Removed old conflicting body.overflow logic
 })();
