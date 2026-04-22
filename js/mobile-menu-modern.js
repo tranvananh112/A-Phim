@@ -155,27 +155,27 @@
                 </div>
             </div>
 
-        </div>
-
-        <!-- FOOTER -->
-        <div class="mm-footer">
-            <div class="mm-footer-div"></div>
-            <div class="mm-footer-row">
-                <span class="mm-footer-version">A Phim</span>
-                <div class="mm-footer-links">
-                    <a href="profile.html" class="mm-footer-link">
-                        ${icon('settings', 'font-size:16px;')} Cài đặt
-                    </a>
-                    ${user 
-                        ? `<button class="mm-footer-link danger" onclick="try{authService.logout()}catch(e){window.location.href='login.html'}">
-                               ${icon('logout', 'font-size:16px;')} Đăng xuất
-                           </button>`
-                        : `<a href="login.html" class="mm-footer-link" style="color:#FFD700;">
-                               ${icon('login', 'font-size:16px;')} Đăng nhập
-                           </a>`
-                    }
+            <!-- FOOTER chuyển vào trong nhánh Scroll để rộng chỗ -->
+            <div class="mm-footer">
+                <div class="mm-footer-div"></div>
+                <div class="mm-footer-row">
+                    <span class="mm-footer-version">A Phim</span>
+                    <div class="mm-footer-links">
+                        <a href="profile.html" class="mm-footer-link">
+                            ${icon('settings', 'font-size:16px;')} Cài đặt
+                        </a>
+                        ${user 
+                            ? `<button class="mm-footer-link danger" onclick="try{authService.logout()}catch(e){window.location.href='login.html'}">
+                                   ${icon('logout', 'font-size:16px;')} Đăng xuất
+                               </button>`
+                            : `<a href="login.html" class="mm-footer-link" style="color:#FFD700;">
+                                   ${icon('login', 'font-size:16px;')} Đăng nhập
+                               </a>`
+                        }
+                    </div>
                 </div>
             </div>
+
         </div>
         `;
 

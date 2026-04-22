@@ -40,7 +40,6 @@
     -webkit-transform: translateX(100%);
     transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform;
-    -webkit-overflow-scrolling: touch;
 }
 /* Ambient glow orbs trang trí */
 #mm-drawer::before {
@@ -171,6 +170,7 @@
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch; /* Bắt buộc cho iOS mượt */
     padding-right: 2px;
     display: flex;
     flex-direction: column;
@@ -203,6 +203,8 @@
     text-align: left;
     transition: all 0.2s ease;
     -webkit-tap-highlight-color: transparent;
+    -webkit-transform: translateZ(0); /* Ép GPU render mượt kính mờ Safari */
+    transform: translateZ(0);
 }
 .mm-nav-full.mm-active {
     background: linear-gradient(90deg, rgba(255,215,0,0.18) 0%, rgba(255,215,0,0.04) 100%);
@@ -227,6 +229,9 @@
     border-left: 3px solid #f472b6 !important;
     box-shadow: inset 0 0 20px rgba(236,72,153,0.15), 0 4px 15px rgba(0,0,0,0.5);
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
 }
 .mm-phim-btn .mm-nav-full-text {
     color: #fff !important; 
@@ -278,6 +283,8 @@
     color: rgba(255,255,255,0.8);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     -webkit-tap-highlight-color: transparent;
+    -webkit-transform: translateZ(0); /* Anti Glitch */
+    transform: translateZ(0);
     position: relative;
     overflow: hidden;
 }
@@ -435,6 +442,7 @@
 /* FOOTER */
 .mm-footer {
     margin-top: 24px;
+    margin-bottom: 24px;
     flex-shrink: 0;
 }
 .mm-footer-div { height: 1px; background: rgba(255,255,255,0.05); margin-bottom: 20px; }
