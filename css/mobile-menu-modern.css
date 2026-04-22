@@ -31,15 +31,20 @@
     backdrop-filter: blur(40px) saturate(200%);
     -webkit-backdrop-filter: blur(40px) saturate(200%);
     border-left: 1px solid rgba(255, 215, 0, 0.12);
-    box-shadow: -20px 0 80px rgba(0, 0, 0, 0.95), inset 1px 0 0 rgba(255,255,255,0.04);
+    /* FIX: Giảm shadow spread + opacity để tránh đường dọc mờ leak ra viewport khi đóng */
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.6), inset 1px 0 0 rgba(255,255,255,0.04);
     display: flex;
     flex-direction: column;
     padding: 36px 18px 24px;
     overflow: hidden;
     transform: translateX(100%);
     -webkit-transform: translateX(100%);
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.35s;
+    will-change: auto;
+    /* FIX: visibility:hidden khi đóng → browser không render compositing layer */
+    visibility: hidden;
+    /* FIX: clip shadow tại edge phải màn hình, tránh sub-pixel artifact */
+    clip-path: inset(0 0 0 0);
 }
 /* Ambient glow orbs trang trí */
 #mm-drawer::before {
@@ -70,6 +75,10 @@
 #mm-drawer.open {
     transform: translateX(0);
     -webkit-transform: translateX(0);
+    /* FIX: Khi mở → hiện ngay lập tức, will-change kích hoạt GPU */
+    visibility: visible;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0s;
+    will-change: transform;
 }
 
 /* Scrollbar tùy chỉnh */

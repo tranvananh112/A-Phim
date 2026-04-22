@@ -105,9 +105,19 @@ a[href]:active {
 /* ── 4. Drawer slide animation — rút ngắn xuống 0.22s ──────
    0.35s → 0.22s: giảm 40%, người dùng cảm nhận nhanh hơn
    rõ rệt mà vẫn đủ mượt. ─────────────────────────────────── */
+/* FIX: transition bao gồm visibility để delay hidden đúng timing */
 #mm-drawer {
-    transition: transform 0.22s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-    -webkit-transition: -webkit-transform 0.22s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    /* Khi đóng: ẩn hoàn toàn sau 0.22s animation xong */
+    -webkit-transition: -webkit-transform 0.22s cubic-bezier(0.25, 0.46, 0.45, 0.94), visibility 0s linear 0.22s !important;
+    transition: transform 0.22s cubic-bezier(0.25, 0.46, 0.45, 0.94), visibility 0s linear 0.22s !important;
+}
+#mm-drawer.open {
+    /* Khi mở: hiện ngay lập tức (visibility 0s delay = 0) */
+    -webkit-transition: -webkit-transform 0.22s cubic-bezier(0.25, 0.46, 0.45, 0.94), visibility 0s linear 0s !important;
+    transition: transform 0.22s cubic-bezier(0.25, 0.46, 0.45, 0.94), visibility 0s linear 0s !important;
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 #mm-overlay {
@@ -152,13 +162,12 @@ body {
     overscroll-behavior-x: contain;
 }
 
-/* ── 8. GPU acceleration cho drawer và overlay ──────────────
-   Đưa lên GPU layer riêng để animation không bị jank. ─────── */
-#mm-drawer,
+/* ── 8. GPU acceleration cho overlay ───────────────────────
+   Drawer GPU đã được xử lý trong section 4 (#mm-drawer.open)
+   Không set will-change/translateZ trên drawer khi đóng
+   → tránh compositing layer leak gây đường dọc mờ. ────────── */
 #mm-overlay {
-    will-change: transform, opacity;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
+    will-change: opacity;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
 }
