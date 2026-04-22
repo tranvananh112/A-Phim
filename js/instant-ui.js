@@ -151,14 +151,21 @@ class InstantUI {
         }
     }
 
-    // Instant page transition
+    // Instant page transition — không delay, dùng CSS class
     transitionToPage(url) {
-        this.showLoadingOverlay('Đang chuyển trang...');
-
-        // Add slight delay for smooth transition
-        setTimeout(() => {
-            window.location.href = url;
-        }, 100);
+        if (!url || url === '#') return;
+        // Dùng TouchSpeed nếu có (ưu tiên)
+        if (window.TouchSpeed && window.TouchSpeed.navigate) {
+            window.TouchSpeed.navigate(url);
+            return;
+        }
+        // Fallback: fade body ra rồi navigate
+        document.body.classList.add('page-exiting');
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                window.location.href = url;
+            });
+        });
     }
 }
 

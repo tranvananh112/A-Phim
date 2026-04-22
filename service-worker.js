@@ -1,16 +1,17 @@
 // =====================================================
-// A Phim Service Worker — v5
+// A Phim Service Worker — v6
 // Chiến lược:
-//   HTML / CSS / JS  → Network-First (luôn lấy mới nhất)
-//   Ảnh / Media       → Cache-First (ít thay đổi)
-//   Fonts Google      → Cache-First (bất biến)
-//   API OPhim         → Stale-While-Revalidate
+//   HTML pages          → Stale-While-Revalidate (trả cache ngay, update ngầm)
+//   CSS / JS (versioned)→ Cache-First (có ?v=N nên an toàn)
+//   Ảnh / Media         → Cache-First (ít thay đổi)
+//   Fonts Google        → Cache-First (bất biến)
+//   API OPhim           → Stale-While-Revalidate
 // =====================================================
 
-const CACHE_VERSION  = 'aphim-v5';
+const CACHE_VERSION  = 'aphim-v6';
 const FONT_CACHE     = 'aphim-fonts-v1';
-const IMAGE_CACHE    = 'aphim-images-v5';
-const API_CACHE      = 'aphim-api-v2';
+const IMAGE_CACHE    = 'aphim-images-v6';
+const API_CACHE      = 'aphim-api-v3';
 
 const ALL_CACHES = [CACHE_VERSION, FONT_CACHE, IMAGE_CACHE, API_CACHE];
 
@@ -53,7 +54,7 @@ self.addEventListener('fetch', event => {
         return;
     }
 
-    // ── 2. OPhim API — Stale-While-Revalidate ─────────
+    // ── 2. OPhim API / Images — Stale-While-Revalidate ─
     if (url.hostname.includes('ophim') || url.hostname.includes('img.ophim')) {
         event.respondWith(staleWhileRevalidate(request, API_CACHE));
         return;
@@ -68,10 +69,23 @@ self.addEventListener('fetch', event => {
         return;
     }
 
-    // ── 5. HTML / CSS / JS — Network First ────────────
-    // Luôn lấy từ mạng để nhận bản cập nhật mới nhất.
-    // Nếu offline → dùng cache dự phòng.
-    event.respondWith(networkFirst(request, CACHE_VERSION));
+    // ── 5. HTML pages — Stale-While-Revalidate ────────
+    // Trả cache ngay (< 10ms) → update ngầm → lần sau có bản mới
+    // Hiệu quả: trang thứ 2 trở đi gần như INSTANT
+    if (url.pathname.endsWith('.html') || url.pathname === '/' || url.pathname === '') {
+        event.respondWith(staleWhileRevalidate(request, CACHE_VERSION));
+        return;
+    }
+
+    // ── 6. CSS / JS (có ?v=N) — Cache First ───────────
+    // Versioned assets: an toàn để cache lâu dài
+    if (/\.(css|js)(\?.*)?$/.test(url.pathname)) {
+        event.respondWith(cacheFirst(request, CACHE_VERSION));
+        return;
+    }
+
+    // ── 7. Còn lại — Stale-While-Revalidate ──────────
+    event.respondWith(staleWhileRevalidate(request, CACHE_VERSION));
 });
 
 // ─────────────────────────────────────────────────────

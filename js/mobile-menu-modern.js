@@ -207,15 +207,26 @@
     }
 
     /* ── OPEN / CLOSE ── */
+    // Drawer được build SẴN một lần khi init, sau đó chỉ toggle class
+    // → không phải tạo DOM mỗi lần mở = menu xuất hiện tức thì
+    let _drawerBuilt = false;
+
+    function ensureDrawerBuilt() {
+        if (_drawerBuilt) return;
+        buildDrawer();
+        _drawerBuilt = true;
+    }
+
     function openMenu() {
         // Chỉ cho phép mở trên mobile (< 1024px = Tailwind lg breakpoint)
         if (window.innerWidth >= 1024) return;
 
-        buildDrawer();
-        requestAnimationFrame(() => {
-            document.getElementById('mm-overlay')?.classList.add('open');
-            setTimeout(() => document.getElementById('mm-drawer')?.classList.add('open'), 10);
-        });
+        // Đảm bảo drawer đã được build (thường đã build khi init)
+        ensureDrawerBuilt();
+
+        // Toggle class NGAY - không setTimeout, không delay
+        document.getElementById('mm-overlay')?.classList.add('open');
+        document.getElementById('mm-drawer')?.classList.add('open');
 
         const scrollY = window.scrollY;
         document.body.style.position = 'fixed';
@@ -239,11 +250,7 @@
 
         const burger = document.querySelector('.mm-burger-btn');
         if (burger) burger.classList.remove('open');
-
-        setTimeout(() => {
-            document.getElementById('mm-overlay')?.remove();
-            document.getElementById('mm-drawer')?.remove();
-        }, 350);
+        // Không xóa DOM khi đóng - giữ lại để lần mở tiếp theo instant
     }
 
     /* ── SETUP BUTTON ── */
@@ -288,6 +295,12 @@
     function init() {
         suppressOldMenu();
         setupBtn();
+        // Pre-build drawer ngay khi init (chỉ trên mobile)
+        // → Khi user nhấn mở menu: DOM đã sẵn sàng, không cần tạo mới
+        if (window.innerWidth < 1024) {
+            // Delay nhỏ để không cạnh tranh với critical page render
+            setTimeout(ensureDrawerBuilt, 300);
+        }
     }
 
     if (document.readyState === 'loading') {
