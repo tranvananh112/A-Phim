@@ -121,10 +121,19 @@
         </div>
 
         <!-- Right Menu -->
-        <div class="flex items-center gap-4">
-            <a href="search.html" class="text-gray-300 hover:text-primary transition-colors">
-                <span class="material-icons-round">search</span>
-            </a>
+                    <div class="flex items-center gap-2 lg:gap-4">
+                                <!-- Desktop Search Bar -->
+                <form action="search.html" method="GET" class="hidden lg:block relative group mr-2">
+                    <div class="flex items-center w-56 xl:w-64 h-10 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full overflow-hidden focus-within:border-primary/50 focus-within:bg-black/60 focus-within:w-64 xl:focus-within:w-72 focus-within:shadow-[0_0_15px_rgba(242,242,13,0.1)] transition-all duration-300 backdrop-blur-md">
+                        <span class="material-icons-round text-gray-400 pl-3 pr-2 text-lg group-focus-within:text-primary transition-colors">search</span>
+                        <input type="text" name="q" placeholder="Tìm kiếm..." class="w-full h-full bg-transparent border-none border-0 ring-0 focus:ring-0 focus:outline-none text-white text-sm pr-4 placeholder-gray-400 font-medium m-0 p-0" autocomplete="off" required style="box-shadow: none; outline: none; border: none; background: transparent;">
+                    </div>
+                </form>
+
+                <!-- Mobile Search Icon -->
+                <a href="search.html" class="lg:hidden w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-300 hover:text-primary transition-colors mr-2">
+                    <span class="material-icons-round text-xl">search</span>
+                </a>
             <a href="login.html"
                 class="px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors">
                 Đăng nhập

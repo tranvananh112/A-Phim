@@ -461,8 +461,6 @@
     <link rel="stylesheet" href="css/page-animations.css?v=2">
 
     <link rel="stylesheet" href="css/navigation-pill-v2.css?v=2">
-    <link rel="stylesheet" href="css/search-icon-desktop.css?v=2">
-    <link rel="stylesheet" href="css/search-expand-simple.css?v=2">
     <link rel="stylesheet" href="css/horror-section.css?v=2">
     <link rel="stylesheet" href="css/coming-soon-section.css?v=2">
     <link rel="stylesheet" href="css/country-sections.css?v=2">
@@ -698,14 +696,19 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-4">
-                <!-- Expandable Search -->
-                <div class="search-expand-wrapper">
-                    <input type="text" id="searchExpandInput" placeholder="Tìm kiếm..." class="search-expand-input">
-                    <button class="search-expand-icon" onclick="handleSearchSubmit()">
-                        <span class="material-icons-round">search</span>
-                    </button>
-                </div>
+                        <div class="flex items-center gap-2 lg:gap-4">
+                                <!-- Desktop Search Bar -->
+                <form action="search.html" method="GET" class="hidden lg:block relative group mr-2">
+                    <div class="flex items-center w-56 xl:w-64 h-10 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full overflow-hidden focus-within:border-primary/50 focus-within:bg-black/60 focus-within:w-64 xl:focus-within:w-72 focus-within:shadow-[0_0_15px_rgba(242,242,13,0.1)] transition-all duration-300 backdrop-blur-md">
+                        <span class="material-icons-round text-gray-400 pl-3 pr-2 text-lg group-focus-within:text-primary transition-colors">search</span>
+                        <input type="text" name="q" placeholder="Tìm kiếm..." class="w-full h-full bg-transparent border-none border-0 ring-0 focus:ring-0 focus:outline-none text-white text-sm pr-4 placeholder-gray-400 font-medium m-0 p-0" autocomplete="off" required style="box-shadow: none; outline: none; border: none; background: transparent;">
+                    </div>
+                </form>
+
+                <!-- Mobile Search Icon -->
+                <a href="search.html" class="lg:hidden w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-300 hover:text-primary transition-colors mr-2">
+                    <span class="material-icons-round text-xl">search</span>
+                </a>
 
                 <!-- authContainer: user-ui.js thay avatar/tên khi đăng nhập; auth-modal.js intercept khi chưa đăng nhập -->
                 <div id="authContainer" class="flex items-center">
@@ -1743,34 +1746,6 @@
     <!-- <script src="js/navigation-danh-sach.js?v=6"></script> -->
     <script src="js/search-icon-enhance.js?v=6"></script>
 
-    <!-- Expandable Search Logic -->
-    <script>
-        function handleSearchSubmit() {
-            const input = document.getElementById('searchExpandInput');
-            const query = input.value.trim();
-
-            if (query) {
-                // Có query -> chuyển sang search.html
-                window.location.href = `search.html?q=${encodeURIComponent(query)}`;
-            } else {
-                // Không có query -> focus vào input
-                input.focus();
-            }
-        }
-
-        // Enter key to search
-        document.addEventListener('DOMContentLoaded', function () {
-            const input = document.getElementById('searchExpandInput');
-
-            if (input) {
-                input.addEventListener('keypress', function (e) {
-                    if (e.key === 'Enter') {
-                        handleSearchSubmit();
-                    }
-                });
-            }
-        });
-    </script>
 
     <script src="js/top-comments.js?v=2"></script>
 
