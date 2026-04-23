@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html class="dark" lang="vi">
 
 <head>
@@ -83,7 +83,7 @@
     </style>
 
     <link rel="stylesheet" href="css/chat-room.css?v=2">
-<link rel="stylesheet" href="css/mobile-viewport-fix.css?v=5">
+<link rel="stylesheet" href="css/mobile-viewport-fix.css?v=6">
 <link rel="stylesheet" href="css/mobile-menu-modern.css?v=2">
 
     <!-- A Phim: Hardcode Dropdown Blue Override inside HTML to bypass all cache/specificity -->
@@ -198,7 +198,7 @@
             </div>
 
             <!-- Right side: Search + Auth -->
-            <div class="flex items-center gap-2 lg:gap-4">
+            <div class="flex items-center gap-2 lg:gap-4 ml-auto lg:ml-0">
                 <!-- Desktop Search Bar -->
                 <form action="search.html" method="GET" class="hidden lg:block relative group mr-2">
                     <div class="flex items-center w-56 xl:w-64 h-10 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full overflow-hidden focus-within:border-primary/50 focus-within:bg-black/60 focus-within:w-64 xl:focus-within:w-72 focus-within:shadow-[0_0_15px_rgba(242,242,13,0.1)] transition-all duration-300 backdrop-blur-md">
@@ -206,22 +206,23 @@
                         <input type="text" name="q" placeholder="Tìm kiếm..." class="w-full h-full bg-transparent border-none border-0 ring-0 focus:ring-0 focus:outline-none text-white text-sm pr-4 placeholder-gray-400 font-medium m-0 p-0" autocomplete="off" required style="box-shadow: none; outline: none; border: none; background: transparent;">
                     </div>
                 </form>
-
-                <!-- Mobile Search Icon -->
-                <a href="search.html" class="lg:hidden w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-300 hover:text-primary transition-colors mr-2">
-                    <span class="material-icons-round text-xl">search</span>
-                </a>
                 <div id="authContainer" class="flex items-center">
-                    <a href="login.html" class="px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors text-sm uppercase tracking-wide">Đăng nhập</a>
+                    <a href="login.html" class="px-4 lg:px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors text-xs lg:text-sm uppercase tracking-wide whitespace-nowrap">Đăng nhập</a>
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="lg:hidden text-white ml-2">
+                    <span class="material-icons-round">menu</span>
+                </button>
                 </div>
             </div>
-
-            <!-- Mobile Menu Button -->
-            <button id="mobileMenuBtn" class="lg:hidden text-white">
-                <span class="material-icons-round">menu</span>
-            </button>
         </div>
 
+        <!-- Mobile Search Bar - chi hien tren mobile -->
+        <div class="mobile-nav-search lg:hidden">
+            <form action="search.html" method="GET">
+                <span class="material-icons-round msb-icon">search</span>
+                <input type="text" name="q" placeholder="Tim kiem phim..." autocomplete="off">
+            </form>
+        </div>
         <!-- Mobile Menu -->
         <div id="mobileMenu" class="lg:hidden hidden bg-black/95 backdrop-blur-md border-t border-white/10">
             <!-- Content will be injected by mobile-menu-modern.js -->

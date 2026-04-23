@@ -196,3 +196,70 @@ select option {
     background-color: #1e202c !important;
     color: #ffffff !important;
 }
+
+/* ========================================================
+   11. MOBILE INLINE SEARCH (pill search TRONG navbar row)
+   Hiện trên mobile giữa logo và nút login/menu
+   flex-1 → tự dãn ra để lấp đầy khoảng trống
+   ======================================================== */
+.mobile-inline-search {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 9999px;
+    padding: 0 10px;
+    gap: 6px;
+    margin: 0 8px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.mobile-inline-search:focus-within {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(242, 242, 13, 0.4);
+    box-shadow: 0 0 0 2px rgba(242, 242, 13, 0.08);
+}
+
+.mobile-inline-search-icon {
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 16px !important;
+    flex-shrink: 0;
+    transition: color 0.2s;
+}
+
+.mobile-inline-search:focus-within .mobile-inline-search-icon {
+    color: rgba(242, 242, 13, 0.8);
+}
+
+.mobile-inline-search-input {
+    flex: 1;
+    min-width: 0;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    color: #fff;
+    font-size: 13px;
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.mobile-inline-search-input::placeholder {
+    color: rgba(255, 255, 255, 0.38);
+    font-size: 12px;
+}
+
+/* Ẩn hoàn toàn trên desktop */
+@media (min-width: 1024px) {
+    .mobile-inline-search {
+        display: none !important;
+    }
+}
+
+/* Ẩn mobile-nav-search (row dưới nav - đã deprecated) */
+.mobile-nav-search {
+    display: none !important;
+}
+

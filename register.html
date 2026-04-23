@@ -47,7 +47,7 @@
     </style>
     <link rel="stylesheet" href="css/chat-room.css?v=2">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons" rel="stylesheet">
-<link rel="stylesheet" href="css/mobile-viewport-fix.css?v=5">
+<link rel="stylesheet" href="css/mobile-viewport-fix.css?v=6">
 <link rel="stylesheet" href="css/mobile-menu-modern.css?v=2">
 
     <!-- A Phim: Hardcode Dropdown Blue Override inside HTML to bypass all cache/specificity -->
@@ -98,7 +98,14 @@
                 </a>
             </div>
         </div>
-    </nav>
+            <!-- Mobile Search Bar - chi hien tren mobile -->
+        <div class="mobile-nav-search lg:hidden">
+            <form action="search.html" method="GET">
+                <span class="material-icons-round msb-icon">search</span>
+                <input type="text" name="q" placeholder="Tim kiem phim..." autocomplete="off">
+            </form>
+        </div>
+</nav>
 
     <div class="relative z-10 flex-grow flex items-center justify-center w-full px-4 py-8">
         <div class="w-full max-w-[750px] flex flex-col sm:flex-row bg-[#1e2030] rounded-[20px] overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.6)] ring-1 ring-white/5 animate-[ap-modal-slidein_0.3s_ease] m-auto relative">
