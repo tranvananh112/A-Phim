@@ -269,15 +269,12 @@ function renderEpisodes(episodes) {
 
     const html = serverData.map((ep, index) => {
         const isActive = index === 0;
-        const btnClass = isActive 
-            ? 'ep-btn-active shadow-[0_0_15px_rgba(220,38,38,0.3)]' 
-            : 'ep-btn-glass hover:scale-105';
-            
+        
         return `
             <a href="watch.html?slug=${currentMovie.slug}&episode=${ep.slug}"
-                class="flex items-center justify-center gap-1 sm:gap-2 ${btnClass} rounded-lg py-2.5 px-2 text-sm font-medium transition-all group">
-                <span class="material-icons-round text-[16px] ${isActive ? 'text-primary' : 'text-gray-400 group-hover:text-white'}">play_arrow</span>
-                <span class="truncate">${ep.name}</span>
+                class="${isActive ? 'bg-[#fcd576] text-black font-bold border-transparent' : 'bg-[#323447] hover:bg-white/10 text-gray-300 border-white/5'} px-4 py-3 rounded-lg flex items-center justify-center gap-2 transition-all border whitespace-nowrap shadow-lg hover:-translate-y-1">
+                <span class="material-icons-round text-[18px]">${isActive ? 'play_arrow' : 'play_arrow'}</span>
+                <span>${ep.name}</span>
             </a>
         `;
     }).join('');

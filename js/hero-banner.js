@@ -308,13 +308,9 @@ function renderThumbnails(movies) {
                         onerror="this.src='https://via.placeholder.com/320x180?text=No+Image'"
                         loading="lazy" />
                     ${index === 0 ? `
-                    <!-- Trailer Badge -->
-                    <div class="absolute top-1 left-1 md:top-1.5 md:left-1.5 bg-primary text-black text-[8px] md:text-[9px] font-black px-1.5 md:px-2 py-0.5 rounded shadow-lg z-20 uppercase tracking-wider">
-                        Trailer
-                    </div>
                     <!-- Play Icon -->
-                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
-                        <span class="material-icons-round text-white text-2xl md:text-3xl opacity-80">play_circle</span>
+                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center transition-all duration-300">
+                        <span class="material-icons-round text-white text-2xl md:text-3xl opacity-90 drop-shadow-lg">play_circle</span>
                     </div>
                     ` : ''}
                 </div>
