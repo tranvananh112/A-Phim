@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html class="dark" lang="vi">
 
 <head>
@@ -455,7 +455,7 @@
     <link rel="stylesheet" href="css/material-icons-fix.css?v=2">
     <link rel="stylesheet" href="css/dropdown-z-index-fix.css?v=2">
     <link rel="stylesheet" href="css/top-movies.css?v=2">
-    <link rel="stylesheet" href="css/hero-banner.css?v=3">
+    <link rel="stylesheet" href="css/hero-banner.css?v=4">
     <!-- <link rel="stylesheet" href="css/imdb-carousel-3d.css?v=2"> --> <!-- Removed: 404 error -->
     <link rel="stylesheet" href="css/hero-mobile-fix.css?v=2">
     <link rel="stylesheet" href="css/page-animations.css?v=2">
@@ -536,7 +536,8 @@
 <link rel="stylesheet" href="css/mobile-viewport-fix.css?v=5">
 <link rel="stylesheet" href="css/mobile-menu-modern.css?v=6">
 <link rel="stylesheet" href="css/progressive-image.css?v=1">
-<link rel="stylesheet" href="css/ambient-bg.css?v=2">
+<link rel="stylesheet" href="css/ambient-bg.css?v=3">
+<link rel="stylesheet" href="css/seamless-sections.css?v=1">
 
     <!-- A Phim: Hardcode Dropdown Blue Override inside HTML to bypass all cache/specificity -->
             <style id="dropdown-blue-override">
@@ -822,7 +823,8 @@
 
         <!-- Gradients -->
         <div class="absolute inset-0 hero-gradient z-10"></div>
-        <div class="absolute bottom-0 left-0 w-full h-48 hero-bottom-gradient z-10"></div>
+        <div class="absolute bottom-0 left-0 w-full h-64 hero-bottom-gradient z-10"></div>
+        <div class="absolute bottom-0 left-0 w-full h-40 hero-mist-edge relative z-11 pointer-events-none"></div>
 
         <!-- Content -->
         <div id="heroContent"
@@ -901,7 +903,7 @@
     </main>
 
     <!-- Top Movies Hot Section -->
-    <section class="py-6 md:py-8 top-movies-section">
+    <section class="py-6 md:py-8 top-movies-section ambient-section">
         <div class="container mx-auto px-6">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
@@ -940,7 +942,7 @@
     </section>
 
     <!-- IMDB Top 250 3D Carousel Section -->
-    <section class="imdb-section">
+    <section class="imdb-section ambient-section">
         <div class="container mx-auto px-6">
             <div class="imdb-wrapper">
                 <div id="imdb-ring" class="imdb-ring loading" style="--total: 6">
@@ -951,7 +953,7 @@
     </section>
 
     <!-- Top Comments Community Dashboard -->
-    <section class="py-6 md:py-8" id="top-comments-section">
+    <section class="py-6 md:py-8 ambient-section" id="top-comments-section">
         <div class="container mx-auto px-6">
             <div class="tc-container">
                 <!-- Header -->
@@ -1036,7 +1038,7 @@
     </section>
 
     <!-- Action Movies Section -->
-    <section class="py-6 md:py-8 bg-background-dark">
+    <section class="py-6 md:py-8 bg-background-dark ambient-section">
         <div class="container mx-auto px-6">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
@@ -1072,7 +1074,7 @@
     </section>
 
     <!-- Vietnamese Movies Section -->
-    <section class="py-6 md:py-8 bg-background-dark">
+    <section class="py-6 md:py-8 bg-background-dark ambient-section">
         <div class="container mx-auto px-6">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
@@ -1104,7 +1106,7 @@
     </section>
 
     <!-- Coming Soon Movies Section - Top 10 Style -->
-    <section class="py-6 md:py-8 coming-soon-section">
+    <section class="py-6 md:py-8 coming-soon-section ambient-section">
         <div class="container mx-auto px-6">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
@@ -1152,7 +1154,7 @@
     </section>
 
     <!-- Latest Updates Section -->
-    <section class="py-6 md:py-8 bg-background-dark">
+    <section class="py-6 md:py-8 bg-background-dark ambient-section">
         <div class="container mx-auto px-6">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
@@ -1184,7 +1186,7 @@
     </section>
 
     <!-- Horror Section -->
-    <section class="py-6 md:py-8 horror-section">
+    <section class="py-6 md:py-8 horror-section ambient-section">
         <div class="container mx-auto px-6">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
@@ -1731,7 +1733,7 @@
     <script src="js/coming-soon.js?v=3"></script>
 
     <!-- Country Sections - Phim Hàn Quốc, Trung Quốc, US-UK -->
-    <script src="js/country-sections.js?v=6"></script>
+    <script src="js/country-sections.js?v=7"></script>
 
     <!-- Analytics & Ads -->
     <script defer src="js/analytics.js?v=6"></script>

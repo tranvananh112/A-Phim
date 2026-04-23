@@ -162,7 +162,7 @@ function addMovieMetadata(movie) {
                     Diễn viên
                 </h3>
                 <div class="relative">
-                    <div id="cast-container" class="flex gap-4 overflow-x-auto pb-4 scrollbar-hide" style="scroll-behavior: smooth;">
+                    <div id="cast-container" class="flex gap-4 overflow-x-auto scrollbar-hide" style="scroll-behavior: smooth; scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 8px;">
                         ${movie.actor.slice(0, 10).map((actor, index) => {
             const colors = ['from-red-500 to-red-700', 'from-blue-500 to-blue-700', 'from-green-500 to-green-700', 'from-yellow-500 to-yellow-700', 'from-purple-500 to-purple-700', 'from-pink-500 to-pink-700', 'from-indigo-500 to-indigo-700', 'from-teal-500 to-teal-700'];
             const colorClass = colors[index % colors.length];
@@ -270,8 +270,8 @@ function renderEpisodes(episodes) {
     const html = serverData.map((ep, index) => {
         const isActive = index === 0;
         const btnClass = isActive 
-            ? 'bg-primary/20 border border-primary text-white shadow-[0_0_10px_rgba(236,19,19,0.3)]' 
-            : 'bg-[#1e2025] border border-white/5 text-gray-300 hover:bg-white/10 hover:text-white';
+            ? 'ep-btn-active shadow-[0_0_15px_rgba(220,38,38,0.3)]' 
+            : 'ep-btn-glass hover:scale-105';
             
         return `
             <a href="watch.html?slug=${currentMovie.slug}&episode=${ep.slug}"

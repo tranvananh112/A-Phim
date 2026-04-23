@@ -117,10 +117,17 @@
    ============================================================ */
 
 /* Xóa màu nền đặc của body/main để lộ ambient background */
+body,
+main,
 body.bg-background-dark,
 main.bg-background-dark,
 .bg-background-dark {
     background-color: transparent !important;
+}
+
+/* Chắc chắn body không tạo nền riêng che ambient */
+html {
+    background-color: #0a0b10;
 }
 
 /* Biến các thẻ surface (như sidebar, filter box, card) thành glass */
@@ -148,13 +155,34 @@ main.bg-background-dark,
 .horror-section,
 .coming-soon-section,
 .top-movies-section,
-section.bg-background-dark {
-    background: transparent !important;
+.top-movies-section *:not(.movie-card):not(img):not(button),
+.country-section,
+.imdb-section,
+section.bg-background-dark,
+section[id],
+section {
+    background-color: transparent !important;
 }
 
-/* Hero Banner Fade: Chuyển từ mờ đen sang trong suốt thay vì về màu #1e202c */
+/* Cho phép glass-card giữ nền riêng */
+.glass-card,
+.glass-card-premium,
+.bg-surface-dark,
+.movie-card,
+[class*="glass"],
+[class*="card"] {
+    background-color: initial;
+}
+
+/* Hero Banner Fade: gradient mịn về ambient base color, KHÔNG về #1e202c */
 .hero-bottom-gradient {
-    background: linear-gradient(to top, rgba(10,11,16,0.8) 5%, transparent 100%) !important;
+    background: linear-gradient(
+        to top,
+        rgba(10, 11, 16, 0.97) 0%,
+        rgba(10, 11, 16, 0.85) 25%,
+        rgba(10, 11, 16, 0.40) 60%,
+        transparent 100%
+    ) !important;
 }
 
 /* Horror Section Fade */

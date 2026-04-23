@@ -26,9 +26,11 @@ const COUNTRY_CONFIGS = {
 };
 
 // Create section HTML
-function createCountrySection(config) {
+function createCountrySection(config, isFirst) {
+    // isFirst: section đầu tiên sau hero nhận bridge class
+    const bridgeClass = isFirst ? 'hero-to-content-bridge' : 'ambient-section';
     return `
-        <section class="country-section py-3 md:py-4 bg-gradient-to-b ${config.gradient}">
+        <section class="country-section py-3 md:py-4 ${bridgeClass}">
             <div class="container mx-auto px-6">
                 <div class="country-section-container">
                     <div class="country-section-header">
@@ -159,8 +161,9 @@ function initCountrySections() {
     }
 
     // Create and insert all three sections BEFORE top movies
-    const sectionsHTML = Object.values(COUNTRY_CONFIGS)
-        .map(config => createCountrySection(config))
+    const configs = Object.values(COUNTRY_CONFIGS);
+    const sectionsHTML = configs
+        .map((config, index) => createCountrySection(config, index === 0))
         .join('');
 
     topMoviesSection.insertAdjacentHTML('beforebegin', sectionsHTML);

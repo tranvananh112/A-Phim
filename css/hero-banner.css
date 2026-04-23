@@ -12,7 +12,46 @@
 }
 
 .hero-bottom-gradient {
-    background: linear-gradient(to top, #1e202c 5%, transparent 100%);
+    background: linear-gradient(
+        to top,
+        rgba(10,11,16,0.92) 0%,
+        rgba(10,11,16,0.72) 20%,
+        rgba(10,11,16,0.38) 50%,
+        rgba(10,11,16,0.10) 80%,
+        transparent 100%
+    );
+}
+
+/* Lớp sương mù (mist) tại cạnh dưới hero — xóa đường ranh giới */
+.hero-mist-edge {
+    background: radial-gradient(
+        ellipse 95% 100% at 50% 100%,
+        rgba(150, 160, 255, 0.38) 0%,    /* Tím xanh đậm hơn */
+        rgba(200, 210, 255, 0.18) 30%,   /* Lớp trắng xanh giữa */
+        rgba(100, 120, 210, 0.06) 60%,
+        transparent 80%
+    );
+    filter: blur(22px) brightness(1.1); /* Blur mạnh + sáng nhẹ */
+}
+
+/* Lớp sương mù chính: radial-gradient hình elip mờ */
+.hero-to-content-bridge::after {
+    content: '';
+    position: absolute;
+    top: -28px;            /* Nằm CHỒNG sâu hơn vào điểm tiếp giáp */
+    left: -10%;
+    right: -10%;
+    height: 70px;
+    background: radial-gradient(
+        ellipse 85% 100% at 50% 50%,
+        rgba(160, 170, 255, 0.30) 0%,   /* Đậm hơn gấp đôi */
+        rgba(200, 210, 255, 0.14) 35%,  /* Lớp trắng xanh giữa */
+        rgba(120, 140, 220, 0.05) 65%,
+        transparent 85%
+    );
+    filter: blur(14px);                /* Blur lớn hơn */
+    pointer-events: none;
+    z-index: 20;
 }
 
 .hide-scrollbar::-webkit-scrollbar {
