@@ -7,6 +7,12 @@ class InstantUI {
 
     init() {
         console.log('⚡ Instant UI initialized');
+        // Fix for Bfcache: remove page-exiting when restoring from back button
+        window.addEventListener('pageshow', () => {
+            if (document.body) {
+                document.body.classList.remove('page-exiting');
+            }
+        });
     }
 
     // Show skeleton loading for movie grid

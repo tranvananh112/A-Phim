@@ -28,11 +28,14 @@
     }
 
     function completeProgressBar() {
+        if (document.body) document.body.classList.remove('page-exiting');
         if (!_bar) return;
         _bar.style.width = '100%';
         _barTimer = setTimeout(function () {
-            _bar.classList.remove('active');
-            _bar.style.width = '0%';
+            if (_bar) {
+                _bar.classList.remove('active');
+                _bar.style.width = '0%';
+            }
         }, 300);
     }
 
