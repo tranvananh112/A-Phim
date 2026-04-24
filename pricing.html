@@ -65,7 +65,7 @@
                 <!-- Mobile Inline Search (chi hien tren mobile) -->
                 <form action="search.html" method="GET" class="mobile-inline-search">
                     <span class="material-icons-round mobile-inline-search-icon">search</span>
-                    <input type="text" name="q" placeholder="Tim kiem phim..." autocomplete="off" class="mobile-inline-search-input">
+                    <input type="text" name="q" placeholder="Tìm kiếm phim..." autocomplete="off" class="mobile-inline-search-input">
                 </form>
 
             <!-- Desktop Menu with Modern Pill Container -->
@@ -205,26 +205,21 @@
                 </div>
             </div>
 
-            <!-- Mobile Inline Search (chi hien tren mobile) -->
-            <form action="search.html" method="GET" class="mobile-inline-search">
-                <span class="material-icons-round mobile-inline-search-icon">search</span>
-                <input type="text" name="q" placeholder="Tim kiem phim..." autocomplete="off" class="mobile-inline-search-input">
-            </form>
-
             <!-- Right Side: Search, Login, Mobile Menu -->
-                        <div class="flex items-center gap-2 lg:gap-4 ml-auto lg:ml-0">
-                                <!-- Desktop Search Bar -->
+            <div class="flex items-center gap-2 lg:gap-4 ml-auto lg:ml-0">
+                <!-- Desktop Search Bar -->
                 <form action="search.html" method="GET" class="hidden lg:block relative group mr-2">
                     <div class="flex items-center w-56 xl:w-64 h-10 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full overflow-hidden focus-within:border-primary/50 focus-within:bg-black/60 focus-within:w-64 xl:focus-within:w-72 focus-within:shadow-[0_0_15px_rgba(242,242,13,0.1)] transition-all duration-300 backdrop-blur-md">
                         <span class="material-icons-round text-gray-400 pl-3 pr-2 text-lg group-focus-within:text-primary transition-colors">search</span>
                         <input type="text" name="q" placeholder="Tìm kiếm..." class="w-full h-full bg-transparent border-none border-0 ring-0 focus:ring-0 focus:outline-none text-white text-sm pr-4 placeholder-gray-400 font-medium m-0 p-0" autocomplete="off" required style="box-shadow: none; outline: none; border: none; background: transparent;">
                     </div>
                 </form>
-                <div id="authContainer" class="flex items-center"><a href="login.html"
-                    class="px-4 lg:px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors text-xs lg:text-sm uppercase tracking-wide whitespace-nowrap">Đăng nhập</a><!-- Mobile Menu Button -->
-                <button id="mobileMenuBtn" class="lg:hidden text-white ml-2">
-                    <span class="material-icons-round">menu</span>
-                </button>
+                <div id="authContainer" class="flex items-center">
+                    <a href="login.html" onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');return false;}" class="px-4 lg:px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors text-xs lg:text-sm uppercase tracking-wide whitespace-nowrap">Đăng nhập</a>
+                    <!-- Mobile Menu Button (Moved inside authContainer for layout stability) -->
+                    <button id="mobileMenuBtn" class="lg:hidden text-white ml-2">
+                        <span class="material-icons-round">menu</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -469,7 +464,10 @@
     <script src="js/categories-dropdown.js?v=2"></script>
     <script src="js/dropdown-hover-fix.js?v=2"></script>
     <script src="js/config.js?v=3"></script>
-    <script src="js/mobile-menu-modern.js?v=2"></script>
+    <script src="js/auth.js?v=6"></script>
+    <script src="js/auth-modal.js?v=7"></script>
+    <script src="js/user-ui.js?v=7"></script>
+    <script src="js/mobile-menu-modern.js?v=7"></script>
     <!-- Sticky Navigation -->
     <script src="js/sticky-nav.js?v=2"></script>
     <script src="js/nav-active-indicator.js?v=1"></script>

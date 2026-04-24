@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 
 <head>
@@ -164,7 +164,7 @@
                 <!-- Mobile Inline Search (chi hien tren mobile) -->
                 <form action="search.html" method="GET" class="mobile-inline-search">
                     <span class="material-icons-round mobile-inline-search-icon">search</span>
-                    <input type="text" name="q" placeholder="Tim kiem phim..." autocomplete="off" class="mobile-inline-search-input">
+                    <input type="text" name="q" placeholder="Tìm kiếm phim..." autocomplete="off" class="mobile-inline-search-input">
                 </form>
 
             <!-- Desktop Menu with Modern Pill Container -->
@@ -281,14 +281,13 @@
                         <input type="text" name="q" placeholder="Tìm kiếm..." class="w-full h-full bg-transparent border-none border-0 ring-0 focus:ring-0 focus:outline-none text-white text-sm pr-4 placeholder-gray-400 font-medium m-0 p-0" autocomplete="off" required style="box-shadow: none; outline: none; border: none; background: transparent;">
                     </div>
                 </form>
-                <a href="login.html"
-                    class="px-4 lg:px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors text-xs lg:text-sm uppercase tracking-wide whitespace-nowrap">
-                    Đăng nhập
-                </a>
-                <!-- Mobile Menu Button -->
-                <button id="mobileMenuBtn" class="lg:hidden text-white ml-2">
-                    <span class="material-icons-round">menu</span>
-                </button>
+                <div id="authContainer" class="flex items-center">
+                    <a href="login.html" onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');return false;}" class="px-4 lg:px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors text-xs lg:text-sm uppercase tracking-wide whitespace-nowrap">Đăng nhập</a>
+                    <!-- Mobile Menu Button (Moved inside authContainer for layout stability) -->
+                    <button id="mobileMenuBtn" class="lg:hidden text-white ml-2">
+                        <span class="material-icons-round">menu</span>
+                    </button>
+                </div>
             </div>
         </div>
         <!-- Mobile Menu -->

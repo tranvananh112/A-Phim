@@ -142,6 +142,13 @@
                 if (target === '_blank') {
                     // Để browser xử lý
                 } else {
+                    // Chặn touch-speed nếu là link đăng nhập/đăng ký (để auth-modal.js xử lý)
+                    const isAuth = url.includes('login.html') || url.includes('register.html');
+                    if (isAuth || _touchTarget.getAttribute('onclick')) {
+                        _touchTarget = null;
+                        return;
+                    }
+                    
                     _touchHandled = true;
                     e.preventDefault();
                     window.instantNavigate(url);

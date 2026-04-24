@@ -23,12 +23,24 @@ function updateUserUI() {
             ? `<img src="${savedAvatar}" class="w-9 h-9 md:w-10 md:h-10 rounded-full object-cover border-2 border-primary shadow-[0_0_12px_rgba(242,242,13,0.4)] hover:shadow-[0_0_20px_rgba(242,242,13,0.6)] transition-all" alt="Tài khoản" style="pointer-events:none" />`
             : `<div class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-primary flex items-center justify-center text-black font-bold border-2 border-primary shadow-[0_0_12px_rgba(242,242,13,0.4)]">${initial}</div>`;
 
-        authContainer.innerHTML = `
+        const profileLink = `
             <a href="profile.html" class="flex items-center gap-2 hover:text-primary transition-colors group">
                 ${avatarHtml}
                 <span class="hidden md:inline text-sm font-semibold text-white group-hover:text-primary">${user.name}</span>
             </a>
         `;
+
+        // Tìm nút đăng nhập cũ để thay thế, giữ lại các thành phần khác (như mobileMenuBtn)
+        const loginBtn = authContainer.querySelector('a[href="login.html"]');
+        if (loginBtn) {
+            loginBtn.outerHTML = profileLink;
+        } else {
+            // Nếu không tìm thấy (có thể đã được thay thế), nhưng muốn chắc chắn UI đúng
+            // Kiểm tra xem đã có link profile chưa, nếu chưa mới chèn
+            if (!authContainer.querySelector('a[href="profile.html"]')) {
+                authContainer.insertAdjacentHTML('afterbegin', profileLink);
+            }
+        }
     }
     // Chưa đăng nhập: KHÔNG làm gì - button gốc html có onclick + auth-modal.js xử lý
 }

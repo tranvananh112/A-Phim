@@ -30,7 +30,7 @@ function createCountrySection(config, isFirst) {
     // isFirst: section đầu tiên sau hero nhận bridge class
     const bridgeClass = isFirst ? 'hero-to-content-bridge' : 'ambient-section';
     return `
-        <section class="country-section py-3 md:py-4 ${bridgeClass}">
+        <section class="country-section py-6 md:py-10 ${bridgeClass}">
             <div class="container mx-auto px-6">
                 <div class="country-section-container">
                     <div class="country-section-header">

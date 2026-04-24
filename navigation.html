@@ -134,14 +134,13 @@
                 <a href="search.html" class="lg:hidden text-gray-300 hover:text-primary transition-colors mr-2">
                     <span class="material-icons-round">search</span>
                 </a>
-            <a href="login.html"
-                class="px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors">
-                Đăng nhập
-            </a>
-        <!-- Mobile Menu Button -->
-        <button id="mobileMenuBtn" class="lg:hidden text-white ml-2">
-            <span class="material-icons-round">menu</span>
-        </button>
+            <div id="authContainer" class="flex items-center">
+                    <a href="login.html" onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');return false;}" class="px-4 lg:px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors text-xs lg:text-sm uppercase tracking-wide whitespace-nowrap">Đăng nhập</a>
+                </div>
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="lg:hidden text-white ml-2">
+                    <span class="material-icons-round">menu</span>
+                </button>
                 </div>
     </div>
 

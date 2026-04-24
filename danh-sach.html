@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 
 <head>
     <!-- TOUCH SPEED -->
     <link rel="stylesheet" href="css/touch-speed.css?v=2">
-    <script src="js/touch-speed.js?v=1"></script>
+    <script src="js/touch-speed.js?v=7"></script>
     <link rel="prefetch" href="index.html" as="document">
     <link rel="prefetch" href="search.html" as="document">
 
@@ -165,7 +165,7 @@
                 <!-- Mobile Inline Search (chi hien tren mobile) -->
                 <form action="search.html" method="GET" class="mobile-inline-search">
                     <span class="material-icons-round mobile-inline-search-icon">search</span>
-                    <input type="text" name="q" placeholder="Tim kiem phim..." autocomplete="off" class="mobile-inline-search-input">
+                    <input type="text" name="q" placeholder="Tìm kiếm phim..." autocomplete="off" class="mobile-inline-search-input">
                 </form>
 
             <!-- Desktop Menu with Modern Pill Container -->
@@ -282,15 +282,12 @@
                         <input type="text" name="q" placeholder="Tìm kiếm..." class="w-full h-full bg-transparent border-none border-0 ring-0 focus:ring-0 focus:outline-none text-white text-sm pr-4 placeholder-gray-400 font-medium m-0 p-0" autocomplete="off" required style="box-shadow: none; outline: none; border: none; background: transparent;">
                     </div>
                 </form>
-                <a href="login.html"
-                    class="px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors text-sm uppercase tracking-wide">
-                    Đăng nhập
-                </a>
+                <div id="authContainer" class="flex items-center"><a href="login.html" onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');return false;}" class="px-4 lg:px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors text-xs lg:text-sm uppercase tracking-wide whitespace-nowrap">Đăng nhập</a><!-- Mobile Menu Button (Moved inside authContainer for layout stability) -->
+                    <button id="mobileMenuBtn" class="lg:hidden text-white ml-2">
+                        <span class="material-icons-round">menu</span>
+                    </button>
+                </div>
             </div>
-
-            <button id="mobileMenuBtn" class="lg:hidden text-white">
-                <span class="material-icons-round">menu</span>
-            </button>
         </div>
         <!-- Mobile Menu -->
         <div id="mobileMenu" class="lg:hidden hidden bg-black/95 backdrop-blur-md border-t border-white/10">
@@ -595,9 +592,9 @@
     <script src="js/config.js?v=2"></script>
     <script src="js/api.js?v=2"></script>
     <script src="js/auth.js?v=2"></script>
-    <script src="js/auth-modal.js?v=2"></script>
-    <script src="js/user-ui.js?v=4"></script>
-    <script src="js/mobile-menu-modern.js?v=3"></script>
+    <script src="js/auth-modal.js?v=7"></script>
+    <script src="js/user-ui.js?v=7"></script>
+    <script src="js/mobile-menu-modern.js?v=7"></script>
     <script src="js/categories-dropdown.js?v=2"></script>
     <script src="js/countries-dropdown.js?v=3"></script>
     

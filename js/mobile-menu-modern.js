@@ -168,7 +168,7 @@
                             ? `<button class="mm-footer-link danger" onclick="try{authService.logout()}catch(e){window.location.href='login.html'}">
                                    ${icon('logout', 'font-size:16px;')} Đăng xuất
                                </button>`
-                            : `<a href="login.html" class="mm-footer-link" style="color:#FFD700;">
+                            : `<a href="login.html" onclick="if(window.showAuthModal){event.preventDefault(); if(window.closeMobileMenu) window.closeMobileMenu(); window.showAuthModal('login'); return false;}" class="mm-footer-link" style="color:#fcd576; font-weight:700; background: rgba(252,213,118,0.1); padding: 6px 12px; border-radius: 20px;">
                                    ${icon('login', 'font-size:16px;')} Đăng nhập
                                </a>`
                         }

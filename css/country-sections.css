@@ -1,12 +1,12 @@
 /* Country Sections Styles - Phim Hàn Quốc, Trung Quốc, US-UK */
 
 .country-section {
-    padding: 0.5rem 0;
+    padding: 1.5rem 0;
 }
 
 @media (min-width: 768px) {
     .country-section {
-        padding: 1rem 0;
+        padding: 2.5rem 0;
     }
 }
 
@@ -46,7 +46,7 @@
 .country-section-title {
     font-size: 1.5rem;
     font-weight: 700;
-    margin-bottom: 0;
+    margin-bottom: 0.5rem;
     line-height: 1.1;
 }
 

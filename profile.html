@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html class="dark" lang="vi">
 
 <head>
@@ -129,6 +129,12 @@
                 </div>
             </a>
 
+                <!-- Mobile Inline Search (chi hien tren mobile) -->
+                <form action="search.html" method="GET" class="mobile-inline-search">
+                    <span class="material-icons-round mobile-inline-search-icon">search</span>
+                    <input type="text" name="q" placeholder="Tìm kiếm phim..." autocomplete="off" class="mobile-inline-search-input">
+                </form>
+
             <!-- Desktop Menu -->
             <div class="hidden lg:flex items-center">
                 <div class="flex items-center gap-1 bg-white/5 backdrop-blur-md rounded-full p-1.5 border border-white/10">
@@ -207,11 +213,11 @@
                     </div>
                 </form>
                 <div id="authContainer" class="flex items-center">
-                    <a href="login.html" class="px-4 lg:px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors text-xs lg:text-sm uppercase tracking-wide whitespace-nowrap">Đăng nhập</a>
-                <!-- Mobile Menu Button -->
-                <button id="mobileMenuBtn" class="lg:hidden text-white ml-2">
-                    <span class="material-icons-round">menu</span>
-                </button>
+                    <a href="login.html" onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');return false;}" class="px-4 lg:px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors text-xs lg:text-sm uppercase tracking-wide whitespace-nowrap">Đăng nhập</a>
+                    <!-- Mobile Menu Button (Moved inside authContainer for layout stability) -->
+                    <button id="mobileMenuBtn" class="lg:hidden text-white ml-2">
+                        <span class="material-icons-round">menu</span>
+                    </button>
                 </div>
             </div>
         </div>
