@@ -19,22 +19,30 @@ async function loadHomeMovies() {
                 // Không render "Latest Updates" section nữa vì đã có trong index.html
                 // renderLatestMoviesSection(movies);
 
-                // Ẩn loading và dynamicSections vì không dùng nữa
+                // Hiển thị loading và dynamicSections
                 const loading = document.getElementById('sectionsLoading');
                 const container = document.getElementById('dynamicSections');
-                if (loading) loading.style.display = 'none';
-                if (container) container.style.display = 'none';
+                if (loading) loading.style.display = 'block';
+                if (container) container.style.display = 'block';
+
+                // Nếu data.data có sections (v1/api/home version mới)
+                if (data.data.sections) {
+                    renderAllSections(data.data.sections);
+                } else {
+                    // Fallback render flat list if no sections
+                    // renderLatestMoviesSection(movies);
+                }
 
                 // Load Vietnamese movies separately
                 loadVietnameseMoviesHome();
             } else {
                 console.log('No movies in home API, loading fallback');
 
-                // Ẩn loading và dynamicSections
+                // Hiển thị loading và dynamicSections
                 const loading = document.getElementById('sectionsLoading');
                 const container = document.getElementById('dynamicSections');
-                if (loading) loading.style.display = 'none';
-                if (container) container.style.display = 'none';
+                if (loading) loading.style.display = 'block';
+                if (container) container.style.display = 'block';
 
                 loadVietnameseMoviesHome();
             }
@@ -42,11 +50,11 @@ async function loadHomeMovies() {
     } catch (error) {
         console.error('Error loading home movies:', error);
 
-        // Ẩn loading và dynamicSections khi có lỗi
+        // Hiển thị loading để báo lỗi
         const loading = document.getElementById('sectionsLoading');
         const container = document.getElementById('dynamicSections');
-        if (loading) loading.style.display = 'none';
-        if (container) container.style.display = 'none';
+        if (loading) loading.style.display = 'block';
+        if (container) container.style.display = 'block';
 
         loadVietnameseMoviesHome();
     }
@@ -73,8 +81,8 @@ function renderLatestMoviesSection(movies) {
     const filteredMovies = movies; // Don't filter anymore, show with "Hidden" badge instead
 
     const html = `
-        <section class="py-20 bg-transparent">
-            <div class="container mx-auto px-6">
+        <section class="py-4 md:py-5 bg-transparent">
+            <div class="w-full px-4 md:px-10 lg:px-16">
                 <div class="flex items-center justify-between mb-8">
                     <h2 class="text-3xl font-bold text-white flex items-center gap-3">
                         <span class="w-1.5 h-8 bg-primary rounded-full block shadow-[0_0_10px_rgba(242,242,13,0.5)]"></span>
@@ -157,8 +165,9 @@ function renderAllSections(sections) {
     // Filter out Vietnam section (already displayed separately)
     // Lấy TẤT CẢ các sections có phim
     const filteredSections = sections.filter(section => {
-        // Bỏ qua section Việt Nam (đã hiển thị riêng)
-        if (section.slug === 'viet-nam' || section.name?.toLowerCase().includes('việt nam')) {
+        // Bỏ qua section Việt Nam và Hành Động (đã hiển thị riêng)
+        if (section.slug === 'viet-nam' || section.name?.toLowerCase().includes('việt nam') ||
+            section.slug === 'hanh-dong' || section.name?.toLowerCase().includes('hành động')) {
             return false;
         }
 
@@ -188,9 +197,9 @@ function renderAllSections(sections) {
         const bgClass = 'bg-transparent';
 
         return `
-            <section class="py-20 ${bgClass}">
-                <div class="container mx-auto px-6">
-                    <div class="flex items-center justify-between mb-8">
+            <section class="py-1 md:py-1 ${bgClass}">
+                <div class="w-full px-4 md:px-10 lg:px-16">
+                    <div class="flex items-center justify-between mb-3">
                         <h2 class="text-3xl font-bold text-white flex items-center gap-3">
                             <span class="w-1.5 h-8 bg-primary rounded-full block shadow-[0_0_10px_rgba(242,242,13,0.5)]"></span>
                             ${section.name || 'Phim'}
@@ -204,7 +213,7 @@ function renderAllSections(sections) {
                     </div>
 
                     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                        ${(section.items || []).slice(0, 10).map(movie => {
+                        ${(section.items || []).slice(0, 20).map(movie => {
             const hasCustomLink = !!movieLinks[movie.slug];
             const linkUrl = hasCustomLink ? `watch-simple.html?slug=${movie.slug}` : `movie-detail.html?slug=${movie.slug}`;
             const hiddenUI = window.getHiddenMovieOverlay ? window.getHiddenMovieOverlay(movie.slug) : { badge: '', imgClass: '', containerClass: '' };
@@ -260,7 +269,7 @@ function renderAllSections(sections) {
 // Fallback function - load Vietnamese movies
 async function loadVietnameseMoviesHome() {
     try {
-        const response = await fetch('https://ophim1.com/v1/api/quoc-gia/viet-nam?page=1', {
+        const response = await fetch('https://ophim1.com/v1/api/quoc-gia/viet-nam?page=1&limit=20', {
             method: 'GET',
             headers: { 'accept': 'application/json' }
         });
@@ -268,7 +277,7 @@ async function loadVietnameseMoviesHome() {
         const data = await response.json();
 
         if (data.status === 'success' && data.data && data.data.items) {
-            const movies = data.data.items.slice(0, 10);
+            const movies = data.data.items.slice(0, 20);
             renderVietnameseMovies(movies);
         }
     } catch (error) {

@@ -291,6 +291,90 @@
    </div>
   </div>
 
+  <!-- Category Backgrounds -->
+  <div class="admin-card mb-4">
+   <div class="admin-card-header">
+    <span class="admin-card-title flex items-center gap-2">
+     <i data-lucide="image" class="text-primary"></i>
+     Hình Nền Chuyên Mục
+     <span class="badge badge-gray" style="font-size:11px;margin-left:4px">Trang chủ</span>
+    </span>
+    <div class="flex items-center gap-2">
+     <button class="btn btn-primary btn-sm" onclick="saveCategoryBackgrounds()" id="btnSaveCategoryBg">
+      <i data-lucide="save"></i> Lưu cài đặt
+     </button>
+    </div>
+   </div>
+   <div class="admin-card-body">
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">
+     Dán link URL ảnh để làm hình nền cho các chuyên mục. Nếu để trống, hệ thống sẽ tự động lấy ảnh của bộ phim mới nhất.
+    </p>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;">
+        <!-- Phim Bộ -->
+        <div class="form-group mb-0 p-3" style="background:var(--surface-2); border-radius:var(--radius-sm); border:1px solid var(--border);">
+            <label class="form-label font-bold text-primary" style="display:flex; justify-content:space-between;"><span>Phim Bộ</span><i data-lucide="tv" style="width:16px;height:16px;"></i></label>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <img id="preview_bg_phim_bo" src="https://via.placeholder.com/80x45?text=Auto" style="width:80px; height:45px; object-fit:cover; border-radius:4px; background:var(--surface-3);">
+                <input type="hidden" id="bg_phim_bo">
+                <button class="btn btn-secondary btn-sm flex-1" onclick="showCategoryBgModal('danh-sach/phim-bo')"><i data-lucide="image-plus"></i> Chọn phim</button>
+                <button class="btn btn-danger btn-sm" onclick="clearCategoryBg('phim_bo')" title="Xóa nền"><i data-lucide="trash-2"></i></button>
+            </div>
+        </div>
+        <!-- Phim Mới -->
+        <div class="form-group mb-0 p-3" style="background:var(--surface-2); border-radius:var(--radius-sm); border:1px solid var(--border);">
+            <label class="form-label font-bold text-danger" style="display:flex; justify-content:space-between;"><span>Phim Mới</span><i data-lucide="bolt" style="width:16px;height:16px;"></i></label>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <img id="preview_bg_phim_moi" src="https://via.placeholder.com/80x45?text=Auto" style="width:80px; height:45px; object-fit:cover; border-radius:4px; background:var(--surface-3);">
+                <input type="hidden" id="bg_phim_moi">
+                <button class="btn btn-secondary btn-sm flex-1" onclick="showCategoryBgModal('danh-sach/phim-moi-cap-nhat')"><i data-lucide="image-plus"></i> Chọn phim</button>
+                <button class="btn btn-danger btn-sm" onclick="clearCategoryBg('phim_moi')" title="Xóa nền"><i data-lucide="trash-2"></i></button>
+            </div>
+        </div>
+        <!-- Hành Động -->
+        <div class="form-group mb-0 p-3" style="background:var(--surface-2); border-radius:var(--radius-sm); border:1px solid var(--border);">
+            <label class="form-label font-bold text-warning" style="display:flex; justify-content:space-between;"><span>Hành Động</span><i data-lucide="swords" style="width:16px;height:16px;"></i></label>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <img id="preview_bg_hanh_dong" src="https://via.placeholder.com/80x45?text=Auto" style="width:80px; height:45px; object-fit:cover; border-radius:4px; background:var(--surface-3);">
+                <input type="hidden" id="bg_hanh_dong">
+                <button class="btn btn-secondary btn-sm flex-1" onclick="showCategoryBgModal('the-loai/hanh-dong')"><i data-lucide="image-plus"></i> Chọn phim</button>
+                <button class="btn btn-danger btn-sm" onclick="clearCategoryBg('hanh_dong')" title="Xóa nền"><i data-lucide="trash-2"></i></button>
+            </div>
+        </div>
+        <!-- Tình Cảm -->
+        <div class="form-group mb-0 p-3" style="background:var(--surface-2); border-radius:var(--radius-sm); border:1px solid var(--border);">
+            <label class="form-label font-bold" style="color:#ec4899; display:flex; justify-content:space-between;"><span>Tình Cảm</span><i data-lucide="heart" style="width:16px;height:16px;"></i></label>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <img id="preview_bg_tinh_cam" src="https://via.placeholder.com/80x45?text=Auto" style="width:80px; height:45px; object-fit:cover; border-radius:4px; background:var(--surface-3);">
+                <input type="hidden" id="bg_tinh_cam">
+                <button class="btn btn-secondary btn-sm flex-1" onclick="showCategoryBgModal('the-loai/tinh-cam')"><i data-lucide="image-plus"></i> Chọn phim</button>
+                <button class="btn btn-danger btn-sm" onclick="clearCategoryBg('tinh_cam')" title="Xóa nền"><i data-lucide="trash-2"></i></button>
+            </div>
+        </div>
+        <!-- Hài Hước -->
+        <div class="form-group mb-0 p-3" style="background:var(--surface-2); border-radius:var(--radius-sm); border:1px solid var(--border);">
+            <label class="form-label font-bold" style="color:#eab308; display:flex; justify-content:space-between;"><span>Hài Hước</span><i data-lucide="smile" style="width:16px;height:16px;"></i></label>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <img id="preview_bg_hai_huoc" src="https://via.placeholder.com/80x45?text=Auto" style="width:80px; height:45px; object-fit:cover; border-radius:4px; background:var(--surface-3);">
+                <input type="hidden" id="bg_hai_huoc">
+                <button class="btn btn-secondary btn-sm flex-1" onclick="showCategoryBgModal('the-loai/hai-huoc')"><i data-lucide="image-plus"></i> Chọn phim</button>
+                <button class="btn btn-danger btn-sm" onclick="clearCategoryBg('hai_huoc')" title="Xóa nền"><i data-lucide="trash-2"></i></button>
+            </div>
+        </div>
+        <!-- Hoạt Hình -->
+        <div class="form-group mb-0 p-3" style="background:var(--surface-2); border-radius:var(--radius-sm); border:1px solid var(--border);">
+            <label class="form-label font-bold text-success" style="display:flex; justify-content:space-between;"><span>Hoạt Hình</span><i data-lucide="cat" style="width:16px;height:16px;"></i></label>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <img id="preview_bg_hoat_hinh" src="https://via.placeholder.com/80x45?text=Auto" style="width:80px; height:45px; object-fit:cover; border-radius:4px; background:var(--surface-3);">
+                <input type="hidden" id="bg_hoat_hinh">
+                <button class="btn btn-secondary btn-sm flex-1" onclick="showCategoryBgModal('danh-sach/hoat-hinh')"><i data-lucide="image-plus"></i> Chọn phim</button>
+                <button class="btn btn-danger btn-sm" onclick="clearCategoryBg('hoat_hinh')" title="Xóa nền"><i data-lucide="trash-2"></i></button>
+            </div>
+        </div>
+    </div>
+   </div>
+  </div>
+
   <!-- Banners List -->
   <div class="admin-card">
    <div class="admin-card-header">
@@ -364,10 +448,13 @@
    <div class="filter-select-wrapper">
     <select id="filterCategory" class="form-select">
     <option value="danh-sach/phim-moi-cap-nhat">Phim mới nổi bật</option>
+    <option value="danh-sach/phim-bo">Phim Bộ</option>
+    <option value="danh-sach/phim-le">Phim Lẻ</option>
     <optgroup label="Thể loại">
      <option value="the-loai/hanh-dong">Hành Động</option>
      <option value="the-loai/tinh-cam">Tình Cảm</option>
      <option value="the-loai/hai-huoc">Hài Hước</option>
+     <option value="danh-sach/hoat-hinh">Hoạt Hình</option>
     </optgroup>
     <optgroup label="Quốc gia">
      <option value="quoc-gia/viet-nam">Việt Nam</option>

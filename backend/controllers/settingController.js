@@ -71,7 +71,15 @@ exports.getPublicSettings = async (req, res) => {
             apiSecondary: 'https://ophim17.cc',
             enableMultipleSources: false,
             defaultServer: 'Server #1 (OPhim)',
-            autoplayDelay: '5 giây'
+            autoplayDelay: '5 giây',
+            categoryBackgrounds: {
+                "danh-sach/phim-bo": "",
+                "danh-sach/phim-moi-cap-nhat": "",
+                "the-loai/hanh-dong": "",
+                "the-loai/tinh-cam": "",
+                "the-loai/hai-huoc": "",
+                "danh-sach/hoat-hinh": ""
+            }
         }
     };
 
@@ -97,7 +105,8 @@ exports.getPublicSettings = async (req, res) => {
                 apiSecondary:         settings.content?.apiSecondary         ?? defaults.content.apiSecondary,
                 enableMultipleSources:settings.content?.enableMultipleSources ?? false,
                 defaultServer:        settings.content?.defaultServer        ?? defaults.content.defaultServer,
-                autoplayDelay:        settings.content?.autoplayDelay        ?? defaults.content.autoplayDelay
+                autoplayDelay:        settings.content?.autoplayDelay        ?? defaults.content.autoplayDelay,
+                categoryBackgrounds:  settings.content?.categoryBackgrounds  ?? defaults.content.categoryBackgrounds
             }
         };
 

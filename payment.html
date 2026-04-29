@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html class="dark" lang="vi">
 
 <head>
@@ -56,184 +56,137 @@
         }
     </style>
 
+    <link rel="stylesheet" href="css/nav-desktop-v2.css?v=2">
+    <link rel="stylesheet" href="css/design-tokens.css?v=1">
 </head>
 
 <body class="bg-background-dark text-white font-display min-h-screen flex flex-col">
-    <nav class="fixed top-0 w-full z-50 bg-transparent backdrop-blur-sm border-b border-white/5 pt-safe">
-        <div class="container mx-auto px-6 h-16 flex items-center justify-between">
-            <a href="index.html" class="flex items-center gap-2 group">
-                <div
-                    class="w-10 h-10 rounded-full border-2 border-primary flex items-center justify-center bg-black/50 group-hover:bg-primary transition-colors duration-300 overflow-hidden">
-                    <img src="/favicon.png" alt="A Phim Logo"
-                        class="w-6 h-6 object-contain group-hover:scale-110 transition-transform" />
+    <!-- Ambient Background (7 Orbs for Full Coverage) -->
+    <div class="ambient-bg">
+        <div class="ambient-orb ambient-orb-1"></div>
+        <div class="ambient-orb ambient-orb-2"></div>
+        <div class="ambient-orb ambient-orb-3"></div>
+        <div class="ambient-orb ambient-orb-4"></div>
+        <div class="ambient-orb ambient-orb-5"></div>
+        <div class="ambient-orb ambient-orb-6"></div>
+        <div class="ambient-orb ambient-orb-7"></div>
+        <div class="ambient-noise"></div>
+        <div class="ambient-grain"></div>
+    </div>
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 pt-safe" id="mainNav">
+        <div class="container mx-auto px-6 flex items-center justify-between" style="height:56px;">
+
+            <!-- ZONE 1: Logo -->
+            <a href="index.html" class="flex items-center gap-2.5 group flex-shrink-0" style="text-decoration:none;">
+                <div class="w-9 h-9 rounded-full border-2 border-primary flex items-center justify-center bg-black/40 group-hover:bg-primary/20 transition-colors duration-300 overflow-hidden">
+                    <img src="/favicon.png" alt="A Phim Logo" class="w-5 h-5 object-contain group-hover:scale-110 transition-transform" />
                 </div>
                 <div class="flex flex-col leading-none">
-                    <span class="text-2xl font-bold text-white tracking-wide">A Phim</span>
-                    <span class="text-[10px] text-primary uppercase tracking-widest">Cinema</span>
+                    <span class="text-xl font-bold text-white tracking-wide">A <span class="text-primary">Phim</span></span>
+                    <span class="text-[9px] text-white/40 uppercase tracking-widest">Cinema</span>
                 </div>
             </a>
 
-                <!-- Mobile Inline Search (chi hien tren mobile) -->
-                <form action="search.html" method="GET" class="mobile-inline-search">
-                    <span class="material-icons-round mobile-inline-search-icon">search</span>
-                    <input type="text" name="q" placeholder="Tìm kiếm phim..." autocomplete="off" class="mobile-inline-search-input">
-                </form>
+            <!-- Mobile Inline Search -->
+            <form action="search.html" method="GET" class="mobile-inline-search">
+                <span class="material-icons-round mobile-inline-search-icon">search</span>
+                <input type="text" name="q" placeholder="Tìm kiếm phim..." autocomplete="off" class="mobile-inline-search-input">
+            </form>
 
-            <!-- Desktop Menu with Modern Pill Container -->
-            <div class="hidden lg:flex items-center">
-                <div
-                    class="flex items-center gap-1 bg-white/5 backdrop-blur-md rounded-full p-1.5 border border-white/10">
-                    <a href="index.html"
-                        class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white">
-                        Trang chủ
-                    </a>
+            <!-- ZONE 2: Desktop Search + Links (hidden on mobile) -->
+            <div class="hidden lg:flex items-center flex-1 justify-center ml-14">
+                <!-- Dark pill wrapper (like SofaFlix) -->
+                <div id="desktopNavPill" class="desktop-nav-pill">
 
-                    <!-- Phim Dropdown -->
-                    <div class="relative group">
-                        <button
-                            class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white flex items-center gap-1">
-                            Phim
-                            <span
-                                class="material-icons-round text-sm group-hover:rotate-180 transition-transform duration-300">expand_more</span>
-                        </button>
-                        <div
-                            class="absolute top-full left-0 mt-2 w-64 bg-gradient-to-br from-[#3d5a96]/95 to-[#25385e]/95 backdrop-blur-md border border-white/15 rounded-xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden z-50">
-                            <div class="grid grid-cols-1 gap-0">
-                                <a href="phim-theo-quoc-gia.html"
-                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5 font-semibold">
-                                    🌍 Tất Cả Quốc Gia
-                                </a>
-                                <a href="phim-theo-quoc-gia.html?country=viet-nam"
-                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
-                                    🇻🇳 Phim Việt Nam
-                                </a>
-                                <a href="phim-theo-quoc-gia.html?country=han-quoc"
-                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
-                                    🇰🇷 Phim Hàn Quốc
-                                </a>
-                                <a href="phim-theo-quoc-gia.html?country=trung-quoc"
-                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
-                                    🇨🇳 Phim Trung Quốc
-                                </a>
-                                <a href="phim-theo-quoc-gia.html?country=nhat-ban"
-                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
-                                    🇯🇵 Phim Nhật Bản
-                                </a>
-                                <a href="phim-theo-quoc-gia.html?country=thai-lan"
-                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">
-                                    🇹🇭 Phim Thái Lan
-                                </a>
-                                <a href="phim-theo-quoc-gia.html?country=au-my"
-                                    class="block px-5 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all">
-                                    🇺🇸 Phim Âu Mỹ
-                                </a>
+                    <!-- Search Bar -->
+                    <form action="search.html" method="GET" class="nav-search-v2">
+                        <span class="material-icons-round search-icon">search</span>
+                        <input type="text" name="q" placeholder="Tìm kiếm phim, diễn viên..." autocomplete="off" required>
+                    </form>
+
+                    <!-- Divider -->
+                    <div style="width:1px; height:20px; background:rgba(255,255,255,0.12); margin:0 6px; flex-shrink:0;"></div>
+
+                    <!-- Nav Links — flat, no pill -->
+                    <nav-links class="flex items-center" style="gap:2px;">
+                        <a href="index.html" class="nav-flat-link active">Trang Chủ</a>
+
+                        <!-- Phim Dropdown -->
+                        <div class="nav-flat-dropdown">
+                            <button class="nav-flat-link" type="button">
+                                Phim
+                                <span class="material-icons-round nav-caret">expand_more</span>
+                            </button>
+                            <div class="nav-dropdown-panel" id="countryDropdown" style="min-width:680px;">
+                                <div class="p-4 text-center text-gray-400 text-sm">Đang tải...</div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Danh Sách Dropdown -->
-                    <div class="relative group">
-                        <button
-                            class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white flex items-center gap-1">
-                            Danh Sách
-                            <span
-                                class="material-icons-round text-sm group-hover:rotate-180 transition-transform duration-300">expand_more</span>
-                        </button>
-                        <div
-                            class="absolute top-full left-0 mt-2 w-[600px] bg-gradient-to-br from-[#3d5a96]/95 to-[#25385e]/95 backdrop-blur-md border border-white/15 rounded-xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden">
-                            <div class="grid grid-cols-3 gap-0">
-                                <a href="danh-sach.html?list=phim-moi"
-                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Phim
-                                    Mới</a>
-                                <a href="danh-sach.html?list=phim-bo"
-                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Phim
-                                    Bộ</a>
-                                <a href="danh-sach.html?list=phim-le"
-                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">Phim
-                                    Lẻ</a>
-                                <a href="danh-sach.html?list=tv-shows"
-                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Shows</a>
-                                <a href="danh-sach.html?list=hoat-hinh"
-                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Hoạt
-                                    Hình</a>
-                                <a href="danh-sach.html?list=phim-vietsub"
-                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">Phim
-                                    Vietsub</a>
-                                <a href="danh-sach.html?list=phim-thuyet-minh"
-                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Phim
-                                    Thuyết Minh</a>
-                                <a href="danh-sach.html?list=phim-long-tien"
-                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-b border-white/5">Phim
-                                    Lồng Tiếng</a>
-                                <a href="danh-sach.html?list=phim-bo-dang-chieu"
-                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-b border-white/5">Phim
-                                    Bộ Đang Chiếu</a>
-                                <a href="danh-sach.html?list=phim-bo-hoan-thanh"
-                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-white/5">Phim
-                                    Bộ Đã Hoàn Thành</a>
-                                <a href="danh-sach.html?list=phim-sap-chieu"
-                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all border-r border-white/5">Phim
-                                    Sắp Chiếu</a>
-                                <a href="danh-sach.html?list=subteam"
-                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all">Subteam</a>
-                                <a href="danh-sach.html?list=phim-chieu-rap"
-                                    class="block px-5 py-4 text-gray-300 hover:text-primary hover:bg-white/5 transition-all col-span-3 border-t border-white/5 text-center font-semibold">Phim
-                                    Chiếu Rạp</a>
+                        <!-- Danh Sách Dropdown -->
+                        <div class="nav-flat-dropdown">
+                            <button class="nav-flat-link" type="button">
+                                Danh Sách
+                                <span class="material-icons-round nav-caret">expand_more</span>
+                            </button>
+                            <div class="nav-dropdown-panel" style="min-width:560px;">
+                                <div style="background:linear-gradient(160deg,#1e4d8c 0%,#2563b8 40%,#1a3d7a 100%);border-radius:12px;padding:6px;border:1px solid rgba(59,130,246,0.25);box-shadow:0 20px 50px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);">
+                                    <div class="grid grid-cols-3 gap-0">
+                                        <a href="danh-sach.html?list=phim-moi" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Mới</a>
+                                        <a href="danh-sach.html?list=phim-bo" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Bộ</a>
+                                        <a href="danh-sach.html?list=phim-le" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Lẻ</a>
+                                        <a href="danh-sach.html?list=tv-shows" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">TV Shows</a>
+                                        <a href="danh-sach.html?list=hoat-hinh" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Hoạt Hình</a>
+                                        <a href="danh-sach.html?list=phim-vietsub" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Vietsub</a>
+                                        <a href="danh-sach.html?list=phim-thuyet-minh" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Thuyết Minh</a>
+                                        <a href="danh-sach.html?list=phim-long-tien" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Lồng Tiếng</a>
+                                        <a href="danh-sach.html?list=phim-bo-dang-chieu" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Bộ Đang Chiếu</a>
+                                        <a href="danh-sach.html?list=phim-bo-hoan-thanh" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Bộ Đã Xong</a>
+                                        <a href="danh-sach.html?list=phim-sap-chieu" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Sắp Chiếu</a>
+                                        <a href="danh-sach.html?list=subteam" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Subteam</a>
+                                        <a href="danh-sach.html?list=phim-chieu-rap" style="display:flex;align-items:center;justify-content:center;padding:11px 16px;color:rgba(255,255,255,0.95);font-size:0.82rem;font-weight:700;border-top:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;grid-column:span 3;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.95)';">🎬 Phim Chiếu Rạp</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Thể Loại Dropdown -->
-                    <div class="relative group">
-                        <button
-                            class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white flex items-center gap-1">
-                            Thể Loại
-                            <span
-                                class="material-icons-round text-sm group-hover:rotate-180 transition-transform duration-300">expand_more</span>
-                        </button>
-                        <div id="categoryDropdown"
-                            class="absolute top-full left-0 mt-2 w-[700px] bg-gradient-to-br from-[#3d5a96]/95 to-[#25385e]/95 backdrop-blur-md border border-white/15 rounded-xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden">
-                            <!-- Categories will be loaded here -->
-                            <div class="p-4 text-center text-gray-400">Đang tải...</div>
+                        <!-- Thể Loại Dropdown -->
+                        <div class="nav-flat-dropdown">
+                            <button class="nav-flat-link" type="button">
+                                Thể Loại
+                                <span class="material-icons-round nav-caret">expand_more</span>
+                            </button>
+                            <div class="nav-dropdown-panel" id="categoryDropdown" style="min-width:680px;">
+                                <div class="p-4 text-center text-gray-400 text-sm">Đang tải...</div>
+                            </div>
                         </div>
-                    </div>
 
-                    <a href="search.html"
-                        class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white">
-                        Khám phá
-                    </a>
-
-                    <a href="pricing.html"
-                        class="nav-item px-6 py-2.5 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 text-white">
-                        Gói cước
-                    </a>
-
-                    <!-- Phim X (18+) -->
-                    <a href="phim-x.html"
-                        class="nav-item px-6 py-2.5 rounded-full text-sm font-bold uppercase tracking-wide transition-colors duration-200 text-red-400 hover:text-red-300">
-                        🔞 Phim X
-                    </a>
+                        <a href="search.html" class="nav-flat-link">Khám Phá</a>
+                        <a href="pricing.html" class="nav-flat-link">Gói Cước</a>
+                        <a href="phim-x.html" class="nav-flat-link nav-flat-link--danger">🔞 Phim X</a>
+                    </nav-links>
                 </div>
             </div>
 
-            <!-- Right Side: Search, Login, Mobile Menu -->
-                        <div class="flex items-center gap-2 lg:gap-4 ml-auto lg:ml-0">
-                                <!-- Desktop Search Bar -->
-                <form action="search.html" method="GET" class="hidden lg:block relative group mr-2">
-                    <div class="flex items-center w-56 xl:w-64 h-10 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full overflow-hidden focus-within:border-primary/50 focus-within:bg-black/60 focus-within:w-64 xl:focus-within:w-72 focus-within:shadow-[0_0_15px_rgba(242,242,13,0.1)] transition-all duration-300 backdrop-blur-md">
-                        <span class="material-icons-round text-gray-400 pl-3 pr-2 text-lg group-focus-within:text-primary transition-colors">search</span>
-                        <input type="text" name="q" placeholder="Tìm kiếm..." class="w-full h-full bg-transparent border-none border-0 ring-0 focus:ring-0 focus:outline-none text-white text-sm pr-4 placeholder-gray-400 font-medium m-0 p-0" autocomplete="off" required style="box-shadow: none; outline: none; border: none; background: transparent;">
-                    </div>
-                </form>
+
+            <!-- ZONE 3: Right — Auth + Mobile Toggle -->
+            <div class="flex items-center gap-3 flex-shrink-0 ml-4">
+                <!-- Auth Container (filled by auth.js / user-ui.js) -->
                 <div id="authContainer" class="flex items-center">
-                    <a href="login.html" onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');return false;}" class="px-4 lg:px-6 py-2 bg-primary text-black font-bold rounded-full hover:bg-primary-dim transition-colors text-xs lg:text-sm uppercase tracking-wide whitespace-nowrap">Đăng nhập</a>
+                    <a href="login.html"
+                       onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');return false;}"
+                       class="nav-auth-btn hidden lg:inline-flex">
+                        <span class="material-icons-round" style="font-size:16px;">person</span>
+                        Đăng Nhập
+                    </a>
                 </div>
                 <!-- Mobile Menu Button -->
-                <button id="mobileMenuBtn" class="lg:hidden text-white ml-2">
+                <button id="mobileMenuBtn" class="lg:hidden text-white p-1">
                     <span class="material-icons-round">menu</span>
                 </button>
             </div>
         </div>
+
         <!-- Mobile Menu -->
         <div id="mobileMenu" class="lg:hidden hidden bg-black/95 backdrop-blur-md border-t border-white/10">
             <!-- Content will be injected by mobile-menu-simple.js -->
@@ -345,7 +298,7 @@
     </main>
 
         <!-- Footer -->
-    <footer class="bg-[#1e202c] border-t border-white/5 py-12 relative overflow-hidden">
+    <footer class="bg-void border-t border-white/5 py-12 relative overflow-hidden ambient-section">
         <!-- Background pattern/logo graphic -->
         <div class="absolute right-0 top-1/2 -translate-y-1/2 opacity-5 pointer-events-none scale-150">
             <span class="material-icons-round text-[400px]">play_circle_outline</span>
@@ -648,6 +601,7 @@
     <script src="js/auth.js?v=6"></script>
     <script src="js/auth-modal.js?v=7"></script>
     <script src="js/user-ui.js?v=7"></script>
+    <script src="js/countries-dropdown.js"></script>
 </body>
 
 </html>

@@ -46,48 +46,70 @@ async function loadCountriesDropdown() {
         const totalCells = Math.ceil(countries.length / 4) * 4;
         const missingCells = totalCells - countries.length;
 
-        // Render as grid 4 columns
-        let gridHTML = '<div class="grid grid-cols-4 gap-0">';
+        // Render as grid 4 columns — bọc trong nền xanh dương
+        let gridHTML = `
+            <div style="
+                background: linear-gradient(160deg, #1e4d8c 0%, #2563b8 40%, #1a3d7a 100%);
+                border-radius: 12px;
+                padding: 6px;
+                border: 1px solid rgba(59,130,246,0.25);
+                box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+            ">
+                <div class="grid grid-cols-4 gap-0">`;
         
         gridHTML += countries.map((country, index) => {
             const isLastRow = index >= totalCells - 4;
             const isRightEdge = (index + 1) % 4 === 0;
-            const borderClasses = `${!isRightEdge ? 'border-r' : ''} ${!isLastRow ? 'border-b' : ''} border-white/5`;
+            const borderColor = 'rgba(255,255,255,0.08)';
+            let borderStyle = '';
+            if (!isRightEdge) borderStyle += `border-right: 1px solid ${borderColor};`;
+            if (!isLastRow)   borderStyle += `border-bottom: 1px solid ${borderColor};`;
             
             const code = flags[country.slug] || 'globe';
             
-            // Nếu là icon dùng Emoji địa cầu nguyên thủy, nếu là quốc gia dùng cờ img
             const iconHtml = (code === 'globe') 
-                ? `<span class="mr-2" style="font-size:16px;">🌍</span>`
-                : `<img src="https://flagcdn.com/16x12/${code}.png" alt="${code}" class="mr-2 rounded-sm" style="width:16px;height:12px;object-fit:cover;">`;
+                ? `<span style="margin-right:8px;font-size:15px;flex-shrink:0;">🌍</span>`
+                : `<img src="https://flagcdn.com/16x12/${code}.png" alt="${code}" style="width:16px;height:12px;object-fit:cover;border-radius:2px;margin-right:8px;flex-shrink:0;">`;
 
-            // Link URL
             const url = (country.slug === 'all') 
                 ? 'phim-theo-quoc-gia.html' 
                 : `phim-theo-quoc-gia.html?country=${country.slug}`;
 
-            // Highlight mục Tất Cả
-            const textClass = (country.slug === 'all') ? 'font-bold' : '';
+            const fontWeight = (country.slug === 'all') ? 'font-weight:700;' : '';
 
             return `
                 <a href="${url}" 
-                   class="flex items-center px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all text-sm whitespace-nowrap ${borderClasses} ${textClass}">
-                    ${iconHtml} <span class="truncate">${country.name}</span>
+                   style="
+                       display: flex; align-items: center;
+                       padding: 11px 16px;
+                       color: rgba(255,255,255,0.88);
+                       font-size: 0.82rem;
+                       ${fontWeight}
+                       ${borderStyle}
+                       white-space: nowrap;
+                       transition: background 0.18s, color 0.18s;
+                       border-radius: 0;
+                       text-decoration: none;
+                   "
+                   onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                   onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';"
+                >
+                    ${iconHtml}
+                    <span style="overflow:hidden;text-overflow:ellipsis;">${country.name}</span>
                 </a>
             `;
         }).join('');
 
-        // Render các ô trống để lấp đầy grid với border chuẩn
+        // Empty cells
         for (let i = 0; i < missingCells; i++) {
             const index = countries.length + i;
-            const isLastRow = true; // Chắc chắn ở hàng cuối
             const isRightEdge = (index + 1) % 4 === 0;
-            const borderClasses = `${!isRightEdge ? 'border-r' : ''} ${!isLastRow ? 'border-b' : ''} border-white/5`;
-            
-            gridHTML += `<div class="block px-4 py-3 pointer-events-none ${borderClasses}"></div>`;
+            const borderColor = 'rgba(255,255,255,0.08)';
+            let borderStyle = !isRightEdge ? `border-right: 1px solid ${borderColor};` : '';
+            gridHTML += `<div style="display:block;padding:11px 16px;pointer-events:none;${borderStyle}"></div>`;
         }
 
-        gridHTML += '</div>';
+        gridHTML += '</div></div>';
         dropdown.innerHTML = gridHTML;
         
     } catch (error) {

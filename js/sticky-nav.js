@@ -21,17 +21,15 @@
         const scrollDelta = scrollTop - lastScrollTop;
         const isMobile = isMobileDevice();
 
-        // DESKTOP: Luôn hiện, chỉ thay đổi background (CODE CŨ)
+        // DESKTOP: Thêm scrolled khi kéo xuống
         if (!isMobile) {
-            if (scrollTop > 50) {
+            if (scrollTop > 5) {
                 nav.classList.add('scrolled');
-                nav.classList.remove('nav-hidden');
-                nav.classList.add('nav-visible');
             } else {
                 nav.classList.remove('scrolled');
-                nav.classList.remove('nav-hidden');
-                nav.classList.add('nav-visible');
             }
+            nav.classList.remove('nav-hidden');
+            nav.classList.add('nav-visible');
         }
         // MOBILE: Auto-hide khi scroll xuống
         else {
@@ -88,4 +86,62 @@
 
     // Prevent body scroll when mobile menu is open - DISABLED (now handled by mobile-menu-modern.js)
     // Removed old conflicting body.overflow logic
+})();
+
+// ── Desktop Dropdown Dim Overlay ──────────────────────────────────────────────
+// Khi hover vào bất kỳ nav dropdown (Phim/Danh Sách/Thể Loại), trang mờ đi
+// để menu nổi bật hơn — hiện đại như Netflix, Disney+
+(function () {
+    'use strict';
+
+    function initDropdownDim() {
+        // Chỉ chạy trên desktop (>= 1024px)
+        if (window.innerWidth < 1024) return;
+
+        // Tạo overlay element (1 lần)
+        let overlay = document.getElementById('nav-dim-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'nav-dim-overlay';
+            overlay.className = 'nav-dim-overlay';
+            document.body.appendChild(overlay);
+        }
+
+        const dropdowns = document.querySelectorAll('.nav-flat-dropdown');
+        if (!dropdowns.length) return;
+
+        let _dimTimer = null;
+
+        function showDim() {
+            clearTimeout(_dimTimer);
+            overlay.classList.add('active');
+        }
+
+        function hideDim() {
+            clearTimeout(_dimTimer);
+            _dimTimer = setTimeout(() => overlay.classList.remove('active'), 80);
+        }
+
+        dropdowns.forEach(dd => {
+            dd.addEventListener('mouseenter', showDim);
+            dd.addEventListener('mouseleave', hideDim);
+        });
+
+        // Click overlay → ẩn ngay
+        overlay.addEventListener('click', hideDim);
+    }
+
+    // Khởi tạo khi DOM sẵn sàng
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initDropdownDim);
+    } else {
+        initDropdownDim();
+    }
+
+    // Re-init khi resize (desktop ↔ mobile)
+    let _resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(_resizeTimer);
+        _resizeTimer = setTimeout(initDropdownDim, 200);
+    }, { passive: true });
 })();

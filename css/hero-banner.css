@@ -1,66 +1,252 @@
-/* Hero Banner Styles */
-.text-shadow {
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+/* ================================================================
+   A PHIM — Hero Banner — Midnight Cinema v2
+   ================================================================ */
+
+/* ── Container chính ── */
+.hero-section {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    min-height: 100svh;
 }
 
-.text-glow {
-    text-shadow: 0 0 10px rgba(252, 211, 77, 0.5);
+/* ── Gradient overlay (bên trái → phải, học RoPhim) ── */
+.hero-content-gradient,
+.hero-left-gradient {
+    background: linear-gradient(
+        105deg,
+        rgba(5, 5, 8, 0.97)  0%,
+        rgba(5, 5, 8, 0.88)  28%,
+        rgba(5, 5, 8, 0.55)  52%,
+        rgba(5, 5, 8, 0.18)  72%,
+        transparent          100%
+    ) !important;
 }
 
-.hero-gradient {
-    background: linear-gradient(to right, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.6) 40%, rgba(0, 0, 0, 0.1) 100%);
-}
-
+/* ── Bottom fade (hòa quyện với section bên dưới) ── */
 .hero-bottom-gradient {
     background: linear-gradient(
         to top,
-        rgba(10,11,16,0.92) 0%,
-        rgba(10,11,16,0.72) 20%,
-        rgba(10,11,16,0.38) 50%,
-        rgba(10,11,16,0.10) 80%,
+        var(--bg-deep) 0%,           /* Màu xám Slate chính */
+        rgba(42, 46, 57, 0.95) 15%,
+        rgba(42, 46, 57, 0.60) 40%,
         transparent 100%
-    );
+    ) !important;
+    height: 40% !important; /* Tăng độ cao của gradient để tràn xuống */
 }
 
-/* Lớp sương mù (mist) tại cạnh dưới hero — xóa đường ranh giới */
-.hero-mist-edge {
-    background: radial-gradient(
-        ellipse 95% 100% at 50% 100%,
-        rgba(150, 160, 255, 0.38) 0%,    /* Tím xanh đậm hơn */
-        rgba(200, 210, 255, 0.18) 30%,   /* Lớp trắng xanh giữa */
-        rgba(100, 120, 210, 0.06) 60%,
-        transparent 80%
-    );
-    filter: blur(22px) brightness(1.1); /* Blur mạnh + sáng nhẹ */
+/* ── Top darkening ── */
+.hero-top-gradient {
+    background: linear-gradient(
+        to bottom,
+        rgba(5, 5, 8, 0.72)  0%,
+        rgba(5, 5, 8, 0.20)  40%,
+        transparent          100%
+    ) !important;
 }
 
-/* Lớp sương mù chính: radial-gradient hình elip mờ */
-.hero-to-content-bridge::after {
+/* ── Badges (năm, chất lượng, trạng thái) ── */
+.hero-badge,
+.quality-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: var(--radius-xs, 4px);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+/* Badge vàng — FHD / HD */
+.hero-badge-quality {
+    background: rgba(232, 185, 79, 0.15);
+    border: 1px solid rgba(232, 185, 79, 0.40);
+    color: var(--accent-gold, #e8b94f);
+}
+
+/* Badge xanh lá — Vietsub / Hoàn tất */
+.hero-badge-status {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.38);
+    color: #10b981;
+}
+
+/* Badge xám — năm */
+.hero-badge-year {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: var(--text-secondary, #9899b0);
+}
+
+/* ── CTA Button "Xem Ngay" ── */
+.btn-watch-now,
+.hero-btn-primary {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.7rem 1.8rem;
+    background: linear-gradient(135deg, #e8b94f 0%, #f59e0b 100%);
+    color: #050508;
+    font-weight: 800;
+    font-size: 0.92rem;
+    border-radius: var(--radius-pill, 9999px);
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow:
+        0 4px 20px rgba(232, 185, 79, 0.35),
+        0 0 40px rgba(232, 185, 79, 0.12);
+    text-decoration: none;
+}
+
+/* Shimmer sweep khi hover */
+.btn-watch-now::before,
+.hero-btn-primary::before {
     content: '';
     position: absolute;
-    top: -28px;            /* Nằm CHỒNG sâu hơn vào điểm tiếp giáp */
-    left: -10%;
-    right: -10%;
-    height: 70px;
-    background: radial-gradient(
-        ellipse 85% 100% at 50% 50%,
-        rgba(160, 170, 255, 0.30) 0%,   /* Đậm hơn gấp đôi */
-        rgba(200, 210, 255, 0.14) 35%,  /* Lớp trắng xanh giữa */
-        rgba(120, 140, 220, 0.05) 65%,
-        transparent 85%
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.30) 50%,
+        transparent 70%
     );
-    filter: blur(14px);                /* Blur lớn hơn */
-    pointer-events: none;
-    z-index: 20;
+    transform: rotate(45deg) translateX(-100%);
+    transition: transform 0.6s ease;
 }
 
-.hide-scrollbar::-webkit-scrollbar {
-    display: none;
+.btn-watch-now:hover::before,
+.hero-btn-primary:hover::before {
+    transform: rotate(45deg) translateX(100%);
 }
 
-.hide-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+.btn-watch-now:hover,
+.hero-btn-primary:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow:
+        0 10px 34px rgba(232, 185, 79, 0.50),
+        0 0 60px rgba(232, 185, 79, 0.22);
+}
+
+/* ── Button "Thêm vào danh sách" (secondary) ── */
+.hero-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.7rem 1.5rem;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary, #f0f0f5);
+    font-weight: 700;
+    font-size: 0.88rem;
+    border-radius: var(--radius-pill, 9999px);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-decoration: none;
+}
+
+.hero-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(232, 185, 79, 0.28);
+    color: var(--accent-gold, #e8b94f);
+    transform: translateY(-2px);
+}
+
+/* ── Title ── */
+.hero-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    color: var(--text-primary, #f0f0f5);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+}
+
+/* ── Slide indicators dạng strip (học RoPhim) ── */
+.hero-slide-thumbnails {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.hero-slide-thumb {
+    width: 56px;
+    height: 34px;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.25s ease;
+    opacity: 0.6;
+}
+
+.hero-slide-thumb.active,
+.hero-slide-thumb:hover {
+    border-color: var(--accent-gold, #e8b94f);
+    opacity: 1;
+    box-shadow: 0 0 12px rgba(232, 185, 79, 0.38);
+}
+
+/* ── Genre tags ── */
+.hero-genre-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill, 9999px);
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--text-secondary, #9899b0);
+    transition: all 0.2s ease;
+}
+
+.hero-genre-tag:hover {
+    background: rgba(232, 185, 79, 0.10);
+    border-color: rgba(232, 185, 79, 0.25);
+    color: var(--accent-gold, #e8b94f);
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+    .hero-section {
+        min-height: 100svh;
+    }
+
+    .hero-title {
+        font-size: clamp(1.5rem, 6vw, 2.2rem);
+    }
+
+    .btn-watch-now,
+    .hero-btn-primary {
+        padding: 0.6rem 1.4rem;
+        font-size: 0.82rem;
+    }
+
+    .hero-slide-thumbnails {
+        display: none; /* Ẩn thumbnails trên mobile để save space */
+    }
+
+    /* Mobile — gradient từ dưới đẩy lên mạnh hơn */
+    .hero-bottom-gradient {
+        background: linear-gradient(
+            to top,
+            rgba(5, 5, 8, 1.00)  0%,
+            rgba(5, 5, 8, 0.96)  30%,
+            rgba(5, 5, 8, 0.60)  65%,
+            transparent          100%
+        ) !important;
+    }
 }
 
 /* Font for hero title - Responsive: Different fonts for mobile and desktop */
@@ -80,8 +266,4 @@
         font-weight: 600;
         letter-spacing: 0.01em;
     }
-}
-
-.font-serif-italic {
-    font-family: 'Playfair Display', serif;
 }

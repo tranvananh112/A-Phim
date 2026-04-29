@@ -27,7 +27,10 @@ const pagination = document.getElementById('pagination');
 const error = document.getElementById('error');
 const pageTitle = document.getElementById('pageTitle');
 const pageSubtitle = document.getElementById('pageSubtitle');
+const pageHeader = document.getElementById('pageHeader');
 const categoriesGrid = document.getElementById('categoriesGrid');
+const listTitle = document.getElementById('listTitle');
+const movieCountLabel = document.getElementById('movieCountLabel');
 
 // Mobile menu toggle
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -60,6 +63,8 @@ async function loadMoviesList(listSlug, page = 1) {
     moviesTable.classList.add('hidden');
     error.classList.add('hidden');
     if (categoriesGrid) categoriesGrid.classList.add('hidden');
+    // Ẩn header cũ khi xem phim
+    if (pageHeader) pageHeader.classList.add('hidden');
 
     if (mobileMenu) {
         mobileMenu.classList.add('hidden');
@@ -100,7 +105,7 @@ async function loadMoviesList(listSlug, page = 1) {
             pageSubtitle.textContent = `Đang hiển thị ${movies.length} phim`;
 
             if (movies.length > 0) {
-                renderMoviesTable(movies);
+                renderMoviesTable(movies, listName, totalItems, totalPages_api);
                 // Always render pagination with proper data
                 renderPagination({
                     currentPage: currentPage,
@@ -127,8 +132,8 @@ async function loadMoviesList(listSlug, page = 1) {
     }
 }
 
-// Render movies grid
-function renderMoviesTable(movies) {
+// Render movies grid - bố cục y như phim-theo-quoc-gia.html
+function renderMoviesTable(movies, listName, totalItems, totalPages_api) {
     loading.classList.add('hidden');
 
     const moviesTable = document.getElementById('moviesTable');
@@ -149,15 +154,19 @@ function renderMoviesTable(movies) {
 
     moviesTable.classList.remove('hidden');
 
+    // Update header
+    if (listTitle) listTitle.textContent = listName || LIST_NAMES[currentList] || currentList;
+    if (movieCountLabel) movieCountLabel.textContent = `${movies.length} phim (Trang ${currentPage}/${totalPages_api || totalPages} - Tổng: ${(totalItems || 0).toLocaleString()} phim)`;
+
     let gridHTML = '';
 
     movies.forEach((movie) => {
         const thumbUrl = movie.thumb_url || movie.poster_url || '';
-        const posterUrl = movieAPI.getImageURL(thumbUrl);
+        const posterUrl = thumbUrl ? `https://img.ophim.live/uploads/movies/${thumbUrl}` : 'https://via.placeholder.com/200x300?text=No+Image';
         const year = movie.year || 'N/A';
         const quality = movie.quality || movie.lang || '';
         const episodeCurrent = movie.episode_current || 'N/A';
-        const tmdbRating = movie.tmdb?.vote_average || 'N/A';
+        const tmdbRating = movie.tmdb?.vote_average || null;
         const hiddenUI = window.getHiddenMovieOverlay ? window.getHiddenMovieOverlay(movie.slug) : { badge: '', imgClass: '', containerClass: '' };
 
         gridHTML += `
@@ -168,9 +177,11 @@ function renderMoviesTable(movies) {
                     <img src="${posterUrl}" 
                          alt="${movie.name}"
                          class="w-full h-full object-cover ${hiddenUI.imgClass}"
+                         loading="lazy"
                          onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
                     
                     ${hiddenUI.badge}
+                    
                     <!-- Overlay gradient -->
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     
@@ -191,7 +202,7 @@ function renderMoviesTable(movies) {
                     </div>
                     
                     <!-- Rating -->
-                    ${tmdbRating !== 'N/A' ? `
+                    ${tmdbRating ? `
                         <div class="absolute bottom-2 left-2 flex items-center gap-1 bg-black/80 px-2 py-1 rounded">
                             <span class="material-icons-round text-primary text-sm">star</span>
                             <span class="text-white text-xs font-bold">${tmdbRating}</span>
@@ -352,12 +363,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const categoriesGrid = document.getElementById('categoriesGrid');
 
     if (params.list) {
-        // Hide categories grid, show movies table
+        // Hide categories grid and old header, show movies table
         if (categoriesGrid) categoriesGrid.classList.add('hidden');
+        if (pageHeader) pageHeader.classList.add('hidden');
         loadMoviesList(params.list, params.page);
     } else {
-        // Show categories grid
+        // Show categories grid and old header
         if (categoriesGrid) categoriesGrid.classList.remove('hidden');
+        if (pageHeader) pageHeader.classList.remove('hidden');
         pageTitle.textContent = 'Danh Sách Phim';
         pageSubtitle.textContent = 'Khám phá phim ảnh từ 13 loại phim';
     }

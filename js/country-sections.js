@@ -1,185 +1,167 @@
-// Country Sections - Load movies from different countries
-// Phim Hàn Quốc, Phim Trung Quốc, Phim US-UK
+// Country Sections - Unified Frame Layout with Landscape Cards
+// Phim Hàn Quốc, Trung Quốc, US-UK
 
 const COUNTRY_CONFIGS = {
     korea: {
         id: 'korea',
-        title: '<span class="text-pink-500">Phim Hàn Quốc Mới</span>',
-        url: 'https://ophim1.com/v1/api/quoc-gia/han-quoc',
-        linkUrl: 'phim-theo-quoc-gia.html?country=han-quoc',
-        gradient: 'from-background-dark to-pink-900/5'
+        title: 'Phim Hàn Quốc mới',
+        url: 'https://ophim1.com/v1/api/quoc-gia/han-quoc?limit=20',
+        linkUrl: 'phim-theo-quoc-gia.html?country=han-quoc'
     },
     china: {
         id: 'china',
-        title: '<span class="text-pink-400">Phim Trung Quốc mới</span>',
-        url: 'https://ophim1.com/v1/api/quoc-gia/trung-quoc',
-        linkUrl: 'phim-theo-quoc-gia.html?country=trung-quoc',
-        gradient: 'from-background-dark to-pink-800/5'
+        title: 'Phim Trung Quốc mới',
+        url: 'https://ophim1.com/v1/api/quoc-gia/trung-quoc?limit=20',
+        linkUrl: 'phim-theo-quoc-gia.html?country=trung-quoc'
     },
     usuk: {
         id: 'usuk',
-        title: '<span class="text-yellow-400">Phim US-UK mới</span>',
-        url: 'https://ophim1.com/v1/api/quoc-gia/au-my',
-        linkUrl: 'phim-theo-quoc-gia.html?country=au-my',
-        gradient: 'from-background-dark to-yellow-900/5'
+        title: 'Phim US-UK mới',
+        url: 'https://ophim1.com/v1/api/quoc-gia/au-my?limit=20',
+        linkUrl: 'phim-theo-quoc-gia.html?country=au-my'
     }
 };
 
-// Create section HTML
-function createCountrySection(config, isFirst) {
-    // isFirst: section đầu tiên sau hero nhận bridge class
-    const bridgeClass = isFirst ? 'hero-to-content-bridge' : 'ambient-section';
+// Create Landscape Movie Card
+function createLandscapeMovieCard(movie) {
+    const posterUrl = `https://img.ophim.live/uploads/movies/${movie.thumb_url}`;
+    const detailUrl = `movie-detail.html?slug=${movie.slug}`;
+    const hiddenUI = window.getHiddenMovieOverlay ? window.getHiddenMovieOverlay(movie.slug) : { badge: '', imgClass: '', containerClass: '' };
+    
+    const quality = movie.quality || movie.lang || 'HD';
+    
     return `
-        <section class="country-section py-6 md:py-10 ${bridgeClass}">
-            <div class="container mx-auto px-6">
-                <div class="country-section-container">
-                    <div class="country-section-header">
-                        <h2 class="country-section-title">
-                            ${config.title}
-                        </h2>
-                        <a href="${config.linkUrl}" class="country-section-link">
-                            Xem toàn bộ
-                            <span class="material-icons-round">chevron_right</span>
-                        </a>
-                    </div>
+        <div class="landscape-card ${hiddenUI.containerClass}">
+            <a href="${detailUrl}">
+                <div class="landscape-poster">
+                    <img src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url || movie.poster_url, 480, 70) : posterUrl}" 
+                         alt="${movie.name}" 
+                         class="${hiddenUI.imgClass}"
+                         onerror="this.src='https://via.placeholder.com/480x270?text=No+Image'"
+                         loading="lazy" />
                     
-                    <div class="country-section-content">
-                        <button class="country-scroll-btn" onclick="scrollCountrySection('${config.id}', 'right')">
-                            <span class="material-icons-round">chevron_right</span>
-                        </button>
-                        
-                        <div id="${config.id}Loading" class="text-center py-4">
-                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
-                            <p class="text-gray-400 text-xs">Đang tải...</p>
-                        </div>
-                        
-                        <div id="${config.id}Container" class="country-section-scroll hidden">
-                            <!-- Movies will be loaded here -->
+                    <div class="landscape-overlay"></div>
+                    
+                    ${hiddenUI.badge}
+                    <div class="landscape-badge">${quality}</div>
+                    
+                    <div class="landscape-play">
+                        <div class="landscape-play-icon">
+                            <span class="material-icons-round">play_arrow</span>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+                
+                <div class="landscape-info">
+                    <h3 class="landscape-title">${movie.name}</h3>
+                    <p class="landscape-subtitle">${movie.origin_name || ''}</p>
+                </div>
+            </a>
+        </div>
     `;
 }
 
-// Create movie card HTML
-function createMovieCard(movie) {
-    const posterUrl = `https://img.ophim.live/uploads/movies/${movie.thumb_url}`;
-    const detailUrl = `movie-detail.html?slug=${movie.slug}`;
-
-    // Get episode info
-    let episodeInfo = '';
-    if (movie.episode_current) {
-        episodeInfo = `<span>PĐ. ${movie.episode_current}</span>`;
-    }
-
+// Create a single row inside the unified frame
+function createCountryRow(config) {
     return `
-        <div class="country-movie-card">
-            <div class="country-movie-poster" onclick="window.location.href='${detailUrl}'">
-                <img src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url, 320, 70) : posterUrl}" 
-                     alt="${movie.name}" 
-                     onerror="this.src='https://via.placeholder.com/240x135?text=No+Image'"
-                     loading="lazy" />
-                ${episodeInfo ? `
-                    <div class="country-movie-badge">
-                        ${episodeInfo}
-                    </div>
-                ` : ''}
+        <div class="country-row" id="row-${config.id}">
+            <!-- Left: Title Column -->
+            <div class="country-title-col">
+                <h2 class="country-main-title">${config.title}</h2>
+                <a href="${config.linkUrl}" class="country-view-all">
+                    Xem toàn bộ 
+                    <span class="material-icons-round text-sm">arrow_forward_ios</span>
+                </a>
             </div>
-            <div class="country-movie-info">
-                <h3 class="country-movie-title" onclick="window.location.href='${detailUrl}'">${movie.name}</h3>
-                <p class="country-movie-subtitle">${movie.origin_name || movie.name}</p>
+            
+            <!-- Right: Content Column -->
+            <div class="country-content-col">
+                <!-- Navigation Arrows -->
+                <button onclick="scrollRows('${config.id}', 'left')" class="nav-arrow nav-arrow-left">
+                    <span class="material-icons-round">chevron_left</span>
+                </button>
+                <button onclick="scrollRows('${config.id}', 'right')" class="nav-arrow nav-arrow-right">
+                    <span class="material-icons-round">chevron_right</span>
+                </button>
+                
+                <div id="${config.id}Container" class="country-scroll-container">
+                    <!-- Loading placeholder items -->
+                    <div class="animate-pulse flex gap-4 w-full">
+                        <div class="bg-white/5 rounded-xl aspect-video w-[250px] flex-shrink-0"></div>
+                        <div class="bg-white/5 rounded-xl aspect-video w-[250px] flex-shrink-0"></div>
+                        <div class="bg-white/5 rounded-xl aspect-video w-[250px] flex-shrink-0"></div>
+                    </div>
+                </div>
             </div>
         </div>
     `;
 }
 
-// Load movies for a country
-async function loadCountryMovies(config) {
-    const loadingEl = document.getElementById(`${config.id}Loading`);
-    const containerEl = document.getElementById(`${config.id}Container`);
-
-    if (!loadingEl || !containerEl) return;
+// Load movies for each row
+async function loadRowMovies(config) {
+    const container = document.getElementById(`${config.id}Container`);
+    if (!container) return;
 
     try {
-        const response = await fetch(config.url, {
-            method: 'GET',
-            headers: { 'accept': 'application/json' }
-        });
-
+        const response = await fetch(config.url);
         const data = await response.json();
 
         if (data.status === 'success' && data.data && data.data.items) {
-            const movies = data.data.items.slice(0, 10); // Get first 10 movies
-
-            if (movies.length > 0) {
-                containerEl.innerHTML = movies.map(movie => createMovieCard(movie)).join('');
-                loadingEl.classList.add('hidden');
-                containerEl.classList.remove('hidden');
-            } else {
-                loadingEl.innerHTML = '<p class="text-gray-400">Không có phim nào</p>';
-            }
-        } else {
-            throw new Error('Invalid response format');
+            const movies = data.data.items.slice(0, 15);
+            container.innerHTML = movies.map(movie => createLandscapeMovieCard(movie)).join('');
         }
     } catch (error) {
-        console.error(`Error loading ${config.id} movies:`, error);
-        loadingEl.innerHTML = '<p class="text-red-400">Không thể tải phim</p>';
+        console.error(`Error loading ${config.id} row:`, error);
+        container.innerHTML = `<p class="text-red-400 p-4">Không thể tải phim</p>`;
     }
 }
 
 // Scroll function
-function scrollCountrySection(sectionId, direction) {
-    const container = document.getElementById(`${sectionId}Container`);
+function scrollRows(id, direction) {
+    const container = document.getElementById(`${id}Container`);
     if (!container) return;
-
-    const scrollAmount = 260; // Card width + gap
-    const currentScroll = container.scrollLeft;
-
-    if (direction === 'right') {
-        container.scrollTo({
-            left: currentScroll + scrollAmount,
-            behavior: 'smooth'
-        });
-    } else {
-        container.scrollTo({
-            left: currentScroll - scrollAmount,
-            behavior: 'smooth'
-        });
-    }
-}
-
-// Initialize all country sections
-function initCountrySections() {
-    // Find the insertion point (before top movies section)
-    const topMoviesSection = document.querySelector('section.top-movies-section');
-
-    if (!topMoviesSection) {
-        console.error('Top movies section not found');
-        return;
-    }
-
-    // Create and insert all three sections BEFORE top movies
-    const configs = Object.values(COUNTRY_CONFIGS);
-    const sectionsHTML = configs
-        .map((config, index) => createCountrySection(config, index === 0))
-        .join('');
-
-    topMoviesSection.insertAdjacentHTML('beforebegin', sectionsHTML);
-
-    // Load movies for each section
-    Object.values(COUNTRY_CONFIGS).forEach(config => {
-        loadCountryMovies(config);
+    
+    const amount = container.clientWidth * 0.8;
+    container.scrollBy({
+        left: direction === 'right' ? amount : -amount,
+        behavior: 'smooth'
     });
 }
 
-// Initialize when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initCountrySections);
-} else {
-    initCountrySections();
+// Init Function
+function initUnifiedCountryFrame() {
+    // We want to insert this before the Top Hot movies section as before
+    const insertionPoint = document.querySelector('section.top-movies-section');
+    if (!insertionPoint) return;
+
+    // Check if hero banner bridge already exists
+    const hasBridge = !!document.querySelector('.hero-to-content-bridge');
+    const bridgeClass = hasBridge ? '' : 'hero-to-content-bridge';
+
+    const html = `
+        <section class="pb-6 md:pb-8 pt-0 ${bridgeClass}">
+            <div class="container mx-auto px-6">
+                <div class="country-unified-frame">
+                    ${Object.values(COUNTRY_CONFIGS).map(config => createCountryRow(config)).join('')}
+                </div>
+            </div>
+        </section>
+    `;
+
+    insertionPoint.insertAdjacentHTML('beforebegin', html);
+
+    // Initial load
+    Object.values(COUNTRY_CONFIGS).forEach(config => {
+        loadRowMovies(config);
+    });
 }
 
-// Export for use in other scripts
-window.scrollCountrySection = scrollCountrySection;
+// Run
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initUnifiedCountryFrame);
+} else {
+    initUnifiedCountryFrame();
+}
+
+// Bind to window
+window.scrollRows = scrollRows;

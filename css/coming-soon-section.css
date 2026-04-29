@@ -1,6 +1,5 @@
-/* Coming Soon Section - Top 10 Style with Perspective */
 .coming-soon-section {
-    background: linear-gradient(180deg, #1e202c 0%, #282a3a 50%, #1e202c 100%);
+    background: transparent !important;
     position: relative;
     overflow: hidden;
 }
@@ -21,17 +20,16 @@
     pointer-events: none;
 }
 
-/* Top 10 Card Style with Perspective Effect */
 .cs-top10-card {
     position: relative;
     flex-shrink: 0;
-    width: 160px;
+    width: 100px;
     scroll-snap-align: start;
 }
 
 @media (min-width: 768px) {
     .cs-top10-card {
-        width: 180px;
+        width: 120px;
     }
 }
 
@@ -71,7 +69,7 @@
 
 /* Rank Number - Smaller and Compact */
 .cs-rank-number {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 900;
     font-style: italic;
     color: #F5C518;
@@ -85,7 +83,7 @@
 
 @media (min-width: 768px) {
     .cs-rank-number {
-        font-size: 3rem;
+        font-size: 2.5rem;
     }
 }
 

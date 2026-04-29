@@ -1,52 +1,56 @@
-/* Sticky Navigation Styles with Safe Area Support */
+/* ================================================================
+   A PHIM — Sticky Navigation — Midnight Cinema Theme v2
+   ================================================================ */
+
 nav {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 9999;
-    /* Tối ưu tốc độ: 0.2s cubic-bezier cho transform để nhanh nhạy hơn, 0.3s cho background để mượt */
-    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease-in-out, opacity 0.2s ease-in-out;
-    /* Mặc định: TRONG SUỐT HOÀN TOÀN */
+    transition:
+        transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+        background 0.35s ease-in-out,
+        opacity 0.2s ease-in-out,
+        border-color 0.35s ease-in-out,
+        box-shadow 0.35s ease-in-out;
+    /* Mặc định: trong suốt hoàn toàn */
     background: transparent !important;
     backdrop-filter: none;
 
-    /* Tràn lên vùng notch/Dynamic Island */
+    /* Safe area—Notch/Dynamic Island */
     padding-top: env(safe-area-inset-top, 0px);
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
 
-    /* Cho phép #mobileMenu (position:absolute) visible ra ngoài nav */
     overflow: visible;
 }
 
-/* Container bên trong nav cần điều chỉnh */
-nav>div {
-    /* Đảm bảo nội dung không bị che bởi notch */
+nav > div {
     min-height: 64px;
 }
 
-/* Scrolled state - làm thanh điều hướng trong suốt hoàn toàn khi cuộn */
+/* Scrolled state — Glassmorphism cao cấp */
 nav.scrolled {
-    background: transparent !important;
-    backdrop-filter: blur(10px);
-    box-shadow: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(5, 5, 8, 0.82) !important;
+    backdrop-filter: blur(32px) saturate(200%) !important;
+    -webkit-backdrop-filter: blur(32px) saturate(200%) !important;
+    box-shadow: var(--shadow-nav, 0 1px 40px rgba(0, 0, 0, 0.55)) !important;
+    border-bottom: 1px solid rgba(232, 185, 79, 0.07) !important;
 }
 
-/* Hidden state - ẩn khi scroll xuống (MOBILE ONLY) */
+/* Hidden — ẩn khi scroll xuống (MOBILE ONLY) */
 nav.nav-hidden {
     transform: translateY(calc(-100% - env(safe-area-inset-top)));
     opacity: 0;
 }
 
-/* Visible state - hiện khi scroll lên */
+/* Visible — hiện khi scroll lên */
 nav.nav-visible {
     transform: translateY(0);
     opacity: 1;
 }
 
-/* Ensure content doesn't hide behind fixed nav */
 body {
     padding-top: 0;
 }
@@ -54,26 +58,21 @@ body {
 main {
     position: relative;
     z-index: 1;
-    /* Cho phép content tràn lên dưới navbar */
     margin-top: 0;
 }
 
-/* Dropdown menus should be above everything and positioned correctly */
 nav .group {
     position: relative;
 }
 
-nav .group:hover>div[class*="absolute"] {
+nav .group:hover > div[class*="absolute"] {
     z-index: 10000;
 }
 
-/* Ensure dropdowns stay in place */
 nav .container {
     position: static;
 }
 
-/* Mobile menu - dùng top:100% để luôn theo sát nav kể cả khi nav đang transition/transform
-   Tránh khoảng trống xuất hiện khi nav slide lên/xuống trên mobile */
 #mobileMenu {
     position: absolute;
     top: 100%;
@@ -82,56 +81,149 @@ nav .container {
     z-index: 9998;
     max-height: calc(100svh - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
     overflow-y: auto;
-    /* Thêm padding cho safe area bên trái/phải */
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* Smooth scroll behavior */
 html {
     scroll-behavior: smooth;
 }
 
-/* Prevent layout shift */
-nav+* {
+nav + * {
     margin-top: 0;
 }
 
-/* Responsive cho landscape mode trên iPhone với notch */
+/* Landscape iPhone */
 @media (orientation: landscape) and (max-height: 500px) {
     nav {
-        /* Giảm padding khi ở landscape để tiết kiệm không gian */
         padding-top: max(env(safe-area-inset-top), 10px);
     }
-
-    nav>div {
+    nav > div {
         min-height: 60px;
     }
 }
 
-/* Flexible mobile nav scaling */
+/* ── Nav Item — hover glow với màu gold ấm ── */
+nav .nav-item:hover,
+nav .nav-pill:hover,
+nav .btn-pill:hover {
+    background: rgba(232, 185, 79, 0.08) !important;
+    border-color: rgba(232, 185, 79, 0.28) !important;
+    box-shadow:
+        0 0 18px rgba(232, 185, 79, 0.18),
+        0 0 35px rgba(232, 185, 79, 0.08),
+        inset 0 0 10px rgba(232, 185, 79, 0.08) !important;
+    transform: translateY(-2px);
+    color: var(--accent-gold, #e8b94f) !important;
+}
+
+nav .nav-item {
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* ── Dropdown — Dark Cinema Glass (đã override bằng inline style) ── */
+/* Fallback cho các trang không có inline override */
+nav .group:hover > div[class*="absolute"],
+#categoryDropdown,
+nav .group > div[class*="absolute"] {
+    background-color: rgba(5, 5, 8, 0.96) !important;
+    background-image: none !important;
+    backdrop-filter: blur(28px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+    border: 1px solid rgba(232, 185, 79, 0.12) !important;
+    box-shadow:
+        0 24px 70px rgba(0, 0, 0, 0.70),
+        0 0 50px rgba(232, 185, 79, 0.05) !important;
+    border-radius: 1rem !important;
+    overflow: hidden !important;
+}
+
+/* ── Dropdown Links ── */
+nav .group > div[class*="absolute"] a,
+#categoryDropdown a {
+    position: relative !important;
+    overflow: hidden !important;
+    transition: all 0.25s ease !important;
+    color: rgba(240, 240, 245, 0.85) !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Left accent bar khi hover */
+nav .group > div[class*="absolute"] a::before,
+#categoryDropdown a::before {
+    content: '' !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    height: 100% !important;
+    width: 3px !important;
+    background: linear-gradient(180deg, #e8b94f, #f59e0b) !important;
+    transform: scaleY(0) !important;
+    transition: transform 0.25s ease !important;
+    box-shadow: 0 0 10px rgba(232, 185, 79, 0.5) !important;
+}
+
+nav .group > div[class*="absolute"] a:hover::before,
+#categoryDropdown a:hover::before {
+    transform: scaleY(1) !important;
+}
+
+nav .group > div[class*="absolute"] a:hover,
+#categoryDropdown a:hover {
+    background: linear-gradient(90deg, rgba(232, 185, 79, 0.12), transparent) !important;
+    color: var(--accent-gold, #e8b94f) !important;
+    padding-left: 1.75rem !important;
+}
+
+/* Caret rotation */
+nav .group:hover .group-hover\:rotate-180 {
+    transform: rotate(180deg) !important;
+}
+
+/* ── Mobile menu — gold hover ── */
+#mobileMenu a:hover {
+    background: rgba(232, 185, 79, 0.12) !important;
+    color: var(--accent-gold, #e8b94f) !important;
+    box-shadow: inset 0 0 12px rgba(232, 185, 79, 0.08) !important;
+    border-radius: 0.5rem !important;
+    padding-left: 1.5rem !important;
+}
+
+nav .group:hover .nav-item {
+    background: rgba(232, 185, 79, 0.08) !important;
+    border-color: rgba(232, 185, 79, 0.28) !important;
+    box-shadow:
+        0 0 18px rgba(232, 185, 79, 0.18),
+        inset 0 0 10px rgba(232, 185, 79, 0.08) !important;
+    color: var(--accent-gold, #e8b94f) !important;
+}
+
+#mobileMenu a {
+    transition: all 0.3s ease;
+}
+
+/* ── Mobile 480px ── */
 @media (max-width: 480px) {
     nav .container {
         padding-left: 0.75rem !important;
         padding-right: 0.75rem !important;
-        gap: 0.4rem !important; /* Small gap between action buttons and menu */
-        justify-content: flex-start !important; /* Override justify-between to collapse gaps */
+        gap: 0.4rem !important;
+        justify-content: flex-start !important;
     }
-    
-    /* Push the Search+Login blocks and Menu Button to the right edge */
+
     nav .container > div.flex.items-center.gap-4 {
         margin-left: auto !important;
     }
-    
-    /* Adjust logo container */
+
     nav a.group.flex {
         gap: 0.35rem !important;
         flex-shrink: 1 !important;
         min-width: 0 !important;
     }
-    
-    /* Optimize logo icon size */
+
     nav .w-10.h-10 {
         width: 2rem !important;
         height: 2rem !important;
@@ -142,8 +234,7 @@ nav+* {
         width: 1.25rem !important;
         height: 1.25rem !important;
     }
-    
-    /* Optimize title text */
+
     nav .text-2xl {
         font-size: 1.15rem !important;
         line-height: 1.25rem !important;
@@ -155,14 +246,12 @@ nav+* {
         line-height: 0.75rem !important;
         margin-top: -1px !important;
     }
-    
-    /* Tools section spacing */
+
     nav .gap-4 {
         gap: 0.5rem !important;
         flex-shrink: 0 !important;
     }
-    
-    /* Optimize login button */
+
     nav a[href="login.html"],
     nav a.bg-primary {
         white-space: nowrap !important;
@@ -175,13 +264,11 @@ nav+* {
         line-height: 1.1 !important;
         font-weight: 700 !important;
     }
-    
-    /* Standardize icons size (search, menu) */
+
     nav .material-icons-round {
         font-size: 20px !important;
     }
-    
-    /* Burger menu button padding reduction for alignment */
+
     nav button#mobileMenuBtn {
         padding: 0px !important;
         display: flex;
@@ -190,12 +277,8 @@ nav+* {
     }
 }
 
-/* ================================================
-   TRUNG BÌNH (1024px - 1279px): Desktop nav hiện nhưng chật
-   Giảm padding + font để vừa vào màn hình hẹp hơn
-   ================================================ */
+/* ── 1024px–1279px ── */
 @media (min-width: 1024px) and (max-width: 1279px) {
-    /* Thu nhỏ các nav-item button */
     nav .nav-item {
         padding-left: 0.75rem !important;
         padding-right: 0.75rem !important;
@@ -205,15 +288,13 @@ nav+* {
         white-space: nowrap !important;
     }
 
-    /* Thu nhỏ vertical height của pill để không bị khít vào 2 thanh */
     nav .hidden.lg\:flex > div {
         gap: 0rem !important;
         padding: 0.25rem 0.35rem !important;
-        transform: scale(0.92); /* Thu nhỏ nhẹ toàn bộ cụm pill */
+        transform: scale(0.92);
         transform-origin: center;
     }
 
-    /* Thu nhỏ padding của từng item để pill thanh thoát hơn */
     nav .nav-item {
         padding-left: 0.8rem !important;
         padding-right: 0.8rem !important;
@@ -222,17 +303,14 @@ nav+* {
         font-size: 0.72rem !important;
     }
 
-    /* Đảm bảo logo không bị thu nhỏ */
     nav a.group.flex {
         flex-shrink: 0;
     }
 
-    /* Thu nhỏ khoảng cách giữa logo và menu */
     nav > div {
         gap: 0.5rem !important;
     }
 
-    /* Thu nhỏ nút đăng nhập */
     nav a[href="login.html"],
     nav a.bg-primary {
         padding-left: 0.9rem !important;
@@ -243,124 +321,28 @@ nav+* {
         white-space: nowrap !important;
     }
 }
-/* === RESTORE A-PHIM ORIGINAL NAVIGATION EFFECTS === */
 
-/* 1. Global Navbar Items active & hover color */
-nav .nav-item:hover, nav .nav-pill:hover, nav .btn-pill:hover {
-    background: rgba(242, 242, 13, 0.08) !important;
-    border-color: rgba(242, 242, 13, 0.3) !important;
-    box-shadow: 0 0 20px rgba(242, 242, 13, 0.2), inset 0 0 10px rgba(242, 242, 13, 0.1) !important;
-    transform: translateY(-2px);
-    color: #f2f20d !important;
-}
-
-nav .nav-item {
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-/* 2. Dropdown Container - "viền trong trắng" (màu Xanh Đậm Lam) */
-nav .group:hover > div[class*="absolute"], 
-#categoryDropdown,
-nav .group > div[class*="absolute"] {
-    background-color: #3d5a96 !important;
-    background-image: linear-gradient(145deg, #3d5a96 0%, #25385e 100%) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(242, 242, 13, 0.1) !important;
-    border-radius: 1rem !important;
-    overflow: hidden !important;
-}
-
-/* 3. Dropdown Links Hover - "màu xanh" gradient (yellow/olive effect in dark mode) */
-nav .group > div[class*="absolute"] a,
-#categoryDropdown a {
-    position: relative !important;
-    overflow: hidden !important;
-    transition: all 0.3s ease !important;
-    color: #ffffff !important;
-    font-weight: 600 !important;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-nav .group > div[class*="absolute"] a::before,
-#categoryDropdown a::before {
-    content: '' !important;
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-    height: 100% !important;
-    width: 3px !important;
-    background: linear-gradient(180deg, #f2f20d, #ffd700) !important;
-    transform: scaleY(0) !important;
-    transition: transform 0.3s ease !important;
-    box-shadow: 0 0 10px rgba(242, 242, 13, 0.5) !important;
-}
-
-nav .group > div[class*="absolute"] a:hover::before,
-#categoryDropdown a:hover::before {
-    transform: scaleY(1) !important;
-}
-
-nav .group > div[class*="absolute"] a:hover,
-#categoryDropdown a:hover {
-    background: linear-gradient(90deg, rgba(242, 242, 13, 0.15), transparent) !important;
-    color: #f2f20d !important;
-    padding-left: 2rem !important; 
-}
-
-/* 4. Ensure Desktop Icons rotate properly inside nav */
-nav .group:hover .group-hover\:rotate-180 {
-    transform: rotate(180deg) !important;
-}
-
-/* === MOBILE: Also add green/yellow pill style to mobile nav items on hover/active === */
-#mobileMenu a:hover {
-    background: rgba(242, 242, 13, 0.15) !important;
-    color: #f2f20d !important;
-    box-shadow: inset 0 0 15px rgba(242, 242, 13, 0.1) !important;
-    border-radius: 0.5rem !important;
-    padding-left: 1.5rem !important;
-}
-
-/* Ensure nav-item stays highlighted while its dropdown is open */
-nav .group:hover .nav-item {
-    background: rgba(242, 242, 13, 0.08) !important;
-    border-color: rgba(242, 242, 13, 0.3) !important;
-    box-shadow: 0 0 20px rgba(242, 242, 13, 0.2), inset 0 0 10px rgba(242, 242, 13, 0.1) !important;
-    color: #f2f20d !important;
-}
-
-/* Ensure mobile menu links transition smoothly */
-#mobileMenu a {
-    transition: all 0.3s ease;
-}
-
-/* === GLOBAL PILL REFINEMENT (Shrink for more breathing room) === */
+/* ── Desktop ≥ 1024px — Pill refinement ── */
 @media (min-width: 1024px) {
-    /* Reduce overall vertical thickness of the pill container */
     nav .hidden.lg\:flex > div {
         padding-top: 0.25rem !important;
         padding-bottom: 0.25rem !important;
         padding-left: 0.4rem !important;
         padding-right: 0.4rem !important;
         gap: 0.15rem !important;
-        transform: scale(0.95); /* Subtly shrink the whole pill for a more elegant look */
+        transform: scale(0.95);
         transition: transform 0.3s ease, padding 0.3s ease;
     }
 
-    /* Shrink the items inside to match */
     nav .nav-item {
         padding-top: 0.4rem !important;
         padding-bottom: 0.4rem !important;
-        padding-left: 1.25rem !important; 
+        padding-left: 1.25rem !important;
         padding-right: 1.25rem !important;
         font-size: 0.8rem !important;
     }
-    
-    /* Slightly lower the entire nav height feel by centering better */
+
     nav .container {
-        height: 60px !important; /* Shrunk from 64px to give more outside air */
+        height: 60px !important;
     }
 }

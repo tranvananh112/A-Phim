@@ -1,6 +1,6 @@
 /**
- * Theater Movies Section - Top 20 Style
- * Load movies from "phim-chieu-rap" and sort by highest rating
+ * Coming Soon Movies Section - Top 10 Styling (Sync with Top Movies Layout)
+ * Load movies from "phim-chieu-rap"
  */
 
 (function () {
@@ -12,27 +12,20 @@
         const container = document.getElementById('comingSoonContainer');
 
         if (!loading || !container) {
-            console.warn('Theater movies section elements not found');
             return;
         }
 
         try {
-            console.log('Loading theater movies...');
-
-            // Fetch from phim-chieu-rap API - load 20 movies without sorting
-            const response = await fetch('https://ophim1.com/v1/api/danh-sach/phim-chieu-rap?page=1&limit=20', {
+            // Fetch from phim-chieu-rap API
+            const response = await fetch('https://ophim1.com/v1/api/danh-sach/phim-chieu-rap?page=1&limit=10', {
                 method: 'GET',
                 headers: { 'accept': 'application/json' }
             });
 
             const data = await response.json();
-            console.log('Theater movies data:', data);
 
             if (data.status === 'success' && data.data && data.data.items) {
-                const movies = data.data.items;
-
-                // Take first 20 movies as-is (no sorting)
-                renderComingSoonMovies(movies.slice(0, 20));
+                renderComingSoonMovies(data.data.items);
             } else {
                 loading.innerHTML = '<p class="text-gray-400">Không thể tải phim chiếu rạp</p>';
             }
@@ -47,85 +40,61 @@
         const container = document.getElementById('comingSoonContainer');
         
         if (!container) return;
-        const scrollContainer = container.querySelector('.flex');
-
-        if (!scrollContainer) return;
 
         if (loading) loading.classList.add('hidden');
         container.classList.remove('hidden');
 
-        // Get movie links from localStorage
-        const movieLinks = JSON.parse(localStorage.getItem('movieLinks') || '{}');
-
-        scrollContainer.innerHTML = movies.map((movie, index) => {
+        container.innerHTML = movies.map((movie, index) => {
             const rank = index + 1;
-            const hasCustomLink = !!movieLinks[movie.slug];
-            const linkUrl = hasCustomLink ? `watch-simple.html?slug=${movie.slug}` : `movie-detail.html?slug=${movie.slug}`;
-            const rating = movie.tmdb?.vote_average || 0;
-            const posterUrl = `https://img.ophim.live/uploads/movies/${movie.poster_url || movie.thumb_url}`;
-
+            const thumb = movie.thumb_url || '';
+            const poster = movie.poster_url || '';
+            
+            const posterUrl = thumb ? 
+                (thumb.startsWith('http') ? thumb : `https://img.ophim.live/uploads/movies/${thumb}`) : 
+                (poster ? (poster.startsWith('http') ? poster : `https://img.ophim.live/uploads/movies/${poster}`) : '');
+                
+            const optimizedUrl = (typeof imageOptimizer !== 'undefined' && (thumb || poster)) ? 
+                imageOptimizer.optimizeImageUrl(thumb || poster, 400, 80) : posterUrl;
+            
+            const detailUrl = `movie-detail.html?slug=${movie.slug}`;
+            const episodes = movie.episode_current || '';
+            
             return `
-                <article class="cs-top10-card">
-                    <!-- Poster with Perspective -->
-                    <div class="cs-poster-perspective">
-                        <a href="${linkUrl}">
-                            <div class="cs-poster-container">
-                                <!-- Poster Image - Progressive Loading -->
-                                ${typeof imageOptimizer !== 'undefined'
-                                    ? imageOptimizer.createProgressiveImgTag({
-                                        originalUrl: posterUrl,
-                                        altText: movie.name,
-                                        extraClasses: 'absolute top-0 left-0 w-full h-full object-cover z-0 transition-transform duration-500 group-hover:scale-110',
-                                        extraAttrs: ''
-                                      })
-                                    : `<img src="${posterUrl}" alt="${movie.name}" onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" class="absolute top-0 left-0 w-full h-full object-cover z-0" loading="lazy" />`
-                                }
-                                
-                                <!-- Badges on Poster -->
-                                <div class="cs-badges-container">
-                                    ${movie.episode_current ? `
-                                        <span class="cs-badge cs-badge-episode">PĐ. ${movie.episode_current.replace(/[^0-9]/g, '')}</span>
-                                    ` : ''}
-                                    ${movie.lang ? `
-                                        <span class="cs-badge ${movie.lang.includes('Thuyết Minh') || movie.lang.includes('TM') ? 'cs-badge-quality' : 'cs-badge-lang'}">
-                                            ${movie.lang.includes('Thuyết Minh') ? 'TM' : movie.lang.includes('Lồng Tiếng') ? 'LT' : movie.lang}
-                                        </span>
-                                    ` : ''}
-                                </div>
-                                
-                                <!-- Play Overlay -->
-                                <div class="cs-play-overlay">
-                                    <div class="cs-play-icon">
-                                        <span class="material-icons-round">play_arrow</span>
-                                    </div>
-                                </div>
+                <div class="ranking-item group" data-rank="${rank}">
+                    <a href="${detailUrl}">
+                        <div class="ranking-poster-w">
+                            <img src="${optimizedUrl}" 
+                                 alt="${movie.name}" 
+                                 class="w-full h-full object-cover"
+                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/400x600?text=No+Poster'"
+                                 loading="lazy" />
+                            
+                            <div class="ranking-badges-bottom">
+                                <span class="badge-pd">PĐ. ${episodes.replace(/[^0-9]/g, '') || 'HD'}</span>
+                                <span class="badge-lt">LT. ${episodes.replace(/[^0-9]/g, '') || 'Full'}</span>
                             </div>
-                        </a>
-                    </div>
-                    
-                    <!-- Movie Info with Rank Number -->
-                    <div class="cs-movie-info-container">
-                        <span class="cs-rank-number">${rank}</span>
-                        <div class="cs-movie-info">
-                            <a href="${linkUrl}">
-                                <h3 class="cs-movie-title">${movie.name}</h3>
-                            </a>
-                            <p class="cs-movie-subtitle">${movie.origin_name || movie.name}</p>
-                            <div class="cs-movie-meta">
-                                ${movie.quality ? `<span class="cs-age-rating">${movie.quality}</span>` : ''}
-                                ${movie.year ? `<span>• ${movie.year}</span>` : ''}
-                                ${movie.episode_current ? `<span>• ${movie.episode_current}</span>` : ''}
-                                ${rating > 0 ? `
-                                    <span>•</span>
-                                    <div class="cs-rating">
-                                        <span class="material-icons-round">star</span>
-                                        <span>${rating.toFixed(1)}</span>
-                                    </div>
-                                ` : ''}
+
+                            <div class="ranking-icon-circle"><span class="material-icons-round">theaters</span></div>
+
+                            <!-- Hover overlay -->
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-lg transform scale-50 group-hover:scale-100 transition-transform">
+                                    <span class="material-icons-round text-black text-2xl">play_arrow</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </article>
+
+                        <!-- Bottom Info with Big Rank -->
+                        <div class="ranking-info-w">
+                            <div class="rank-big-number">${rank}</div>
+                            <div class="ranking-text-content">
+                                <h3 class="ranking-title">${movie.name}</h3>
+                                <p class="ranking-sub">${movie.origin_name || ''}</p>
+                                ${episodes ? `<p class="ranking-extra">${episodes}</p>` : ''}
+                            </div>
+                        </div>
+                    </a>
+                </div>
             `;
         }).join('');
 
@@ -135,47 +104,19 @@
 
     function setupScrollButtons() {
         const container = document.getElementById('comingSoonContainer');
-        const scrollContainer = container?.querySelector('.flex');
         const leftBtn = document.getElementById('comingSoonScrollLeft');
         const rightBtn = document.getElementById('comingSoonScrollRight');
 
-        if (!scrollContainer || !leftBtn || !rightBtn) return;
+        if (!container || !leftBtn || !rightBtn) return;
 
-        leftBtn.addEventListener('click', () => {
-            scrollContainer.scrollBy({ left: -180, behavior: 'smooth' });
-        });
-
-        rightBtn.addEventListener('click', () => {
-            scrollContainer.scrollBy({ left: 180, behavior: 'smooth' });
-        });
-
-        // Update button visibility based on scroll position
-        function updateButtonVisibility() {
-            const { scrollLeft, scrollWidth, clientWidth } = scrollContainer;
-
-            if (scrollLeft <= 0) {
-                leftBtn.style.opacity = '0';
-                leftBtn.style.pointerEvents = 'none';
-            } else {
-                leftBtn.style.pointerEvents = 'auto';
-            }
-
-            if (scrollLeft + clientWidth >= scrollWidth - 10) {
-                rightBtn.style.opacity = '0';
-                rightBtn.style.pointerEvents = 'none';
-            } else {
-                rightBtn.style.pointerEvents = 'auto';
-            }
-        }
-
-        scrollContainer.addEventListener('scroll', updateButtonVisibility);
-        updateButtonVisibility();
+        leftBtn.onclick = () => container.scrollBy({ left: -container.clientWidth * 0.8, behavior: 'smooth' });
+        rightBtn.onclick = () => container.scrollBy({ left: container.clientWidth * 0.8, behavior: 'smooth' });
     }
 
-    // Load on page load
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', loadComingSoonMovies);
-    } else {
-        loadComingSoonMovies();
-    }
+    // Run
+    loadComingSoonMovies();
+    setupScrollButtons();
+
+    // Expose to window
+    window.loadComingSoonMovies = loadComingSoonMovies;
 })();

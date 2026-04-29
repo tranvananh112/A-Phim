@@ -300,6 +300,9 @@ function showLoadMoviesModal() {
     if (typeof thumbnailModalMode !== 'undefined' && !arguments.callee.caller?.name?.includes('Thumbnail')) {
         thumbnailModalMode = false; 
     }
+    if (typeof categoryBgSelectionMode !== 'undefined' && !arguments.callee.caller?.name?.includes('CategoryBg')) {
+        categoryBgSelectionMode = null;
+    }
     
     const modal = document.getElementById('loadMoviesModal');
     modal.classList.remove('hidden');
@@ -323,8 +326,9 @@ function closeLoadMoviesModal() {
     const loading = document.getElementById('loadingMovies');
     if (grid)    grid.classList.add('hidden'), grid.style.display = 'none';
     if (loading) loading.classList.add('hidden'), loading.style.display = 'none';
-    // Reset thumbnail modal mode
+    // Reset modal modes
     if (typeof thumbnailModalMode !== 'undefined') thumbnailModalMode = false;
+    if (typeof categoryBgSelectionMode !== 'undefined') categoryBgSelectionMode = null;
 }
 
 let isModalFullScreen = false;
@@ -491,7 +495,20 @@ function renderModalPagination(totalPages, currentPage) {
 function displayMovies(movies) {
     const gridContent = document.getElementById('moviesGridContent');
 
-    gridContent.innerHTML = movies.map(movie => `
+    gridContent.innerHTML = movies.map(movie => {
+        let actionButtons = '';
+        if (typeof categoryBgSelectionMode !== 'undefined' && categoryBgSelectionMode) {
+            actionButtons = `<button onclick='selectCategoryBgMovie(${JSON.stringify(movie).replace(/'/g, "&apos;")})' class="btn btn-primary btn-sm" style="flex:1;justify-content:center"><i data-lucide="image-plus"></i> Chọn làm nền</button>`;
+        } else if (thumbnailModalMode) {
+            actionButtons = `<button onclick='addMovieToThumbnail(${JSON.stringify(movie).replace(/'/g, "&apos;")})' class="btn btn-primary btn-sm" style="flex:1;justify-content:center"><i data-lucide="layout-list"></i> Thêm Thumbnail</button>`;
+        } else {
+            actionButtons = `
+                <button onclick='addMovieToBanner(${JSON.stringify(movie).replace(/'/g, "&apos;")})' class="btn btn-primary btn-sm" style="flex:1;justify-content:center"><i data-lucide="plus-circle"></i> Thêm Banner</button>
+                <button onclick='addMovieToThumbnail(${JSON.stringify(movie).replace(/'/g, "&apos;")})' class="btn btn-secondary btn-sm" style="flex:1;justify-content:center" title="Thêm vào Thumbnail"><i data-lucide="layout-list"></i> Thumbnail</button>
+            `;
+        }
+        
+        return `
         <div class="movie-pick-card">
             <img src="https://img.ophim.live/uploads/movies/${movie.thumb_url}"
                  alt="${movie.name}"
@@ -504,11 +521,12 @@ function displayMovies(movies) {
                     <span class="badge badge-primary" style="padding:1px 6px;font-size:10px">${movie.quality || 'HD'}</span>
                 </div>
                 <div class="movie-pick-actions" style="display:flex;gap:6px;margin-top:auto">
-                 ${!thumbnailModalMode ? `<button onclick='addMovieToBanner(${JSON.stringify(movie).replace(/'/g, "&apos;")})' class="btn btn-primary btn-sm" style="flex:1;justify-content:center"><i data-lucide="plus-circle"></i> Thêm Banner</button>` : ''}${thumbnailModalMode ? `<button onclick='addMovieToThumbnail(${JSON.stringify(movie).replace(/'/g, "&apos;")})' class="btn btn-primary btn-sm" style="flex:1;justify-content:center"><i data-lucide="layout-list"></i> Thêm Thumbnail</button>` : `<button onclick='addMovieToThumbnail(${JSON.stringify(movie).replace(/'/g, "&apos;")})' class="btn btn-secondary btn-sm" style="flex:1;justify-content:center" title="Thêm vào Thumbnail"><i data-lucide="layout-list"></i> Thumbnail</button>`}
+                 ${actionButtons}
                 </div>
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
     if (window.lucide) lucide.createIcons();
 }
 
@@ -884,3 +902,180 @@ function onThumbDragEnd(e) {
     document.querySelectorAll('.thumb-card').forEach(c => c.classList.remove('drag-over'));
     dragSrcIdx = null;
 }
+
+// ── Category Backgrounds ──────────────────────────────────────
+let categoryBgSelectionMode = null;
+
+function showCategoryBgModal(apiPath) {
+    categoryBgSelectionMode = apiPath;
+    showLoadMoviesModal();
+    // Auto set the filter to the selected category and reload
+    const filterSelect = document.getElementById('filterCategory');
+    if (filterSelect) {
+        // Try to find the exact option
+        let optionExists = Array.from(filterSelect.options).some(opt => opt.value === apiPath);
+        if (optionExists) {
+            filterSelect.value = apiPath;
+            loadMoviesFromOphim('', 1);
+        } else {
+            filterSelect.value = 'danh-sach/phim-moi-cap-nhat';
+            // Even if we fallback, let's load what they actually requested
+            loadMoviesFromOphim('', 1);
+        }
+    }
+}
+
+function selectCategoryBgMovie(movie) {
+    if (!categoryBgSelectionMode) return;
+    
+    // Map apiPath to DOM element ID
+    const pathMap = {
+        "danh-sach/phim-bo": "bg_phim_bo",
+        "danh-sach/phim-moi-cap-nhat": "bg_phim_moi",
+        "the-loai/hanh-dong": "bg_hanh_dong",
+        "the-loai/tinh-cam": "bg_tinh_cam",
+        "the-loai/hai-huoc": "bg_hai_huoc",
+        "danh-sach/hoat-hinh": "bg_hoat_hinh"
+    };
+
+    const inputId = pathMap[categoryBgSelectionMode];
+    if (inputId) {
+        const inputEl = document.getElementById(inputId);
+        const imageUrl = movie.thumb_url.startsWith('http') ? movie.thumb_url : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`;
+        
+        if (inputEl) {
+            inputEl.value = imageUrl;
+            previewCatBg(inputEl, `preview_${inputId}`, categoryBgSelectionMode);
+            // Bỏ tự động lưu theo yêu cầu của giao diện, đợi admin click Lưu
+        }
+    }
+    
+    closeLoadMoviesModal();
+    showThumbToast(`Đã chọn hình nền phim "${movie.name}"`, 'success');
+}
+
+function clearCategoryBg(key) {
+    const inputEl = document.getElementById(`bg_${key}`);
+    const apiPathMap = {
+        'phim_bo': 'danh-sach/phim-bo',
+        'phim_moi': 'danh-sach/phim-moi-cap-nhat',
+        'hanh_dong': 'the-loai/hanh-dong',
+        'tinh_cam': 'the-loai/tinh-cam',
+        'hai_huoc': 'the-loai/hai-huoc',
+        'hoat_hinh': 'danh-sach/hoat-hinh'
+    };
+    if (inputEl) {
+        inputEl.value = '';
+        previewCatBg(inputEl, `preview_bg_${key}`, apiPathMap[key]);
+    }
+}
+
+async function previewCatBg(input, previewId, apiPath = null) {
+    const img = document.getElementById(previewId);
+    if (!img) return;
+
+    const val = input ? input.value.trim() : '';
+    if (val) {
+        img.src = val;
+    } else {
+        // Fetch from OPhim to show what is currently active
+        img.src = 'https://via.placeholder.com/80x45?text=Loading';
+        if (apiPath) {
+            try {
+                const response = await fetch(`https://ophim1.com/v1/api/${apiPath}?page=1&limit=1`, {
+                    method: 'GET',
+                    headers: { 'accept': 'application/json' }
+                });
+                const data = await response.json();
+                if (data.status === 'success' && data.data && data.data.items && data.data.items.length > 0) {
+                    const thumbUrl = data.data.items[0].thumb_url;
+                    img.src = thumbUrl.startsWith('http') ? thumbUrl : `https://img.ophim.live/uploads/movies/${thumbUrl}`;
+                } else {
+                    img.src = 'https://via.placeholder.com/80x45?text=Auto';
+                }
+            } catch (e) {
+                console.error('Failed to preview auto bg:', e);
+                img.src = 'https://via.placeholder.com/80x45?text=Auto';
+            }
+        } else {
+            img.src = 'https://via.placeholder.com/80x45?text=Auto';
+        }
+    }
+}
+
+async function loadCategoryBackgrounds() {
+    try {
+        const apiUrl = window.getBackendBaseURL();
+        const res = await fetch(`${apiUrl}/api/settings/public`);
+        const data = await res.json();
+        if (data.success && data.data && data.data.content && data.data.content.categoryBackgrounds) {
+            const bg = data.data.content.categoryBackgrounds;
+            document.getElementById('bg_phim_bo').value = bg["danh-sach/phim-bo"] || '';
+            document.getElementById('bg_phim_moi').value = bg["danh-sach/phim-moi-cap-nhat"] || '';
+            document.getElementById('bg_hanh_dong').value = bg["the-loai/hanh-dong"] || '';
+            document.getElementById('bg_tinh_cam').value = bg["the-loai/tinh-cam"] || '';
+            document.getElementById('bg_hai_huoc').value = bg["the-loai/hai-huoc"] || '';
+            document.getElementById('bg_hoat_hinh').value = bg["danh-sach/hoat-hinh"] || '';
+
+            // trigger preview
+            const categories = [
+                { id: 'phim_bo', apiPath: 'danh-sach/phim-bo' },
+                { id: 'phim_moi', apiPath: 'danh-sach/phim-moi-cap-nhat' },
+                { id: 'hanh_dong', apiPath: 'the-loai/hanh-dong' },
+                { id: 'tinh_cam', apiPath: 'the-loai/tinh-cam' },
+                { id: 'hai_huoc', apiPath: 'the-loai/hai-huoc' },
+                { id: 'hoat_hinh', apiPath: 'danh-sach/hoat-hinh' }
+            ];
+            categories.forEach(cat => {
+                previewCatBg(document.getElementById(`bg_${cat.id}`), `preview_bg_${cat.id}`, cat.apiPath);
+            });
+        }
+    } catch (e) {
+        console.error('loadCategoryBackgrounds error:', e);
+    }
+}
+
+async function saveCategoryBackgrounds() {
+    const btn = document.getElementById('btnSaveCategoryBg');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i data-lucide="loader"></i> Đang lưu...'; if (window.lucide) lucide.createIcons(); }
+
+    const bg = {
+        "danh-sach/phim-bo": document.getElementById('bg_phim_bo').value.trim(),
+        "danh-sach/phim-moi-cap-nhat": document.getElementById('bg_phim_moi').value.trim(),
+        "the-loai/hanh-dong": document.getElementById('bg_hanh_dong').value.trim(),
+        "the-loai/tinh-cam": document.getElementById('bg_tinh_cam').value.trim(),
+        "the-loai/hai-huoc": document.getElementById('bg_hai_huoc').value.trim(),
+        "danh-sach/hoat-hinh": document.getElementById('bg_hoat_hinh').value.trim()
+    };
+
+    try {
+        const token = localStorage.getItem('cinestream_admin_token');
+        const apiUrl = window.getBackendBaseURL();
+        
+        const res = await fetch(`${apiUrl}/api/settings`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ content: { categoryBackgrounds: bg } })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            showThumbToast('Đã lưu hình nền chuyên mục!', 'success');
+        } else {
+            showThumbToast(data.message || 'Lỗi lưu cài đặt', 'error');
+        }
+    } catch (e) {
+        console.error('saveCategoryBackgrounds error:', e);
+        showThumbToast('Không thể lưu cài đặt: ' + e.message, 'error');
+    } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i data-lucide="save"></i> Lưu cài đặt'; if (window.lucide) lucide.createIcons(); }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadCategoryBackgrounds();
+});
+

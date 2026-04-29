@@ -95,12 +95,16 @@
                 <div style="margin-left:auto;">${icon('expand_more', 'font-size:22px;color:rgba(255,255,255,0.3);transition:transform 0.25s;' )}</div>
             </button>
             <div id="mmPhimDrop" style="display:none;padding:0 4px 4px;">
-                <div class="mm-grid-2" id="mmPhimDropGrid">
-                    <a href="phim-theo-quoc-gia.html" class="mm-card-item mm-glass">
-                        ${icon('public', 'font-size:24px;color:#aaabad;')}
-                        <span class="mm-card-label">Tất Cả</span>
-                    </a>
-                    <!-- Danh sách quốc gia loading -->
+                <div class="mm-dropdown-panel-blue">
+                    <div class="mm-dropdown-panel-blue-scroll">
+                        <div class="mm-grid-2" id="mmPhimDropGrid">
+                            <a href="phim-theo-quoc-gia.html" class="mm-card-item mm-glass">
+                                ${icon('public', 'font-size:24px;color:#aaabad;')}
+                                <span class="mm-card-label">Tất Cả</span>
+                            </a>
+                            <!-- Danh sách quốc gia loading -->
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -111,8 +115,12 @@
                 <div style="margin-left:auto;">${icon('expand_more', 'font-size:22px;color:rgba(255,255,255,0.3);transition:transform 0.25s;' )}</div>
             </button>
             <div id="mmLoaiDrop" style="display:none;padding:0 4px 4px;">
-                <div class="mm-grid-2" id="mmLoaiDropGrid">
-                    <!-- Danh sách thể loại loading -->
+                <div class="mm-dropdown-panel-blue">
+                    <div class="mm-dropdown-panel-blue-scroll">
+                        <div class="mm-grid-2" id="mmLoaiDropGrid">
+                            <!-- Danh sách thể loại loading -->
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -337,18 +345,35 @@
     }
 
     function closeMenu() {
-        document.getElementById('mm-overlay')?.classList.remove('open');
-        document.getElementById('mm-drawer')?.classList.remove('open');
+        const overlay = document.getElementById('mm-overlay');
+        const drawer = document.getElementById('mm-drawer');
+        
+        if (overlay) {
+            overlay.classList.remove('open');
+            // Ensure it's hidden even if class transition fails
+            setTimeout(() => {
+                if (!overlay.classList.contains('open')) {
+                    overlay.style.opacity = '0';
+                    overlay.style.pointerEvents = 'none';
+                }
+            }, 300);
+        }
+        
+        if (drawer) {
+            drawer.classList.remove('open');
+        }
 
         const scrollY = parseInt(document.body.dataset.scrollY || '0');
         document.body.style.position = '';
         document.body.style.top      = '';
         document.body.style.width    = '';
-        window.scrollTo(0, scrollY);
+        
+        if (scrollY > 0) {
+            window.scrollTo(0, scrollY);
+        }
 
         const burger = document.querySelector('.mm-burger-btn');
         if (burger) burger.classList.remove('open');
-        // Không xóa DOM khi đóng - giữ lại để lần mở tiếp theo instant
     }
 
     /* ── SETUP BUTTON ── */
@@ -370,12 +395,13 @@
     function suppressOldMenu() {
         const oldMenu = document.getElementById('mobileMenu');
         if (!oldMenu) return;
-        oldMenu.style.cssText = 'display:none!important;visibility:hidden!important;';
+        oldMenu.style.cssText = 'display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;';
         oldMenu.classList.add('hidden');
+        oldMenu.setAttribute('aria-hidden', 'true');
         oldMenu.innerHTML = '';
         new MutationObserver(() => {
             if (!oldMenu.classList.contains('hidden') || oldMenu.style.display !== 'none') {
-                oldMenu.style.cssText = 'display:none!important;visibility:hidden!important;';
+                oldMenu.style.cssText = 'display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;';
                 oldMenu.classList.add('hidden');
             }
         }).observe(oldMenu, { attributes: true, attributeFilter: ['class', 'style'] });

@@ -27,41 +27,67 @@ function loadCategoriesDropdown() {
         const totalCells = Math.ceil(categories.length / 4) * 4;
         const missingCells = totalCells - categories.length;
 
-        // Render as grid 4 columns
-        let gridHTML = '<div class="grid grid-cols-4 gap-0">';
+        // Render as grid 4 columns — bọc trong nền xanh dương
+        let gridHTML = `
+            <div style="
+                background: linear-gradient(160deg, #1e4d8c 0%, #2563b8 40%, #1a3d7a 100%);
+                border-radius: 12px;
+                padding: 6px;
+                border: 1px solid rgba(59,130,246,0.25);
+                box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+            ">
+                <div class="grid grid-cols-4 gap-0">`;
         
         gridHTML += categories.map((cat, index) => {
             const isLastRow = index >= totalCells - 4;
             const isRightEdge = (index + 1) % 4 === 0;
-            const borderClasses = `${!isRightEdge ? 'border-r' : ''} ${!isLastRow ? 'border-b' : ''} border-white/5`;
+            const borderColor = 'rgba(255,255,255,0.08)';
+            
+            // Border CSS
+            let borderStyle = '';
+            if (!isRightEdge) borderStyle += `border-right: 1px solid ${borderColor};`;
+            if (!isLastRow)   borderStyle += `border-bottom: 1px solid ${borderColor};`;
             
             // Link URL
             const url = (cat.slug === 'all') 
                 ? 'categories.html' 
                 : `categories.html?category=${cat.slug}`;
 
-            // Highlight mục Tất Cả
-            const textClass = (cat.slug === 'all') ? 'font-bold' : '';
+            // Bold for Tất Cả
+            const fontWeight = (cat.slug === 'all') ? 'font-weight:700;' : '';
 
             return `
                 <a href="${url}" 
-                   class="flex items-center px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all text-sm whitespace-nowrap ${borderClasses} ${textClass}">
-                    <span class="truncate">${cat.name}</span>
+                   style="
+                       display: flex; align-items: center;
+                       padding: 11px 16px;
+                       color: rgba(255,255,255,0.88);
+                       font-size: 0.82rem;
+                       ${fontWeight}
+                       ${borderStyle}
+                       white-space: nowrap;
+                       transition: background 0.18s, color 0.18s;
+                       border-radius: 0;
+                       text-decoration: none;
+                   "
+                   onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                   onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';"
+                >
+                    <span style="overflow:hidden;text-overflow:ellipsis;">${cat.name}</span>
                 </a>
             `;
         }).join('');
 
-        // Render các ô trống để lấp đầy grid với border chuẩn
+        // Empty cells
         for (let i = 0; i < missingCells; i++) {
             const index = categories.length + i;
-            const isLastRow = true; // Chắc chắn ở hàng cuối
             const isRightEdge = (index + 1) % 4 === 0;
-            const borderClasses = `${!isRightEdge ? 'border-r' : ''} ${!isLastRow ? 'border-b' : ''} border-white/5`;
-            
-            gridHTML += `<div class="block px-4 py-3 pointer-events-none ${borderClasses}"></div>`;
+            const borderColor = 'rgba(255,255,255,0.08)';
+            let borderStyle = !isRightEdge ? `border-right: 1px solid ${borderColor};` : '';
+            gridHTML += `<div style="display:block;padding:11px 16px;pointer-events:none;${borderStyle}"></div>`;
         }
 
-        gridHTML += '</div>';
+        gridHTML += '</div></div>';
         dropdown.innerHTML = gridHTML;
         
     } catch (error) {

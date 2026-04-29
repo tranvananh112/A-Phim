@@ -6,14 +6,14 @@
 .backdrop-gradient {
     background: linear-gradient(
         to top,
-        rgba(10, 11, 16, 1.00) 0%,
-        rgba(10, 11, 16, 0.96) 8%,
-        rgba(10, 11, 16, 0.88) 18%,
-        rgba(10, 11, 16, 0.70) 32%,
-        rgba(10, 11, 16, 0.45) 50%,
-        rgba(10, 11, 16, 0.20) 70%,
-        rgba(10, 11, 16, 0.05) 88%,
-        rgba(10, 11, 16, 0.00) 100%
+        rgba(5, 5, 8, 1.00) 0%,
+        rgba(5, 5, 8, 0.96) 8%,
+        rgba(5, 5, 8, 0.88) 18%,
+        rgba(5, 5, 8, 0.70) 32%,
+        rgba(5, 5, 8, 0.45) 50%,
+        rgba(5, 5, 8, 0.20) 70%,
+        rgba(5, 5, 8, 0.05) 88%,
+        rgba(5, 5, 8, 0.00) 100%
     ) !important;
 }
 
@@ -47,8 +47,8 @@ section.bg-background-dark {
    ============================================================ */
 .hero-to-content-bridge {
     position: relative;
-    margin-top: 0;    /* Không kéo lên — hero tự handle bottom gradient */
-    padding-top: 2rem; /* Give space for the first section title */
+    margin-top: 0;    /* Xóa khoảng cách để các section áp sát nhau */
+    padding-top: 1rem; 
     z-index: 5;
     background: transparent !important;
     background-image: none !important;
@@ -64,9 +64,9 @@ section.bg-background-dark {
     height: 80px;
     background: linear-gradient(
         to bottom,
-        rgba(10, 11, 16, 0.18) 0%,   /* Nhẹ — hero đã tối sẵn */
-        rgba(10, 11, 16, 0.06) 50%,
-        rgba(10, 11, 16, 0.00) 100%
+        rgba(5, 5, 8, 0.18) 0%,   /* Nhẹ — hero đã tối sẵn */
+        rgba(5, 5, 8, 0.06) 50%,
+        rgba(5, 5, 8, 0.00) 100%
     );
     pointer-events: none;
     z-index: 1;
@@ -92,8 +92,8 @@ section.bg-background-dark {
     background-image: none !important;
 }
 
-/* Fade nhẹ đỉnh */
-.ambient-section::before {
+/* Fade nhẹ đỉnh - DISABLED to prevent section division */
+/*.ambient-section::before {
     content: '';
     position: absolute;
     top: 0;
@@ -102,26 +102,23 @@ section.bg-background-dark {
     height: 40px;
     background: linear-gradient(
         to bottom,
-        rgba(10, 11, 16, 0.08) 0%,
-        rgba(10, 11, 16, 0.00) 100%
+        rgba(5, 5, 8, 0.08) 0%,
+        rgba(5, 5, 8, 0.00) 100%
     );
     pointer-events: none;
     z-index: 0;
-}
+}*/
 
-/* ============================================================
-   3. SECTION DIVIDER LINE — Thay thế đường kẻ cứng
-   Tạo separator gradient mờ thay vì border solid.
-   ============================================================ */
-.ambient-section + .ambient-section::before,
+/* SECTION DIVIDER LINE — DISABLED to prevent section division */
+/*.ambient-section + .ambient-section::before,
 .ambient-section + section::before {
     height: 60px;
     background: linear-gradient(
         to bottom,
-        rgba(10, 11, 16, 0.15) 0%,
-        rgba(10, 11, 16, 0.00) 100%
+        rgba(5, 5, 8, 0.15) 0%,
+        rgba(5, 5, 8, 0.00) 100%
     );
-}
+}*/
 
 /* ============================================================
    4. MOVIE DETAIL — CONTENT ZONE
@@ -149,10 +146,10 @@ section.bg-background-dark {
     bottom: 0;
     background: linear-gradient(
         to bottom,
-        rgba(10, 11, 16, 0.00) 0%,
-        rgba(10, 11, 16, 0.55) 25%,
-        rgba(10, 11, 16, 0.78) 55%,
-        rgba(10, 11, 16, 0.88) 100%
+        rgba(5, 5, 8, 0.00) 0%,
+        rgba(5, 5, 8, 0.55) 25%,
+        rgba(5, 5, 8, 0.78) 55%,
+        rgba(5, 5, 8, 0.88) 100%
     );
     pointer-events: none;
     z-index: 0;
@@ -213,33 +210,4 @@ section.bg-background-dark {
     }
 }
 
-/* ============================================================
-   9. MIST EFFECT tại điểm tiếp giáp hero → content
-   Dải sương mờ ảo horizontal — người dùng không nhận ra ranh giới
-   ============================================================ */
 
-/* Lớp sương mù chính: radial-gradient hình elip mờ */
-.hero-to-content-bridge::after {
-    content: '';
-    position: absolute;
-    top: -28px;
-    left: -10%;
-    right: -10%;
-    height: 70px;
-    background: radial-gradient(
-        ellipse 85% 100% at 50% 50%,
-        rgba(160, 170, 255, 0.30) 0%,
-        rgba(200, 210, 255, 0.14) 35%,
-        rgba(120, 140, 220, 0.05) 65%,
-        transparent 85%
-    );
-    filter: blur(14px);
-    pointer-events: none;
-    z-index: 20;
-}
-
-/* Lớp ánh sáng phụ: thêm độ sâu mờ ảo — rộng hơn nhưng mờ hơn */
-.hero-to-content-bridge {
-    /* Dùng box-shadow bên ngoài top edge để thêm glow mờ */
-    filter: drop-shadow(0 -2px 18px rgba(140, 150, 230, 0.08));
-}

@@ -219,6 +219,9 @@ function renderHeroBanner(movie, isInstant = false) {
 
     if (heroPlayBtn) heroPlayBtn.href = `movie-detail.html?slug=${movie.slug}`;
 
+    // Update Favorite & Info buttons logic
+    setupHeroActions(movie);
+
     // Hiển thị chữ ngay lập tức, không chờ ảnh
     showHeroText();
 
@@ -293,42 +296,90 @@ async function fetchLatestEpisodeCount(movie) {
     }
 }
 
+// Setup logic for Favorite & Info buttons on Hero Banner
+function setupHeroActions(movie) {
+    const favBtn = document.getElementById('heroFavBtn');
+    const infoBtn = document.getElementById('heroInfoBtn');
+    
+    if (!movie) return;
+
+    // 1. Setup Info Button Link
+    if (infoBtn) {
+        infoBtn.href = `movie-detail.html?slug=${movie.slug}`;
+    }
+
+    // 2. Setup Favorite Button Logic
+    if (favBtn && typeof userService !== 'undefined') {
+        const icon = favBtn.querySelector('span');
+        
+        // Initial state update
+        const updateFavUI = () => {
+            const isFav = userService.isFavorite(movie.slug);
+            if (icon) {
+                icon.textContent = isFav ? 'favorite' : 'favorite_border';
+                if (isFav) {
+                    icon.classList.add('text-red-500');
+                    icon.classList.remove('text-white/90');
+                } else {
+                    icon.classList.remove('text-red-500');
+                    icon.classList.add('text-white/90');
+                }
+            }
+        };
+
+        updateFavUI();
+
+        // Handle Click
+        favBtn.onclick = (e) => {
+            e.preventDefault();
+            
+            // Check login first
+            if (typeof authService !== 'undefined' && !authService.isLoggedIn()) {
+                if (typeof showAuthModal === 'function') {
+                    showAuthModal('login');
+                } else {
+                    alert('Vui lòng đăng nhập để lưu phim');
+                }
+                return;
+            }
+
+            if (userService.isFavorite(movie.slug)) {
+                userService.removeFromFavorites(movie.slug);
+                if (typeof showNotification === 'function') {
+                    showNotification('Đã xóa khỏi danh sách yêu thích', 'info');
+                }
+            } else {
+                userService.addToFavorites({
+                    slug: movie.slug,
+                    name: movie.name,
+                    thumb_url: movie.thumb_url,
+                    year: movie.year || movie.release_date || ''
+                });
+                if (typeof showNotification === 'function') {
+                    showNotification('Đã thêm vào danh sách yêu thích', 'success');
+                }
+            }
+            
+            updateFavUI();
+        };
+    }
+}
+
 function renderThumbnails(movies) {
     const thumbnailsContainer = document.getElementById('heroThumbnails');
     if (!thumbnailsContainer || !Array.isArray(movies) || movies.length === 0) return;
 
     thumbnailsContainer.innerHTML = movies.map((movie, index) => `
-        <div class="relative flex-shrink-0 group cursor-pointer ${index === 0 ? 'opacity-100' : 'opacity-70'} hover:opacity-100 transition-all hover:scale-105 snap-start">
-            <a href="movie-detail.html?slug=${movie.slug}" class="flex items-center gap-2 md:gap-3">
-                <!-- Poster Image -->
-                <div class="flex-shrink-0 w-20 sm:w-24 md:w-28 aspect-[2/3] rounded-md md:rounded-lg overflow-hidden border-2 ${index === 0 ? 'border-primary shadow-[0_0_15px_rgba(252,211,77,0.3)]' : 'border-white/20'} bg-gray-800 relative">
+        <div class="relative flex-shrink-0 group cursor-pointer ${index === 0 ? 'active-hero-thumb' : 'opacity-60'} hover:opacity-100 transition-all duration-300 snap-start">
+            <a href="movie-detail.html?slug=${movie.slug}" class="block">
+                <div class="w-14 md:w-16 lg:w-20 aspect-[2/3] rounded-lg overflow-hidden 
+                    ${index === 0 ? 'scale-105' : ''} 
+                    transition-all duration-300 bg-gray-900">
                     <img alt="${movie.name}"
-                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url, 300, 70) : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`}"
-                        onerror="this.src='https://via.placeholder.com/320x180?text=No+Image'"
+                        class="w-full h-full object-cover object-center transition-transform duration-500"
+                        src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url || movie.poster_url, 300, 70) : `https://img.ophim.live/uploads/movies/${movie.thumb_url || movie.poster_url}`}"
+                        onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'"
                         loading="lazy" />
-                    ${index === 0 ? `
-                    <!-- Play Icon -->
-                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center transition-all duration-300">
-                        <span class="material-icons-round text-white text-2xl md:text-3xl opacity-90 drop-shadow-lg">play_circle</span>
-                    </div>
-                    ` : ''}
-                </div>
-                
-                <!-- Movie Info next to poster -->
-                <div class="flex flex-col justify-center min-w-0 pr-2">
-                    <p class="text-[11px] md:text-xs text-white font-semibold truncate mb-0.5 max-w-[120px] md:max-w-[150px]">${movie.name}</p>
-                    <p class="text-[9px] md:text-[10px] text-gray-400 truncate max-w-[120px] md:max-w-[150px]">${movie.origin_name || movie.name}</p>
-                    <div class="flex items-center gap-1.5 mt-0.5 text-[9px] md:text-[10px] text-gray-300">
-                        <span>${movie.year || 'N/A'}</span>
-                        ${movie.tmdb?.vote_average ? `
-                        <span>•</span>
-                        <span class="flex items-center gap-0.5 text-yellow-500 font-bold">
-                            <span class="material-icons-round text-[10px] md:text-xs">star</span>
-                            ${movie.tmdb.vote_average.toFixed(1)}
-                        </span>
-                        ` : ''}
-                    </div>
                 </div>
             </a>
         </div>

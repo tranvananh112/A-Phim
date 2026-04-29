@@ -1,11 +1,11 @@
-// Top Movies Hot Section
+// Top Movies Hot Section — New Premium Ranking Layout
 async function loadTopMovies() {
     const loading = document.getElementById('topMoviesLoading');
     const container = document.getElementById('topMoviesContainer');
 
     try {
-        // Lấy phim hot từ API - sử dụng phim mới cập nhật và sắp xếp theo view
-        const response = await fetch('https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=1', {
+        // Lấy 10 phim theo yêu cầu Top 10
+        const response = await fetch('https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=1&limit=10', {
             method: 'GET',
             headers: { 'accept': 'application/json' }
         });
@@ -13,9 +13,7 @@ async function loadTopMovies() {
         const data = await response.json();
 
         if (data.status === 'success' && data.data && data.data.items) {
-            // Lấy 10 phim đầu tiên (giả định là hot nhất)
-            const topMovies = data.data.items.slice(0, 10);
-            renderTopMovies(topMovies);
+            renderTopMovies(data.data.items);
         } else {
             loading.innerHTML = '<p class="text-gray-400">Không thể tải top phim</p>';
         }
@@ -34,83 +32,55 @@ function renderTopMovies(movies) {
 
     if (!container) return;
 
-    const movieLinks = JSON.parse(localStorage.getItem('movieLinks') || '{}');
-
     container.innerHTML = movies.map((movie, index) => {
         const rank = index + 1;
-        const isTop3 = rank <= 3;
-        const hasCustomLink = !!movieLinks[movie.slug];
-        const linkUrl = hasCustomLink ? `watch-simple.html?slug=${movie.slug}` : `movie-detail.html?slug=${movie.slug}`;
-
-        // Xác định kích thước card - giảm kích thước để gần nhau hơn
-        const cardWidth = isTop3 ? 'w-56' : 'w-48';
-        const rankClass = isTop3 ? 'rank-number-top text-7xl' : 'rank-number text-5xl';
-        const posterClass = isTop3 ? 'poster-top-glow' : 'border border-slate-800';
-        const titleClass = isTop3 ? 'text-primary drop-shadow-[0_0_2px_rgba(255,215,0,0.5)]' : 'group-hover:text-primary';
-
-        const hiddenUI = window.getHiddenMovieOverlay ? window.getHiddenMovieOverlay(movie.slug) : { badge: '', imgClass: '', containerClass: '' };
+        const thumb = movie.thumb_url || '';
+        const poster = movie.poster_url || '';
         
-        const imgTag = typeof imageOptimizer !== 'undefined'
-            ? imageOptimizer.createProgressiveImgTag({
-                originalUrl: movie.thumb_url
-                    ? (movie.thumb_url.startsWith('http') ? movie.thumb_url : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`)
-                    : '',
-                altText: movie.name,
-                extraClasses: `w-full h-full object-cover ${hiddenUI.imgClass}`,
-                extraAttrs: ''
-              })
-            : `<img alt="${movie.name}" class="w-full h-full object-cover ${hiddenUI.imgClass}" src="https://img.ophim.live/uploads/movies/${movie.thumb_url}" onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" loading="lazy" />`;
-
+        const posterUrl = thumb ? 
+            (thumb.startsWith('http') ? thumb : `https://img.ophim.live/uploads/movies/${thumb}`) : 
+            (poster ? (poster.startsWith('http') ? poster : `https://img.ophim.live/uploads/movies/${poster}`) : '');
+            
+        const optimizedUrl = (typeof imageOptimizer !== 'undefined' && (thumb || poster)) ? 
+            imageOptimizer.optimizeImageUrl(thumb || poster, 400, 80) : posterUrl;
+        
+        const detailUrl = `movie-detail.html?slug=${movie.slug}`;
+        
+        // Episode & Info Badges
+        const episodes = movie.episode_current || '';
+        
         return `
-            <div class="flex-none ${cardWidth} group snap-start relative transform hover:-translate-y-2 transition-transform duration-300 ${hiddenUI.containerClass}">
-                <a href="${linkUrl}">
-                    <div class="relative aspect-[2/3] overflow-hidden rounded-xl mb-4 cursor-pointer ${posterClass} img-progressive-wrap">
-                        ${imgTag}
-                        <div class="absolute inset-0 poster-overlay"></div>
+            <div class="ranking-item group" data-rank="${rank}">
+                <a href="${detailUrl}">
+                    <div class="ranking-poster-w">
+                        <img src="${optimizedUrl}" 
+                             alt="${movie.name}" 
+                             class="w-full h-full object-cover"
+                             onerror="this.onerror=null; this.src='https://via.placeholder.com/400x600?text=No+Poster'"
+                             loading="lazy" />
                         
-                        ${hiddenUI.badge}
-                        
-                        <!-- Top Badge -->
-                        <div class="absolute top-0 right-0 ${isTop3 ? 'bg-primary' : 'bg-primary/80'} text-black font-black px-3 py-1 rounded-bl-xl text-base shadow-lg ${hiddenUI.badge ? 'opacity-30' : ''}">
-                            TOP ${rank}
+                        <div class="ranking-badges-bottom">
+                            <span class="badge-pd">PĐ. ${episodes || 'HD'}</span>
+                            <span class="badge-lt">LT. ${episodes || 'Full'}</span>
                         </div>
-                        
-                        <!-- Episode Info -->
-                        <div class="absolute bottom-3 left-3 flex gap-2">
-                            ${movie.quality && !hiddenUI.badge ? `
-                            <span class="bg-black/60 backdrop-blur-md px-2 py-0.5 rounded text-[10px] font-bold border ${isTop3 ? 'border-primary/50 text-primary' : 'border-white/10'} uppercase">
-                                ${movie.quality}
-                            </span>` : ''}
-                            ${movie.episode_current ? `
-                            <span class="${isTop3 ? 'bg-primary/80 text-black' : 'bg-blue-500/80 text-white'} backdrop-blur-md px-2 py-0.5 rounded text-[10px] font-bold uppercase">
-                                ${movie.episode_current}
-                            </span>` : ''}
+
+                        <div class="ranking-icon-circle"><span class="material-icons-round">edit_note</span></div>
+
+                        <!-- Hover overlay -->
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-lg transform scale-50 group-hover:scale-100 transition-transform">
+                                <span class="material-icons-round text-black text-2xl">play_arrow</span>
+                            </div>
                         </div>
                     </div>
-                    
-                    <!-- Movie Info -->
-                    <div class="flex items-start gap-3 relative">
-                        <span class="${rankClass} font-black italic ${isTop3 ? '' : 'text-slate-500/50'} leading-none absolute -left-5 ${isTop3 ? '-top-16' : '-top-14'} z-10 drop-shadow-xl">
-                            ${rank}
-                        </span>
-                        <div class="space-y-1 ${isTop3 ? 'pl-10 pt-1' : 'pl-8'}">
-                            <h3 class="font-bold ${isTop3 ? 'text-base' : 'text-sm'} line-clamp-1 ${titleClass} transition-colors">
-                                ${movie.name}
-                            </h3>
-                            <p class="text-xs text-slate-300 line-clamp-1 italic">
-                                ${movie.origin_name || ''}
-                            </p>
-                            <div class="flex items-center gap-2 text-[10px] font-semibold text-slate-400 uppercase">
-                                <span class="${isTop3 ? 'bg-primary/20 border border-primary/30 text-primary' : 'bg-slate-800 text-slate-300'} px-1.5 py-0.5 rounded">
-                                    ${movie.lang || 'Vietsub'}
-                                </span>
-                                <span>• ${movie.year || 'N/A'}</span>
-                                ${movie.tmdb?.vote_average ? `
-                                <span class="flex items-center gap-0.5 text-yellow-500">
-                                    <span class="material-icons-round text-[10px]">star</span>
-                                    ${movie.tmdb.vote_average.toFixed(1)}
-                                </span>` : ''}
-                            </div>
+
+                    <!-- Bottom Info with Big Rank -->
+                    <div class="ranking-info-w">
+                        <div class="rank-big-number">${rank}</div>
+                        <div class="ranking-text-content">
+                            <h3 class="ranking-title">${movie.name}</h3>
+                            <p class="ranking-sub">${movie.origin_name || ''}</p>
+                            ${episodes ? `<p class="ranking-extra">Tập ${episodes}</p>` : ''}
                         </div>
                     </div>
                 </a>
@@ -119,7 +89,7 @@ function renderTopMovies(movies) {
     }).join('');
 }
 
-// Scroll buttons
+// Scroll logic
 function setupTopMoviesScroll() {
     const container = document.getElementById('topMoviesContainer');
     const leftBtn = document.getElementById('topMoviesScrollLeft');
@@ -127,17 +97,18 @@ function setupTopMoviesScroll() {
 
     if (!container || !leftBtn || !rightBtn) return;
 
-    leftBtn.addEventListener('click', () => {
-        container.scrollBy({ left: -300, behavior: 'smooth' });
-    });
-
-    rightBtn.addEventListener('click', () => {
-        container.scrollBy({ left: 300, behavior: 'smooth' });
-    });
+    leftBtn.onclick = () => container.scrollBy({ left: -container.clientWidth * 0.8, behavior: 'smooth' });
+    rightBtn.onclick = () => container.scrollBy({ left: container.clientWidth * 0.8, behavior: 'smooth' });
 }
 
-// Load on page load
+// Run
 document.addEventListener('DOMContentLoaded', () => {
     loadTopMovies();
     setupTopMoviesScroll();
 });
+
+// Bind for external access if needed
+window.scrollTopMovies = (dir) => {
+    const container = document.getElementById('topMoviesContainer');
+    if (container) container.scrollBy({ left: dir === 'right' ? 800 : -800, behavior: 'smooth' });
+};

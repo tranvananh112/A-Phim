@@ -151,10 +151,23 @@
         }
     </style>
 
+    <link rel="stylesheet" href="css/sticky-nav.css">
+    <link rel="stylesheet" href="css/nav-desktop-v2.css">
 </head>
 
 <body class="bg-background-dark text-white min-h-screen">
-
+    <!-- Ambient Background (7 Orbs for Full Coverage) -->
+    <div class="ambient-bg">
+        <div class="ambient-orb ambient-orb-1"></div>
+        <div class="ambient-orb ambient-orb-2"></div>
+        <div class="ambient-orb ambient-orb-3"></div>
+        <div class="ambient-orb ambient-orb-4"></div>
+        <div class="ambient-orb ambient-orb-5"></div>
+        <div class="ambient-orb ambient-orb-6"></div>
+        <div class="ambient-orb ambient-orb-7"></div>
+        <div class="ambient-noise"></div>
+        <div class="ambient-grain"></div>
+    </div>
     <!-- Modern Navigation -->
     <nav class="fixed top-0 w-full z-50 glass-effect border-b border-white/10 transition-all duration-300">
         <div class="container mx-auto px-6 h-16 flex items-center justify-between">
@@ -331,7 +344,7 @@
         </div>
     </main>
     <!-- Footer -->
-    <footer class="bg-[#1e202c] border-t border-white/5 py-12 relative overflow-hidden">
+    <footer class="bg-void border-t border-white/5 py-12 relative overflow-hidden ambient-section">
         <!-- Background pattern/logo graphic -->
         <div class="absolute right-0 top-1/2 -translate-y-1/2 opacity-5 pointer-events-none scale-150">
             <span class="material-icons-round text-[400px]">play_circle_outline</span>
@@ -440,6 +453,10 @@
     <script src="js/auth.js?v=6"></script>
     <script src="js/auth-modal.js?v=7"></script>
     <script src="js/user-ui.js?v=7"></script>
+    <script src="js/categories-dropdown.js"></script>
+    <script src="js/countries-dropdown.js"></script>
+    <script src="js/dropdown-hover-fix.js"></script>
+    <script src="js/sticky-nav.js"></script>
 </body>
 
 </html>

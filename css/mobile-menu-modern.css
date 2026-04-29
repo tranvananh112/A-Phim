@@ -10,12 +10,16 @@
     z-index: 9990;
     background: rgba(0, 0, 0, 0.6);
     opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 #mm-overlay.open {
     opacity: 1;
-    pointer-events: auto;
+    pointer-events: auto !important;
+    visibility: visible !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 /* DRAWER - trượt từ bên PHẢI vào */
@@ -152,7 +156,7 @@
 .mm-user-badge {
     font-size: 10px;
     font-weight: 700;
-    color: #FFD700;
+    color: #f59e0b;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     opacity: 0.9;
@@ -217,7 +221,7 @@
 }
 .mm-nav-full.mm-active {
     background: linear-gradient(90deg, rgba(255,215,0,0.18) 0%, rgba(255,215,0,0.04) 100%);
-    border-left: 3px solid #FFD700 !important;
+    border-left: 3px solid #f59e0b !important;
     box-shadow: inset 10px 0 20px -10px rgba(255,215,0,0.25), 0 2px 12px rgba(255,215,0,0.1);
     border: 1px solid rgba(255, 215, 0, 0.15);
 }
@@ -228,8 +232,8 @@
     color: rgba(170, 171, 173, 1);
     transition: color 0.2s;
 }
-.mm-nav-full.mm-active .mm-nav-icon { color: #FFD700 !important; }
-.mm-nav-full:hover .mm-nav-icon { color: #FFD700 !important; }
+.mm-nav-full.mm-active .mm-nav-icon { color: #f59e0b !important; }
+.mm-nav-full:hover .mm-nav-icon { color: #f59e0b !important; }
 
 /* Nút Phim/Thể Loại nổi bật dạng khối Glow */
 .mm-phim-btn {
@@ -313,7 +317,7 @@
     box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
 .mm-card-item:hover::before { opacity: 1; }
-.mm-card-item:hover .mm-card-icon { color: #FFD700; transform: scale(1.1); }
+.mm-card-item:hover .mm-card-icon { color: #f59e0b; transform: scale(1.1); }
 .mm-card-icon {
     font-size: 24px !important;
     color: rgba(170, 171, 173, 1);
@@ -374,6 +378,61 @@
 .mm-card-item.color-purple .mm-card-label { color: #fff; font-weight: 800; text-shadow: 0 2px 8px rgba(168,85,247,0.4); }
 .mm-card-item.color-purple:hover { border-color: rgba(168,85,247,0.8) !important; box-shadow: 0 0 25px rgba(168,85,247,0.3); }
 
+/* ============================================================
+   DROPDOWN PANEL NỀN XANH DƯƠNG (như hình)
+   Dùng cho mmPhimDrop và mmLoaiDrop
+   ============================================================ */
+
+/* Wrapper nền của dropdown panel mở rộng */
+.mm-dropdown-panel-blue {
+    background: linear-gradient(160deg, #1a3a6b 0%, #1e4d8c 40%, #163672 100%) !important;
+    border-radius: 14px;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+    padding: 8px;
+    margin-top: 4px;
+}
+
+/* Card items bên trong panel xanh */
+.mm-dropdown-panel-blue .mm-card-item {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 8px;
+    padding: 10px 12px;
+    gap: 6px;
+}
+
+.mm-dropdown-panel-blue .mm-card-item .mm-card-label {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 600;
+}
+
+.mm-dropdown-panel-blue .mm-card-item img {
+    flex-shrink: 0;
+}
+
+.mm-dropdown-panel-blue .mm-card-item:hover {
+    background: rgba(255, 255, 255, 0.14) !important;
+    border-color: rgba(255, 255, 255, 0.22) !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.mm-dropdown-panel-blue .mm-card-item:hover .mm-card-label {
+    color: #ffffff !important;
+}
+
+/* Scroll area của panel xanh - smooth scroll */
+.mm-dropdown-panel-blue-scroll {
+    max-height: 280px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.mm-dropdown-panel-blue-scroll::-webkit-scrollbar { width: 3px; }
+.mm-dropdown-panel-blue-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 4px; }
+.mm-dropdown-panel-blue-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border-radius: 4px; }
+
 /* Khám Phá - xanh lá */
 .mm-card-item.color-green {
     border: 1px solid rgba(16, 185, 129, 0.4) !important;
@@ -432,7 +491,7 @@
     margin-top: 20px;
     width: 100%;
     padding: 14px;
-    background: linear-gradient(135deg, #FFD700 0%, #d4af37 100%);
+    background: linear-gradient(135deg, #f59e0b 0%, #d4af37 100%);
     color: #3b2a00;
     font-weight: 900;
     font-size: 13px;
@@ -481,7 +540,7 @@
     border: none;
     cursor: pointer;
 }
-.mm-footer-link:hover { color: #FFD700; }
+.mm-footer-link:hover { color: #f59e0b; }
 .mm-footer-link.danger { color: rgba(255,115,81,0.6); }
 .mm-footer-link.danger:hover { color: #ff7351; }
 .mm-footer-link .material-symbols-outlined { font-size: 16px !important; }

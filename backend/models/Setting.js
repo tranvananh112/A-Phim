@@ -34,7 +34,18 @@ const SettingSchema = new mongoose.Schema({
         apiBase: { type: String, default: 'https://ophim1.com/v1/api' },
         apiSecondary: { type: String, default: 'https://ophim17.cc/_next/data/9QkyZ8-jLzIfTtyR2y41x' },
         enableMultipleSources: { type: Boolean, default: false },
-        heroThumbnails: { type: [Object], default: [] } 
+        heroThumbnails: { type: [Object], default: [] },
+        categoryBackgrounds: {
+            type: Object,
+            default: {
+                "danh-sach/phim-bo": "",
+                "danh-sach/phim-moi-cap-nhat": "",
+                "the-loai/hanh-dong": "",
+                "the-loai/tinh-cam": "",
+                "the-loai/hai-huoc": "",
+                "danh-sach/hoat-hinh": ""
+            }
+        }
     },
     security: {
         enable2FA: { type: Boolean, default: false },

@@ -14,7 +14,7 @@
             const data = await movieAPI.getMoviesFromMultipleSources(1, 'kinh-di');
 
             if (data && data.status === 'success' && data.data && data.data.items) {
-                const movies = data.data.items.slice(0, 15);
+                const movies = data.data.items.slice(0, 20);
                 renderHorrorBanner(movies[0], movies);
             } else {
                 console.error('[Horror] Invalid data structure:', data);
@@ -138,7 +138,7 @@
             const hiddenUI = window.getHiddenMovieOverlay ? window.getHiddenMovieOverlay(movie.slug) : { badge: '', imgClass: '', containerClass: '' };
             const isActive = index === activeIndex;
             return `
-                                <div class="flex-shrink-0 ${isActive ? 'w-24 h-32 md:w-28 md:h-40 horror-thumbnail-active' : 'w-20 h-28 md:w-24 md:h-36 opacity-60'} rounded-xl overflow-hidden horror-thumbnail cursor-pointer transition-all duration-300 relative ${hiddenUI.containerClass}"
+                                <div class="flex-shrink-0 ${isActive ? 'w-20 h-28 md:w-24 md:h-36 horror-thumbnail-active' : 'w-16 h-24 md:w-20 md:h-32 opacity-60'} rounded-xl overflow-hidden horror-thumbnail cursor-pointer transition-all duration-300 relative ${hiddenUI.containerClass}"
                                      data-movie-index="${index}">
                                     <img 
                                         alt="${movie.name || 'Phim'}" 
@@ -166,7 +166,7 @@
             if (!mobileThumb) { mobileThumb = 'https://via.placeholder.com/60x90?text=Phim'; }
             const isActiveMobile = index === activeIndex;
             return `
-                            <div class="flex-shrink-0 ${isActiveMobile ? 'w-14 h-20 horror-thumbnail-active' : 'w-12 h-16 opacity-50'} rounded-lg overflow-hidden horror-thumbnail cursor-pointer transition-all duration-300" data-movie-index="${index}">
+                            <div class="flex-shrink-0 ${isActiveMobile ? 'w-12 h-16 horror-thumbnail-active' : 'w-10 h-14 opacity-50'} rounded-lg overflow-hidden horror-thumbnail cursor-pointer transition-all duration-300" data-movie-index="${index}">
                                 <img alt="${movie.name || 'Phim'}" class="w-full h-full object-cover" src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url || movie.poster_url, 150, 65) : mobileThumb}" onerror="this.src='https://via.placeholder.com/60x90?text=No'">
                             </div>`;
         }).join('')}

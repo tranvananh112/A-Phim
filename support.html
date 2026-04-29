@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html class="dark" lang="vi">
 
 <head>
@@ -107,10 +107,38 @@
         }
     </style>
 
+    <link rel="stylesheet" href="css/nav-desktop-v2.css?v=2">
+
+    <!-- ===== FONTS + ICONS (dong bo tu index.html) ===== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Google Fonts: Space Grotesk + Be Vietnam Pro (non-blocking) -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Be+Vietnam+Pro:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Be+Vietnam+Pro:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
+    <!-- Material Icons (non-blocking) -->
+    <link rel="preload" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons" rel="stylesheet"></noscript>
+    <!-- Base CSS -->
+    <link rel="stylesheet" href="css/tailwind.min.css?v=1">
+    <link rel="stylesheet" href="css/design-tokens.css?v=1">
+    <link rel="stylesheet" href="css/ambient-bg.css?v=4">
+    <link rel="stylesheet" href="css/material-icons-fix.css?v=2">
+    <!-- ===== END FONTS ===== -->
 </head>
 
 <body class="bg-[#141118] text-slate-100 min-h-screen flex flex-col">
-
+    <!-- Ambient Background (7 Orbs for Full Coverage) -->
+    <div class="ambient-bg">
+        <div class="ambient-orb ambient-orb-1"></div>
+        <div class="ambient-orb ambient-orb-2"></div>
+        <div class="ambient-orb ambient-orb-3"></div>
+        <div class="ambient-orb ambient-orb-4"></div>
+        <div class="ambient-orb ambient-orb-5"></div>
+        <div class="ambient-orb ambient-orb-6"></div>
+        <div class="ambient-orb ambient-orb-7"></div>
+        <div class="ambient-noise"></div>
+        <div class="ambient-grain"></div>
+    </div>
     <!-- Header -->
     <header
         class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#302839] bg-[#141118]/95 backdrop-blur-md px-4 py-3 lg:px-10">
@@ -313,7 +341,7 @@
         </div>
     </main>
     <!-- Footer -->
-    <footer class="bg-[#1e202c] border-t border-white/5 py-12 relative overflow-hidden">
+    <footer class="bg-void border-t border-white/5 py-12 relative overflow-hidden ambient-section">
         <!-- Background pattern/logo graphic -->
         <div class="absolute right-0 top-1/2 -translate-y-1/2 opacity-5 pointer-events-none scale-150">
             <span class="material-icons-round text-[400px]">play_circle_outline</span>
@@ -646,6 +674,9 @@
     </script>
     <!-- ====== End Chat Widget ====== -->
 <script src="js/nav-active-indicator.js?v=1"></script>
+    <script src="js/categories-dropdown.js?v=2"></script>
+    <script src="js/countries-dropdown.js?v=3"></script>
+    <script src="js/dropdown-hover-fix.js?v=2"></script>
 </body>
 
 </html>
