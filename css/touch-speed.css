@@ -155,7 +155,7 @@ body {
 }
 
 /* CÃ¡c container cÃ³ scroll ngang */
-.scrollbar-hide,
+.scrollbar-hide, .custom-scrollbar, [class*="overflow-x-auto"],
 #mm-drawer-scroll,
 #episode-list {
     -webkit-overflow-scrolling: touch;
@@ -196,4 +196,11 @@ body {
 @keyframes progress-shimmer {
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
+}
+
+/* Fix l?i rung l?c / hi?n toàn b? khung trên mobile khi vu?t ngang */
+[class*="overflow-x-auto"] {
+    touch-action: pan-x pan-y;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
 }

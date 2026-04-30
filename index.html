@@ -13,7 +13,7 @@
 
     <!-- ⚡ TOUCH SPEED — Load NGAY, không defer/async -->
     <!-- Loại bỏ 300ms tap delay + instant visual feedback -->
-    <link rel="stylesheet" href="css/touch-speed.css?v=2">
+    <link rel="stylesheet" href="css/touch-speed.css?v=2?v=2">
     <script src="js/touch-speed.js?v=1"></script>
 
     <!-- Prefetch trang phổ biến ngay từ đầu -->
@@ -461,7 +461,7 @@
     <link rel="stylesheet" href="css/interests-section.css?v=1">
     <link rel="stylesheet" href="css/top-comments.css?v=5">
     <link rel="stylesheet" href="css/mobile-menu-modern.css?v=6">
-    <link rel="stylesheet" href="css/mobile-viewport-fix.css?v=7">
+    <link rel="stylesheet" href="css/mobile-viewport-fix.css?v=2?v=7">
 
     <style>
         /* Action Premium Overlay Layout (Image 2 Style) */
@@ -471,6 +471,7 @@
             flex-shrink: 0;
             margin-bottom: 20px;
             transition: transform 0.3s ease;
+            scroll-snap-align: start;
         }
         .action-premium-card:hover {
             transform: translateY(-5px);
@@ -1056,7 +1057,7 @@
 
                 <!-- Movies Container -->
                 <div id="topMoviesContainer"
-                    class="hidden flex gap-6 overflow-x-auto custom-scrollbar pb-8 snap-x items-end px-4 -mx-4 py-4 -my-4">
+                    class="hidden flex gap-5 md:gap-7 overflow-x-auto scrollbar-hide pb-8 snap-x snap-mandatory items-end px-4 -mx-4 py-4 -my-4">
                     <!-- Movies will be loaded here -->
                 </div>
             </div>
@@ -1101,7 +1102,7 @@
 
                 <!-- Movies Container -->
                 <div id="animationContainer"
-                    class="hidden flex gap-5 md:gap-7 overflow-x-auto scrollbar-hide pb-8 snap-x px-4 -mx-4 py-4 -my-4">
+                    class="hidden flex gap-5 md:gap-7 overflow-x-auto scrollbar-hide pb-8 snap-x snap-mandatory items-end px-4 -mx-4 py-4 -my-4">
                     <!-- Movies will be loaded here -->
                 </div>
             </div>
@@ -1223,7 +1224,7 @@
             </div>
 
             <!-- Movies Container - Horizontal Scroll -->
-            <div id="actionMoviesContainer" class="hidden flex gap-4 overflow-x-auto pb-4 scrollbar-hide px-4 -mx-4 py-4 -my-4">
+            <div id="actionMoviesContainer" class="hidden flex gap-5 md:gap-7 overflow-x-auto scrollbar-hide pb-8 snap-x snap-mandatory items-end px-4 -mx-4 py-4 -my-4">
                 <!-- Movies will be loaded here -->
             </div>
         </div>
@@ -1259,7 +1260,7 @@
 
                 <!-- Movies Container -->
                 <div id="adventureContainer"
-                    class="hidden flex gap-5 md:gap-7 overflow-x-auto scrollbar-hide pb-8 snap-x px-4 -mx-4 py-4 -my-4">
+                    class="hidden flex gap-5 md:gap-7 overflow-x-auto scrollbar-hide pb-8 snap-x snap-mandatory items-end px-4 -mx-4 py-4 -my-4">
                     <!-- Movies will be loaded here -->
                 </div>
             </div>
@@ -1282,7 +1283,7 @@
                 </div>
 
                 <!-- Ranking Horizontal Scroll -->
-                <div id="mythologyRankingContainer" class="hidden flex gap-6 overflow-x-auto pb-12 pt-4 scrollbar-hide px-4 -mx-4 py-4 -my-4">
+                <div id="mythologyRankingContainer" class="hidden flex gap-5 md:gap-7 overflow-x-auto scrollbar-hide pb-8 snap-x snap-mandatory items-end px-4 -mx-4 py-4 -my-4">
                     <!-- Content will be injected via JS -->
                 </div>
             </div>
@@ -1314,7 +1315,7 @@
             </div>
 
             <!-- Movies Horizontal Scroll -->
-            <div id="vietnamMoviesGrid" class="hidden flex gap-4 overflow-x-auto pb-4 scrollbar-hide px-4 -mx-4 py-4 -my-4">
+            <div id="vietnamMoviesGrid" class="hidden flex gap-5 md:gap-7 overflow-x-auto scrollbar-hide pb-8 snap-x snap-mandatory items-end px-4 -mx-4 py-4 -my-4">
                 <!-- Movies will be loaded here -->
             </div>
         </div>
@@ -1350,7 +1351,7 @@
             </div>
 
             <div id="comingSoonContainer"
-                class="hidden flex gap-6 overflow-x-auto custom-scrollbar pb-8 snap-x items-end px-4 -mx-4 py-4 -my-4">
+                class="hidden flex gap-5 md:gap-7 overflow-x-auto scrollbar-hide pb-8 snap-x snap-mandatory items-end px-4 -mx-4 py-4 -my-4">
                 <!-- Content will be injected here via coming-soon.js -->
             </div>
         </div>
@@ -1392,7 +1393,7 @@
             </div>
 
             <!-- Movies Horizontal Scroll -->
-            <div id="latestMoviesGrid" class="hidden flex gap-4 overflow-x-auto pb-4 scrollbar-hide px-4 -mx-4 py-4 -my-4">
+            <div id="latestMoviesGrid" class="hidden flex gap-5 md:gap-7 overflow-x-auto scrollbar-hide pb-8 snap-x snap-mandatory items-end px-4 -mx-4 py-4 -my-4">
                 <!-- Movies will be loaded here -->
             </div>
         </div>
@@ -1421,7 +1422,7 @@
             <div id="romanceLoading" class="text-center py-8">
                 <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mx-auto mb-4"></div>
             </div>
-            <div id="romanceContainer" class="hidden flex gap-4 overflow-x-auto pb-4 scrollbar-hide px-4 -mx-4 py-4 -my-4"></div>
+            <div id="romanceContainer" class="hidden flex gap-5 md:gap-7 overflow-x-auto scrollbar-hide pb-8 snap-x snap-mandatory items-end px-4 -mx-4 py-4 -my-4"></div>
         </div>
     </section>
 
@@ -1478,7 +1479,7 @@
             <div id="comedyLoading" class="text-center py-8">
                 <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
             </div>
-            <div id="comedyContainer" class="hidden flex gap-4 overflow-x-auto pb-4 scrollbar-hide px-4 -mx-4 py-4 -my-4"></div>
+            <div id="comedyContainer" class="hidden flex gap-5 md:gap-7 overflow-x-auto scrollbar-hide pb-8 snap-x snap-mandatory items-end px-4 -mx-4 py-4 -my-4"></div>
         </div>
     </section>
 
@@ -1504,7 +1505,7 @@
             <div id="dramaLoading" class="text-center py-8">
                 <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto mb-4"></div>
             </div>
-            <div id="dramaContainer" class="hidden flex gap-4 overflow-x-auto pb-4 scrollbar-hide px-4 -mx-4 py-4 -my-4"></div>
+            <div id="dramaContainer" class="hidden flex gap-5 md:gap-7 overflow-x-auto scrollbar-hide pb-8 snap-x snap-mandatory items-end px-4 -mx-4 py-4 -my-4"></div>
         </div>
 
     <!-- TOP 10 SOFAFLIX -->
@@ -1542,7 +1543,7 @@
             </div>
 
             <!-- Ranking Horizontal Scroll -->
-            <div id="sofaflixContainer" class="hidden flex gap-6 overflow-x-auto pb-12 pt-4 scrollbar-hide px-4 -mx-4 py-4 -my-4">
+            <div id="sofaflixContainer" class="hidden flex gap-5 md:gap-7 overflow-x-auto scrollbar-hide pb-8 snap-x snap-mandatory items-end px-4 -mx-4 py-4 -my-4">
                 <!-- Content will be injected via JS -->
             </div>
         </div>

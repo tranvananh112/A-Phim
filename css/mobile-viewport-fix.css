@@ -263,3 +263,11 @@ select option {
     display: none !important;
 }
 
+
+/* Fix l?i rung l?c / bôi den text khi vu?t ngang trên mobile */
+[class*="overflow-x-auto"] {
+    -webkit-user-select: none;
+    user-select: none;
+    /* Không cho phép drag th? con ra ngoài gây rác giao di?n */
+    -webkit-user-drag: none;
+}
