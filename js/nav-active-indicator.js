@@ -1,34 +1,101 @@
 /**
  * nav-active-indicator.js
- * Tự động xác định trang hiện tại, tìm nav item tương ứng
- * và hiển thị vùng vàng (indicator) đúng vị trí, đúng trung tâm.
+ * Tự động xác định trang hiện tại và:
+ * 1. Fix active class cho hệ thống nav-flat-link (v2, dùng ở phim-theo-quoc-gia, danh-sach, v.v.)
+ * 2. Hiển thị indicator vàng (sliding pill) cho hệ thống nav-item cũ
  */
 (function () {
     'use strict';
 
-    // Map: pathname pattern -> index trong navLinks[]
-    // Thứ tự navLinks: [0]=Trang chủ, [1]=Phim(btn), [2]=Danh Sách(btn), [3]=Thể Loại(btn), [4]=Khám phá, [5]=Gói cước, [6]=🔞 Phim X
+    // ─── Bảng mapping tên file → thứ tự item (0-indexed) ───────────────────────
+    // nav-flat-link order: [0]=Trang Chủ, [1]=Phim(btn), [2]=Danh Sách(btn),
+    //                      [3]=Thể Loại(btn), [4]=Khám Phá, [5]=Gói Cước, [6]=Phim X
+    // nav-item order (cũ): giống trên
     const PAGE_MAP = {
         'index.html': 0,
-        '': 0,           // root
-        'phim-theo-quoc-gia.html': 1, // Phim
-        'phim-x.html': 6,
+        '': 0,
+        'phim-theo-quoc-gia.html': 1,
+        'hanh-dong.html': 1,
+        'filter.html': 1,
         'danh-sach.html': 2,
         'categories.html': 3,
         'search.html': 4,
         'pricing.html': 5,
         'support.html': 5,
-        'watch.html': -1,       // -1 = không highlight item nào
+        'phim-x.html': 6,
+        // Trang không cần highlight
+        'watch.html': -1,
         'movie-detail.html': -1,
         'login.html': -1,
         'register.html': -1,
         'profile.html': -1,
+        'payment.html': -1,
+        'partner.html': -1,
     };
 
-    function initIndicator() {
-        // Tìm div pill container (flex gap-1 bg-white/5...) bên trong desktop nav wrapper
-        // Thử nhiều selector khác nhau vì Tailwind class dùng ký tự đặc biệt
+    /** Xác định index active dựa trên URL hiện tại */
+    function getActiveIndex() {
+        const pathname = window.location.pathname;
+        const currentPage = pathname.split('/').pop() || '';
+
+        let idx = PAGE_MAP[currentPage];
+        if (idx !== undefined) return idx;
+
+        // Fallback pattern match
+        if (pathname.includes('danh-sach')) return 2;
+        if (pathname.includes('categories')) return 3;
+        if (pathname.includes('search')) return 4;
+        if (pathname.includes('pricing')) return 5;
+        if (pathname.includes('phim-theo-quoc-gia') || pathname.includes('hanh-dong') || pathname.includes('filter')) return 1;
+        if (pathname.includes('phim-x')) return 6;
+        if (pathname === '/' || pathname === '/index.html') return 0;
+        return -1;
+    }
+
+    // ─── Fix 1: Hệ thống nav-flat-link (v2) ─────────────────────────────────────
+    function fixNavFlatLink() {
+        // Tìm nav-links container (custom element hoặc div chứa nav-flat-link)
+        const navLinksEl = document.querySelector('nav-links');
+        if (!navLinksEl) return;
+
+        const activeIndex = getActiveIndex();
+
+        // Xóa tất cả active hiện tại
+        navLinksEl.querySelectorAll('.nav-flat-link.active').forEach(el => {
+            el.classList.remove('active');
+        });
+
+        if (activeIndex === -1) return;
+
+        // Lấy các nav-flat-link trực tiếp (bao gồm cả a và button là con trực tiếp,
+        // hoặc button bên trong .nav-flat-dropdown)
+        // Thứ tự: Trang Chủ(a), div.nav-flat-dropdown>button[Phim],
+        //         div.nav-flat-dropdown>button[Danh Sách], div.nav-flat-dropdown>button[Thể Loại],
+        //         a[Khám Phá], a[Gói Cước], a[Phim X]
+        const allNavItems = [];
+
+        for (const child of navLinksEl.children) {
+            if (child.classList.contains('nav-flat-link')) {
+                // Direct <a> link
+                allNavItems.push(child);
+            } else if (child.classList.contains('nav-flat-dropdown')) {
+                // Dropdown: lấy button bên trong
+                const btn = child.querySelector(':scope > button.nav-flat-link');
+                if (btn) allNavItems.push(btn);
+            }
+        }
+
+        const target = allNavItems[Math.min(activeIndex, allNavItems.length - 1)];
+        if (target) {
+            target.classList.add('active');
+        }
+    }
+
+    // ─── Fix 2: Hệ thống nav-item cũ + sliding pill indicator ────────────────────
+    function initNavItemIndicator() {
         let navContainer = null;
+
+        // Tìm container chứa nav-item
         const selectors = [
             'nav .hidden.lg\\:flex > div',
             'nav [class*="hidden"][class*="lg"] > div',
@@ -40,9 +107,9 @@
                     navContainer = el;
                     break;
                 }
-            } catch (e) { /* ignore invalid selector */ }
+            } catch (e) { /* ignore */ }
         }
-        // Fallback: tìm thủ công
+
         if (!navContainer) {
             const allDivs = document.querySelectorAll('nav div');
             for (const div of allDivs) {
@@ -58,32 +125,13 @@
         const navLinks = navContainer.querySelectorAll('.nav-item');
         if (!navLinks || navLinks.length === 0) return;
 
-        // Xác định trang hiện tại
-        const pathname = window.location.pathname;
-        const currentPage = pathname.split('/').pop() || '';
-
-        let activeIndex = PAGE_MAP[currentPage];
-
-        // Fallback: quét qua tên file
-        if (activeIndex === undefined) {
-            if (pathname.includes('danh-sach')) activeIndex = 2;
-            else if (pathname.includes('categories')) activeIndex = 3;
-            else if (pathname.includes('search')) activeIndex = 4;
-            else if (pathname.includes('pricing')) activeIndex = 5;
-            else if (pathname.includes('phim-theo-quoc-gia') || pathname.includes('hanh-dong') || pathname.includes('filter')) activeIndex = 1;
-            else if (pathname.includes('phim-x')) activeIndex = 6;
-            else if (pathname === '/' || pathname === '/index.html') activeIndex = 0;
-            else activeIndex = -1;
-        }
-
-        // Không highlight gì nếu activeIndex = -1
+        const activeIndex = getActiveIndex();
         if (activeIndex === -1) return;
 
-        // Clamp in case trang mới được thêm vào
         const activeLink = navLinks[Math.min(activeIndex, navLinks.length - 1)];
         if (!activeLink) return;
 
-        // Tạo indicator nếu chưa có
+        // Tạo pill indicator
         let indicator = navContainer.querySelector('.nav-slide-indicator');
         if (!indicator) {
             indicator = document.createElement('div');
@@ -101,45 +149,28 @@
             navContainer.insertBefore(indicator, navContainer.firstChild);
         }
 
-        // Đặt z-index cho nav items
         navLinks.forEach(link => {
             link.style.position = 'relative';
             link.style.zIndex = '1';
         });
 
-        /**
-         * Tính vị trí indicator bằng cách kết hợp getBoundingClientRect() và toán khử scale,
-         * bảo đảm độ chính xác tới hàng thập phân (sub-pixel), giúp vùng vàng LUÔN vào đúng 
-         * giữa chữ (centered) không bị lệch vì làm tròn số.
-         */
         function placeIndicator(target, animate) {
             const rect = target.getBoundingClientRect();
             const containerRect = navContainer.getBoundingClientRect();
-            
-            // Lấy kích thước layout chưa scale của container
             const offsetWidth = navContainer.offsetWidth;
             const offsetHeight = navContainer.offsetHeight;
-            
-            // Kích thước visual (sau scale) chia kích thước layout => tìm ra hệ số scale thực tế
             const scaleX = offsetWidth > 0 ? (containerRect.width / offsetWidth) : 1;
             const scaleY = offsetHeight > 0 ? (containerRect.height / offsetHeight) : 1;
-            
-            // Khử scale cho mọi đại lượng, đưa về toạ độ pixel thực trong container
             const left = (rect.left - containerRect.left) / scaleX;
             const top = (rect.top - containerRect.top) / scaleY;
             const width = rect.width / scaleX;
             const height = rect.height / scaleY;
-            
-            // Container có thể có border (ví dụ 1px), cần offset thêm để left/top khớp hệ toạ độ padding-box
             const computedStyle = window.getComputedStyle(navContainer);
             const borderLeft = parseFloat(computedStyle.borderLeftWidth) || 0;
             const borderTop = parseFloat(computedStyle.borderTopWidth) || 0;
 
-            if (!animate) {
-                indicator.style.transition = 'none';
-            } else {
-                indicator.style.transition = '';
-            }
+            if (!animate) indicator.style.transition = 'none';
+            else indicator.style.transition = '';
 
             indicator.style.width = width + 'px';
             indicator.style.height = height + 'px';
@@ -148,40 +179,22 @@
             indicator.style.opacity = '1';
 
             if (!animate) {
-                // Force reflow để huỷ transition tức thì
                 requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        indicator.style.transition = '';
-                    });
+                    requestAnimationFrame(() => { indicator.style.transition = ''; });
                 });
             }
         }
 
-        // Hover: di chuyển indicator theo chuột
         navLinks.forEach(link => {
             link.addEventListener('mouseenter', () => placeIndicator(link, true));
         });
-
-        // Khi chuột rời container: quay về active item
         navContainer.addEventListener('mouseleave', () => placeIndicator(activeLink, true));
 
-        // Initial placement (no animation) - wait for layout
-        function setInitial() {
-            placeIndicator(activeLink, false);
-        }
-
-        // Chạy ngay
-        requestAnimationFrame(setInitial);
-
-        // Chạy lại sau khi font load xong (tránh bị lệch do font chưa render)
+        requestAnimationFrame(() => placeIndicator(activeLink, false));
         if (document.fonts && document.fonts.ready) {
             document.fonts.ready.then(() => placeIndicator(activeLink, false));
         }
-
-        // Chạy lại sau khi trang load hoàn tất
         window.addEventListener('load', () => requestAnimationFrame(() => placeIndicator(activeLink, false)));
-
-        // Chạy lại khi resize
         let resizeTimer;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimer);
@@ -189,10 +202,15 @@
         });
     }
 
-    // Khởi chạy
+    // ─── Bootstrap ───────────────────────────────────────────────────────────────
+    function init() {
+        fixNavFlatLink();       // Fix active class cho nav-flat-link (v2)
+        initNavItemIndicator(); // Sliding pill cho nav-item (v1 cũ)
+    }
+
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initIndicator);
+        document.addEventListener('DOMContentLoaded', init);
     } else {
-        initIndicator();
+        init();
     }
 })();
