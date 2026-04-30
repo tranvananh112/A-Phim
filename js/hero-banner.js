@@ -370,11 +370,9 @@ function renderThumbnails(movies) {
     if (!thumbnailsContainer || !Array.isArray(movies) || movies.length === 0) return;
 
     thumbnailsContainer.innerHTML = movies.map((movie, index) => `
-        <div class="relative flex-shrink-0 group cursor-pointer ${index === 0 ? 'active-hero-thumb' : 'opacity-60'} hover:opacity-100 transition-all duration-300 snap-start">
+        <div class="relative flex-shrink-0 group cursor-pointer ${index === 0 ? 'active-hero-thumb' : ''} hover:scale-105 transition-all duration-300 snap-start">
             <a href="movie-detail.html?slug=${movie.slug}" class="block">
-                <div class="w-14 md:w-16 lg:w-20 aspect-[2/3] rounded-lg overflow-hidden 
-                    ${index === 0 ? 'scale-105' : ''} 
-                    transition-all duration-300 bg-gray-900">
+                <div class="w-14 md:w-16 lg:w-20 aspect-[2/3] rounded-lg overflow-hidden transition-all duration-300 bg-gray-900">
                     <img alt="${movie.name}"
                         class="w-full h-full object-cover object-center transition-transform duration-500"
                         src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url || movie.poster_url, 300, 70) : `https://img.ophim.live/uploads/movies/${movie.thumb_url || movie.poster_url}`}"

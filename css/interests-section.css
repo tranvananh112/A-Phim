@@ -66,23 +66,15 @@
     transform: scale(1.1);
 }
 
+/* Overlay fade đáy - Disabled for brightness as requested */
 .interest-card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(5, 5, 8, 0.5) 0%, rgba(5, 5, 8, 0.1) 60%, transparent 100%);
-    z-index: 2;
+    display: none;
 }
 
 /* Color Tint Overlay - Standardized GOLD tint */
+/* Color Tint Overlay - Disabled for brightness */
 .interest-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(232, 185, 79, 0.1), transparent);
-    opacity: 0.3;
-    z-index: 3;
-    transition: opacity 0.3s ease;
+    display: none;
 }
 
 .interest-card:hover::before {
