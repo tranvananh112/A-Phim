@@ -3,11 +3,11 @@
 }
 
 .horror-banner-gradient {
-    background: linear-gradient(90deg, rgba(5, 5, 8, 0.85) 15%, transparent 60%) !important;
+    background: linear-gradient(90deg, rgba(5, 5, 8, 0.45) 15%, transparent 60%) !important;
 }
 
 .horror-banner-overlay {
-    background: linear-gradient(0deg, rgba(5, 5, 8, 0.90) 5%, transparent 40%) !important;
+    background: linear-gradient(0deg, rgba(5, 5, 8, 0.50) 5%, transparent 40%) !important;
 }
 
 .horror-glass-tag {

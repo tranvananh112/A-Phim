@@ -23,16 +23,16 @@
     ) !important;
 }
 
-/* ── Bottom fade (hòa quyện với section bên dưới) ── */
+/* ── Bottom fade (hòa quyện với section bên dưới) - Reduced for brightness ── */
 .hero-bottom-gradient {
     background: linear-gradient(
         to top,
         var(--bg-deep) 0%,           /* Màu xám Slate chính */
-        rgba(42, 46, 57, 0.95) 15%,
-        rgba(42, 46, 57, 0.60) 40%,
+        rgba(42, 46, 57, 0.50) 15%,
+        rgba(42, 46, 57, 0.20) 40%,
         transparent 100%
     ) !important;
-    height: 40% !important; /* Tăng độ cao của gradient để tràn xuống */
+    height: 20% !important; /* Giảm độ cao để không đè lên thumbnails bên dưới */
 }
 
 /* ── Top darkening ── */
@@ -237,13 +237,13 @@
         display: none; /* Ẩn thumbnails trên mobile để save space */
     }
 
-    /* Mobile — gradient từ dưới đẩy lên mạnh hơn */
+    /* Mobile — gradient từ dưới đẩy lên - Reduced for brightness */
     .hero-bottom-gradient {
         background: linear-gradient(
             to top,
-            rgba(5, 5, 8, 1.00)  0%,
-            rgba(5, 5, 8, 0.96)  30%,
-            rgba(5, 5, 8, 0.60)  65%,
+            rgba(5, 5, 8, 0.85)  0%,
+            rgba(5, 5, 8, 0.40)  30%,
+            rgba(5, 5, 8, 0.10)  65%,
             transparent          100%
         ) !important;
     }
