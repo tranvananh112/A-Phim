@@ -247,6 +247,17 @@
             transparent          100%
         ) !important;
     }
+
+    /* Mobile: thumbnail to hơn để dễ tap */
+    .hero-thumb-item .hero-thumb-poster {
+        width: 56px !important;
+    }
+
+    /* Touch hint: cho phép scroll ngang trong thumbnail strip */
+    #heroThumbnails {
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-x;
+    }
 }
 
 /* Font for hero title - Responsive: Different fonts for mobile and desktop */
@@ -266,4 +277,116 @@
         font-weight: 600;
         letter-spacing: 0.01em;
     }
+}
+
+/* ================================================================
+   A PHIM — Hero Banner v10 — Smooth Slide Transitions
+   ================================================================ */
+
+/* ── Hero Image — base transition ── */
+#heroImage {
+    will-change: opacity, transform;
+    transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Fade OUT: ảnh mờ dần + scale nhẹ ra ngoài */
+#heroImage.hero-img-out {
+    opacity: 0.06 !important;
+    transform: scale(1.04) !important;
+    transition: opacity 0.16s cubic-bezier(0.55, 0, 1, 0.45),
+                transform 0.16s cubic-bezier(0.55, 0, 1, 0.45) !important;
+}
+
+/* Fade IN: ảnh sáng dần + scale về đúng vị trí */
+#heroImage.hero-img-in {
+    opacity: 1 !important;
+    transform: scale(1.05) !important;
+    transition: opacity 0.40s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.40s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* ── Hero Content Text — base ── */
+#heroContent {
+    will-change: opacity, transform;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* Slide + fade OUT */
+#heroContent.hero-content-out {
+    opacity: 0 !important;
+    transform: translateY(10px) !important;
+    transition: opacity 0.14s ease,
+                transform 0.14s ease !important;
+}
+
+/* Slide + fade IN — nhanh hơn, không delay */
+#heroContent.hero-content-in {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    transition: opacity 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.38s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* ── Thumbnail Item — Base ── */
+.hero-thumb-item {
+    position: relative;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                opacity 0.3s ease,
+                border-color 0.3s ease,
+                box-shadow 0.3s ease;
+    opacity: 0.58;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.hero-thumb-item:hover {
+    opacity: 0.88;
+    transform: scale(1.06) translateY(-4px);
+    border-color: rgba(242, 242, 13, 0.45);
+}
+
+.hero-thumb-item:focus-visible {
+    border-color: rgba(242, 242, 13, 0.7);
+    box-shadow: 0 0 0 3px rgba(242, 242, 13, 0.25);
+}
+
+/* ── Thumbnail Item — Active (phim đang hiển thị trên Banner) ── */
+.hero-thumb-item.hero-thumb-active {
+    opacity: 1 !important;
+    transform: scale(1.06) translateY(-3px) !important;
+    border-color: #f2f20d !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45) !important;
+}
+
+/* Glow ring — đã tắt, chỉ giữ viền vàng đơn giản */
+.hero-thumb-item.hero-thumb-active .hero-thumb-glow {
+    display: none;
+}
+
+/* Poster ảnh trong thumbnail */
+.hero-thumb-poster {
+    transition: transform 0.3s ease;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.hero-thumb-item:hover .hero-thumb-poster {
+    transform: scale(1.04);
+}
+
+
+
+
+/* ── Cursor grab khi kéo ── */
+main.hero-grabbing {
+    cursor: grabbing !important;
+}
+main.hero-grabbing * {
+    cursor: grabbing !important;
+    pointer-events: none;
 }
