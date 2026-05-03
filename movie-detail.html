@@ -3,10 +3,11 @@
 
 <head>
     <!-- TOUCH SPEED -->
-    <link rel="stylesheet" href="css/touch-speed.css?v=8?v=8">
-    <script src="js/touch-speed.js?v=8"></script>
-    <link rel="prefetch" href="index.html" as="document">
-    <link rel="prefetch" href="search.html" as="document">
+    <link rel="stylesheet" href="css/touch-speed.css?v=9">
+    <script src="js/touch-speed.js?v=9"></script>
+    <!-- Tắt Prefetch để tránh lỗi 503 -->
+    <!-- <link rel="prefetch" href="index.html" as="document"> -->
+    <!-- <link rel="prefetch" href="search.html" as="document"> -->
 
     <style id="aphim-tawk-hide-guard">
         /* A Phim: Decisive Tawk.to Hide Guard - Prevent FOUC on Mobile/Desktop */
@@ -15,7 +16,7 @@
             width: 0 !important; height: 0 !important; z-index: -9999 !important; position: fixed !important; left: -9999px !important;
         }
     </style>
-    <script src="js/chat-init-guard.js?v=8"></script>
+    <script src="js/chat-init-guard.js?v=9"></script>
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1617450652619669"
         crossorigin="anonymous"></script>
@@ -549,9 +550,9 @@
 
 <script src="js/ads-manager.js?v=8" defer></script>
     <!-- ====== Firebase SDK (Compat CDN) ====== -->
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" crossorigin="anonymous"></script>
+    <!-- <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script> -->
     <!-- Firebase Chat Service -->
     <script src="js/firebase-chat.js?v=8"></script>
     <!-- Chat Widget Logic -->

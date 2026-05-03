@@ -13,8 +13,8 @@
         projectId        : "chat-a-phim",
         storageBucket    : "chat-a-phim.firebasestorage.app",
         messagingSenderId: "450796005025",
-        appId            : "1:450796005025:web:c36985db03de84c6a972e0",
-        measurementId    : "G-L6MK53GPM5"
+        appId            : "1:450796005025:web:c36985db03de84c6a972e0"
+        // measurementId đã được gỡ bỏ để tránh lỗi Tracking Prevention
     };
 
     // Tabs supported
@@ -61,10 +61,12 @@
                     merge: true
                 });
 
-                // Analytics (optional)
+                // Analytics đã bị vô hiệu hóa
+                /*
                 if (typeof firebase.analytics === 'function') {
                     this.analytics = firebase.analytics();
                 }
+                */
 
                 this.ready = true;
                 console.log('[APFilmChat] Firebase Firestore initialized ✓');

@@ -8,22 +8,12 @@
 
     // 0. TĂNG TỐC ĐỘ MPA (Giả SPA) VÀ AUTH GUARD CHỐNG CHỚP NHÁY
     try {
-        // A. Cài cắm Instant Page tốc độ cao
+        // A. Instant Page đã bị loại bỏ để tránh lỗi 503 Service Unavailable do prefetch quá nhiều
+        /*
         if (!document.getElementById('instant-page-script')) {
-            var initInstantPage = function() {
-                var script = document.createElement('script');
-                script.id = 'instant-page-script';
-                script.src = 'https://unpkg.com/instant.page@5.2.0/instantpage.js';
-                script.type = 'module';
-                script.defer = true;
-                document.body.appendChild(script);
-            };
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initInstantPage);
-            } else {
-                initInstantPage();
-            }
+            ...
         }
+        */
 
         // B. Xử lý đồng bộ thay thế Avatar chống nháy (FOUC)
         var userStr = localStorage.getItem('cinestream_user'); // STORAGE_KEYS.USER
@@ -62,6 +52,21 @@
     // 1. Khai báo Tawk_API ngay lập tức
     window.Tawk_API = window.Tawk_API || {};
     window.Tawk_LoadStart = new Date();
+    
+    // Cấu hình cookie để tránh lỗi "Unable to store cookie" trên một số môi trường
+    window.Tawk_API.cookieOptions = {
+        useCookie: true, // Thử bật nhưng có thể fallback nếu lỗi
+        secure: true
+    };
+    
+    // Bắt lỗi cookie nội bộ của Tawk.to nếu có thể
+    window.addEventListener('error', function(e) {
+        if (e.filename && e.filename.includes('twk')) {
+            if (e.message && e.message.includes('cookie')) {
+                e.preventDefault(); // Ngăn chặn hiển thị lỗi cookie ra console nếu được
+            }
+        }
+    }, true);
     
     // Luôn gọi hideWidget khi sẵn sàng
     window.Tawk_API.onLoad = function () {

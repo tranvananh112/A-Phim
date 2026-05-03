@@ -163,15 +163,17 @@
     }, { passive: true });
 
     // ── Prefetch on hover (desktop) ──────────────────────────
-    // Desktop: hover vào link → prefetch
+    // ĐÃ TẮT: Tránh gây lỗi 503 Service Unavailable khi di chuột qua quá nhiều poster
     var _hoverTimer = null;
     document.addEventListener('mouseover', function (e) {
         var a = e.target.closest('a[href]');
         if (!a) return;
         clearTimeout(_hoverTimer);
+        /* 
         _hoverTimer = setTimeout(function () {
             prefetchURL(a.href);
-        }, 80); // 80ms delay để tránh prefetch khi chỉ di chuột qua
+        }, 150); 
+        */
     });
 
     document.addEventListener('mouseout', function () {
@@ -212,18 +214,16 @@
     };
 
     // ── Prefetch trang phổ biến sau khi page load ────────────
+    // ĐÃ TẮT: Tránh cạnh tranh tài nguyên và lỗi 503
+    /*
     document.addEventListener('DOMContentLoaded', function () {
-        // Prefetch sau 2s để không cạnh tranh network với tài nguyên chính
         setTimeout(function () {
-            var popularPages = [
-                'search.html',
-                'danh-sach.html',
-                'categories.html'
-            ];
+            var popularPages = ['search.html', 'danh-sach.html', 'categories.html'];
             popularPages.forEach(function (p) {
                 prefetchURL(new URL(p, location.href).href);
             });
-        }, 2000);
+        }, 3000);
     });
+    */
 
 })();
