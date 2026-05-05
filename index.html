@@ -11,13 +11,7 @@
     <link rel="dns-prefetch" href="https://ophim1.com">
     <link rel="dns-prefetch" href="https://img.ophim.live">
     
-    <style id="aphim-tawk-hide-guard">
-        /* A Phim: Decisive Tawk.to Hide Guard - Prevent FOUC on Mobile/Desktop */
-        #tawk-widget-layer, [id^="tawk-"], [class^="tawk-"], [class*=" tawk-"], [id*="tawkchat"], iframe[title*="chat widget" i], iframe[src*="tawk.to"], .tawk-min-container, .tawk-button {
-            display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important;
-            width: 0 !important; height: 0 !important; z-index: -9999 !important; position: fixed !important; left: -9999px !important;
-        }
-    </style>
+    
     <script src="js/chat-init-guard.js?v=9" fetchpriority="high"></script>
 
     <!-- ⚡ TOUCH SPEED — Load NGAY, không defer/async -->
@@ -2473,27 +2467,7 @@
     
 
 
-    <!-- Tawk.to (Ho tro) - Đã được tối ưu để không chặn main thread -->
-    <script type="text/javascript">
-        var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-        Tawk_API.onLoad = function() { Tawk_API.hideWidget(); };
-        (function(){
-            // Trì hoãn việc tải Tawk.to cho đến khi trình duyệt nhàn rỗi hoặc sau 3 giây
-            const loadTawk = () => {
-                var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-                s1.async = true;
-                s1.src = 'https://embed.tawk.to/69c7d8abf493031c356334cf/1jkqaco0t';
-                s1.charset = 'UTF-8';
-                s1.setAttribute('crossorigin','*');
-                s0.parentNode.insertBefore(s1, s0);
-            };
-            if ('requestIdleCallback' in window) {
-                requestIdleCallback(() => setTimeout(loadTawk, 3000));
-            } else {
-                setTimeout(loadTawk, 5000);
-            }
-        })();
-    </script>
+    
     <!-- ====== End Chat Widget ====== -->
 </body>
 

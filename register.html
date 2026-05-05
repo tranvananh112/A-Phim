@@ -2,13 +2,7 @@
 <html class="dark" lang="vi">
 
 <head>
-    <style id="aphim-tawk-hide-guard">
-        /* A Phim: Decisive Tawk.to Hide Guard - Prevent FOUC on Mobile/Desktop */
-        #tawk-widget-layer, [id^="tawk-"], [class^="tawk-"], [class*=" tawk-"], [id*="tawkchat"], iframe[title*="chat widget" i], iframe[src*="tawk.to"], .tawk-min-container, .tawk-button {
-            display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important;
-            width: 0 !important; height: 0 !important; z-index: -9999 !important; position: fixed !important; left: -9999px !important;
-        }
-    </style>
+    
     <script src="js/chat-init-guard.js?v=2"></script>
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-QYK5R13WK2"></script>
@@ -406,35 +400,7 @@
     <script src="js/firebase-chat.js?v=2"></script>
     <script src="js/chat-room.js?v=2"></script>
 
-    <!-- Tawk.to (Ho tro) - widget mac dinh bi an, mo qua tab Ho tro -->
-    <script type="text/javascript">
-        var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-        Tawk_API.onLoad = function() { Tawk_API.hideWidget(); };
-        (function(){
-            var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-            s1.async = true;
-            s1.src = 'https://embed.tawk.to/69c7d8abf493031c356334cf/1jkqaco0t';
-            s1.charset = 'UTF-8';
-            s1.setAttribute('crossorigin','*');
-            s0.parentNode.insertBefore(s1, s0);
-        })();
-
-        // Fetch dynamic background for the Left Panel (Latest Vietnamese Movie)
-        (async function() {
-            try {
-                const res = await fetch('https://ophim1.com/v1/api/quoc-gia/viet-nam');
-                const data = await res.json();
-                if (data?.data?.items?.length > 0) {
-                    const latestMovie = data.data.items[0];
-                    const url = `https://img.ophim.live/uploads/movies/${latestMovie.thumb_url || latestMovie.poster_url}`;
-                    const panel = document.getElementById('auth-left-panel');
-                    if (panel) {
-                        panel.style.background = `linear-gradient(to bottom, rgba(15,15,30,0.15) 0%, rgba(15,15,30,0.95) 100%), url('${url}') center / cover no-repeat`;
-                    }
-                }
-            } catch(e) { console.error('Failed to load dynamic background:', e); }
-        })();
-    </script>
+    
     <script src="js/categories-dropdown.js"></script>
     <script src="js/countries-dropdown.js"></script>
     <script src="js/dropdown-hover-fix.js"></script>
