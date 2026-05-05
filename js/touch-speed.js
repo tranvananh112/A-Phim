@@ -120,9 +120,9 @@
         rippleEl.classList.add('tap-ripple');
         createRipple(rippleEl, e);
 
-        // Prefetch URL ngay khi chạm
-        var url = target.getAttribute('href') || target.getAttribute('data-href');
-        if (url) prefetchURL(new URL(url, location.href).href);
+        // ĐÃ TẮT: Prefetch URL ngay khi chạm để tránh lỗi 503 (DDOS tự tạo)
+        // var url = target.getAttribute('href') || target.getAttribute('data-href');
+        // if (url) prefetchURL(new URL(url, location.href).href);
 
     }, { passive: true });
 
