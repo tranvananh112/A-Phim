@@ -368,6 +368,10 @@
                     refreshCommentSection();
                     if (typeof updateUserUI === 'function') updateUserUI();
                     else if (window.userUI) window.userUI.update?.();
+                    
+                    if (typeof window.rebuildMobileMenu === 'function') {
+                        window.rebuildMobileMenu();
+                    }
                 }, 800);
             } else {
                 showMsg(msgEl, result.message || 'Thất bại, vui lòng thử lại', 'error');
@@ -448,6 +452,9 @@
     // Không chạy trên các trang auth standalone
     if (!_isAuthPage) {
         document.addEventListener('click', function (e) {
+            // Ignore if clicking inside the auth modal itself
+            if (e.target.closest('#ap-auth-modal')) return;
+
             // 1. Check link closest
             const el = e.target.closest('a');
             if (!el) {
@@ -470,6 +477,7 @@
             if (isLogin || isRegister) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
+                if (typeof window.closeMobileMenu === 'function') window.closeMobileMenu();
                 window.showAuthModal(isRegister ? 'register' : 'login');
             }
         }, { capture: true, passive: false });

@@ -57,12 +57,13 @@
 
         const userName  = user ? escHtml(user.name || user.email || 'Người dùng') : 'Khách';
         const userBadge = user ? 'Thành viên Vàng' : 'Chưa đăng nhập';
-        const userHref  = user ? 'profile.html' : 'login.html';
+        const userHref  = user ? 'profile.html' : '#';
+        const userClick = user ? '' : `onclick="if(window.showAuthModal){event.preventDefault(); if(window.closeMobileMenu) window.closeMobileMenu(); window.showAuthModal('login'); return false;}"`;
 
         drawer.innerHTML = `
         <!-- TOP USER -->
         <div class="mm-top">
-            <a href="${userHref}" class="mm-user-wrap">
+            <a href="${userHref}" ${userClick} class="mm-user-wrap">
                 <div class="mm-avatar-wrap">
                     <div class="mm-avatar-glow"></div>
                     <div class="mm-avatar-img">${avatarHtml}</div>
@@ -376,6 +377,23 @@
         if (burger) burger.classList.remove('open');
     }
 
+    function rebuildMenu() {
+        _drawerBuilt = false;
+        const drawer = document.getElementById('mm-drawer');
+        const overlay = document.getElementById('mm-overlay');
+        const wasOpen = drawer && drawer.classList.contains('open');
+        
+        if (drawer) drawer.remove();
+        if (overlay) overlay.remove();
+        
+        buildDrawer();
+        
+        if (wasOpen) {
+            document.getElementById('mm-overlay').classList.add('open');
+            document.getElementById('mm-drawer').classList.add('open');
+        }
+    }
+
     /* ── SETUP BUTTON ── */
     function setupBtn() {
         const oldBtn = document.getElementById('mobileMenuBtn');
@@ -435,4 +453,5 @@
 
     window.openMobileMenu  = openMenu;
     window.closeMobileMenu = closeMenu;
+    window.rebuildMobileMenu = rebuildMenu;
 })();
