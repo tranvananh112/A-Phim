@@ -49,7 +49,7 @@ async function initPaymentConfig() {
         if (d.pricePremiumYear) PLANS.family.amount  = d.pricePremiumYear;
 
     } catch (e) {
-        console.warn('payment.js: backend config fetch failed, using defaults', e);
+        // silent fail — use defaults
     }
 }
 
