@@ -156,8 +156,23 @@ function initializePlayer(episode) {
 
     player = document.getElementById('videoPlayer');
 
-    // Initialize HLS.js
-    if (Hls.isSupported()) {
+    // Prefer native HLS on iOS and Safari for better stability and performance
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    const preferNativeHLS = (isIOS || isSafari) && player.canPlayType('application/vnd.apple.mpegurl');
+
+    if (preferNativeHLS) {
+        // Native HLS support (Safari/iOS)
+        console.log('✅ Using native HLS support (Safari/iOS)');
+        player.src = videoUrl;
+        player.addEventListener('loadedmetadata', () => {
+            console.log('✅ Video metadata loaded');
+            if (progress.currentTime > 0) {
+                player.currentTime = progress.currentTime;
+            }
+            player.play().catch(e => console.log('Auto-play prevented:', e));
+        });
+    } else if (Hls.isSupported()) {
         console.log('✅ HLS.js is supported');
         const hls = new Hls({
             debug: false,
@@ -176,6 +191,7 @@ function initializePlayer(episode) {
                 player.currentTime = progress.currentTime;
                 console.log('⏩ Resuming from:', progress.currentTime);
             }
+            player.play().catch(e => console.log('Auto-play prevented:', e));
         });
 
         hls.on(Hls.Events.ERROR, function (event, data) {
@@ -199,8 +215,8 @@ function initializePlayer(episode) {
             }
         });
     } else if (player.canPlayType('application/vnd.apple.mpegurl')) {
-        // Native HLS support (Safari)
-        console.log('✅ Using native HLS support (Safari)');
+        // Fallback for other browsers that support native HLS
+        console.log('✅ Using native HLS support (Fallback)');
         player.src = videoUrl;
         player.addEventListener('loadedmetadata', () => {
             console.log('✅ Video metadata loaded');
