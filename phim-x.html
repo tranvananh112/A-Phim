@@ -852,7 +852,7 @@
             VNPT/Viettel dang ch?n video!
         </div>
         <div style="font-size: 13px; opacity: 0.95; margin-bottom: 16px; line-height: 1.5;">
-            Nhà m?ng c?a b?n dang ch?n ngu?n video. Vui lòng d?i DNS ho?c dùng VPN d? xem.
+            Nhï¿½ m?ng c?a b?n dang ch?n ngu?n video. Vui lï¿½ng d?i DNS ho?c dï¿½ng VPN d? xem.
         </div>
 
         <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
@@ -865,12 +865,12 @@
             <button onclick="document.getElementById('isp-warning').style.display='none'" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid white; 
                        padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; 
                        font-size: 13px; backdrop-filter: blur(10px);">
-                Ðóng
+                ï¿½ï¿½ng
             </button>
         </div>
 
         <div style="margin-top: 12px; font-size: 11px; opacity: 0.8;">
-            ?? Ho?c dùng data 4G/5G thay vì WiFi
+            ?? Ho?c dï¿½ng data 4G/5G thay vï¿½ WiFi
         </div>
     </div>
     </div>
@@ -884,7 +884,7 @@
                 <div class="logo-name">A<span>Phim</span></div>
             </a>
             <div class="header-sep"></div>
-            <div id="header-label">?? Th?nh hành</div>
+            <div id="header-label">?? Th?nh hï¿½nh</div>
             <div class="header-right">
                 <!-- Server Selector -->
                 <div class="server-selector">
@@ -910,7 +910,7 @@
                 </div>
 
                 <div class="search-box">
-                    <input type="text" id="search-input" placeholder="Tìm ki?m...">
+                    <input type="text" id="search-input" placeholder="Tï¿½m ki?m...">
                     <button class="search-btn" onclick="doSearch()">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
@@ -926,18 +926,18 @@
     <!-- Category Nav -->
     <div id="cat-nav">
         <div class="cat-nav-inner">
-            <button class="cat-btn active" data-q="hot trending" onclick="selectCat(this, event)">Th?nh hành</button>
+            <button class="cat-btn active" data-q="hot trending" onclick="selectCat(this, event)">Th?nh hï¿½nh</button>
             <button class="cat-btn sister-hot" data-q="Sister hot" onclick="selectCat(this, event)">Sister Hot
                 ??</button>
             <button class="cat-btn" data-q="asian vietnam" onclick="selectCat(this, event)">Phim Vi?t</button>
             <button class="cat-btn" data-q="japanese teen" onclick="selectCat(this, event)">Nh?t B?n</button>
-            <button class="cat-btn" data-q="korean bj" onclick="selectCat(this, event)">Hàn Qu?c</button>
+            <button class="cat-btn" data-q="korean bj" onclick="selectCat(this, event)">Hï¿½n Qu?c</button>
             <button class="cat-btn" data-q="chinese asian" onclick="selectCat(this, event)">Trung Qu?c</button>
-            <button class="cat-btn" data-q="milf amateur" onclick="selectCat(this, event)">Âu M?</button>
-            <button class="cat-btn" data-q="uncensored asian" onclick="selectCat(this, event)">Không che</button>
+            <button class="cat-btn" data-q="milf amateur" onclick="selectCat(this, event)">ï¿½u M?</button>
+            <button class="cat-btn" data-q="uncensored asian" onclick="selectCat(this, event)">Khï¿½ng che</button>
             <button class="cat-btn" data-q="amateur homemade" onclick="selectCat(this, event)">Nghi?p du</button>
             <button class="cat-btn" data-q="teen sister" onclick="selectCat(this, event)">N?i b?t</button>
-            <button class="cat-btn" data-q="hentai anime" onclick="selectCat(this, event)">Ho?t hình</button>
+            <button class="cat-btn" data-q="hentai anime" onclick="selectCat(this, event)">Ho?t hï¿½nh</button>
         </div>
     </div>
 
@@ -947,7 +947,7 @@
         <div id="player-section">
             <div style="position: relative;">
                 <div id="player-box"></div>
-                <button class="close-player-btn" onclick="closePlayer()" title="Ðóng video">
+                <button class="close-player-btn" onclick="closePlayer()" title="ï¿½ï¿½ng video">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                         stroke-linecap="round">
                         <path d="M18 6L6 18M6 6l12 12" />
@@ -1101,7 +1101,7 @@
             query: 'hot trending',
             page: 1,
             currentPage: 1,
-            totalPages: 50, // Tang lên 50 trang
+            totalPages: 50, // Tang lï¿½n 50 trang
             active: null,
             currentServer: 2 // Default to Server 2 (Eporner)
         };
@@ -1206,7 +1206,7 @@
                 document.getElementById('video-grid').innerHTML = `
                     <div style="grid-column: 1/-1; text-align: center; padding: 80px 20px; color: #666;">
                         <div style="font-size: 48px; margin-bottom: 16px;">??</div>
-                        <div>Không th? t?i video t? Server ${S.currentServer}.</div>
+                        <div>Khï¿½ng th? t?i video t? Server ${S.currentServer}.</div>
                         <div style="margin-top: 8px; font-size: 14px;">${error.message}</div>
                     </div>
                 `;
@@ -1312,7 +1312,7 @@
             const id = video.id;
             const server = video.server;
 
-            document.getElementById('vp-title').textContent = video.title || 'Ðang phát video...';
+            document.getElementById('vp-title').textContent = video.title || 'ï¿½ang phï¿½t video...';
             
             const views = typeof video.views === 'number' ? video.views.toLocaleString() : video.views;
             document.getElementById('vp-meta').innerHTML = `
@@ -1337,8 +1337,8 @@
                 playerBox.innerHTML = `
                     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; color: white;">
                         <div style="font-size: 48px; margin-bottom: 20px;">??</div>
-                        <p style="color: #f97316; font-size: 18px; margin-bottom: 12px;">Không có URL phát tr?c ti?p</p>
-                        ${video.url ? `<a href="${video.url}" target="_blank" style="display: inline-block; padding: 10px 20px; background: #f97316; font-weight: bold; color: white; border-radius: 8px; text-decoration: none;">M? video trên web g?c</a>` : ''}
+                        <p style="color: #f97316; font-size: 18px; margin-bottom: 12px;">Khï¿½ng cï¿½ URL phï¿½t tr?c ti?p</p>
+                        ${video.url ? `<a href="${video.url}" target="_blank" style="display: inline-block; padding: 10px 20px; background: #f97316; font-weight: bold; color: white; border-radius: 8px; text-decoration: none;">M? video trï¿½n web g?c</a>` : ''}
                     </div>
                 `;
             }
@@ -1609,7 +1609,7 @@
                         font-weight: 800;
                         margin: 0 0 12px;
                         letter-spacing: 0.5px;
-                    ">C?nh báo: 18+</h2>
+                    ">C?nh bï¿½o: 18+</h2>
 
                     <p style="
                         color: #9ca3af;
@@ -1617,11 +1617,11 @@
                         line-height: 1.7;
                         margin: 0 0 28px;
                     ">
-                        Khu v?c <strong style="color:#f97316">Phim X</strong> ch?a n?i dung dành riêng cho
-                        ngu?i l?n t? <strong style="color:#fff">18 tu?i tr? lên</strong>.
+                        Khu v?c <strong style="color:#f97316">Phim X</strong> ch?a n?i dung dï¿½nh riï¿½ng cho
+                        ngu?i l?n t? <strong style="color:#fff">18 tu?i tr? lï¿½n</strong>.
                         <br><br>
-                        B?ng cách ti?p t?c, b?n xác nh?n r?ng b?n d? 18 tu?i và d?ng ý v?i
-                        di?u kho?n s? d?ng c?a chúng tôi.
+                        B?ng cï¿½ch ti?p t?c, b?n xï¿½c nh?n r?ng b?n d? 18 tu?i vï¿½ d?ng ï¿½ v?i
+                        di?u kho?n s? d?ng c?a chï¿½ng tï¿½i.
                     </p>
 
                     <div style="
@@ -1638,7 +1638,7 @@
                         text-align: left;
                     ">
                         <span style="font-size:16px;flex-shrink:0;">??</span>
-                        <span>Không dành cho ngu?i du?i 18 tu?i. N?u b?n chua d? tu?i, vui lòng r?i kh?i trang này.</span>
+                        <span>Khï¿½ng dï¿½nh cho ngu?i du?i 18 tu?i. N?u b?n chua d? tu?i, vui lï¿½ng r?i kh?i trang nï¿½y.</span>
                     </div>
 
                     <div style="display: flex; flex-direction: column; gap: 12px;">
@@ -1656,7 +1656,7 @@
                             transition: all 0.2s;
                             box-shadow: 0 4px 20px rgba(249,115,22,0.4);
                         ">
-                            ? Tôi dã d? 18 tu?i, cho tôi vào!
+                            ? Tï¿½i dï¿½ d? 18 tu?i, cho tï¿½i vï¿½o!
                         </button>
 
                         <button onclick="goBack()" style="
@@ -1671,7 +1671,7 @@
                             width: 100%;
                             transition: all 0.2s;
                         ">
-                            ? Quay l?i trang an toàn
+                            ? Quay l?i trang an toï¿½n
                         </button>
                     </div>
 
@@ -1679,7 +1679,7 @@
                         color: #4b5563;
                         font-size: 11px;
                         margin-top: 20px;
-                    ">L?a ch?n c?a b?n s? du?c luu trong phiên trình duy?t hi?n t?i</p>
+                    ">L?a ch?n c?a b?n s? du?c luu trong phiï¿½n trï¿½nh duy?t hi?n t?i</p>
                 </div>
             </div>
 
@@ -1806,24 +1806,24 @@
                 <!-- Links -->
                 <div
                     class="flex flex-wrap text-center justify-center md:justify-start gap-6 mb-6 text-sm font-semibold text-gray-300">
-                    <a href="#" class="hover:text-primary transition-colors">H?i-Ðáp</a>
-                    <a href="#" class="hover:text-primary transition-colors">Chính sách b?o m?t</a>
-                    <a href="#" class="hover:text-primary transition-colors">Ði?u kho?n s? d?ng</a>
+                    <a href="#" class="hover:text-primary transition-colors">H?i-ï¿½ï¿½p</a>
+                    <a href="#" class="hover:text-primary transition-colors">Chï¿½nh sï¿½ch b?o m?t</a>
+                    <a href="#" class="hover:text-primary transition-colors">ï¿½i?u kho?n s? d?ng</a>
                     <a href="#" class="hover:text-primary transition-colors">Gi?i thi?u</a>
-                    <a href="https://web.telegram.org/k/#@aphimiovn" target="_blank" class="hover:text-primary transition-colors">Liên h?</a>
+                    <a href="https://web.telegram.org/k/#@aphimiovn" target="_blank" class="hover:text-primary transition-colors">Liï¿½n h?</a>
                 </div>
 
                 <!-- Text block -->
                 <p class="text-sm text-gray-400 leading-relaxed max-w-5xl text-center md:text-left mb-6">
-                    A Phim - Phim hay c? r? - trang xem phim online mi?n phí Full HD Vietsub, thuy?t minh + l?ng ti?ng.
-                    Kho phim m?i kh?ng l?, phim chi?u r?p, phim b?, phim l? t? nhi?u qu?c gia nhu Vi?t Nam, Hàn Qu?c,
-                    Trung Qu?c, Thái Lan, Nh?t B?n, Âu M?... da d?ng th? lo?i. Khám phá n?n t?ng phim tr?c tuy?n hay
+                    A Phim - Phim hay c? r? - trang xem phim online mi?n phï¿½ Full HD Vietsub, thuy?t minh + l?ng ti?ng.
+                    Kho phim m?i kh?ng l?, phim chi?u r?p, phim b?, phim l? t? nhi?u qu?c gia nhu Vi?t Nam, Hï¿½n Qu?c,
+                    Trung Qu?c, Thï¿½i Lan, Nh?t B?n, ï¿½u M?... da d?ng th? lo?i. Khï¿½m phï¿½ n?n t?ng phim tr?c tuy?n hay
                     nh?t nam 2025 ch?t lu?ng 4K!
                 </p>
 
                 <!-- Copyright -->
                 <div class="text-xs text-gray-500 font-medium text-center md:text-left">
-                    Copyright ©2025 A Phim
+                    Copyright ï¿½2025 A Phim
                 </div>
             </div>
         </div>
@@ -1909,7 +1909,7 @@
     <!-- CSS -->
     <link rel="stylesheet" href="css/chat-room.css?v=13">
     <!-- FAB Button -->
-    <button id="chatFab" class="chat-fab" aria-label="M? chat c?ng d?ng" title="Chat C?ng Ð?ng">
+    <button id="chatFab" class="chat-fab" aria-label="M? chat c?ng d?ng" title="Chat C?ng ï¿½?ng">
         <span class="fab-icon material-icons">forum</span>
         <span class="chat-fab-badge" id="chatFabBadge">0</span>
     </button>
@@ -1922,7 +1922,7 @@
                     <span class="material-icons">forum</span>
                 </div>
                 <div class="chat-header-text">
-                    <div class="chat-header-title">C?ng Ð?ng A Phim</div>
+                    <div class="chat-header-title">C?ng ï¿½?ng A Phim</div>
                     <div class="chat-header-status">
                         <div class="online-dot"></div>
                         <span class="chat-header-online-text" id="headerOnlineCount">42 ngu?i tr?c tuy?n</span>
@@ -1931,7 +1931,7 @@
             </div>
             <div class="chat-header-actions">
                 <button class="chat-header-btn" id="chatMinimizeBtn" title="Thu nh?"><span class="material-icons">remove</span></button>
-                <button class="chat-header-btn" id="chatCloseBtn" title="Ðóng"><span class="material-icons">close</span></button>
+                <button class="chat-header-btn" id="chatCloseBtn" title="ï¿½ï¿½ng"><span class="material-icons">close</span></button>
             </div>
         </div>
         <!-- BODY -->
@@ -1940,18 +1940,18 @@
             <div class="chat-screen chat-screen-welcome active" id="screenWelcome">
                 <div class="welcome-glow"><img src="/favicon.png" alt="A Phim" style="width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.15));"></div>
                 <div>
-                    <h2 class="welcome-title">Chào m?ng d?n <span>Kênh A Phim</span></h2>
-                    <p class="welcome-desc" style="margin-top:8px;">K?t n?i, th?o lu?n và t?n hu?ng di?n ?nh cùng hàng ngàn tín d? phim ?nh.</p>
+                    <h2 class="welcome-title">Chï¿½o m?ng d?n <span>Kï¿½nh A Phim</span></h2>
+                    <p class="welcome-desc" style="margin-top:8px;">K?t n?i, th?o lu?n vï¿½ t?n hu?ng di?n ?nh cï¿½ng hï¿½ng ngï¿½n tï¿½n d? phim ?nh.</p>
                 </div>
                 <div class="welcome-stats">
                     <div class="welcome-stat"><div class="welcome-stat-num" id="welcomeOnline">1,284</div><div class="welcome-stat-label">Tr?c tuy?n</div></div>
-                    <div class="welcome-stat"><div class="welcome-stat-num">50K+</div><div class="welcome-stat-label">Thành viên</div></div>
+                    <div class="welcome-stat"><div class="welcome-stat-num">50K+</div><div class="welcome-stat-label">Thï¿½nh viï¿½n</div></div>
                     <div class="welcome-stat"><div class="welcome-stat-num">24/7</div><div class="welcome-stat-label">Ho?t d?ng</div></div>
                 </div>
                 <div class="welcome-features">
-                    <div class="welcome-feature"><span class="material-icons">movie</span><div class="welcome-feature-text"><strong>Th?o lu?n phim</strong><span>Review, rating và khám phá phim m?i</span></div></div>
-                    <div class="welcome-feature"><span class="material-icons">groups</span><div class="welcome-feature-text"><strong>C?ng d?ng sôi n?i</strong><span>K?t n?i v?i ngu?i xem cùng s? thích</span></div></div>
-                    <div class="welcome-feature"><span class="material-icons">bolt</span><div class="welcome-feature-text"><strong>Chat th?i gian th?c</strong><span>Nh?n tin ngay l?p t?c, không d? tr?</span></div></div>
+                    <div class="welcome-feature"><span class="material-icons">movie</span><div class="welcome-feature-text"><strong>Th?o lu?n phim</strong><span>Review, rating vï¿½ khï¿½m phï¿½ phim m?i</span></div></div>
+                    <div class="welcome-feature"><span class="material-icons">groups</span><div class="welcome-feature-text"><strong>C?ng d?ng sï¿½i n?i</strong><span>K?t n?i v?i ngu?i xem cï¿½ng s? thï¿½ch</span></div></div>
+                    <div class="welcome-feature"><span class="material-icons">bolt</span><div class="welcome-feature-text"><strong>Chat th?i gian th?c</strong><span>Nh?n tin ngay l?p t?c, khï¿½ng d? tr?</span></div></div>
                 </div>
                 <button class="welcome-start-btn" id="welcomeStartBtn">B?t d?u chat ngay <span class="material-icons">arrow_forward</span></button>
             </div>
@@ -1959,10 +1959,10 @@
             <div class="chat-screen chat-screen-name" id="screenEnterName">
                 <div class="enter-name-header">
                     <button class="enter-name-back-btn" id="enterNameBackBtn"><span class="material-icons">arrow_back</span></button>
-                    <div class="enter-name-title-wrap"><h2>T?o h? so</h2><p>Ch?n bi?t danh và màu s?c c?a b?n</p></div>
+                    <div class="enter-name-title-wrap"><h2>T?o h? so</h2><p>Ch?n bi?t danh vï¿½ mï¿½u s?c c?a b?n</p></div>
                 </div>
                 <div>
-                    <span class="name-color-label">Màu d?i di?n</span>
+                    <span class="name-color-label">Mï¿½u d?i di?n</span>
                     <div class="color-picker-row" id="colorPickerRow">
                         <div class="color-option selected" data-color="#ffd709" style="background:#ffd709"></div>
                         <div class="color-option" data-color="#22c55e" style="background:#22c55e"></div>
@@ -1983,11 +1983,11 @@
                         <input type="text" id="chatNameInput" class="name-input" placeholder="VD: MovieLover_99" maxlength="20" autocomplete="off">
                         <span class="name-input-icon material-icons">person</span>
                     </div>
-                    <div class="name-error-msg" id="nameErrorMsg">Tên ph?i t? 3–20 ký t?, không ch?a ký t? d?c bi?t.</div>
+                    <div class="name-error-msg" id="nameErrorMsg">Tï¿½n ph?i t? 3ï¿½20 kï¿½ t?, khï¿½ng ch?a kï¿½ t? d?c bi?t.</div>
                 </div>
                 <div class="name-preview">
                     <div class="name-preview-avatar" id="previewAvatar" style="background:#ffd709;">A</div>
-                    <div class="name-preview-info"><strong id="previewName">Bi?t danh c?a b?n</strong><span>Thành viên m?i · Hôm nay</span></div>
+                    <div class="name-preview-info"><strong id="previewName">Bi?t danh c?a b?n</strong><span>Thï¿½nh viï¿½n m?i ï¿½ Hï¿½m nay</span></div>
                 </div>
                 <div class="online-preview">
                     <div class="online-avatars">
@@ -1996,20 +1996,20 @@
                         <div class="online-avatar-mini" style="background:#3b82f6;color:#fff;font-weight:700;">M</div>
                         <div class="online-avatar-mini more">+39</div>
                     </div>
-                    <div class="online-info"><strong><span style="display:inline-block;width:7px;height:7px;background:#22c55e;border-radius:50%;margin-right:5px;vertical-align:middle;"></span>42 tr?c tuy?n</strong><span>Ðang th?o lu?n sôi n?i</span></div>
+                    <div class="online-info"><strong><span style="display:inline-block;width:7px;height:7px;background:#22c55e;border-radius:50%;margin-right:5px;vertical-align:middle;"></span>42 tr?c tuy?n</strong><span>ï¿½ang th?o lu?n sï¿½i n?i</span></div>
                 </div>
-                <button class="join-btn" id="chatJoinBtn" disabled><span class="material-icons">login</span>Tham gia phòng chat</button>
+                <button class="join-btn" id="chatJoinBtn" disabled><span class="material-icons">login</span>Tham gia phï¿½ng chat</button>
             </div>
             <!-- SCREEN 3: CHAT ROOM -->
             <div class="chat-screen chat-screen-room" id="screenRoom">
                 <div class="messages-area" id="messagesArea">
-                    <div class="date-separator"><span>Hôm Nay</span></div>
-                    <div class="sys-msg"><span>?? Chào m?ng d?n v?i Kênh A Phim!</span></div>
+                    <div class="date-separator"><span>Hï¿½m Nay</span></div>
+                    <div class="sys-msg"><span>?? Chï¿½o m?ng d?n v?i Kï¿½nh A Phim!</span></div>
                     <div class="msg-group">
                         <div class="msg-avatar" style="background:#3b82f6;color:#fff;">M</div>
                         <div class="msg-content">
                             <div class="msg-name">MovieFan</div>
-                            <div class="msg-bubble">M?i ngu?i th?y Dune: Part Two th? nào? Hình ?nh choáng ng?p luôn! ??</div>
+                            <div class="msg-bubble">M?i ngu?i th?y Dune: Part Two th? nï¿½o? Hï¿½nh ?nh choï¿½ng ng?p luï¿½n! ??</div>
                             <div class="msg-meta"><span class="msg-time">20:20</span></div>
                         </div>
                     </div>
@@ -2017,7 +2017,7 @@
                         <div class="msg-avatar" style="background:#22c55e;color:#fff;">L</div>
                         <div class="msg-content">
                             <div class="msg-name">LinhChi</div>
-                            <div class="msg-bubble">Nh?c phim c?a Hans Zimmer n?a, nghe mà rung d?ng c? phòng chi?u ??</div>
+                            <div class="msg-bubble">Nh?c phim c?a Hans Zimmer n?a, nghe mï¿½ rung d?ng c? phï¿½ng chi?u ??</div>
                             <div class="msg-meta"><span class="msg-time">20:21</span></div>
                         </div>
                     </div>
@@ -2028,8 +2028,8 @@
                 </div>
                 <div class="quick-reactions" id="quickReactions">
                     <button class="quick-react-btn" data-text="?? Tuy?t v?i!">?? Tuy?t v?i</button>
-                    <button class="quick-react-btn" data-text="?? Quá d?nh!">?? Quá d?nh</button>
-                    <button class="quick-react-btn" data-text="?? Ðang xem">?? Ðang xem</button>
+                    <button class="quick-react-btn" data-text="?? Quï¿½ d?nh!">?? Quï¿½ d?nh</button>
+                    <button class="quick-react-btn" data-text="?? ï¿½ang xem">?? ï¿½ang xem</button>
                     <button class="quick-react-btn" data-text="? 10/10">? 10/10</button>
                     <button class="quick-react-btn" data-text="?? R?t ngh?">?? R?t ngh?</button>
                     <button class="quick-react-btn" data-text="?? C?c hay!">?? C?c hay</button>
@@ -2042,26 +2042,26 @@
                         <span class="material-icons">support_agent</span>
                     </div>
                     <h3 class="support-title">H? tr? tr?c tuy?n</h3>
-                    <p class="support-desc">Ð?i ngu h? tr? c?a A Phim luôn s?n sàng gi?i dáp m?i th?c m?c c?a b?n.</p>
+                    <p class="support-desc">ï¿½?i ngu h? tr? c?a A Phim luï¿½n s?n sï¿½ng gi?i dï¿½p m?i th?c m?c c?a b?n.</p>
                     <div class="support-info-cards">
                         <div class="support-info-card">
                             <span class="material-icons">schedule</span>
-                            <div><strong>Gi? ho?t d?ng</strong><span>24/7 — Ph?n h?i nhanh</span></div>
+                            <div><strong>Gi? ho?t d?ng</strong><span>24/7 ï¿½ Ph?n h?i nhanh</span></div>
                         </div>
                         <div class="support-info-card">
                             <span class="material-icons">translate</span>
-                            <div><strong>Ngôn ng?</strong><span>Ti?ng Vi?t — Ti?ng Anh</span></div>
+                            <div><strong>Ngï¿½n ng?</strong><span>Ti?ng Vi?t ï¿½ Ti?ng Anh</span></div>
                         </div>
                         <div class="support-info-card">
                             <span class="material-icons">verified</span>
-                            <div><strong>Chuyên nghi?p</strong><span>Ðu?c dào t?o bài b?n</span></div>
+                            <div><strong>Chuyï¿½n nghi?p</strong><span>ï¿½u?c dï¿½o t?o bï¿½i b?n</span></div>
                         </div>
                     </div>
                     <button class="support-start-btn" id="supportStartTawk">
                         <span class="material-icons">chat</span>
                         B?t d?u chat h? tr?
                     </button>
-                    <p class="support-note">Nh?n d? m? c?a s? chat v?i nhân viên h? tr?</p>
+                    <p class="support-note">Nh?n d? m? c?a s? chat v?i nhï¿½n viï¿½n h? tr?</p>
                 </div>
             </div>
         </div>
@@ -2080,9 +2080,9 @@
             <div class="input-footer">
                 <div class="current-user-tag">
                     <div class="current-user-avatar" id="currentUserAvatar" style="background:#ffd709;">A</div>
-                    <span id="currentUserName">Khách</span>
+                    <span id="currentUserName">Khï¿½ch</span>
                 </div>
-                <span class="change-name-link" id="changeNameLink">Ð?i tên</span>
+                <span class="change-name-link" id="changeNameLink">ï¿½?i tï¿½n</span>
             </div>
         </div>
         <!-- Emoji picker -->
@@ -2107,9 +2107,9 @@
     <!-- ====== End Chat Widget ====== -->
 <script src="js/nav-active-indicator.js?v=13"></script>
     <script src="js/config.js?v=13"></script>
-    <script src="js/auth.js?v=13"></script>
+    <script src="js/auth.js?v=17"></script>
     <script src="js/auth-modal.js?v=13"></script>
-    <script src="js/user-ui.js?v=13"></script>
+    <script src="js/user-ui.js?v=14"></script>
     <script src="js/categories-dropdown.js?v=13"></script>
     <script src="js/countries-dropdown.js?v=13"></script>
     <script src="js/dropdown-hover-fix.js?v=13"></script>

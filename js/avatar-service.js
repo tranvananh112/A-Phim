@@ -101,7 +101,19 @@
         loadAvatar(userId, onUpdate) {
             if (!userId) return;
 
-            const local = getLocalAvatar(userId);
+            let local = getLocalAvatar(userId);
+            
+            // Try MongoDB first (source of truth if Firestore fails)
+            try {
+                if (typeof authService !== 'undefined') {
+                    const currentUser = authService.getCurrentUser();
+                    if (currentUser && String(currentUser.id) === String(userId) && currentUser.avatar) {
+                        local = currentUser.avatar;
+                        setLocalAvatar(userId, local);
+                    }
+                }
+            } catch(e) {}
+
             // If local exists, show immediately (will be updated if Firestore differs)
             if (local && typeof onUpdate === 'function') {
                 onUpdate(local);

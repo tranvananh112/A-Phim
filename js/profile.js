@@ -13,10 +13,25 @@ document.addEventListener('DOMContentLoaded', function () {
     setupProfileForm();
     setupPasswordForm();
 
-    // Don't load detailed info until user clicks on tabs
-    // loadSubscriptionInfo();
-    // loadFavorites();
-    // loadHistory();
+    // Check URL for active tab
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabFromUrl = urlParams.get('tab') || window.location.hash.substring(1);
+    
+    // Slight delay to ensure DOM is ready
+    setTimeout(() => {
+        if (tabFromUrl && document.getElementById(tabFromUrl + 'Tab')) {
+            showTab(tabFromUrl);
+        }
+    }, 50);
+
+    // Listen for background profile sync
+    window.addEventListener('auth:profileSynced', function(e) {
+        console.log('[Profile] Auto-sync received, refreshing data...');
+        // Refresh tabs if they were loaded
+        if (loadedTabs.has('favorites')) loadFavorites();
+        if (loadedTabs.has('history')) loadHistory();
+        if (loadedTabs.has('profile')) loadBasicUserInfo();
+    });
 });
 
 // Load basic user info for sidebar

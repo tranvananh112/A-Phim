@@ -133,11 +133,12 @@ exports.getMe = async (req, res) => {
 // @access  Private
 exports.updateDetails = async (req, res) => {
     try {
-        const fieldsToUpdate = {
-            name: req.body.name,
-            phone: req.body.phone,
-            avatar: req.body.avatar
-        };
+        const fieldsToUpdate = {};
+        if (req.body.name !== undefined) fieldsToUpdate.name = req.body.name;
+        if (req.body.phone !== undefined) fieldsToUpdate.phone = req.body.phone;
+        if (req.body.avatar !== undefined) fieldsToUpdate.avatar = req.body.avatar;
+        if (req.body.favorites !== undefined) fieldsToUpdate.favorites = req.body.favorites;
+        if (req.body.watchHistory !== undefined) fieldsToUpdate.watchHistory = req.body.watchHistory;
 
         const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
             new: true,
@@ -302,7 +303,10 @@ const sendTokenResponse = (user, statusCode, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
-            subscription: user.subscription
+            avatar: user.avatar,
+            subscription: user.subscription,
+            favorites: user.favorites,
+            watchHistory: user.watchHistory
         }
     });
 };

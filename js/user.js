@@ -33,6 +33,7 @@ class UserService {
         });
 
         localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(favorites));
+        this.authService.updateProfile({ favorites }).catch(()=>{});
         return true;
     }
 
@@ -41,6 +42,7 @@ class UserService {
         const favorites = this.getFavorites();
         const filtered = favorites.filter(m => m.slug !== slug);
         localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(filtered));
+        this.authService.updateProfile({ favorites: filtered }).catch(()=>{});
         return true;
     }
 
@@ -78,11 +80,13 @@ class UserService {
         // Keep only last 50 items
         const limited = filtered.slice(0, 50);
         localStorage.setItem(STORAGE_KEYS.WATCH_HISTORY, JSON.stringify(limited));
+        this.authService.updateProfile({ watchHistory: limited }).catch(()=>{});
     }
 
     // Clear watch history
     clearHistory() {
         localStorage.removeItem(STORAGE_KEYS.WATCH_HISTORY);
+        this.authService.updateProfile({ watchHistory: [] }).catch(()=>{});
     }
 
     // Get watch progress for a movie

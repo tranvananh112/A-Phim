@@ -2,7 +2,11 @@
 const STORAGE_KEYS = {
     USER: 'cinestream_user',
     TOKEN: 'cinestream_token',
-    THEME: 'cinestream_theme'
+    THEME: 'cinestream_theme',
+    FAVORITES: 'cinestream_favorites',
+    WATCH_HISTORY: 'cinestream_watch_history',
+    WATCH_PROGRESS: 'cinestream_watch_progress',
+    SUBSCRIPTION: 'cinestream_subscription'
 };
 
 class AuthService {
@@ -11,6 +15,9 @@ class AuthService {
         // Always use backend for authentication
         this.useBackend = typeof API_CONFIG !== 'undefined' ? API_CONFIG.USE_BACKEND_FOR_AUTH : true;
         this.currentUser = this.loadUser();
+
+        // Background auto-sync to pull latest avatar/favorites/history from MongoDB
+        setTimeout(() => this.syncProfile(), 100);
 
         console.log('🔐 AuthService initialized:', {
             backendURL: this.backendURL,
@@ -24,10 +31,38 @@ class AuthService {
         return userStr ? JSON.parse(userStr) : null;
     }
 
+    // Fetch latest user data from backend
+    async syncProfile() {
+        if (!this.useBackend || !this.isLoggedIn()) return;
+        try {
+            const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+            const response = await fetch(`${this.backendURL}/auth/me`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await response.json();
+            if (data.success && data.data) {
+                // Background update localStorage
+                this.saveUser(data.data);
+                // Dispatch event in case UI wants to refresh
+                window.dispatchEvent(new CustomEvent('auth:profileSynced', { detail: data.data }));
+            }
+        } catch (e) {
+            console.warn('[AuthService] Auto-sync profile failed', e);
+        }
+    }
+
     // Save user to localStorage
     saveUser(user) {
         localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
         this.currentUser = user;
+        
+        // Sync arrays back to local storage
+        if (user.favorites) {
+            localStorage.setItem('cinestream_favorites', JSON.stringify(user.favorites));
+        }
+        if (user.watchHistory) {
+            localStorage.setItem('cinestream_watch_history', JSON.stringify(user.watchHistory));
+        }
     }
 
     // Register new user

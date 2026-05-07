@@ -62,6 +62,21 @@ const UserSchema = new mongoose.Schema({
         deviceId: String,
         deviceName: String,
         lastActive: Date
+    }],
+    favorites: [{
+        slug: String,
+        name: String,
+        thumb_url: String,
+        year: Number,
+        addedAt: Date
+    }],
+    watchHistory: [{
+        slug: String,
+        name: String,
+        thumb_url: String,
+        year: Number,
+        episode: String,
+        watchedAt: Date
     }]
 }, {
     timestamps: true
