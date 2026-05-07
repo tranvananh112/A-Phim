@@ -1,4 +1,4 @@
-# Dependencies
+﻿# Dependencies
 node_modules/
 package-lock.json
 
@@ -51,7 +51,3 @@ demo-*.html
 debug-*.html
 unregister-*.html
 
-*.xlsx
-baogia_output.txt
-create_excel.py
-dutoan_output.txt
