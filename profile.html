@@ -33,47 +33,172 @@
         rel="stylesheet" />
 
     <style>
-        /* Profile page specific styles */
-        .profile-sidebar {
-            display: flex;
-            flex-direction: column;
+        /* ── Profile v2: Facebook-style Cover ── */
+        .profile-cover {
+            position: relative;
+            height: 220px;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 40%, #12122a 70%, #0a0a1a 100%);
+            border-radius: 16px 16px 0 0;
+            overflow: hidden;
         }
-        .profile-avatar-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 1.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+        @media(min-width:768px){ .profile-cover { height: 280px; } }
+        .profile-cover-img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: opacity 0.4s;
         }
-        .profile-nav {
-            display: flex;
-            flex-direction: column;
-            padding: 0.75rem;
-            position: static !important;
+        .profile-cover-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.7) 100%);
         }
-        .profile-nav .tab-btn,
-        .profile-nav button {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            width: 100%;
-            text-align: left;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            border: none;
-            background: transparent;
-            position: static !important;
-            transform: none !important;
-            cursor: pointer;
-            transition: background-color 0.2s;
+        .profile-cover-edit-btn {
+            position: absolute; top: 14px; right: 14px;
+            display: flex; align-items: center; gap: 6px;
+            padding: 8px 14px;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 10px;
+            color: #fff; font-size: 13px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
         }
-        .profile-nav .tab-btn:hover {
-            background-color: rgba(255,255,255,0.05);
-        }
-        .profile-nav .tab-btn.active {
+        .profile-cover-edit-btn:hover {
+            background: rgba(232,185,79,0.2);
+            border-color: #e8b94f;
             color: #e8b94f;
-            background-color: rgba(255,255,255,0.1);
         }
+        /* ── Identity bar ── */
+        .profile-identity {
+            position: relative;
+            padding: 0 24px 20px;
+            background: var(--bg-surface, #13131f);
+            border-radius: 0 0 16px 16px;
+        }
+        .profile-avatar-wrap {
+            position: absolute;
+            top: -52px; left: 24px;
+            width: 96px; height: 96px;
+            border-radius: 50%;
+            border: 4px solid var(--bg-surface, #13131f);
+            background: #1a1a2e;
+            overflow: hidden;
+            box-shadow: 0 0 0 2px #e8b94f, 0 8px 24px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: box-shadow 0.2s;
+        }
+        @media(min-width:768px){
+            .profile-avatar-wrap { width: 110px; height: 110px; top: -58px; }
+        }
+        .profile-avatar-wrap:hover { box-shadow: 0 0 0 2px #e8b94f, 0 0 24px rgba(232,185,79,0.4); }
+        .profile-avatar-wrap img, .profile-avatar-wrap .avatar-letter {
+            width: 100%; height: 100%; object-fit: cover;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; font-weight: 700;
+            background: #e8b94f; color: #000;
+        }
+        .avatar-edit-badge {
+            position: absolute; bottom: 2px; right: 2px;
+            width: 28px; height: 28px;
+            background: #e8b94f; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid var(--bg-surface, #13131f);
+        }
+        .profile-info-row {
+            padding-top: 60px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        @media(min-width:768px){ .profile-info-row { padding-top: 64px; } }
+        .profile-username {
+            font-size: 1.6rem; font-weight: 800;
+            color: #fff; line-height: 1.1;
+            margin-bottom: 6px;
+        }
+        .profile-badges {
+            display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+        }
+        .badge-pill {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 10px; border-radius: 999px;
+            font-size: 11px; font-weight: 700;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.75);
+        }
+        .badge-pill.gold { background: rgba(232,185,79,0.15); border-color: rgba(232,185,79,0.3); color: #e8b94f; }
+        .badge-pill.green { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.25); color: #4ade80; }
+        .badge-dot { width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: 0.5; }
+        .edit-profile-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 9px 18px; border-radius: 10px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff; font-size: 13px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .edit-profile-btn:hover {
+            background: rgba(232,185,79,0.12);
+            border-color: #e8b94f; color: #e8b94f;
+        }
+        /* ── Horizontal tab bar ── */
+        .profile-tab-bar {
+            display: flex;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            gap: 4px;
+            margin-top: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .profile-tab-bar::-webkit-scrollbar { display: none; }
+        .tab-btn {
+            display: flex; align-items: center; gap: 7px;
+            padding: 10px 16px;
+            border: none; border-bottom: 2px solid transparent;
+            background: transparent;
+            color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 600;
+            cursor: pointer; white-space: nowrap;
+            transition: all 0.2s;
+            margin-bottom: -1px;
+        }
+        .tab-btn:hover { color: #fff; }
+        .tab-btn.active { color: #e8b94f; border-bottom-color: #e8b94f; }
+        /* ── Content panels ── */
+        .tab-content { display: none; }
+        .tab-content.active-tab { display: block; }
+        .profile-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 14px;
+            padding: 28px;
+        }
+        /* ── Avatar picker modal ── */
+        #avatarPickerModal {
+            display: none;
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            align-items: center; justify-content: center;
+        }
+        #avatarPickerModal.open { display: flex; }
+        .avatar-picker-box {
+            background: #1a1a2e;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 18px;
+            padding: 24px;
+            width: 340px; max-width: 92vw;
+        }
+        /* ── Cover picker modal ── */
+        #coverPickerModal {
+            display: none;
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            align-items: center; justify-content: center;
+        }
+        #coverPickerModal.open { display: flex; }
     </style>
 
     <link rel="stylesheet" href="css/chat-room.css?v=13">
@@ -268,173 +393,201 @@
     </script>
 
 
-    <main class="pt-24 pb-20 container mx-auto px-6">
-        <div class="max-w-6xl mx-auto">
-            <h1 class="text-3xl md:text-4xl font-bold mb-6 md:mb-8 text-center md:text-left text-white mt-4 md:mt-0">Tài khoản của tôi</h1>
+        <main class="pt-20 pb-20">
+        <div class="max-w-4xl mx-auto px-4 md:px-6">
 
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                <!-- Sidebar -->
-                <div class="lg:col-span-1">
-                    <div class="profile-sidebar bg-surface-dark border border-white/5 rounded-xl overflow-hidden sticky top-24">
-                        <!-- Avatar & User Info -->
-                        <div class="profile-avatar-section relative pb-6" id="profileAvatarSection">
-                            <div class="relative group cursor-pointer mx-auto" style="width: 80px; height: 80px;" onclick="toggleAvatarSelect(event)">
-                                <div id="userAvatar"
-                                    class="w-full h-full rounded-full bg-primary flex items-center justify-center text-black text-2xl font-bold border-2 border-transparent group-hover:border-primary transition-all overflow-hidden relative z-10 m-0 shadow-[0_0_20px_rgba(232,185,79,0.2)] hover:shadow-[0_0_30px_rgba(232,185,79,0.4)]">
-                                    U
-                                </div>
-                                <!-- Overlay edit icon (Desktop Hover) -->
-                                <div class="absolute inset-0 bg-black/60 rounded-full hidden md:flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20 m-0">
-                                    <span class="material-icons-round text-white text-[28px]">photo_camera</span>
-                                </div>
-                                <!-- Permanent edit badge (Mobile Friendly) -->
-                                <div class="absolute bottom-[-2px] right-[-4px] z-30 bg-surface-elevated rounded-full border-2 border-primary shadow-lg" style="width: 30px; height: 30px; overflow: hidden; position: absolute;">
-                                    <span class="material-icons-round text-primary" style="font-size: 15px; position: absolute; top: 50%; left: 50%; transform: translate(-46%, -50%);">edit</span>
-                                </div>
-                            </div>
-                            <!-- Dropdown options -->
-                            <div id="avatarSelectDropdown" class="absolute top-[100px] z-[100] bg-surface-elevated border border-white/20 rounded-xl p-3 shadow-2xl transition-all duration-200 hidden mt-2" style="left: 50%; transform: translateX(-50%); width: max-content; min-width: 200px;">
-                                <div class="grid grid-cols-3 gap-3" id="avatarGrid">
-                                    <!-- Avatars will be injected by JS -->
-                                </div>
-                                <div class="text-center mt-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Chọn Ảnh Đại Diện</div>
-                            </div>
-                            <h3 id="userName" class="text-base font-bold text-white text-center mt-3">User</h3>
-                            <p id="userEmail" class="text-xs text-gray-400 text-center break-all mt-1">user@example.com</p>
-                        </div>
+            <!-- ── Profile Hero Card ── -->
+            <div class="rounded-2xl overflow-visible shadow-2xl border border-white/8 mb-8">
 
-                        <!-- Navigation Menu -->
-                        <div class="profile-nav">
-                            <button onclick="showTab('profile')" data-tab="profile"
-                                class="tab-btn text-gray-300">
-                                <span class="material-icons-round" style="font-size:20px">person</span>
-                                <span>Thông tin cá nhân</span>
-                            </button>
-                            <button onclick="showTab('subscription')" data-tab="subscription"
-                                class="tab-btn text-gray-300">
-                                <span class="material-icons-round" style="font-size:20px">card_membership</span>
-                                <span>Gói thành viên</span>
-                            </button>
-                            <button onclick="showTab('favorites')" data-tab="favorites"
-                                class="tab-btn text-gray-300">
-                                <span class="material-icons-round" style="font-size:20px">favorite</span>
-                                <span>Phim yêu thích</span>
-                            </button>
-                            <button onclick="showTab('history')" data-tab="history"
-                                class="tab-btn text-gray-300">
-                                <span class="material-icons-round" style="font-size:20px">history</span>
-                                <span>Lịch sử xem</span>
-                            </button>
-                            <div style="border-top: 1px solid rgba(255,255,255,0.05); margin-top: 8px; padding-top: 8px;">
-                                <button onclick="authService.logout()"
-                                    style="color: #f87171;">
-                                    <span class="material-icons-round" style="font-size:20px">logout</span>
-                                    <span>Đăng xuất</span>
-                                </button>
-                            </div>
-                        </div>
+                <!-- Cover Photo -->
+                <div class="profile-cover" id="profileCoverSection">
+                    <img id="profileCoverImg" class="profile-cover-img" src="" alt="" style="display:none;" />
+                    <div class="profile-cover-overlay"></div>
+                    <div style="position:absolute;inset:0;overflow:hidden;pointer-events:none;">
+                        <div style="position:absolute;top:20%;left:15%;width:2px;height:2px;background:#e8b94f;border-radius:50%;opacity:0.6;animation:twinkle 3s infinite;"></div>
+                        <div style="position:absolute;top:40%;left:60%;width:1px;height:1px;background:#fff;border-radius:50%;opacity:0.4;animation:twinkle 2s infinite 0.5s;"></div>
+                        <div style="position:absolute;top:70%;left:30%;width:2px;height:2px;background:#fff;border-radius:50%;opacity:0.3;animation:twinkle 4s infinite 1s;"></div>
+                        <div style="position:absolute;top:25%;left:80%;width:1px;height:1px;background:#e8b94f;border-radius:50%;opacity:0.5;animation:twinkle 2.5s infinite 0.2s;"></div>
                     </div>
+                    <style>@keyframes twinkle{0%,100%{opacity:0.2}50%{opacity:0.8}}</style>
+                    <button class="profile-cover-edit-btn" onclick="openCoverPicker()">
+                        <span class="material-icons-round" style="font-size:15px;">add_photo_alternate</span>
+                        Thay ảnh bìa
+                    </button>
                 </div>
 
-                <!-- Content -->
-                <div class="lg:col-span-3">
-                    <!-- Welcome message (default view) -->
-                    <div id="welcomeTab" class="tab-content">
-                        <div class="bg-surface-dark border border-white/5 rounded-xl p-8 text-center">
-                            <span class="material-icons-round text-6xl text-primary mb-4 block">account_circle</span>
-                            <h2 class="text-2xl font-bold mb-2">Chào mừng đến trang tài khoản</h2>
-                            <p class="text-gray-400">Chọn một mục từ menu bên trái để xem thông tin chi tiết.</p>
+                <!-- Identity bar -->
+                <div class="profile-identity" style="background:#13131f;">
+                    <!-- Avatar overlapping -->
+                    <div class="profile-avatar-wrap" id="profileAvatarSection" onclick="toggleAvatarSelect(event)">
+                        <div id="userAvatar" style="width:100%;height:100%;background:#e8b94f;display:flex;align-items:center;justify-content:center;font-size:2.2rem;font-weight:800;color:#000;">U</div>
+                        <div id="avatarSelectDropdown" style="display:none;position:fixed;z-index:10000;background:#1a1a2e;border:1px solid rgba(255,255,255,0.15);border-radius:16px;padding:16px;box-shadow:0 20px 60px rgba(0,0,0,0.7);width:260px;" onclick="event.stopPropagation()">
+                            <p style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Chọn Ảnh Đại Diện</p>
+                            <div class="grid grid-cols-3 gap-3" id="avatarGrid"></div>
+                        </div>
+                        <div class="avatar-edit-badge">
+                            <span class="material-icons-round" style="font-size:14px;color:#000;">photo_camera</span>
                         </div>
                     </div>
 
-                    <!-- Profile Tab -->
-                    <div id="profileTab" class="tab-content hidden">
-                        <div class="bg-surface-dark border border-white/5 rounded-xl p-8">
-                            <h2 class="text-2xl font-bold mb-6">Thông tin cá nhân</h2>
-                            <form id="profileForm" class="space-y-6">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-300 mb-2">Họ và tên</label>
-                                        <input type="text" id="profileName"
-                                            class="w-full px-4 py-3 bg-background-dark border border-white/10 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-white" />
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
-                                        <input type="email" id="profileEmail" disabled
-                                            class="w-full px-4 py-3 bg-background-dark/50 border border-white/10 rounded-lg text-gray-400" />
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-300 mb-2">Số điện
-                                            thoại</label>
-                                        <input type="tel" id="profilePhone"
-                                            class="w-full px-4 py-3 bg-background-dark border border-white/10 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-white" />
-                                    </div>
-                                </div>
-                                <button type="submit"
-                                    class="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors">
-                                    Cập nhật thông tin
-                                </button>
-                            </form>
-
-                            <hr class="border-white/5 my-8" />
-
-                            <h3 class="text-xl font-bold mb-4">Đổi mật khẩu</h3>
-                            <form id="passwordForm" class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-2">Mật khẩu cũ</label>
-                                    <input type="password" id="oldPassword"
-                                        class="w-full px-4 py-3 bg-background-dark border border-white/10 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-white" />
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-2">Mật khẩu mới</label>
-                                    <input type="password" id="newPassword"
-                                        class="w-full px-4 py-3 bg-background-dark border border-white/10 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-white" />
-                                </div>
-                                <button type="submit"
-                                    class="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors">
-                                    Đổi mật khẩu
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Subscription Tab -->
-                    <div id="subscriptionTab" class="tab-content hidden">
-                        <div class="bg-surface-dark border border-white/5 rounded-xl p-8">
-                            <h2 class="text-2xl font-bold mb-6">Gói thành viên</h2>
-                            <div id="subscriptionInfo"></div>
-                            <a href="pricing.html"
-                                class="inline-block mt-6 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors">
-                                Nâng cấp gói
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Favorites Tab -->
-                    <div id="favoritesTab" class="tab-content hidden">
-                        <div class="bg-surface-dark border border-white/5 rounded-xl p-8">
-                            <h2 class="text-2xl font-bold mb-6">Phim yêu thích</h2>
-                            <div id="favoritesList" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
-                        </div>
-                    </div>
-
-                    <!-- History Tab -->
-                    <div id="historyTab" class="tab-content hidden">
-                        <div class="bg-surface-dark border border-white/5 rounded-xl p-8">
-                            <div class="flex items-center justify-between mb-6">
-                                <h2 class="text-2xl font-bold">Lịch sử xem</h2>
-                                <button onclick="clearHistory()"
-                                    class="text-sm text-red-400 hover:text-red-300 transition-colors">
-                                    Xóa tất cả
-                                </button>
+                    <!-- Info row -->
+                    <div class="profile-info-row">
+                        <div>
+                            <div class="profile-username" id="userName">Người dùng</div>
+                            <div class="profile-badges">
+                                <span class="badge-pill gold"><span class="material-icons-round" style="font-size:11px;">workspace_premium</span>Khán Giả</span>
+                                <span class="badge-dot"></span>
+                                <span class="badge-pill">Tập Sự</span>
+                                <span class="badge-dot"></span>
+                                <span class="badge-pill">Cấp 1</span>
+                                <span class="badge-dot"></span>
+                                <span class="badge-pill green"><span style="font-size:13px;">🪙</span> 0</span>
                             </div>
-                            <div id="historyList" class="space-y-4"></div>
+                            <p id="userEmail" style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:5px;display:none;"></p>
                         </div>
+                        <button class="edit-profile-btn" onclick="showTab('profile')">
+                            <span class="material-icons-round" style="font-size:16px;">edit_note</span>
+                            Sửa hồ sơ
+                        </button>
+                    </div>
+
+                    <!-- Horizontal tabs -->
+                    <div class="profile-tab-bar" style="margin-top:20px;">
+                        <button class="tab-btn" data-tab="profile" onclick="showTab('profile')">
+                            <span class="material-icons-round" style="font-size:17px;">person</span>Thông tin
+                        </button>
+                        <button class="tab-btn" data-tab="subscription" onclick="showTab('subscription')">
+                            <span class="material-icons-round" style="font-size:17px;">card_membership</span>Gói cước
+                        </button>
+                        <button class="tab-btn" data-tab="favorites" onclick="showTab('favorites')">
+                            <span class="material-icons-round" style="font-size:17px;">favorite</span>Yêu thích
+                        </button>
+                        <button class="tab-btn" data-tab="history" onclick="showTab('history')">
+                            <span class="material-icons-round" style="font-size:17px;">history</span>Lịch sử
+                        </button>
+                        <button class="tab-btn" onclick="authService.logout()" style="color:#f87171;margin-left:auto;">
+                            <span class="material-icons-round" style="font-size:17px;">logout</span>Đăng xuất
+                        </button>
                     </div>
                 </div>
             </div>
+
+            <!-- Tab Panels -->
+            <div id="welcomeTab" class="tab-content">
+                <div class="profile-card text-center py-12">
+                    <span class="material-icons-round" style="font-size:56px;color:#e8b94f;display:block;margin-bottom:12px;">movie_filter</span>
+                    <h2 class="text-xl font-bold mb-2">Chào mừng đến trang tài khoản</h2>
+                    <p class="text-gray-400">Chọn một mục từ tab phía trên để xem thông tin.</p>
+                </div>
+            </div>
+
+            <div id="profileTab" class="tab-content hidden">
+                <div class="profile-card">
+                    <h2 class="text-xl font-bold mb-6">Thông tin cá nhân</h2>
+                    <form id="profileForm" class="space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Họ và tên</label>
+                                <input type="text" id="profileName" class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary text-white" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                                <input type="email" id="profileEmail" disabled class="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-lg text-gray-400" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Số điện thoại</label>
+                                <input type="tel" id="profilePhone" class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary text-white" />
+                            </div>
+                        </div>
+                        <button type="submit" class="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors">Cập nhật thông tin</button>
+                    </form>
+                    <hr class="border-white/5 my-8" />
+                    <h3 class="text-lg font-bold mb-4">Đổi mật khẩu</h3>
+                    <form id="passwordForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Mật khẩu cũ</label>
+                            <input type="password" id="oldPassword" class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary text-white" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Mật khẩu mới</label>
+                            <input type="password" id="newPassword" class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary text-white" />
+                        </div>
+                        <button type="submit" class="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors">Đổi mật khẩu</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="subscriptionTab" class="tab-content hidden">
+                <div class="profile-card">
+                    <h2 class="text-xl font-bold mb-6">Gói thành viên</h2>
+                    <div id="subscriptionInfo"></div>
+                    <a href="pricing.html" class="inline-block mt-6 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors">Nâng cấp gói</a>
+                </div>
+            </div>
+
+            <div id="favoritesTab" class="tab-content hidden">
+                <div class="profile-card">
+                    <h2 class="text-xl font-bold mb-6">Phim yêu thích</h2>
+                    <div id="favoritesList" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+                </div>
+            </div>
+
+            <div id="historyTab" class="tab-content hidden">
+                <div class="profile-card">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold">Lịch sử xem</h2>
+                        <button onclick="clearHistory()" class="text-sm text-red-400 hover:text-red-300">Xóa tất cả</button>
+                    </div>
+                    <div id="historyList" class="space-y-4"></div>
+                </div>
+            </div>
+
         </div>
     </main>
+
+    <!-- Cover Picker Modal -->
+    <div id="coverPickerModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
+        <div style="background:#1a1a2e;border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:24px;width:420px;max-width:92vw;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                <h3 style="font-size:1rem;font-weight:700;color:#fff;">Chọn ảnh bìa</h3>
+                <button onclick="closeCoverPicker()" style="background:none;border:none;color:rgba(255,255,255,0.5);cursor:pointer;font-size:22px;line-height:1;">&times;</button>
+            </div>
+            <div id="coverGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"></div>
+        </div>
+    </div>
+
+    <script>
+    const COVER_PRESETS = [
+        'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1574267432553-4b4628081c31?w=800&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=800&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=800&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1524712245354-2c4e5e7121c0?w=800&auto=format&fit=crop',
+    ];
+    function openCoverPicker() {
+        const modal = document.getElementById('coverPickerModal');
+        modal.style.display = 'flex';
+        const saved = localStorage.getItem('ap_profile_cover') || '';
+        document.getElementById('coverGrid').innerHTML = COVER_PRESETS.map(url =>
+            '<img src="' + url + '" onclick="setCover(\'' + url + '\')" style="width:100%;height:80px;object-fit:cover;border-radius:10px;cursor:pointer;border:2px solid ' + (saved===url?'#e8b94f':'transparent') + ';transition:border-color 0.2s;" onmouseover="this.style.borderColor=\'#e8b94f\';" onmouseout="this.style.borderColor=\'' + (saved===url?'#e8b94f':'transparent') + '\';" />'
+        ).join('');
+    }
+    function closeCoverPicker() { document.getElementById('coverPickerModal').style.display = 'none'; }
+    function setCover(url) {
+        localStorage.setItem('ap_profile_cover', url);
+        const img = document.getElementById('profileCoverImg');
+        img.src = url; img.style.display = 'block';
+        closeCoverPicker();
+    }
+    document.getElementById('coverPickerModal').addEventListener('click', function(e){ if(e.target===this) closeCoverPicker(); });
+    document.addEventListener('DOMContentLoaded', function() {
+        const saved = localStorage.getItem('ap_profile_cover');
+        if (saved) { const img = document.getElementById('profileCoverImg'); img.src = saved; img.style.display = 'block'; }
+        const user = typeof authService !== 'undefined' ? authService.getCurrentUser() : null;
+        if (user && user.email) { const el = document.getElementById('userEmail'); if(el){el.textContent=user.email;el.style.display='block';} }
+    });
+    </script>
     <!-- Footer -->
     <footer class="bg-void border-t border-white/5 py-12 relative overflow-hidden ambient-section">
         <!-- Background pattern/logo graphic -->
