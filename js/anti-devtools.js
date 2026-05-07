@@ -232,6 +232,10 @@
     }
 
     function _showDevToolsOverlay() {
+        // Không hiển thị cảnh báo trên trang chủ (index.html) theo yêu cầu
+        const path = window.location.pathname;
+        if (path === '/' || path.endsWith('/index.html')) return;
+
         _createOverlay();
         if (!_overlayEl) return;
 
@@ -309,6 +313,10 @@
     }
 
     function _showWarningToast() {
+        // Không hiển thị cảnh báo trên trang chủ (index.html) theo yêu cầu
+        const path = window.location.pathname;
+        if (path === '/' || path.endsWith('/index.html')) return;
+
         _createToast();
 
         clearTimeout(_toastTimeout);
