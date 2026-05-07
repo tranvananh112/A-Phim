@@ -6,7 +6,33 @@ document.addEventListener('DOMContentLoaded', function () {
     setupLoginForm();
     setupRegisterForm();
     setupForgotPassword();
+    setupAuthLeftPanel();
 });
+
+// Setup dynamic background for left panel
+function setupAuthLeftPanel() {
+    const panel = document.getElementById('auth-left-panel');
+    if (!panel) return;
+
+    // Default fallback
+    let bgUrl = 'https://image.tmdb.org/t/p/w780/8b8R8l88Qje9dn9OE8Ez05N5cKk.jpg';
+    panel.style.background = `linear-gradient(to bottom, rgba(15,15,30,0.15) 0%, rgba(15,15,30,0.95) 100%), url('${bgUrl}') center / cover no-repeat`;
+
+    // Fetch dynamic
+    setTimeout(async () => {
+        try {
+            const res = await fetch('https://ophim1.com/v1/api/quoc-gia/viet-nam');
+            const data = await res.json();
+            if (data?.data?.items?.length > 0) {
+                const latestMovie = data.data.items[0];
+                const url = `https://img.ophim.live/uploads/movies/${latestMovie.thumb_url || latestMovie.poster_url}`;
+                panel.style.background = `linear-gradient(to bottom, rgba(15,15,30,0.15) 0%, rgba(15,15,30,0.95) 100%), url('${url}') center / cover no-repeat`;
+            }
+        } catch (e) {
+            console.warn('Could not load dynamic auth background');
+        }
+    }, 100);
+}
 
 // Setup login form
 function setupLoginForm() {

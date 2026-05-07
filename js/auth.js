@@ -140,7 +140,7 @@ class AuthService {
         localStorage.removeItem(STORAGE_KEYS.USER);
         localStorage.removeItem(STORAGE_KEYS.TOKEN);
         this.currentUser = null;
-        window.location.href = 'login.html';
+        window.location.href = 'index.html';
     }
 
     // Check if logged in
