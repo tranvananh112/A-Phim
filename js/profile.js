@@ -42,19 +42,23 @@ function loadBasicUserInfo() {
     const userId = user._id || user.id || user.email;
     const avatarContainer = document.getElementById('userAvatar');
 
+    // Helper: render avatar
     function renderAvatar(url) {
         if (url) {
-            avatarContainer.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.innerHTML=user.name.charAt(0).toUpperCase()" />`;
+            avatarContainer.innerHTML = `<img src="${url}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML=user.name.charAt(0).toUpperCase()" />`;
         } else {
-            avatarContainer.innerHTML = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+            avatarContainer.innerHTML = user.name.charAt(0).toUpperCase();
         }
     }
 
+    // 1. Render backend avatar instantly (from localStorage user object)
     renderAvatar(user.avatar);
 
+    // 2. Use avatarService to load per-user avatar (local then Firestore sync)
     if (typeof avatarService !== 'undefined') {
         avatarService.loadAvatar(userId, function(avatarUrl) {
             renderAvatar(avatarUrl);
+            // Sync back into user object so auth module stays consistent
             if (avatarUrl && user.avatar !== avatarUrl) {
                 user.avatar = avatarUrl;
                 try { localStorage.setItem('cinestream_user', JSON.stringify(user)); } catch(e) {}
@@ -62,10 +66,8 @@ function loadBasicUserInfo() {
         });
     }
 
-    const nameEl  = document.getElementById('userName');
-    const emailEl = document.getElementById('userEmail');
-    if (nameEl)  nameEl.textContent  = user.name  || 'Người dùng';
-    if (emailEl) { emailEl.textContent = user.email || ''; emailEl.style.display = user.email ? 'block' : 'none'; }
+    document.getElementById('userName').textContent = user.name;
+    document.getElementById('userEmail').textContent = user.email;
 }
 
 // Load detailed user profile for form
@@ -293,40 +295,48 @@ window.clearHistory = function () {
 
 // Show tab
 window.showTab = function (tabName) {
-    // Hide all tab-content elements
+    // Hide all tab-content elements (including welcomeTab)
     document.querySelectorAll('.tab-content').forEach(tab => {
         tab.classList.add('hidden');
-        tab.classList.remove('active-tab');
     });
 
     // Remove active class from all tab buttons
     document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active');
+        btn.classList.remove('active', 'text-primary', 'bg-white/10');
+        btn.classList.add('text-gray-300');
         btn.style.color = '';
+        btn.style.backgroundColor = '';
     });
 
     // Show selected tab
     const selectedTab = document.getElementById(tabName + 'Tab');
     if (selectedTab) {
         selectedTab.classList.remove('hidden');
-        selectedTab.classList.add('active-tab');
-        selectedTab.style.display = 'block';
     }
 
     // Add active class to the button matching this tab
-    const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
+    const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabName}"], .tab-btn[onclick*="'${tabName}'"]`);
     if (activeBtn) {
         activeBtn.classList.add('active');
-        activeBtn.style.color = '#e8b94f';
+        activeBtn.style.color = '#f2f20d';
+        activeBtn.style.backgroundColor = 'rgba(255,255,255,0.1)';
     }
 
     // Load data based on selected tab (only if not loaded before)
     if (!loadedTabs.has(tabName)) {
         switch (tabName) {
-            case 'profile':     loadUserProfile();      break;
-            case 'subscription':loadSubscriptionInfo(); break;
-            case 'favorites':   loadFavorites();        break;
-            case 'history':     loadHistory();          break;
+            case 'profile':
+                loadUserProfile();
+                break;
+            case 'subscription':
+                loadSubscriptionInfo();
+                break;
+            case 'favorites':
+                loadFavorites();
+                break;
+            case 'history':
+                loadHistory();
+                break;
         }
         loadedTabs.add(tabName);
     }
@@ -477,36 +487,35 @@ const PROFILE_AVATAR_LIST = [
 ];
 
 function toggleAvatarSelect(e) {
-    if (e) { e.preventDefault(); e.stopPropagation(); }
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
     const dropdown = document.getElementById('avatarSelectDropdown');
     if (!dropdown) return;
 
-    if (dropdown.style.display === 'none' || !dropdown.style.display) {
-        // Build avatar list if empty
+    if (dropdown.classList.contains('hidden')) {
+        // Initialize avatars UI if empty
         const grid = document.getElementById('avatarGrid');
         if (grid && grid.children.length === 0) {
             let html = '';
             PROFILE_AVATAR_LIST.forEach(url => {
-                html += `<img src="${url}" class="w-12 h-12 rounded-full object-cover cursor-pointer hover:scale-110 transition-all border-2 border-transparent hover:border-yellow-400" onclick="selectAvatar(event, '${url}')" />`;
+                html += `<img src="${url}" class="relative w-12 h-12 rounded-full object-cover cursor-pointer hover:scale-[1.35] hover:z-50 transition-all duration-300 hover:border-primary border-2 border-transparent shadow-[0_0_10px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(242,242,13,0.5)]" onclick="selectAvatar(event, '${url}')">`;
             });
             grid.innerHTML = html;
         }
-        // Position under avatar
-        const wrap = document.getElementById('profileAvatarSection');
-        const rect = wrap ? wrap.getBoundingClientRect() : { left: 20, bottom: 160 };
-        dropdown.style.display = 'block';
-        dropdown.style.top  = (rect.bottom + window.scrollY + 8) + 'px';
-        dropdown.style.left = Math.max(10, rect.left) + 'px';
-
+        dropdown.classList.remove('hidden');
+        
+        // Hide when clicking outside
         const outsideClickListener = (event) => {
-            if (!event.target.closest('#profileAvatarSection') && !event.target.closest('#avatarSelectDropdown')) {
-                dropdown.style.display = 'none';
+            if (!event.target.closest('#profileAvatarSection')) {
+                dropdown.classList.add('hidden');
                 document.removeEventListener('click', outsideClickListener);
             }
         };
         setTimeout(() => document.addEventListener('click', outsideClickListener), 10);
     } else {
-        dropdown.style.display = 'none';
+        dropdown.classList.add('hidden');
     }
 }
 
