@@ -757,7 +757,10 @@ window.showTab = function (tabName) {
         activeBtn.classList.add('active');
         
         // Update Mobile View Title
-        const titleText = activeBtn.innerText.trim();
+        const btnClone = activeBtn.cloneNode(true);
+        const iconSpan = btnClone.querySelector('.material-icons-round, span');
+        if (iconSpan) iconSpan.remove();
+        const titleText = btnClone.innerText.trim();
         const mobileTitle = document.getElementById('mobileViewTitle');
         if (mobileTitle) mobileTitle.textContent = titleText;
     }

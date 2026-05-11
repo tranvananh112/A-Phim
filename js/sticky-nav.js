@@ -8,7 +8,7 @@
     let lastScrollTop = 0;
     let ticking = false;
     // Giảm threshold để scroll nhạy hơn (vuốt 5px là ẩn ngay)
-    const scrollThreshold = 5;
+    const scrollThreshold = 8;
     const hideThreshold = 80; // Hạ thấp ngưỡng ẩn cho nhạy hơn
 
     // Check if device is mobile/tablet
@@ -33,18 +33,18 @@
         }
         // MOBILE: Auto-hide khi scroll xuống
         else {
-            // Ở đầu trang (nhỏ hơn 5px) - luôn hiện rõ
+            // Ở đầu trang (nhỏ hơn 5px) - luôn hiện rõ, gỡ 'scrolled'
             if (scrollTop <= 5) {
                 nav.classList.remove('scrolled', 'nav-hidden');
                 nav.classList.add('nav-visible');
             }
-            // Vuốt xuống dù chỉ 1px - ẨN LẬP TỨC
-            else if (scrollTop > lastScrollTop) {
+            // Kéo xuống vượt quá scrollThreshold -> ẨN
+            else if (scrollTop > lastScrollTop + scrollThreshold && scrollTop > 50) {
                 nav.classList.add('scrolled', 'nav-hidden');
                 nav.classList.remove('nav-visible');
             }
-            // Vuốt lên - HIỆN (debounce nhẹ 2px để mượt)
-            else if (scrollTop < lastScrollTop - 2) {
+            // Kéo lên vượt quá scrollThreshold -> HIỆN
+            else if (scrollTop < lastScrollTop - scrollThreshold) {
                 nav.classList.add('scrolled', 'nav-visible');
                 nav.classList.remove('nav-hidden');
             }
