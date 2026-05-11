@@ -264,53 +264,81 @@ select option {
 }
 
 
-/* Fix l?i rung l?c / b�i den text khi vu?t ngang tr�n mobile */
+/* Fix l?i rung l?c / b�i den text khi vu?t ngang tr�n mobile */
 [class*="overflow-x-auto"] {
     -webkit-user-select: none;
     user-select: none;
-    /* Kh�ng cho ph�p drag th? con ra ngo�i g�y r�c giao di?n */
+    /* Kh�ng cho ph�p drag th? con ra ngo�i g�y r�c giao di?n */
     -webkit-user-drag: none;
 }
 /* ====================================================
    12. OPTIMIZE NAV SEARCH SPACE ON MOBILE
-   T?i uu di?n t�ch cho thanh t�m ki?m hi?n th? d�i hon
+   Tối ưu diện tích cho thanh tìm kiếm dài hơn, giấu sub-text Cinema
    ==================================================== */
 @media (max-width: 768px) {
-    /* Gi?m padding l? 2 b�n nav container */
+    /* Giảm padding lề container nav tối đa để lấy không gian */
+    nav .container, 
     nav .container.mx-auto {
-        padding-left: 10px !important;
-        padding-right: 10px !important;
+        padding-left: 6px !important;
+        padding-right: 6px !important;
+        gap: 4px !important;
     }
 
-    /* ?n ch? Cinema v� thu g?n logo d? nhu?ng ch? */
-    .flex-col.leading-none span[class*=" tracking-widest\] {
- display: none !important;
- }
- .text-xl.font-bold.text-white {
- font-size: 0.95rem !important;
- letter-spacing: -0.02em;
- }
+    /* TỪNG BƯỚC TIẾT KIỆM KHÔNG GIAN ĐỂ DÀNH CHO THANH TÌM KIẾM: */
+    
+    /* 1. Ẩn chữ Cinema nhỏ xíu bên dưới Logo TEXT */
+    .flex-col.leading-none span.tracking-widest,
+    .flex-col.leading-none span.text-\[9px\],
+    .flex-col.leading-none span:last-child {
+        display: none !important;
+    }
+    
+    /* 2. Thu nhỏ nhẹ Logo chữ A PHIM */
+    .text-xl.font-bold.text-white {
+        font-size: 0.95rem !important;
+        letter-spacing: -0.02em !important;
+    }
+    
+    /* 3. Ép chặt gap giữa Logo Icon và Logo Text */
+    a.group.flex-shrink-0.flex.items-center,
+    a[href="index.html"].group {
+        gap: 6px !important;
+    }
 
- /* Gi?m kho?ng c�ch gi?a c�c icon b�n ph?i */
- .flex.items-center.gap-3.flex-shrink-0.ml-4 {
- margin-left: 2px !important;
- gap: 4px !important;
- }
-
- /* K�o d�i thanh t�m ki?m, �p min-width */
- .mobile-inline-search {
- margin: 0 6px !important;
- min-width: 110px !important;
- flex-grow: 2 !important;
- }
+    /* 4. Thu gọn khoảng cách cụm Icon bên phải (Chuông, Avatar, Menu) */
+    .flex.items-center.gap-3.flex-shrink-0.ml-4,
+    .flex.items-center.gap-3.flex-shrink-0 {
+        margin-left: 0 !important;
+        gap: 2px !important;
+    }
+    
+    /* 5. Thu hẹp các icon đơn lẻ */
+    #navNotificationBtn {
+        margin-right: 0px !important;
+    }
+    
+    /* Kéo dài tối đa thanh tìm kiếm */
+    .mobile-inline-search {
+        margin: 0 4px !important;
+        min-width: 130px !important;
+        flex: 1 !important;
+        padding: 0 8px !important;
+    }
+    
+    .mobile-inline-search-input {
+        font-size: 12px !important;
+    }
 }
 
-/* Screen si�u nh? - uu ti�n t?i da Search Bar */
+/* Screen siêu nhỏ - Ưu tiên tối đa diện tích hiển thị Search Bar */
 @media (max-width: 360px) {
- .flex-col.leading-none {
- display: none !important;
- }
- .mobile-inline-search {
- min-width: 140px !important;
- }
+    .flex-col.leading-none {
+        display: none !important;
+    }
+    a.group.flex-shrink-0.flex.items-center {
+        gap: 0 !important;
+    }
+    .mobile-inline-search {
+        min-width: 110px !important;
+    }
 }
