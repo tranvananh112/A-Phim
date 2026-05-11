@@ -319,7 +319,7 @@
     </style>
 
     <link rel="stylesheet" href="css/chat-room.css?v=13">
-<link rel="stylesheet" href="css/mobile-viewport-fix.css?v=13">
+<link rel="stylesheet" href="css/mobile-viewport-fix.css?v=16">
 <link rel="stylesheet" href="css/mobile-menu-modern.css?v=13">
 
     <!-- A Phim: Hardcode Dropdown Blue Override inside HTML to bypass all cache/specificity -->
@@ -535,7 +535,7 @@
             <!-- ZONE 3: Right — Auth + Mobile Toggle -->
             <div class="flex items-center gap-3 flex-shrink-0 ml-4">
                 <!-- Auth Container (filled by auth.js / user-ui.js) -->
-                <div id="authContainer" class="flex items-center">
+                <div id="authContainer" class="flex items-center" style="overflow: visible !important;">
                     <a href="login.html"
                        onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');return false;}"
                        class="nav-auth-btn hidden lg:inline-flex">
@@ -1183,7 +1183,7 @@
     <script src="js/user.js?v=16"></script>
     <script src="js/rating.js?v=13"></script>
     <!-- user-ui.js: CẦN THIẾT để đồng bộ avatar/tên trên thanh nav -->
-    <script src="js/user-ui.js?v=2?v=14"></script>
+    <script src="js/user-ui.js?v=16"></script>
     <script src="js/realtime-sync.js?v=13"></script>
 
     <!-- Avatar + Profile -->

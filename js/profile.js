@@ -23,6 +23,15 @@ document.addEventListener('DOMContentLoaded', function () {
     
     // Slight delay to ensure DOM is ready
     setTimeout(() => {
+        // MOBILE: By default show the full Menu view, don't enter sub-tabs instantly
+        if (window.innerWidth <= 1024) {
+            if (typeof goBackToMenu === 'function') {
+                goBackToMenu();
+            }
+            return;
+        }
+
+        // DESKTOP: Proceed with direct tab rendering
         if (document.getElementById(activeTabName + 'Tab')) {
             showTab(activeTabName);
         }
