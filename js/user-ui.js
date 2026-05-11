@@ -146,7 +146,22 @@ function updateUserUI() {
             syncNotifications();
         }
     }
-    // Chưa đăng nhập: KHÔNG làm gì - button gốc html có onclick + auth-modal.js xử lý
+    } else {
+        // CHƯA ĐĂNG NHẬP: Tự động tiêm nút Đăng nhập chuẩn vào container để đồng bộ giao diện Mobile
+        const loginBtnHtml = `
+            <a href="login.html"
+               onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');return false;}"
+               class="nav-auth-btn" 
+               style="display: inline-flex !important;">
+                <span class="material-icons-round" style="font-size:16px;">person</span>
+                <span class="auth-btn-text">Đăng Nhập</span>
+            </a>
+        `;
+        const containers = document.querySelectorAll('#authContainer');
+        containers.forEach(container => {
+            container.innerHTML = loginBtnHtml;
+        });
+    }
 }
 
 // Khởi chạy
