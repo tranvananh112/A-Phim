@@ -33,7 +33,7 @@
         rel="stylesheet" />
     <link rel="stylesheet" href="css/avatar-frames.css?v=15">
     <link rel="stylesheet" href="css/pricing-premium.css?v=15">
-    <link rel="stylesheet" href="css/profile-shop.css?v=15">
+    <link rel="stylesheet" href="css/profile-shop.css?v=32">
 
     <style>
         /* ── Profile v2: Facebook-style Cover ── */
@@ -319,8 +319,8 @@
     </style>
 
     <link rel="stylesheet" href="css/chat-room.css?v=13">
-<link rel="stylesheet" href="css/mobile-viewport-fix.css?v=19">
-<link rel="stylesheet" href="css/mobile-menu-modern.css?v=13">
+<link rel="stylesheet" href="css/mobile-viewport-fix.css?v=32">
+<link rel="stylesheet" href="css/mobile-menu-modern.css?v=32">
 
     <!-- A Phim: Hardcode Dropdown Blue Override inside HTML to bypass all cache/specificity -->
             <style id="dropdown-blue-override">
@@ -619,10 +619,10 @@
                                     to { opacity: 1; transform: translateY(0) scale(1); }
                                 }
                             </style>
-                            <div class="avatar-edit-badge" onclick="event.stopPropagation(); document.getElementById('epAvatarUpload').click();" title="Tải ảnh lên">
+                            <div class="avatar-edit-badge" onclick="event.stopPropagation(); document.getElementById('epAvatarUploadMain').click();" title="Tải ảnh lên">
                                 <span class="material-icons-round" style="font-size:16px; color:#111;">camera_alt</span>
                             </div>
-                            <input type="file" id="epAvatarUpload" accept="image/*" style="display:none;" onchange="handleEpAvatarUpload(event)" />
+                            <input type="file" id="epAvatarUploadMain" accept="image/*" style="display:none;" onchange="handleEpAvatarUpload(event)" />
                         </div>
                         <!-- Edit btn top-right -->
                         <button class="edit-profile-btn" onclick="openEditProfileModal()" style="margin-top:16px;flex-shrink:0;">
@@ -1177,7 +1177,7 @@
     <script src="js/user.js?v=16"></script>
     <script src="js/rating.js?v=13"></script>
     <!-- user-ui.js: CẦN THIẾT để đồng bộ avatar/tên trên thanh nav -->
-    <script src="js/user-ui.js?v=19"></script>
+    <script src="js/user-ui.js?v=32"></script>
     <script src="js/realtime-sync.js?v=13"></script>
 
     <!-- Avatar + Profile -->
@@ -1185,13 +1185,13 @@
     <script src="js/playlist-service.js?v=13"></script>
     <script src="js/playlist-modal.js?v=13"></script>
     <script src="js/profile-shop.js?v=13"></script>
-    <script src="js/profile.js?v=16"></script>
+    <script src="js/profile.js?v=32"></script>
     <script src="js/profile-progress.js?v=13"></script>
 
     <!-- Navigation Utils -->
     <script src="js/categories-dropdown.js?v=13"></script>
     <script src="js/dropdown-hover-fix.js?v=13"></script>
-    <script src="js/mobile-menu-modern.js?v=13"></script>
+    <script src="js/mobile-menu-modern.js?v=32"></script>
     <script src="js/sticky-nav.js?v=16"></script>
     <script src="js/phim-x-modal.js?v=13"></script>
 
@@ -1428,8 +1428,8 @@
                         <div>
                             <p style="font-size:14px; font-weight:700; color:#fff; margin-bottom:8px;">Ảnh đại diện</p>
                             <div style="display:flex; gap:10px; margin-bottom:8px;">
-                                <input type="file" id="epAvatarUpload" accept="image/png, image/jpeg, image/webp" style="display:none;" onchange="handleEpAvatarUpload(event)" />
-                                <button onclick="document.getElementById('epAvatarUpload').click()" style="padding:8px 16px; background:rgba(167, 139, 250, 0.1); border:1px solid rgba(167, 139, 250, 0.3); color:#a78bfa; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px;"><span class="material-icons-round" style="font-size:16px;">upload</span> Tải lên</button>
+                                <input type="file" id="epAvatarUploadModal" accept="image/png, image/jpeg, image/webp" style="display:none;" onchange="handleEpAvatarUpload(event)" />
+                                <button onclick="document.getElementById('epAvatarUploadModal').click()" style="padding:8px 16px; background:rgba(167, 139, 250, 0.1); border:1px solid rgba(167, 139, 250, 0.3); color:#a78bfa; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px;"><span class="material-icons-round" style="font-size:16px;">upload</span> Tải lên</button>
                                 <button onclick="promptEpAvatarUrl()" style="padding:8px 16px; background:transparent; border:1px solid rgba(255,255,255,0.1); color:rgba(255,255,255,0.8); border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px;"><span class="material-icons-round" style="font-size:16px;">link</span> Dán URL</button>
                             </div>
                             <p style="font-size:11px; color:rgba(255,255,255,0.4);">PNG/JPG. Sẽ tự thu nhỏ về 256x256.</p>

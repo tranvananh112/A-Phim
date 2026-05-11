@@ -145,7 +145,6 @@ function updateUserUI() {
         if (typeof syncNotifications === 'function') {
             syncNotifications();
         }
-    }
     } else {
         // CHƯA ĐĂNG NHẬP: Tự động tiêm nút Đăng nhập chuẩn vào container để đồng bộ giao diện Mobile
         const loginBtnHtml = `

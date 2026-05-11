@@ -57,6 +57,10 @@ function loadBasicUserInfo() {
     const heroAvatar = document.getElementById('userAvatar');
     const sidebarAvatar = document.getElementById('sidebarAvatar');
     
+    // Lấy URL avatar mới nhất từ Cache Local (Giống user-ui.js) để đồng bộ tức thời
+    const avatarKey = userId ? `avatar_${userId}` : 'user_avatar';
+    const currentAvatar = localStorage.getItem(avatarKey) || user.avatar || '';
+    
     // Get frame info (Use correct DB field: equippedFrameClass)
     const frameClass = user.equippedFrameClass || localStorage.getItem('ap_frame_class') || '';
 
@@ -96,15 +100,19 @@ function loadBasicUserInfo() {
         container.style.justifyContent = 'center';
     }
 
-    // 1. Initial render
-    renderTo(heroAvatar, user.avatar, 'size-lg');
-    renderTo(sidebarAvatar, user.avatar, 'size-sm');
+    // 1. Initial render (Dùng avatar mới nhất từ cache local)
+    renderTo(heroAvatar, currentAvatar, 'size-lg');
+    renderTo(sidebarAvatar, currentAvatar, 'size-sm');
 
-    // 2. Load sync avatar
+    // 2. Load sync avatar (Phải tôn trọng Local Cache trong hàm callback bất đồng bộ này)
     if (typeof avatarService !== 'undefined') {
         avatarService.loadAvatar(userId, function(avatarUrl) {
-            renderTo(heroAvatar, avatarUrl, 'size-lg');
-            renderTo(sidebarAvatar, avatarUrl, 'size-sm');
+            // LUÔN KIỂM TRA LẠI Cache Local trước khi gán, tránh bị luồng Async ghi đè ảnh cũ lên ảnh vừa tải!
+            const finalAvatar = localStorage.getItem(avatarKey) || avatarUrl;
+            
+            renderTo(heroAvatar, finalAvatar, 'size-lg');
+            renderTo(sidebarAvatar, finalAvatar, 'size-sm');
+            
             if (avatarUrl && user.avatar !== avatarUrl) {
                 user.avatar = avatarUrl;
                 try { localStorage.setItem('cinestream_user', JSON.stringify(user)); } catch(e) {}
@@ -159,6 +167,7 @@ window.refreshAllUI = function() {
     
     // Sync with other modules
     if (typeof updateUserUI === 'function') updateUserUI();
+    if (typeof rebuildMobileMenu === 'function') rebuildMobileMenu();
     if (typeof updateJourneyUI === 'function') updateJourneyUI();
     if (typeof updateBalanceDisplay === 'function') updateBalanceDisplay();
 };
@@ -177,20 +186,41 @@ function loadUserProfile() {
 // Setup profile form
 function setupProfileForm() {
     const form = document.getElementById('profileForm');
-    form.addEventListener('submit', function (e) {
+    if (!form) return;
+    form.addEventListener('submit', async function (e) {
         e.preventDefault();
 
         const name = document.getElementById('profileName').value.trim();
         const phone = document.getElementById('profilePhone').value.trim();
 
-        const result = authService.updateProfile({ name, phone });
+        // Gom nhóm tất cả dữ liệu bao gồm cả avatar đang chờ xử lý (nếu có)
+        let updatePayload = { name, phone };
+        if (typeof epPendingAvatarUrl !== 'undefined' && epPendingAvatarUrl) {
+            updatePayload.avatar = epPendingAvatarUrl;
+        }
+
+        const result = await authService.updateProfile(updatePayload);
 
         if (result.success) {
+            // Ghi đè ngay cache local cho đồng bộ hoàn hảo
+            const user = authService.getCurrentUser();
+            if (user && updatePayload.avatar) {
+                const userId = user._id || user.id || user.email;
+                const avatarKey = userId ? `avatar_${userId}` : 'user_avatar';
+                localStorage.setItem(avatarKey, updatePayload.avatar);
+            }
+            
             showMessage('Cập nhật thông tin thành công!', 'success');
+            
+            // Buộc vẽ lại toàn bộ Avatar trên web
+            if (typeof updateUserUI === 'function') updateUserUI();
+            if (typeof rebuildMobileMenu === 'function') rebuildMobileMenu();
+            if (typeof loadBasicUserInfo === 'function') loadBasicUserInfo();
+            
             if (typeof refreshAllUI === 'function') refreshAllUI();
             else loadUserProfile();
         } else {
-            showMessage(result.message, 'error');
+            showMessage(result.message || 'Lỗi cập nhật', 'error');
         }
     });
 }
@@ -1139,18 +1169,64 @@ window.handleEpAvatarUpload = function(event) {
     const file = event.target.files[0];
     if (!file) return;
 
+    // Hiển thị trạng thái loading nhẹ
+    showMessage("Đang nén ảnh...", "info");
+
     const reader = new FileReader();
     reader.onload = function (e) {
-        epPendingAvatarUrl = e.target.result;
-        
-        // Open modal and switch to profile tab if not already open
-        const modal = document.getElementById('editProfileModal');
-        if (modal && modal.style.display !== 'flex') {
-            window.openEditProfileModal();
-        }
-        
-        window.switchEpTab('ep-hoso');
-        window.updateEpAvatarPreview();
+        const img = new Image();
+        img.onload = function() {
+            // Tạo canvas để nén và crop vuông
+            const canvas = document.createElement('canvas');
+            const MAX_SIZE = 256;
+            canvas.width = MAX_SIZE;
+            canvas.height = MAX_SIZE;
+            const ctx = canvas.getContext('2d');
+
+            // Tính toán cắt vuông ở giữa (Center Crop)
+            let sourceX = 0, sourceY = 0, sourceWidth = img.width, sourceHeight = img.height;
+            if (img.width > img.height) {
+                sourceWidth = img.height;
+                sourceX = (img.width - img.height) / 2;
+            } else {
+                sourceHeight = img.width;
+                sourceY = (img.height - img.width) / 2;
+            }
+
+            // Vẽ nén
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(img, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, MAX_SIZE, MAX_SIZE);
+
+            // Xuất thành Base64 chất lượng nén 0.8 để siêu nhẹ (khoảng 15-30KB)
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+            epPendingAvatarUrl = compressedBase64;
+            
+            // ═════════════════════════════════════════════════════════════════════
+            // PHÉP MÀU TỨC THỜI: LƯU LOCAL CACHE & RENDER LẠI TOÀN WEBSITE NGAY LẬP TỨC!
+            // ═════════════════════════════════════════════════════════════════════
+            const user = authService.getCurrentUser();
+            if (user) {
+                const userId = user._id || user.id || user.email;
+                const avatarKey = userId ? `avatar_${userId}` : 'user_avatar';
+                localStorage.setItem(avatarKey, compressedBase64);
+            }
+            // Buộc render lại toàn bộ giao diện để người dùng thấy thay đổi CẤP KỲ!
+            if (typeof updateUserUI === 'function') updateUserUI();
+            if (typeof rebuildMobileMenu === 'function') rebuildMobileMenu();
+            if (typeof loadBasicUserInfo === 'function') loadBasicUserInfo();
+            // ═════════════════════════════════════════════════════════════════════
+
+            showMessage("Đã tải ảnh & Cập nhật giao diện tức thì!", "success");
+
+            // Mở modal và đồng bộ preview
+            const modal = document.getElementById('editProfileModal');
+            if (modal && modal.style.display !== 'flex') {
+                window.openEditProfileModal();
+            }
+            window.switchEpTab('ep-hoso');
+            window.updateEpAvatarPreview();
+        };
+        img.src = e.target.result;
     };
     reader.readAsDataURL(file);
 };
@@ -1171,8 +1247,14 @@ window.saveEditProfile = async function() {
 
         const result = await authService.updateProfile({ name, phone, avatar: epPendingAvatarUrl });
         if (result.success) {
+            // Đồng bộ cache local ngay lập tức để UI hiển thị luôn
+            if (epPendingAvatarUrl) {
+                const avatarKey = userId ? `avatar_${userId}` : 'user_avatar';
+                localStorage.setItem(avatarKey, epPendingAvatarUrl);
+            }
             showMessage("Cập nhật hồ sơ thành công", "success");
             if (typeof updateUserUI === 'function') updateUserUI();
+            if (typeof rebuildMobileMenu === 'function') rebuildMobileMenu();
             if (typeof loadBasicUserInfo === 'function') loadBasicUserInfo();
             closeEditProfileModal();
         } else {
@@ -1227,7 +1309,14 @@ window.saveEditProfile = async function() {
                 await authService.updateProfile(updateData);
             }
             
+            // Đồng bộ cache local cho Avatar nếu có thay đổi trong tab tùy chỉnh
+            if (updateData.avatar) {
+                const avatarKey = userId ? `avatar_${userId}` : 'user_avatar';
+                localStorage.setItem(avatarKey, updateData.avatar);
+            }
+            
             if (typeof updateUserUI === 'function') updateUserUI();
+            if (typeof rebuildMobileMenu === 'function') rebuildMobileMenu();
             if (typeof loadBasicUserInfo === 'function') loadBasicUserInfo();
             showMessage("Đã cập nhật tùy chỉnh thành công!", "success");
             closeEditProfileModal();

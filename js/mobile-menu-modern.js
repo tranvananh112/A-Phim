@@ -48,10 +48,13 @@
         const drawer = document.createElement('div');
         drawer.id = 'mm-drawer';
 
-        const userAvatar = user ? (user.avatar || user.photoURL) : null;
+        const userId = user ? (user._id || user.id || user.email) : null;
+        const avatarKey = userId ? `avatar_${userId}` : 'user_avatar';
+        const savedAvatar = user ? (localStorage.getItem(avatarKey) || user.avatar || localStorage.getItem('user_avatar') || user.photoURL) : null;
+        
         const avatarHtml = user
-            ? (userAvatar
-                ? `<img src="${escHtml(userAvatar)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+            ? (savedAvatar
+                ? `<img src="${escHtml(savedAvatar)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'U')}&background=random'">`
                 : escHtml((user.name || user.email || 'U').charAt(0).toUpperCase()))
             : icon('person', 'font-size:26px;color:rgba(255,255,255,0.3)');
 

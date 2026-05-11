@@ -547,47 +547,39 @@ window.shareToZalo = function () {
     window.open(`https://zalo.me/share?url=${url}`, '_blank');
 };
 
-// Toggle save movie
+// Toggle save movie (Launch Playlist Modal)
 function toggleSaveMovie(button) {
     if (!currentMovie) return;
 
     // Check if user is logged in
     if (!authService.isLoggedIn()) {
-        if (confirm('Bạn cần đăng nhập để lưu phim. Chuyển đến trang đăng nhập?')) {
+        if (typeof window.showAuthModal === 'function') {
+            window.showAuthModal('login');
+        } else if (confirm('Bạn cần đăng nhập để thêm phim vào danh sách. Chuyển đến trang đăng nhập?')) {
             window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
         }
         return;
     }
 
-    if (userService.isFavorite(currentMovie.slug)) {
-        userService.removeFromFavorites(currentMovie.slug);
-        alert('❌ Đã xóa khỏi danh sách yêu thích');
+    // Open standard playlist management modal
+    if (typeof openPlaylistModal === 'function') {
+        openPlaylistModal({
+            slug: currentMovie.slug,
+            name: currentMovie.name,
+            thumb_url: currentMovie.thumb_url || currentMovie.poster_url,
+            year: currentMovie.year
+        });
     } else {
-        if (userService.addToFavorites(currentMovie)) {
-            alert('✅ Đã lưu vào danh sách yêu thích');
-        }
+        console.error('❌ openPlaylistModal function not defined. Verify playlist-modal.js loading.');
     }
-
-    updateSaveButton(button);
 }
 
 // Update save button UI
 function updateSaveButton(button) {
+    // For playlist modal, the button always triggers the prompt. 
+    // Optional: we could dynamically check if it exists in ANY playlist.
+    // Keeping it simple and functional as a prompt trigger.
     if (!currentMovie) return;
-
-    const isSaved = userService.isFavorite(currentMovie.slug);
-    const icon = button.querySelector('.material-icons-outlined') || button.querySelector('.material-icons-round');
-    const textSpan = button.querySelectorAll('span')[1];
-
-    if (isSaved) {
-        if(icon) icon.textContent = 'check';
-        if(textSpan) textSpan.textContent = 'Đã thêm';
-        button.classList.add('text-primary');
-    } else {
-        if(icon) icon.textContent = 'add';
-        if(textSpan) textSpan.textContent = 'Thêm vào';
-        button.classList.remove('text-primary');
-    }
 }
 
 // setupActionButtons is now called directly in loadMovieAndPlay() after currentMovie is set
@@ -615,27 +607,30 @@ function toggleFavoriteMovie(button) {
 
 // Update favorite button UI
 function updateFavoriteButton(button) {
-    if (!currentMovie) return;
+    if (!currentMovie || !button) return;
 
     const isFav = userService.isFavorite(currentMovie.slug);
     const icon = button.querySelector('.material-icons-round') || button.querySelector('.material-icons-outlined');
+    const textSpan = button.querySelector('.whitespace-nowrap');
 
     if (isFav) {
-        if (icon) icon.textContent = 'favorite';
+        if (icon) {
+            icon.textContent = 'favorite';
+            icon.classList.remove('group-hover:text-red-400');
+            icon.classList.add('text-red-500');
+        }
+        if (textSpan) textSpan.textContent = 'Đã thích';
         button.classList.add('text-red-500');
-        button.childNodes.forEach(node => {
-            if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
-                node.textContent = ' Đã thích';
-            }
-        });
+        button.classList.remove('text-gray-300');
     } else {
-        if (icon) icon.textContent = 'favorite_border';
+        if (icon) {
+            icon.textContent = 'favorite_border';
+            icon.classList.add('group-hover:text-red-400');
+            icon.classList.remove('text-red-500');
+        }
+        if (textSpan) textSpan.textContent = 'Yêu thích';
         button.classList.remove('text-red-500');
-        button.childNodes.forEach(node => {
-            if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
-                node.textContent = ' Yêu thích';
-            }
-        });
+        button.classList.add('text-gray-300');
     }
 }
 

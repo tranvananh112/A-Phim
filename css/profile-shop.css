@@ -191,3 +191,47 @@
     background: rgba(255,255,255,0.2);
 }
 
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE OVERRIDES FOR MOBILE MODALS (FIX CHAOTIC SCROLL)
+   ════════════════════════════════════════════════════════════ */
+@media screen and (max-width: 640px) {
+    /* 1. Khống chế Frame Grid: Ép về 3 cột để items không bị thu hẹp gây loạn bố cục */
+    #epFrameGrid {
+        grid-template-columns: repeat(3, 1fr) !important; 
+        gap: 8px !important;
+        overflow-x: hidden !important; /* Cấm tuyệt đối trượt ngang lung tung */
+        overflow-y: auto !important;
+        padding-bottom: 20px !important;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* 2. Đảm bảo các frame item không gây vỡ Layout */
+    .ep-frame-option {
+        width: 100% !important;
+        min-height: 110px !important;
+        padding: 12px 4px !important;
+    }
+    
+    /* Thu nhỏ nhẹ tên khung để vừa khung */
+    .ep-frame-option p {
+        font-size: 10px !important;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+    }
+
+    /* 3. Grid ảnh bìa ép thành 1 cột cho dễ chọn trên mobile */
+    #epCoverGrid {
+        grid-template-columns: 1fr !important;
+        overflow-x: hidden !important;
+    }
+}
+
+@media screen and (max-width: 380px) {
+    #epFrameGrid {
+        grid-template-columns: repeat(2, 1fr) !important; /* 2 cột cực to cho máy quá bé */
+    }
+}
+

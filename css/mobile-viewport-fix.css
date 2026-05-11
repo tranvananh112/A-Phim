@@ -306,17 +306,40 @@ select option {
         gap: 12px !important; /* Nới rộng khoảng cách click thoải mái */
     }
     
-    /* 3. Thu nhỏ nhẹ nút Đăng Nhập để vừa vặn giao diện Mobile (nếu chưa đăng nhập) */
+    /* 3. CẬP NHẬT NÚT ĐĂNG NHẬP: VÀNG RỰC, CHỮ ĐEN, CĂN GIỮA HOÀN HẢO */
     .nav-auth-btn {
-        padding: 6px 12px !important;
-        font-size: 11px !important;
-        gap: 4px !important;
-        box-shadow: 0 4px 10px rgba(242, 242, 13, 0.2) !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 7px 15px !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        gap: 6px !important;
+        color: #000000 !important; /* Ép chữ đen */
+        background: #f2f20d !important; /* Vàng rực rỡ */
+        border-radius: 99px !important;
+        box-shadow: 0 2px 12px rgba(242, 242, 13, 0.35) !important;
+        text-decoration: none !important;
+        white-space: nowrap !important;
+        height: 32px !important; /* Ép chiều cao cố định bằng thanh search để cân bằng */
     }
     
-    /* Thu nhỏ icon thông báo để tránh choán chỗ */
+    /* Đảm bảo icon người bên trong nút cũng là màu đen */
+    .nav-auth-btn .material-icons-round {
+        color: #000000 !important;
+        font-size: 16px !important;
+        margin-bottom: 1px; /* Tinh chỉnh vị trí icon cho cân giữa text */
+    }
+    
+    /* Force cụm nút bên phải và menu hamburger luôn căn giữa chiều dọc (flex items center) */
+    nav .container > div.flex.items-center.flex-shrink-0:last-child {
+        display: flex !important;
+        align-items: center !important; 
+        height: 100% !important;
+    }
+    
     #navNotificationBtn {
-        margin-right: 2px !important;
+        margin-right: 12px !important; /* Đẩy sang trái một chút, tạo khoảng cách với Avatar */
     }
     
     /* 4. ĐẢM BẢO THANH TÌM KIẾM CO GIÃN HỢP LÝ THEO PHẦN TRỐNG CÒN LẠI */
