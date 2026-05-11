@@ -90,6 +90,18 @@
     const _THRESHOLD = 160; // px — DevTools thường rộng hơn 160px
 
     function _detectDevTools() {
+        // ⚠️ TẮT HOÀN TOÀN TRÊN MOBILE ĐỂ TRÁNH FALSE POSITIVE
+        // Trên điện thoại (đặc biệt Safari iOS), size viewport thay đổi liên tục do address bar gây nhiễu
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (window.innerWidth <= 768 && ('ontouchstart' in window || navigator.maxTouchPoints > 0));
+        if (isMobile) {
+            // Đảm bảo ẩn overlay nếu lỡ hiện (dù hiếm)
+            if (_devToolsOpen) {
+                _devToolsOpen = false;
+                _onDevToolsClosed();
+            }
+            return;
+        }
+
         const widthThreshold  = window.outerWidth  - window.innerWidth  > _THRESHOLD;
         const heightThreshold = window.outerHeight - window.innerHeight > _THRESHOLD;
 

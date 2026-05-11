@@ -271,3 +271,46 @@ select option {
     /* Không cho phép drag th? con ra ngoài gây rác giao di?n */
     -webkit-user-drag: none;
 }
+/* ====================================================
+   12. OPTIMIZE NAV SEARCH SPACE ON MOBILE
+   T?i uu di?n tích cho thanh tìm ki?m hi?n th? dài hon
+   ==================================================== */
+@media (max-width: 768px) {
+    /* Gi?m padding l? 2 bên nav container */
+    nav .container.mx-auto {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+
+    /* ?n ch? Cinema và thu g?n logo d? nhu?ng ch? */
+    .flex-col.leading-none span[class*=" tracking-widest\] {
+ display: none !important;
+ }
+ .text-xl.font-bold.text-white {
+ font-size: 0.95rem !important;
+ letter-spacing: -0.02em;
+ }
+
+ /* Gi?m kho?ng cách gi?a các icon bên ph?i */
+ .flex.items-center.gap-3.flex-shrink-0.ml-4 {
+ margin-left: 2px !important;
+ gap: 4px !important;
+ }
+
+ /* Kéo dài thanh tìm ki?m, ép min-width */
+ .mobile-inline-search {
+ margin: 0 6px !important;
+ min-width: 110px !important;
+ flex-grow: 2 !important;
+ }
+}
+
+/* Screen siêu nh? - uu tiên t?i da Search Bar */
+@media (max-width: 360px) {
+ .flex-col.leading-none {
+ display: none !important;
+ }
+ .mobile-inline-search {
+ min-width: 140px !important;
+ }
+}
