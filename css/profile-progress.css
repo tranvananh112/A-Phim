@@ -249,3 +249,120 @@
     transition: all 0.2s;
 }
 .control-btn:hover { background: rgba(255,255,255,0.1); }
+
+/* ==========================================================
+   RESPONSIVE MOBILE UI - A PHIM GAMIFICATION
+   ========================================================== */
+@media (max-width: 768px) {
+    .journey-container {
+        gap: 14px;
+    }
+
+    .journey-section {
+        padding: 16px;
+        border-radius: 14px;
+    }
+
+    .journey-label {
+        font-size: 1.05rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    /* Optimize Attendance Button for inline fit */
+    .attendance-btn {
+        padding: 6px 12px;
+        font-size: 11px;
+        border-radius: 8px;
+        gap: 4px;
+    }
+    .attendance-btn .material-icons-round {
+        font-size: 16px;
+    }
+
+    /* PROGRESS BAR */
+    .progress-stats-top {
+        margin-bottom: 6px;
+    }
+    .xp-current, .xp-next {
+        font-size: 12px;
+    }
+    .progress-bar-wrap {
+        height: 8px;
+    }
+
+    /* --- STATS GRID (FIXED 2x2 on Mobile) --- */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important; /* Buộc layout 2 cột */
+        gap: 10px;
+    }
+
+    .stat-card {
+        padding: 14px 12px;
+        gap: 10px;
+        border-radius: 12px;
+        align-items: center;
+    }
+
+    .stat-icon-box {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        flex-shrink: 0;
+    }
+    .stat-icon-box .material-icons-round {
+        font-size: 18px;
+    }
+
+    .stat-value {
+        font-size: 16px;
+        font-weight: 700;
+    }
+    
+    .stat-label {
+        font-size: 11px;
+        white-space: nowrap;
+        margin-top: 1px;
+    }
+
+    /* --- JOURNEY TIMELINE --- */
+    .journey-timeline {
+        gap: 28px; /* Giảm khoảng cách cho sát hơn tí cho cân */
+        padding: 0 4px;
+    }
+
+    .journey-step {
+        width: 70px; /* Bóp gọn container cho timeline step */
+    }
+
+    .step-icon-wrap {
+        width: 54px;
+        height: 54px;
+        border-radius: 14px;
+    }
+    .step-icon-wrap .material-icons-round {
+        font-size: 22px;
+    }
+
+    /* Nối giữa các step (cần calibrate lại vị trí line) */
+    .journey-step:not(:last-child)::after {
+        top: 27px;
+        left: 62px;
+        width: 16px;
+    }
+
+    .step-name {
+        font-size: 11px;
+    }
+    .step-lv {
+        font-size: 9px;
+    }
+    
+    /* Journey text hint */
+    .journey-section > p[style*="font-size:13px"] {
+        font-size: 12px !important;
+        margin-bottom: 12px !important;
+    }
+}
