@@ -51,7 +51,7 @@
         const userAvatar = user ? (user.avatar || user.photoURL) : null;
         const avatarHtml = user
             ? (userAvatar
-                ? `<img src="${escHtml(userAvatar)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:16px;">`
+                ? `<img src="${escHtml(userAvatar)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
                 : escHtml((user.name || user.email || 'U').charAt(0).toUpperCase()))
             : icon('person', 'font-size:26px;color:rgba(255,255,255,0.3)');
 
@@ -60,12 +60,13 @@
         const userHref  = user ? 'profile.html' : '#';
         const userClick = user ? '' : `onclick="if(window.showAuthModal){event.preventDefault(); if(window.closeMobileMenu) window.closeMobileMenu(); window.showAuthModal('login'); return false;}"`;
 
+        const frameClass = user ? (user.equippedFrameClass || localStorage.getItem('ap_frame_class') || '') : '';
+
         drawer.innerHTML = `
         <!-- TOP USER -->
         <div class="mm-top">
             <a href="${userHref}" ${userClick} class="mm-user-wrap">
-                <div class="mm-avatar-wrap">
-                    <div class="mm-avatar-glow"></div>
+                <div class="mm-avatar-wrap shop-frame-wrap size-sm ${frameClass}">
                     <div class="mm-avatar-img">${avatarHtml}</div>
                     ${user ? '<div class="mm-avatar-dot"></div>' : ''}
                 </div>

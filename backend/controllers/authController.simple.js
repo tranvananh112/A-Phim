@@ -176,8 +176,20 @@ exports.updateDetails = async (req, res) => {
         }
 
         // Update fields
-        if (req.body.name) users[userIndex].name = req.body.name;
-        if (req.body.phone) users[userIndex].phone = req.body.phone;
+        if (req.body.name !== undefined) users[userIndex].name = req.body.name;
+        if (req.body.phone !== undefined) users[userIndex].phone = req.body.phone;
+        if (req.body.avatar !== undefined) users[userIndex].avatar = req.body.avatar;
+        if (req.body.coins !== undefined) users[userIndex].coins = req.body.coins;
+        if (req.body.xu !== undefined) users[userIndex].xu = req.body.xu;
+        if (req.body.xp !== undefined) users[userIndex].xp = req.body.xp;
+        if (req.body.inventory !== undefined) users[userIndex].inventory = req.body.inventory;
+        if (req.body.ownedFrames !== undefined) users[userIndex].ownedFrames = req.body.ownedFrames;
+        if (req.body.ownedBanners !== undefined) users[userIndex].ownedBanners = req.body.ownedBanners;
+        if (req.body.equippedFrame !== undefined) users[userIndex].equippedFrame = req.body.equippedFrame;
+        if (req.body.equippedFrameUrl !== undefined) users[userIndex].equippedFrameUrl = req.body.equippedFrameUrl;
+        if (req.body.equippedFrameClass !== undefined) users[userIndex].equippedFrameClass = req.body.equippedFrameClass;
+        
+        const updatedUser = users[userIndex];
 
         res.json({
             success: true,

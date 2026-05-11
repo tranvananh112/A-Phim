@@ -17,8 +17,11 @@ const BANK_ID_MAP = {
 
 // ── Thông tin các gói (default — sẽ bị override bởi backend) ─────────────────
 const PLANS = {
-    premium: { name: 'Gói Cao Cấp',  amount: 69000,  duration: '1 tháng', code: 'PREMIUM' },
-    family:  { name: 'Gói Gia Đình', amount: 699000, duration: '1 năm',   code: 'FAMILY'  }
+    premium: { name: 'Gói Cao Cấp',  amount: 69000,  duration: '1 tháng', code: 'PREMIUM', coinsReward: 5000 },
+    family:  { name: 'Gói Gia Đình', amount: 699000, duration: '1 năm',   code: 'FAMILY',  coinsReward: 50000 },
+    xu_20k:  { name: 'Gói Khởi Đầu', amount: 20000, duration: 'Nạp Xu', code: 'XU20K', coinsReward: 5000 },
+    xu_100k: { name: 'Gói Đam Mê', amount: 100000, duration: 'Nạp Xu', code: 'XU100K', coinsReward: 35000 },
+    xu_500k: { name: 'Gói VIP Collector', amount: 500000, duration: 'Nạp Xu', code: 'XU500K', coinsReward: 250000 }
 };
 
 // ── Fetch cấu hình từ backend và override defaults ────────────────────────────
@@ -86,14 +89,28 @@ function generateUsername(user) {
 }
 
 // Tạo nội dung chuyển khoản
-function generateTransferContent(planCode, username = null) {
-    const timestamp = Date.now().toString().slice(-6);
-    if (username) {
-        // Nếu có username, thêm vào nội dung
-        return `APHIM ${planCode} ${username} ${timestamp}`;
+function generateTransferContent(planCode, user = null) {
+    const timestamp = Date.now().toString().slice(-4);
+    
+    if (user) {
+        // Tên hiển thị (bỏ dấu, lấy 8 ký tự đầu)
+        const rawName = user.name || user.email || '';
+        const baseUsername = rawName.split('@')[0]
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Bỏ dấu tiếng Việt
+            .replace(/[^a-zA-Z0-9]/g, '')
+            .substring(0, 8).toUpperCase();
+            
+        // ID rút gọn (5 ký tự cuối)
+        const uid = user._id || user.id || '';
+        const uidSuffix = uid ? uid.slice(-5).toUpperCase() : timestamp;
+        
+        // Cấu trúc: APHIM [GÓI] [TÊN] [ID]
+        // Ví dụ: APHIM PREMIUM ANHTRAN E75F
+        return `APHIM ${planCode} ${baseUsername} ${uidSuffix}`;
     }
-    // Nếu không có username (chưa đăng nhập)
-    return `APHIM ${planCode} ${timestamp}`;
+    
+    // Nếu chưa đăng nhập (khách)
+    return `APHIM ${planCode} KHACH ${timestamp}`;
 }
 
 // Tạo URL QR Code
@@ -120,22 +137,38 @@ function initPaymentPage() {
     const plan = getPlanFromURL();
 
     if (!plan) {
-        alert('Không tìm thấy thông tin gói dịch vụ!');
+        if (typeof showMessage === 'function') showMessage('Không tìm thấy thông tin gói dịch vụ!', 'error');
+        else alert('Không tìm thấy thông tin gói dịch vụ!');
         window.location.href = 'pricing.html';
         return;
     }
 
-    // Lấy thông tin user và tạo username
+    // Lấy thông tin user
     const user = getCurrentUser();
-    const username = generateUsername(user);
 
-    // Tạo nội dung chuyển khoản (có hoặc không có username)
-    const transferContent = generateTransferContent(plan.code, username);
+    // Tạo nội dung chuyển khoản (có hoặc không có user)
+    const transferContent = generateTransferContent(plan.code, user);
 
     // Cập nhật thông tin gói
     document.getElementById('planName').textContent = `Thanh toán ${plan.name}`;
     document.getElementById('planNameDetail').textContent = plan.name;
     document.getElementById('planDuration').textContent = plan.duration;
+    
+    // Hiển thị Xu tặng kèm (nếu có)
+    const existingCoinsRow = document.getElementById('coinsRewardRow');
+    if (existingCoinsRow) existingCoinsRow.remove();
+
+    if (plan.coinsReward > 0) {
+        const planDetailsEl = document.getElementById('planDuration').parentElement;
+        if (planDetailsEl) {
+            const div = document.createElement('div');
+            div.id = 'coinsRewardRow';
+            div.className = 'flex justify-between text-yellow-500 font-bold mt-1';
+            div.innerHTML = `<span>Tặng kèm:</span><span>+ ${plan.coinsReward.toLocaleString('vi-VN')} Xu</span>`;
+            planDetailsEl.after(div);
+        }
+    }
+
     document.getElementById('totalAmount').textContent = formatCurrency(plan.amount);
     document.getElementById('amountText').textContent = formatCurrency(plan.amount);
     document.getElementById('contentText').textContent = transferContent;
@@ -177,11 +210,11 @@ function setupPaymentConfirmation(plan, transferContent) {
     const confirmBtn = document.getElementById('confirmPaymentBtn');
     const confirmedBtn = document.getElementById('confirmedBtn');
 
-    confirmBtn.addEventListener('click', function () {
+    confirmBtn.addEventListener('click', async function () {
         // Hiển thị xác nhận
-        const confirmed = confirm(
-            `Bạn đã chuyển khoản ${formatCurrency(plan.amount)} với nội dung "${transferContent}"?\n\n` +
-            'Vui lòng chỉ xác nhận khi đã hoàn tất thanh toán.'
+        const confirmed = await showConfirm(
+            'Xác nhận thanh toán',
+            `Bạn đã chuyển khoản ${formatCurrency(plan.amount)} với nội dung "${transferContent}"?\n\nVui lòng chỉ xác nhận khi đã hoàn tất thanh toán.`
         );
 
         if (confirmed) {
@@ -236,15 +269,10 @@ function calculateExpiryDate(duration) {
 
 // Hiển thị thông báo thành công
 function showSuccessMessage(plan) {
-    const message = `
-        ✅ Đã xác nhận thanh toán ${plan.name}!
-        
-        Gói dịch vụ của bạn sẽ được kích hoạt trong vòng 5-10 phút.
-        
-        Bạn sẽ được chuyển về trang chủ sau 5 giây...
-    `;
+    const message = `✅ Đã xác nhận thanh toán ${plan.name}! Gói dịch vụ của bạn sẽ được kích hoạt trong vòng 5-10 phút. Bạn sẽ được chuyển về trang chủ sau vài giây...`;
 
-    alert(message);
+    if (typeof showMessage === 'function') showMessage(message, 'success', 8000);
+    else alert(message);
 
     // Chuyển về trang chủ sau 5 giây
     setTimeout(() => {

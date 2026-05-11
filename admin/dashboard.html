@@ -160,6 +160,32 @@
     text-decoration: none;
     color: inherit;
   }
+
+  /* Compact Stats Grid */
+  @media (min-width: 1200px) {
+    .stats-grid {
+      grid-template-columns: repeat(5, 1fr) !important;
+    }
+  }
+
+  .detail-modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+    z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .detail-modal {
+    background: #1a1b2e; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
+    width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; position: relative;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+  }
+  .detail-modal-header {
+    padding: 24px; border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .detail-modal-body { padding: 24px; }
+  .detail-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px; background: rgba(255,255,255,0.02); border-radius: 12px; margin-bottom: 8px;
+  }
   </style>
   <link rel="icon"type="image/png"href="../favicon.png">
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -321,65 +347,80 @@
    </div>
 
    <!-- Stats Grid -->
-   <div class="stats-grid">
+   <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px;">
      <!-- Total Users -->
-     <div class="stat-card-v2">
+     <div class="stat-card-v2" onclick="showStatDetail('users')" style="cursor:pointer">
        <div style="display:flex; justify-content:space-between; align-items:center">
-         <div style="width:40px; height:40px; border-radius:10px; background:var(--info-bg); display:flex; align-items:center; justify-content:center; color:var(--info)">
-           <i data-lucide="users"></i>
+         <div style="width:36px; height:36px; border-radius:8px; background:var(--info-bg); display:flex; align-items:center; justify-content:center; color:var(--info)">
+           <i data-lucide="users" style="width:18px;"></i>
          </div>
          <span class="stat-badge positive" id="totalUsersChange">+0%</span>
        </div>
        <div>
-         <div class="stat-number" id="totalUsers" style="font-size: 28px; font-weight: 800;">0</div>
-         <div class="stat-label">Tổng người dùng</div>
+         <div class="stat-number" id="totalUsers" style="font-size: 24px; font-weight: 800;">0</div>
+         <div class="stat-label" style="font-size: 11px;">Tổng người dùng</div>
        </div>
        <div class="sparkline-container"><canvas id="usersSparkline"></canvas></div>
      </div>
 
-     <!-- Total Movies Local -->
-     <div class="stat-card-v2">
+     <!-- Total Revenue -->
+     <div class="stat-card-v2" onclick="showStatDetail('revenue')" style="cursor:pointer">
        <div style="display:flex; justify-content:space-between; align-items:center">
-         <div style="width:40px; height:40px; border-radius:10px; background:var(--primary-10); display:flex; align-items:center; justify-content:center; color:var(--primary-light)">
-           <i data-lucide="database"></i>
-         </div>
-         <span class="stat-badge info" id="totalMoviesChange" style="background:var(--primary-10); color:var(--primary-light)">Local</span>
-       </div>
-       <div>
-         <div class="stat-number" id="totalMovies" style="font-size: 28px; font-weight: 800;">0</div>
-         <div class="stat-label">Phim trên hệ thống</div>
-       </div>
-       <div class="sparkline-container"><canvas id="moviesSparkline"></canvas></div>
-     </div>
-
-     <!-- Global Movies API -->
-     <div class="stat-card-v2">
-       <div style="display:flex; justify-content:space-between; align-items:center">
-         <div style="width:40px; height:40px; border-radius:10px; background:var(--accent-glow); display:flex; align-items:center; justify-content:center; color:var(--accent)">
-           <i data-lucide="globe"></i>
-         </div>
-         <span class="stat-badge" style="background:rgba(139,92,246,0.1); color:var(--accent)">Global</span>
-       </div>
-       <div>
-         <div class="stat-number" id="globalMovieCount" style="font-size: 28px; font-weight: 800;">0</div>
-         <div class="stat-label">Kho phim API Ophim</div>
-       </div>
-       <div class="sparkline-container"><canvas id="globalSparkline"></canvas></div>
-     </div>
-
-     <!-- Revenue -->
-     <div class="stat-card-v2">
-       <div style="display:flex; justify-content:space-between; align-items:center">
-         <div style="width:40px; height:40px; border-radius:10px; background:var(--success-bg); display:flex; align-items:center; justify-content:center; color:var(--success)">
-           <i data-lucide="dollar-sign"></i>
+         <div style="width:36px; height:36px; border-radius:8px; background:var(--success-bg); display:flex; align-items:center; justify-content:center; color:var(--success)">
+           <i data-lucide="dollar-sign" style="width:18px;"></i>
          </div>
          <span class="stat-badge positive" id="totalRevenueChange">+0%</span>
        </div>
        <div>
-         <div class="stat-number" id="totalRevenue" style="font-size: 28px; font-weight: 800;">0đ</div>
-         <div class="stat-label">Doanh thu tháng này</div>
+         <div class="stat-number" id="totalRevenue" style="font-size: 24px; font-weight: 800;">0đ</div>
+         <div class="stat-label" style="font-size: 11px;">Doanh thu tháng này</div>
        </div>
        <div class="sparkline-container"><canvas id="revenueSparkline"></canvas></div>
+     </div>
+
+     <!-- Total Spent Xu -->
+     <div class="stat-card-v2" onclick="showStatDetail('spentXu')" style="cursor:pointer">
+       <div style="display:flex; justify-content:space-between; align-items:center">
+         <div style="width:36px; height:36px; border-radius:8px; background:rgba(251,191,36,0.1); display:flex; align-items:center; justify-content:center; color:#fbbf24">
+           <i data-lucide="shopping-bag" style="width:18px;"></i>
+         </div>
+         <span class="stat-badge" style="background:rgba(251,191,36,0.1); color:#fbbf24">Xu Tiêu</span>
+       </div>
+       <div>
+         <div class="stat-number" id="totalSpentXu" style="font-size: 24px; font-weight: 800;">0</div>
+         <div class="stat-label" style="font-size: 11px;">Tổng Xu đã tiêu</div>
+       </div>
+       <div class="sparkline-container"><canvas id="spentXuSparkline"></canvas></div>
+     </div>
+
+     <!-- Top Category -->
+     <div class="stat-card-v2" onclick="showStatDetail('topCategories')" style="cursor:pointer">
+       <div style="display:flex; justify-content:space-between; align-items:center">
+         <div style="width:36px; height:36px; border-radius:8px; background:rgba(139,92,246,0.1); display:flex; align-items:center; justify-content:center; color:#a78bfa">
+           <i data-lucide="pie-chart" style="width:18px;"></i>
+         </div>
+         <span class="stat-badge" style="background:rgba(139,92,246,0.1); color:#a78bfa">TOP</span>
+       </div>
+       <div>
+         <div class="stat-number" id="topSpentName" style="font-size: 18px; font-weight: 800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:4px;">...</div>
+         <div class="stat-label" style="font-size: 11px;">Hạng mục tiêu nhiều nhất</div>
+       </div>
+       <div class="sparkline-container"><canvas id="topCategorySparkline"></canvas></div>
+     </div>
+
+     <!-- Membership Stats -->
+     <div class="stat-card-v2" onclick="showStatDetail('membership')" style="cursor:pointer">
+       <div style="display:flex; justify-content:space-between; align-items:center">
+         <div style="width:36px; height:36px; border-radius:8px; background:rgba(236,72,153,0.1); display:flex; align-items:center; justify-content:center; color:#ec4899">
+           <i data-lucide="shield-check" style="width:18px;"></i>
+         </div>
+         <span class="stat-badge" style="background:rgba(236,72,153,0.1); color:#ec4899">VIP</span>
+       </div>
+       <div>
+         <div class="stat-number" id="premiumCount" style="font-size: 24px; font-weight: 800;">0</div>
+         <div class="stat-label" style="font-size: 11px;">Hội viên Premium/Family</div>
+       </div>
+       <div class="sparkline-container"><canvas id="membershipSparkline"></canvas></div>
      </div>
    </div>
 
@@ -486,6 +527,19 @@
 
  </div><!-- /admin-content -->
  </main>
+</div>
+
+<!-- Detailed Stats Modal -->
+<div id="statsDetailOverlay" class="detail-modal-overlay" onclick="if(event.target === this) this.style.display='none'">
+    <div class="detail-modal">
+        <div class="detail-modal-header">
+            <h3 id="detailModalTitle" style="font-weight: 800; color: #fff; margin:0;">Chi tiết thống kê</h3>
+            <button onclick="document.getElementById('statsDetailOverlay').style.display='none'" style="background:none; border:none; color:#94a3b8; cursor:pointer;"><i data-lucide="x"></i></button>
+        </div>
+        <div class="detail-modal-body" id="detailModalBody">
+            <!-- Dynamic content -->
+        </div>
+    </div>
 </div>
 
 <!-- Toast Container -->

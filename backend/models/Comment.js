@@ -48,6 +48,11 @@ const CommentSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
+    parent: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comment',
+        default: null
+    },
     isReported: {
         type: Boolean,
         default: false

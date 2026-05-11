@@ -8,19 +8,23 @@ const {
     blockUser,
     deleteUser,
     updateSubscription,
-    getUserStats
+    manageUserGamification,
+    getUserStats,
+    broadcastNotification
 } = require('../controllers/userController');
 
 // Admin only routes
 router.use(protect);
 router.use(authorize('admin'));
 
+router.post('/broadcast', broadcastNotification);
 router.get('/stats', getUserStats);
 router.get('/', getAllUsers);
 router.get('/:id', getUser);
 router.put('/:id', updateUser);
 router.put('/:id/block', blockUser);
 router.put('/:id/subscription', updateSubscription);
+router.put('/:id/gamification', manageUserGamification);
 router.delete('/:id', deleteUser);
 
 module.exports = router;

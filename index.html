@@ -444,6 +444,8 @@
     <script src="js/auth.js?v=17"></script>
     <script src="js/auth-modal.js?v=13"></script>
     <script src="js/user-ui.js?v=14"></script>
+    <script src="js/realtime-sync.js?v=13"></script>
+    <script src="js/profile-promo.js?v=2"></script>
 
     <link rel="stylesheet" href="css/navigation-modern.css?v=13">
     <link rel="stylesheet" href="css/navigation-pill-v2.css?v=13">
@@ -468,6 +470,7 @@
     <link rel="stylesheet" href="css/top-comments.css?v=13">
     <link rel="stylesheet" href="css/mobile-menu-modern.css?v=13">
     <link rel="stylesheet" href="css/mobile-viewport-fix.css?v=13">
+    <link rel="stylesheet" href="css/avatar-frames.css?v=15">
 
     <style>
         /* Action Premium Overlay Layout (Image 2 Style) */
@@ -817,7 +820,7 @@
             <!-- ZONE 3: Right — Auth + Mobile Toggle -->
             <div class="flex items-center gap-3 flex-shrink-0 ml-4">
                 <!-- Auth Container (filled by auth.js / user-ui.js) -->
-                <div id="authContainer" class="flex items-center">
+                <div id="authContainer" class="flex items-center" style="overflow: visible !important;">
                     <a href="login.html"
                        onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');return false;}"
                        class="nav-auth-btn hidden lg:inline-flex">
@@ -2470,6 +2473,7 @@
 
     
     <!-- ====== End Chat Widget ====== -->
+    <script src="js/realtime-sync.js"></script>
 </body>
 
 </html>

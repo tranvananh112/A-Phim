@@ -78,6 +78,7 @@ app.use('/api/adult', require('./routes/adultContent')); // Adult content proxy
 app.use('/api/phimx-proxy', require('./routes/phimXProxy')); // Phim X Proxy to bypass ISP blocking
 app.use('/api/partner', require('./routes/partner')); // Partner DT99 session tracking
 app.use('/api/settings', require('./routes/settings')); // System settings
+app.use('/api/notifications', require('./routes/notifications')); // Persistent notifications
 
 // Health check
 app.get('/health', (req, res) => {

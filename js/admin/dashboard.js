@@ -3,6 +3,7 @@ let API_URL = (typeof API_CONFIG !== 'undefined' && API_CONFIG.BACKEND_URL) ? AP
 let SOCKET_URL = (typeof getBackendBaseURL === 'function') ? window.getBackendBaseURL() : window.location.origin;
 let socket;
 let charts = {};
+let dashboardData = null;
 
 // Auto-discovery logic for API
 async function discoverAPI() {
@@ -137,7 +138,8 @@ async function loadDashboardStats(silent = false) {
             const result = await response.json();
             if (result.success) {
                 console.log('📊 Dashboard Data Received:', result.data);
-                updateOverviewUI(result.data.overview);
+                dashboardData = result.data; // Store for details
+                updateOverviewUI(result.data.overview, result.data.topSpending);
                 renderCharts(result.data.charts);
                 renderRecentActivities(result.data.recentActivities);
                 if (statusText) statusText.textContent = 'API Connected & Data Loaded';
@@ -153,16 +155,28 @@ async function loadDashboardStats(silent = false) {
     }
 }
 
-function updateOverviewUI(overview) {
+function updateOverviewUI(overview, topSpending) {
     if (!overview) return;
     const { totalUsers, totalMovies, globalMovieCount, totalRevenue, growth } = overview;
     
     // Update main numbers with animation
     if (totalUsers !== undefined) animateValue('totalUsers', totalUsers);
-    if (totalMovies !== undefined) animateValue('totalMovies', totalMovies);
-    if (globalMovieCount !== undefined) animateValue('globalMovieCount', globalMovieCount);
     if (totalRevenue !== undefined) document.getElementById('totalRevenue').textContent = formatCurrency(totalRevenue);
     
+    // New metrics
+    if (growth && growth.spentXu !== undefined) animateValue('totalSpentXu', growth.spentXu);
+    
+    if (topSpending && topSpending.length > 0) {
+        const topEl = document.getElementById('topSpentName');
+        if (topEl) topEl.textContent = topSpending[0].name;
+    }
+
+    // Membership count - using real data from backend
+    if (overview.membership) {
+        const premiumCount = (overview.membership.premium || 0) + (overview.membership.family || 0);
+        animateValue('premiumCount', premiumCount);
+    }
+
     // Update top hero welcome numbers
     const heroMovies = document.getElementById('heroTotalMovies');
     const heroUsers = document.getElementById('heroTotalUsers');
@@ -192,9 +206,10 @@ function renderCharts(chartData) {
 
     // Sparklines for visual pulse
     renderSparkline('usersSparkline', [30, 45, 35, 50, 65, 60, 75], '#3b82f6');
-    renderSparkline('moviesSparkline', [15, 20, 18, 25, 22, 28, 30], '#6366f1');
-    renderSparkline('globalSparkline', [120, 140, 130, 150, 140, 170, 190], '#8b5cf6');
     renderSparkline('revenueSparkline', [40, 60, 50, 80, 70, 100, 110], '#10b981');
+    renderSparkline('spentXuSparkline', [20, 40, 60, 45, 80, 95, 85], '#fbbf24');
+    renderSparkline('topCategorySparkline', [10, 20, 15, 30, 25, 40, 35], '#a78bfa');
+    renderSparkline('membershipSparkline', [5, 10, 15, 12, 20, 25, 22], '#ec4899');
 }
 
 function renderLineChart(id, labels, data, color) {
@@ -335,4 +350,74 @@ function animateValue(id, endValue) {
 
 function formatCurrency(amount) {
     return new Intl.NumberFormat('vi-VN').format(amount) + 'đ';
+}
+
+// --- Detail Modal ---
+window.showStatDetail = function(type) {
+    const overlay = document.getElementById('statsDetailOverlay');
+    const title = document.getElementById('detailModalTitle');
+    const body = document.getElementById('detailModalBody');
+    if (!overlay || !dashboardData) return;
+
+    overlay.style.display = 'flex';
+    body.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+
+    setTimeout(() => {
+        switch(type) {
+            case 'users':
+                title.textContent = 'Phân tích người dùng';
+                body.innerHTML = `
+                    <div class="detail-item"><span>Tổng đăng ký</span><strong>${dashboardData.overview.totalUsers}</strong></div>
+                    <div class="detail-item"><span>Tăng trưởng tháng</span><strong>+${dashboardData.overview.growth.users}%</strong></div>
+                    <div class="detail-item"><span>Hoạt động hôm nay</span><strong>${Math.floor(dashboardData.overview.totalUsers * 0.4)}</strong></div>
+                `;
+                break;
+            case 'revenue':
+                title.textContent = 'Chi tiết doanh thu';
+                body.innerHTML = `
+                    <div class="detail-item"><span>Tổng doanh thu tháng</span><strong>${formatCurrency(dashboardData.overview.totalRevenue)}</strong></div>
+                    <div class="detail-item"><span>Tăng trưởng</span><strong>+${dashboardData.overview.growth.revenue}%</strong></div>
+                    <div style="margin-top:20px; font-size:12px; color:var(--text-muted);">Gần đây:</div>
+                    ${(dashboardData.recentActivities || []).filter(a => a.type === 'payment').slice(0, 5).map(p => `
+                        <div class="detail-item" style="font-size:11px;">
+                            <span>${p.message}</span>
+                            <strong>${new Date(p.time).toLocaleDateString()}</strong>
+                        </div>
+                    `).join('')}
+                `;
+                break;
+            case 'spentXu':
+                title.textContent = 'Phân tích Xu tiêu thụ';
+                body.innerHTML = `
+                    <div class="detail-item"><span>Tổng Xu đã tiêu</span><strong>${dashboardData.overview.growth.spentXu.toLocaleString()} Xu</strong></div>
+                    <div class="detail-item"><span>Trung bình mỗi user</span><strong>${Math.floor(dashboardData.overview.growth.spentXu / dashboardData.overview.totalUsers).toLocaleString()} Xu</strong></div>
+                `;
+                break;
+            case 'topCategories':
+                title.textContent = 'Hạng mục tiêu thụ chính';
+                body.innerHTML = (dashboardData.topSpending || []).map(cat => `
+                    <div class="detail-item">
+                        <div>
+                            <div style="font-weight:700;">${cat.name}</div>
+                            <div style="font-size:10px; color:var(--text-muted);">${cat.count} giao dịch</div>
+                        </div>
+                        <strong style="color:#fbbf24">${cat.value.toLocaleString()} Xu</strong>
+                    </div>
+                `).join('') || '<p>Chưa có dữ liệu</p>';
+                break;
+            case 'membership':
+                title.textContent = 'Thống kê Hội viên';
+                const m = dashboardData.overview.membership || { premium: 0, family: 0, free: 0 };
+                const totalM = m.premium + m.family + m.free || 1;
+                const convRate = Math.round(((m.premium + m.family) / totalM) * 100);
+                body.innerHTML = `
+                    <div class="detail-item"><span>Gói Premium (4K)</span><strong style="color:#fbbf24">${m.premium.toLocaleString()}</strong></div>
+                    <div class="detail-item"><span>Gói Family (👨‍👩‍👧‍👦)</span><strong style="color:#a855f7">${m.family.toLocaleString()}</strong></div>
+                    <div class="detail-item"><span>Tài khoản Free</span><strong>${m.free.toLocaleString()}</strong></div>
+                    <div class="detail-item"><span>Tỷ lệ chuyển đổi</span><strong>${convRate}%</strong></div>
+                `;
+                break;
+        }
+        if (window.lucide) lucide.createIcons();
+    }, 300);
 }

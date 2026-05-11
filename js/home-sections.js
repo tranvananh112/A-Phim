@@ -122,6 +122,11 @@ function renderLatestMoviesSection(movies) {
                                     <div class="absolute bottom-2 right-2 bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
                                         <span class="material-icons-round text-[10px]">check_circle</span>
                                     </div>` : ''}
+                                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
+                                        <div class="w-10 h-10 bg-primary/90 rounded-full flex items-center justify-center shadow-lg transform scale-50 group-hover:scale-100 transition-transform duration-300">
+                                            <span class="material-icons-round text-black text-xl">play_arrow</span>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="p-4">
                                     <h3 class="text-white font-semibold text-sm truncate group-hover:text-primary transition-colors">
@@ -240,6 +245,11 @@ function renderAllSections(sections) {
                                         <div class="absolute bottom-2 right-2 bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
                                             <span class="material-icons-round text-[10px]">check_circle</span>
                                         </div>` : ''}
+                                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
+                                            <div class="w-10 h-10 bg-primary/90 rounded-full flex items-center justify-center shadow-lg transform scale-50 group-hover:scale-100 transition-transform duration-300">
+                                                <span class="material-icons-round text-black text-xl">play_arrow</span>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="p-4">
                                         <h3 class="text-white font-semibold truncate group-hover:text-primary transition-colors">
@@ -327,8 +337,10 @@ function renderVietnameseMovies(movies) {
                 <div class="absolute bottom-2 right-2 bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
                     <span class="material-icons-round text-[10px]">check_circle</span> Có link
                 </div>` : ''}
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                    <div class="text-xs text-white/90">${movie.origin_name || ''}</div>
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
+                    <div class="w-10 h-10 bg-primary/90 rounded-full flex items-center justify-center shadow-lg transform scale-50 group-hover:scale-100 transition-transform duration-300">
+                        <span class="material-icons-round text-black text-xl">play_arrow</span>
+                    </div>
                 </div>
             </div>
             <div class="p-4">

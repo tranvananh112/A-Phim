@@ -6,8 +6,10 @@ const STORAGE_KEYS = {
     FAVORITES: 'cinestream_favorites',
     WATCH_HISTORY: 'cinestream_watch_history',
     WATCH_PROGRESS: 'cinestream_watch_progress',
-    SUBSCRIPTION: 'cinestream_subscription'
+    SUBSCRIPTION: 'cinestream_subscription',
+    PLAYLISTS: 'cinestream_playlists'
 };
+
 
 class AuthService {
     constructor() {
@@ -41,10 +43,26 @@ class AuthService {
             });
             const data = await response.json();
             if (data.success && data.data) {
-                // Background update localStorage
-                this.saveUser(data.data);
+                const serverUser = data.data;
+                const localPlaylistsStr = localStorage.getItem('cinestream_playlists');
+                const localPlaylists = localPlaylistsStr ? JSON.parse(localPlaylistsStr) : [];
+
+                // Trường hợp đặc biệt: Server chưa có playlists nhưng local đã có (do mới nâng cấp hệ thống)
+                if ((!serverUser.playlists || serverUser.playlists.length === 0) && localPlaylists.length > 0) {
+                    console.log('📤 Pushing local playlists to server...');
+                    this.updateProfile({ playlists: localPlaylists });
+                } else {
+                    // Background update localStorage
+                    this.saveUser(serverUser);
+                    
+                    // Đồng bộ Playlists chuyên sâu
+                    if (serverUser.playlists && typeof playlistService !== 'undefined') {
+                        playlistService.syncFromProfile(serverUser.playlists);
+                    }
+                }
+
                 // Dispatch event in case UI wants to refresh
-                window.dispatchEvent(new CustomEvent('auth:profileSynced', { detail: data.data }));
+                window.dispatchEvent(new CustomEvent('auth:profileSynced', { detail: serverUser }));
             }
         } catch (e) {
             console.warn('[AuthService] Auto-sync profile failed', e);
@@ -63,6 +81,15 @@ class AuthService {
         if (user.watchHistory) {
             localStorage.setItem('cinestream_watch_history', JSON.stringify(user.watchHistory));
         }
+        // Đảm bảo đồng bộ Playlists nếu có trong dữ liệu server
+        if (user.playlists && Array.isArray(user.playlists)) {
+            localStorage.setItem('cinestream_playlists', JSON.stringify(user.playlists));
+        }
+
+        // ĐỒNG BỘ DỮ LIỆU TRANG TRÍ (Frames & Banners)
+        if (user.equippedFrameClass) localStorage.setItem('ap_frame_class', user.equippedFrameClass);
+        if (user.equippedFrame) localStorage.setItem('ap_frame_id', user.equippedFrame);
+        if (user.profileCover) localStorage.setItem('ap_profile_cover', user.profileCover);
     }
 
     // Register new user

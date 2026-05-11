@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Notification = require('../models/Notification');
 
 // @desc    Get all users (Admin only)
 // @route   GET /api/users
@@ -173,6 +174,174 @@ exports.updateSubscription = async (req, res) => {
             success: false,
             message: error.message
         });
+    }
+};
+
+// @desc    Update user gamification details (Admin only)
+// @route   PUT /api/users/:id/gamification
+// @access  Private/Admin
+exports.manageUserGamification = async (req, res) => {
+    try {
+        const { coins, xp, frameToAdd, bannerToAdd, frameToRemove, bannerToRemove, subscription } = req.body;
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng' });
+        }
+
+        // Ensure inventory object exists
+        if (!user.inventory) {
+            user.inventory = { frames: [], banners: [] };
+        }
+        if (!user.transactions) {
+            user.transactions = [];
+        }
+
+        // --- DETECT CHANGES FOR NOTIFICATION ---
+        const isCoinUpdate = typeof coins === 'number' && coins !== user.coins;
+        const isPlanUpdate = subscription && subscription.plan && subscription.plan.toUpperCase() !== (user.subscription?.plan || 'FREE');
+        const notificationMsg = req.body.message || 'Hệ thống vừa cập nhật tài khoản của bạn';
+
+        // ✅ Handle subscription plan update
+        if (subscription && subscription.plan) {
+            const prevPlan = user.subscription?.plan || 'FREE';
+            const newPlan = subscription.plan.toUpperCase();
+            const newEndDate = subscription.endDate ? new Date(subscription.endDate) : (user.subscription?.endDate || null);
+
+            user.subscription = {
+                plan: newPlan,
+                startDate: subscription.startDate ? new Date(subscription.startDate) : new Date(),
+                endDate: newEndDate,
+                expiresAt: newEndDate,   // keep legacy alias in sync
+                status: newPlan !== 'FREE' ? 'active' : 'inactive',
+                autoRenew: user.subscription?.autoRenew || false
+            };
+
+            // Log plan change as transaction
+            if (prevPlan !== newPlan) {
+                const planLabel = newPlan === 'PREMIUM' ? 'CAO CẤP (Premium)' : newPlan === 'FAMILY' ? 'GIA ĐÌNH (Family)' : 'FREE';
+                user.transactions.push({
+                    title: `Admin kích hoạt gói ${planLabel}`,
+                    amount: 0,
+                    type: 'admin',
+                    date: new Date()
+                });
+            }
+        }
+
+        // Handle inventory additions
+        if (frameToAdd && !user.inventory.frames.includes(frameToAdd)) {
+            user.inventory.frames.push(frameToAdd);
+            user.transactions.push({ title: `Admin cấp thẻ Khung: ${frameToAdd}`, amount: 0, type: 'admin', date: new Date() });
+        }
+        if (bannerToAdd && !user.inventory.banners.includes(bannerToAdd)) {
+            user.inventory.banners.push(bannerToAdd);
+            user.transactions.push({ title: `Admin cấp thẻ Ảnh bìa: ${bannerToAdd}`, amount: 0, type: 'admin', date: new Date() });
+        }
+
+        // Handle removals
+        if (frameToRemove) {
+            user.inventory.frames = user.inventory.frames.filter(f => f !== frameToRemove);
+        }
+        if (bannerToRemove) {
+            user.inventory.banners = user.inventory.banners.filter(b => b !== bannerToRemove);
+        }
+
+        // Log coin changes if it was a modification
+        if (isCoinUpdate) {
+            const diff = coins - user.coins;
+            user.transactions.push({ 
+                title: 'Admin điều chỉnh số dư Xu', 
+                amount: diff, 
+                type: 'recharge', 
+                date: new Date() 
+            });
+            user.coins = coins;
+            user.xu = coins; // SYNC BOTH FIELDS
+        }
+        if (typeof xp === 'number') user.xp = xp;
+        
+        // --- PERSISTENT NOTIFICATION ---
+        try {
+            await Notification.create({
+                user: user._id,
+                title: isCoinUpdate ? 'Biến động số dư' : (isPlanUpdate ? 'Nâng cấp gói thành viên' : 'Cập nhật tài khoản'),
+                message: notificationMsg,
+                type: isCoinUpdate ? 'success' : (isPlanUpdate ? 'promotion' : 'info'),
+                category: isPlanUpdate ? 'subscription' : (isCoinUpdate ? 'payment' : 'account')
+            });
+        } catch (notifErr) {
+            console.error('❌ [Notification] Persistent save failed:', notifErr);
+        }
+
+        await user.save();
+
+        // REALTIME SYNC via Socket.IO
+        const socketUtil = require('../utils/socket');
+        if (socketUtil.isInitialized()) {
+            console.log(`📡 [Socket] Emitting USER_UPDATE_${user._id} | coins: ${user.coins}, xp: ${user.xp}, plan: ${user.subscription?.plan}`);
+            socketUtil.emitEvent(`USER_UPDATE_${user._id}`, {
+                userId: user._id,
+                coins: user.coins,
+                xp: user.xp,
+                inventory: user.inventory,
+                equippedFrame: user.equippedFrame,
+                subscription: user.subscription,
+                message: req.body.message || 'Hệ thống vừa cập nhật tài khoản của bạn'
+            });
+        } else {
+            console.warn('⚠️ [Socket] Socket.io not initialized, cannot emit realtime update');
+        }
+
+        res.json({
+            success: true,
+            message: 'Đã đồng bộ thông tin tài khoản thành công',
+            data: {
+                coins: user.coins,
+                xp: user.xp,
+                inventory: user.inventory,
+                subscription: user.subscription
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// @desc    Broadcast notification to all users (Admin only)
+// @route   POST /api/users/broadcast
+// @access  Private/Admin
+exports.broadcastNotification = async (req, res) => {
+    try {
+        const { title, message, type } = req.body;
+        
+        // Emit to all users via Socket.IO
+        const socketUtil = require('../utils/socket');
+        if (socketUtil.isInitialized()) {
+            socketUtil.emitEvent('SYSTEM_NOTIFICATION', {
+                title: title || 'Thông báo hệ thống',
+                message: message,
+                type: type || 'admin'
+            });
+        }
+
+        // --- PERSISTENT BROADCAST SAVE ---
+        // Save as a broadcast notification for all users to see when they login
+        const Notification = require('../models/Notification');
+        await Notification.create({
+            title: title || 'Thông báo hệ thống',
+            message: message,
+            type: type || 'info',
+            isBroadcast: true,
+            category: 'system'
+        });
+
+        res.json({
+            success: true,
+            message: 'Đã gửi thông báo cho toàn bộ hệ thống'
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 

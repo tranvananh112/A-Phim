@@ -111,7 +111,37 @@ try {
 const APP_CONFIG = {
     ITEMS_PER_PAGE: 20,
     VIDEO_QUALITIES: ['360p', '480p', '720p', '1080p', '4K'],
-    PLAYBACK_SPEEDS: [0.5, 0.75, 1, 1.25, 1.5, 2]
+    PLAYBACK_SPEEDS: [0.5, 0.75, 1, 1.25, 1.5, 2],
+    SUBSCRIPTION_PLANS: {
+        FREE: {
+            id: 'FREE',
+            name: 'Cơ bản',
+            price: 0,
+            features: ['Xem phim miễn phí', 'Chất lượng SD', 'Có quảng cáo'],
+            quality: 'SD', devices: 1,
+            ads: true,
+            coinsReward: 0
+        },
+        PREMIUM: {
+            id: 'PREMIUM',
+            name: 'Cao cấp',
+            price: 69000,
+            features: ['Không quảng cáo', 'Chất lượng Full HD', 'Tải phim offline', 'Tặng 5.000 Xu'],
+            quality: 'FHD', devices: 3,
+            ads: false,
+            coinsReward: 5000
+        },
+        FAMILY: {
+            id: 'FAMILY',
+            name: 'Gia đình',
+            price: 699000,
+            features: ['Không quảng cáo', 'Chất lượng 4K', 'Tải phim offline', 'Chia sẻ 5 màn hình', 'Tặng 50.000 Xu'],
+            quality: '4K', devices: 5,
+            ads: false,
+            yearly: true,
+            coinsReward: 50000
+        }
+    }
 };
 
 // Backward compatibility and Global Helper
@@ -188,3 +218,4 @@ window.getHiddenMovieOverlay = function(slug) {
     }
     return { badge: '', imgClass: '', containerClass: '' };
 };
+

@@ -10,8 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://ophim1.com">
     <link rel="dns-prefetch" href="https://img.ophim.live">
-    
-    
+
+
     <script src="js/chat-init-guard.js?v=13" fetchpriority="high"></script>
 
     <!-- ⚡ TOUCH SPEED — Load NGAY, không defer/async -->
@@ -23,7 +23,8 @@
 
 
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
 
     <title>Gói Thành Viên - A Phim</title>
 
@@ -110,13 +111,17 @@
         }
 
         /* 🚀 TURBO RENDER: Tối ưu hóa các section nằm ngoài viewport */
-        .movie-section, footer, #comments-section {
+        .movie-section,
+        footer,
+        #comments-section {
             content-visibility: auto;
             contain-intrinsic-size: 1px 500px;
         }
-        
+
         /* Hardware acceleration cho các hiệu ứng mượt mà */
-        .portrait-card, .landscape-card, .hero-slide {
+        .portrait-card,
+        .landscape-card,
+        .hero-slide {
             will-change: transform, opacity;
             transform: translateZ(0);
         }
@@ -430,12 +435,24 @@
     <link rel="stylesheet" href="css/tailwind.min.css?v=13">
 
     <!-- Google Fonts: load non-blocking qua media=print trick -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Be+Vietnam+Pro:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Be+Vietnam+Pro:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
+    <link rel="preload"
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Be+Vietnam+Pro:wght@400;600;700&display=swap"
+        as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Be+Vietnam+Pro:wght@400;600;700&display=swap"
+            rel="stylesheet">
+    </noscript>
 
     <!-- Material Icons: load async (non-blocking) -->
-    <link rel="preload" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons" rel="stylesheet"></noscript>
+    <link rel="preload"
+        href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons"
+        as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link
+            href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons"
+            rel="stylesheet">
+    </noscript>
 
 
 
@@ -479,9 +496,11 @@
             transition: transform 0.3s ease;
             scroll-snap-align: start;
         }
+
         .action-premium-card:hover {
             transform: translateY(-5px);
         }
+
         .action-backdrop-w {
             position: relative;
             width: 100%;
@@ -490,11 +509,13 @@
             overflow: hidden;
             background: #111;
         }
+
         .action-backdrop-w img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
+
         .action-small-poster {
             position: absolute;
             bottom: 10px;
@@ -503,20 +524,23 @@
             aspect-ratio: 2/3;
             border-radius: 6px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             z-index: 10;
             background: #000;
         }
+
         .action-small-poster img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
+
         .action-info-overlay {
             margin-left: 85px;
             margin-top: 8px;
         }
+
         .action-title-p {
             font-size: 0.9rem;
             font-weight: 700;
@@ -526,6 +550,7 @@
             text-overflow: ellipsis;
             margin-bottom: 2px;
         }
+
         .action-subtitle-p {
             font-size: 0.7rem;
             color: #888;
@@ -534,11 +559,13 @@
             text-overflow: ellipsis;
             margin-bottom: 4px;
         }
+
         .action-meta-p {
             font-size: 0.65rem;
             color: #bbb;
             font-weight: 500;
         }
+
         .backdrop-quality-badge {
             position: absolute;
             bottom: 8px;
@@ -556,25 +583,32 @@
             .action-premium-card {
                 width: 220px;
             }
+
             .action-small-poster {
                 width: 50px;
             }
+
             .action-info-overlay {
                 margin-left: 65px;
             }
+
             .action-title-p {
                 font-size: 0.8rem;
             }
         }
-            font-size: 0.6rem;
-            font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 4px;
-            z-index: 5;
+
+        font-size: 0.6rem;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 4px;
+        z-index: 5;
         }
 
         /* Hide Hero Progress Bar & Scrollbars */
-        .hero-progress-container, .hero-progress-bar, #heroProgressBar, .hero-progress {
+        .hero-progress-container,
+        .hero-progress-bar,
+        #heroProgressBar,
+        .hero-progress {
             display: none !important;
             height: 0 !important;
             opacity: 0 !important;
@@ -584,6 +618,7 @@
         .hide-scrollbar::-webkit-scrollbar {
             display: none !important;
         }
+
         .hide-scrollbar {
             -ms-overflow-style: none !important;
             scrollbar-width: none !important;
@@ -663,22 +698,22 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="APhim">
     <link rel="apple-touch-icon" href="/logo_aphim1.png">
-<link rel="stylesheet" href="css/design-tokens.css?v=13">
-<link rel="stylesheet" href="css/ambient-bg.css?v=13">
-<link rel="stylesheet" href="css/interests-section.css?v=13">
-<link rel="stylesheet" href="css/top-ranking-v2.css?v=13">
-<link rel="stylesheet" href="css/movie-cards-v2.css?v=13">
-<link rel="stylesheet" href="css/coming-soon-section.css?v=13">
-<link rel="stylesheet" href="css/country-sections.css?v=13">
-<link rel="stylesheet" href="css/horror-section.css?v=13">
-<link rel="stylesheet" href="css/page-transitions.css?v=13">
-<link rel="stylesheet" href="css/portrait-cards-v3.css?v=13">
-<link rel="stylesheet" href="css/seamless-sections.css?v=13">
+    <link rel="stylesheet" href="css/design-tokens.css?v=13">
+    <link rel="stylesheet" href="css/ambient-bg.css?v=13">
+    <link rel="stylesheet" href="css/interests-section.css?v=13">
+    <link rel="stylesheet" href="css/top-ranking-v2.css?v=13">
+    <link rel="stylesheet" href="css/movie-cards-v2.css?v=13">
+    <link rel="stylesheet" href="css/coming-soon-section.css?v=13">
+    <link rel="stylesheet" href="css/country-sections.css?v=13">
+    <link rel="stylesheet" href="css/horror-section.css?v=13">
+    <link rel="stylesheet" href="css/page-transitions.css?v=13">
+    <link rel="stylesheet" href="css/portrait-cards-v3.css?v=13">
+    <link rel="stylesheet" href="css/seamless-sections.css?v=13">
 
     <!-- A Phim: Hardcode Dropdown Blue Override inside HTML to bypass all cache/specificity -->
-            <style id="dropdown-blue-override">
+    <style id="dropdown-blue-override">
         @media (min-width: 1024px) {
-            nav .relative.group > .absolute.top-full {
+            nav .relative.group>.absolute.top-full {
                 background-color: rgba(5, 5, 8, 0.96) !important;
                 background-image: none !important;
                 backdrop-filter: blur(16px) !important;
@@ -686,23 +721,28 @@
                 border: 1px solid rgba(255, 255, 255, 0.15) !important;
                 box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
             }
-            nav .relative.group > .absolute.top-full a {
+
+            nav .relative.group>.absolute.top-full a {
                 color: #eff6ff !important;
                 font-weight: 500 !important;
-                text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
             }
-            nav .relative.group > .absolute.top-full a:hover {
+
+            nav .relative.group>.absolute.top-full a:hover {
                 color: #f2f20d !important;
                 background-color: rgba(255, 255, 255, 0.1) !important;
-                text-shadow: 0 0 10px rgba(242,242,13,0.5);
+                text-shadow: 0 0 10px rgba(242, 242, 13, 0.5);
             }
-            nav .relative.group > .absolute.top-full * {
+
+            nav .relative.group>.absolute.top-full * {
                 /* Ensure no child elements are painting a black background covering the blue */
             }
         }
     </style>
 
     <script src="js/anti-devtools.js?v=4"></script>
+    <link rel="stylesheet" href="css/avatar-frames.css?v=4">
+    <link rel="stylesheet" href="css/pricing-premium.css?v=15">
 </head>
 
 <body class="bg-background-dark text-gray-100 font-display min-h-screen">
@@ -724,11 +764,14 @@
 
             <!-- ZONE 1: Logo -->
             <a href="index.html" class="flex items-center gap-2.5 group flex-shrink-0" style="text-decoration:none;">
-                <div class="w-9 h-9 rounded-full border-2 border-primary flex items-center justify-center bg-black/40 group-hover:bg-primary/20 transition-colors duration-300 overflow-hidden">
-                    <img src="/favicon.png" alt="A Phim Logo" class="w-5 h-5 object-contain group-hover:scale-110 transition-transform" />
+                <div
+                    class="w-9 h-9 rounded-full border-2 border-primary flex items-center justify-center bg-black/40 group-hover:bg-primary/20 transition-colors duration-300 overflow-hidden">
+                    <img src="/favicon.png" alt="A Phim Logo"
+                        class="w-5 h-5 object-contain group-hover:scale-110 transition-transform" />
                 </div>
                 <div class="flex flex-col leading-none">
-                    <span class="text-xl font-bold text-white tracking-wide">A <span class="text-primary">Phim</span></span>
+                    <span class="text-xl font-bold text-white tracking-wide">A <span
+                            class="text-primary">Phim</span></span>
                     <span class="text-[9px] text-white/40 uppercase tracking-widest">Cinema</span>
                 </div>
             </a>
@@ -736,7 +779,8 @@
             <!-- Mobile Inline Search -->
             <form action="search.html" method="GET" class="mobile-inline-search">
                 <span class="material-icons-round mobile-inline-search-icon">search</span>
-                <input type="text" name="q" placeholder="Tìm kiếm phim..." autocomplete="off" class="mobile-inline-search-input">
+                <input type="text" name="q" placeholder="Tìm kiếm phim..." autocomplete="off"
+                    class="mobile-inline-search-input">
             </form>
 
             <!-- ZONE 2: Desktop Search + Links (hidden on mobile) -->
@@ -747,11 +791,14 @@
                     <!-- Search Bar -->
                     <form action="search.html" method="GET" class="nav-search-v2">
                         <span class="material-icons-round search-icon">search</span>
-                        <input type="text" name="q" placeholder="Tìm kiếm phim, diễn viên..." autocomplete="off" required>
+                        <input type="text" name="q" placeholder="Tìm kiếm phim, diễn viên..." autocomplete="off"
+                            required>
                     </form>
 
                     <!-- Divider -->
-                    <div style="width:1px; height:20px; background:rgba(255,255,255,0.12); margin:0 6px; flex-shrink:0;"></div>
+                    <div
+                        style="width:1px; height:20px; background:rgba(255,255,255,0.12); margin:0 6px; flex-shrink:0;">
+                    </div>
 
                     <!-- Nav Links — flat, no pill -->
                     <nav-links class="flex items-center" style="gap:2px;">
@@ -775,21 +822,73 @@
                                 <span class="material-icons-round nav-caret">expand_more</span>
                             </button>
                             <div class="nav-dropdown-panel" style="min-width:560px;">
-                                <div style="background:linear-gradient(160deg,#1e4d8c 0%,#2563b8 40%,#1a3d7a 100%);border-radius:12px;padding:6px;border:1px solid rgba(59,130,246,0.25);box-shadow:0 20px 50px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);">
+                                <div
+                                    style="background:linear-gradient(160deg,#1e4d8c 0%,#2563b8 40%,#1a3d7a 100%);border-radius:12px;padding:6px;border:1px solid rgba(59,130,246,0.25);box-shadow:0 20px 50px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);">
                                     <div class="grid grid-cols-3 gap-0">
-                                        <a href="danh-sach.html?list=phim-moi" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Mới</a>
-                                        <a href="danh-sach.html?list=phim-bo" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Bộ</a>
-                                        <a href="danh-sach.html?list=phim-le" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Lẻ</a>
-                                        <a href="danh-sach.html?list=tv-shows" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">TV Shows</a>
-                                        <a href="danh-sach.html?list=hoat-hinh" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Hoạt Hình</a>
-                                        <a href="danh-sach.html?list=phim-vietsub" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Vietsub</a>
-                                        <a href="danh-sach.html?list=phim-thuyet-minh" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Thuyết Minh</a>
-                                        <a href="danh-sach.html?list=phim-long-tien" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Lồng Tiếng</a>
-                                        <a href="danh-sach.html?list=phim-bo-dang-chieu" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Bộ Đang Chiếu</a>
-                                        <a href="danh-sach.html?list=phim-bo-hoan-thanh" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Bộ Đã Xong</a>
-                                        <a href="danh-sach.html?list=phim-sap-chieu" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Sắp Chiếu</a>
-                                        <a href="danh-sach.html?list=subteam" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Subteam</a>
-                                        <a href="danh-sach.html?list=phim-chieu-rap" style="display:flex;align-items:center;justify-content:center;padding:11px 16px;color:rgba(255,255,255,0.95);font-size:0.82rem;font-weight:700;border-top:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;grid-column:span 3;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.95)';">🎬 Phim Chiếu Rạp</a>
+                                        <a href="danh-sach.html?list=phim-moi"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim
+                                            Mới</a>
+                                        <a href="danh-sach.html?list=phim-bo"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim
+                                            Bộ</a>
+                                        <a href="danh-sach.html?list=phim-le"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim
+                                            Lẻ</a>
+                                        <a href="danh-sach.html?list=tv-shows"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">TV
+                                            Shows</a>
+                                        <a href="danh-sach.html?list=hoat-hinh"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Hoạt
+                                            Hình</a>
+                                        <a href="danh-sach.html?list=phim-vietsub"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim
+                                            Vietsub</a>
+                                        <a href="danh-sach.html?list=phim-thuyet-minh"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Thuyết
+                                            Minh</a>
+                                        <a href="danh-sach.html?list=phim-long-tien"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Lồng
+                                            Tiếng</a>
+                                        <a href="danh-sach.html?list=phim-bo-dang-chieu"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim
+                                            Bộ Đang Chiếu</a>
+                                        <a href="danh-sach.html?list=phim-bo-hoan-thanh"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Bộ
+                                            Đã Xong</a>
+                                        <a href="danh-sach.html?list=phim-sap-chieu"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Sắp
+                                            Chiếu</a>
+                                        <a href="danh-sach.html?list=subteam"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Subteam</a>
+                                        <a href="danh-sach.html?list=phim-chieu-rap"
+                                            style="display:flex;align-items:center;justify-content:center;padding:11px 16px;color:rgba(255,255,255,0.95);font-size:0.82rem;font-weight:700;border-top:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;grid-column:span 3;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.95)';">🎬
+                                            Phim Chiếu Rạp</a>
                                     </div>
                                 </div>
                             </div>
@@ -819,8 +918,8 @@
                 <!-- Auth Container (filled by auth.js / user-ui.js) -->
                 <div id="authContainer" class="flex items-center">
                     <a href="login.html"
-                       onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');return false;}"
-                       class="nav-auth-btn hidden lg:inline-flex">
+                        onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');return false;}"
+                        class="nav-auth-btn hidden lg:inline-flex">
                         <span class="material-icons-round" style="font-size:16px;">person</span>
                         Đăng Nhập
                     </a>
@@ -856,120 +955,172 @@
         });
     </script>
 
-    
 
-    <main class="flex-grow pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full relative">
-        <div class="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[128px] pointer-events-none -z-10"></div>
 
-        <div class="text-center mb-10">
-            <h1 class="text-3xl md:text-4xl font-bold mb-3">Nâng Cấp Trải Nghiệm Điện Ảnh</h1>
-            <p class="text-gray-400 max-w-xl mx-auto text-base">
-                Chọn gói thành viên phù hợp để mở khóa kho phim 4K không giới hạn và xem phim không quảng cáo ngay hôm nay.
-            </p>
+    <main class="flex-grow pb-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full relative" style="padding-top: 85px;">
+        <div
+            class="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[128px] pointer-events-none -z-10">
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-            <!-- Free Plan -->
-            <div class="relative group rounded-2xl border border-white/10 bg-white/5 p-6 transition-transform duration-300 hover:-translate-y-2">
-                <div class="mb-4">
-                    <h3 class="text-lg font-medium text-gray-400 mb-1">Miễn Phí</h3>
-                    <div class="flex items-baseline gap-1">
-                        <span class="text-3xl font-bold">0</span>
-                        <span class="text-lg font-medium text-gray-500">đ</span>
-                        <span class="text-xs text-gray-500">/tháng</span>
-                    </div>
+        <!-- Toggle Switch -->
+        <div class="flex justify-center relative z-10" style="margin-top: 20px; margin-bottom: 20px;">
+            <div class="inline-flex bg-[#1a1a1a] border border-white/10 rounded-full relative shadow-[0_0_20px_rgba(232,185,79,0.15)]"
+                style="padding: 6px;">
+                <div id="pricingToggleBg"
+                    class="absolute rounded-full transition-transform duration-300 pointer-events-none"
+                    style="top: 6px; bottom: 6px; left: 6px; width: 140px; background: #e8b94f; transform: translateX(0); box-shadow: 0 4px 15px rgba(232,185,79,0.4);">
                 </div>
-                <ul class="space-y-4 mb-8 text-sm text-gray-300">
-                    <li class="flex items-center gap-3">
-                        <span class="material-icons-round text-gray-400 text-lg">check_circle</span>
-                        <span>Truy cập kho phim giới hạn</span>
-                    </li>
-                    <li class="flex items-center gap-3">
-                        <span class="material-icons-round text-gray-400 text-lg">check_circle</span>
-                        <span>Chất lượng SD (480p)</span>
-                    </li>
-                    <li class="flex items-center gap-3">
-                        <span class="material-icons-round text-gray-400 text-lg">check_circle</span>
-                        <span>Xem trên 1 thiết bị</span>
-                    </li>
-                </ul>
-                <button class="w-full py-2 rounded-lg border border-white/20 font-medium hover:bg-white/10 transition-colors">
-                    Đang sử dụng
-                </button>
-            </div>
-
-            <!-- Premium Plan -->
-            <div class="relative group rounded-2xl border-2 border-primary bg-primary/5 p-6 transform md:-translate-y-2 shadow-xl shadow-primary/10">
-                <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-black px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-lg">
-                    Phổ biến nhất
-                </div>
-                <div class="mb-4">
-                    <h3 class="text-lg font-medium text-primary mb-1">Cao Cấp</h3>
-                    <div class="flex items-baseline gap-1">
-                        <span class="text-3xl font-bold" id="price-premium">69.000</span>
-                        <span class="text-lg font-medium text-gray-500">đ</span>
-                        <span class="text-xs text-gray-500">/tháng</span>
-                    </div>
-                    <p class="text-[10px] text-primary mt-1">Dùng thử miễn phí 7 ngày</p>
-                </div>
-                <ul class="space-y-4 mb-8 text-sm text-white font-medium">
-                    <li class="flex items-center gap-3">
-                        <span class="material-icons-round text-primary text-lg">check_circle</span>
-                        <span>Truy cập toàn bộ kho phim</span>
-                    </li>
-                    <li class="flex items-center gap-3">
-                        <span class="material-icons-round text-primary text-lg">check_circle</span>
-                        <span>Chất lượng Full HD & 4K</span>
-                    </li>
-                    <li class="flex items-center gap-3">
-                        <span class="material-icons-round text-primary text-lg">check_circle</span>
-                        <span>Không quảng cáo</span>
-                    </li>
-                    <li class="flex items-center gap-3">
-                        <span class="material-icons-round text-primary text-lg">check_circle</span>
-                        <span>Xem trên 2 thiết bị</span>
-                    </li>
-                </ul>
-                <a href="payment.html?plan=premium" data-plan="premium" class="pricing-plan-btn block text-center w-full py-3 rounded-lg bg-primary text-black font-bold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">Chọn Gói Cao Cấp</a>
-            </div>
-
-            <!-- Family Plan -->
-            <div class="relative group rounded-2xl border border-white/10 bg-white/5 p-6 transition-transform duration-300 hover:-translate-y-2">
-                <div class="absolute top-3 right-3 bg-green-500/20 text-green-400 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
-                    Tiết kiệm 20%
-                </div>
-                <div class="mb-4">
-                    <h3 class="text-lg font-medium text-white mb-1">Gia Đình</h3>
-                    <div class="flex items-baseline gap-1">
-                        <span class="text-3xl font-bold" id="price-premium-year">699.000</span>
-                        <span class="text-lg font-medium text-gray-500">đ</span>
-                        <span class="text-xs text-gray-500">/năm</span>
-                    </div>
-                </div>
-                <ul class="space-y-4 mb-8 text-sm text-gray-300">
-                    <li class="flex items-center gap-3">
-                        <span class="material-icons-round text-primary text-lg">check_circle</span>
-                        <span>Tất cả quyền lợi Cao Cấp</span>
-                    </li>
-                    <li class="flex items-center gap-3">
-                        <span class="material-icons-round text-primary text-lg">check_circle</span>
-                        <span>Xem trên 4 thiết bị cùng lúc</span>
-                    </li>
-                    <li class="flex items-center gap-3">
-                        <span class="material-icons-round text-primary text-lg">check_circle</span>
-                        <span>Tải xuống xem offline</span>
-                    </li>
-                    <li class="flex items-center gap-3">
-                        <span class="material-icons-round text-primary text-lg">check_circle</span>
-                        <span>Hồ sơ trẻ em an toàn</span>
-                    </li>
-                </ul>
-                <a href="payment.html?plan=family" data-plan="family" class="pricing-plan-btn block text-center w-full py-3 rounded-lg border border-white/20 font-medium hover:bg-white/10 hover:text-primary hover:border-primary transition-all">Chọn Gói Gia Đình</a>
+                <button id="togglePlanBtn" onclick="switchPricingTab('plan')"
+                    class="relative rounded-full text-sm font-extrabold transition-colors duration-300 z-10"
+                    style="width: 140px; padding: 10px 0; color: #000;">Mua Gói</button>
+                <button id="toggleCoinBtn" onclick="switchPricingTab('coin')"
+                    class="relative rounded-full text-sm font-extrabold transition-colors duration-300 z-10 hover:text-white"
+                    style="width: 140px; padding: 10px 0; color: #9ca3af;">Nạp Xu</button>
             </div>
         </div>
+
+        <div id="planSection" class="transition-opacity duration-300" style="opacity: 1; display: block; margin-top: 0;">
+            <div class="text-center mb-8">
+                <h1 class="text-xl md:text-2xl font-bold mb-3">Nâng Cấp Trải Nghiệm Điện Ảnh</h1>
+                <p class="text-gray-400 max-w-xl mx-auto text-sm">
+                    Chọn gói thành viên phù hợp để mở khóa kho phim 4K không giới hạn và xem phim không quảng cáo ngay
+                    hôm nay.
+                </p>
+            </div>
+
+            <div class="p-pricing-grid">
+                <!-- Free Plan -->
+                <div class="p-card">
+                    <div class="p-title">Miễn Phí</div>
+                    <div class="p-price-wrap">
+                        <span class="p-price">0</span>
+                        <span class="p-currency">đ</span>
+                        <span class="p-period">/tháng</span>
+                    </div>
+                    <ul class="p-features">
+                        <li class="p-feature-item"><span class="material-icons-round">check_circle</span>Truy cập kho phim giới hạn</li>
+                        <li class="p-feature-item"><span class="material-icons-round">check_circle</span>Chất lượng SD (480p)</li>
+                        <li class="p-feature-item"><span class="material-icons-round">check_circle</span>Xem trên 1 thiết bị</li>
+                    </ul>
+                    <button id="btn-free-plan" class="p-btn p-btn-outline">Đang sử dụng</button>
+                </div>
+
+                <!-- Premium Plan -->
+                <div class="p-card p-card-featured p-shine-effect">
+                    <div style="position:absolute; top:12px; right:32px; background:var(--p-gold); color:#000; font-size:10px; font-weight:900; padding:4px 12px; border-radius:10px; text-transform:uppercase;">Phổ biến nhất</div>
+                    <div class="p-title" style="color:var(--p-gold)">Cao Cấp</div>
+                    <div class="p-price-wrap">
+                        <span class="p-price" id="price-premium" style="color:var(--p-gold)">69.000</span>
+                        <span class="p-currency" style="color:var(--p-gold)">đ</span>
+                        <span class="p-period">/tháng</span>
+                    </div>
+                    <div style="font-size:11px; color:var(--p-gold); font-weight:700; margin-bottom:20px; text-transform:uppercase; letter-spacing:1px;">Dùng thử miễn phí 7 ngày</div>
+                    
+                    <ul class="p-features">
+                        <li class="p-feature-item"><span class="material-icons-round" style="color:var(--p-gold)">check_circle</span>Truy cập toàn bộ kho phim</li>
+                        <li class="p-feature-item"><span class="material-icons-round" style="color:var(--p-gold)">check_circle</span>Chất lượng Full HD & 4K</li>
+                        <li class="p-feature-item"><span class="material-icons-round" style="color:var(--p-gold)">check_circle</span>Không quảng cáo</li>
+                        <li class="p-feature-item"><span class="material-icons-round" style="color:var(--p-gold)">check_circle</span>Xem trên 2 thiết bị</li>
+                    </ul>
+
+                    <div class="p-bonus-badge" style="border-color:rgba(232,185,79,0.3); background:rgba(232,185,79,0.05);">
+                        <div class="p-bonus-icon" style="background:var(--p-gold)"><span class="material-icons-round">redeem</span></div>
+                        <div>
+                            <div style="font-size:13px; font-weight:800; color:var(--p-gold);">Tặng 10.000 Xu Thưởng</div>
+                            <div style="font-size:10px; opacity:0.6;">+ 300 XP (Lên ngay 10 Cấp)</div>
+                        </div>
+                    </div>
+
+                    <a href="payment.html?plan=premium" data-plan="premium" id="btn-premium-plan" class="p-btn p-btn-gold">Chọn Gói Cao Cấp</a>
+                </div>
+
+                <!-- Family Plan -->
+                <div class="p-card">
+                    <div style="position:absolute; top:24px; right:24px; background:rgba(16,185,129,0.15); color:var(--p-emerald); font-size:10px; font-weight:800; padding:4px 10px; border-radius:8px;">TIẾT KIỆM 20%</div>
+                    <div class="p-title">Gia Đình</div>
+                    <div class="p-price-wrap">
+                        <span class="p-price" id="price-premium-year">699.000</span>
+                        <span class="p-currency">đ</span>
+                        <span class="p-period">/năm</span>
+                    </div>
+                    <ul class="p-features">
+                        <li class="p-feature-item"><span class="material-icons-round">check_circle</span>Tất cả quyền lợi Cao Cấp</li>
+                        <li class="p-feature-item"><span class="material-icons-round">check_circle</span>Xem trên 4 thiết bị cùng lúc</li>
+                        <li class="p-feature-item"><span class="material-icons-round">check_circle</span>Hỗ trợ ưu tiên 24/7</li>
+                    </ul>
+
+                    <div class="p-bonus-badge">
+                        <div class="p-bonus-icon"><span class="material-icons-round">card_giftcard</span></div>
+                        <div>
+                            <div style="font-size:13px; font-weight:800; color:var(--p-emerald);">Tặng 50.000 Xu Siêu Cấp</div>
+                            <div style="font-size:10px; opacity:0.6;">+ 1.000 XP Thần Thánh</div>
+                        </div>
+                    </div>
+
+                    <a href="payment.html?plan=family" data-plan="family" id="btn-family-plan" class="p-btn p-btn-outline">Chọn Gói Gia Đình</a>
+                </div>
+            </div>
+        </div> <!-- End planSection -->
+
+        <!-- SECTION: GÓI NẠP XU -->
+        <div id="coinSection" class="transition-opacity duration-300" style="opacity: 0; display: none; margin-top: 0;">
+            <div class="mb-8">
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <h2 class="text-xl md:text-2xl font-bold text-white mb-3">Gói Nạp Xu <span class="text-primary">Tiết Kiệm</span></h2>
+                    <p class="text-gray-400 max-w-xl mx-auto text-sm">Dùng Xu để mở khóa Khung Avatar &amp; Banner độc
+                        quyền tại Cửa hàng Profile của bạn.</p>
+                </div>
+
+                <!-- Cards -->
+                <div class="p-coin-grid">
+
+                    <!-- Card 1: Khởi Đầu -->
+                    <div class="p-coin-card" onclick="openPaymentModal('xu_20k')">
+                        <div class="p-coin-icon" style="background:rgba(56,189,248,0.1); color:var(--p-blue);">
+                            <span class="material-icons-round">savings</span>
+                        </div>
+                        <h3 style="font-size:1.1rem; font-weight:700; color:rgba(255,255,255,0.6); margin-bottom:4px;">Gói Khởi Đầu</h3>
+                        <div style="font-size:2.5rem; font-weight:900; color:var(--p-blue); letter-spacing:-1px;">5.000 <span style="font-size:14px; opacity:0.5;">Xu</span></div>
+                        <div style="font-size:12px; color:rgba(255,255,255,0.3); margin-bottom:20px;">Dành cho người mới bắt đầu</div>
+                        <div style="height:1px; background:rgba(255,255,255,0.05); margin-bottom:20px;"></div>
+                        <div style="font-size:1.4rem; font-weight:800; margin-bottom:20px;">20.000 đ</div>
+                        <button class="p-btn p-btn-outline" style="padding:12px;">Nạp Ngay</button>
+                    </div>
+
+                    <!-- Card 2: Đam Mê (Featured) -->
+                    <div class="p-coin-card p-shine-effect" style="border-color:var(--p-gold); background:rgba(232,185,79,0.04);" onclick="openPaymentModal('xu_100k')">
+                        <div style="position:absolute; top:12px; right:12px; background:var(--p-gold); color:#000; font-size:9px; font-weight:900; padding:3px 8px; border-radius:10px; text-transform:uppercase;">PHỔ BIẾN</div>
+                        <div class="p-coin-icon" style="background:rgba(232,185,79,0.15); color:var(--p-gold); box-shadow:0 0 20px rgba(232,185,79,0.2);">
+                            <span class="material-icons-round">stars</span>
+                        </div>
+                        <h3 style="font-size:1.1rem; font-weight:700; color:rgba(255,255,255,0.8); margin-bottom:4px;">Gói Đam Mê</h3>
+                        <div style="font-size:2.5rem; font-weight:900; color:var(--p-gold); letter-spacing:-1px;">30.000 <span style="font-size:14px; opacity:0.5;">Xu</span></div>
+                        <div style="font-size:12px; color:var(--p-emerald); font-weight:700; margin-bottom:20px;">+ Tặng 5.000 Xu Thưởng</div>
+                        <div style="height:1px; background:rgba(232,185,79,0.1); margin-bottom:20px;"></div>
+                        <div style="font-size:1.4rem; font-weight:800; color:var(--p-gold); margin-bottom:20px;">100.000 đ</div>
+                        <button class="p-btn p-btn-gold" style="padding:12px;">Nạp Ngay</button>
+                    </div>
+
+                    <!-- Card 3: VIP Collector -->
+                    <div class="p-coin-card" onclick="openPaymentModal('xu_500k')">
+                        <div class="p-coin-icon" style="background:rgba(168,85,247,0.1); color:var(--p-purple);">
+                            <span class="material-icons-round">diamond</span>
+                        </div>
+                        <h3 style="font-size:1.1rem; font-weight:700; color:rgba(255,255,255,0.6); margin-bottom:4px;">Gói VIP Collector</h3>
+                        <div style="font-size:2.5rem; font-weight:900; color:var(--p-purple); letter-spacing:-1px;">200.000 <span style="font-size:14px; opacity:0.5;">Xu</span></div>
+                        <div style="font-size:12px; color:var(--p-purple); font-weight:700; margin-bottom:20px;">+ Tặng 50.000 Xu Thưởng</div>
+                        <div style="height:1px; background:rgba(255,255,255,0.05); margin-bottom:20px;"></div>
+                        <div style="font-size:1.4rem; font-weight:800; margin-bottom:20px;">500.000 đ</div>
+                        <button class="p-btn p-btn-outline" style="padding:12px;">Nạp Ngay</button>
+                    </div>
+
+                </div>
+            </div>
+        </div> <!-- End coinSection -->
     </main>
 
-<footer class="bg-void border-t border-white/5 py-12 relative overflow-hidden ambient-section">
+    <footer class="bg-void border-t border-white/5 py-12 relative overflow-hidden ambient-section">
         <!-- Background pattern/logo graphic -->
         <div class="absolute right-0 top-1/2 -translate-y-1/2 opacity-5 pointer-events-none scale-150">
             <span class="material-icons-round text-[400px]">play_circle_outline</span>
@@ -1060,7 +1211,8 @@
                     <a href="#" class="hover:text-primary transition-colors">Chính sách bảo mật</a>
                     <a href="#" class="hover:text-primary transition-colors">Điều khoản sử dụng</a>
                     <a href="#" class="hover:text-primary transition-colors">Giới thiệu</a>
-                    <a href="https://web.telegram.org/k/#@aphimiovn" target="_blank" class="hover:text-primary transition-colors">Liên hệ</a>
+                    <a href="https://web.telegram.org/k/#@aphimiovn" target="_blank"
+                        class="hover:text-primary transition-colors">Liên hệ</a>
                 </div>
 
                 <!-- Text block -->
@@ -1086,13 +1238,13 @@
     <script src="js/image-optimization.js?v=13"></script>
     <script src="js/user.js?v=16"></script>
     <script src="js/rating.js?v=13"></script>
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
 
     <script>
         // Preload critical data on page load
@@ -1141,11 +1293,11 @@
 
                 const thumb = movie.thumb_url || '';
                 const poster = movie.poster_url || '';
-                
-                const finalImgUrl = (typeof imageOptimizer !== 'undefined') ? 
-                    imageOptimizer.optimizeImageUrl(thumb || poster, 400, 80) : 
-                    (thumb ? (thumb.startsWith('http') ? thumb : `https://img.ophim.live/uploads/movies/${thumb}`) : 
-                            (poster ? (poster.startsWith('http') ? poster : `https://img.ophim.live/uploads/movies/${poster}`) : ''));
+
+                const finalImgUrl = (typeof imageOptimizer !== 'undefined') ?
+                    imageOptimizer.optimizeImageUrl(thumb || poster, 400, 80) :
+                    (thumb ? (thumb.startsWith('http') ? thumb : `https://img.ophim.live/uploads/movies/${thumb}`) :
+                        (poster ? (poster.startsWith('http') ? poster : `https://img.ophim.live/uploads/movies/${poster}`) : ''));
 
                 return `
                     <div class="portrait-card group ${hiddenUI.containerClass}">
@@ -1300,21 +1452,21 @@
             container.innerHTML = movies.map(movie => {
                 const hasCustomLink = !!movieLinks[movie.slug];
                 const linkUrl = hasCustomLink ? `watch-simple.html?slug=${movie.slug}` : `movie-detail.html?slug=${movie.slug}`;
-                
+
                 // OPhim: thumb_url is portrait, poster_url is landscape
                 const thumb = movie.thumb_url || '';
                 const poster = movie.poster_url || '';
 
                 // Backdrop prioritized for landscape (poster_url)
                 const backdropUrl = poster || thumb;
-                const finalBackdrop = (typeof imageOptimizer !== 'undefined') ? 
-                    imageOptimizer.optimizeImageUrl(backdropUrl, 600, 75) : 
+                const finalBackdrop = (typeof imageOptimizer !== 'undefined') ?
+                    imageOptimizer.optimizeImageUrl(backdropUrl, 600, 75) :
                     (backdropUrl.startsWith('http') ? backdropUrl : `https://img.ophim.live/uploads/movies/${backdropUrl}`);
 
                 // Poster prioritized for portrait (thumb_url)
                 const posterUrl = thumb || poster;
-                const finalPoster = (typeof imageOptimizer !== 'undefined') ? 
-                    imageOptimizer.optimizeImageUrl(posterUrl, 200, 70) : 
+                const finalPoster = (typeof imageOptimizer !== 'undefined') ?
+                    imageOptimizer.optimizeImageUrl(posterUrl, 200, 70) :
                     (posterUrl.startsWith('http') ? posterUrl : `https://img.ophim.live/uploads/movies/${posterUrl}`);
 
                 return `
@@ -1372,7 +1524,6 @@
         }
 
         // Load on page load - try home API first
-        loadHomeMovies();
         loadLatestMovies();
         loadActionMovies();
         if (typeof loadTopMovies === 'function') loadTopMovies();
@@ -1408,18 +1559,18 @@
                         container.innerHTML = movies.map(movie => {
                             const thumb = movie.thumb_url || '';
                             const poster = movie.poster_url || '';
-                            
+
                             // Đảo lại logic: Backdrop ưu tiên poster_url (ngang), Poster ưu tiên thumb_url (dọc)
                             const backdropUrl = poster || thumb;
-                            const finalBackdrop = (typeof imageOptimizer !== 'undefined') ? 
-                                imageOptimizer.optimizeImageUrl(backdropUrl, 600, 75) : 
+                            const finalBackdrop = (typeof imageOptimizer !== 'undefined') ?
+                                imageOptimizer.optimizeImageUrl(backdropUrl, 600, 75) :
                                 (backdropUrl.startsWith('http') ? backdropUrl : `https://img.ophim.live/uploads/movies/${backdropUrl}`);
-                            
+
                             const posterUrl = thumb || poster;
-                            const finalPoster = (typeof imageOptimizer !== 'undefined') ? 
-                                imageOptimizer.optimizeImageUrl(posterUrl, 200, 70) : 
+                            const finalPoster = (typeof imageOptimizer !== 'undefined') ?
+                                imageOptimizer.optimizeImageUrl(posterUrl, 200, 70) :
                                 (posterUrl.startsWith('http') ? posterUrl : `https://img.ophim.live/uploads/movies/${posterUrl}`);
-                            
+
                             return `
                             <div class="action-premium-card group">
                                 <a href="movie-detail.html?slug=${movie.slug}">
@@ -1471,10 +1622,10 @@
                         container.innerHTML = movies.map(movie => {
                             const thumb = movie.thumb_url || '';
                             const poster = movie.poster_url || '';
-                            const finalImg = (typeof imageOptimizer !== 'undefined') ? 
-                                imageOptimizer.optimizeImageUrl(thumb || poster, 400, 80) : 
+                            const finalImg = (typeof imageOptimizer !== 'undefined') ?
+                                imageOptimizer.optimizeImageUrl(thumb || poster, 400, 80) :
                                 (thumb ? (thumb.startsWith('http') ? thumb : `https://img.ophim.live/uploads/movies/${thumb}`) : `https://img.ophim.live/uploads/movies/${poster}`);
-                            
+
                             return `
                             <div class="anime-card group">
                                 <a href="movie-detail.html?slug=${movie.slug}" class="block">
@@ -1506,7 +1657,7 @@
             } catch (err) { console.error('Animation error:', err); }
         }
         loadAnimationMovies();
-        
+
         // Load Adventure Movies (Phiêu Lưu)
         async function loadAdventureMovies() {
             const loading = document.getElementById('adventureLoading');
@@ -1522,10 +1673,10 @@
                         container.innerHTML = movies.map(movie => {
                             const thumb = movie.thumb_url || '';
                             const poster = movie.poster_url || '';
-                            const finalImg = (typeof imageOptimizer !== 'undefined') ? 
-                                imageOptimizer.optimizeImageUrl(thumb || poster, 400, 80) : 
+                            const finalImg = (typeof imageOptimizer !== 'undefined') ?
+                                imageOptimizer.optimizeImageUrl(thumb || poster, 400, 80) :
                                 (thumb ? (thumb.startsWith('http') ? thumb : `https://img.ophim.live/uploads/movies/${thumb}`) : `https://img.ophim.live/uploads/movies/${poster}`);
-                            
+
                             return `
                             <div class="anime-card group">
                                 <a href="movie-detail.html?slug=${movie.slug}" class="block">
@@ -1572,8 +1723,8 @@
                             const rank = index + 1;
                             const thumb = movie.thumb_url || '';
                             const poster = movie.poster_url || '';
-                            const finalImg = (typeof imageOptimizer !== 'undefined') ? 
-                                imageOptimizer.optimizeImageUrl(thumb || poster, 400, 80) : 
+                            const finalImg = (typeof imageOptimizer !== 'undefined') ?
+                                imageOptimizer.optimizeImageUrl(thumb || poster, 400, 80) :
                                 (thumb ? (thumb.startsWith('http') ? thumb : `https://img.ophim.live/uploads/movies/${thumb}`) : `https://img.ophim.live/uploads/movies/${poster}`);
 
                             return `
@@ -1624,8 +1775,8 @@
                             const rank = index + 1;
                             const thumb = movie.thumb_url || '';
                             const poster = movie.poster_url || '';
-                            const finalImg = (typeof imageOptimizer !== 'undefined') ? 
-                                imageOptimizer.optimizeImageUrl(thumb || poster, 400, 80) : 
+                            const finalImg = (typeof imageOptimizer !== 'undefined') ?
+                                imageOptimizer.optimizeImageUrl(thumb || poster, 400, 80) :
                                 (thumb ? (thumb.startsWith('http') ? thumb : `https://img.ophim.live/uploads/movies/${thumb}`) : `https://img.ophim.live/uploads/movies/${poster}`);
 
                             return `
@@ -1667,7 +1818,7 @@
     <script src="js/search-icon-enhance.js?v=13"></script>
 
 
-    
+
 
     <!-- PWA Service Worker + Auto Update Detection -->
     <script src="js/sw-updater.js" defer></script>
@@ -1700,36 +1851,64 @@
                 </div>
             </div>
             <div class="chat-header-actions">
-                <button class="chat-header-btn" id="chatMinimizeBtn" title="Thu nhỏ"><span class="material-icons">remove</span></button>
-                <button class="chat-header-btn" id="chatCloseBtn" title="Đóng"><span class="material-icons">close</span></button>
+                <button class="chat-header-btn" id="chatMinimizeBtn" title="Thu nhỏ"><span
+                        class="material-icons">remove</span></button>
+                <button class="chat-header-btn" id="chatCloseBtn" title="Đóng"><span
+                        class="material-icons">close</span></button>
             </div>
         </div>
         <!-- BODY -->
         <div class="chat-body" id="chatBody">
             <!-- SCREEN 1: WELCOME -->
             <div class="chat-screen chat-screen-welcome active" id="screenWelcome">
-                <div class="welcome-glow"><img src="/favicon.png" alt="A Phim" style="width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.15));"></div>
+                <div class="welcome-glow"><img src="/favicon.png" alt="A Phim"
+                        style="width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.15));">
+                </div>
                 <div>
                     <h2 class="welcome-title">Chào mừng đến <span>Kênh A Phim</span></h2>
-                    <p class="welcome-desc" style="margin-top:8px;">Kết nối, thảo luận và tận hưởng điện ảnh cùng hàng ngàn tín đồ phim ảnh.</p>
+                    <p class="welcome-desc" style="margin-top:8px;">Kết nối, thảo luận và tận hưởng điện ảnh cùng hàng
+                        ngàn tín đồ phim ảnh.</p>
                 </div>
                 <div class="welcome-stats">
-                    <div class="welcome-stat"><div class="welcome-stat-num" id="welcomeOnline">1,284</div><div class="welcome-stat-label">Trực tuyến</div></div>
-                    <div class="welcome-stat"><div class="welcome-stat-num">50K+</div><div class="welcome-stat-label">Thành viên</div></div>
-                    <div class="welcome-stat"><div class="welcome-stat-num">24/7</div><div class="welcome-stat-label">Hoạt động</div></div>
+                    <div class="welcome-stat">
+                        <div class="welcome-stat-num" id="welcomeOnline">1,284</div>
+                        <div class="welcome-stat-label">Trực tuyến</div>
+                    </div>
+                    <div class="welcome-stat">
+                        <div class="welcome-stat-num">50K+</div>
+                        <div class="welcome-stat-label">Thành viên</div>
+                    </div>
+                    <div class="welcome-stat">
+                        <div class="welcome-stat-num">24/7</div>
+                        <div class="welcome-stat-label">Hoạt động</div>
+                    </div>
                 </div>
                 <div class="welcome-features">
-                    <div class="welcome-feature"><span class="material-icons">movie</span><div class="welcome-feature-text"><strong>Thảo luận phim</strong><span>Review, rating và khám phá phim mới</span></div></div>
-                    <div class="welcome-feature"><span class="material-icons">groups</span><div class="welcome-feature-text"><strong>Cộng đồng sôi nổi</strong><span>Kết nối với người xem cùng sở thích</span></div></div>
-                    <div class="welcome-feature"><span class="material-icons">bolt</span><div class="welcome-feature-text"><strong>Chat thời gian thực</strong><span>Nhắn tin ngay lập tức, không độ trễ</span></div></div>
+                    <div class="welcome-feature"><span class="material-icons">movie</span>
+                        <div class="welcome-feature-text"><strong>Thảo luận phim</strong><span>Review, rating và khám
+                                phá phim mới</span></div>
+                    </div>
+                    <div class="welcome-feature"><span class="material-icons">groups</span>
+                        <div class="welcome-feature-text"><strong>Cộng đồng sôi nổi</strong><span>Kết nối với người xem
+                                cùng sở thích</span></div>
+                    </div>
+                    <div class="welcome-feature"><span class="material-icons">bolt</span>
+                        <div class="welcome-feature-text"><strong>Chat thời gian thực</strong><span>Nhắn tin ngay lập
+                                tức, không độ trễ</span></div>
+                    </div>
                 </div>
-                <button class="welcome-start-btn" id="welcomeStartBtn">Bắt đầu chat ngay <span class="material-icons">arrow_forward</span></button>
+                <button class="welcome-start-btn" id="welcomeStartBtn">Bắt đầu chat ngay <span
+                        class="material-icons">arrow_forward</span></button>
             </div>
             <!-- SCREEN 2: ENTER NAME -->
             <div class="chat-screen chat-screen-name" id="screenEnterName">
                 <div class="enter-name-header">
-                    <button class="enter-name-back-btn" id="enterNameBackBtn"><span class="material-icons">arrow_back</span></button>
-                    <div class="enter-name-title-wrap"><h2>Tạo hồ sơ</h2><p>Chọn biệt danh và màu sắc của bạn</p></div>
+                    <button class="enter-name-back-btn" id="enterNameBackBtn"><span
+                            class="material-icons">arrow_back</span></button>
+                    <div class="enter-name-title-wrap">
+                        <h2>Tạo hồ sơ</h2>
+                        <p>Chọn biệt danh và màu sắc của bạn</p>
+                    </div>
                 </div>
                 <div>
                     <span class="name-color-label">Màu đại diện</span>
@@ -1750,25 +1929,32 @@
                         <span class="name-char-count" id="nameCharCount">0 / 20</span>
                     </div>
                     <div class="name-input-wrapper">
-                        <input type="text" id="chatNameInput" class="name-input" placeholder="VD: MovieLover_99" maxlength="20" autocomplete="off">
+                        <input type="text" id="chatNameInput" class="name-input" placeholder="VD: MovieLover_99"
+                            maxlength="20" autocomplete="off">
                         <span class="name-input-icon material-icons">person</span>
                     </div>
-                    <div class="name-error-msg" id="nameErrorMsg">Tên phải từ 3–20 ký tự, không chứa ký tự đặc biệt.</div>
+                    <div class="name-error-msg" id="nameErrorMsg">Tên phải từ 3–20 ký tự, không chứa ký tự đặc biệt.
+                    </div>
                 </div>
                 <div class="name-preview">
                     <div class="name-preview-avatar" id="previewAvatar" style="background:#ffd709;">A</div>
-                    <div class="name-preview-info"><strong id="previewName">Biệt danh của bạn</strong><span>Thành viên mới · Hôm nay</span></div>
+                    <div class="name-preview-info"><strong id="previewName">Biệt danh của bạn</strong><span>Thành viên
+                            mới · Hôm nay</span></div>
                 </div>
                 <div class="online-preview">
                     <div class="online-avatars">
-                        <div class="online-avatar-mini" style="background:#ffd709;color:#1a1200;font-weight:700;">K</div>
+                        <div class="online-avatar-mini" style="background:#ffd709;color:#1a1200;font-weight:700;">K
+                        </div>
                         <div class="online-avatar-mini" style="background:#22c55e;color:#fff;font-weight:700;">L</div>
                         <div class="online-avatar-mini" style="background:#3b82f6;color:#fff;font-weight:700;">M</div>
                         <div class="online-avatar-mini more">+39</div>
                     </div>
-                    <div class="online-info"><strong><span style="display:inline-block;width:7px;height:7px;background:#22c55e;border-radius:50%;margin-right:5px;vertical-align:middle;"></span>42 trực tuyến</strong><span>Đang thảo luận sôi nổi</span></div>
+                    <div class="online-info"><strong><span
+                                style="display:inline-block;width:7px;height:7px;background:#22c55e;border-radius:50%;margin-right:5px;vertical-align:middle;"></span>42
+                            trực tuyến</strong><span>Đang thảo luận sôi nổi</span></div>
                 </div>
-                <button class="join-btn" id="chatJoinBtn" disabled><span class="material-icons">login</span>Tham gia phòng chat</button>
+                <button class="join-btn" id="chatJoinBtn" disabled><span class="material-icons">login</span>Tham gia
+                    phòng chat</button>
             </div>
             <!-- SCREEN 3: CHAT ROOM -->
             <div class="chat-screen chat-screen-room" id="screenRoom">
@@ -1779,7 +1965,8 @@
                         <div class="msg-avatar" style="background:#3b82f6;color:#fff;">M</div>
                         <div class="msg-content">
                             <div class="msg-name">MovieFan</div>
-                            <div class="msg-bubble">Mọi người thấy Dune: Part Two thế nào? Hình ảnh choáng ngợp luôn! 🤩</div>
+                            <div class="msg-bubble">Mọi người thấy Dune: Part Two thế nào? Hình ảnh choáng ngợp luôn! 🤩
+                            </div>
                             <div class="msg-meta"><span class="msg-time">20:20</span></div>
                         </div>
                     </div>
@@ -1787,13 +1974,18 @@
                         <div class="msg-avatar" style="background:#22c55e;color:#fff;">L</div>
                         <div class="msg-content">
                             <div class="msg-name">LinhChi</div>
-                            <div class="msg-bubble">Nhạc phim của Hans Zimmer nữa, nghe mà rung động cả phòng chiếu 🎵</div>
+                            <div class="msg-bubble">Nhạc phim của Hans Zimmer nữa, nghe mà rung động cả phòng chiếu 🎵
+                            </div>
                             <div class="msg-meta"><span class="msg-time">20:21</span></div>
                         </div>
                     </div>
                     <div class="typing-indicator" id="typingIndicator">
                         <div class="typing-avatar" style="background:#a855f7;border-radius:50%;"></div>
-                        <div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
+                        <div class="typing-dots">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="quick-reactions" id="quickReactions">
@@ -1838,13 +2030,18 @@
         <!-- INPUT AREA -->
         <div class="chat-input-area" id="chatInputArea">
             <div class="chat-tabs-bar">
-                <button class="chat-tab active" data-tab="general" id="tabGeneral"><span class="material-icons">public</span>Chung</button>
-                <button class="chat-tab" data-tab="movies" id="tabMovies"><span class="material-icons">movie</span>Phim</button>
-                <button class="chat-tab" data-tab="support" id="tabSupport"><span class="material-icons">help</span>Hỗ trợ</button>
+                <button class="chat-tab active" data-tab="general" id="tabGeneral"><span
+                        class="material-icons">public</span>Chung</button>
+                <button class="chat-tab" data-tab="movies" id="tabMovies"><span
+                        class="material-icons">movie</span>Phim</button>
+                <button class="chat-tab" data-tab="support" id="tabSupport"><span class="material-icons">help</span>Hỗ
+                    trợ</button>
             </div>
             <div class="input-row">
-                <button class="input-icon-btn" id="emojiToggleBtn" title="Emoji"><span class="material-icons">mood</span></button>
-                <input type="text" id="chatMessageInput" placeholder="Viết tin nhắn..." maxlength="500" autocomplete="off">
+                <button class="input-icon-btn" id="emojiToggleBtn" title="Emoji"><span
+                        class="material-icons">mood</span></button>
+                <input type="text" id="chatMessageInput" placeholder="Viết tin nhắn..." maxlength="500"
+                    autocomplete="off">
                 <button class="send-btn" id="chatSendBtn" disabled><span class="material-icons">send</span></button>
             </div>
             <div class="input-footer">
@@ -1863,7 +2060,8 @@
 
     <!-- ====== Firebase SDK (Compat CDN) ====== -->
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js" crossorigin="anonymous"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"
+        crossorigin="anonymous"></script>
     <!-- Firebase Analytics đã bị loại bỏ để tránh lỗi Tracking Prevention làm bẩn Console -->
     <!-- <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script> -->
 
@@ -1872,100 +2070,216 @@
     <!-- Chat Widget Logic -->
     <script src="js/chat-room.js?v=13"></script>
 
-    
-    
 
 
-    
+
+
+
     <!-- ====== End Chat Widget ====== -->
 
     <script>
-    // -- Sync pricing from backend settings ----------------------------------
-    (async function syncPricing() {
-        function fmtVND(num) {
-            if (!num || isNaN(num)) return null;
-            return Number(num).toLocaleString('vi-VN');
-        }
-
-        function applyPrices(payment) {
-            const premium     = fmtVND(payment?.pricePremium);
-            const premiumYear = fmtVND(payment?.pricePremiumYear);
-            if (premium)     {
-                const el = document.getElementById('price-premium');
-                if (el) el.textContent = premium;
-            }
-            if (premiumYear) {
-                const el = document.getElementById('price-premium-year');
-                if (el) el.textContent = premiumYear;
+        // -- Sync pricing from backend settings ----------------------------------
+        (async function syncPricing() {
+            function fmtVND(num) {
+                if (!num || isNaN(num)) return null;
+                return Number(num).toLocaleString('vi-VN');
             }
 
-            // Update PLANS in payment.js if it's loaded
-            if (typeof PLANS !== 'undefined') {
-                if (payment?.pricePremium)     PLANS.premium.amount = payment.pricePremium;
-                if (payment?.pricePremiumYear) PLANS.family.amount  = payment.pricePremiumYear;
-                // Update bank info
-                if (payment?.bankAccount && typeof PAYMENT_CONFIG !== 'undefined') {
-                    PAYMENT_CONFIG.accountNo   = payment.bankAccount;
-                    PAYMENT_CONFIG.accountName = payment.bankOwner || PAYMENT_CONFIG.accountName;
+            function applyPrices(payment) {
+                const premium = fmtVND(payment?.pricePremium);
+                const premiumYear = fmtVND(payment?.pricePremiumYear);
+                if (premium) {
+                    const el = document.getElementById('price-premium');
+                    if (el) el.textContent = premium;
+                }
+                if (premiumYear) {
+                    const el = document.getElementById('price-premium-year');
+                    if (el) el.textContent = premiumYear;
+                }
+
+                // Update PLANS in payment.js if it's loaded
+                if (typeof PLANS !== 'undefined') {
+                    if (payment?.pricePremium) PLANS.premium.amount = payment.pricePremium;
+                    if (payment?.pricePremiumYear) PLANS.family.amount = payment.pricePremiumYear;
+                    // Update bank info
+                    if (payment?.bankAccount && typeof PAYMENT_CONFIG !== 'undefined') {
+                        PAYMENT_CONFIG.accountNo = payment.bankAccount;
+                        PAYMENT_CONFIG.accountName = payment.bankOwner || PAYMENT_CONFIG.accountName;
+                    }
                 }
             }
-        }
 
-        function applyPhimXNav(enablePhimX) {
-            const slot = document.getElementById('pricing-nav-phimx');
-            if (!slot) return;
-            if (enablePhimX) {
-                slot.outerHTML = `<a href="phim-x.html"
+            function applyPhimXNav(enablePhimX) {
+                const slot = document.getElementById('pricing-nav-phimx');
+                if (!slot) return;
+                if (enablePhimX) {
+                    slot.outerHTML = `<a href="phim-x.html"
                     class="nav-item px-6 py-2.5 rounded-full text-sm font-bold uppercase tracking-wide transition-colors duration-200 text-red-400 hover:text-red-300">
                     🎬 Phim X</a>`;
-            }
-        }
-
-        // Check cache first for instant render
-        try {
-            const cached = JSON.parse(localStorage.getItem('cinestream_public_settings') || '{}');
-            if (cached.pricePremium) applyPrices(cached);
-            applyPhimXNav(cached.enablePhimX);
-        } catch(e) {}
-
-        // Then fetch fresh from backend
-        try {
-            const BACKEND = (typeof API_CONFIG !== 'undefined')
-                ? API_CONFIG.BACKEND_URL
-                : (location.hostname === 'localhost' ? 'http://localhost:5000/api' : 'https://a-phim-production-c87b.up.railway.app/api');
-
-            const [settingsRes, paymentRes] = await Promise.allSettled([
-                fetch(`${BACKEND}/settings/public`),
-                fetch(`${BACKEND}/settings/payment-public`)
-            ]);
-
-            // Try /settings/public first (has content & general)
-            if (settingsRes.status === 'fulfilled' && settingsRes.value.ok) {
-                const data = await settingsRes.value.json();
-                if (data?.success && data?.data) {
-                    applyPhimXNav(data.data.content?.enablePhimX);
                 }
             }
 
-            // Try /settings/payment-public for payment data
-            if (paymentRes.status === 'fulfilled' && paymentRes.value.ok) {
-                const data = await paymentRes.value.json();
-                if (data?.success && data?.data) {
-                    applyPrices(data.data);
-                    // Cache it
-                    try {
-                        const cached = JSON.parse(localStorage.getItem('cinestream_public_settings') || '{}');
-                        Object.assign(cached, data.data);
-                        localStorage.setItem('cinestream_public_settings', JSON.stringify(cached));
-                    } catch(e) {}
+            // Check cache first for instant render
+            try {
+                const cached = JSON.parse(localStorage.getItem('cinestream_public_settings') || '{}');
+                if (cached.pricePremium) applyPrices(cached);
+                applyPhimXNav(cached.enablePhimX);
+            } catch (e) { }
+
+            // Then fetch fresh from backend
+            try {
+                const BACKEND = (typeof API_CONFIG !== 'undefined')
+                    ? API_CONFIG.BACKEND_URL
+                    : (location.hostname === 'localhost' ? 'http://localhost:5000/api' : 'https://a-phim-production-c87b.up.railway.app/api');
+
+                const [settingsRes, paymentRes] = await Promise.allSettled([
+                    fetch(`${BACKEND}/settings/public`),
+                    fetch(`${BACKEND}/settings/payment-public`)
+                ]);
+
+                // Try /settings/public first (has content & general)
+                if (settingsRes.status === 'fulfilled' && settingsRes.value.ok) {
+                    const data = await settingsRes.value.json();
+                    if (data?.success && data?.data) {
+                        applyPhimXNav(data.data.content?.enablePhimX);
+                    }
+                }
+
+                // Try /settings/payment-public for payment data
+                if (paymentRes.status === 'fulfilled' && paymentRes.value.ok) {
+                    const data = await paymentRes.value.json();
+                    if (data?.success && data?.data) {
+                        applyPrices(data.data);
+                        // Cache it
+                        try {
+                            const cached = JSON.parse(localStorage.getItem('cinestream_public_settings') || '{}');
+                            Object.assign(cached, data.data);
+                            localStorage.setItem('cinestream_public_settings', JSON.stringify(cached));
+                        } catch (e) { }
+                    }
+                }
+            } catch (e) {
+                console.warn('Pricing sync failed, using defaults', e);
+            }
+
+            window.openPaymentModal = function (planId) {
+                window.location.href = `payment.html?plan=${planId}`;
+            };
+
+            // Tab Switching Logic
+            window.switchPricingTab = function (tab) {
+                const planSec = document.getElementById('planSection');
+                const coinSec = document.getElementById('coinSection');
+                const bg = document.getElementById('pricingToggleBg');
+                const btnPlan = document.getElementById('togglePlanBtn');
+                const btnCoin = document.getElementById('toggleCoinBtn');
+
+                if (tab === 'plan') {
+                    coinSec.style.opacity = '0';
+                    setTimeout(() => {
+                        coinSec.style.display = 'none';
+                        planSec.style.display = 'block';
+                        void planSec.offsetWidth;
+                        planSec.style.opacity = '1';
+                    }, 150);
+
+                    bg.style.transform = 'translateX(0)';
+                    btnPlan.style.color = '#000';
+                    btnCoin.style.color = '#9ca3af';
+                } else {
+                    planSec.style.opacity = '0';
+                    setTimeout(() => {
+                        planSec.style.display = 'none';
+                        coinSec.style.display = 'block';
+                        void coinSec.offsetWidth;
+                        coinSec.style.opacity = '1';
+                    }, 150);
+
+                    bg.style.transform = 'translateX(100%)';
+                    btnCoin.style.color = '#000';
+                    btnPlan.style.color = '#9ca3af';
+                }
+            };
+
+            // Auto-switch based on URL params (e.g. ?tab=coin)
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('tab') === 'coin') {
+                const planSec = document.getElementById('planSection');
+                const coinSec = document.getElementById('coinSection');
+                const bg = document.getElementById('pricingToggleBg');
+                const btnPlan = document.getElementById('togglePlanBtn');
+                const btnCoin = document.getElementById('toggleCoinBtn');
+
+                if (planSec && coinSec) {
+                    planSec.style.display = 'none';
+                    planSec.style.opacity = '0';
+                    coinSec.style.display = 'block';
+                    coinSec.style.opacity = '1';
+
+                    bg.style.transform = 'translateX(100%)';
+                    btnCoin.style.color = '#000';
+                    btnPlan.style.color = '#9ca3af';
                 }
             }
-        } catch(e) {
-            console.warn('Pricing sync failed, using defaults', e);
-        }
-    })();
+            // Update Plan UI based on current user plan
+            function updateActivePlanUI() {
+                if (typeof authService === 'undefined') return setTimeout(updateActivePlanUI, 200);
+                const user = authService.getCurrentUser();
+                if (!user) return; // if not logged in, buttons act as defaults
+
+                const currentPlan = (user.subscription && user.subscription.plan) ? user.subscription.plan.toUpperCase() : 'FREE';
+
+                const btnFree = document.getElementById('btn-free-plan');
+                const btnPremium = document.getElementById('btn-premium-plan');
+                const btnFamily = document.getElementById('btn-family-plan');
+
+                // Reset all buttons first
+                if (btnFree) {
+                    btnFree.textContent = 'Chọn Gói Free';
+                    btnFree.classList.remove('bg-gray-500/20', 'cursor-default');
+                    btnFree.onclick = () => window.location.href = '#';
+                }
+                if (btnPremium) {
+                    btnPremium.textContent = 'Chọn Gói Cao Cấp';
+                    btnPremium.style.pointerEvents = 'auto';
+                    btnPremium.classList.remove('bg-gray-500/20', 'text-white', 'border', 'border-white/20', 'cursor-default');
+                    btnPremium.classList.add('bg-primary', 'text-black', 'hover:bg-primary/90');
+                }
+                if (btnFamily) {
+                    btnFamily.textContent = 'Chọn Gói Gia Đình';
+                    btnFamily.style.pointerEvents = 'auto';
+                    btnFamily.classList.remove('bg-gray-500/20', 'text-white', 'cursor-default');
+                    btnFamily.classList.add('hover:bg-white/10', 'hover:text-primary', 'hover:border-primary');
+                }
+
+                // Set "Đang sử dụng"
+                if (currentPlan === 'FREE' && btnFree) {
+                    btnFree.textContent = 'Đang sử dụng';
+                    btnFree.classList.add('bg-gray-500/20', 'cursor-default');
+                    btnFree.onclick = (e) => e.preventDefault();
+                } else if (currentPlan === 'PREMIUM' && btnPremium) {
+                    btnPremium.textContent = 'Đang sử dụng';
+                    btnPremium.style.pointerEvents = 'none';
+                    btnPremium.classList.remove('bg-primary', 'text-black', 'hover:bg-primary/90');
+                    btnPremium.classList.add('bg-gray-500/20', 'text-white', 'border', 'border-white/20', 'cursor-default');
+                } else if (currentPlan === 'FAMILY' && btnFamily) {
+                    btnFamily.textContent = 'Đang sử dụng';
+                    btnFamily.style.pointerEvents = 'none';
+                    btnFamily.classList.remove('hover:bg-white/10', 'hover:text-primary', 'hover:border-primary');
+                    btnFamily.classList.add('bg-gray-500/20', 'text-white', 'cursor-default');
+                    
+                    if (btnPremium) {
+                        btnPremium.textContent = 'Hạ Cấp';
+                    }
+                }
+            }
+            
+            // Wait for authService to initialize
+            setTimeout(updateActivePlanUI, 500);
+
+        })();
     </script>
-
+    <script src="js/realtime-sync.js"></script>
 </body>
 
 </html>

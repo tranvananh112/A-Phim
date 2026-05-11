@@ -67,6 +67,14 @@
                     if (this._db) {
                         this._ready = true;
                         console.log('[AvatarService] Firestore ready ✓');
+                        
+                        // Ensure authenticated with Firebase (at least anonymous) to avoid permission-denied
+                        if (typeof firebase.auth === 'function' && !firebase.auth().currentUser) {
+                            firebase.auth().signInAnonymously().catch(err => {
+                                console.warn('[AvatarService] Anonymous sign-in failed:', err.message);
+                            });
+                        }
+
                         this._pending.forEach(fn => fn());
                         this._pending = [];
                     }
@@ -133,7 +141,9 @@
                         }
                     })
                     .catch(err => {
-                        console.warn('[AvatarService] loadAvatar Firestore error:', err.code || err.message);
+                        if (err.code !== 'permission-denied') {
+                            console.warn('[AvatarService] loadAvatar Firestore error:', err.code || err.message);
+                        }
                     });
             });
         }

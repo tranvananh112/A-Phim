@@ -58,6 +58,11 @@ function renderMovieGrid(movies, container) {
                 <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
                     ${movie.episode_current}
                 </div>` : ''}
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
+                    <div class="w-10 h-10 bg-primary/90 rounded-full flex items-center justify-center shadow-lg transform scale-50 group-hover:scale-100 transition-transform duration-300">
+                        <span class="material-icons-round text-black text-xl">play_arrow</span>
+                    </div>
+                </div>
             </div>
             <div class="p-4">
                 <h3 class="text-white font-semibold truncate group-hover:text-primary transition-colors">

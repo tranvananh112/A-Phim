@@ -134,7 +134,8 @@
                         movieId: movieId,
                         movieSlug: slug,
                         content: text,
-                        avatar: avatarUrl
+                        avatar: avatarUrl,
+                        parentId: parentId || null
                     })
                 });
 
@@ -172,16 +173,34 @@
                         text: d.content,
                         color: getAvatarColor(d.user ? d.user.name : 'U'),
                         avatarUrl: d.user ? (d.user.avatarUrl || d.user.avatar) : '',
+                        frameClass: d.user ? d.user.equippedFrameClass : '',
+                        frameUrl: d.user ? d.user.equippedFrameUrl : '',
+                        userRole: d.user ? d.user.role : 'user',
                         timestamp: new Date(d.createdAt),
                         isSpoiler: d.isSpoiler || false,
-                        parentId: null, // Since we don't have replies backend logic fully implemented yet
+                        parentId: d.parent || null, 
                         episodeInfo: '',
                         likedBy: d.likes || [],
                         dislikedBy: []
                     }));
                     
-                    // In the future: handle parent/children mapping here
-                    cb({ comments: rawList, count: data.count || data.total || rawList.length });
+                    // Build nested tree
+                    const commentMap = {};
+                    const topLevelComments = [];
+
+                    rawList.forEach(c => {
+                        commentMap[c.id] = { ...c, replies: [] };
+                    });
+
+                    rawList.forEach(c => {
+                        if (c.parentId && commentMap[c.parentId]) {
+                            commentMap[c.parentId].replies.push(commentMap[c.id]);
+                        } else {
+                            topLevelComments.push(commentMap[c.id]);
+                        }
+                    });
+
+                    cb({ comments: topLevelComments, count: data.count || data.total || rawList.length });
                 }
             } catch(e) {
                 console.error("Lỗi fetch comment", e);
@@ -261,6 +280,7 @@
             width: 32px; height: 32px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             font-weight: 700; font-size: 13px; color: #fff; flex-shrink:0;
+            position: relative; overflow: visible;
         }
         .ap-form-user-name { font-size: 13px; font-weight: 600; color: #fff; }
         .ap-form-user-badge {
@@ -356,7 +376,33 @@
         .ap-cmt-item { display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.05); animation: ap-in 0.3s ease; position:relative; align-items: flex-start; text-align: left; }
         .ap-cmt-item:last-child { border-bottom: none; }
         
-        .ap-cmt-avatar { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #fff;}
+        /* ── AVATAR FRAME v9 INTEGRATION ── */
+        .ap-cmt-avatar, .ap-form-user-ava {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+        /* Overwrite size-sm specifically for comment context if needed, but we use standard size-sm */
+        .ap-cmt-avatar.shop-frame-wrap.size-sm {
+            width: 40px;
+            height: 40px;
+        }
+        .ap-form-user-ava.shop-frame-wrap.size-sm {
+            width: 36px;
+            height: 36px;
+        }
+        .ap-cmt-avatar img, .ap-form-user-ava img {
+            width: 100% !important;
+            height: 100% !important;
+            border-radius: 50% !important;
+            object-fit: cover !important;
+            position: relative;
+            z-index: 1;
+        }
+        
         .ap-cmt-body { flex: 1; min-width: 0; display:flex; flex-direction:column; align-items: flex-start; text-align: left; }
         
         .ap-cmt-info { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap:wrap; width: 100%;}
@@ -405,9 +451,9 @@
         .ap-dropdown-item .material-icons-round { font-size: 18px; color: #4b5563; }
 
         /* Nested Comments Layout */
-        .ap-cmt-replies { margin-top: 14px; display: flex; flex-direction: column;}
-        .ap-cmt-replies .ap-cmt-item { border-bottom: none; padding-top: 10px; padding-bottom:0; }
-        .ap-cmt-replies .ap-cmt-avatar { width: 30px; height: 30px; font-size: 12px; }
+        .ap-cmt-replies { margin-top: 14px; display: flex; flex-direction: column; padding-left: 48px; border-left: 2px solid rgba(255,255,255,0.05); }
+        .ap-cmt-replies .ap-cmt-item { border-bottom: none; padding-top: 12px; padding-bottom:0; }
+        .ap-cmt-replies .ap-cmt-avatar { width: 32px; height: 32px; font-size: 12px; }
         
         /* Form Trả lời lồng nhau */
         .ap-reply-form-container { margin-top: 16px; display: none; margin-bottom: 8px;}
@@ -470,7 +516,18 @@
                       || localStorage.getItem('ap_chosen_avatar')
                       || '';
 
-        const avaHtml = savedAva ? `<div class="ap-form-user-ava" id="ap-user-ava-${pid}"><img src="${savedAva}" style="width:100% !important; height:100% !important; border-radius:50% !important; object-fit:cover !important; display:block !important;"></div>` : `<div class="ap-form-user-ava" id="ap-user-ava-${pid}" style="background:${color}">${initial}</div>`;
+        // Lấy frame data
+        const frameClass = user.equippedFrameClass || localStorage.getItem('ap_frame_class') || '';
+
+        const avaInner = savedAva 
+            ? `<img src="${savedAva}" style="width:100% !important; height:100% !important; border-radius:50% !important; object-fit:cover !important; display:block !important;">` 
+            : `<div style="width:100%; height:100%; border-radius:50%; background:${color}; display:flex; align-items:center; justify-content:center;">${initial}</div>`;
+        
+        const avaHtml = `
+            <div class="ap-form-user-ava shop-frame-wrap size-sm ${frameClass}" id="ap-user-ava-${pid}">
+                ${avaInner}
+            </div>`;
+        
         const previewHtml = savedAva ? `<img src="${savedAva}" class="ap-ava-preview" id="ap-preview-${pid}">` : `<span class="material-icons-round" style="font-size:18px" id="ap-preview-${pid}">account_circle</span>`;
 
         let optionsHtml = '';
@@ -534,7 +591,21 @@
 
         // Like count
         const likeCountStr = c.likedBy.length > 0 ? c.likedBy.length : '';
-        const userAva = c.avatarUrl ? `<div class="ap-cmt-avatar"><img src="${sanitize(c.avatarUrl)}" style="width:100% !important; height:100% !important; border-radius:50% !important; object-fit:cover !important; display:block !important;"></div>` : `<div class="ap-cmt-avatar" style="background:${sanitize(c.color)}">${initial}</div>`;
+        
+        const fClass = c.frameClass || '';
+        
+        const currentUser = getCurrentUser();
+        // Fallback cho chính người dùng hiện tại nếu API chưa kịp sync hoặc trả về thiếu
+        const finalFrameClass = (fClass && fClass !== 'none') ? fClass : (currentUser && currentUser.email === c.email ? (localStorage.getItem('ap_frame_class') || '') : '');
+
+        const avaInnerList = c.avatarUrl 
+            ? `<img src="${sanitize(c.avatarUrl)}" style="width:100% !important; height:100% !important; border-radius:50% !important; object-fit:cover !important; display:block !important; position:relative; z-index:2;">` 
+            : `<div style="width:100%; height:100%; border-radius:50%; background:${sanitize(c.color)}; display:flex; align-items:center; justify-content:center; position:relative; z-index:2;">${initial}</div>`;
+
+        const userAva = `
+            <div class="ap-cmt-avatar shop-frame-wrap size-sm ${finalFrameClass}" style="z-index:1;">
+                ${avaInnerList}
+            </div>`;
 
         return `
         <div class="ap-cmt-item" data-id="${c.id}">

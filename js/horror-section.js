@@ -148,6 +148,12 @@
                                         loading="lazy"
                                     />
                                     ${hiddenUI.badge}
+                                    <!-- Play Overlay -->
+                                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
+                                        <div class="w-8 h-8 bg-primary/90 rounded-full flex items-center justify-center shadow-lg transform scale-50 group-hover:scale-100 transition-transform duration-300">
+                                            <span class="material-icons-round text-black text-sm">play_arrow</span>
+                                        </div>
+                                    </div>
                                 </div>
                             `;
         }).join('')}

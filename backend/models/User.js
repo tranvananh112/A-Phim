@@ -29,6 +29,58 @@ const UserSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    equippedFrame: {
+        type: String,
+        default: 'none'
+    },
+    equippedFrameUrl: {
+        type: String,
+        default: ''
+    },
+    equippedFrameClass: {
+        type: String,
+        default: ''
+    },
+    profileCover: {
+        type: String,
+        default: ''
+    },
+    coins: {
+        type: Number,
+        default: 0
+    },
+    xu: {
+        type: Number,
+        default: 0
+    },
+    xp: {
+        type: Number,
+        default: 0
+    },
+    transactions: [{
+        title: String,
+        amount: Number,
+        type: { type: String, enum: ['spend', 'earn', 'admin', 'recharge', 'bonus'] },
+        date: { type: Date, default: Date.now }
+    }],
+    inventory: {
+        frames: {
+            type: [String],
+            default: []
+        },
+        banners: {
+            type: [String],
+            default: []
+        }
+    },
+    ownedFrames: {
+        type: [String],
+        default: []
+    },
+    ownedBanners: {
+        type: [String],
+        default: []
+    },
     role: {
         type: String,
         enum: ['user', 'admin'],
@@ -41,7 +93,13 @@ const UserSchema = new mongoose.Schema({
             default: 'FREE'
         },
         startDate: Date,
-        expiresAt: Date,
+        endDate: Date,       // primary field used by frontend
+        expiresAt: Date,     // legacy alias kept for backward compat
+        status: {
+            type: String,
+            enum: ['active', 'inactive', 'expired'],
+            default: 'inactive'
+        },
         autoRenew: {
             type: Boolean,
             default: false
@@ -77,6 +135,19 @@ const UserSchema = new mongoose.Schema({
         year: Number,
         episode: String,
         watchedAt: Date
+    }],
+    playlists: [{
+        id: String,
+        name: String,
+        description: String,
+        movies: [{
+            slug: String,
+            name: String,
+            thumb_url: String,
+            year: Number,
+            addedAt: Date
+        }],
+        createdAt: Date
     }]
 }, {
     timestamps: true
@@ -85,7 +156,7 @@ const UserSchema = new mongoose.Schema({
 // Encrypt password before saving
 UserSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
-        next();
+        return next();
     }
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);

@@ -137,13 +137,39 @@ exports.updateDetails = async (req, res) => {
         if (req.body.name !== undefined) fieldsToUpdate.name = req.body.name;
         if (req.body.phone !== undefined) fieldsToUpdate.phone = req.body.phone;
         if (req.body.avatar !== undefined) fieldsToUpdate.avatar = req.body.avatar;
+        if (req.body.equippedFrame !== undefined) fieldsToUpdate.equippedFrame = req.body.equippedFrame;
+        if (req.body.equippedFrameUrl !== undefined) fieldsToUpdate.equippedFrameUrl = req.body.equippedFrameUrl;
+        if (req.body.equippedFrameClass !== undefined) fieldsToUpdate.equippedFrameClass = req.body.equippedFrameClass;
+        if (req.body.profileCover !== undefined) fieldsToUpdate.profileCover = req.body.profileCover;
         if (req.body.favorites !== undefined) fieldsToUpdate.favorites = req.body.favorites;
         if (req.body.watchHistory !== undefined) fieldsToUpdate.watchHistory = req.body.watchHistory;
+        if (req.body.playlists !== undefined) fieldsToUpdate.playlists = req.body.playlists;
+        
+        // Bổ sung Whitelist cho Gamification / Shop
+        if (req.body.coins !== undefined) fieldsToUpdate.coins = req.body.coins;
+        if (req.body.xu !== undefined) fieldsToUpdate.xu = req.body.xu; // Fallback tương thích
+        if (req.body.xp !== undefined) fieldsToUpdate.xp = req.body.xp;
+        if (req.body.inventory !== undefined) fieldsToUpdate.inventory = req.body.inventory;
+        if (req.body.ownedFrames !== undefined) fieldsToUpdate.ownedFrames = req.body.ownedFrames;
+        if (req.body.ownedBanners !== undefined) fieldsToUpdate.ownedBanners = req.body.ownedBanners;
 
-        const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
-            new: true,
-            runValidators: true
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        // Apply updates manually
+        Object.keys(fieldsToUpdate).forEach(key => {
+            user[key] = fieldsToUpdate[key];
         });
+
+        // Handle transaction log push
+        if (req.body.transactionLog) {
+            if (!user.transactions) user.transactions = [];
+            user.transactions.push(req.body.transactionLog);
+        }
+
+        await user.save();
 
         res.json({
             success: true,
@@ -304,9 +330,21 @@ const sendTokenResponse = (user, statusCode, res) => {
             email: user.email,
             role: user.role,
             avatar: user.avatar,
+            equippedFrame: user.equippedFrame,
+            equippedFrameUrl: user.equippedFrameUrl,
+            equippedFrameClass: user.equippedFrameClass,
+            profileCover: user.profileCover,
+            coins: user.coins || 0,
+            xu: user.xu || 0,
+            xp: user.xp || 0,
+            inventory: user.inventory || { frames: [], banners: [] },
+            ownedFrames: user.ownedFrames || [],
+            ownedBanners: user.ownedBanners || [],
+            transactions: user.transactions || [],
             subscription: user.subscription,
             favorites: user.favorites,
-            watchHistory: user.watchHistory
+            watchHistory: user.watchHistory,
+            playlists: user.playlists
         }
     });
 };

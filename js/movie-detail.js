@@ -309,6 +309,25 @@ function setupFavoriteButton() {
     });
 
     buttonsContainer.appendChild(favBtn);
+
+    // ── Playlist button ──────────────────────────────────
+    const plBtn = document.createElement('button');
+    plBtn.className = 'flex-1 lg:flex-none px-3 sm:px-6 md:px-8 py-3 md:py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full backdrop-blur-md border border-white/10 hover:border-white/30 transition-all duration-300 flex items-center justify-center gap-1 sm:gap-2 md:gap-3';
+    plBtn.innerHTML = `
+        <span class="material-icons-round text-base md:text-xl">playlist_add</span>
+        <span class="text-xs sm:text-sm md:text-base whitespace-nowrap">Thêm vào</span>
+    `;
+    plBtn.addEventListener('click', () => {
+        if (typeof openPlaylistModal === 'function') {
+            openPlaylistModal({
+                slug: currentMovie.slug,
+                name: currentMovie.name,
+                thumb_url: currentMovie.thumb_url || currentMovie.poster_url,
+                year: currentMovie.year
+            });
+        }
+    });
+    buttonsContainer.appendChild(plBtn);
 }
 
 // Setup rating system

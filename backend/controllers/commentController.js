@@ -8,7 +8,7 @@ const User = require('../models/User');
 // @access  Private
 exports.addComment = async (req, res) => {
     try {
-        const { movieId, movieSlug, movieName, content, avatar } = req.body;
+        const { movieId, movieSlug, movieName, content, avatar, parentId } = req.body;
 
         if (!movieId || !movieSlug || !content) {
             return res.status(400).json({
@@ -24,11 +24,14 @@ exports.addComment = async (req, res) => {
 
         // Handle case where frontend passes slug instead of ObjectId for movieId
         let validMovieId = null;
+        let movie = null;
         const mongoose = require('mongoose');
         if (movieId && mongoose.Types.ObjectId.isValid(movieId) && movieId !== movieSlug) {
              validMovieId = movieId;
+             // Optional: still find movie for name
+             movie = await Movie.findById(movieId);
         } else {
-             const movie = await Movie.findOne({ slug: movieSlug });
+             movie = await Movie.findOne({ slug: movieSlug });
              if (movie) {
                  validMovieId = movie._id;
              }
@@ -40,6 +43,7 @@ exports.addComment = async (req, res) => {
             movieSlug: movieSlug,
             movieName: movieName || '',
             content: content,
+            parent: parentId || null,
             isApproved: true // Auto approve comments for now
         });
 
@@ -54,7 +58,7 @@ exports.addComment = async (req, res) => {
         });
 
         // Populate user details so frontend can display immediately
-        await comment.populate('user', 'name email avatar avatarUrl');
+        await comment.populate('user', 'name email avatar avatarUrl equippedFrameClass equippedFrameUrl');
 
         res.status(201).json({
             success: true,
@@ -80,7 +84,7 @@ exports.getMovieComments = async (req, res) => {
 
         const total = await Comment.countDocuments(query);
         const comments = await Comment.find(query)
-            .populate('user', 'name email avatar avatarUrl')
+            .populate('user', 'name email avatar avatarUrl equippedFrameClass equippedFrameUrl')
             .sort({ createdAt: -1 })
             .skip(startIndex)
             .limit(limit);

@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Load basic user info for sidebar only
     loadBasicUserInfo();
+    if (typeof updateJourneyUI === 'function') updateJourneyUI();
     setupProfileForm();
     setupPasswordForm();
 
@@ -17,10 +18,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const tabFromUrl = urlParams.get('tab') || window.location.hash.substring(1);
     
+    // Default to 'journey' if no tab in URL
+    const activeTabName = tabFromUrl || 'journey';
+    
     // Slight delay to ensure DOM is ready
     setTimeout(() => {
-        if (tabFromUrl && document.getElementById(tabFromUrl + 'Tab')) {
-            showTab(tabFromUrl);
+        if (document.getElementById(activeTabName + 'Tab')) {
+            showTab(activeTabName);
         }
     }, 50);
 
@@ -31,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (loadedTabs.has('favorites')) loadFavorites();
         if (loadedTabs.has('history')) loadHistory();
         if (loadedTabs.has('profile')) loadBasicUserInfo();
+        if (loadedTabs.has('subscription')) loadSubscriptionInfo();
     });
 });
 
@@ -40,25 +45,57 @@ function loadBasicUserInfo() {
     if (!user) return;
 
     const userId = user._id || user.id || user.email;
-    const avatarContainer = document.getElementById('userAvatar');
+    const heroAvatar = document.getElementById('userAvatar');
+    const sidebarAvatar = document.getElementById('sidebarAvatar');
+    
+    // Get frame info (Use correct DB field: equippedFrameClass)
+    const frameClass = user.equippedFrameClass || localStorage.getItem('ap_frame_class') || '';
 
-    // Helper: render avatar
-    function renderAvatar(url) {
-        if (url) {
-            avatarContainer.innerHTML = `<img src="${url}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML=user.name.charAt(0).toUpperCase()" />`;
+    // Helper: render avatar to a specific container
+    function renderTo(container, url, sizeClass = 'size-md') {
+        if (!container) return;
+        
+        // Get name initial
+        const initial = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+
+        // Wrap with frame if exists
+        let html = '';
+        if (frameClass) {
+            // Apply frame class directly to the container to avoid double wrapping
+            container.className = `shop-frame-wrap ${frameClass} ${sizeClass}`;
+            container.style.border = 'none';
+            container.style.background = 'transparent';
+            
+            const content = url 
+                ? `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;position:relative;z-index:1;" onerror="this.parentElement.innerHTML='${initial}'" />`
+                : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#e8b94f;color:#000;font-weight:800;position:relative;z-index:1;">${initial}</div>`;
+            
+            html = content;
         } else {
-            avatarContainer.innerHTML = user.name.charAt(0).toUpperCase();
+            container.className = ''; 
+            html = url 
+                ? `<img src="${url}" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.innerHTML='${initial}'" />`
+                : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#e8b94f;color:#000;font-weight:800;">${initial}</div>`;
         }
+        container.innerHTML = html;
+        
+        // Final sanity check for container
+        container.style.overflow = 'visible';
+        container.style.position = 'relative';
+        container.style.display = 'flex';
+        container.style.alignItems = 'center';
+        container.style.justifyContent = 'center';
     }
 
-    // 1. Render backend avatar instantly (from localStorage user object)
-    renderAvatar(user.avatar);
+    // 1. Initial render
+    renderTo(heroAvatar, user.avatar, 'size-lg');
+    renderTo(sidebarAvatar, user.avatar, 'size-sm');
 
-    // 2. Use avatarService to load per-user avatar (local then Firestore sync)
+    // 2. Load sync avatar
     if (typeof avatarService !== 'undefined') {
         avatarService.loadAvatar(userId, function(avatarUrl) {
-            renderAvatar(avatarUrl);
-            // Sync back into user object so auth module stays consistent
+            renderTo(heroAvatar, avatarUrl, 'size-lg');
+            renderTo(sidebarAvatar, avatarUrl, 'size-sm');
             if (avatarUrl && user.avatar !== avatarUrl) {
                 user.avatar = avatarUrl;
                 try { localStorage.setItem('cinestream_user', JSON.stringify(user)); } catch(e) {}
@@ -66,9 +103,56 @@ function loadBasicUserInfo() {
         });
     }
 
+    // Update names and texts
     document.getElementById('userName').textContent = user.name;
     document.getElementById('userEmail').textContent = user.email;
+    
+    const sbName = document.getElementById('sidebarName');
+    const sbEmail = document.getElementById('sidebarEmail');
+    const sbXu = document.getElementById('sidebarXuBalance');
+    const sbMiniCover = document.getElementById('sidebarMiniCover');
+    
+    if (sbName) sbName.textContent = user.name;
+    if (sbEmail) sbEmail.textContent = user.email;
+    if (sbXu) sbXu.textContent = Math.max(user.xu || 0, user.coins || 0).toLocaleString();
+
+    // Update Cover Images
+    const savedCover = (user && user.profileCover) ? user.profileCover : localStorage.getItem('ap_profile_cover');
+    if (savedCover) {
+        const heroCover = document.getElementById('profileCoverImg');
+        if (heroCover) {
+            heroCover.src = savedCover;
+            heroCover.style.display = 'block';
+        }
+        if (sbMiniCover) {
+            sbMiniCover.style.backgroundImage = `url('${savedCover}')`;
+            sbMiniCover.style.backgroundSize = 'cover';
+            sbMiniCover.style.backgroundPosition = 'center';
+            sbMiniCover.style.opacity = '0.25';
+        }
+    }
+
+    // Sync Playlists from Profile
+    if (user.playlists && typeof playlistService !== 'undefined') {
+        playlistService.syncFromProfile(user.playlists);
+    }
 }
+
+// Global UI Refresh without F5
+window.refreshAllUI = function() {
+    console.log('[Profile] Refreshing all UI components...');
+    loadBasicUserInfo();
+    loadUserProfile();
+    loadSubscriptionInfo();
+    loadFavorites();
+    loadHistory();
+    loadPlaylists();
+    
+    // Sync with other modules
+    if (typeof updateUserUI === 'function') updateUserUI();
+    if (typeof updateJourneyUI === 'function') updateJourneyUI();
+    if (typeof updateBalanceDisplay === 'function') updateBalanceDisplay();
+};
 
 // Load detailed user profile for form
 function loadUserProfile() {
@@ -94,7 +178,8 @@ function setupProfileForm() {
 
         if (result.success) {
             showMessage('Cập nhật thông tin thành công!', 'success');
-            loadUserProfile();
+            if (typeof refreshAllUI === 'function') refreshAllUI();
+            else loadUserProfile();
         } else {
             showMessage(result.message, 'error');
         }
@@ -127,46 +212,122 @@ function setupPasswordForm() {
 }
 
 // Load subscription info
-function loadSubscriptionInfo() {
+window.loadSubscriptionInfo = function() {
     const container = document.getElementById('subscriptionInfo');
     if (!container) return;
 
-    // Show loading state
-    container.innerHTML = `
-        <div class="bg-black/30 border border-white/5 rounded-lg p-6">
-            <div class="animate-pulse">
-                <div class="h-6 bg-gray-700 rounded w-1/3 mb-4"></div>
-                <div class="space-y-2">
-                    <div class="h-4 bg-gray-700 rounded w-1/2"></div>
-                    <div class="h-4 bg-gray-700 rounded w-1/3"></div>
-                </div>
-            </div>
-        </div>
-    `;
-
-    // Simulate loading delay
-    setTimeout(() => {
-        const subscription = userService.getSubscription();
-        const expiresDate = subscription.expiresAt
-            ? new Date(subscription.expiresAt).toLocaleDateString('vi-VN')
-            : 'N/A';
-
+    // Use current user immediately if possible to avoid flicker
+    const user = (typeof authService !== 'undefined') ? authService.getCurrentUser() : null;
+    
+    // Show loading state if user is being fetched (optional)
+    if (!user) {
         container.innerHTML = `
             <div class="bg-black/30 border border-white/5 rounded-lg p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xl font-bold text-white">Gói ${subscription.name}</h3>
-                    <span class="px-4 py-2 bg-primary/20 text-primary rounded-full text-sm font-bold">
-                        ${subscription.price === 0 ? 'Miễn phí' : subscription.price.toLocaleString('vi-VN') + 'đ'}
-                    </span>
-                </div>
-                <div class="space-y-2 text-sm text-gray-300">
-                    <p>Chất lượng: <span class="text-white font-semibold">${subscription.quality}</span></p>
-                    <p>Số thiết bị: <span class="text-white font-semibold">${subscription.devices}</span></p>
-                    ${subscription.expiresAt ? `<p>Hết hạn: <span class="text-white font-semibold">${expiresDate}</span></p>` : ''}
+                <div class="animate-pulse">
+                    <div class="h-6 bg-gray-700 rounded w-1/3 mb-4"></div>
+                    <div class="space-y-2">
+                        <div class="h-4 bg-gray-700 rounded w-1/2"></div>
+                        <div class="h-4 bg-gray-700 rounded w-1/3"></div>
+                    </div>
                 </div>
             </div>
         `;
-    }, 500);
+    }
+
+    const render = (u) => {
+        let planKey = 'FREE';
+        let expiresDate = '';
+        
+        if (u && u.subscription && u.subscription.plan) {
+            planKey = u.subscription.plan;
+            const endDate = u.subscription.endDate || u.subscription.expiresAt;
+            if (endDate) {
+                expiresDate = new Date(endDate).toLocaleDateString('vi-VN');
+            }
+        }
+
+        let planDetails = { name: 'Cơ bản', price: 0, quality: 'SD', devices: 1 };
+        
+        if (planKey === 'PREMIUM') {
+            planDetails = { name: 'Premium (4K)', price: 69000, quality: '4K HDR', devices: 2 };
+        } else if (planKey === 'FAMILY') {
+            planDetails = { name: 'Family', price: 699000, quality: '4K HDR', devices: 4 };
+        } else if (planKey !== 'FREE' && typeof APP_CONFIG !== 'undefined' && APP_CONFIG.SUBSCRIPTION_PLANS && APP_CONFIG.SUBSCRIPTION_PLANS[planKey]) {
+            const sp = APP_CONFIG.SUBSCRIPTION_PLANS[planKey];
+            planDetails = { 
+                name: sp.name || planKey, 
+                price: sp.price || 0, 
+                quality: sp.features && sp.features[0] ? sp.features[0] : '4K HDR',
+                devices: sp.features && sp.features[1] ? sp.features[1] : 'Không giới hạn' 
+            };
+        }
+
+        const isPremium = planKey !== 'FREE';
+
+        container.innerHTML = `
+            <div class="p-status-card ${isPremium ? 'p-shine-effect' : ''}">
+                <div class="p-status-header">
+                    <div>
+                        <div class="p-status-label">Gói hiện tại</div>
+                        <h3 class="p-title" style="margin:0; ${isPremium ? 'color:var(--p-gold)' : ''}">
+                            ${planDetails.name}
+                        </h3>
+                    </div>
+                    ${isPremium ? '<div class="p-status-badge">Active</div>' : '<div class="p-status-badge" style="background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.4);">Standard</div>'}
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                    <div class="p-status-item">
+                        <span class="material-icons-round" style="color:var(--p-blue); font-size:18px;">high_quality</span>
+                        <div>
+                            <div class="p-status-label">Chất lượng</div>
+                            <div class="p-status-value">${planDetails.quality}</div>
+                        </div>
+                    </div>
+                    <div class="p-status-item">
+                        <span class="material-icons-round" style="color:var(--p-purple); font-size:18px;">devices</span>
+                        <div>
+                            <div class="p-status-label">Thiết bị</div>
+                            <div class="p-status-value">${planDetails.devices}</div>
+                        </div>
+                    </div>
+                </div>
+
+                ${expiresDate && isPremium ? `
+                <div class="p-status-item" style="border-color:rgba(232,185,79,0.3); background:rgba(232,185,79,0.05);">
+                    <span class="material-icons-round" style="color:var(--p-gold); font-size:18px;">event</span>
+                    <div style="flex:1">
+                        <div class="p-status-label" style="color:rgba(232,185,79,0.6)">Ngày hết hạn</div>
+                        <div class="p-status-value" style="color:var(--p-gold)">${expiresDate}</div>
+                    </div>
+                </div>` : ''}
+
+                ${!isPremium ? `
+                <div style="margin-top:8px;">
+                    <p style="font-size:12px; color:rgba(255,255,255,0.4); margin-bottom:12px;">Nâng cấp lên Premium để trải nghiệm phim 4K không quảng cáo.</p>
+                </div>` : ''}
+            </div>
+        `;
+
+        // Update hero plan badge if exists
+        const heroPlan = document.getElementById('heroPlanBadge');
+        if (heroPlan) {
+            heroPlan.textContent = planKey === 'FREE' ? 'Khán Giả' : planKey;
+            if (planKey !== 'FREE') {
+                heroPlan.style.background = '#e8b94f';
+                heroPlan.style.color = '#111';
+            }
+        }
+    };
+
+    if (user) {
+        render(user);
+    } else {
+        setTimeout(() => {
+            const u = authService.getCurrentUser();
+            if (u) render(u);
+        }, 500);
+    }
 }
 
 // Load favorites
@@ -176,7 +337,7 @@ function loadFavorites() {
 
     // Show loading state
     container.innerHTML = `
-        <div class="col-span-full flex justify-center items-center py-8">
+        <div class="flex justify-center items-center py-8 w-full">
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             <span class="ml-3 text-gray-400">Đang tải phim yêu thích...</span>
         </div>
@@ -187,32 +348,35 @@ function loadFavorites() {
         const favorites = userService.getFavorites();
 
         if (favorites.length === 0) {
-            container.innerHTML = '<p class="col-span-full text-center text-gray-400 py-8">Chưa có phim yêu thích</p>';
+            container.innerHTML = `
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:48px 0; width:100%; gap:12px;">
+                    <div style="width:64px; height:64px; border-radius:50%; background:rgba(255,255,255,0.03); display:flex; align-items:center; justify-content:center; margin-bottom:4px;">
+                        <span class="material-icons-round" style="font-size:32px; color:rgba(255,255,255,0.15);">favorite_border</span>
+                    </div>
+                    <p style="font-size:14px; color:rgba(255,255,255,0.35); margin:0; font-weight:500;">Chưa có phim yêu thích nào</p>
+                </div>
+            `;
             return;
         }
 
         container.innerHTML = favorites.map(movie => `
-            <div class="group relative rounded-xl overflow-hidden bg-black border border-white/5 hover:border-primary/50 transition-all">
-                <a href="movie-detail.html?slug=${movie.slug}" class="block aspect-[2/3] relative">
+            <div class="fav-movie-card group">
+                <a href="movie-detail.html?slug=${movie.slug}" class="block w-full h-full">
                     <img src="${movieAPI.getImageURL(movie.thumb_url)}" 
                          alt="${movie.name}"
-                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                          onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
-                </a>
-                <div class="p-3">
-                    <h4 class="text-sm font-semibold text-white truncate group-hover:text-primary transition-colors">
-                        ${movie.name}
-                    </h4>
-                    <div class="flex items-center justify-between mt-2">
-                        <span class="text-xs text-gray-400">${movie.year}</span>
-                        <button onclick="removeFavorite('${movie.slug}')" 
-                            class="text-red-400 hover:text-red-300 transition-colors">
-                            <span class="material-icons-round text-sm">delete</span>
-                        </button>
+                    <div class="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/95 via-black/40 to-transparent">
+                        <h4 style="font-size:11px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${movie.name}</h4>
                     </div>
-                </div>
+                </a>
+                <button onclick="removeFavorite('${movie.slug}')" class="fav-delete-btn" title="Xóa khỏi yêu thích">
+                    <span class="material-icons-round" style="font-size:14px;">close</span>
+                </button>
             </div>
         `).join('');
+        
+        // Update Stats count immediately
+        if(typeof updateJourneyUI === 'function') updateJourneyUI();
     }, 300);
 }
 
@@ -243,7 +407,14 @@ function loadHistory() {
         const history = userService.getWatchHistory();
 
         if (history.length === 0) {
-            container.innerHTML = '<p class="text-center text-gray-400 py-8">Chưa có lịch sử xem</p>';
+            container.innerHTML = `
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:48px 0; width:100%; gap:12px;">
+                    <div style="width:64px; height:64px; border-radius:50%; background:rgba(255,255,255,0.03); display:flex; align-items:center; justify-content:center; margin-bottom:4px;">
+                        <span class="material-icons-round" style="font-size:32px; color:rgba(255,255,255,0.15);">history_toggle_off</span>
+                    </div>
+                    <p style="font-size:14px; color:rgba(255,255,255,0.35); margin:0; font-weight:500;">Bạn chưa xem phim nào</p>
+                </div>
+            `;
             return;
         }
 
@@ -284,6 +455,264 @@ function loadHistory() {
     }, 400);
 }
 
+// Load Transaction History
+function loadTransactions() {
+    const container = document.getElementById('transactionsList');
+    if (!container) return;
+
+    // Show loading
+    container.innerHTML = `
+        <div class="flex justify-center items-center py-12">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e8b94f]"></div>
+            <span class="ml-3 text-gray-400">Đang tải lịch sử giao dịch...</span>
+        </div>
+    `;
+
+    setTimeout(() => {
+        const user = authService.getCurrentUser();
+        const transactions = (user && user.transactions) ? [...user.transactions].reverse() : [];
+
+        if (transactions.length === 0) {
+            container.innerHTML = `
+                <div style="text-align:center;padding:48px 24px;background:rgba(255,255,255,0.02);border-radius:16px;border:1px dashed rgba(255,255,255,0.1);">
+                    <div style="width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                        <span class="material-icons-round" style="font-size:24px;color:rgba(255,255,255,0.2);">receipt</span>
+                    </div>
+                    <p style="color:rgba(255,255,255,0.3);font-size:14px;margin:0;font-weight:500;">Bạn chưa có giao dịch nào</p>
+                    <p style="color:rgba(255,255,255,0.15);font-size:12px;margin-top:4px;">Lịch sử nạp xu và mua gói sẽ hiện ở đây</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = transactions.map(t => {
+            const date = new Date(t.date || Date.now());
+            const dateStr = date.toLocaleDateString('vi-VN');
+            const timeStr = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+            
+            let icon = 'payments';
+            let color = '#e8b94f';
+            let bgColor = 'rgba(232,185,79,0.1)';
+            
+            if (t.type === 'spend') {
+                icon = 'shopping_bag';
+                color = '#f87171';
+                bgColor = 'rgba(248,113,113,0.1)';
+            } else if (t.title && (t.title.includes('Admin') || t.type === 'admin')) {
+                icon = 'verified_user';
+                color = '#34d399';
+                bgColor = 'rgba(52,211,153,0.1)';
+            }
+
+            return `
+                <div class="flex items-center gap-4 p-4 bg-black/40 border border-white/5 rounded-xl hover:border-white/10 transition-all">
+                    <div style="width:44px;height:44px;border-radius:12px;background:${bgColor};display:flex;align-items:center;justify-content:center;color:${color};flex-shrink:0;">
+                        <span class="material-icons-round" style="font-size:20px;">${icon}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex justify-between items-start mb-1">
+                            <h4 class="font-bold text-white text-sm truncate pr-2">${t.title || 'Giao dịch hệ thống'}</h4>
+                            <span class="text-xs font-black" style="color:${t.amount >= 0 ? '#34d399' : '#f87171'}; white-space:nowrap;">
+                                ${t.amount >= 0 ? '+' : ''}${t.amount.toLocaleString()} XU
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">${dateStr}</span>
+                            <span class="w-1 h-1 rounded-full bg-gray-700"></span>
+                            <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">${timeStr}</span>
+                            ${t.type ? `<span class="ml-auto text-[9px] px-2 py-0.5 rounded-full bg-white/5 text-gray-400 font-black uppercase tracking-tighter border border-white/5">${t.type}</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }, 400);
+}
+
+// Load Playlists
+function loadPlaylists() {
+    const container = document.getElementById('playlistsList');
+    if (!container) return;
+
+    // Sync from profile first to ensure fresh data
+    const user = authService.getCurrentUser();
+    if (user && user.playlists && typeof playlistService !== 'undefined') {
+        playlistService.syncFromProfile(user.playlists);
+    }
+
+    // Show loading
+    container.innerHTML = `
+        <div class="flex justify-center items-center py-12">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e8b94f]"></div>
+            <span class="ml-3 text-gray-400">Đang tải danh sách...</span>
+        </div>
+    `;
+
+    setTimeout(() => {
+        if (typeof playlistService === 'undefined') {
+            container.innerHTML = '<p class="text-center text-gray-400 py-8">Dịch vụ danh sách chưa sẵn sàng</p>';
+            return;
+        }
+
+        const playlists = playlistService.getAll();
+
+        if (playlists.length === 0) {
+            container.innerHTML = `
+                <div style="text-align:center;padding:48px 24px;background:rgba(255,255,255,0.02);border-radius:16px;border:1px dashed rgba(255,255,255,0.1);">
+                    <div style="font-size:48px;margin-bottom:16px;opacity:0.3;">📋</div>
+                    <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:8px;">Chưa có danh sách nào</h3>
+                    <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:20px;">Hãy tạo danh sách đầu tiên để lưu trữ những bộ phim yêu thích của bạn.</p>
+                    <button onclick="window.openCreatePlaylistDialog()" style="padding:8px 20px;background:#e8b94f;border:none;border-radius:20px;color:#000;font-size:13px;font-weight:700;cursor:pointer;">Tạo ngay</button>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = playlists.map(pl => `
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px;display:flex;align-items:center;justify-content:space-between;transition:all 0.2s;cursor:pointer;" 
+                 onmouseover="this.style.background='rgba(255,255,255,0.06)';this.style.borderColor='rgba(232,185,79,0.2)'" 
+                 onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.06)'"
+                 onclick="window.viewPlaylist('${pl.id}')">
+                <div style="display:flex;align-items:center;gap:16px;min-width:0;">
+                    <div style="width:50px;height:50px;background:linear-gradient(135deg,#e8b94f,#d4a017);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#000;flex-shrink:0;">
+                        <span class="material-icons-round" style="font-size:24px;">playlist_play</span>
+                    </div>
+                    <div style="min-width:0;">
+                        <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${pl.name}</div>
+                        <div style="font-size:12px;color:rgba(255,255,255,0.4);display:flex;align-items:center;gap:10px;">
+                            <span>${pl.movies.length} bộ phim</span>
+                            <span>•</span>
+                            <span>${new Date(pl.createdAt).toLocaleDateString('vi-VN')}</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <button onclick="event.stopPropagation(); window.deletePlaylist('${pl.id}', '${pl.name}')" style="width:36px;height:36px;border-radius:50%;background:rgba(248,113,113,0.1);border:none;color:#f87171;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='#f87171';this.style.color='#fff'" onmouseout="this.style.background='rgba(248,113,113,0.1)';this.style.color='#f87171'">
+                        <span class="material-icons-round" style="font-size:18px;">delete</span>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }, 400);
+}
+
+// Actions for Playlists
+window.viewPlaylist = function(id) {
+    const container = document.getElementById('playlistsList');
+    const header = document.getElementById('playlistsHeader');
+    if (!container || !header) return;
+    
+    const pl = playlistService.getById(id);
+    if (!pl) return;
+
+    // Save original header HTML if not already saved
+    if (!window._originalPlaylistHeader) {
+        window._originalPlaylistHeader = header.innerHTML;
+    }
+    
+    // Smooth transition
+    container.style.opacity = '0';
+    container.style.transform = 'translateY(10px)';
+    
+    setTimeout(() => {
+        // Update header with Back button
+        header.innerHTML = `
+            <div style="display:flex;align-items:center;gap:12px;" class="playlist-animate-in">
+                <button onclick="window.backToPlaylists()" style="background:rgba(255,255,255,0.08); border:none; width:32px; height:32px; border-radius:50%; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+                    <span class="material-icons-round" style="font-size:18px;">arrow_back</span>
+                </button>
+                <div style="min-width:0;">
+                    <h2 style="font-size:1.25rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${pl.name}</h2>
+                    <p style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px;">${pl.movies.length} phim trong danh sách</p>
+                </div>
+            </div>
+        `;
+
+        if (pl.movies.length === 0) {
+            container.innerHTML = `
+                <div style="text-align:center;padding:60px 24px;" class="playlist-animate-in">
+                    <div style="font-size:64px;margin-bottom:20px;opacity:0.1;filter:grayscale(1);">🎬</div>
+                    <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:8px;">Danh sách trống</h3>
+                    <p style="color:rgba(255,255,255,0.4);max-width:240px;margin:0 auto;font-size:13px;">Hãy quay lại trang chủ và thêm những bộ phim bạn yêu thích vào đây nhé!</p>
+                </div>
+            `;
+        } else {
+            container.innerHTML = `
+                <div style="display:flex;flex-direction:column;gap:12px;" class="playlist-animate-in">
+                    ${pl.movies.map((movie, index) => `
+                        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);border-radius:16px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:16px;transition:all 0.3s;animation-delay:${index * 0.05}s;" 
+                             class="playlist-item-card"
+                             onmouseover="this.style.background='rgba(255,255,255,0.06)';this.style.transform='translateX(5px)';this.style.borderColor='rgba(232,185,79,0.15)'" 
+                             onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.transform='translateX(0)';this.style.borderColor='rgba(255,255,255,0.05)'">
+                            <a href="movie-detail.html?slug=${movie.slug}" style="display:flex;align-items:center;gap:14px;text-decoration:none;min-width:0;flex:1;">
+                                <div style="position:relative;flex-shrink:0;">
+                                    <img src="${movieAPI.getImageURL(movie.thumb_url)}" style="width:50px;height:75px;border-radius:10px;object-fit:cover;box-shadow:0 4px 12px rgba(0,0,0,0.3);" onerror="this.src='https://via.placeholder.com/50x75?text=?'" />
+                                    <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(0,0,0,0.4), transparent);border-radius:10px;"></div>
+                                </div>
+                                <div style="min-width:0;">
+                                    <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${movie.name}</div>
+                                    <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(255,255,255,0.3);">
+                                        <span style="background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:4px;color:rgba(255,255,255,0.6);">${movie.year || 'N/A'}</span>
+                                        <span>•</span>
+                                        <span>Thêm ngày ${new Date(movie.addedAt).toLocaleDateString('vi-VN')}</span>
+                                    </div>
+                                </div>
+                            </a>
+                            <button onclick="window.removeFromPlaylist('${pl.id}', '${movie.slug}', '${pl.name}')" 
+                                    style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.04);border:none;color:rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;flex-shrink:0;" 
+                                    onmouseover="this.style.background='rgba(248,113,113,0.15)';this.style.color='#f87171'" 
+                                    onmouseout="this.style.background='rgba(255,255,255,0.04)';this.style.color='rgba(255,255,255,0.3)'"
+                                    title="Xóa khỏi danh sách">
+                                <span class="material-icons-round" style="font-size:18px;">delete_outline</span>
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        container.style.opacity = '1';
+        container.style.transform = 'translateY(0)';
+        container.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+    }, 200);
+};
+
+window.backToPlaylists = function() {
+    const header = document.getElementById('playlistsHeader');
+    if (header && window._originalPlaylistHeader) {
+        header.innerHTML = window._originalPlaylistHeader;
+    }
+    loadPlaylists();
+};
+
+window.removeFromPlaylist = function(plId, slug, plName) {
+    if (confirm(`Xóa phim này khỏi danh sách "${plName}"?`)) {
+        playlistService.removeMovie(plId, slug);
+        window.viewPlaylist(plId); // Refresh view
+        showMessage('Đã xóa phim khỏi danh sách', 'info');
+    }
+};
+
+window.openCreatePlaylistDialog = function() {
+    if (typeof openCreatePlaylistModalStandalone === 'function') {
+        openCreatePlaylistModalStandalone();
+    } else {
+        showMessage('Tính năng này đang được bảo trì', 'error');
+    }
+};
+
+
+
+window.deletePlaylist = function(id, name) {
+    if (confirm(`Bạn có chắc muốn xóa danh sách "${name}"?`)) {
+        if (typeof playlistService !== 'undefined') {
+            playlistService.delete(id);
+            loadPlaylists();
+            showMessage('Đã xóa danh sách', 'success');
+        }
+    }
+};
+
 // Clear history
 window.clearHistory = function () {
     if (confirm('Bạn có chắc muốn xóa toàn bộ lịch sử xem?')) {
@@ -295,31 +724,48 @@ window.clearHistory = function () {
 
 // Show tab
 window.showTab = function (tabName) {
-    // Hide all tab-content elements (including welcomeTab)
+    // Hide all tab-content elements
     document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active-tab');
         tab.classList.add('hidden');
     });
 
     // Remove active class from all tab buttons
     document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active', 'text-primary', 'bg-white/10');
-        btn.classList.add('text-gray-300');
-        btn.style.color = '';
-        btn.style.backgroundColor = '';
+        btn.classList.remove('active');
     });
 
     // Show selected tab
     const selectedTab = document.getElementById(tabName + 'Tab');
     if (selectedTab) {
         selectedTab.classList.remove('hidden');
+        selectedTab.classList.add('active-tab');
     }
 
     // Add active class to the button matching this tab
-    const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabName}"], .tab-btn[onclick*="'${tabName}'"]`);
+    const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
     if (activeBtn) {
         activeBtn.classList.add('active');
-        activeBtn.style.color = '#f2f20d';
-        activeBtn.style.backgroundColor = 'rgba(255,255,255,0.1)';
+        
+        // Update Mobile View Title
+        const titleText = activeBtn.innerText.trim();
+        const mobileTitle = document.getElementById('mobileViewTitle');
+        if (mobileTitle) mobileTitle.textContent = titleText;
+    }
+
+    // Handle Mobile View Switching
+    if (window.innerWidth <= 1024) {
+        const sidebar = document.querySelector('.profile-sidebar');
+        const contentHeader = document.getElementById('mobileContentHeader');
+        if (sidebar) sidebar.style.display = 'none';
+        if (contentHeader) contentHeader.style.display = 'flex';
+        
+        // Ensure hero card (banner) is hidden or smaller on mobile detail view to save space
+        const heroCard = document.querySelector('.profile-hero-card');
+        if (heroCard) heroCard.style.display = 'none';
+        
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // Load data based on selected tab (only if not loaded before)
@@ -337,144 +783,56 @@ window.showTab = function (tabName) {
             case 'history':
                 loadHistory();
                 break;
+            case 'journey':
+                if (typeof initJourney === 'function') initJourney();
+                else if (typeof loadJourney === 'function') loadJourney();
+                break;
+            case 'shop':
+                if (typeof renderShopItems === 'function') renderShopItems();
+                break;
+            case 'playlists':
+                loadPlaylists();
+                break;
+            case 'transactions':
+                loadTransactions();
+                break;
         }
         loadedTabs.add(tabName);
     }
 };
 
-// ─── Premium Toast Notification ──────────────────────────────────────────
-const TOAST_ICONS = {
-    success : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
-    error   : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
-    info    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/></svg>`,
-    warning : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+// Back to Menu Logic for Mobile
+window.goBackToMenu = function() {
+    if (window.innerWidth <= 1024) {
+        const sidebar = document.querySelector('.profile-sidebar');
+        const contentHeader = document.getElementById('mobileContentHeader');
+        const heroCard = document.querySelector('.profile-hero-card');
+        
+        // Show Sidebar & Hero
+        if (sidebar) sidebar.style.display = 'flex';
+        if (heroCard) heroCard.style.display = 'block';
+        
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active-tab');
+            tab.classList.add('hidden');
+            tab.style.display = 'none';
+        });
+        
+        // Hide Back Header
+        if (contentHeader) contentHeader.style.display = 'none';
+
+        // Remove active button class
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 };
 
-// Inject toast styles once
-(function injectToastCSS() {
-    if (document.getElementById('ap-toast-css')) return;
-    const s = document.createElement('style');
-    s.id = 'ap-toast-css';
-    s.textContent = `
-        #ap-toast-stack {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 99999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            pointer-events: none;
-        }
-        .ap-toast {
-            pointer-events: all;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 18px;
-            border-radius: 14px;
-            min-width: 260px;
-            max-width: 360px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.2);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            font-family: 'Be Vietnam Pro','Space Grotesk',sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            color: #fff;
-            cursor: pointer;
-            transform: translateX(120%);
-            opacity: 0;
-            transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .ap-toast.show {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        .ap-toast::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0;
-            height: 3px;
-            width: 100%;
-            background: rgba(255,255,255,0.4);
-            animation: ap-toast-bar var(--toast-duration, 3s) linear forwards;
-            transform-origin: left;
-        }
-        @keyframes ap-toast-bar {
-            from { transform: scaleX(1); }
-            to   { transform: scaleX(0); }
-        }
-        .ap-toast-success { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
-        .ap-toast-error   { background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); }
-        .ap-toast-info    { background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); }
-        .ap-toast-warning { background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); }
-        .ap-toast-icon {
-            flex-shrink: 0;
-            width: 22px; height: 22px;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .ap-toast-icon svg { width: 100%; height: 100%; }
-        .ap-toast-close {
-            margin-left: auto;
-            flex-shrink: 0;
-            width: 20px; height: 20px;
-            opacity: 0.6;
-            cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 50%;
-            transition: opacity 0.2s, background 0.2s;
-        }
-        .ap-toast-close:hover { opacity: 1; background: rgba(255,255,255,0.2); }
-        .ap-toast-close svg { width: 14px; height: 14px; }
-        @media (max-width: 480px) {
-            #ap-toast-stack { top: auto; bottom: 80px; right: 10px; left: 10px; }
-            .ap-toast { min-width: unset; max-width: unset; width: 100%; }
-        }
-    `;
-    document.head.appendChild(s);
-})();
 
-function getToastStack() {
-    let stack = document.getElementById('ap-toast-stack');
-    if (!stack) {
-        stack = document.createElement('div');
-        stack.id = 'ap-toast-stack';
-        document.body.appendChild(stack);
-    }
-    return stack;
-}
-
-function showMessage(message, type = 'info', duration = 3500) {
-    const stack = getToastStack();
-    const icon = TOAST_ICONS[type] || TOAST_ICONS.info;
-    const closeIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
-
-    const toast = document.createElement('div');
-    toast.className = `ap-toast ap-toast-${type}`;
-    toast.style.setProperty('--toast-duration', duration + 'ms');
-    toast.innerHTML = `
-        <span class="ap-toast-icon">${icon}</span>
-        <span style="flex:1;line-height:1.4">${message}</span>
-        <span class="ap-toast-close" onclick="this.closest('.ap-toast')._dismiss()">${closeIcon}</span>
-    `;
-
-    const dismiss = () => {
-        toast.style.transform = 'translateX(120%)';
-        toast.style.opacity = '0';
-        setTimeout(() => toast.remove(), 350);
-    };
-    toast._dismiss = dismiss;
-    toast.addEventListener('click', dismiss);
-
-    stack.appendChild(toast);
-    requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('show')));
-
-    setTimeout(dismiss, duration);
-}
-
+// ─── Premium Toast Notification ──────────────────────────────────────────
+// Moved to user-ui.js for global access
 
 // Avatar selection for profile
 const PROFILE_AVATAR_LIST = [
@@ -572,3 +930,301 @@ async function selectAvatar(e, url) {
         loadBasicUserInfo(); // revert
     }
 }
+
+// --- EDIT PROFILE MODAL LOGIC ---
+let epCurrentTab = 'ep-hoso';
+let epPendingAvatarUrl = '';
+
+window.openEditProfileModal = function() {
+    const user = authService.getCurrentUser();
+    if (!user) return;
+
+    // Populate Data
+    const nameInput = document.getElementById('epNameInput');
+    const emailInput = document.getElementById('epEmailInput');
+    const phoneInput = document.getElementById('epPhoneInput');
+    
+    if (nameInput) nameInput.value = user.name || '';
+    if (emailInput) emailInput.value = user.email || '';
+    if (phoneInput) phoneInput.value = user.phone || '';
+
+    epPendingAvatarUrl = user.avatar || '';
+    updateEpAvatarPreview();
+
+    // Clear passwords
+    const oldPw = document.getElementById('epOldPassword');
+    const newPw = document.getElementById('epNewPassword');
+    const confirmPw = document.getElementById('epConfirmPassword');
+    if (oldPw) oldPw.value = '';
+    if (newPw) newPw.value = '';
+    if (confirmPw) confirmPw.value = '';
+
+    // Default to 'hoso' tab
+    switchEpTab('ep-hoso');
+
+    // Show modal
+    const modal = document.getElementById('editProfileModal');
+    if (modal) modal.style.display = 'flex';
+};
+
+window.closeEditProfileModal = function() {
+    const modal = document.getElementById('editProfileModal');
+    if (modal) modal.style.display = 'none';
+};
+
+window.switchEpTab = function(tabId) {
+    epCurrentTab = tabId;
+
+    // Update tab buttons
+    document.querySelectorAll('.ep-modal-tab').forEach(btn => {
+        if (btn.dataset.target === tabId) {
+            btn.classList.add('active');
+            btn.style.color = '#a78bfa';
+            btn.style.borderBottomColor = '#a78bfa';
+        } else {
+            btn.classList.remove('active');
+            btn.style.color = 'rgba(255,255,255,0.4)';
+            btn.style.borderBottomColor = 'transparent';
+        }
+    });
+
+    // Update content
+    document.querySelectorAll('.ep-tab-content').forEach(content => {
+        content.style.display = content.id === tabId ? 'block' : 'none';
+    });
+
+    // Update Save button text
+    const saveBtn = document.getElementById('epSaveBtn');
+    if (!saveBtn) return;
+
+    if (tabId === 'ep-matkhau') {
+        saveBtn.textContent = 'Đổi mật khẩu';
+        saveBtn.style.background = '#a855f7';
+        saveBtn.style.display = 'block';
+    } else if (tabId === 'ep-tuychinh') {
+        saveBtn.style.display = 'block';
+        saveBtn.textContent = 'Lưu thay đổi';
+        saveBtn.style.background = '#a855f7';
+
+        // Refresh Gamification Pills in preview
+        if (typeof updateJourneyUI === 'function') updateJourneyUI();
+        
+        // Render dynamic content from SHOP_DATA (via profile-shop.js)
+        if (typeof renderOwnedAvatarsForEdit === 'function') renderOwnedAvatarsForEdit();
+        if (typeof renderOwnedFramesForEdit === 'function') renderOwnedFramesForEdit();
+        if (typeof renderOwnedBannersForEdit === 'function') renderOwnedBannersForEdit();
+        
+        // Highlight current frame
+        const currentId = localStorage.getItem('ap_frame_id') || 'none';
+        document.querySelectorAll('.ep-frame-option').forEach(opt => {
+            if (opt.dataset.frameId === currentId) {
+                opt.classList.add('selected');
+            } else {
+                opt.classList.remove('selected');
+            }
+        });
+        
+        // Populate preview with current data
+        const user = authService.getCurrentUser();
+        if (user) {
+            const previewAvatar = document.getElementById('epFramePreviewAvatar');
+            const previewInitials = document.getElementById('epFramePreviewInitials');
+            const previewWrap = document.getElementById('epFramePreviewWrap');
+            
+            if (user.avatar) {
+                if (previewAvatar) { previewAvatar.src = user.avatar; previewAvatar.style.display = 'block'; }
+                if (previewInitials) previewInitials.style.display = 'none';
+            }
+            
+            const frameClass = localStorage.getItem('ap_frame_class');
+            if (previewWrap) {
+                Array.from(previewWrap.classList).forEach(c => {
+                    if (c.startsWith('av-frame-')) previewWrap.classList.remove(c);
+                });
+                if (frameClass) previewWrap.classList.add(frameClass);
+            }
+        }
+    } else {
+        saveBtn.style.display = 'block';
+        saveBtn.textContent = 'Lưu thay đổi';
+        saveBtn.style.background = '#a855f7';
+    }
+};
+
+window.updateEpAvatarPreview = function() {
+    const preview = document.getElementById('epAvatarPreview');
+    const initials = document.getElementById('epAvatarInitials');
+    const removeBtn = document.getElementById('epRemoveAvatarBtn');
+    
+    // Preview in customization tab
+    const framePreview = document.getElementById('epFramePreviewAvatar');
+    const frameInitials = document.getElementById('epFramePreviewInitials');
+
+    const user = authService.getCurrentUser();
+    const currentUrl = epPendingAvatarUrl || (user ? user.avatar : '');
+
+    if (currentUrl) {
+        if (preview) { preview.src = currentUrl; preview.style.display = 'block'; }
+        if (framePreview) { framePreview.src = currentUrl; framePreview.style.display = 'block'; }
+        
+        if (initials) initials.style.display = 'none';
+        if (frameInitials) frameInitials.style.display = 'none';
+        if (removeBtn && epPendingAvatarUrl) removeBtn.style.display = 'flex';
+    } else {
+        if (preview) preview.style.display = 'none';
+        if (framePreview) framePreview.style.display = 'none';
+        
+        if (initials) {
+            initials.style.display = 'flex';
+            initials.textContent = document.getElementById('epNameInput').value.charAt(0).toUpperCase() || (user ? user.name.charAt(0).toUpperCase() : 'U');
+        }
+        if (frameInitials) frameInitials.style.display = 'flex';
+        if (removeBtn) removeBtn.style.display = 'none';
+    }
+};
+
+window.renderOwnedAvatarsForEdit = function() {
+    const grid = document.getElementById('epAvatarGrid');
+    if (!grid) return;
+    
+    const user = authService.getCurrentUser();
+    const currentUrl = epPendingAvatarUrl || (user ? user.avatar : '');
+    
+    let html = '';
+    PROFILE_AVATAR_LIST.forEach(url => {
+        const isSelected = currentUrl === url;
+        html += `
+            <div class="ep-avatar-option ${isSelected ? 'selected' : ''}" 
+                 onclick="epSelectAvatarImage('${url}')"
+                 style="width:100%; aspect-ratio:1; border-radius:50%; cursor:pointer; border:3px solid ${isSelected ? '#a78bfa' : 'rgba(255,255,255,0.1)'}; overflow:hidden; transition:all 0.2s;">
+                <img src="${url}" style="width:100%; height:100%; object-fit:cover;" />
+            </div>
+        `;
+    });
+    grid.innerHTML = html;
+};
+
+window.epSelectAvatarImage = function(url) {
+    epPendingAvatarUrl = url;
+    window.renderOwnedAvatarsForEdit();
+    window.updateEpAvatarPreview();
+};
+
+window.removeEpAvatar = function() {
+    epPendingAvatarUrl = '';
+    updateEpAvatarPreview();
+};
+
+window.promptEpAvatarUrl = function() {
+    const url = prompt("Nhập URL hình ảnh:");
+    if (url) {
+        epPendingAvatarUrl = url;
+        updateEpAvatarPreview();
+    }
+};
+
+window.handleEpAvatarUpload = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        epPendingAvatarUrl = e.target.result;
+        
+        // Open modal and switch to profile tab if not already open
+        const modal = document.getElementById('editProfileModal');
+        if (modal && modal.style.display !== 'flex') {
+            window.openEditProfileModal();
+        }
+        
+        window.switchEpTab('ep-hoso');
+        window.updateEpAvatarPreview();
+    };
+    reader.readAsDataURL(file);
+};
+
+window.saveEditProfile = async function() {
+    const user = authService.getCurrentUser();
+    if (!user) return;
+    const userId = user._id || user.id || user.email;
+
+    if (epCurrentTab === 'ep-hoso') {
+        const name = document.getElementById('epNameInput').value.trim();
+        const phone = document.getElementById('epPhoneInput').value.trim();
+
+        if (name.length < 2) {
+            showMessage("Tên quá ngắn!", "error");
+            return;
+        }
+
+        const result = await authService.updateProfile({ name, phone, avatar: epPendingAvatarUrl });
+        if (result.success) {
+            showMessage("Cập nhật hồ sơ thành công", "success");
+            if (typeof updateUserUI === 'function') updateUserUI();
+            if (typeof loadBasicUserInfo === 'function') loadBasicUserInfo();
+            closeEditProfileModal();
+        } else {
+            showMessage(result.message || "Lỗi cập nhật", "error");
+        }
+    } else if (epCurrentTab === 'ep-matkhau') {
+        const oldPw = document.getElementById('epOldPassword').value;
+        const newPw = document.getElementById('epNewPassword').value;
+        const confirmPw = document.getElementById('epConfirmPassword').value;
+
+        if (!oldPw || !newPw) {
+            showMessage("Vui lòng nhập mật khẩu", "warning");
+            return;
+        }
+
+        if (newPw !== confirmPw) {
+            showMessage("Xác nhận mật khẩu không khớp", "error");
+            return;
+        }
+
+        const res = await authService.changePassword(oldPw, newPw);
+        if (res.success) {
+            showMessage("Đổi mật khẩu thành công!", "success");
+            closeEditProfileModal();
+        } else {
+            showMessage(res.message || "Lỗi đổi mật khẩu", "error");
+        }
+    } else if (epCurrentTab === 'ep-tuychinh') {
+        const id = window._tempSelectedFrame || localStorage.getItem('ep_selected_frame_id');
+        const frameClass = window._tempSelectedFrameClass || localStorage.getItem('ep_selected_frame_class');
+        const coverUrl = window._tempSelectedCover;
+        
+        let updateData = {};
+        if (epPendingAvatarUrl && epPendingAvatarUrl !== user.avatar) {
+            updateData.avatar = epPendingAvatarUrl;
+        }
+
+        if (id) {
+            localStorage.setItem('ap_frame_id', id);
+            localStorage.setItem('ap_frame_class', frameClass || '');
+            updateData.equippedFrame = id;
+            updateData.equippedFrameClass = frameClass || '';
+        }
+
+        if (coverUrl) {
+            localStorage.setItem('ap_profile_cover', coverUrl);
+            updateData.profileCover = coverUrl;
+        }
+        
+        if (Object.keys(updateData).length > 0) {
+            if (authService.updateProfile) {
+                await authService.updateProfile(updateData);
+            }
+            
+            if (typeof updateUserUI === 'function') updateUserUI();
+            if (typeof loadBasicUserInfo === 'function') loadBasicUserInfo();
+            showMessage("Đã cập nhật tùy chỉnh thành công!", "success");
+            closeEditProfileModal();
+        } else {
+            closeEditProfileModal();
+        }
+    }
+};
+
+// Selection logic is now handled by profile-shop.js to avoid duplication
+// and ensure consistency with the shop logic.
+

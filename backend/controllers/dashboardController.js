@@ -34,6 +34,33 @@ exports.getDashboardStats = async (req, res) => {
             { $group: { _id: null, totalRevenue: { $sum: '$amount' } } }
         ]);
         const totalRevenue = revenueAgg.length > 0 ? revenueAgg[0].totalRevenue : 0;
+        
+        // 1.0.1 Real-time Membership counts
+        const premiumCount = await User.countDocuments({ 'subscription.plan': 'PREMIUM', 'subscription.status': 'active' });
+        const familyCount = await User.countDocuments({ 'subscription.plan': 'FAMILY', 'subscription.status': 'active' });
+        const freeCount = await User.countDocuments({ $or: [{ 'subscription.plan': 'FREE' }, { 'subscription.plan': { $exists: false } }, { 'subscription.status': 'inactive' }] });
+        
+        // 1.1 Calculate Total Spent Xu (Coins)
+        const spentXuAgg = await User.aggregate([
+            { $unwind: '$transactions' },
+            { $match: { 'transactions.type': 'spend' } },
+            { $group: { _id: null, totalSpent: { $sum: '$transactions.amount' } } }
+        ]);
+        const totalSpentXu = spentXuAgg.length > 0 ? Math.abs(spentXuAgg[0].totalSpent) : 0;
+
+        // 1.2 Top Spending Categories
+        const topSpendingAgg = await User.aggregate([
+            { $unwind: '$transactions' },
+            { $match: { 'transactions.type': 'spend' } },
+            { $group: { 
+                _id: '$transactions.title', 
+                total: { $sum: '$transactions.amount' },
+                count: { $sum: 1 }
+            } },
+            { $sort: { total: 1 } }, // Spent amount is negative
+            { $limit: 5 }
+        ]);
+        const topSpending = topSpendingAgg.map(x => ({ name: x._id || 'Khác', value: Math.abs(x.total), count: x.count }));
 
         // 2. Growth Calculations (Current Month vs Previous Month)
         const prevUsers = await User.countDocuments({ createdAt: { $lt: firstDayOfMonth } });
@@ -145,12 +172,19 @@ exports.getDashboardStats = async (req, res) => {
                         globalMovieCount, // Still show separate for Ophim card
                         totalViews,
                         totalRevenue,
+                        membership: {
+                            premium: premiumCount,
+                            family: familyCount,
+                            free: freeCount
+                        },
                         growth: {
                             users: usersGrowth,
                             revenue: revenueGrowth,
                             movies: 0,
-                            views: 0
-                        }
+                            views: 0,
+                            spentXu: totalSpentXu
+                        },
+                        topSpending
                     },
                     charts: {
                         views: { labels: last7DaysLabels, data: last7DaysData },

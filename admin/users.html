@@ -153,6 +153,10 @@
  </p>
  </div>
  <div class="header-right">
+  <button class="btn btn-secondary" onclick="openBroadcastModal()" style="background: rgba(167, 139, 250, 0.1); color: #a78bfa; border: 1px solid rgba(167, 139, 250, 0.2); font-weight: bold; margin-right: 8px;">
+   <i data-lucide="megaphone" style="width: 1em; height: 1em;"></i>
+   Phát thông báo
+  </button>
  <button class="btn btn-primary"onclick="loadUsers()">
   <i data-lucide="refresh-cw"style="width: 1em; height: 1em;"></i>
   Làm mới
@@ -207,7 +211,7 @@
  <div class="filter-row">
  <div class="filter-search">
   <i data-lucide="search"class="search-icon"style="width: 1em; height: 1em;"></i>
-  <input type="text"id="searchInput"placeholder="Tìm kiếm theo tên hoặc email...">
+  <input type="text"id="searchInput"placeholder="Tìm kiếm theo tên, email, ID hoặc 5 mã cuối...">
  </div>
  <select id="planFilter"class="form-select"style="width: auto;"onchange="applyFilters()">
   <option value="">Tất cả gói</option>
@@ -219,6 +223,11 @@
   <option value="">Tất cả trạng thái</option>
   <option value="active">Hoạt động</option>
   <option value="blocked">Bị khóa</option>
+ </select>
+ <select id="coinsFilter"class="form-select"style="width: auto; border-color:#eab308; color:#eab308;"onchange="applyFilters()">
+  <option value="" style="color:#fff">Tất cả Ví Xu</option>
+  <option value="has_coins" style="color:#fff">Chỉ hiển thị User CÓ XU (> 0)</option>
+  <option value="no_coins" style="color:#fff">User HẾT XU (= 0)</option>
  </select>
  <button class="btn btn-secondary"onclick="resetFilters()"title="Xóa bộ lọc">
   <i data-lucide="filter-x"style="width: 1em; height: 1em;"></i>
@@ -237,6 +246,7 @@
   <th>Người dùng</th>
   <th>Số điện thoại</th>
   <th>Gói</th>
+  <th>Số dư Xu</th>
   <th>Ngày tạo</th>
   <th>Hoạt động</th>
   <th>Trạng thái</th>
@@ -295,7 +305,7 @@
  };
  }
 </script>
-<script src="../js/admin/users-realtime.js"></script>
+<script src="../js/admin/users-realtime.js?v=110"></script>
 <!-- Stats are now updated correctly from users-realtime.js using allUsers data -->
   <script>
   // Tự động render Lucide Icons khi DOM thay đổi (tải dữ liệu bảng/động)
