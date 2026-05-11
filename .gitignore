@@ -99,3 +99,24 @@ debug-*.html
 unregister-*.html
 
 *.xlsx
+# Recovery and Temp Files
+*.py
+*.bin
+*LOG*
+*RECOVER*
+*RESCUE*
+GIT_RAW*
+STAGED_VERSION*
+STASHED_VERSION*
+
+
+ABSOLUTE_*
+*_DUMP*
+old_profile.html
+frame-test.html
+stash_diff.txt
+EXTRACTED_GIT*
+
+
+ULTIMATE_*
+
