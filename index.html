@@ -44,13 +44,18 @@
             justify-content: center !important;
             opacity: 1 !important;
             visibility: visible !important;
-            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
+                        visibility 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.7s cubic-bezier(0.3, 0.8, 0.4, 1),
+                        filter 0.6s ease-out;
         }
 
         #splashLoader.hidden {
             opacity: 0 !important;
             visibility: hidden !important;
             pointer-events: none !important;
+            transform: scale(1.08) !important; /* Premium zoom-out scale effect */
+            filter: blur(10px);
         }
 
         /* Logo container */
@@ -188,25 +193,23 @@
             background: linear-gradient(90deg, #f2f20d 0%, #ffd700 50%, #f2f20d 100%);
             background-size: 200% 100%;
             border-radius: 2px;
-            animation: splash-loading 1.5s ease-in-out infinite;
             box-shadow: 0 0 10px rgba(242, 242, 13, 0.5);
+            /* Thay đổi: Chạy mượt tới 75% thay vì lặp đi lặp lại vô tận */
+            width: 0%;
+            animation: splash-intro-fill 2.5s cubic-bezier(0.1, 0.5, 0.1, 1) forwards;
+            transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
-        @keyframes splash-loading {
-            0% {
-                width: 0%;
-                background-position: 0% 50%;
-            }
+        /* Khi load xong, kích hoạt class này để chạy vút lên 100% */
+        .splash-loading-fill.filled {
+            width: 100% !important;
+            animation: none !important;
+            transition: width 0.3s ease-out !important;
+        }
 
-            50% {
-                width: 70%;
-                background-position: 100% 50%;
-            }
-
-            100% {
-                width: 100%;
-                background-position: 0% 50%;
-            }
+        @keyframes splash-intro-fill {
+            from { width: 0%; }
+            to { width: 75%; }
         }
 
         /* Loading text */
@@ -350,7 +353,7 @@
 
     <!-- Splash Loader - Load first for immediate display -->
     <link rel="stylesheet" href="css/splash-loader.css?v=13">
-    <script src="js/splash-loader.js?v=13"></script>
+    <script src="js/splash-loader.js?v=34"></script>
 
     <!-- Turbo Performance Optimization - Load ASAP -->
     <script>
@@ -443,7 +446,7 @@
     <script src="js/config.js?v=13"></script>
     <script src="js/auth.js?v=17"></script>
     <script src="js/auth-modal.js?v=13"></script>
-    <script src="js/user-ui.js?v=32"></script>
+    <script src="js/user-ui.js?v=34"></script>
     <script src="js/realtime-sync.js?v=13"></script>
     <script src="js/profile-promo.js?v=2"></script>
 
@@ -468,8 +471,8 @@
     <link rel="stylesheet" href="css/progressive-image.css?v=13">
     <link rel="stylesheet" href="css/interests-section.css?v=13">
     <link rel="stylesheet" href="css/top-comments.css?v=13">
-    <link rel="stylesheet" href="css/mobile-menu-modern.css?v=32">
-    <link rel="stylesheet" href="css/mobile-viewport-fix.css?v=32">
+    <link rel="stylesheet" href="css/mobile-menu-modern.css?v=34">
+    <link rel="stylesheet" href="css/mobile-viewport-fix.css?v=34">
     <link rel="stylesheet" href="css/avatar-frames.css?v=15">
 
     <style>
@@ -841,7 +844,7 @@
     <script src="js/categories-dropdown.js?v=13"></script>
     <script src="js/countries-dropdown.js?v=13"></script>
     <script src="js/dropdown-hover-fix.js?v=13"></script>
-    <script src="js/mobile-menu-modern.js?v=32"></script>
+    <script src="js/mobile-menu-modern.js?v=34"></script>
 
     <!-- Sticky Navigation -->
     <script src="js/sticky-nav.js?v=16"></script>

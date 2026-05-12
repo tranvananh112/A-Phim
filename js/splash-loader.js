@@ -59,8 +59,12 @@
     function hideSplashScreen() {
         const splash = document.getElementById('splashLoader');
         if (splash && !splash.classList.contains('hidden')) {
-            // Reduce minimum display time for instant feeling
-            const minDisplayTime = 50;
+            // Đẩy thanh loading lên 100% ngay lập tức khi chuẩn bị xong
+            const fillBar = splash.querySelector('.splash-loading-fill');
+            if (fillBar) fillBar.classList.add('filled');
+
+            // Ensure minimum display time so the premium entry animation completes fully
+            const minDisplayTime = 800;
             const startTime = window.splashStartTime || Date.now();
             const elapsedTime = Date.now() - startTime;
             const remainingTime = Math.max(0, minDisplayTime - elapsedTime);
@@ -68,12 +72,12 @@
             setTimeout(() => {
                 if (splash) {
                     splash.classList.add('hidden');
-                    // Remove from DOM after transition
+                    // Remove from DOM after smooth transition completes
                     setTimeout(() => {
                         if (splash && splash.parentNode) {
                             splash.parentNode.removeChild(splash);
                         }
-                    }, 400);
+                    }, 800);
                 }
             }, remainingTime);
         }
