@@ -36,14 +36,18 @@ async function loadMovieDetail(slug) {
 
 // Render movie detail
 function renderMovieDetail(movie) {
-    // Update page title
-    document.title = `${movie.name} - CineStream`;
+    // 🚀 INJECT DYNAMIC SEO - Overrides meta, title & schema
+    if (typeof SEO !== 'undefined') {
+        SEO.updateMovieSEO(movie);
+    } else {
+        document.title = `${movie.name} - APhim`;
+    }
 
     // Update poster
     const posterImg = document.querySelector('.aspect-\\[2\\/3\\] img');
     if (posterImg) {
         posterImg.src = movieAPI.getImageURL(movie.poster_url || movie.thumb_url, 600, 85, true);
-        posterImg.alt = movie.name;
+        posterImg.alt = `Xem Phim ${movie.name} (${movie.year}) Full HD Vietsub tại APhim`;
     }
 
     // Update background

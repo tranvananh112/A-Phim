@@ -64,7 +64,12 @@ async function loadMovieAndPlay(slug, episodeSlug) {
 
 // Render movie info
 function renderMovieInfo(movie, episode) {
-    document.title = `${movie.name} - ${episode?.name || ''} - CineStream`;
+    // 🚀 INJECT DYNAMIC SEO - Overrides meta & title immediately
+    if (typeof SEO !== 'undefined') {
+        SEO.updateMovieSEO(movie);
+    } else {
+        document.title = `${movie.name} - ${episode?.name || ''} - APhim`;
+    }
 
     const titleElement = document.querySelector('h1');
     if (titleElement) {
@@ -390,7 +395,7 @@ function renderRecommendations(movies, container) {
            href="movie-detail.html?slug=${movie.slug}">
             <div class="relative w-full aspect-[2/3] flex-shrink-0">
                 <img src="${movieAPI.getImageURL(movie.thumb_url)}" 
-                     alt="${movie.name}"
+                     alt="Xem Phim ${movie.name} (${movie.year}) Vietsub Full HD"
                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                      onerror="this.src='https://via.placeholder.com/150x225?text=No+Image'" />
                 <span class="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-1.5 py-0.5 rounded">

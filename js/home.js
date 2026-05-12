@@ -47,7 +47,7 @@ function renderMovieGrid(movies, container) {
         <a href="movie-detail.html?slug=${movie.slug}"
             class="group relative block rounded-xl overflow-hidden bg-surface-dark border border-white/5 hover:border-primary/50 transition-all duration-300">
             <div class="aspect-[2/3] w-full overflow-hidden relative">
-                <img alt="${movie.name}"
+                <img alt="Xem Phim ${movie.name} (${movie.year}) Vietsub HD"
                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     src="${movieAPI.getImageURL(movie.thumb_url)}"
                     onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
