@@ -200,7 +200,17 @@ exports.manageUserGamification = async (req, res) => {
         // --- DETECT CHANGES FOR NOTIFICATION ---
         const isCoinUpdate = typeof coins === 'number' && coins !== user.coins;
         const isPlanUpdate = subscription && subscription.plan && subscription.plan.toUpperCase() !== (user.subscription?.plan || 'FREE');
-        const notificationMsg = req.body.message || 'Hệ thống vừa cập nhật tài khoản của bạn';
+        
+        let notificationMsg = req.body.message || 'Hệ thống vừa cập nhật tài khoản của bạn';
+        let coinDiffCalculated = 0; // HOISTED for Socket event
+        
+        // DYNAMIC QUANTIFICATION: Append precise delta for transparency if applicable
+        if (isCoinUpdate) {
+            coinDiffCalculated = coins - user.coins;
+            const direction = coinDiffCalculated > 0 ? 'nhận' : 'bị trừ';
+            const formattedDiff = coinDiffCalculated > 0 ? `+${coinDiffCalculated.toLocaleString('vi-VN')}` : coinDiffCalculated.toLocaleString('vi-VN');
+            notificationMsg = `[${formattedDiff} Xu] Bạn vừa ${direction} ${formattedDiff} Xu vào tài khoản. \nNội dung: ${notificationMsg}`;
+        }
 
         // ✅ Handle subscription plan update
         if (subscription && subscription.plan) {
@@ -283,11 +293,12 @@ exports.manageUserGamification = async (req, res) => {
             socketUtil.emitEvent(`USER_UPDATE_${user._id}`, {
                 userId: user._id,
                 coins: user.coins,
+                coinDiff: coinDiffCalculated, // EXPLICIT FOR FRONTEND
                 xp: user.xp,
                 inventory: user.inventory,
                 equippedFrame: user.equippedFrame,
                 subscription: user.subscription,
-                message: req.body.message || 'Hệ thống vừa cập nhật tài khoản của bạn'
+                message: notificationMsg || 'Hệ thống vừa cập nhật tài khoản của bạn'
             });
         } else {
             console.warn('⚠️ [Socket] Socket.io not initialized, cannot emit realtime update');

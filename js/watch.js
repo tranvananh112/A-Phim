@@ -167,13 +167,20 @@ function initializePlayer(episode) {
         // Native HLS support (Safari/iOS)
         console.log('✅ Using native HLS support (Safari/iOS)');
         player.src = videoUrl;
+        
+        // FIX CỰC MẠNH CHO MOBILE: Chờ 'canplay' và thêm độ trễ nhỏ để trình duyệt ổn định thanh tua
+        player.addEventListener('canplay', () => {
+            if (!isTimeRestored && progress.currentTime > 0) {
+                isTimeRestored = true; 
+                setTimeout(() => {
+                    console.log('⏪ [SafeRestore-Delay] Resumed on Mobile:', progress.currentTime);
+                    player.currentTime = progress.currentTime;
+                }, 200); // Độ trễ 200ms đảm bảo trình duyệt đã ổn định Buffer, không bị treo Touch
+            }
+        }, { once: true }); // Chỉ chạy 1 lần duy nhất
+
         player.addEventListener('loadedmetadata', () => {
             console.log('✅ Video metadata loaded');
-            if (!isTimeRestored && progress.currentTime > 0) {
-                isTimeRestored = true; // Khóa lại ngay lập tức
-                player.currentTime = progress.currentTime;
-                console.log('⏪ [SafeRestore] Resumed from history:', progress.currentTime);
-            }
             player.play().catch(e => console.log('Auto-play prevented:', e));
         });
     } else if (Hls.isSupported()) {
@@ -190,11 +197,13 @@ function initializePlayer(episode) {
 
         hls.on(Hls.Events.MANIFEST_PARSED, function () {
             console.log('✅ Video manifest parsed - ready to play');
-            // Set initial time from progress
+            // Bổ sung delay nhỏ cho HLS.js để ổn định thanh timeline trước khi tua
             if (!isTimeRestored && progress.currentTime > 0) {
-                isTimeRestored = true; // Khóa lại ngay lập tức
-                player.currentTime = progress.currentTime;
-                console.log('⏪ [SafeRestore] Resumed from history:', progress.currentTime);
+                isTimeRestored = true; 
+                setTimeout(() => {
+                    console.log('⏪ [SafeRestore-HLS] Resumed with Delay:', progress.currentTime);
+                    player.currentTime = progress.currentTime;
+                }, 150); 
             }
             player.play().catch(e => console.log('Auto-play prevented:', e));
         });
@@ -223,13 +232,14 @@ function initializePlayer(episode) {
         // Fallback for other browsers that support native HLS
         console.log('✅ Using native HLS support (Fallback)');
         player.src = videoUrl;
-        player.addEventListener('loadedmetadata', () => {
-            console.log('✅ Video metadata loaded');
+        player.addEventListener('canplay', () => {
             if (!isTimeRestored && progress.currentTime > 0) {
                 isTimeRestored = true;
-                player.currentTime = progress.currentTime;
+                setTimeout(() => {
+                     player.currentTime = progress.currentTime;
+                }, 200);
             }
-        });
+        }, { once: true });
     } else {
         console.error('❌ HLS not supported');
         showError('Trình duyệt của bạn không hỗ trợ phát video HLS');

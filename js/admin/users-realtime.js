@@ -152,11 +152,17 @@ function checkAdminAuth() {
 // Start auto refresh
 function startAutoRefresh() {
     autoRefreshInterval = setInterval(() => {
-        console.log('🔄 Auto-refreshing users/subscriptions...');
+        // SAFETY GUARD: Never disrupt DOM if admin is actively working in a modal
+        if (document.getElementById('modal') || document.getElementById('inventoryOverlay') || document.getElementById('analyticsModalOverlay')) {
+            console.log('⏸️ Auto-refresh paused while Modal is active.');
+            return;
+        }
+
+        console.log('🔄 Auto-refreshing data siliently...');
         if (document.getElementById('usersTableBody')) {
             loadUsers(true);
         } else if (typeof loadSubscriptions === 'function') {
-            loadSubscriptions();
+            loadSubscriptions(true); // Pass true to prevent UI wipe!
         }
     }, 30000);
 }
@@ -230,9 +236,11 @@ async function loadUsers(silent = false) {
                 coins: user.coins || 0
             }));
 
-            filteredUsers = [...allUsers];
             updateStats();
-            renderUsers();
+            
+            // PRESERVE USER FILTERS: Re-apply current filters instead of blindly resetting the array
+            applyFilters(); 
+            // renderUsers() is already called inside applyFilters()
 
             const message = `✅ Đã tải ${allUsers.length} người dùng từ MongoDB`;
             console.log(message);
@@ -963,7 +971,7 @@ async function viewUserDetail(userId) {
         };
 
         // ── PLAN CARD PICKER LOGIC ─────────────────────────────────────────
-        window.selectPlanCard = (planId) => {
+        window.selectPlanCard = (planId, isAutoInit = false) => {
             const planInput = document.getElementById('adminPlanInput');
             const summaryEl = document.getElementById('planCardSummary');
             const expiryInput = document.getElementById('adminExpiryInput');
@@ -1013,9 +1021,9 @@ async function viewUserDetail(userId) {
             const rewardBox = document.getElementById('autoApplyRewards');
             if (rewardBox) rewardBox.checked = (planId !== 'FREE');
 
-            // Auto-fill message
+            // Auto-fill message ONLY IF MANUALLY INITIATED BY ADMIN CLICK, NOT ON AUTO-LOAD
             const msgInput = document.getElementById('adminMessageInput');
-            if (msgInput && !msgInput.value && planId !== 'FREE') {
+            if (!isAutoInit && msgInput && !msgInput.value && planId !== 'FREE') {
                 const label = planId === 'PREMIUM' ? 'Cao Cấp (Premium)' : 'Gia Đình (Family)';
                 msgInput.value = `Admin đã kích hoạt gói ${label} cho tài khoản của bạn. Chúc bạn xem phim vui vẻ!`;
             }
@@ -1147,7 +1155,12 @@ async function viewUserDetail(userId) {
                 const res = await fetch(`${API_URL}/users/${uid}/gamification`, {
                     method: 'PUT',
                     headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ coins: c, xp: x, transactionRef: transRef, message: msg || undefined })
+                    body: JSON.stringify({ 
+                        coins: c, 
+                        xp: x, 
+                        transactionRef: transRef, 
+                        message: msg || 'Nạp Xu bổ sung vào tài khoản' 
+                    })
                 });
                 const data = await res.json();
                 if(data.success) {
@@ -1245,7 +1258,7 @@ async function viewUserDetail(userId) {
         setTimeout(() => {
             const currentPlan = user.subscription?.plan || 'FREE';
             console.log('🎯 Auto-highlighting current user plan:', currentPlan);
-            if (typeof selectPlanCard === 'function') selectPlanCard(currentPlan);
+            if (typeof selectPlanCard === 'function') selectPlanCard(currentPlan, true); // true = isAutoInit
         }, 100);
     } catch (error) {
         console.error('❌ Detailed Error loading user:', error);

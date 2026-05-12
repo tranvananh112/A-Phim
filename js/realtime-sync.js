@@ -12,7 +12,9 @@ class RealtimeSync {
         
         console.log('🚀 [Realtime] Module starting...');
         
-        // Use a more robust initialization sequence to avoid race conditions with authService
+        // Robust Event Driven Initialization + Fallback Polling
+        this._setupListeners();
+        
         if (document.readyState === 'complete') {
             this.delayedInit();
         } else {
@@ -20,22 +22,40 @@ class RealtimeSync {
         }
     }
 
+    _setupListeners() {
+        // Listen for standard login / data ready events to spark instant connection
+        window.addEventListener('userLogin', () => {
+            console.log('🔑 [Realtime] Login detected via event, initializing...');
+            this.init();
+        });
+        
+        // Periodic sanity check (every 8 seconds) to catch deferred initialization states
+        setInterval(() => {
+            if (!this.socket && typeof authService !== 'undefined' && authService.isLoggedIn()) {
+                console.log('🔄 [Realtime] Self-healing poll detected logged-in state, activating connection...');
+                this.init();
+            }
+        }, 8000);
+    }
+
     async delayedInit() {
-        // Wait for authService to be available and stable
+        // Increased patience for auth service loading
         let attempts = 0;
-        while (typeof authService === 'undefined' && attempts < 15) {
-            await new Promise(r => setTimeout(r, 200));
+        while (typeof authService === 'undefined' && attempts < 30) {
+            await new Promise(r => setTimeout(r, 150));
             attempts++;
         }
 
         if (typeof authService !== 'undefined' && authService.isLoggedIn()) {
             this.init();
         } else {
-            console.log('ℹ️ [Realtime] User not logged in, socket connection deferred.');
+            console.log('ℹ️ [Realtime] User not logged in yet, awaiting login hook or self-healing cycle.');
         }
     }
 
     async init() {
+        if (this.socket && this.socket.connected) return; // Prevent duplicate concurrent tunnels
+        
         // 1. Dynamically load Socket.io Client if not present
         if (typeof io === 'undefined') {
             try {
@@ -77,12 +97,7 @@ class RealtimeSync {
         this.socket.on(`USER_UPDATE_${userId}`, async (data) => {
             console.warn('⚡ [Realtime] ACCOUNT UPDATE RECEIVED:', data);
             
-            // Show visible feedback
-            if (typeof showToast === 'function') {
-                showToast('🚀 Tài khoản của bạn vừa được cập nhật!', 'success');
-            } else if (typeof showMessage === 'function') {
-                showMessage('🚀 Tài khoản của bạn vừa được cập nhật!', 'success');
-            }
+            console.warn('⚡ [Realtime] ACCOUNT UPDATE RECEIVED:', data);
             
             const oldUser = authService.getCurrentUser();
             const oldCoins = oldUser ? (oldUser.coins || oldUser.xu || 0) : 0;
@@ -118,13 +133,16 @@ class RealtimeSync {
                 window.syncNotifications();
             }
 
-            // Show popup toast
-            if (data.coins !== undefined && typeof showCoinChange === 'function') {
-                const diff = newCoins - oldCoins;
-                if (diff !== 0) showCoinChange(diff, displayMsg);
+            // Show popup toast WITH EXPLICIT BACKEND DIFF FOR TOTAL RELIABILITY
+            if (data.coinDiff !== undefined && data.coinDiff !== 0 && typeof showCoinChange === 'function') {
+                showCoinChange(data.coinDiff, displayMsg);
             } else if (typeof showMessage === 'function') {
                 showMessage(displayMsg, 'success');
             }
+            
+            // Prevent this incoming realtime socket notification from firing AGAIN as persistent on next reload
+            // (Backend Notification will match by ID shortly, we save local keys to suppress redundant deliveries)
+            // We dynamically derive IDs after sync completes
         });
 
         // 4. LISTEN FOR SYSTEM BROADCASTS

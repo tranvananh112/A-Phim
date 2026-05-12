@@ -376,9 +376,9 @@ function loadFavorites() {
 
     // Show loading state
     container.innerHTML = `
-        <div class="flex justify-center items-center py-8 w-full">
+        <div style="grid-column: 1 / -1; display:flex; justify-content:center; align-items:center; padding:32px 0; width:100%;">
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            <span class="ml-3 text-gray-400">Đang tải phim yêu thích...</span>
+            <span style="margin-left:12px; color:rgba(255,255,255,0.4);">Đang tải phim yêu thích...</span>
         </div>
     `;
 
@@ -388,7 +388,7 @@ function loadFavorites() {
 
         if (favorites.length === 0) {
             container.innerHTML = `
-                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:48px 0; width:100%; gap:12px;">
+                <div style="grid-column: 1 / -1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:48px 0; width:100%; gap:12px;">
                     <div style="width:64px; height:64px; border-radius:50%; background:rgba(255,255,255,0.03); display:flex; align-items:center; justify-content:center; margin-bottom:4px;">
                         <span class="material-icons-round" style="font-size:32px; color:rgba(255,255,255,0.15);">favorite_border</span>
                     </div>

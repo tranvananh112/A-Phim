@@ -186,58 +186,105 @@ const TOAST_ICONS = {
     s.textContent = `
         #ap-toast-stack {
             position: fixed;
-            bottom: 24px;
-            left: 24px;
-            z-index: 100000;
+            top: 20px;
+            right: 20px;
+            z-index: 1000000;
             display: flex;
-            flex-direction: column-reverse;
+            flex-direction: column;
             gap: 12px;
             pointer-events: none;
+            width: 330px;
+            max-width: 85vw;
         }
         .ap-toast {
             pointer-events: all;
+            position: relative;
             display: flex;
             align-items: center;
             gap: 14px;
-            padding: 16px 20px;
+            padding: 14px 18px;
             border-radius: 16px;
-            min-width: 300px;
-            max-width: 420px;
-            background: rgba(15, 15, 25, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            color: #fff;
-            font-size: 14px;
-            font-weight: 600;
-            transform: translateX(-120%);
+            background: rgba(13, 13, 17, 0.75);
+            backdrop-filter: blur(20px) saturate(200%);
+            -webkit-backdrop-filter: blur(20px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.5), 
+                        inset 0 1px 1px rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            transform: translateX(140%);
             opacity: 0;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+        }
+        .ap-toast::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 3px; height: 100%;
+            background: var(--accent-color, #6366f1);
+            border-radius: 0 3px 3px 0;
         }
         .ap-toast.show { transform: translateX(0); opacity: 1; }
-        .ap-toast-icon { width: 24px; height: 24px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-        .ap-toast-icon svg { width: 100%; height: 100%; }
         
-        .ap-toast-success .ap-toast-icon { color: #4ade80; }
-        .ap-toast-error .ap-toast-icon { color: #f87171; }
-        .ap-toast-warning .ap-toast-icon { color: #fbbf24; }
-        .ap-toast-info .ap-toast-icon { color: #60a5fa; }
+        .ap-toast-icon-wrap {
+            width: 36px; height: 36px; flex-shrink: 0;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--accent-color);
+        }
+        .ap-toast-icon-wrap svg { width: 20px; height: 20px; }
+        
+        .ap-toast-content { flex: 1; display: flex; flex-direction: column; gap: 2px; justify-content: center; min-width: 0; }
+        .ap-toast-title { font-size: 11px; color: rgba(255,255,255,0.4); text-transform: uppercase; font-weight: 800; letter-spacing: 0.8px; }
+        .ap-toast-body { 
+            font-size: 13.5px; 
+            color: rgba(255,255,255,0.95); 
+            font-weight: 600; 
+            line-height: 1.35; 
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden; 
+        }
+
+        .ap-toast-success { --accent-color: #10b981; }
+        .ap-toast-success .ap-toast-icon-wrap { background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.1); }
+        
+        .ap-toast-error { --accent-color: #ef4444; }
+        .ap-toast-error .ap-toast-icon-wrap { background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.1); }
+        
+        .ap-toast-warning { --accent-color: #f59e0b; }
+        .ap-toast-warning .ap-toast-icon-wrap { background: rgba(245, 158, 11, 0.08); border-color: rgba(245, 158, 11, 0.1); }
+        
+        .ap-toast-info { --accent-color: #3b82f6; }
+        .ap-toast-info .ap-toast-icon-wrap { background: rgba(59, 130, 246, 0.08); border-color: rgba(59, 130, 246, 0.1); }
         
         .ap-toast-coin-change {
-            background: linear-gradient(135deg, rgba(20, 20, 35, 0.9), rgba(40, 35, 20, 0.9));
-            border: 1px solid rgba(234, 179, 8, 0.3);
+            --accent-color: #f59e0b;
+            background: linear-gradient(135deg, rgba(15, 15, 22, 0.8), rgba(25, 20, 15, 0.8));
+            border: 1px solid rgba(245, 158, 11, 0.15);
         }
-        .coin-diff { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 18px; margin-left: auto; }
-        .coin-diff.plus { color: #4ade80; text-shadow: 0 0 10px rgba(74, 222, 128, 0.3); }
-        .coin-diff.minus { color: #f87171; text-shadow: 0 0 10px rgba(248, 113, 113, 0.3); }
+        .coin-diff { 
+            font-family: 'Space Grotesk', sans-serif; 
+            font-weight: 800; 
+            font-size: 17px; 
+            margin-left: auto;
+            display: flex;
+            align-items: baseline;
+            gap: 2px;
+            flex-shrink: 0;
+        }
+        .coin-diff.plus { color: #10b981; text-shadow: 0 0 12px rgba(16, 185, 129, 0.3); }
+        .coin-diff.minus { color: #ef4444; text-shadow: 0 0 12px rgba(239, 68, 68, 0.3); }
         
         @keyframes toast-shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-4px); }
             75% { transform: translateX(4px); }
         }
-        .ap-toast-shake { animation: toast-shake 0.3s ease-in-out 2; }
+        .ap-toast-shake { animation: toast-shake 0.3s cubic-bezier(.36,.07,.19,.97) 2; }
 
         /* Notification Bell & Panel */
         .notif-bell-shake { animation: bell-shake 0.5s ease-in-out infinite; }
@@ -356,35 +403,45 @@ window.showMessage = function(message, type = 'info', duration = 4000) {
     const stack = getToastStack();
     const toast = document.createElement('div');
     toast.className = `ap-toast ap-toast-${type}`;
+    
+    const titleLabels = { success: 'Thành Công', error: 'Lỗi Hệ Thống', warning: 'Cảnh Báo', info: 'Thông Báo' };
+    
     toast.innerHTML = `
-        <div class="ap-toast-icon">${TOAST_ICONS[type] || TOAST_ICONS.info}</div>
-        <div style="flex:1">${message}</div>
+        <div class="ap-toast-icon-wrap">${TOAST_ICONS[type] || TOAST_ICONS.info}</div>
+        <div class="ap-toast-content">
+            <div class="ap-toast-title">${titleLabels[type] || 'Thông Báo'}</div>
+            <div class="ap-toast-body">${message}</div>
+        </div>
     `;
     stack.appendChild(toast);
     setTimeout(() => toast.classList.add('show'), 10);
     
     const hide = () => {
         toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 500);
+        toast.style.transform = 'translateX(150%) scale(0.9)';
+        setTimeout(() => toast.remove(), 600);
     };
     setTimeout(hide, duration);
     toast.onclick = hide;
 };
 
-window.showCoinChange = function(amount, reason = 'Cập nhật số dư') {
+window.showCoinChange = function(amount, reason = 'Giao dịch thành công') {
     const stack = getToastStack();
     const isPlus = amount > 0;
-    const diffText = isPlus ? `+${amount.toLocaleString()}` : `${amount.toLocaleString()}`;
+    const diffText = isPlus ? `+${amount.toLocaleString('vi-VN')}` : `${amount.toLocaleString('vi-VN')}`;
     
     const toast = document.createElement('div');
     toast.className = `ap-toast ap-toast-coin-change ${!isPlus ? 'ap-toast-shake' : ''}`;
     toast.innerHTML = `
-        <div class="ap-toast-icon">${TOAST_ICONS.coin}</div>
-        <div style="display:flex; flex-direction:column; gap:2px;">
-            <div style="color:rgba(255,255,255,0.5); font-size:11px; text-transform:uppercase; letter-spacing:1px;">${reason}</div>
-            <div style="color:#fff; font-size:14px; font-weight:700;">Biến động tài khoản</div>
+        <div class="ap-toast-icon-wrap">${TOAST_ICONS.coin}</div>
+        <div class="ap-toast-content">
+            <div class="ap-toast-title">Biến Động Số Dư</div>
+            <div class="ap-toast-body" style="color: rgba(255,255,255,0.7); font-size:13px;">${reason}</div>
         </div>
-        <div class="coin-diff ${isPlus ? 'plus' : 'minus'}">${diffText} <span style="font-size:12px; font-weight:600;">Xu</span></div>
+        <div class="coin-diff ${isPlus ? 'plus' : 'minus'}">
+            ${diffText} 
+            <span style="font-size: 11px; opacity: 0.7; font-weight:700; letter-spacing:0.5px;">XU</span>
+        </div>
     `;
     
     stack.appendChild(toast);
@@ -392,9 +449,10 @@ window.showCoinChange = function(amount, reason = 'Cập nhật số dư') {
     
     const hide = () => {
         toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 500);
+        toast.style.transform = 'translateX(150%) scale(0.9)';
+        setTimeout(() => toast.remove(), 600);
     };
-    setTimeout(hide, 5000);
+    setTimeout(hide, 6000); // slightly longer to read amounts
     toast.onclick = hide;
 };
 
@@ -437,6 +495,59 @@ window.syncNotifications = async function() {
             localStorage.setItem(`ap_notifs_${userId}`, JSON.stringify(data.data));
             renderNotifications();
             updateNotifBadge();
+            
+            // 🚀 DELIVER PENDING UNREAD TOASTS (User returned to site)
+            // Filter unread, sort oldest-to-newest to queue properly
+            const unread = (data.data || []).filter(n => !n.isRead && !n.read).reverse(); 
+            let toastCount = 0;
+            
+            unread.forEach((n) => {
+                const notifId = n._id || n.id;
+                if (!notifId) return;
+                
+                const toastKey = `ap_toast_seen_${notifId}`;
+                // Check local delivery guard to prevent duplicate spamming on every F5 refresh
+                if (!localStorage.getItem(toastKey) && toastCount < 2) {
+                    toastCount++;
+                    
+                    setTimeout(() => {
+                         if (n.type === 'coin' || n.type === 'success') {
+                              let msg = n.message || '';
+                              let reason = 'Giao dịch thành công';
+                              
+                              // Attempt intelligent string extraction from backend format: 
+                              // "[+1.000 Xu] Bạn vừa nhận... \nNội dung: Admin nap"
+                              if(msg.includes('\nNội dung:')) {
+                                   const parts = msg.split('\nNội dung:');
+                                   // Reason is the second part, keep it clean
+                                   reason = parts[1].trim() || 'Biến động tài khoản';
+                              } else if (n.title) {
+                                   reason = n.title;
+                              }
+                              
+                              // Highly resilient REGEX search for numeric currency pattern (+/- then digit)
+                              const numMatch = msg.match(/([+-]?[\d\.,]+)\s*Xu/i);
+                              if(numMatch && typeof showCoinChange === 'function') {
+                                   // Clean numeric separators (. or ,) to parse int
+                                   const valStr = numMatch[1].replace(/\./g, '').replace(/,/g, '');
+                                   const val = parseInt(valStr, 10);
+                                   if (!isNaN(val)) {
+                                        showCoinChange(val, reason);
+                                   } else {
+                                        showMessage(n.message, n.type);
+                                   }
+                              } else {
+                                   showMessage(n.message, n.type);
+                              }
+                         } else {
+                              // Standard push for info / other types
+                              showMessage(n.message, n.type === 'promotion' ? 'success' : 'info');
+                         }
+                         // Lock the delivery so it never repeats
+                         localStorage.setItem(toastKey, 'true');
+                    }, 1500 + (toastCount * 2000)); // Delayed stagger to prevent collision lag
+                }
+            });
         }
     } catch (e) {
         console.warn('Silent fail: could not sync notifications', e);

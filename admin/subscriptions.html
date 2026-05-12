@@ -317,9 +317,13 @@
     FREE: 'badge-gray' 
   };
 
-  async function loadSubscriptions() {
+  async function loadSubscriptions(isSilent = false) {
       const tbody = document.getElementById('subsBody');
-      tbody.innerHTML = '<tr><td colspan="7"><div class="loading-spinner"><div class="spinner"></div><p style="margin-top:12px;">Đang fetching database thực...</p></div></td></tr>';
+      
+      // Skip clearing HTML with spinner if background/silent refresh
+      if (!isSilent) {
+          tbody.innerHTML = '<tr><td colspan="7"><div class="loading-spinner"><div class="spinner"></div><p style="margin-top:12px;">Đang fetching database thực...</p></div></td></tr>';
+      }
 
       try {
           // Dùng helper có sẵn trong users-realtime.js?v=110 để lấy token an toàn
@@ -361,8 +365,8 @@
           // Update master stat cards
           syncStatCounters(liveSubsData);
           
-          // Render output rows
-          renderSubList(liveSubsData);
+          // PRESERVE FILTERS: Use unified filters to render so current user search isn't wiped!
+          applyUnifiedFilters();
           
       } catch (error) {
           console.error('[SubsConsole] Retrieval catastrophic failure:', error);
