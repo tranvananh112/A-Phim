@@ -463,7 +463,7 @@ function loadHistory() {
             const progressPercent = progress.percentage || 0;
 
             return `
-                <a href="movie-detail.html?slug=${movie.slug}" 
+                <a href="watch.html?slug=${movie.slug}${movie.episode ? `&episode=${movie.episode}` : ''}" 
                    class="flex gap-4 p-4 bg-black/30 border border-white/5 rounded-lg hover:border-primary/50 transition-all group">
                     <div class="w-24 aspect-[2/3] flex-shrink-0 rounded-md overflow-hidden">
                         <img src="${movieAPI.getImageURL(movie.thumb_url)}" 

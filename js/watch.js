@@ -161,14 +161,18 @@ function initializePlayer(episode) {
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     const preferNativeHLS = (isIOS || isSafari) && player.canPlayType('application/vnd.apple.mpegurl');
 
+    let isTimeRestored = false; // CỜ CHẶN: Chỉ cho phép khôi phục thời gian DUY NHẤT 1 LẦN, tránh bị kẹt tua phim
+
     if (preferNativeHLS) {
         // Native HLS support (Safari/iOS)
         console.log('✅ Using native HLS support (Safari/iOS)');
         player.src = videoUrl;
         player.addEventListener('loadedmetadata', () => {
             console.log('✅ Video metadata loaded');
-            if (progress.currentTime > 0) {
+            if (!isTimeRestored && progress.currentTime > 0) {
+                isTimeRestored = true; // Khóa lại ngay lập tức
                 player.currentTime = progress.currentTime;
+                console.log('⏪ [SafeRestore] Resumed from history:', progress.currentTime);
             }
             player.play().catch(e => console.log('Auto-play prevented:', e));
         });
@@ -187,9 +191,10 @@ function initializePlayer(episode) {
         hls.on(Hls.Events.MANIFEST_PARSED, function () {
             console.log('✅ Video manifest parsed - ready to play');
             // Set initial time from progress
-            if (progress.currentTime > 0) {
+            if (!isTimeRestored && progress.currentTime > 0) {
+                isTimeRestored = true; // Khóa lại ngay lập tức
                 player.currentTime = progress.currentTime;
-                console.log('⏩ Resuming from:', progress.currentTime);
+                console.log('⏪ [SafeRestore] Resumed from history:', progress.currentTime);
             }
             player.play().catch(e => console.log('Auto-play prevented:', e));
         });
@@ -220,7 +225,8 @@ function initializePlayer(episode) {
         player.src = videoUrl;
         player.addEventListener('loadedmetadata', () => {
             console.log('✅ Video metadata loaded');
-            if (progress.currentTime > 0) {
+            if (!isTimeRestored && progress.currentTime > 0) {
+                isTimeRestored = true;
                 player.currentTime = progress.currentTime;
             }
         });
@@ -230,31 +236,41 @@ function initializePlayer(episode) {
         return;
     }
 
+    // Hàm hỗ trợ lưu tiến độ tức thời
+    function doSaveProgress() {
+        if (player && player.currentTime > 0 && player.duration > 0 && currentMovie) {
+            userService.saveWatchProgress(
+                currentMovie.slug,
+                player.currentTime,
+                player.duration,
+                episode ? episode.slug : null
+            );
+        }
+    }
+
     // Save progress periodically
-    let progressInterval;
+    let progressInterval = null;
     player.addEventListener('play', () => {
         console.log('▶️ Video playing');
-        progressInterval = setInterval(() => {
-            if (player.currentTime > 0 && player.duration > 0) {
-                userService.saveWatchProgress(
-                    currentMovie.slug,
-                    player.currentTime,
-                    player.duration,
-                    episode.slug
-                );
-            }
-        }, 5000);
+        if (progressInterval) clearInterval(progressInterval); // Dọn dẹp interval cũ nếu có
+        progressInterval = setInterval(doSaveProgress, 5000); // Cập nhật mỗi 5 giây
     });
 
     player.addEventListener('pause', () => {
         console.log('⏸️ Video paused');
-        clearInterval(progressInterval);
-        userService.saveWatchProgress(
-            currentMovie.slug,
-            player.currentTime,
-            player.duration,
-            episode.slug
-        );
+        if (progressInterval) clearInterval(progressInterval);
+        doSaveProgress(); // Lưu luôn khi bấm tạm dừng
+    });
+
+    // Bổ sung: Lưu TỨC THỜI khi người dùng tua phim đến vị trí mới
+    player.addEventListener('seeked', () => {
+        console.log('⏩ User seeked - Instant save');
+        doSaveProgress();
+    });
+
+    // Bổ sung: Lưu TỨC THỜI khi chuẩn bị tắt tab / tải lại trang
+    window.addEventListener('beforeunload', () => {
+        doSaveProgress();
     });
 
     // Auto play next episode

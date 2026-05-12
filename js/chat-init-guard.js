@@ -6,13 +6,45 @@
 (function () {
     'use strict';
 
-    // 0. TĂNG TỐC ĐỘ MPA (Giả SPA) VÀ AUTH GUARD CHỐNG CHỚP NHÁY
+    // ═════════════════════════════════════════════════════════════════════
+    // TĂNG TỐC & TẮT CÁC LỖI LOG RÁC TỪ TAWK.TO (CORS/ERR_FAILED)
+    // ═════════════════════════════════════════════════════════════════════
     try {
-        // A. Instant Page đã bị loại bỏ để tránh lỗi 503 Service Unavailable do prefetch quá nhiều
+        // Chặn Fetch API gọi log hiệu suất lỗi của Tawk
+        const originalFetch = window.fetch;
+        window.fetch = function () {
+            const url = arguments[0];
+            if (typeof url === 'string' && url.includes('va.tawk.to/log-performance')) {
+                return Promise.resolve(new Response('{"blocked":true}', { status: 200 }));
+            }
+            return originalFetch.apply(this, arguments);
+        };
+
+        // Chặn XMLHttpRequest gọi log hiệu suất lỗi của Tawk
+        const originalOpen = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function (method, url) {
+            if (typeof url === 'string' && url.includes('va.tawk.to/log-performance')) {
+                this.isBlockedRequest = true;
+                return; // Không mở request
+            }
+            return originalOpen.apply(this, arguments);
+        };
         
-        // B. Xử lý đồng bộ thay thế Avatar chống nháy (FOUC) - ĐÃ CHUYỂN SANG user-ui.js
-        // Phần này trước đây thay thế nút Login bằng Avatar cũ, gây ra lỗi nhân bản Profile.
-    } catch (e) {}
+        const originalSend = XMLHttpRequest.prototype.send;
+        XMLHttpRequest.prototype.send = function () {
+            if (this.isBlockedRequest) {
+                // Giả lập đã hoàn tất thành công
+                Object.defineProperty(this, 'readyState', { get: () => 4 });
+                Object.defineProperty(this, 'status', { get: () => 200 });
+                if (this.onload) this.onload();
+                return;
+            }
+            return originalSend.apply(this, arguments);
+        };
+    } catch (e) {
+        console.warn('[Guard] Block optimization skipped.');
+    }
+    // ═════════════════════════════════════════════════════════════════════
 
     // 5. Material Icons Fix
     function fixIcons() {
