@@ -2,6 +2,7 @@
 class UserService {
     constructor() {
         this.authService = authService;
+        this.lastProgressSyncTime = 0; // Kiểm soát tần suất đồng bộ cloud
     }
 
     // Get user favorites
@@ -113,7 +114,18 @@ class UserService {
             updatedAt: new Date().toISOString()
         };
 
+        // 1. Luôn lưu ngay lập tức vào LocalStorage trên máy hiện tại
         localStorage.setItem(STORAGE_KEYS.WATCH_PROGRESS, JSON.stringify(allProgress));
+
+        // 2. Đồng bộ lên Server để liên kết đa thiết bị
+        // Dùng throttle: Chỉ đẩy lên server tối đa 10 giây một lần để tránh làm chậm mạng/quá tải request
+        const now = Date.now();
+        if (!this.lastProgressSyncTime || (now - this.lastProgressSyncTime > 10000)) {
+            this.lastProgressSyncTime = now;
+            this.authService.updateProfile({ watchProgress: allProgress })
+                .then(() => { console.log('☁️ [CloudSync] Watch progress backed up'); })
+                .catch(() => {});
+        }
     }
 
     // Get subscription info

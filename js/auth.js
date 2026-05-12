@@ -81,6 +81,10 @@ class AuthService {
         if (user.watchHistory) {
             localStorage.setItem('cinestream_watch_history', JSON.stringify(user.watchHistory));
         }
+        // Cập nhật: Đồng bộ TIẾN TRÌNH XEM PHIM (giây hiện tại, % hoàn thành) từ Server
+        if (user.watchProgress) {
+            localStorage.setItem('cinestream_watch_progress', JSON.stringify(user.watchProgress));
+        }
         // Đảm bảo đồng bộ Playlists nếu có trong dữ liệu server
         if (user.playlists && Array.isArray(user.playlists)) {
             localStorage.setItem('cinestream_playlists', JSON.stringify(user.playlists));

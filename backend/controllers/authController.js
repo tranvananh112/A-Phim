@@ -143,6 +143,7 @@ exports.updateDetails = async (req, res) => {
         if (req.body.profileCover !== undefined) fieldsToUpdate.profileCover = req.body.profileCover;
         if (req.body.favorites !== undefined) fieldsToUpdate.favorites = req.body.favorites;
         if (req.body.watchHistory !== undefined) fieldsToUpdate.watchHistory = req.body.watchHistory;
+        if (req.body.watchProgress !== undefined) fieldsToUpdate.watchProgress = req.body.watchProgress;
         if (req.body.playlists !== undefined) fieldsToUpdate.playlists = req.body.playlists;
         
         // Bổ sung Whitelist cho Gamification / Shop
@@ -167,6 +168,11 @@ exports.updateDetails = async (req, res) => {
         if (req.body.transactionLog) {
             if (!user.transactions) user.transactions = [];
             user.transactions.push(req.body.transactionLog);
+        }
+
+        // Mark modified for mixed types to ensure save triggers properly
+        if (req.body.watchProgress !== undefined) {
+            user.markModified('watchProgress');
         }
 
         await user.save();
@@ -344,6 +350,7 @@ const sendTokenResponse = (user, statusCode, res) => {
             subscription: user.subscription,
             favorites: user.favorites,
             watchHistory: user.watchHistory,
+            watchProgress: user.watchProgress || {},
             playlists: user.playlists
         }
     });

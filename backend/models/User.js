@@ -136,6 +136,10 @@ const UserSchema = new mongoose.Schema({
         episode: String,
         watchedAt: Date
     }],
+    watchProgress: {
+        type: Object,
+        default: {}
+    },
     playlists: [{
         id: String,
         name: String,
