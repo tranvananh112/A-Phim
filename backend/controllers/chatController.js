@@ -6,7 +6,7 @@ const ChatMessage = require('../models/ChatMessage');
 exports.saveMessage = async (req, res) => {
     try {
         const { text, tab, firebaseId, avatar, chatRole, frame } = req.body;
-        
+
         if (!text || !firebaseId) {
             return res.status(400).json({ success: false, message: 'Missing required fields' });
         }
@@ -59,15 +59,49 @@ exports.getHistory = async (req, res) => {
 
 // @desc    Delete message
 // @route   DELETE /api/chat/:id
-// @access  Private (Admin)
+// @access  Private (Admin or Owner)
 exports.deleteMessage = async (req, res) => {
     try {
-        if (req.user.role !== 'admin') {
-            return res.status(403).json({ success: false, message: 'Unauthorized' });
+        // Find message first
+        let message = await ChatMessage.findById(req.params.id);
+        if (!message) {
+            message = await ChatMessage.findOne({ firebaseId: req.params.id });
         }
-        await ChatMessage.findByIdAndDelete(req.params.id);
-        res.json({ success: true, message: 'Message deleted' });
+
+        if (!message) {
+            return res.status(404).json({ success: false, message: 'Message not found' });
+        }
+
+        // Check permissions: Admin (role or chatRole) OR message owner
+        const isAdmin = req.user.role === 'admin' || req.user.chatRole === 'admin';
+        const isOwner = message.userId && message.userId.toString() === req.user._id.toString();
+
+        if (!isAdmin && !isOwner) {
+            return res.status(403).json({
+                success: false,
+                message: 'Unauthorized: Only admins or message owners can delete messages'
+            });
+        }
+
+        // Delete the message
+        await ChatMessage.findByIdAndDelete(message._id);
+
+        // Broadcast deletion to all clients via Socket.io
+        const socketUtil = require('../utils/socket');
+        if (socketUtil.isInitialized()) {
+            socketUtil.emitEvent('chat:delete', {
+                firebaseId: message.firebaseId,
+                tab: message.tab
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'Message deleted successfully',
+            firebaseId: message.firebaseId
+        });
     } catch (err) {
+        console.error('Delete Message Error:', err);
         res.status(500).json({ success: false, message: err.message });
     }
 };
@@ -80,20 +114,20 @@ exports.togglePin = async (req, res) => {
         if (req.user.role !== 'admin' && req.user.chatRole !== 'admin') {
             return res.status(403).json({ success: false, message: 'Unauthorized' });
         }
-        
+
         // Find by ID or FirebaseId
         let msg = await ChatMessage.findById(req.params.id);
         if (!msg) msg = await ChatMessage.findOne({ firebaseId: req.params.id });
-        
+
         if (!msg) return res.status(404).json({ success: false, message: 'Not found' });
-        
+
         const newState = !msg.isPinned;
-        
+
         if (newState) {
             // Unpin all others in the same tab
             await ChatMessage.updateMany({ tab: msg.tab }, { isPinned: false });
         }
-        
+
         msg.isPinned = newState;
         await msg.save();
 
@@ -110,7 +144,7 @@ exports.togglePin = async (req, res) => {
                 } : null
             });
         }
-        
+
         res.json({ success: true, isPinned: msg.isPinned });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
@@ -126,7 +160,7 @@ exports.toggleReaction = async (req, res) => {
         const userId = req.user.id;
 
         let message = await ChatMessage.findOne({ firebaseId });
-        
+
         if (!message) {
             // Create a placeholder message if it doesn't exist in MongoDB yet
             // This happens if Firestore created it but MongoDB sync hasn't finished
@@ -142,7 +176,7 @@ exports.toggleReaction = async (req, res) => {
         // Toggle the reaction
         const uid = req.user._id.toString();
         const reactions = message.reactions || new Map();
-        
+
         if (!reactions.has(emoji)) {
             reactions.set(emoji, { uids: [], avatars: [], names: [] });
         }
@@ -200,7 +234,7 @@ exports.getReactionsMap = async (req, res) => {
         const { tab } = req.params;
         const messages = await ChatMessage.find({ tab })
             .select('firebaseId reactions');
-        
+
         const reactionsMap = {};
         messages.forEach(msg => {
             if (msg.firebaseId && msg.reactions && msg.reactions.size > 0) {
@@ -225,7 +259,7 @@ exports.getPinned = async (req, res) => {
         const { tab } = req.params;
         const pinned = await ChatMessage.findOne({ tab: tab || 'general', isPinned: true })
             .sort('-updatedAt');
-            
+
         res.json({
             success: true,
             data: pinned

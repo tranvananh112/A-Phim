@@ -6,30 +6,30 @@
 class APFilmChat {
     constructor() {
         this.currentScreen = 'welcome'; // welcome | room | support
-        this.currentTab    = 'general';
-        this.user          = null; 
-        this.isMinimized   = false;
-        this.isOpen        = false;
-        this.unreadCount   = 0;
+        this.currentTab = 'general';
+        this.user = null;
+        this.isMinimized = false;
+        this.isOpen = false;
+        this.unreadCount = 0;
         this._stopPresence = null;
-        this._stopPinned   = null;
-        this._isMaximized  = false;
-        this.replyingTo    = null; 
-        this._defaultW     = 390;
-        this._defaultH     = 600;
+        this._stopPinned = null;
+        this._isMaximized = false;
+        this.replyingTo = null;
+        this._defaultW = 390;
+        this._defaultH = 600;
 
         this.emojis = [
-            '😀','😄','😆','😅','😂','🤣','😊','😇',
-            '🥰','😍','🤩','😘','😋','😎','🤓','🥳',
-            '😏','😒','😞','😔','😢','😭','😤','😡',
-            '👍','👎','👏','🙌','🤝','💪','❤️','🔥',
-            '⭐','🎬','🍿','🎭','🎥','📽️','🎞️','🎉',
-            '🤔','💯','✅','❌','🔴','🟡','🟢','✨',
+            '😀', '😄', '😆', '😅', '😂', '🤣', '😊', '😇',
+            '🥰', '😍', '🤩', '😘', '😋', '😎', '🤓', '🥳',
+            '😏', '😒', '😞', '😔', '😢', '😭', '😤', '😡',
+            '👍', '👎', '👏', '🙌', '🤝', '💪', '❤️', '🔥',
+            '⭐', '🎬', '🍿', '🎭', '🎥', '📽️', '🎞️', '🎉',
+            '🤔', '💯', '✅', '❌', '🔴', '🟡', '🟢', '✨',
         ];
 
         this.reactionsCache = {}; // Local cache for MongoDB reactions (Persistence Fallback)
-        this.lastMessages   = [];
-        
+        this.lastMessages = [];
+
         this._init();
         this._setupExternalListeners();
     }
@@ -57,10 +57,10 @@ class APFilmChat {
     _setup() {
         try {
             console.log('[APFilmChat] Starting initialization...');
-            
+
             this._injectHtmlIfNeeded();
             this._cacheDOM();
-            
+
             if (!this.el.fab) {
                 console.error('[APFilmChat] Critical elements missing.');
                 return;
@@ -170,7 +170,7 @@ class APFilmChat {
         }
 
         if (document.getElementById('chatFab')) return;
-        
+
         const html = `
         <div id="aphimChatInjectedContainer">
             <button id="chatFab" class="chat-fab" aria-label="Mở chat cộng đồng" title="Chat Cộng Đồng">
@@ -303,47 +303,47 @@ class APFilmChat {
     _cacheDOM() {
         const $ = id => document.getElementById(id);
         this.el = {
-            fab              : $('chatFab'),
-            fabBadge         : $('chatFabBadge'),
-            window           : $('chatWindow'),
-            body             : $('chatBody'),
-            inputArea        : $('chatInputArea'),
-            header           : $('chatHeader'),
-            minimizeBtn      : $('chatMinimizeBtn'),
-            closeBtn         : $('chatCloseBtn'),
-            headerOnline     : $('headerOnlineCount'),
-            screenWelcome    : $('screenWelcome'),
-            screenRoom       : $('screenRoom'),
-            screenSupport    : $('screenSupport'),
-            welcomeStartBtn  : $('welcomeStartBtn'),
-            welcomeOnline    : $('welcomeOnline'),
-            supportStartTawk : $('supportStartTawk'),
-            messagesArea     : $('messagesArea'),
-            tabs             : document.querySelectorAll('.chat-tab'),
-            messageInput     : $('chatMessageInput'),
-            sendBtn          : $('chatSendBtn'),
-            emojiToggle      : $('emojiToggleBtn'),
-            emojiPanel       : $('emojiPickerPanel'),
-            emojiGrid        : $('emojiGrid'),
-            pinnedBanner     : $('pinnedBanner'),
-            pinnedUser       : $('pinnedBannerUser'),
-            pinnedText       : $('pinnedBannerText'),
-            unpinBtn         : $('unpinBtn'),
-            inputPrefix      : $('inputPrefix'),
-            prefixIcon       : $('prefixIcon'),
-            prefixTitle      : $('prefixTitle'),
-            prefixText       : $('prefixText'),
-            prefixClose      : $('prefixClose'),
-            contextMenu      : $('chatContextMenu'),
-            currentUserName  : $('currentUserName'),
+            fab: $('chatFab'),
+            fabBadge: $('chatFabBadge'),
+            window: $('chatWindow'),
+            body: $('chatBody'),
+            inputArea: $('chatInputArea'),
+            header: $('chatHeader'),
+            minimizeBtn: $('chatMinimizeBtn'),
+            closeBtn: $('chatCloseBtn'),
+            headerOnline: $('headerOnlineCount'),
+            screenWelcome: $('screenWelcome'),
+            screenRoom: $('screenRoom'),
+            screenSupport: $('screenSupport'),
+            welcomeStartBtn: $('welcomeStartBtn'),
+            welcomeOnline: $('welcomeOnline'),
+            supportStartTawk: $('supportStartTawk'),
+            messagesArea: $('messagesArea'),
+            tabs: document.querySelectorAll('.chat-tab'),
+            messageInput: $('chatMessageInput'),
+            sendBtn: $('chatSendBtn'),
+            emojiToggle: $('emojiToggleBtn'),
+            emojiPanel: $('emojiPickerPanel'),
+            emojiGrid: $('emojiGrid'),
+            pinnedBanner: $('pinnedBanner'),
+            pinnedUser: $('pinnedBannerUser'),
+            pinnedText: $('pinnedBannerText'),
+            unpinBtn: $('unpinBtn'),
+            inputPrefix: $('inputPrefix'),
+            prefixIcon: $('prefixIcon'),
+            prefixTitle: $('prefixTitle'),
+            prefixText: $('prefixText'),
+            prefixClose: $('prefixClose'),
+            contextMenu: $('chatContextMenu'),
+            currentUserName: $('currentUserName'),
             currentUserAvatar: $('currentUserAvatar'),
-            changeNameLink   : $('changeNameLink'),
-            bulkActionBar    : $('bulkActionBar'),
-            selectedCount    : $('selectedCount'),
-            bulkDeleteBtn    : $('bulkDeleteBtn'),
-            bulkCancelBtn    : $('bulkCancelBtn'),
-            bulkForwardBtn   : $('bulkForwardBtn'),
-            pinnedArea       : $('pinnedBannerArea')
+            changeNameLink: $('changeNameLink'),
+            bulkActionBar: $('bulkActionBar'),
+            selectedCount: $('selectedCount'),
+            bulkDeleteBtn: $('bulkDeleteBtn'),
+            bulkCancelBtn: $('bulkCancelBtn'),
+            bulkForwardBtn: $('bulkForwardBtn'),
+            pinnedArea: $('pinnedBannerArea')
         };
     }
 
@@ -355,31 +355,88 @@ class APFilmChat {
     }
 
     _restoreUser() {
+        // Try multiple sources to restore user
+        let currentUser = null;
+
+        // 1. Try authService first
         if (typeof authService !== 'undefined') {
-            let currentUser = authService.getCurrentUser();
-            
-            // Fallback: Check localStorage directly
-            if (!currentUser) {
-                const stored = localStorage.getItem('cinestream_user');
-                if (stored) {
-                    try { currentUser = JSON.parse(stored); } catch(e) {}
+            currentUser = authService.getCurrentUser();
+        }
+
+        // 2. Fallback: Check localStorage directly
+        if (!currentUser) {
+            const stored = localStorage.getItem('cinestream_user');
+            if (stored) {
+                try {
+                    currentUser = JSON.parse(stored);
+                    console.log('[APFilmChat] Restored user from localStorage:', currentUser.name);
+                } catch (e) {
+                    console.error('[APFilmChat] Failed to parse stored user:', e);
                 }
             }
+        }
 
-            if (currentUser) {
-                const userId = currentUser._id || currentUser.id;
-                const avatarKey = userId ? `avatar_${userId}` : 'user_avatar';
-                
-                this.user = {
-                    id: userId,
-                    name: currentUser.name || 'User',
-                    avatar: localStorage.getItem(avatarKey) || currentUser.avatar || localStorage.getItem('user_avatar') || '/favicon.png',
-                    frame: currentUser.equippedFrameClass || localStorage.getItem('ap_frame_class') || '',
-                    chatRole: currentUser.chatRole || 'user',
-                    role: currentUser.role
-                };
-                this._syncUserUI();
+        // 3. Check if token exists (user is logged in)
+        if (!currentUser) {
+            const token = localStorage.getItem('cinestream_token');
+            if (token) {
+                // User has token but no user data - fetch from API
+                console.log('[APFilmChat] Token found but no user data, fetching from API...');
+                this._fetchUserFromAPI(token);
+                return; // Will be called again after fetch
             }
+        }
+
+        if (currentUser) {
+            const userId = currentUser._id || currentUser.id;
+            const avatarKey = userId ? `avatar_${userId}` : 'user_avatar';
+
+            this.user = {
+                id: userId,
+                name: currentUser.name || currentUser.user || 'User',
+                avatar: localStorage.getItem(avatarKey) || currentUser.avatar || localStorage.getItem('user_avatar') || '/favicon.png',
+                frame: currentUser.equippedFrameClass || localStorage.getItem('ap_frame_class') || '',
+                chatRole: currentUser.chatRole || 'user',
+                role: currentUser.role
+            };
+
+            console.log('[APFilmChat] User restored successfully:', this.user.name);
+            this._syncUserUI();
+        } else {
+            console.log('[APFilmChat] No user found - guest mode');
+        }
+    }
+
+    async _fetchUserFromAPI(token) {
+        try {
+            const response = await fetch(`${typeof API_CONFIG !== 'undefined' ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api'}/auth/me`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success && result.data) {
+                    // Save to localStorage
+                    localStorage.setItem('cinestream_user', JSON.stringify(result.data));
+                    console.log('[APFilmChat] User fetched from API:', result.data.name);
+
+                    // Restore user again
+                    this._restoreUser();
+
+                    // If chat is open, refresh the screen
+                    if (this.isOpen && this.currentScreen === 'welcome') {
+                        this._showScreen('room');
+                        this._enterRoomFirebase();
+                    }
+                }
+            } else {
+                console.warn('[APFilmChat] Failed to fetch user from API:', response.status);
+            }
+        } catch (error) {
+            console.error('[APFilmChat] Error fetching user from API:', error);
         }
     }
 
@@ -455,6 +512,16 @@ class APFilmChat {
             if (el.contextMenu) el.contextMenu.style.display = 'none';
             if (el.emojiPanel) el.emojiPanel.classList.remove('show');
         });
+
+        // Close context menu when clicking backdrop on mobile
+        if (el.contextMenu) {
+            el.contextMenu.addEventListener('click', (e) => {
+                // Close if clicking on the backdrop (::before pseudo-element area)
+                if (e.target === el.contextMenu) {
+                    el.contextMenu.style.display = 'none';
+                }
+            });
+        }
 
         el.tabs?.forEach(tab => {
             tab.addEventListener('click', (e) => {
@@ -552,7 +619,7 @@ class APFilmChat {
 
     _renderPinned(msg) {
         if (!this.el.pinnedArea) return;
-        
+
         // Clear area
         this.el.pinnedArea.innerHTML = '';
         this.el.pinnedArea.classList.remove('active');
@@ -587,7 +654,7 @@ class APFilmChat {
     _enterRoomFirebase() {
         const init = () => {
             if (!this.user) return;
-            
+
             if (this._stopPresence) this._stopPresence();
             this._stopPresence = window.firebaseChat.trackPresence(
                 this.user.id,
@@ -599,7 +666,7 @@ class APFilmChat {
             );
 
             this._listenTab(this.currentTab);
-            
+
             if (this._stopPinned) this._stopPinned();
             this._stopPinned = window.firebaseChat.listenPinned(this.currentTab, msg => this._renderPinned(msg));
 
@@ -682,7 +749,7 @@ class APFilmChat {
 
     _listenTab(tab) {
         if (!window.firebaseChat?.ready) return;
-        
+
         // 1. Initial Sync reactions from MongoDB (Persistence Fallback)
         this._syncReactions(tab);
 
@@ -710,19 +777,19 @@ class APFilmChat {
         if (!this.el.messagesArea) return;
         this.lastMessages = msgs; // Keep for re-renders
         this.el.messagesArea.innerHTML = '';
-        
+
         let lastUserId = null;
-        let lastTime   = null;
+        let lastTime = null;
 
         msgs.forEach(msg => {
             // STRICT IDENTIFICATION: Only own if IDs match AND are not falsy
             const currentId = this.user ? (this.user.id || this.user._id) : null;
             msg.isOwn = !!currentId && !!msg.userId && msg.userId === currentId;
-            
+
             const isSameUser = msg.userId === lastUserId && lastTime === msg.time;
             this._appendMessage(msg, false, isSameUser);
             lastUserId = msg.userId;
-            lastTime   = msg.time;
+            lastTime = msg.time;
         });
 
         this._scrollToBottom();
@@ -732,15 +799,15 @@ class APFilmChat {
         if (!this.el.messagesArea) return;
 
         const own = msg.isOwn ? 'own' : '';
-        const isAdmin = (msg.chatRole && msg.chatRole.toLowerCase() === 'admin') || 
-                        (msg.role && msg.role.toLowerCase() === 'admin') ||
-                        (msg.user && msg.user.toLowerCase().includes('admin cinestream')); 
+        const isAdmin = (msg.chatRole && msg.chatRole.toLowerCase() === 'admin') ||
+            (msg.role && msg.role.toLowerCase() === 'admin') ||
+            (msg.user && msg.user.toLowerCase().includes('admin cinestream'));
         const time = msg.time || this._now();
 
         const div = document.createElement('div');
         div.className = `tg-msg-wrapper ${own} ${isSameUser ? 'same-user' : ''} ${isAdmin ? 'is-admin' : ''}`;
         div.setAttribute('data-msg-id', msg.id);
-        
+
         // Hide name if it's our own message OR if it's the same user sending consecutive messages
         const showName = !msg.isOwn && !isSameUser;
 
@@ -789,14 +856,14 @@ class APFilmChat {
         let reactionsHtml = '';
         const mergedReactions = { ...(msg.reactions || {}), ...(this.reactionsCache[msg.id] || {}) };
         const emojiList = Object.keys(mergedReactions);
-        
+
         if (emojiList.length > 0) {
             // Calculate totals and first user data
             const firstEmoji = emojiList[0];
             const firstData = mergedReactions[firstEmoji];
             const firstAvatar = (firstData.avatars && firstData.avatars[0]) ? firstData.avatars[0] : '/favicon.png';
             const totalCount = Object.values(mergedReactions).reduce((acc, curr) => acc + (curr.uids ? curr.uids.length : 0), 0);
-            
+
             // Build Detailed Tooltip
             let tooltipHtml = '<div class="reaction-tooltip">';
             for (const [emo, data] of Object.entries(mergedReactions)) {
@@ -867,7 +934,7 @@ class APFilmChat {
         `;
 
         const bubble = div.querySelector('.tg-msg-bubble');
-        
+
         // Attachment events to BUBBLE for better hit area
         bubble.addEventListener('contextmenu', e => {
             e.preventDefault();
@@ -916,11 +983,11 @@ class APFilmChat {
         if (!this.reactionsCache[msgId]) this.reactionsCache[msgId] = {};
         const cache = this.reactionsCache[msgId];
         if (!cache[emoji]) cache[emoji] = { uids: [], avatars: [], names: [] };
-        
+
         const myUid = this.user.id || this.user._id;
         const myName = this.user.user || this.user.name || 'Khách';
         const myAvatar = this.user.avatar || '/favicon.png';
-        
+
         const idx = cache[emoji].uids.indexOf(myUid);
         if (idx !== -1) {
             cache[emoji].uids.splice(idx, 1);
@@ -939,7 +1006,7 @@ class APFilmChat {
         if (msgWrapper) {
             const bubble = msgWrapper.querySelector('.tg-msg-bubble');
             let pillContainer = msgWrapper.querySelector('.tg-reactions-pill');
-            
+
             const emojiList = Object.keys(cache);
             if (emojiList.length === 0) {
                 if (pillContainer) pillContainer.remove();
@@ -972,7 +1039,7 @@ class APFilmChat {
                         ${tooltipHtml}
                     </div>
                 `;
-                
+
                 if (!pillContainer) {
                     pillContainer = document.createElement('div');
                     pillContainer.className = 'tg-reactions-pill';
@@ -985,7 +1052,7 @@ class APFilmChat {
             const heart = msgWrapper.querySelector('.quick-heart');
             if (heart) {
                 heart.style.animation = 'none';
-                heart.offsetHeight; 
+                heart.offsetHeight;
                 heart.style.animation = 'heartBurst 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
             }
         }
@@ -1013,21 +1080,60 @@ class APFilmChat {
         }
 
         const isAdmin = this.user && (this.user.chatRole === 'admin' || this.user.role === 'admin');
-        
+
         menu.style.display = 'block';
-        
+
         const clientX = e.clientX || (e.touches && e.touches[0].clientX);
         const clientY = e.clientY || (e.touches && e.touches[0].clientY);
 
-        // Fixed position adjustment
-        let left = clientX;
-        let top  = clientY;
+        // Get menu dimensions after display (for accurate calculation)
+        const menuRect = menu.getBoundingClientRect();
+        const menuWidth = menuRect.width || 200;
+        const menuHeight = menuRect.height || 300;
 
-        if (left + 200 > window.innerWidth) left -= 200;
-        if (top + 250 > window.innerHeight) top -= 250;
+        // Calculate viewport dimensions
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        // Smart positioning with padding from edges
+        const padding = 10; // Minimum distance from screen edges
+        let left = clientX;
+        let top = clientY;
+
+        // Horizontal positioning
+        if (left + menuWidth + padding > viewportWidth) {
+            // Menu would overflow right edge - position to the left of touch point
+            left = Math.max(padding, clientX - menuWidth);
+        }
+
+        // Ensure menu doesn't overflow left edge
+        if (left < padding) {
+            left = padding;
+        }
+
+        // Vertical positioning
+        if (top + menuHeight + padding > viewportHeight) {
+            // Menu would overflow bottom edge - position above touch point
+            top = Math.max(padding, clientY - menuHeight);
+        }
+
+        // Ensure menu doesn't overflow top edge
+        if (top < padding) {
+            top = padding;
+        }
+
+        // On mobile, center horizontally if there's enough space
+        if (window.innerWidth <= 768) {
+            const centerX = (viewportWidth - menuWidth) / 2;
+            // Use centered position if it's reasonable
+            if (Math.abs(centerX - left) < 100) {
+                left = Math.max(padding, Math.min(centerX, viewportWidth - menuWidth - padding));
+            }
+        }
 
         menu.style.left = left + 'px';
-        menu.style.top  = top + 'px';
+        menu.style.top = top + 'px';
+        console.log('[APFilmChat] Menu positioned at:', { left, top, menuWidth, menuHeight });
         console.log('[APFilmChat] Menu shown at:', { left, top });
 
         document.getElementById('ctxReply').onclick = () => { this._setReply(msg); menu.style.display = 'none'; };
@@ -1041,7 +1147,7 @@ class APFilmChat {
             this._toggleSelectMode(true);
             menu.style.display = 'none';
         };
-        
+
         const ctxPin = document.getElementById('ctxPin');
         const ctxBan = document.getElementById('ctxBan');
         const ctxDelete = document.getElementById('ctxDelete');
@@ -1050,12 +1156,12 @@ class APFilmChat {
         const emojis = menu.querySelectorAll('.react-emoji');
         emojis.forEach(em => {
             const emojiText = em.dataset.emoji;
-            
+
             // Check if user has already reacted with this emoji
-            const hasReacted = msg.reactions && msg.reactions[emojiText] && 
-                               msg.reactions[emojiText].uids && 
-                               this.user && msg.reactions[emojiText].uids.includes(this.user.id);
-            
+            const hasReacted = msg.reactions && msg.reactions[emojiText] &&
+                msg.reactions[emojiText].uids &&
+                this.user && msg.reactions[emojiText].uids.includes(this.user.id);
+
             em.classList.toggle('already-reacted', !!hasReacted);
 
             em.onclick = () => {
@@ -1063,15 +1169,15 @@ class APFilmChat {
                 menu.style.display = 'none';
             };
         });
-        
+
         if (isAdmin) {
             ctxPin.style.display = 'flex';
             ctxBan.style.display = 'flex';
             ctxDelete.style.display = 'flex';
-            
-            ctxPin.onclick = () => { 
-                if (window.firebaseChat?.ready) window.firebaseChat.pinMessage(this.currentTab, msg.id); 
-                menu.style.display = 'none'; 
+
+            ctxPin.onclick = () => {
+                if (window.firebaseChat?.ready) window.firebaseChat.pinMessage(this.currentTab, msg.id);
+                menu.style.display = 'none';
             };
             ctxBan.onclick = () => {
                 if (confirm(`Chặn người dùng "${msg.user}"? Họ sẽ không thể nhắn tin nữa.`)) {
@@ -1079,11 +1185,45 @@ class APFilmChat {
                 }
                 menu.style.display = 'none';
             };
-            ctxDelete.onclick = () => { 
+            ctxDelete.onclick = async () => {
                 if (confirm('Xóa tin nhắn này?')) {
-                    if (window.firebaseChat?.ready) window.firebaseChat.deleteMessage(this.currentTab, msg.id);
+                    try {
+                        // Delete from Firebase first
+                        if (window.firebaseChat?.ready) {
+                            await window.firebaseChat.deleteMessage(this.currentTab, msg.id);
+                        }
+
+                        // Also delete from MongoDB via API
+                        const token = localStorage.getItem('cinestream_token');
+                        if (token) {
+                            const response = await fetch(`${typeof API_CONFIG !== 'undefined' ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api'}/chat/${msg.id}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+
+                            const result = await response.json();
+                            if (result.success) {
+                                if (window.showMessage) {
+                                    window.showMessage('✅ Đã xóa tin nhắn', 'success');
+                                }
+                            } else {
+                                console.error('Delete failed:', result.message);
+                                if (window.showMessage) {
+                                    window.showMessage(`❌ Lỗi: ${result.message}`, 'error');
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Delete message error:', error);
+                        if (window.showMessage) {
+                            window.showMessage('❌ Không thể xóa tin nhắn', 'error');
+                        }
+                    }
                 }
-                menu.style.display = 'none'; 
+                menu.style.display = 'none';
             };
         } else {
             ctxPin.style.display = 'none';
@@ -1091,9 +1231,43 @@ class APFilmChat {
             // Users can delete their own messages
             if (msg.isOwn) {
                 ctxDelete.style.display = 'flex';
-                ctxDelete.onclick = () => {
+                ctxDelete.onclick = async () => {
                     if (confirm('Xóa tin nhắn của bạn?')) {
-                        if (window.firebaseChat?.ready) window.firebaseChat.deleteMessage(this.currentTab, msg.id);
+                        try {
+                            // Delete from Firebase first
+                            if (window.firebaseChat?.ready) {
+                                await window.firebaseChat.deleteMessage(this.currentTab, msg.id);
+                            }
+
+                            // Also delete from MongoDB via API
+                            const token = localStorage.getItem('cinestream_token');
+                            if (token) {
+                                const response = await fetch(`${typeof API_CONFIG !== 'undefined' ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api'}/chat/${msg.id}`, {
+                                    method: 'DELETE',
+                                    headers: {
+                                        'Authorization': `Bearer ${token}`,
+                                        'Content-Type': 'application/json'
+                                    }
+                                });
+
+                                const result = await response.json();
+                                if (result.success) {
+                                    if (window.showMessage) {
+                                        window.showMessage('✅ Đã xóa tin nhắn', 'success');
+                                    }
+                                } else {
+                                    console.error('Delete failed:', result.message);
+                                    if (window.showMessage) {
+                                        window.showMessage(`❌ ${result.message}`, 'error');
+                                    }
+                                }
+                            }
+                        } catch (error) {
+                            console.error('Delete message error:', error);
+                            if (window.showMessage) {
+                                window.showMessage('❌ Không thể xóa tin nhắn', 'error');
+                            }
+                        }
                     }
                     menu.style.display = 'none';
                 };
@@ -1124,15 +1298,15 @@ class APFilmChat {
             console.error('[APFilmChat] inputPrefix element NOT found in cache!');
             return;
         }
-        
+
         el.inputPrefix.style.setProperty('display', 'flex', 'important');
         el.inputPrefix.style.zIndex = '1000';
-        
+
         if (el.prefixIcon) el.prefixIcon.innerHTML = `<span class="material-icons">${icon}</span>`;
         if (el.prefixTitle) el.prefixTitle.textContent = title;
         if (el.prefixText) el.prefixText.textContent = text;
-        
-        const color = '#f87171'; 
+
+        const color = '#f87171';
         if (el.prefixIcon) el.prefixIcon.style.color = color;
         if (el.prefixTitle) el.prefixTitle.style.color = color;
         console.log('[APFilmChat] inputPrefix should now be visible');
@@ -1148,11 +1322,11 @@ class APFilmChat {
         this.selectMode = active;
         this.selectedMsgs = [];
         this.el.window.classList.toggle('select-mode', active);
-        
+
         if (this.el.bulkActionBar) {
             this.el.bulkActionBar.classList.toggle('active', active);
         }
-        
+
         if (!active) {
             document.querySelectorAll('.tg-msg-wrapper.selected').forEach(el => el.classList.remove('selected'));
         }
@@ -1176,10 +1350,10 @@ class APFilmChat {
 
         const text = (this.el.messageInput?.value || '').trim();
         if (!text || !this.user) return;
-        
+
         const msg = {
             userId: this.user.id,
-            user : this.user.name,
+            user: this.user.name,
             avatar: this.user.avatar,
             frame: this.user.frame,
             chatRole: this.user.chatRole,
@@ -1233,14 +1407,49 @@ class APFilmChat {
 
     toggleMinimize() {
         this.isMinimized = !this.isMinimized;
-        this.el.window?.classList.toggle('minimized', this.isMinimized);
+
+        if (this.isMinimized) {
+            // Messenger style: hide chat completely, show FAB
+            this.el.window?.classList.add('minimized');
+            if (this.el.fab) this.el.fab.style.display = '';
+            this.isOpen = false;
+        } else {
+            // Restore chat
+            this.el.window?.classList.remove('minimized');
+            if (this.el.fab) this.el.fab.style.display = 'none';
+            this.isOpen = true;
+            this._scrollToBottom();
+        }
     }
 
     async open() {
         if (!this.el.window) return;
+
+        // Check if user is logged in before opening
+        if (!this.user) {
+            const token = localStorage.getItem('cinestream_token');
+            if (token) {
+                console.log('[APFilmChat] User not loaded yet, fetching...');
+                await this._fetchUserFromAPI(token);
+            }
+        }
+
         this.isOpen = true;
+        this.isMinimized = false;
+        this.el.window.classList.remove('minimized');
         this.el.window.classList.add('active');
         if (this.el.fab) this.el.fab.style.display = 'none';
+
+        // Auto-enter room if user is logged in
+        if (this.user) {
+            console.log('[APFilmChat] User logged in, entering room directly');
+            this._showScreen('room');
+            this._enterRoomFirebase();
+        } else {
+            console.log('[APFilmChat] No user, showing welcome screen');
+            this._showScreen('welcome');
+        }
+
         this._scrollToBottom();
 
         // Auto-refresh user role to detect if they were promoted to admin
@@ -1269,13 +1478,20 @@ class APFilmChat {
     close() {
         if (!this.el.window) return;
         this.isOpen = false;
+        this.isMinimized = false;
         this.el.window.classList.remove('active');
+        this.el.window.classList.remove('minimized');
         if (this.el.fab) this.el.fab.style.display = '';
     }
 
     /* ── Desktop Interaction ── */
     _initDragResize() {
-        if (window.innerWidth <= 768) return;
+        // Skip drag/resize on mobile completely
+        if (window.innerWidth <= 768) {
+            console.log('[APFilmChat] Mobile detected - skipping drag/resize');
+            return;
+        }
+
         const win = this.el.window;
         const header = this.el.header;
 
@@ -1293,22 +1509,22 @@ class APFilmChat {
             win.style.transition = 'none';
             ox = e.clientX - win.offsetLeft;
             oy = e.clientY - win.offsetTop;
-            
+
             const onDragMove = (ev) => {
                 if (!dragging) return;
                 win.style.left = (ev.clientX - ox) + 'px';
-                win.style.top  = (ev.clientY - oy) + 'px';
-                win.style.right = 'auto'; 
+                win.style.top = (ev.clientY - oy) + 'px';
+                win.style.right = 'auto';
                 win.style.bottom = 'auto';
             };
-            
+
             const onDragUp = () => {
                 dragging = false;
                 win.style.transition = '';
                 document.removeEventListener('mousemove', onDragMove);
                 document.removeEventListener('mouseup', onDragUp);
             };
-            
+
             document.addEventListener('mousemove', onDragMove);
             document.addEventListener('mouseup', onDragUp);
         };
@@ -1317,6 +1533,9 @@ class APFilmChat {
     }
 
     _bindResizeHandlers() {
+        // Skip on mobile
+        if (window.innerWidth <= 768) return;
+
         const win = this.el.window;
         if (!win) return;
         let hideTimeout;
@@ -1327,7 +1546,7 @@ class APFilmChat {
             win.style.transition = 'none';
             win.classList.add('is-resizing');
             if (hideTimeout) clearTimeout(hideTimeout);
-            
+
             const isTouch = e.type === 'touchstart';
             const startW = win.offsetWidth;
             const startH = win.offsetHeight;
@@ -1369,7 +1588,7 @@ class APFilmChat {
                 localStorage.setItem('chat_height', win.style.height);
                 document.removeEventListener(isTouch ? 'touchmove' : 'mousemove', onMove);
                 document.removeEventListener(isTouch ? 'touchend' : 'mouseup', onUp);
-                
+
                 // Hide after 2 seconds
                 hideTimeout = setTimeout(() => {
                     win.classList.remove('is-resizing');
@@ -1382,9 +1601,9 @@ class APFilmChat {
 
         win.querySelectorAll('.cr-resize-handle').forEach(h => {
             const type = h.classList.contains('cr-resize-nw') ? 'nw' :
-                         h.classList.contains('cr-resize-ne') ? 'ne' :
-                         h.classList.contains('cr-resize-se') ? 'se' : 'sw';
-            
+                h.classList.contains('cr-resize-ne') ? 'ne' :
+                    h.classList.contains('cr-resize-se') ? 'se' : 'sw';
+
             // Mouse
             h.onmousedown = (e) => onResizeStart(e, type);
             // Touch
@@ -1393,20 +1612,18 @@ class APFilmChat {
     }
 
     _initMobileKeyboardFix() {
+        // Only apply on mobile
         if (window.innerWidth > 768) return;
         if (!window.visualViewport) return;
-        window.visualViewport.addEventListener('resize', () => {
-            if (this.isOpen && !this.isMinimized) {
-                const keyboardHeight = window.innerHeight - window.visualViewport.height;
-                this.el.window.style.bottom = (keyboardHeight > 0 ? keyboardHeight : 0) + 'px';
-            }
-        });
+
+        // On mobile, chat is full-screen, so we don't need to adjust for keyboard
+        // The browser will handle scrolling automatically
+        console.log('[APFilmChat] Mobile keyboard handling initialized');
     }
 
     _initMobileResize() {
-        if (window.innerWidth <= 768) {
-            this._bindResizeHandlers();
-        }
+        // Mobile resize is disabled - full-screen only
+        console.log('[APFilmChat] Mobile resize disabled (full-screen mode)');
     }
 }
 

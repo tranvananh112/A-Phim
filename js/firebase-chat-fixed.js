@@ -116,7 +116,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('cinestream_token')}`
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
                     },
                     body: JSON.stringify({ ...msg, tab, firebaseId: docRef.id })
                 }).catch(e => console.warn('[APFilmChat] Sync to MongoDB failed:', e));
@@ -178,7 +178,7 @@
 
                 await fetch(`${typeof API_CONFIG !== 'undefined' ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api'}/chat/pin/${messageId}`, {
                     method: 'PUT',
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('cinestream_token')}` }
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                 });
 
             } catch (err) {
@@ -214,7 +214,7 @@
                 await this._msgCol(tab).doc(messageId).delete();
                 fetch(`${typeof API_CONFIG !== 'undefined' ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api'}/chat/${messageId}`, {
                     method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('cinestream_token')}` }
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                 });
             } catch (err) {
                 console.error('[APFilmChat] Delete error:', err);
@@ -230,7 +230,7 @@
                 });
                 fetch(`${typeof API_CONFIG !== 'undefined' ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api'}/users/${userId}/chat-ban`, {
                     method: 'PUT',
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('cinestream_token')}` }
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                 });
             } catch (err) {
                 console.error('[APFilmChat] Ban error:', err);
@@ -250,7 +250,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('cinestream_token')}`
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
                     },
                     body: JSON.stringify({
                         tab,
