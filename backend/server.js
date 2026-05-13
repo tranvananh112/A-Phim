@@ -79,6 +79,7 @@ app.use('/api/phimx-proxy', require('./routes/phimXProxy')); // Phim X Proxy to 
 app.use('/api/partner', require('./routes/partner')); // Partner DT99 session tracking
 app.use('/api/settings', require('./routes/settings')); // System settings
 app.use('/api/notifications', require('./routes/notifications')); // Persistent notifications
+app.use('/api/chat', require('./routes/chat')); // Chat history & moderation
 
 // Health check
 app.get('/health', (req, res) => {

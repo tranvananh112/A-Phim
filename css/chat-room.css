@@ -134,7 +134,7 @@
     display: none;
     flex-direction: column;
     z-index: 9999;
-    overflow: hidden;
+    overflow: hidden; /* Forcing the 20px radius back */
     font-family: 'Manrope', sans-serif;
     color: var(--c-text);
 }
@@ -491,7 +491,71 @@
 
 .join-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(255,215,9,0.45); }
 .join-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
-.join-btn .material-icons { font-size: 20px; }
+.menu-item .material-icons {
+    font-size: 20px;
+}
+
+/* ── Context Menu Reaction Bar ── */
+.reaction-bar {
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 4px;
+}
+
+.react-emoji {
+    font-size: 24px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 8px;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.react-emoji:hover {
+    background: rgba(255, 215, 9, 0.15);
+    transform: scale(1.4) translateY(-6px);
+    box-shadow: 0 5px 15px rgba(255, 215, 9, 0.3);
+    border: 1px solid rgba(255, 215, 9, 0.3);
+}
+
+.react-emoji.already-reacted {
+    background: rgba(255, 215, 9, 0.25);
+    border: 1px solid rgba(255, 215, 9, 0.5);
+    box-shadow: inset 0 0 10px rgba(255, 215, 9, 0.3);
+    border-radius: 10px;
+}
+
+.react-emoji:active {
+    transform: scale(0.9);
+}
+
+/* ── Modern Context Menu refinements ── */
+.tg-context-menu {
+    border-radius: 16px;
+    min-width: 200px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+}
+
+.menu-item {
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.menu-item:hover {
+    padding-left: 16px;
+    background: var(--tg-primary);
+}
+
+/* EMOJI PICKER refinements */
+.emoji-picker-panel {
+    /* ... */
+}
 
 /* ── Chat Room Screen ───────────────────────── */
 .chat-screen-room { background: var(--c-bg); overflow: hidden; }
@@ -507,18 +571,32 @@
 .messages-area::-webkit-scrollbar-track { background: transparent; }
 .messages-area::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 10px; }
 
-/* Date separator */
-.date-separator {
-    display: flex; align-items: center; justify-content: center; margin: 10px 0;
+/* ── Pinned Banner (Telegram Style) ── */
+.pinned-message-banner {
+    display: flex; align-items: center; gap: 12px;
+    padding: 8px 16px; background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    z-index: 10; position: sticky; top: 0;
+    animation: slideInDown 0.3s ease;
 }
-.date-separator span {
-    background: var(--c-surface-2);
-    color: var(--c-text-faint);
-    font-size: 10px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.08em; padding: 4px 12px; border-radius: 20px;
-    font-family: 'Inter', sans-serif;
-    border: 1px solid var(--c-border);
+
+.pinned-icon { color: #f59e0b; flex-shrink: 0; }
+.pinned-line { width: 2px; height: 24px; background: #f59e0b; border-radius: 2px; }
+
+.pinned-content { flex: 1; overflow: hidden; cursor: pointer; }
+.pinned-user { font-size: 11px; font-weight: 800; color: #f59e0b; margin-bottom: 1px; }
+.pinned-text { 
+    font-size: 12.5px; color: #1e293b; 
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
 }
+
+.pinned-close { 
+    background: none; border: none; color: #94a3b8; 
+    cursor: pointer; padding: 4px; border-radius: 50%;
+    transition: all 0.2s;
+}
+.pinned-close:hover { background: rgba(0,0,0,0.05); color: #ef4444; }
 
 /* System message */
 .sys-msg { text-align: center; margin: 6px 0; }
@@ -529,60 +607,190 @@
     border: 1px solid var(--c-border);
 }
 
-/* Message group */
-.msg-group {
-    display: flex; gap: 8px; max-width: 85%;
-    animation: msgFadeIn 0.3s ease; margin-bottom: 8px;
+/* ── Telegram Background Pattern ── */
+.chat-body {
+    flex: 1; overflow: hidden; position: relative;
+    background-color: #f1f5f9;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(255, 215, 9, 0.05) 0, transparent 50%), 
+        radial-gradient(at 50% 0%, rgba(245, 158, 11, 0.05) 0, transparent 50%), 
+        radial-gradient(at 100% 0%, rgba(255, 215, 9, 0.05) 0, transparent 50%);
 }
 
-@keyframes msgFadeIn {
-    from { opacity: 0; transform: translateY(6px); }
-    to   { opacity: 1; transform: translateY(0); }
+.messages-area {
+    flex: 1; overflow-y: auto;
+    padding: 12px 14px; display: flex; flex-direction: column; gap: 4px;
 }
 
-.msg-group.own { flex-direction: row-reverse; margin-left: auto; }
-
-.msg-avatar {
-    width: 30px; height: 30px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 700;
-    flex-shrink: 0; align-self: flex-end;
-    color: rgba(0,0,0,0.65);
-    box-shadow: 0 1px 4px var(--c-shadow);
+/* ── Modern TG Messages ── */
+.tg-msg-wrapper {
+    display: flex; gap: 10px; max-width: 85%;
+    margin-bottom: 28px;
+    animation: tgMsgIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.msg-content { display: flex; flex-direction: column; gap: 3px; }
-
-.msg-name {
-    font-size: 10px; font-weight: 700;
-    color: var(--c-text-dim);
-    font-family: 'Inter', sans-serif;
-    padding-left: 4px; margin-bottom: 1px;
+@keyframes tgMsgIn {
+    from { opacity: 0; transform: translateY(8px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.msg-bubble {
-    background: var(--c-surface);
-    border: 1px solid var(--c-border);
-    color: var(--c-text);
-    padding: 10px 14px;
-    border-radius: 18px 18px 18px 4px;
-    font-size: 13.5px; line-height: 1.5;
+.tg-msg-wrapper.own {
+    flex-direction: row-reverse;
+    margin-left: auto;
+}
+
+.tg-msg-wrapper.same-user { margin-top: -2px; }
+
+.tg-avatar-wrap {
+    align-self: flex-end;
+    margin-bottom: 4px;
+    flex-shrink: 0;
+}
+
+.tg-avatar-spacer { width: 32px; flex-shrink: 0; }
+
+.tg-msg-bubble {
+    position: relative;
+    padding: 8px 14px 6px;
+    background: #ffffff;
+    border-radius: 18px 18px 18px 6px;
+    box-shadow: 0 1.5px 3px rgba(0, 0, 0, 0.08);
+    color: #1e293b;
+    font-size: 14px;
+    line-height: 1.55;
     word-break: break-word;
-    box-shadow: 0 1px 4px var(--c-shadow);
+    min-width: 60px;
 }
 
-.msg-group.own .msg-bubble {
-    background: linear-gradient(135deg, var(--c-gold), #f59e0b);
-    color: #7a5a00; font-weight: 700;
-    border: none; border-radius: 18px 18px 4px 18px;
-    box-shadow: 0 4px 14px rgba(255,215,9,0.25);
+/* Removed Telegram Beak (Tail) as requested */
+
+.tg-msg-wrapper.own .tg-msg-bubble {
+    background: linear-gradient(165deg, #ffd709 0%, #f59e0b 100%);
+    color: #7a5a00;
+    border-radius: 18px 18px 6px 18px;
+    box-shadow: 0 3px 12px rgba(255, 215, 9, 0.4);
 }
 
-.msg-meta { display: flex; align-items: center; gap: 4px; padding: 0 4px; }
-.msg-time { font-size: 10px; color: var(--c-text-faint); font-family: 'Inter', sans-serif; }
-.msg-group.own .msg-meta { justify-content: flex-end; }
+.tg-msg-wrapper.same-user .tg-msg-bubble {
+    border-radius: 16px !important;
+}
 
-/* Typing */
+.tg-msg-name {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #475569; /* Neutral Slate Blue for users */
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.admin-badge {
+    background: rgba(122, 90, 0, 0.1);
+    color: #7a5a00;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 99px;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.admin-badge .material-icons { font-size: 12px; }
+
+.tg-msg-text {
+    white-space: pre-line;
+}
+
+.tg-msg-meta {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    margin-top: 2px;
+    opacity: 0.6;
+}
+
+.tg-msg-time {
+    font-size: 10.5px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+}
+
+.read-icon { font-size: 14px; color: #7a5a00; }
+
+/* Legacy admin styles removed to prevent conflict */
+
+.admin-badge {
+    background: linear-gradient(135deg, #ffd700, #b8860b);
+    color: #000;
+    font-size: 9px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-weight: 900;
+    text-transform: uppercase;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    margin-left: 6px;
+}
+
+.admin-badge .material-icons { font-size: 11px; }
+
+.admin-glow .shop-frame-wrap::before {
+    box-shadow: 0 0 15px #ffd700 !important;
+    animation: adminAvatarPulse 2s infinite !important;
+}
+
+@keyframes adminAvatarPulse {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.1); opacity: 1; filter: brightness(1.2); }
+}
+
+/* Multi-select Mode */
+.chat-window.select-mode .tg-msg-wrapper {
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.chat-window.select-mode .tg-msg-wrapper:hover {
+    background: rgba(255, 215, 9, 0.05);
+}
+.chat-window.select-mode .tg-msg-wrapper.selected .tg-msg-bubble {
+    border: 2px solid #ffd700;
+    transform: scale(1.02);
+}
+
+/* ── Chat Tabs (Telegram Style) ── */
+.chat-tabs-bar {
+    display: flex; gap: 4px; padding: 4px;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 12px; margin-bottom: 10px;
+}
+
+.chat-tab {
+    flex: 1; border: none; background: none;
+    padding: 8px; border-radius: 8px;
+    font-size: 12.5px; font-weight: 700; color: #64748b;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+
+.chat-tab.active {
+    background: #ffffff; color: #1e293b;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.chat-tab:hover:not(.active) { background: rgba(255, 255, 255, 0.5); }
+
+/* Forwarded Message Label */
+.forwarded-label {
+    font-size: 11px; font-style: italic; color: var(--c-text-faint);
+    margin-bottom: 2px; display: flex; align-items: center; gap: 4px;
+}
+.forwarded-label .material-icons { font-size: 12px; }
 .typing-indicator {
     display: none; align-items: center; gap: 8px; padding: 4px 0; margin-bottom: 4px;
 }
@@ -697,6 +905,43 @@
 .chat-tab.active .material-icons {
     filter: drop-shadow(0 1px 3px rgba(122, 90, 0, 0.4));
 }
+
+/* ── Context Menu & Reactions ── */
+.tg-context-menu {
+    position: absolute; z-index: 10001;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 14px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    min-width: 160px;
+    padding: 6px;
+    border: 1px solid rgba(0,0,0,0.05);
+    animation: menuZoom 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes menuZoom { from { opacity:0; transform:scale(0.9); } to { opacity:1; transform:scale(1); } }
+
+.reaction-bar {
+    display: flex; gap: 4px; padding: 4px 6px 8px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    margin-bottom: 4px;
+}
+
+.react-emoji {
+    font-size: 20px; cursor: pointer; padding: 4px;
+    border-radius: 8px; transition: all 0.2s;
+}
+.react-emoji:hover { background: rgba(0,0,0,0.05); transform: scale(1.2); }
+
+.menu-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; border-radius: 8px;
+    font-size: 14px; font-weight: 500; color: #1e293b;
+    cursor: pointer; transition: all 0.15s;
+}
+.menu-item:hover { background: rgba(0,0,0,0.05); }
+.menu-item.danger { color: #ef4444; }
+.menu-item .material-icons { font-size: 18px; opacity: 0.7; }
 
 .chat-tab .material-icons {
     font-size: 17px;
@@ -860,7 +1105,50 @@
         right: -3px;
     }
 
-    /* Pulse ring nhỏ lại */
+    /* ── Reply Preview ── */
+.reply-preview {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--c-border);
+    animation: slideInDown 0.2s ease;
+    position: relative;
+}
+
+.reply-line {
+    width: 3px; height: 32px; background: #ffd700;
+    border-radius: 4px; flex-shrink: 0;
+}
+
+.reply-content { flex: 1; overflow: hidden; }
+.reply-user { font-size: 12px; font-weight: 800; color: #ffd700; margin-bottom: 2px; }
+.reply-text { font-size: 12px; color: var(--c-text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.cancel-reply {
+    background: none; border: none; color: var(--c-text-faint);
+    cursor: pointer; padding: 4px; display: flex; align-items: center;
+}
+.cancel-reply:hover { color: #ef4444; }
+
+/* ── Bulk Action Bar ── */
+.bulk-action-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px; background: #ffd700; color: #000;
+    position: absolute; bottom: 0; left: 0; right: 0; z-index: 100;
+    animation: slideInUp 0.3s ease;
+}
+
+.selected-count { font-size: 14px; font-weight: 800; }
+.bulk-btns { display: flex; gap: 12px; }
+.bulk-btn {
+    background: rgba(0,0,0,0.1); border: none; border-radius: 8px;
+    width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.2s;
+}
+.bulk-btn:hover { background: rgba(0,0,0,0.2); transform: scale(1.1); }
+.bulk-btn.danger:hover { color: #ef4444; }
+
+@keyframes slideInDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     .chat-fab::before { inset: -3px; }
 
     /* ══════════════════════════════════════════════════
@@ -1123,6 +1411,81 @@
     .cr-resize-e  { top: 14px; right: -5px;   bottom: 14px; width: 10px;  cursor: e-resize; }
     .cr-resize-w  { top: 14px; left: -5px;    bottom: 14px; width: 10px;  cursor: w-resize; }
 
+    /* ── Message Checkbox (Multi-select) ── */
+.tg-msg-checkbox {
+    display: none; width: 22px; height: 22px;
+    border: 2px solid rgba(0, 0, 0, 0.1); border-radius: 50%;
+    margin-right: 12px; flex-shrink: 0; align-self: center;
+    position: relative; transition: all 0.2s;
+}
+.select-mode .tg-msg-checkbox { display: flex; align-items: center; justify-content: center; }
+.selected .tg-msg-checkbox { background: #4ade80; border-color: #4ade80; }
+.selected .tg-msg-checkbox::after {
+    content: 'check'; font-family: 'Material Icons';
+    color: white; font-size: 14px;
+}
+
+/* ── Reply/Forward Preview Header (Photo 2 Style) ── */
+.chat-input-prefix {
+    display: none; align-items: center; gap: 14px;
+    padding: 10px 16px; 
+    background: #ffffff; /* Removed blur to prevent text fog */
+    border-top: 1px solid rgba(0,0,0,0.06);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    position: relative;
+    z-index: 5;
+    animation: slideInUp 0.25s ease;
+}
+
+.prefix-icon { 
+    color: #ef4444; flex-shrink: 0; 
+    display: flex; align-items: center; justify-content: center;
+}
+.prefix-icon .material-icons { font-size: 24px; }
+
+.prefix-line { 
+    width: 2px; height: 36px; background: #ef4444; 
+    border-radius: 4px; flex-shrink: 0;
+}
+
+.prefix-content { flex: 1; overflow: hidden; display: flex; flex-direction: column; gap: 2px; }
+.prefix-title { font-size: 13px; font-weight: 800; color: #ef4444; }
+.prefix-text { font-size: 13px; color: #1e293b; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.prefix-close { 
+    background: none; border: none; color: #ef4444; 
+    cursor: pointer; padding: 6px; border-radius: 50%;
+    transition: background 0.2s; display: flex;
+}
+.prefix-close:hover { background: rgba(239, 68, 68, 0.1); }
+.prefix-close .material-icons { font-size: 20px; }
+
+/* ── Floating Bulk Action Bar ── */
+.bulk-action-bar {
+    display: none; position: absolute; bottom: 20px; left: 20px; right: 20px;
+    background: #ffffff; border-radius: 16px; padding: 8px 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    z-index: 1000; align-items: center; gap: 16px;
+    animation: slideInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.bulk-action-bar.active { display: flex; }
+
+.bulk-info { display: flex; align-items: center; gap: 12px; flex: 1; }
+.bulk-cancel { background: none; border: none; color: #94a3b8; cursor: pointer; padding: 4px; }
+.selected-count { font-size: 14px; font-weight: 700; color: #1e293b; }
+
+.bulk-actions { display: flex; gap: 8px; }
+.bulk-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: none; border: none; padding: 8px 12px;
+    border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600;
+    transition: all 0.2s;
+}
+.bulk-btn:hover { background: rgba(0,0,0,0.05); }
+.bulk-btn.forward { color: #1e293b; }
+.bulk-btn.delete { color: #ef4444; }
+.bulk-btn .material-icons { font-size: 20px; }
+
     /* Corners — hit area lớn hơn */
     .cr-resize-ne { top: -5px;    right: -5px;  width: 20px; height: 20px; cursor: ne-resize; }
     .cr-resize-nw { top: -5px;    left: -5px;   width: 20px; height: 20px; cursor: nw-resize; }
@@ -1182,4 +1545,489 @@
 .chat-window textarea {
     user-select: text;
     -webkit-user-select: text;
+}
+
+/* ── Internal Message Preview (Inside Bubble) ── */
+.msg-reply-preview {
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 4px;
+    padding: 4px 10px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex; gap: 8px;
+    border-left: 3px solid #f59e0b;
+}
+/* Own bubble adjustment - nested card style */
+.own .msg-reply-preview {
+    background: rgba(255, 255, 255, 0.15);
+    border-left-color: rgba(0, 0, 0, 0.15);
+}
+.own .msg-reply-preview .reply-preview-user { color: #854d0e; }
+.own .msg-reply-preview .reply-preview-text { color: #451a03; }
+
+.msg-reply-preview.is-forward { border-left-color: #10b981; }
+.msg-reply-preview:hover { background: rgba(0, 0, 0, 0.08); }
+
+.reply-preview-content { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+.reply-preview-user { 
+    font-size: 12px; font-weight: 800; color: #f59e0b; 
+    margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+}
+.is-forward .reply-preview-user { color: #059669; }
+.reply-preview-text { 
+    font-size: 12px; color: #1e293b; font-weight: 500;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+}
+
+/* ── Removed Bubble Tail (Beak) ── */
+.tg-msg-bubble { position: relative; }
+.bubble-tail { display: none !important; }
+
+/* ── Read Receipts & Icons ── */
+.tg-msg-meta {
+    display: flex; align-items: center; justify-content: flex-end; gap: 4px;
+    margin-top: 2px;
+}
+.read-icon { font-size: 14px; color: #7a5a00; opacity: 0.8; }
+.pinned-msg-icon { font-size: 12px; color: #f59e0b; }
+
+/* Disable default browser resize handle */
+.chat-window {
+    resize: none !important;
+}
+
+/* ── Message Reactions Pill ── */
+.tg-reactions-pill {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    position: absolute;
+    bottom: -18px;
+    left: 8px;
+    z-index: 10;
+}
+
+.tg-msg-wrapper.own .tg-reactions-pill {
+    left: auto;
+    right: 8px;
+}
+
+.reaction-item {
+    background: rgba(0, 0, 0, 0.06); /* Semi-transparent like Image 1 */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: none;
+    border-radius: 20px;
+    padding: 3px 10px 3px 6px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    user-select: none;
+    animation: reactionPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes reactionPop {
+    0% { transform: scale(0.5); opacity: 0; }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.reaction-item:hover {
+    transform: scale(1.05) translateY(-1px);
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.reaction-item.active {
+    background: rgba(0, 136, 204, 0.12); /* Telegram Blue hint */
+    color: #0088cc;
+}
+
+.reaction-item .emoji {
+    font-size: 20px; /* Large emoji like Image 1 */
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.05));
+    line-height: 1;
+}
+
+.reaction-item .count {
+    font-size: 13px;
+    font-weight: 800;
+    margin-left: 1px;
+}
+
+/* Consolidated Tooltip */
+.reaction-tooltip {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    pointer-events: none;
+    min-width: 120px;
+}
+
+.reaction-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -6px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.9) transparent transparent transparent;
+}
+
+.reaction-item:hover .reaction-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.tooltip-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 4px;
+}
+
+.tooltip-row:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.tooltip-names {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    color: #cbd5e1;
+    font-size: 11px;
+}
+
+.tooltip-emoji {
+    font-size: 16px;
+}
+
+.reaction-avatars-stack {
+    display: flex;
+    align-items: center;
+}
+
+.reaction-avatar {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0; /* Critical: Prevent shrinking to a dot */
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    margin-left: -10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    background: #fff;
+    display: block;
+}
+
+.reaction-avatar:first-child {
+    margin-left: 0;
+}
+
+/* ── Quick Heart on Hover (Inside Bubble) ── */
+.tg-msg-bubble {
+    position: relative;
+    overflow: visible; /* Let reactions/heart breathe within the bubble context */
+}
+
+.quick-heart {
+    position: absolute;
+    right: -10px;
+    bottom: 2px;
+    transform: scale(0.5);
+    opacity: 0;
+    background: #fff;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 100;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+/* For own messages, put heart on left */
+.tg-msg-wrapper.own .quick-heart {
+    right: auto;
+    left: -10px;
+}
+
+.tg-msg-bubble:hover .quick-heart {
+    opacity: 1;
+    transform: scale(1);
+}
+
+@keyframes heartBurst {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.5); color: #ff0000; }
+    50% { transform: scale(0.8); }
+    70% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.quick-heart .material-icons {
+    font-size: 16px;
+    color: #ef4444;
+    transition: color 0.3s;
+}
+
+.quick-heart:hover {
+    transform: scale(1.2) !important;
+    background: #fee2e2;
+    box-shadow: 0 6px 15px rgba(239, 68, 68, 0.25);
+}
+
+.quick-heart:active {
+    transform: scale(0.9) !important;
+}
+
+/* Cleaned up redundant styles */
+.cr-resize-handle {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    z-index: 10000;
+    cursor: nwse-resize;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    background: transparent !important;
+    border: none !important;
+}
+
+/* 3x3 Dot Grid Pattern */
+.cr-resize-handle::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background-image: radial-gradient(circle, rgba(0,0,0,0.2) 1.5px, transparent 1.5px);
+    background-size: 4px 4px;
+    background-repeat: repeat;
+}
+
+/* Show on interaction */
+.chat-window:hover .cr-resize-handle,
+.chat-window.is-resizing .cr-resize-handle {
+    opacity: 0.6;
+}
+.chat-window.is-resizing .cr-resize-handle {
+    opacity: 1;
+}
+
+/* Positions - tucked INSIDE rounded corners (6px offset) */
+.cr-resize-nw { top: 6px; left: 6px; cursor: nwse-resize; }
+.cr-resize-ne { top: 6px; right: 6px; cursor: nesw-resize; }
+.cr-resize-se { bottom: 6px; right: 6px; cursor: nwse-resize; }
+.cr-resize-sw { bottom: 6px; left: 6px; cursor: nesw-resize; }
+
+/* Desktop Only interaction */
+.cr-resize-handle:hover::after {
+    background-image: radial-gradient(circle, #f59e0b 2px, transparent 2px);
+}
+
+/* ── Pinned Message (Telegram Separate Row Layout) ── */
+.pinned-banner-area {
+    display: none;
+    width: 100%;
+    background: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.pinned-banner-area.active {
+    display: block;
+    animation: slideDownPinned 0.3s ease-out;
+}
+
+@keyframes slideDownPinned {
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.pinned-header-wrapper {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    gap: 12px;
+    cursor: pointer;
+    background: #ffffff;
+    transition: background 0.2s;
+    width: 100%;
+    border-left: 3px solid #0088cc;
+}
+
+.pinned-header-wrapper:hover {
+    background: #f8fafc;
+}
+
+.pinned-thumb {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: #e0f2fe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0088cc;
+    flex-shrink: 0;
+}
+
+.pinned-content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+
+.pinned-user {
+    font-size: 11px;
+    font-weight: 700;
+    color: #0088cc;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.pinned-text {
+    font-size: 11px;
+    color: #475569;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+}
+
+.pinned-close-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: 4px;
+}
+
+.pinned-close-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: #ef4444;
+}
+
+/* ── Jump Highlight ── */
+.jump-highlight {
+    animation: highlightFlash 2s ease;
+}
+
+@keyframes highlightFlash {
+    0% { background-color: transparent; }
+    20% { background-color: rgba(245, 158, 11, 0.2); }
+    100% { background-color: transparent; }
+}
+
+/* ── Admin Special Identity (Privileges) ── */
+.tg-msg-wrapper.is-admin .tg-msg-name {
+    color: #f59e0b !important;
+    text-shadow: 0 0 6px rgba(245, 158, 11, 0.2);
+    font-weight: 800 !important;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.1px;
+}
+
+/* Force High Specificity for Admin Refinement (MATCHING IMAGE 11) */
+.chat-window .tg-msg-wrapper.is-admin .tg-msg-bubble {
+    border: 1px solid rgba(255, 215, 0, 0.2) !important;
+    background: #ffffff !important;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.15) !important;
+    position: relative;
+    padding-bottom: 12px !important;
+    padding-left: 12px !important; 
+    border-radius: 16px !important;
+}
+
+.chat-window .tg-msg-wrapper.is-admin .tg-msg-bubble::before {
+    display: none !important; /* Remove the side accent as requested */
+}
+
+.tg-msg-wrapper.own.is-admin .tg-msg-bubble {
+    background: linear-gradient(135deg, #ffd709 0%, #f59e0b 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 8px 30px rgba(245, 158, 11, 0.45) !important;
+    color: #7a5a00 !important;
+}
+
+/* Premium Badge */
+.admin-badge-premium {
+    background: linear-gradient(135deg, #ffd700, #b8860b);
+    color: #000;
+    font-size: 8px;
+    font-weight: 900;
+    padding: 2px 8px;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(184, 134, 11, 0.4);
+    margin-left: 6px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.admin-badge-premium .material-icons {
+    font-size: 11px;
+    margin-right: 3px;
+    color: #000;
+}
+
+/* Admin Message Row in Dashboard */
+.admin-msg-row {
+    background: rgba(245, 158, 11, 0.05) !important;
+}
+
+/* Glow Animation for Admin Avatars */
+.admin-glow .tg-avatar {
+    box-shadow: 0 0 15px #f59e0b;
+    border: 2px solid #f59e0b;
+    animation: adminGlowPulse 2s infinite ease-in-out;
+}
+
+@keyframes adminGlowPulse {
+    0%, 100% { box-shadow: 0 0 8px #f59e0b; filter: brightness(1); }
+    50% { box-shadow: 0 0 18px #f59e0b; filter: brightness(1.2); }
 }

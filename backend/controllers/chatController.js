@@ -1,0 +1,236 @@
+const ChatMessage = require('../models/ChatMessage');
+
+// @desc    Save chat message to MongoDB
+// @route   POST /api/chat/message
+// @access  Private
+exports.saveMessage = async (req, res) => {
+    try {
+        const { text, tab, firebaseId, avatar, chatRole, frame } = req.body;
+        
+        if (!text || !firebaseId) {
+            return res.status(400).json({ success: false, message: 'Missing required fields' });
+        }
+
+        const message = await ChatMessage.create({
+            userId: req.user.id,
+            user: req.user.user || req.user.name,
+            avatar: avatar || req.user.avatar || '/favicon.png',
+            chatRole: chatRole || req.user.chatRole || 'user',
+            frame: frame || req.user.equippedFrameClass || '',
+            text,
+            tab,
+            firebaseId
+        });
+
+        res.status(201).json({
+            success: true,
+            data: message
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// @desc    Get chat history
+// @route   GET /api/chat/history/:tab
+// @access  Public
+exports.getHistory = async (req, res) => {
+    try {
+        const { tab } = req.params;
+        const messages = await ChatMessage.find({ tab: tab || 'general' })
+            .sort('-createdAt')
+            .limit(100);
+
+        res.json({
+            success: true,
+            count: messages.length,
+            data: messages.reverse()
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// @desc    Delete message
+// @route   DELETE /api/chat/:id
+// @access  Private (Admin)
+exports.deleteMessage = async (req, res) => {
+    try {
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ success: false, message: 'Unauthorized' });
+        }
+        await ChatMessage.findByIdAndDelete(req.params.id);
+        res.json({ success: true, message: 'Message deleted' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+};
+
+// @desc    Toggle pin
+// @route   PUT /api/chat/pin/:id
+// @access  Private (Admin)
+exports.togglePin = async (req, res) => {
+    try {
+        if (req.user.role !== 'admin' && req.user.chatRole !== 'admin') {
+            return res.status(403).json({ success: false, message: 'Unauthorized' });
+        }
+        
+        // Find by ID or FirebaseId
+        let msg = await ChatMessage.findById(req.params.id);
+        if (!msg) msg = await ChatMessage.findOne({ firebaseId: req.params.id });
+        
+        if (!msg) return res.status(404).json({ success: false, message: 'Not found' });
+        
+        const newState = !msg.isPinned;
+        
+        if (newState) {
+            // Unpin all others in the same tab
+            await ChatMessage.updateMany({ tab: msg.tab }, { isPinned: false });
+        }
+        
+        msg.isPinned = newState;
+        await msg.save();
+
+        // Broadcast to all clients via Socket.io
+        const socketUtil = require('../utils/socket');
+        if (socketUtil.isInitialized()) {
+            socketUtil.emitEvent('chat:pin', {
+                tab: msg.tab,
+                message: newState ? {
+                    firebaseId: msg.firebaseId,
+                    text: msg.text,
+                    user: msg.user,
+                    id: msg.firebaseId // for compatibility
+                } : null
+            });
+        }
+        
+        res.json({ success: true, isPinned: msg.isPinned });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+};
+
+// @desc    Toggle reaction on a message
+// @route   POST /api/chat/reaction
+// @access  Private
+exports.toggleReaction = async (req, res) => {
+    try {
+        const { firebaseId, emoji, avatar, name, tab } = req.body;
+        const userId = req.user.id;
+
+        let message = await ChatMessage.findOne({ firebaseId });
+        
+        if (!message) {
+            // Create a placeholder message if it doesn't exist in MongoDB yet
+            // This happens if Firestore created it but MongoDB sync hasn't finished
+            message = new ChatMessage({
+                firebaseId,
+                tab: tab || 'general',
+                text: '[Đang đồng bộ...]',
+                user: 'Khách',
+                userId: req.user._id
+            });
+        }
+
+        // Toggle the reaction
+        const uid = req.user._id.toString();
+        const reactions = message.reactions || new Map();
+        
+        if (!reactions.has(emoji)) {
+            reactions.set(emoji, { uids: [], avatars: [], names: [] });
+        }
+
+        const reactionData = reactions.get(emoji);
+        const idx = reactionData.uids.indexOf(uid);
+
+        if (idx !== -1) {
+            // Remove reaction
+            reactionData.uids.splice(idx, 1);
+            reactionData.avatars.splice(idx, 1);
+            if (reactionData.names) reactionData.names.splice(idx, 1);
+            if (reactionData.uids.length === 0) {
+                reactions.delete(emoji);
+            }
+        } else {
+            // Add reaction
+            reactionData.uids.push(uid);
+            reactionData.avatars.push(avatar || '');
+            if (!reactionData.names) reactionData.names = [];
+            reactionData.names.push(name || req.user.user || 'Khách');
+        }
+
+        // Critical: Tell Mongoose that the Map has changed
+        message.reactions = reactions;
+        message.markModified('reactions');
+        await message.save();
+
+        // Broadcast to all connected clients for realtime sync
+        const socketUtil = require('../utils/socket');
+        if (socketUtil.isInitialized()) {
+            socketUtil.emitEvent('chat:reaction', {
+                firebaseId,
+                emoji,
+                reactions: Object.fromEntries(message.reactions)
+            });
+        }
+
+        res.json({
+            success: true,
+            reactions: Object.fromEntries(message.reactions)
+        });
+    } catch (error) {
+        console.error('Toggle Reaction Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// Get a map of reactions for all messages in a tab
+exports.getReactionsMap = async (req, res) => {
+    try {
+        const { tab } = req.params;
+        const messages = await ChatMessage.find({ tab })
+            .select('firebaseId reactions');
+        
+        const reactionsMap = {};
+        messages.forEach(msg => {
+            if (msg.firebaseId && msg.reactions && msg.reactions.size > 0) {
+                reactionsMap[msg.firebaseId] = Object.fromEntries(msg.reactions);
+            }
+        });
+
+        res.json({
+            success: true,
+            data: reactionsMap
+        });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+};
+
+// @desc    Get pinned message for a tab
+// @route   GET /api/chat/pinned/:tab
+// @access  Public
+exports.getPinned = async (req, res) => {
+    try {
+        const { tab } = req.params;
+        const pinned = await ChatMessage.findOne({ tab: tab || 'general', isPinned: true })
+            .sort('-updatedAt');
+            
+        res.json({
+            success: true,
+            data: pinned
+        });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+};

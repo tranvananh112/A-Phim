@@ -1,20 +1,20 @@
 /**
- * A PHIM - Chat Widget Controller  v3.0  (Firebase Realtime)
- * Flow: Welcome → Enter Name → Chat Room (Firestore realtime)
+ * A PHIM - Chat Widget Controller  v3.5  (Firebase Realtime + MongoDB Sync)
+ * Flow: Welcome → Chat Room (Firestore realtime)
  */
 
 class APFilmChat {
     constructor() {
-        this.currentScreen = 'welcome'; // welcome | enterName | room
+        this.currentScreen = 'welcome'; // welcome | room | support
         this.currentTab    = 'general';
-        this.userName      = '';
-        this.userColor     = '#ffd709';
-        this.userId        = this._genUserId();
+        this.user          = null; 
         this.isMinimized   = false;
         this.isOpen        = false;
         this.unreadCount   = 0;
-        this._stopPresence = null; // unsubscribe fn
+        this._stopPresence = null;
+        this._stopPinned   = null;
         this._isMaximized  = false;
+        this.replyingTo    = null; 
         this._defaultW     = 390;
         this._defaultH     = 600;
 
@@ -27,41 +27,46 @@ class APFilmChat {
             '🤔','💯','✅','❌','🔴','🟡','🟢','✨',
         ];
 
+        this.reactionsCache = {}; // Local cache for MongoDB reactions (Persistence Fallback)
+        this.lastMessages   = [];
+        
         this._init();
+        this._setupExternalListeners();
+    }
+
+    _setupExternalListeners() {
+        // Listen for realtime reaction updates from Socket.io (via RealtimeSync)
+        window.addEventListener('chat:reaction', (e) => {
+            const { firebaseId, reactions } = e.detail;
+            if (firebaseId && reactions) {
+                this.reactionsCache[firebaseId] = reactions;
+                // If we have messages, re-render to show new reaction
+                if (this.lastMessages) this._renderAllMessages(this.lastMessages);
+            }
+        });
     }
 
     _init() {
-        console.log('[APFilmChat] _init starting...');
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this._setup());
         } else {
-            // Already loaded or interactive
             this._setup();
         }
     }
 
     _setup() {
         try {
-            console.log('[APFilmChat] _setup initializing on:', window.location.pathname);
+            console.log('[APFilmChat] Starting initialization...');
             
-            // 1. Inject HTML/CSS if missing
             this._injectHtmlIfNeeded();
-            
-            // 2. Cache DOM elements
             this._cacheDOM();
             
-            // 3. Robust Check: If FAB still not found, try one last time after a micro-task
             if (!this.el.fab) {
-                console.warn('[APFilmChat] FAB not found, retrying cache...');
-                this._cacheDOM();
-            }
-
-            if (!this.el.fab) {
-                console.error('[APFilmChat] Cannot find Chat FAB. Initialization aborted.');
+                console.error('[APFilmChat] Critical elements missing.');
                 return;
             }
 
-            // 4. Initialize components
+            // 5. Build UI & Restore User
             this._buildEmojiGrid();
             this._restoreUser();
             this._attachEvents();
@@ -69,13 +74,33 @@ class APFilmChat {
             this._initMobileKeyboardFix();
             this._initMobileResize();
 
-            // 5. Screen management
-            if (this.userName) {
-                this._showScreen('room');
-                this._updateUserDisplay();
-                this._enterRoomFirebase();
-            } else {
-                this._showScreen('welcome');
+            // 6. Screen management
+            const checkUserAndShow = () => {
+                if (this.user) {
+                    console.log('[APFilmChat] User identified:', this.user.name);
+                    this._showScreen('room');
+                    this._enterRoomFirebase();
+                } else {
+                    console.log('[APFilmChat] No user identified yet, showing welcome screen.');
+                    this._showScreen('welcome');
+                    this._updateWelcomeStats();
+                }
+            };
+
+            checkUserAndShow();
+
+            // 7. Check if user is banned
+            if (this.user && window.firebaseChat) {
+                window.firebaseChat.onReady(async () => {
+                    this.isBanned = await window.firebaseChat.isBanned(this.user.id);
+                    if (this.isBanned) {
+                        if (this.el.messageInput) {
+                            this.el.messageInput.placeholder = 'Tài khoản đã bị cấm chat.';
+                            this.el.messageInput.disabled = true;
+                        }
+                        if (this.el.sendBtn) this.el.sendBtn.disabled = true;
+                    }
+                });
             }
 
             console.log('[APFilmChat] Community Chat initialized successfully ✓');
@@ -85,193 +110,196 @@ class APFilmChat {
     }
 
     _injectHtmlIfNeeded() {
-        // 1. Inject CSS into <head> if not already loaded
         const cssId = 'aphim-chat-css';
         if (!document.getElementById(cssId)) {
             const link = document.createElement('link');
             link.id = cssId;
             link.rel = 'stylesheet';
-            link.href = 'css/chat-room.css';
+            link.href = 'css/chat-room.css?v=15';
             document.head.appendChild(link);
+
+            // Inject Context Menu to BODY to avoid any container overflow/z-index issues
+            const menu = document.createElement('div');
+            menu.id = 'chatContextMenu';
+            menu.className = 'tg-context-menu';
+            menu.style.display = 'none';
+            menu.style.position = 'fixed';
+            menu.style.zIndex = '999999';
+            menu.innerHTML = `
+                <div class="reaction-bar">
+                    <span class="react-emoji" data-emoji="❤️">❤️</span>
+                    <span class="react-emoji" data-emoji="😍">😍</span>
+                    <span class="react-emoji" data-emoji="👍">👍</span>
+                    <span class="react-emoji" data-emoji="🔥">🔥</span>
+                    <span class="react-emoji" data-emoji="👏">👏</span>
+                    <span class="react-emoji" data-emoji="😂">😂</span>
+                    <span class="react-emoji" data-emoji="😮">😮</span>
+                    <span class="react-emoji" data-emoji="😢">😢</span>
+                    <span class="react-emoji" data-emoji="💯">💯</span>
+                    <span class="react-emoji" data-emoji="🎉">🎉</span>
+                </div>
+                <div class="menu-item" id="ctxReply"><span class="material-icons">reply</span> Trả lời</div>
+                <div class="menu-item" id="ctxForward"><span class="material-icons">forward</span> Chuyển tiếp</div>
+                <div class="menu-item" id="ctxCopy"><span class="material-icons">content_copy</span> Sao chép</div>
+                <div class="menu-item" id="ctxSelect"><span class="material-icons">check_circle</span> Chọn nhiều</div>
+                <div class="menu-item" id="ctxPin" style="display: none;"><span class="material-icons">push_pin</span> Ghim tin nhắn</div>
+                <div class="menu-item danger" id="ctxBan" style="display: none;"><span class="material-icons">block</span> Chặn người dùng</div>
+                <div class="menu-item danger" id="ctxDelete" style="display: none;"><span class="material-icons">delete</span> Xóa tin nhắn</div>
+            `;
+            document.body.appendChild(menu);
         }
 
-        // 2. Inject HTML into <body> if not already there
+        // Check if prefix is missing even if FAB exists (for upgrades)
+        if (document.getElementById('chatWindow') && !document.getElementById('inputPrefix')) {
+            const inputArea = document.getElementById('chatInputArea');
+            if (inputArea) {
+                const prefixHtml = `
+                    <div class="chat-input-prefix" id="inputPrefix" style="display: none;">
+                        <div class="prefix-icon"><span class="material-icons" id="prefixIcon">reply</span></div>
+                        <div class="prefix-line"></div>
+                        <div class="prefix-content">
+                            <div class="prefix-title" id="prefixTitle">Reply to Name</div>
+                            <div class="prefix-text" id="prefixText">Message content...</div>
+                        </div>
+                        <button class="prefix-close" id="prefixClose"><span class="material-icons">close</span></button>
+                    </div>`;
+                inputArea.insertAdjacentHTML('afterbegin', prefixHtml);
+                // Re-cache DOM to find new element
+                this._cacheDOM();
+            }
+        }
+
         if (document.getElementById('chatFab')) return;
         
-        console.log('[APFilmChat] Injecting Chat UI...');
         const html = `
         <div id="aphimChatInjectedContainer">
-            <!-- FAB Button -->
             <button id="chatFab" class="chat-fab" aria-label="Mở chat cộng đồng" title="Chat Cộng Đồng">
-            <span class="fab-icon material-icons">forum</span>
-            <span class="chat-fab-badge" id="chatFabBadge">0</span>
-        </button>
-        <!-- Chat Window -->
-        <div id="chatWindow" class="chat-window" role="dialog" aria-label="Chat cộng đồng A Phim">
-            <!-- HEADER -->
-            <div class="chat-header" id="chatHeader">
-                <div class="chat-header-info">
-                    <div class="chat-header-avatar">
-                        <span class="material-icons">forum</span>
-                    </div>
-                    <div class="chat-header-text">
-                        <div class="chat-header-title">Cộng Đồng A Phim</div>
-                        <div class="chat-header-status">
-                            <div class="online-dot"></div>
-                            <span class="chat-header-online-text" id="headerOnlineCount">42 người trực tuyến</span>
+                <span class="fab-icon material-icons">forum</span>
+                <span class="chat-fab-badge" id="chatFabBadge">0</span>
+            </button>
+            
+            <div id="chatWindow" class="chat-window tg-theme" role="dialog">
+                <div class="chat-header" id="chatHeader">
+                    <div class="chat-header-info">
+                        <div class="chat-header-avatar-main">
+                            <img src="/favicon.png" alt="A" id="headerGroupAvatar">
+                        </div>
+                        <div class="chat-header-text">
+                            <div class="chat-header-title">Cộng Đồng A Phim</div>
+                            <div class="chat-header-status" id="headerOnlineCount">... người trực tuyến</div>
                         </div>
                     </div>
-                </div>
-                <div class="chat-header-actions">
-                    <button class="chat-header-btn" id="chatMinimizeBtn" title="Thu nhỏ"><span class="material-icons">remove</span></button>
-                    <button class="chat-header-btn" id="chatCloseBtn" title="Đóng"><span class="material-icons">close</span></button>
-                </div>
-            </div>
-            <!-- BODY -->
-            <div class="chat-body" id="chatBody">
-                <!-- SCREEN 1: WELCOME -->
-                <div class="chat-screen chat-screen-welcome active" id="screenWelcome">
-                    <div class="welcome-glow"><img src="/favicon.png" alt="A Phim" style="width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.15));"></div>
-                    <div>
-                        <h2 class="welcome-title">Chào mừng đến <span>Kênh A Phim</span></h2>
-                        <p class="welcome-desc" style="margin-top:8px;">Kết nối, thảo luận và tận hưởng điện ảnh cùng hàng ngàn tín đồ phim ảnh.</p>
-                    </div>
-                    <div class="welcome-stats">
-                        <div class="welcome-stat"><div class="welcome-stat-num" id="welcomeOnline">1,284</div><div class="welcome-stat-label">Trực tuyến</div></div>
-                        <div class="welcome-stat"><div class="welcome-stat-num">50K+</div><div class="welcome-stat-label">Thành viên</div></div>
-                        <div class="welcome-stat"><div class="welcome-stat-num">24/7</div><div class="welcome-stat-label">Hoạt động</div></div>
-                    </div>
-                    <div class="welcome-features">
-                        <div class="welcome-feature"><span class="material-icons">movie</span><div class="welcome-feature-text"><strong>Thảo luận phim</strong><span>Review, rating và khám phá phim mới</span></div></div>
-                        <div class="welcome-feature"><span class="material-icons">groups</span><div class="welcome-feature-text"><strong>Cộng đồng sôi nổi</strong><span>Kết nối với người xem cùng sở thích</span></div></div>
-                        <div class="welcome-feature"><span class="material-icons">bolt</span><div class="welcome-feature-text"><strong>Chat thời gian thực</strong><span>Nhắn tin ngay lập tức, không độ trễ</span></div></div>
-                    </div>
-                    <button class="welcome-start-btn" id="welcomeStartBtn">Bắt đầu chat ngay <span class="material-icons">arrow_forward</span></button>
-                </div>
-                <!-- SCREEN 2: ENTER NAME -->
-                <div class="chat-screen chat-screen-name" id="screenEnterName">
-                    <div class="enter-name-header">
-                        <button class="enter-name-back-btn" id="enterNameBackBtn"><span class="material-icons">arrow_back</span></button>
-                        <div class="enter-name-title-wrap"><h2>Tạo hồ sơ</h2><p>Chọn biệt danh và màu sắc của bạn</p></div>
-                    </div>
-                    <div>
-                        <span class="name-color-label">Màu đại diện</span>
-                        <div class="color-picker-row" id="colorPickerRow">
-                            <div class="color-option selected" data-color="#ffd709" style="background:#ffd709"></div>
-                            <div class="color-option" data-color="#22c55e" style="background:#22c55e"></div>
-                            <div class="color-option" data-color="#3b82f6" style="background:#3b82f6"></div>
-                            <div class="color-option" data-color="#ef4444" style="background:#ef4444"></div>
-                            <div class="color-option" data-color="#a855f7" style="background:#a855f7"></div>
-                            <div class="color-option" data-color="#f97316" style="background:#f97316"></div>
-                            <div class="color-option" data-color="#06b6d4" style="background:#06b6d4"></div>
-                            <div class="color-option" data-color="#ec4899" style="background:#ec4899"></div>
-                        </div>
-                    </div>
-                    <div class="name-input-group">
-                        <div class="name-input-label">
-                            <span>Biệt danh của bạn</span>
-                            <span class="name-char-count" id="nameCharCount">0 / 20</span>
-                        </div>
-                        <div class="name-input-wrapper">
-                            <input type="text" id="chatNameInput" class="name-input" placeholder="VD: MovieLover_99" maxlength="20" autocomplete="off">
-                            <span class="name-input-icon material-icons">person</span>
-                        </div>
-                        <div class="name-error-msg" id="nameErrorMsg">Tên phải từ 3–20 ký tự, không chứa ký tự đặc biệt.</div>
-                    </div>
-                    <div class="name-preview">
-                        <div class="name-preview-avatar" id="previewAvatar" style="background:#ffd709;">A</div>
-                        <div class="name-preview-info"><strong id="previewName">Biệt danh của bạn</strong><span>Thành viên mới · Hôm nay</span></div>
-                    </div>
-                    <div class="online-preview">
-                        <div class="online-avatars">
-                            <div class="online-avatar-mini" style="background:#ffd709;color:#1a1200;font-weight:700;">K</div>
-                            <div class="online-avatar-mini" style="background:#22c55e;color:#fff;font-weight:700;">L</div>
-                            <div class="online-avatar-mini" style="background:#3b82f6;color:#fff;font-weight:700;">M</div>
-                            <div class="online-avatar-mini more">+39</div>
-                        </div>
-                        <div class="online-info"><strong><span style="display:inline-block;width:7px;height:7px;background:#22c55e;border-radius:50%;margin-right:5px;vertical-align:middle;"></span>42 trực tuyến</strong><span>Đang thảo luận sôi nổi</span></div>
-                    </div>
-                    <button class="join-btn" id="chatJoinBtn" disabled><span class="material-icons">login</span>Tham gia phòng chat</button>
-                </div>
-                <!-- SCREEN 3: CHAT ROOM -->
-                <div class="chat-screen chat-screen-room" id="screenRoom">
-                    <div class="messages-area" id="messagesArea">
-                        <div class="date-separator"><span>Hôm Nay</span></div>
-                        <div class="sys-msg"><span>🎬 Chào mừng đến với Kênh A Phim!</span></div>
-                        <div class="typing-indicator" id="typingIndicator">
-                            <div class="typing-avatar" style="background:#a855f7;border-radius:50%;"></div>
-                            <div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
-                        </div>
-                    </div>
-                    <div class="quick-reactions" id="quickReactions">
-                        <button class="quick-react-btn" data-text="👍 Tuyệt vời!">👍 Tuyệt vời</button>
-                        <button class="quick-react-btn" data-text="🔥 Quá đỉnh!">🔥 Quá đỉnh</button>
-                        <button class="quick-react-btn" data-text="🍿 Đang xem">🍿 Đang xem</button>
-                        <button class="quick-react-btn" data-text="⭐ 10/10">⭐ 10/10</button>
-                        <button class="quick-react-btn" data-text="🎬 Rất nghệ">🎬 Rất nghệ</button>
-                        <button class="quick-react-btn" data-text="😍 Cực hay!">😍 Cực hay</button>
-                    </div>
-                </div>
-                <!-- SCREEN 4: HỖ TRỢ -->
-                <div class="chat-screen chat-screen-support" id="screenSupport">
-                    <div class="support-inner">
-                        <div class="support-icon-wrap">
-                            <span class="material-icons">support_agent</span>
-                        </div>
-                        <h3 class="support-title">Hỗ trợ trực tuyến</h3>
-                        <p class="support-desc">Đội ngũ hỗ trợ của A Phim luôn sẵn sàng giải đáp mọi thắc mắc của bạn.</p>
-                        <div class="support-info-cards">
-                            <div class="support-info-card">
-                                <span class="material-icons">schedule</span>
-                                <div><strong>Giờ hoạt động</strong><span>24/7 — Phản hồi nhanh</span></div>
+                    <div class="chat-header-actions">
+                        <div class="pinned-header-wrapper" id="pinnedBanner" style="display: none;">
+                            <div class="pinned-line-accent"></div>
+                            <div class="pinned-content" id="pinnedBannerContent">
+                                <div class="pinned-user" id="pinnedBannerUser">Pinned Message</div>
+                                <div class="pinned-text" id="pinnedBannerText">...</div>
                             </div>
-                            <div class="support-info-card">
-                                <span class="material-icons">translate</span>
-                                <div><strong>Ngôn ngữ</strong><span>Tiếng Việt — Tiếng Anh</span></div>
-                            </div>
-                            <div class="support-info-card">
-                                <span class="material-icons">verified</span>
-                                <div><strong>Chuyên nghiệp</strong><span>Được đào tạo bài bản</span></div>
-                            </div>
+                            <button class="pinned-close-btn" id="unpinBtn" title="Bỏ ghim"><span class="material-icons">close</span></button>
                         </div>
-                        <button class="support-start-btn" id="supportStartTawk">
-                            <span class="material-icons">chat</span>
-                            Bắt đầu chat hỗ trợ
-                        </button>
-                        <p class="support-note">Nhấn để mở cửa sổ chat với nhân viên hỗ trợ</p>
+                        <button class="chat-header-btn" id="chatSearchBtn" title="Tìm kiếm"><span class="material-icons">search</span></button>
+                        <button class="chat-header-btn" id="chatMinimizeBtn" title="Thu nhỏ"><span class="material-icons">remove</span></button>
+                        <button class="chat-header-btn" id="chatCloseBtn" title="Đóng"><span class="material-icons">close</span></button>
                     </div>
                 </div>
-            </div>
-            <!-- INPUT AREA -->
-            <div class="chat-input-area" id="chatInputArea">
-                <div class="chat-tabs-bar">
-                    <button class="chat-tab active" data-tab="general" id="tabGeneral"><span class="material-icons">public</span>Chung</button>
-                    <button class="chat-tab" data-tab="movies" id="tabMovies"><span class="material-icons">movie</span>Phim</button>
-                    <button class="chat-tab" data-tab="support" id="tabSupport"><span class="material-icons">help</span>Hỗ trợ</button>
-                </div>
-                <div class="input-row">
-                    <button class="input-icon-btn" id="emojiToggleBtn" title="Emoji"><span class="material-icons">mood</span></button>
-                    <input type="text" id="chatMessageInput" placeholder="Viết tin nhắn..." maxlength="500" autocomplete="off">
-                    <button class="send-btn" id="chatSendBtn" disabled><span class="material-icons">send</span></button>
-                </div>
-                <div class="input-footer">
-                    <div class="current-user-tag">
-                        <div class="current-user-avatar" id="currentUserAvatar" style="background:#ffd709;">A</div>
-                        <span id="currentUserName">Khách</span>
+
+                <!-- Multi-corner Resize Handles -->
+                <div class="cr-resize-handle cr-resize-nw"></div>
+                <div class="cr-resize-handle cr-resize-ne"></div>
+                <div class="cr-resize-handle cr-resize-se"></div>
+                <div class="cr-resize-handle cr-resize-sw"></div>
+                <div class="pinned-banner-area" id="pinnedBannerArea"></div>
+
+                <div class="chat-body" id="chatBody">
+                    <!-- SCREEN: WELCOME -->
+                    <div class="chat-screen chat-screen-welcome" id="screenWelcome">
+                        <div class="welcome-glow">
+                            <img src="/favicon.png" alt="A Phim" style="width:42px;height:42px;object-fit:contain;">
+                        </div>
+                        <div>
+                            <h2 class="welcome-title">Chào mừng đến <span>Kênh A Phim</span></h2>
+                            <p class="welcome-desc" style="margin-top:8px;">Kết nối, thảo luận và tận hưởng điện ảnh cùng hàng ngàn tín đồ phim ảnh.</p>
+                        </div>
+                        <div class="welcome-stats">
+                            <div class="welcome-stat"><div class="welcome-stat-num" id="welcomeOnline">1,284</div><div class="welcome-stat-label">Trực tuyến</div></div>
+                            <div class="welcome-stat"><div class="welcome-stat-num">50K+</div><div class="welcome-stat-label">Thành viên</div></div>
+                            <div class="welcome-stat"><div class="welcome-stat-num">24/7</div><div class="welcome-stat-label">Hoạt động</div></div>
+                        </div>
+                        <div class="welcome-features">
+                            <div class="welcome-feature"><span class="material-icons">movie</span><div class="welcome-feature-text"><strong>Thảo luận phim</strong><span>Review, rating và khám phá phim mới</span></div></div>
+                            <div class="welcome-feature"><span class="material-icons">groups</span><div class="welcome-feature-text"><strong>Cộng đồng sôi nổi</strong><span>Kết nối với người xem cùng sở thích</span></div></div>
+                            <div class="welcome-feature"><span class="material-icons">bolt</span><div class="welcome-feature-text"><strong>Chat thời gian thực</strong><span>Nhắn tin ngay lập tức, không độ trễ</span></div></div>
+                        </div>
+                        <button class="welcome-start-btn" id="welcomeStartBtn">Bắt đầu chat ngay <span class="material-icons">arrow_forward</span></button>
                     </div>
-                    <span class="change-name-link" id="changeNameLink">Đổi tên</span>
+
+                    <!-- SCREEN: CHAT ROOM -->
+                    <div class="chat-screen chat-screen-room" id="screenRoom">
+                        <div class="messages-area tg-scroll" id="messagesArea"></div>
+                    </div>
+
+                    <!-- SCREEN: SUPPORT -->
+                    <div class="chat-screen chat-screen-support" id="screenSupport">
+                        <div class="support-inner">
+                            <div class="support-icon-wrap"><span class="material-icons">support_agent</span></div>
+                            <h3 class="support-title">Hỗ trợ trực tuyến</h3>
+                            <p class="support-desc">Chúng tôi luôn sẵn sàng hỗ trợ bạn 24/7.</p>
+                            <button class="support-start-btn" id="supportStartTawk">Bắt đầu chat hỗ trợ</button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <!-- Emoji picker -->
-            <div class="emoji-picker-panel" id="emojiPickerPanel">
-                <div class="emoji-grid" id="emojiGrid"></div>
+
+                <div class="chat-input-area" id="chatInputArea" style="display: none;">
+                    <div class="chat-tabs-bar">
+                        <button class="chat-tab active" data-tab="general">Chung</button>
+                        <button class="chat-tab" data-tab="movies">Phim</button>
+                        <button class="chat-tab" data-tab="support">Hỗ trợ</button>
+                    </div>
+                    <div class="chat-input-prefix" id="inputPrefix" style="display: none;">
+                        <div class="prefix-icon"><span class="material-icons" id="prefixIcon">reply</span></div>
+                        <div class="prefix-line"></div>
+                        <div class="prefix-content">
+                            <div class="prefix-title" id="prefixTitle">Reply to Name</div>
+                            <div class="prefix-text" id="prefixText">Message content...</div>
+                        </div>
+                        <button class="prefix-close" id="prefixClose"><span class="material-icons">close</span></button>
+                    </div>
+                    <div class="bulk-action-bar" id="bulkActionBar">
+                        <div class="bulk-info">
+                            <button class="bulk-cancel" id="bulkCancelBtn"><span class="material-icons">close</span></button>
+                            <span class="selected-count" id="selectedCount">1 message</span>
+                        </div>
+                        <div class="bulk-actions">
+                            <button class="bulk-btn forward" id="bulkForwardBtn"><span class="material-icons">shortcut</span> Forward</button>
+                            <button class="bulk-btn delete" id="bulkDeleteBtn" style="display: none;"><span class="material-icons">delete</span> Delete</button>
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <button class="input-icon-btn" id="emojiToggleBtn"><span class="material-icons">mood</span></button>
+                        <div class="message-input-wrapper">
+                            <textarea id="chatMessageInput" placeholder="Viết tin nhắn..." rows="1" maxlength="1000"></textarea>
+                        </div>
+                        <button class="send-btn" id="chatSendBtn" disabled><span class="material-icons">send</span></button>
+                    </div>
+                    <div class="input-footer" id="inputFooter" style="display: flex; align-items: center; justify-content: space-between; padding: 6px 2px 0;">
+                        <div class="current-user-tag" id="currentUserTag" style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--c-text-dim);">
+                            <div class="current-user-avatar" id="currentUserAvatar" style="width: 24px; height: 24px; flex-shrink: 0;"></div>
+                            <span class="current-user-name" id="currentUserName">Khách</span>
+                        </div>
+                        <a class="change-name-link" id="changeNameLink" style="font-size: 11px; color: var(--c-text-faint); cursor: pointer; text-decoration: underline;">Đổi tên</a>
+                    </div>
+                </div>
+
+                <div class="emoji-picker-panel" id="emojiPickerPanel">
+                    <div class="emoji-grid" id="emojiGrid"></div>
+                </div>
             </div>
         </div>
         `;
         document.body.insertAdjacentHTML('beforeend', html);
     }
 
-    /* ── DOM Cache ─────────────────────────────────────────── */
     _cacheDOM() {
         const $ = id => document.getElementById(id);
         this.el = {
@@ -285,36 +313,40 @@ class APFilmChat {
             closeBtn         : $('chatCloseBtn'),
             headerOnline     : $('headerOnlineCount'),
             screenWelcome    : $('screenWelcome'),
-            screenName       : $('screenEnterName'),
             screenRoom       : $('screenRoom'),
             screenSupport    : $('screenSupport'),
-            supportStartTawk : $('supportStartTawk'),
-            welcomeStart     : $('welcomeStartBtn'),
+            welcomeStartBtn  : $('welcomeStartBtn'),
             welcomeOnline    : $('welcomeOnline'),
-            backBtn          : $('enterNameBackBtn'),
-            colorRow         : $('colorPickerRow'),
-            nameInput        : $('chatNameInput'),
-            nameCharCount    : $('nameCharCount'),
-            nameError        : $('nameErrorMsg'),
-            previewAvatar    : $('previewAvatar'),
-            previewName      : $('previewName'),
-            joinBtn          : $('chatJoinBtn'),
+            supportStartTawk : $('supportStartTawk'),
             messagesArea     : $('messagesArea'),
-            typingIndicator  : $('typingIndicator'),
-            quickReactions   : $('quickReactions'),
             tabs             : document.querySelectorAll('.chat-tab'),
             messageInput     : $('chatMessageInput'),
             sendBtn          : $('chatSendBtn'),
             emojiToggle      : $('emojiToggleBtn'),
             emojiPanel       : $('emojiPickerPanel'),
             emojiGrid        : $('emojiGrid'),
-            currentUserAvatar: $('currentUserAvatar'),
+            pinnedBanner     : $('pinnedBanner'),
+            pinnedUser       : $('pinnedBannerUser'),
+            pinnedText       : $('pinnedBannerText'),
+            unpinBtn         : $('unpinBtn'),
+            inputPrefix      : $('inputPrefix'),
+            prefixIcon       : $('prefixIcon'),
+            prefixTitle      : $('prefixTitle'),
+            prefixText       : $('prefixText'),
+            prefixClose      : $('prefixClose'),
+            contextMenu      : $('chatContextMenu'),
             currentUserName  : $('currentUserName'),
+            currentUserAvatar: $('currentUserAvatar'),
             changeNameLink   : $('changeNameLink'),
+            bulkActionBar    : $('bulkActionBar'),
+            selectedCount    : $('selectedCount'),
+            bulkDeleteBtn    : $('bulkDeleteBtn'),
+            bulkCancelBtn    : $('bulkCancelBtn'),
+            bulkForwardBtn   : $('bulkForwardBtn'),
+            pinnedArea       : $('pinnedBannerArea')
         };
     }
 
-    /* ── Emoji ─────────────────────────────────────────────── */
     _buildEmojiGrid() {
         if (!this.el.emojiGrid) return;
         this.el.emojiGrid.innerHTML = this.emojis
@@ -322,108 +354,142 @@ class APFilmChat {
             .join('');
     }
 
-    /* ── User Persistence ──────────────────────────────────── */
     _restoreUser() {
-        try {
-            const saved = localStorage.getItem('aphim_chat_user');
-            if (saved) {
-                const { name, color, uid } = JSON.parse(saved);
-                this.userName  = name  || '';
-                this.userColor = color || '#ffd709';
-                if (uid) this.userId = uid;
+        if (typeof authService !== 'undefined') {
+            let currentUser = authService.getCurrentUser();
+            
+            // Fallback: Check localStorage directly
+            if (!currentUser) {
+                const stored = localStorage.getItem('cinestream_user');
+                if (stored) {
+                    try { currentUser = JSON.parse(stored); } catch(e) {}
+                }
             }
-        } catch (e) { /* ignore */ }
-    }
 
-    _saveUser() {
-        try {
-            localStorage.setItem('aphim_chat_user', JSON.stringify({
-                name : this.userName,
-                color: this.userColor,
-                uid  : this.userId,
-            }));
-        } catch (e) { /* ignore */ }
-    }
-
-    _genUserId() {
-        try {
-            let uid = localStorage.getItem('aphim_uid');
-            if (!uid) {
-                uid = 'u_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
-                localStorage.setItem('aphim_uid', uid);
+            if (currentUser) {
+                const userId = currentUser._id || currentUser.id;
+                const avatarKey = userId ? `avatar_${userId}` : 'user_avatar';
+                
+                this.user = {
+                    id: userId,
+                    name: currentUser.name || 'User',
+                    avatar: localStorage.getItem(avatarKey) || currentUser.avatar || localStorage.getItem('user_avatar') || '/favicon.png',
+                    frame: currentUser.equippedFrameClass || localStorage.getItem('ap_frame_class') || '',
+                    chatRole: currentUser.chatRole || 'user',
+                    role: currentUser.role
+                };
+                this._syncUserUI();
             }
-            return uid;
-        } catch (e) {
-            return 'u_' + Math.random().toString(36).slice(2, 10);
         }
     }
 
-    /* ── Events ────────────────────────────────────────────── */
+    _syncUserUI() {
+        if (!this.user) return;
+        if (this.el.currentUserName) this.el.currentUserName.textContent = this.user.name;
+        if (this.el.currentUserAvatar) {
+            const frame = this.user.frame || '';
+            this.el.currentUserAvatar.innerHTML = `
+                <div class="shop-frame-wrap ${frame} size-xs" style="width:24px; height:24px;">
+                    <img src="${this.user.avatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+                </div>
+            `;
+        }
+        if (this.el.cancelReplyBtn) {
+            this.el.cancelReplyBtn.onclick = () => this._cancelReply();
+        }
+
+        if (this.el.bulkDeleteBtn) {
+            this.el.bulkDeleteBtn.onclick = () => {
+                if (confirm(`Xóa ${this.selectedMsgs.length} tin nhắn đã chọn?`)) {
+                    this.selectedMsgs.forEach(id => {
+                        if (window.firebaseChat?.ready) window.firebaseChat.deleteMessage(this.currentTab, id);
+                    });
+                    this._toggleSelectMode(false);
+                }
+            };
+        }
+
+        if (this.el.bulkCopyBtn) {
+            this.el.bulkCopyBtn.onclick = () => {
+                const texts = [];
+                this.selectedMsgs.forEach(id => {
+                    const el = document.querySelector(`.tg-msg-wrapper[data-msg-id="${id}"] .tg-msg-text`);
+                    if (el) texts.push(el.textContent);
+                });
+                navigator.clipboard.writeText(texts.join('\n---\n'));
+                if (window.showMessage) window.showMessage('Đã sao chép các tin nhắn được chọn', 'success');
+                this._toggleSelectMode(false);
+            };
+        }
+
+        if (this.el.bulkCancelBtn) {
+            this.el.bulkCancelBtn.onclick = () => this._toggleSelectMode(false);
+        }
+
+        if (this.el.changeNameLink) {
+            this.el.changeNameLink.style.display = 'none';
+        }
+    }
+
     _attachEvents() {
         const el = this.el;
 
         el.fab?.addEventListener('click', () => this.open());
         el.closeBtn?.addEventListener('click', () => this.close());
         el.minimizeBtn?.addEventListener('click', () => this.toggleMinimize());
-        el.header?.addEventListener('click', e => {
-            if (this.isMinimized && !e.target.closest('button')) this.toggleMinimize();
+
+        el.welcomeStartBtn?.addEventListener('click', () => {
+            if (this.user) {
+                this._showScreen('room');
+                this._enterRoomFirebase();
+            } else {
+                if (window.authModal && typeof window.authModal.open === 'function') {
+                    window.authModal.open('login');
+                } else {
+                    window.location.href = '/login.html';
+                }
+            }
         });
 
-        // Welcome → Enter Name
-        el.welcomeStart?.addEventListener('click', () => this._showScreen('enterName'));
+        document.addEventListener('click', () => {
+            if (el.contextMenu) el.contextMenu.style.display = 'none';
+            if (el.emojiPanel) el.emojiPanel.classList.remove('show');
+        });
 
-        // Enter Name → Welcome (back)
-        el.backBtn?.addEventListener('click', () => this._showScreen('welcome'));
-
-        // Color picker
-        el.colorRow?.querySelectorAll('.color-option').forEach(opt => {
-            opt.addEventListener('click', () => {
-                el.colorRow.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
-                opt.classList.add('selected');
-                this.userColor = opt.dataset.color;
-                this._updatePreview();
+        el.tabs?.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this._switchTab(tab.dataset.tab);
             });
         });
 
-        // Name input
-        el.nameInput?.addEventListener('input', () => {
-            const val = el.nameInput.value;
-            el.nameCharCount.textContent = `${val.length} / 20`;
-            this._updatePreview();
-            this._validateName();
-        });
-
-        // Join button + Enter key
-        el.joinBtn?.addEventListener('click', () => this._joinRoom());
-        el.nameInput?.addEventListener('keydown', e => {
-            if (e.key === 'Enter') this._joinRoom();
-        });
-
-        // Tab switch
-        el.tabs?.forEach(tab => {
-            tab.addEventListener('click', () => this._switchTab(tab.dataset.tab));
-        });
-
-        // Message input
         el.messageInput?.addEventListener('input', () => {
+            el.messageInput.style.height = 'auto';
+            el.messageInput.style.height = (el.messageInput.scrollHeight) + 'px';
             el.sendBtn.disabled = el.messageInput.value.trim() === '';
         });
+
         el.messageInput?.addEventListener('keydown', e => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 this._sendMessage();
             }
         });
-        el.sendBtn?.addEventListener('click', () => this._sendMessage());
-
-        // Quick reactions
-        el.quickReactions?.querySelectorAll('.quick-react-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (this.userName) this._sendMessageText(btn.dataset.text);
-            });
+        el.sendBtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this._sendMessage();
         });
 
-        // Emoji
+        el.prefixClose?.addEventListener('click', () => this._cancelReply());
+        el.bulkForwardBtn?.addEventListener('click', () => {
+            if (this.selectedMsgs.length > 0) {
+                if (window.showMessage) window.showMessage('Đã chuyển tiếp tin nhắn', 'info');
+                this._toggleSelectMode(false);
+            }
+        });
+        el.bulkCancelBtn?.addEventListener('click', () => this._toggleSelectMode(false));
+        el.unpinBtn?.addEventListener('click', () => this._unpinCurrent());
+
         el.emojiToggle?.addEventListener('click', e => {
             e.stopPropagation();
             el.emojiPanel?.classList.toggle('show');
@@ -434,23 +500,11 @@ class APFilmChat {
                 el.messageInput.value += cell.dataset.emoji;
                 el.messageInput.focus();
                 el.sendBtn.disabled = false;
-                el.emojiPanel?.classList.remove('show');
-            }
-        });
-        document.addEventListener('click', e => {
-            if (el.emojiPanel && !el.emojiPanel.contains(e.target) && e.target !== el.emojiToggle) {
-                el.emojiPanel.classList.remove('show');
             }
         });
 
-        // Change name
-        el.changeNameLink?.addEventListener('click', () => this._showScreen('enterName'));
-
-        // Support screen: nút mở Tawk.to popup
         el.supportStartTawk?.addEventListener('click', () => {
-            if (typeof window.showTawkTo === 'function') {
-                window.showTawkTo();
-            } else if (typeof Tawk_API !== 'undefined' && Tawk_API.maximize) {
+            if (typeof Tawk_API !== 'undefined' && Tawk_API.maximize) {
                 Tawk_API.showWidget();
                 Tawk_API.maximize();
             } else {
@@ -459,167 +513,30 @@ class APFilmChat {
         });
     }
 
-    /* ── Screen Management ─────────────────────────────────── */
     _showScreen(name) {
-        const map = {
-            welcome  : this.el.screenWelcome,
-            enterName: this.el.screenName,
-            room     : this.el.screenRoom,
-        };
+        const el = this.el;
+        if (!el.screenWelcome) return;
 
-        Object.entries(map).forEach(([key, el]) => {
-            if (!el) return;
-            el.classList.toggle('active', key === name);
-        });
+        el.screenWelcome.classList.toggle('active', name === 'welcome');
+        el.screenRoom.classList.toggle('active', name === 'room');
+        el.screenSupport.classList.toggle('active', name === 'support');
 
         this.currentScreen = name;
-
-        // Input area only visible in room
-        if (this.el.inputArea) {
-            this.el.inputArea.style.display = name === 'room' ? 'block' : 'none';
-        }
-
-        if (this.el.body) {
-            this.el.body.style.overflow = name === 'room' ? 'hidden' : 'auto';
-        }
-
-        if (name === 'enterName' && this.el.nameInput) {
-            setTimeout(() => this.el.nameInput.focus(), 350);
-            if (this.userName) {
-                this.el.nameInput.value = this.userName;
-                if (this.el.nameCharCount) this.el.nameCharCount.textContent = `${this.userName.length} / 20`;
-                this._updatePreview();
-                if (this.el.joinBtn) this.el.joinBtn.disabled = false;
-            }
-            this.el.colorRow?.querySelectorAll('.color-option').forEach(opt => {
-                opt.classList.toggle('selected', opt.dataset.color === this.userColor);
-            });
+        if (el.inputArea) {
+            el.inputArea.style.display = (name === 'room' || name === 'support') ? 'block' : 'none';
         }
 
         if (name === 'room') {
-            this._scrollToBottom();
+            setTimeout(() => this._scrollToBottom(), 50);
         }
     }
 
-    /* ── Name Validation ───────────────────────────────────── */
-    _validateName() {
-        const val   = (this.el.nameInput?.value || '').trim();
-        const regex = /^[a-zA-Z0-9_\sÀ-ỹ]+$/;
-        const valid = val.length >= 3 && val.length <= 20 && regex.test(val);
-
-        if (val.length > 0 && !valid) {
-            this.el.nameInput?.classList.add('error');
-            this.el.nameError?.classList.add('show');
-        } else {
-            this.el.nameInput?.classList.remove('error');
-            this.el.nameError?.classList.remove('show');
-        }
-
-        if (this.el.joinBtn) this.el.joinBtn.disabled = !valid;
-        return valid;
-    }
-
-    _updatePreview() {
-        const val    = (this.el.nameInput?.value || '').trim();
-        const letter = val ? val.charAt(0).toUpperCase() : 'A';
-
-        if (this.el.previewAvatar) {
-            this.el.previewAvatar.style.background = this.userColor;
-            this.el.previewAvatar.textContent = letter;
-        }
-        if (this.el.previewName) {
-            this.el.previewName.textContent = val || 'Biệt danh của bạn';
-        }
-    }
-
-    /* ── Join Room ─────────────────────────────────────────── */
-    _joinRoom() {
-        if (!this._validateName()) return;
-
-        this.userName = (this.el.nameInput?.value || '').trim();
-        this._saveUser();
-        this._updateUserDisplay();
-        this._showScreen('room');
-        this._enterRoomFirebase();
-
-        // System announcement
-        this._appendSystemMessage(`🎉 <strong>${this._esc(this.userName)}</strong> vừa tham gia phòng chat!`);
-    }
-
-    _updateUserDisplay() {
-        const letter = this.userName ? this.userName.charAt(0).toUpperCase() : 'A';
-        if (this.el.currentUserAvatar) {
-            this.el.currentUserAvatar.style.background = this.userColor;
-            this.el.currentUserAvatar.textContent = letter;
-        }
-        if (this.el.currentUserName) {
-            this.el.currentUserName.textContent = this.userName || 'Khách';
-        }
-    }
-
-    /* ── Firebase: Enter Room ──────────────────────────────── */
-    _enterRoomFirebase() {
-        const init = () => {
-            // Start presence tracking
-            if (this._stopPresence) this._stopPresence();
-            this._stopPresence = window.firebaseChat.trackPresence(
-                this.userId,
-                count => {
-                    const fmt = count.toLocaleString('vi-VN');
-                    if (this.el.headerOnline)  this.el.headerOnline.textContent  = `${fmt} người trực tuyến`;
-                    if (this.el.welcomeOnline) this.el.welcomeOnline.textContent = fmt;
-                }
-            );
-
-            // Load tab messages
-            this._listenTab(this.currentTab);
-        };
-
-        if (window.firebaseChat?.ready) {
-            init();
-        } else {
-            window.firebaseChat?.onReady(init);
-        }
-    }
-
-    /* ── Firebase: Listen Tab ──────────────────────────────── */
-    _listenTab(tab) {
-        if (!window.firebaseChat?.ready) return;
-
-        window.firebaseChat.listenMessages(tab, this.userName, msgs => {
-            this._renderAllMessages(msgs);
-        });
-    }
-
-    /* ── Tab Switch ────────────────────────────────────────── */
     _switchTab(tabName) {
-        // Tab Hỗ trợ → hiện màn hình Support (screen 4) bên trong widget
         if (tabName === 'support') {
-            this.currentTab = 'support';
-            // Đánh dấu tab active
-            this.el.tabs?.forEach(tab => {
-                tab.classList.toggle('active', tab.dataset.tab === 'support');
-            });
-            // Ẩn room, hiện màn support  
-            this.el.screenRoom?.classList.remove('active');
-            this.el.screenSupport?.classList.add('active');
-            // Chỉ ẩn phần input gõ tin, giữ nguyên thanh tab
-            const inputRow = this.el.inputArea?.querySelector('.input-row');
-            const inputFooter = this.el.inputArea?.querySelector('.input-footer');
-            if (inputRow) inputRow.style.display = 'none';
-            if (inputFooter) inputFooter.style.display = 'none';
-            return;
-        }
-
-        // Khi chuyển từ support về tab khác: ẩn support screen, hiện room
-        if (this.currentTab === 'support') {
-            this.el.screenSupport?.classList.remove('active');
-            this.el.screenRoom?.classList.add('active');
-            // Hiện lại phần input gõ tin
-            const inputRow = this.el.inputArea?.querySelector('.input-row');
-            const inputFooter = this.el.inputArea?.querySelector('.input-footer');
-            if (inputRow) inputRow.style.display = '';
-            if (inputFooter) inputFooter.style.display = '';
+            this._showScreen('support');
+        } else {
+            this._showScreen('room');
+            this._listenTab(tabName);
         }
 
         this.currentTab = tabName;
@@ -627,156 +544,726 @@ class APFilmChat {
             tab.classList.toggle('active', tab.dataset.tab === tabName);
         });
 
-        // Clear messages and re-listen Firebase
-        this._clearMessages();
-        this._listenTab(tabName);
+        if (this._stopPinned) this._stopPinned();
+        if (window.firebaseChat?.ready) {
+            this._stopPinned = window.firebaseChat.listenPinned(tabName, msg => this._renderPinned(msg));
+        }
     }
 
-    /* ── Render All Messages (from Firebase snapshot) ─────── */
+    _renderPinned(msg) {
+        if (!this.el.pinnedArea) return;
+        
+        // Clear area
+        this.el.pinnedArea.innerHTML = '';
+        this.el.pinnedArea.classList.remove('active');
+
+        if (!msg) return;
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'pinned-header-wrapper';
+        wrapper.onclick = () => this._jumpToMessage(msg.id || msg.firebaseId);
+
+        const isAdmin = this.user && (this.user.chatRole === 'admin' || this.user.role === 'admin');
+
+        wrapper.innerHTML = `
+            <div class="pinned-thumb">
+                <span class="material-icons" style="font-size:16px;">push_pin</span>
+            </div>
+            <div class="pinned-content">
+                <div class="pinned-user">Pinned Message</div>
+                <div class="pinned-text">${this._esc(msg.text)}</div>
+            </div>
+            ${isAdmin ? `
+                <button class="pinned-close-btn" onclick="event.stopPropagation(); window.apFilmChat._unpinCurrent()">
+                    <span class="material-icons" style="font-size:14px;">close</span>
+                </button>
+            ` : ''}
+        `;
+
+        this.el.pinnedArea.appendChild(wrapper);
+        this.el.pinnedArea.classList.add('active');
+    }
+
+    _enterRoomFirebase() {
+        const init = () => {
+            if (!this.user) return;
+            
+            if (this._stopPresence) this._stopPresence();
+            this._stopPresence = window.firebaseChat.trackPresence(
+                this.user.id,
+                count => {
+                    const fmt = count.toLocaleString('vi-VN');
+                    if (this.el.headerOnline) this.el.headerOnline.textContent = `${fmt} người trực tuyến`;
+                    if (this.el.welcomeOnline) this.el.welcomeOnline.textContent = fmt;
+                }
+            );
+
+            this._listenTab(this.currentTab);
+            
+            if (this._stopPinned) this._stopPinned();
+            this._stopPinned = window.firebaseChat.listenPinned(this.currentTab, msg => this._renderPinned(msg));
+
+            // Socket Pin Listener (Fallback/Realtime bypass)
+            if (!this._socketPinBound) {
+                window.addEventListener('chat:pin', (e) => {
+                    const { tab, message } = e.detail;
+                    if (tab === this.currentTab) {
+                        this._renderPinned(message);
+                    }
+                });
+                this._socketPinBound = true;
+            }
+        };
+
+        const setupPinned = () => {
+            // Initial Fetch of Pinned Message from Backend (Persistence)
+            this._fetchPinnedFromBackend();
+        };
+
+        if (window.firebaseChat?.ready) {
+            init();
+            setupPinned();
+        } else {
+            window.firebaseChat?.onReady(init);
+            setupPinned(); // Fetch pinned even if firebase is slow
+        }
+    }
+
+    async _fetchPinnedFromBackend() {
+        try {
+            const tab = this.currentTab || 'general';
+            const res = await fetch(`${typeof API_CONFIG !== 'undefined' ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api'}/chat/pinned/${tab}`);
+            const data = await res.json();
+            if (data.success && data.data) {
+                this._renderPinned(data.data);
+            } else if (data.success && !data.data) {
+                this._renderPinned(null);
+            }
+        } catch (err) {
+            console.warn('[APFilmChat] Failed to fetch pinned from backend:', err);
+        }
+    }
+
+    _unpinCurrent() {
+        if (!confirm('Bỏ ghim tin nhắn này?')) return;
+        if (window.firebaseChat?.ready) {
+            window.firebaseChat.unpinAll(this.currentTab);
+            if (window.showMessage) window.showMessage('Đã gỡ ghim tin nhắn', 'info');
+        }
+    }
+
+    _jumpToMessage(msgId) {
+        if (!msgId) return;
+        const target = document.querySelector(`.tg-msg-wrapper[data-msg-id="${msgId}"]`);
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            target.classList.add('jump-highlight');
+            setTimeout(() => target.classList.remove('jump-highlight'), 2000);
+        } else {
+            if (window.showMessage) window.showMessage('Tin nhắn gốc đã cũ hoặc không có trong bộ nhớ', 'info');
+        }
+    }
+
+    _updateWelcomeStats() {
+        // Pseudo presence for welcome screen if firebase not ready yet
+        const init = () => {
+            this._stopPresence = window.firebaseChat.trackPresence(
+                'guest-' + Math.random().toString(36).substr(2, 9),
+                count => {
+                    const fmt = count.toLocaleString('vi-VN');
+                    if (this.el.welcomeOnline) this.el.welcomeOnline.textContent = fmt;
+                    if (this.el.headerOnline) this.el.headerOnline.textContent = `${fmt} người trực tuyến`;
+                }
+            );
+        };
+        if (window.firebaseChat?.ready) init();
+        else window.firebaseChat?.onReady(init);
+    }
+
+    _listenTab(tab) {
+        if (!window.firebaseChat?.ready) return;
+        
+        // 1. Initial Sync reactions from MongoDB (Persistence Fallback)
+        this._syncReactions(tab);
+
+        window.firebaseChat.listenMessages(tab, this.user?.id || '', msgs => {
+            this._renderAllMessages(msgs);
+        });
+    }
+
+    async _syncReactions(tab) {
+        try {
+            const resp = await fetch(`${typeof API_CONFIG !== 'undefined' ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api'}/chat/reactions-map/${tab}`);
+            const res = await resp.json();
+            if (res.success && res.data) {
+                // Merge into cache
+                this.reactionsCache = { ...this.reactionsCache, ...res.data };
+                // If we already have messages rendered, re-render them to show reactions
+                if (this.lastMessages) this._renderAllMessages(this.lastMessages);
+            }
+        } catch (e) {
+            console.warn('[APFilmChat] Reactions sync failed', e);
+        }
+    }
+
     _renderAllMessages(msgs) {
         if (!this.el.messagesArea) return;
-
-        // Clear existing dynamic messages (keep date separator + sys msg)
-        const existing = this.el.messagesArea.querySelectorAll('.msg-group, .msg-firebase');
-        existing.forEach(m => m.remove());
+        this.lastMessages = msgs; // Keep for re-renders
+        this.el.messagesArea.innerHTML = '';
+        
+        let lastUserId = null;
+        let lastTime   = null;
 
         msgs.forEach(msg => {
-            this._appendMessage(msg, false);
+            // STRICT IDENTIFICATION: Only own if IDs match AND are not falsy
+            const currentId = this.user ? (this.user.id || this.user._id) : null;
+            msg.isOwn = !!currentId && !!msg.userId && msg.userId === currentId;
+            
+            const isSameUser = msg.userId === lastUserId && lastTime === msg.time;
+            this._appendMessage(msg, false, isSameUser);
+            lastUserId = msg.userId;
+            lastTime   = msg.time;
         });
 
         this._scrollToBottom();
     }
 
-    _clearMessages() {
+    _appendMessage(msg, doScroll = true, isSameUser = false) {
         if (!this.el.messagesArea) return;
-        const existing = this.el.messagesArea.querySelectorAll('.msg-group, .msg-firebase');
-        existing.forEach(m => m.remove());
+
+        const own = msg.isOwn ? 'own' : '';
+        const isAdmin = (msg.chatRole && msg.chatRole.toLowerCase() === 'admin') || 
+                        (msg.role && msg.role.toLowerCase() === 'admin') ||
+                        (msg.user && msg.user.toLowerCase().includes('admin cinestream')); 
+        const time = msg.time || this._now();
+
+        const div = document.createElement('div');
+        div.className = `tg-msg-wrapper ${own} ${isSameUser ? 'same-user' : ''} ${isAdmin ? 'is-admin' : ''}`;
+        div.setAttribute('data-msg-id', msg.id);
+        
+        // Hide name if it's our own message OR if it's the same user sending consecutive messages
+        const showName = !msg.isOwn && !isSameUser;
+
+        const avatarHtml = !isSameUser ? `
+            <div class="tg-avatar-wrap ${isAdmin ? 'admin-glow' : ''}">
+                <div class="shop-frame-wrap ${msg.frame || ''} size-sm" style="width:34px; height:34px; position:relative;">
+                    <img src="${msg.avatar || '/favicon.png'}" class="tg-avatar" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+                </div>
+            </div>
+        ` : '<div class="tg-avatar-spacer" style="width:34px; height:1px;"></div>';
+
+        // Detect Forwarded message
+        const isForwarded = msg.text.startsWith('Forwarded from');
+        let cleanText = msg.text;
+        let forwardInfo = '';
+        if (isForwarded) {
+            const lines = msg.text.split('\n');
+            forwardInfo = lines[0]; // "Forwarded from Name:"
+            cleanText = lines.slice(1).join('\n').trim().replace(/^"|"$/g, '');
+        }
+
+        // Reply OR Forward UI inside bubble (Telegram style)
+        let replyInfoHtml = '';
+        if (msg.replyTo || msg.forwardFrom) {
+            const isForward = !!msg.forwardFrom;
+            const target = isForward ? msg.forwardFrom : msg.replyTo;
+            const title = isForward ? `Forwarded from ${target.user}` : target.user;
+            const icon = isForward ? 'shortcut' : 'reply';
+            const colorClass = isForward ? 'is-forward' : 'is-reply';
+
+            replyInfoHtml = `
+                <div class="msg-reply-preview ${colorClass}" onclick="event.stopPropagation(); ${target.id ? `window.apFilmChat._jumpToMessage('${target.id}')` : ''}">
+                    <div class="reply-preview-line"></div>
+                    <div class="reply-preview-content">
+                        <div class="reply-preview-user">
+                            <span class="material-icons" style="font-size:12px; vertical-align:middle; margin-right:2px;">${icon}</span>
+                            ${this._esc(title)}
+                        </div>
+                        <div class="reply-preview-text">${this._esc(target.text)}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Reactions UI (Telegram Consolidated Style)
+        let reactionsHtml = '';
+        const mergedReactions = { ...(msg.reactions || {}), ...(this.reactionsCache[msg.id] || {}) };
+        const emojiList = Object.keys(mergedReactions);
+        
+        if (emojiList.length > 0) {
+            // Calculate totals and first user data
+            const firstEmoji = emojiList[0];
+            const firstData = mergedReactions[firstEmoji];
+            const firstAvatar = (firstData.avatars && firstData.avatars[0]) ? firstData.avatars[0] : '/favicon.png';
+            const totalCount = Object.values(mergedReactions).reduce((acc, curr) => acc + (curr.uids ? curr.uids.length : 0), 0);
+            
+            // Build Detailed Tooltip
+            let tooltipHtml = '<div class="reaction-tooltip">';
+            for (const [emo, data] of Object.entries(mergedReactions)) {
+                const names = (data.names && data.names.length > 0) ? data.names.join(', ') : `${data.uids.length} người`;
+                tooltipHtml += `
+                    <div class="tooltip-row">
+                        <span class="tooltip-emoji">${emo}</span>
+                        <div class="tooltip-names">${names}</div>
+                    </div>
+                `;
+            }
+            tooltipHtml += '</div>';
+
+            const hasReactedAny = emojiList.some(emo => {
+                const uids = mergedReactions[emo].uids || [];
+                return this.user && (uids.includes(this.user.id) || uids.includes(this.user._id));
+            });
+
+            reactionsHtml = `
+                <div class="tg-reactions-pill">
+                    <div class="reaction-item ${hasReactedAny ? 'active' : ''}" onclick="event.stopPropagation(); window.apFilmChat._handleReaction('${msg.id}', '${firstEmoji}')">
+                        <span class="emoji">${firstEmoji}</span>
+                        <div class="reaction-avatars-stack">
+                            <img src="${firstAvatar}" class="reaction-avatar" style="width:22px; height:22px;">
+                        </div>
+                        <span class="count">${totalCount}</span>
+                        ${tooltipHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        const nameHtml = showName ? `
+            <div class="tg-msg-name">
+                ${this._esc(msg.user)} 
+                ${isAdmin ? `
+                    <span class="admin-badge-premium">
+                        <span class="material-icons">verified</span>
+                        Admin
+                    </span>` : ''}
+            </div>
+        ` : '';
+
+        const forwardHtml = isForwarded ? `
+            <div class="forwarded-label">
+                <span class="material-icons">shortcut</span> ${this._esc(forwardInfo)}
+            </div>
+        ` : '';
+
+        div.innerHTML = `
+            <div class="tg-msg-checkbox"></div>
+            ${avatarHtml}
+            <div class="tg-msg-bubble">
+                <div class="quick-heart" title="Thả tim" onclick="event.stopPropagation(); window.apFilmChat._handleReaction('${msg.id}', '❤️')">
+                    <span class="material-icons">favorite</span>
+                </div>
+                ${replyInfoHtml}
+                ${forwardHtml}
+                ${nameHtml}
+                <div class="tg-msg-text">${this._esc(cleanText)}</div>
+                <div class="tg-msg-meta">
+                    ${msg.isPinned ? '<span class="material-icons pinned-msg-icon">push_pin</span>' : ''}
+                    <span class="tg-msg-time">${time}</span>
+                    ${msg.isOwn ? '<span class="material-icons read-icon">done_all</span>' : ''}
+                </div>
+                ${reactionsHtml}
+            </div>
+        `;
+
+        const bubble = div.querySelector('.tg-msg-bubble');
+        
+        // Attachment events to BUBBLE for better hit area
+        bubble.addEventListener('contextmenu', e => {
+            e.preventDefault();
+            this._showContextMenu(e, msg);
+        });
+
+        // Mobile Long Press
+        let touchTimer;
+        bubble.addEventListener('touchstart', e => {
+            touchTimer = setTimeout(() => {
+                if (window.navigator.vibrate) window.navigator.vibrate(50);
+                this._showContextMenu(e.touches[0], msg);
+            }, 600);
+        }, { passive: true });
+
+        bubble.addEventListener('touchend', () => clearTimeout(touchTimer));
+        bubble.addEventListener('touchmove', () => clearTimeout(touchTimer));
+
+        bubble.addEventListener('dblclick', e => {
+            e.preventDefault();
+            // Quick react with heart on double click (Telegram style)
+            this._handleReaction(msg.id, '❤️');
+        });
+
+        bubble.addEventListener('click', e => {
+            if (this.selectMode) {
+                this._toggleMessageSelection(div, msg.id);
+            }
+        });
+
+        // Click on checkbox specifically
+        const checkbox = div.querySelector('.tg-msg-checkbox');
+        checkbox.onclick = (e) => {
+            e.stopPropagation();
+            this._toggleMessageSelection(div, msg.id);
+        };
+
+        this.el.messagesArea.appendChild(div);
+        if (doScroll) this._scrollToBottom();
     }
 
-    /* ── Send Message ──────────────────────────────────────── */
+    _handleReaction(msgId, emoji) {
+        if (!this.user || !window.firebaseChat?.ready) return;
+
+        // 1. Update local cache (Persistence & Data source for UI)
+        if (!this.reactionsCache[msgId]) this.reactionsCache[msgId] = {};
+        const cache = this.reactionsCache[msgId];
+        if (!cache[emoji]) cache[emoji] = { uids: [], avatars: [], names: [] };
+        
+        const myUid = this.user.id || this.user._id;
+        const myName = this.user.user || this.user.name || 'Khách';
+        const myAvatar = this.user.avatar || '/favicon.png';
+        
+        const idx = cache[emoji].uids.indexOf(myUid);
+        if (idx !== -1) {
+            cache[emoji].uids.splice(idx, 1);
+            cache[emoji].avatars.splice(idx, 1);
+            if (cache[emoji].names) cache[emoji].names.splice(idx, 1);
+            if (cache[emoji].uids.length === 0) delete cache[emoji];
+        } else {
+            cache[emoji].uids.push(myUid);
+            cache[emoji].avatars.push(myAvatar);
+            if (!cache[emoji].names) cache[emoji].names = [];
+            cache[emoji].names.push(myName);
+        }
+
+        // 2. Optimistic UI Update: Re-render the consolidated pill
+        const msgWrapper = document.querySelector(`.tg-msg-wrapper[data-msg-id="${msgId}"]`);
+        if (msgWrapper) {
+            const bubble = msgWrapper.querySelector('.tg-msg-bubble');
+            let pillContainer = msgWrapper.querySelector('.tg-reactions-pill');
+            
+            const emojiList = Object.keys(cache);
+            if (emojiList.length === 0) {
+                if (pillContainer) pillContainer.remove();
+            } else {
+                const firstEmoji = emojiList[0];
+                const firstAvatar = cache[firstEmoji].avatars[0] || '/favicon.png';
+                const totalCount = Object.values(cache).reduce((acc, curr) => acc + curr.uids.length, 0);
+                const hasReactedAny = emojiList.some(emo => cache[emo].uids.includes(myUid));
+
+                // Build Tooltip HTML for optimistic update
+                let tooltipHtml = '<div class="reaction-tooltip">';
+                for (const [emo, data] of Object.entries(cache)) {
+                    const names = (data.names && data.names.length > 0) ? data.names.join(', ') : `${data.uids.length} người`;
+                    tooltipHtml += `
+                        <div class="tooltip-row">
+                            <span class="tooltip-emoji">${emo}</span>
+                            <div class="tooltip-names">${names}</div>
+                        </div>
+                    `;
+                }
+                tooltipHtml += '</div>';
+
+                const html = `
+                    <div class="reaction-item ${hasReactedAny ? 'active' : ''}" onclick="event.stopPropagation(); window.apFilmChat._handleReaction('${msgId}', '${firstEmoji}')">
+                        <span class="emoji">${firstEmoji}</span>
+                        <div class="reaction-avatars-stack">
+                            <img src="${firstAvatar}" class="reaction-avatar" style="width:22px; height:22px;">
+                        </div>
+                        <span class="count">${totalCount}</span>
+                        ${tooltipHtml}
+                    </div>
+                `;
+                
+                if (!pillContainer) {
+                    pillContainer = document.createElement('div');
+                    pillContainer.className = 'tg-reactions-pill';
+                    bubble.appendChild(pillContainer);
+                }
+                pillContainer.innerHTML = html;
+            }
+
+            // Burst animation
+            const heart = msgWrapper.querySelector('.quick-heart');
+            if (heart) {
+                heart.style.animation = 'none';
+                heart.offsetHeight; 
+                heart.style.animation = 'heartBurst 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            }
+        }
+
+        // 3. Sync to Server
+        window.firebaseChat.toggleReaction(this.currentTab, msgId, emoji, myUid, myAvatar, myName);
+        if (window.navigator.vibrate) window.navigator.vibrate(10);
+    }
+
+    _toggleMessageSelection(div, msgId) {
+        div.classList.toggle('selected');
+        const idx = this.selectedMsgs.indexOf(msgId);
+        if (idx === -1) this.selectedMsgs.push(msgId);
+        else this.selectedMsgs.splice(idx, 1);
+        this._updateSelectedUI();
+        if (this.selectedMsgs.length === 0) this._toggleSelectMode(false);
+    }
+
+    _showContextMenu(e, msg) {
+        console.log('[APFilmChat] _showContextMenu called', { msgUser: msg.user });
+        const menu = document.getElementById('chatContextMenu');
+        if (!menu) {
+            console.error('[APFilmChat] Context menu element NOT found in DOM!');
+            return;
+        }
+
+        const isAdmin = this.user && (this.user.chatRole === 'admin' || this.user.role === 'admin');
+        
+        menu.style.display = 'block';
+        
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+
+        // Fixed position adjustment
+        let left = clientX;
+        let top  = clientY;
+
+        if (left + 200 > window.innerWidth) left -= 200;
+        if (top + 250 > window.innerHeight) top -= 250;
+
+        menu.style.left = left + 'px';
+        menu.style.top  = top + 'px';
+        console.log('[APFilmChat] Menu shown at:', { left, top });
+
+        document.getElementById('ctxReply').onclick = () => { this._setReply(msg); menu.style.display = 'none'; };
+        document.getElementById('ctxForward').onclick = () => { this._forwardMessage(msg); menu.style.display = 'none'; };
+        document.getElementById('ctxCopy').onclick = () => {
+            navigator.clipboard.writeText(msg.text);
+            menu.style.display = 'none';
+            if (window.showMessage) window.showMessage('Đã sao chép tin nhắn', 'success');
+        };
+        document.getElementById('ctxSelect').onclick = () => {
+            this._toggleSelectMode(true);
+            menu.style.display = 'none';
+        };
+        
+        const ctxPin = document.getElementById('ctxPin');
+        const ctxBan = document.getElementById('ctxBan');
+        const ctxDelete = document.getElementById('ctxDelete');
+
+        // Handle Reactions
+        const emojis = menu.querySelectorAll('.react-emoji');
+        emojis.forEach(em => {
+            const emojiText = em.dataset.emoji;
+            
+            // Check if user has already reacted with this emoji
+            const hasReacted = msg.reactions && msg.reactions[emojiText] && 
+                               msg.reactions[emojiText].uids && 
+                               this.user && msg.reactions[emojiText].uids.includes(this.user.id);
+            
+            em.classList.toggle('already-reacted', !!hasReacted);
+
+            em.onclick = () => {
+                this._handleReaction(msg.id, emojiText);
+                menu.style.display = 'none';
+            };
+        });
+        
+        if (isAdmin) {
+            ctxPin.style.display = 'flex';
+            ctxBan.style.display = 'flex';
+            ctxDelete.style.display = 'flex';
+            
+            ctxPin.onclick = () => { 
+                if (window.firebaseChat?.ready) window.firebaseChat.pinMessage(this.currentTab, msg.id); 
+                menu.style.display = 'none'; 
+            };
+            ctxBan.onclick = () => {
+                if (confirm(`Chặn người dùng "${msg.user}"? Họ sẽ không thể nhắn tin nữa.`)) {
+                    if (window.firebaseChat?.ready) window.firebaseChat.banUser(msg.userId, msg.user);
+                }
+                menu.style.display = 'none';
+            };
+            ctxDelete.onclick = () => { 
+                if (confirm('Xóa tin nhắn này?')) {
+                    if (window.firebaseChat?.ready) window.firebaseChat.deleteMessage(this.currentTab, msg.id);
+                }
+                menu.style.display = 'none'; 
+            };
+        } else {
+            ctxPin.style.display = 'none';
+            ctxBan.style.display = 'none';
+            // Users can delete their own messages
+            if (msg.isOwn) {
+                ctxDelete.style.display = 'flex';
+                ctxDelete.onclick = () => {
+                    if (confirm('Xóa tin nhắn của bạn?')) {
+                        if (window.firebaseChat?.ready) window.firebaseChat.deleteMessage(this.currentTab, msg.id);
+                    }
+                    menu.style.display = 'none';
+                };
+            } else {
+                ctxDelete.style.display = 'none';
+            }
+        }
+    }
+
+    _setReply(msg) {
+        this.replyTo = msg;
+        this.forwardFrom = null; // Clear forward if reply
+        this._updateInputPrefix('reply', msg.user, msg.text);
+        this.el.messageInput?.focus();
+    }
+
+    _forwardMessage(msg) {
+        this.replyTo = null; // Clear reply if forward
+        this.forwardFrom = msg;
+        this._updateInputPrefix('shortcut', `Forwarded from ${msg.user}`, msg.text);
+        this.el.messageInput?.focus();
+    }
+
+    _updateInputPrefix(icon, title, text) {
+        console.log('[APFilmChat] _updateInputPrefix called', { icon, title, text });
+        const el = this.el;
+        if (!el.inputPrefix) {
+            console.error('[APFilmChat] inputPrefix element NOT found in cache!');
+            return;
+        }
+        
+        el.inputPrefix.style.setProperty('display', 'flex', 'important');
+        el.inputPrefix.style.zIndex = '1000';
+        
+        if (el.prefixIcon) el.prefixIcon.innerHTML = `<span class="material-icons">${icon}</span>`;
+        if (el.prefixTitle) el.prefixTitle.textContent = title;
+        if (el.prefixText) el.prefixText.textContent = text;
+        
+        const color = '#f87171'; 
+        if (el.prefixIcon) el.prefixIcon.style.color = color;
+        if (el.prefixTitle) el.prefixTitle.style.color = color;
+        console.log('[APFilmChat] inputPrefix should now be visible');
+    }
+
+    _cancelReply() {
+        this.replyTo = null;
+        this.forwardFrom = null;
+        if (this.el.inputPrefix) this.el.inputPrefix.style.display = 'none';
+    }
+
+    _toggleSelectMode(active) {
+        this.selectMode = active;
+        this.selectedMsgs = [];
+        this.el.window.classList.toggle('select-mode', active);
+        
+        if (this.el.bulkActionBar) {
+            this.el.bulkActionBar.classList.toggle('active', active);
+        }
+        
+        if (!active) {
+            document.querySelectorAll('.tg-msg-wrapper.selected').forEach(el => el.classList.remove('selected'));
+        }
+    }
+
+    _updateSelectedUI() {
+        if (this.el.selectedCount) {
+            this.el.selectedCount.textContent = `${this.selectedMsgs.length} đã chọn`;
+        }
+        if (this.el.bulkActionBar) {
+            this.el.bulkActionBar.style.display = this.selectedMsgs.length > 0 ? 'flex' : 'none';
+        }
+    }
+
+
     _sendMessage() {
+        if (this.isBanned) {
+            if (window.showMessage) window.showMessage('Bạn đang bị cấm khỏi phòng chat', 'error');
+            return;
+        }
+
         const text = (this.el.messageInput?.value || '').trim();
-        if (!text || !this.userName) return;
-        this._sendMessageText(text);
-        if (this.el.messageInput) this.el.messageInput.value = '';
-        if (this.el.sendBtn) this.el.sendBtn.disabled = true;
-        if (this.el.emojiPanel) this.el.emojiPanel.classList.remove('show');
-    }
-
-    _sendMessageText(text) {
-        if (!text || !this.userName) return;
-
+        if (!text || !this.user) return;
+        
         const msg = {
-            user : this.userName,
-            color: this.userColor,
+            userId: this.user.id,
+            user : this.user.name,
+            avatar: this.user.avatar,
+            frame: this.user.frame,
+            chatRole: this.user.chatRole,
             text,
+            replyTo: this.replyTo ? {
+                id: this.replyTo.id,
+                user: this.replyTo.user,
+                text: this.replyTo.text
+            } : null,
+            forwardFrom: this.forwardFrom ? {
+                user: this.forwardFrom.user,
+                text: this.forwardFrom.text
+            } : null
         };
 
         if (window.firebaseChat?.ready) {
             window.firebaseChat.sendMessage(this.currentTab, msg);
-        } else {
-            // Offline fallback: show locally
-            this._appendMessage({ ...msg, time: this._now(), isOwn: true });
-            window.firebaseChat?.onReady(() => {
-                window.firebaseChat.sendMessage(this.currentTab, msg);
-            });
         }
 
-        // Support tab auto-reply
-        if (this.currentTab === 'support') {
-            this._showTyping();
-            setTimeout(() => {
-                this._hideTyping();
-                const replies = [
-                    'Cảm ơn bạn! Đội hỗ trợ sẽ phản hồi sớm nhất có thể. 🙏',
-                    'Đã nhận được! Hãy mô tả thêm chi tiết nhé bạn.',
-                    'Chúng tôi đang xem xét vấn đề của bạn, sẽ có phản hồi trong vài phút!',
-                ];
-                const reply = {
-                    user : 'Admin A Phim',
-                    color: '#ffd709',
-                    text : replies[Math.floor(Math.random() * replies.length)],
-                };
-                window.firebaseChat?.sendMessage('support', reply);
-            }, 2000);
+        this.el.messageInput.value = '';
+        this.el.messageInput.style.height = 'auto';
+        this.el.sendBtn.disabled = true;
+        this._cancelReply();
+    }
+
+    _jumpToMessage(id) {
+        const target = document.querySelector(`.tg-msg-wrapper[data-msg-id="${id}"]`);
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            target.classList.add('jump-highlight');
+            setTimeout(() => target.classList.remove('jump-highlight'), 2000);
         }
     }
 
-    /* ── Render Message Bubble ─────────────────────────────── */
-    _appendMessage(msg, doScroll = true) {
-        if (!this.el.messagesArea) return;
-
-        const letter = msg.user ? msg.user.charAt(0).toUpperCase() : '?';
-        const own    = msg.isOwn ? 'own' : '';
-        const time   = msg.time || this._now();
-
-        const div = document.createElement('div');
-        div.className = `msg-group msg-firebase ${own}`;
-        div.innerHTML = `
-            <div class="msg-avatar" style="background:${this._esc(msg.color || '#ffd709')};color:rgba(0,0,0,0.7);">${letter}</div>
-            <div class="msg-content">
-                ${!msg.isOwn ? `<div class="msg-name">${this._esc(msg.user)}</div>` : ''}
-                <div class="msg-bubble">${this._esc(msg.text)}</div>
-                <div class="msg-meta"><span class="msg-time">${time}</span></div>
-            </div>
-        `;
-
-        const typing = this.el.typingIndicator;
-        if (typing) {
-            this.el.messagesArea.insertBefore(div, typing);
-        } else {
-            this.el.messagesArea.appendChild(div);
-        }
-
-        if (doScroll) this._scrollToBottom();
-    }
-
-    _appendSystemMessage(html) {
-        if (!this.el.messagesArea) return;
-        const div = document.createElement('div');
-        div.className = 'sys-msg msg-firebase';
-        div.innerHTML = `<span>${html}</span>`;
-        const typing = this.el.typingIndicator;
-        if (typing) {
-            this.el.messagesArea.insertBefore(div, typing);
-        } else {
-            this.el.messagesArea.appendChild(div);
-        }
-    }
-
-    /* ── Typing Indicator ──────────────────────────────────── */
-    _showTyping() { this.el.typingIndicator?.classList.add('show'); this._scrollToBottom(); }
-    _hideTyping() { this.el.typingIndicator?.classList.remove('show'); }
-
-    /* ── Scroll ────────────────────────────────────────────── */
     _scrollToBottom() {
         if (this.el.messagesArea) {
             this.el.messagesArea.scrollTop = this.el.messagesArea.scrollHeight;
         }
     }
 
-    /* ── Window Controls ───────────────────────────────────── */
-    open() {
-        if (!this.el.window) return;
-        this.isOpen = true;
-        this._resetWindowBounds();
-        this.el.window.classList.add('active');
-        if (this.el.fab) this.el.fab.style.display = 'none';
-        this._resetUnread();
-        if (this.currentScreen === 'room') this._scrollToBottom();
+    _now() {
+        return new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
     }
 
-    _resetWindowBounds() {
-        const win = this.el.window;
-        win.style.width  = '';
-        win.style.height = '';
-        win.style.left   = '';
-        win.style.top    = '';
-        win.style.right  = '';
-        win.style.bottom = '';
-        this._isMaximized = false;
-        const icon = this.el.maximizeBtn?.querySelector('.material-icons');
-        if (icon) icon.textContent = 'open_in_full';
+    _esc(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    toggleMinimize() {
+        this.isMinimized = !this.isMinimized;
+        this.el.window?.classList.toggle('minimized', this.isMinimized);
+    }
+
+    async open() {
+        if (!this.el.window) return;
+        this.isOpen = true;
+        this.el.window.classList.add('active');
+        if (this.el.fab) this.el.fab.style.display = 'none';
+        this._scrollToBottom();
+
+        // Auto-refresh user role to detect if they were promoted to admin
+        if (this.user && this.user.id) {
+            try {
+                const token = localStorage.getItem('cinestream_token');
+                if (token) {
+                    const res = await fetch(`${typeof API_CONFIG !== 'undefined' ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api'}/auth/me`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const data = await res.json();
+                    if (data.success && data.data) {
+                        const newUser = data.data;
+                        this.user.chatRole = newUser.chatRole || 'user';
+                        this.user.avatar = newUser.avatar || this.user.avatar;
+                        this.user.frame = newUser.equippedFrameClass || this.user.frame;
+                        this._syncUserUI();
+                    }
+                }
+            } catch (e) {
+                console.warn('[APFilmChat] Profile refresh failed:', e);
+            }
+        }
     }
 
     close() {
@@ -784,365 +1271,159 @@ class APFilmChat {
         this.isOpen = false;
         this.el.window.classList.remove('active');
         if (this.el.fab) this.el.fab.style.display = '';
-        this.isMinimized = false;
-        this.el.window.classList.remove('minimized');
     }
 
-    toggleMinimize() {
-        this.isMinimized = !this.isMinimized;
-        this.el.window?.classList.toggle('minimized', this.isMinimized);
-        if (this.el.minimizeBtn) {
-            const icon = this.el.minimizeBtn.querySelector('.material-icons');
-            if (icon) icon.textContent = this.isMinimized ? 'open_in_full' : 'remove';
-        }
-    }
-
-    /* ── Unread Badge ──────────────────────────────────────── */
-    _addUnread() {
-        this.unreadCount++;
-        if (this.el.fabBadge) {
-            this.el.fabBadge.textContent = this.unreadCount;
-            this.el.fabBadge.classList.add('show');
-        }
-    }
-
-    _resetUnread() {
-        this.unreadCount = 0;
-        if (this.el.fabBadge) this.el.fabBadge.classList.remove('show');
-    }
-
-    /* ── Helpers ───────────────────────────────────────────── */
-    _now() {
-        return new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-    }
-
-    _esc(str) {
-        if (!str) return '';
-        const d = document.createElement('div');
-        d.textContent = String(str);
-        return d.innerHTML;
-    }
-
-    /* ── Drag & Resize (Desktop only) ─────────────────────── */
+    /* ── Desktop Interaction ── */
     _initDragResize() {
         if (window.innerWidth <= 768) return;
-        this._addResizeHandles();
-        this._addMaximizeBtn();
-        this._attachDragMove();
-        this._attachResize();
-    }
-
-    _addResizeHandles() {
-        const dirs = ['n','ne','e','se','s','sw','w','nw'];
-        dirs.forEach(d => {
-            const h = document.createElement('div');
-            h.className = `cr-resize-handle cr-resize-${d}`;
-            h.dataset.dir = d;
-            this.el.window.appendChild(h);
-        });
-    }
-
-    _addMaximizeBtn() {
-        if (document.getElementById('chatMaximizeBtn')) return;
-        const btn = document.createElement('button');
-        btn.className = 'chat-header-btn';
-        btn.id = 'chatMaximizeBtn';
-        btn.title = 'Phóng to / Thu nhỏ';
-        btn.innerHTML = '<span class="material-icons">open_in_full</span>';
-        btn.addEventListener('click', () => this._toggleMaximize());
-        this.el.minimizeBtn?.parentElement?.insertBefore(btn, this.el.minimizeBtn);
-        this.el.maximizeBtn = btn;
-    }
-
-    _toggleMaximize() {
         const win = this.el.window;
-        if (this._isMaximized) {
-            win.style.width  = this._defaultW + 'px';
-            win.style.height = this._defaultH + 'px';
-            win.style.left   = '';
-            win.style.top    = '';
-            win.style.right  = '28px';
-            win.style.bottom = '100px';
-            this._isMaximized = false;
-            const icon = this.el.maximizeBtn?.querySelector('.material-icons');
-            if (icon) icon.textContent = 'open_in_full';
-            win.classList.remove('cr-maximized');
-        } else {
-            const margin = 16;
-            win.style.left   = margin + 'px';
-            win.style.top    = margin + 'px';
-            win.style.right  = '';
-            win.style.bottom = '';
-            win.style.width  = (window.innerWidth  - margin * 2) + 'px';
-            win.style.height = (window.innerHeight - margin * 2) + 'px';
-            this._isMaximized = true;
-            const icon = this.el.maximizeBtn?.querySelector('.material-icons');
-            if (icon) icon.textContent = 'close_fullscreen';
-            win.classList.add('cr-maximized');
-        }
-    }
-
-    _attachDragMove() {
         const header = this.el.header;
-        const win    = this.el.window;
-        let dragging = false, ox = 0, oy = 0;
 
-        header.addEventListener('mousedown', e => {
-            if (e.target.closest('button') || this._isMaximized) return;
-            const r = win.getBoundingClientRect();
-            win.style.left   = r.left + 'px';
-            win.style.top    = r.top  + 'px';
-            win.style.right  = '';
-            win.style.bottom = '';
-            ox = e.clientX - r.left;
-            oy = e.clientY - r.top;
+        // Restore saved size
+        const savedW = localStorage.getItem('chat_width');
+        const savedH = localStorage.getItem('chat_height');
+        if (savedW) win.style.width = savedW;
+        if (savedH) win.style.height = savedH;
+
+        // Drag logic (Header only)
+        let dragging = false, ox, oy;
+        header.onmousedown = e => {
+            if (e.target.closest('button')) return;
             dragging = true;
-            win.classList.add('cr-dragging');
-            this._blockSelect(true);
-        });
-
-        document.addEventListener('mousemove', e => {
-            if (!dragging) return;
-            let nx = e.clientX - ox;
-            let ny = e.clientY - oy;
-            nx = Math.max(0, Math.min(nx, window.innerWidth  - win.offsetWidth));
-            ny = Math.max(0, Math.min(ny, window.innerHeight - 60));
-            win.style.left = nx + 'px';
-            win.style.top  = ny + 'px';
-        });
-
-        document.addEventListener('mouseup', () => {
-            if (!dragging) return;
-            dragging = false;
-            win.classList.remove('cr-dragging');
-            this._blockSelect(false);
-        });
-    }
-
-    _attachResize() {
-        const win = this.el.window;
-        const MIN_W = 300, MIN_H = 400;
-        let resizing = false, dir = '', sx, sy, sw, sh, sl, st;
-
-        win.addEventListener('mousedown', e => {
-            const h = e.target.closest('.cr-resize-handle');
-            if (!h || this._isMaximized) return;
-            e.preventDefault();
-            dir = h.dataset.dir;
-            resizing = true;
-            const r = win.getBoundingClientRect();
-            sx = e.clientX; sy = e.clientY;
-            sw = r.width;   sh = r.height;
-            sl = r.left;    st = r.top;
-            win.style.left   = sl + 'px';
-            win.style.top    = st + 'px';
-            win.style.right  = '';
-            win.style.bottom = '';
-            win.style.width  = sw + 'px';
-            win.style.height = sh + 'px';
-            this._blockSelect(true);
-        });
-
-        document.addEventListener('mousemove', e => {
-            if (!resizing) return;
-            const dx = e.clientX - sx;
-            const dy = e.clientY - sy;
-            let nw = sw, nh = sh, nl = sl, nt = st;
-            const maxW = window.innerWidth  - 20;
-            const maxH = window.innerHeight - 20;
-
-            if (dir.includes('e')) nw = Math.min(maxW, Math.max(MIN_W, sw + dx));
-            if (dir.includes('s')) nh = Math.min(maxH, Math.max(MIN_H, sh + dy));
-            if (dir.includes('w')) {
-                nw = Math.min(maxW, Math.max(MIN_W, sw - dx));
-                nl = sl + (sw - nw);
-            }
-            if (dir.includes('n')) {
-                nh = Math.min(maxH, Math.max(MIN_H, sh - dy));
-                nt = st + (sh - nh);
-            }
-            win.style.width  = nw + 'px';
-            win.style.height = nh + 'px';
-            win.style.left   = nl + 'px';
-            win.style.top    = nt + 'px';
-        });
-
-        document.addEventListener('mouseup', () => {
-            if (!resizing) return;
-            resizing = false;
-            this._blockSelect(false);
-        });
-    }
-
-    _blockSelect(on) {
-        document.body.style.userSelect    = on ? 'none' : '';
-        document.body.style.webkitUserSelect = on ? 'none' : '';
-        if (this.el.window) this.el.window.style.pointerEvents = 'all';
-    }
-
-    /* ── Mobile: Fix keyboard zoom ────────────────────────────────── */
-    _initMobileKeyboardFix() {
-        if (window.innerWidth > 768) return;
-        const win = this.el.window;
-        if (!win || !window.visualViewport) return;
-
-        const onVVResize = () => {
-            if (!this.isOpen || this.isMinimized) return;
-
-            const vv = window.visualViewport;
-            const keyboardHeight = window.innerHeight - vv.height;
-            const isOpen = keyboardHeight > 150;
-
-            if (isOpen) {
-                win.classList.add('keyboard-open');
-                // Tính toán vị trí top dể không bị lún xuống dưới bàn phím
-                // bottom: bàn phím + 8px margin
-                win.style.bottom = (keyboardHeight + 8) + 'px';
-                // Chiều cao tối đa là phần viewport còn lại - margin top (60px cho header trang)
-                win.style.height = (vv.height - 70) + 'px';
-                
-                setTimeout(() => this._scrollToBottom(), 100);
-            } else {
-                win.classList.remove('keyboard-open');
-                win.style.bottom = '';
-                win.style.height = '';
-            }
+            win.style.transition = 'none';
+            ox = e.clientX - win.offsetLeft;
+            oy = e.clientY - win.offsetTop;
+            
+            const onDragMove = (ev) => {
+                if (!dragging) return;
+                win.style.left = (ev.clientX - ox) + 'px';
+                win.style.top  = (ev.clientY - oy) + 'px';
+                win.style.right = 'auto'; 
+                win.style.bottom = 'auto';
+            };
+            
+            const onDragUp = () => {
+                dragging = false;
+                win.style.transition = '';
+                document.removeEventListener('mousemove', onDragMove);
+                document.removeEventListener('mouseup', onDragUp);
+            };
+            
+            document.addEventListener('mousemove', onDragMove);
+            document.addEventListener('mouseup', onDragUp);
         };
 
-        window.visualViewport.addEventListener('resize', onVVResize);
-        window.visualViewport.addEventListener('scroll', onVVResize);
-
-        // Chặn scroll body khi đang chat trên mobile để tránh lệch viewport
-        this.el.messageInput?.addEventListener('focus', () => {
-            document.body.style.overflow = 'hidden';
-            document.body.style.position = 'fixed';
-            document.body.style.width = '100%';
-        });
-        this.el.messageInput?.addEventListener('blur', () => {
-            document.body.style.overflow = '';
-            document.body.style.position = '';
-            document.body.style.width = '';
-            // Restore scroll position nếu cần
-        });
+        this._bindResizeHandlers();
     }
 
-    /* ── Mobile: Touch Resize 8 hướng + header drag ────────────── */
-    _initMobileResize() {
-        if (window.innerWidth > 768) return;
+    _bindResizeHandlers() {
         const win = this.el.window;
         if (!win) return;
+        let hideTimeout;
 
-        const MIN_W = 240, MIN_H = 200;
-        const MARGIN = 8;
-
-        // ── Tạo 8 resize handles ──────────────────────────────────
-        const dirs = ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'];
-        dirs.forEach(d => {
-            const h = document.createElement('div');
-            h.className = `cr-resize-handle cr-resize-${d} cr-touch-handle`;
-            h.dataset.dir = d;
-            win.appendChild(h);
-        });
-
-        // ── Helper: anchor window tại vị trí tuyệt đối ───────────
-        const snapToAbsolute = () => {
-            const r = win.getBoundingClientRect();
-            win.style.left   = r.left + 'px';
-            win.style.top    = r.top  + 'px';
-            win.style.right  = '';
-            win.style.bottom = '';
-            win.style.width  = r.width  + 'px';
-            win.style.height = r.height + 'px';
-        };
-
-        // ── Touch resize ──────────────────────────────────────────
-        let resizing = false, rDir = '';
-        let rsx = 0, rsy = 0, rsw = 0, rsh = 0, rsl = 0, rst = 0;
-
-        win.addEventListener('touchstart', (e) => {
-            const h = e.target.closest('.cr-resize-handle');
-            if (!h) return;
+        const onResizeStart = (e, type) => {
             e.preventDefault();
             e.stopPropagation();
-            snapToAbsolute();
-            rDir = h.dataset.dir;
-            const t = e.touches[0];
-            rsx = t.clientX; rsy = t.clientY;
-            rsw = win.offsetWidth;  rsh = win.offsetHeight;
-            rsl = parseFloat(win.style.left) || 0;
-            rst = parseFloat(win.style.top)  || 0;
-            resizing = true;
-            win.querySelectorAll('.cr-resize-handle').forEach(el => el.classList.remove('active'));
-            h.classList.add('active');
-        }, { passive: false });
+            win.style.transition = 'none';
+            win.classList.add('is-resizing');
+            if (hideTimeout) clearTimeout(hideTimeout);
+            
+            const isTouch = e.type === 'touchstart';
+            const startW = win.offsetWidth;
+            const startH = win.offsetHeight;
+            const startX = isTouch ? e.touches[0].clientX : e.clientX;
+            const startY = isTouch ? e.touches[0].clientY : e.clientY;
+            const startL = win.offsetLeft;
+            const startT = win.offsetTop;
 
-        document.addEventListener('touchmove', (e) => {
-            if (!resizing) return;
-            e.preventDefault();
-            const t = e.touches[0];
-            const dx = t.clientX - rsx;
-            const dy = t.clientY - rsy;
-            let nw = rsw, nh = rsh, nl = rsl, nt = rst;
-            const maxW = window.innerWidth  - MARGIN * 2;
-            const maxH = window.innerHeight - MARGIN * 2;
+            const onMove = (ev) => {
+                const curX = isTouch ? ev.touches[0].clientX : ev.clientX;
+                const curY = isTouch ? ev.touches[0].clientY : ev.clientY;
 
-            if (rDir.includes('e'))  nw = Math.min(maxW, Math.max(MIN_W, rsw + dx));
-            if (rDir.includes('s'))  nh = Math.min(maxH, Math.max(MIN_H, rsh + dy));
-            if (rDir.includes('w')) { nw = Math.min(maxW, Math.max(MIN_W, rsw - dx)); nl = rsl + (rsw - nw); }
-            if (rDir.includes('n')) { nh = Math.min(maxH, Math.max(MIN_H, rsh - dy)); nt = rst + (rsh - nh); }
+                if (type.includes('w')) {
+                    const newW = startW + (startX - curX);
+                    if (newW > 300 && newW < 1200) {
+                        win.style.width = newW + 'px';
+                        win.style.left = (startL - (newW - startW)) + 'px';
+                    }
+                } else if (type.includes('e')) {
+                    const newW = startW + (curX - startX);
+                    if (newW > 300 && newW < 1200) win.style.width = newW + 'px';
+                }
 
-            nl = Math.max(MARGIN, Math.min(nl, window.innerWidth  - nw - MARGIN));
-            nt = Math.max(MARGIN, Math.min(nt, window.innerHeight - nh - MARGIN));
+                if (type.includes('n')) {
+                    const newH = startH + (startY - curY);
+                    if (newH > 350 && newH < 950) {
+                        win.style.height = newH + 'px';
+                        win.style.top = (startT - (newH - startH)) + 'px';
+                    }
+                } else if (type.includes('s')) {
+                    const newH = startH + (curY - startY);
+                    if (newH > 350 && newH < 950) win.style.height = newH + 'px';
+                }
+            };
 
-            win.style.width  = nw + 'px';
-            win.style.height = nh + 'px';
-            win.style.left   = nl + 'px';
-            win.style.top    = nt + 'px';
-        }, { passive: false });
+            const onUp = () => {
+                win.style.transition = '';
+                localStorage.setItem('chat_width', win.style.width);
+                localStorage.setItem('chat_height', win.style.height);
+                document.removeEventListener(isTouch ? 'touchmove' : 'mousemove', onMove);
+                document.removeEventListener(isTouch ? 'touchend' : 'mouseup', onUp);
+                
+                // Hide after 2 seconds
+                hideTimeout = setTimeout(() => {
+                    win.classList.remove('is-resizing');
+                }, 2000);
+            };
 
-        document.addEventListener('touchend', () => {
-            if (!resizing) return;
-            resizing = false; rDir = '';
-            win.querySelectorAll('.cr-resize-handle').forEach(el => el.classList.remove('active'));
+            document.addEventListener(isTouch ? 'touchmove' : 'mousemove', onMove, { passive: false });
+            document.addEventListener(isTouch ? 'touchend' : 'mouseup', onUp);
+        };
+
+        win.querySelectorAll('.cr-resize-handle').forEach(h => {
+            const type = h.classList.contains('cr-resize-nw') ? 'nw' :
+                         h.classList.contains('cr-resize-ne') ? 'ne' :
+                         h.classList.contains('cr-resize-se') ? 'se' : 'sw';
+            
+            // Mouse
+            h.onmousedown = (e) => onResizeStart(e, type);
+            // Touch
+            h.ontouchstart = (e) => onResizeStart(e, type);
         });
+    }
 
-        // ── Header drag (touch) ───────────────────────────────────
-        const header = this.el.header;
-        if (!header) return;
-
-        let dragging = false;
-        let dgx = 0, dgy = 0, dgl = 0, dgt = 0;
-
-        header.addEventListener('touchstart', (e) => {
-            if (e.target.closest('button')) return;
-            snapToAbsolute();
-            const t = e.touches[0];
-            dgx = t.clientX; dgy = t.clientY;
-            dgl = parseFloat(win.style.left) || 0;
-            dgt = parseFloat(win.style.top)  || 0;
-            dragging = true;
-            win.classList.add('cr-dragging');
-        }, { passive: true });
-
-        document.addEventListener('touchmove', (e) => {
-            if (!dragging || resizing) return;
-            e.preventDefault();
-            const t = e.touches[0];
-            let nx = dgl + (t.clientX - dgx);
-            let ny = dgt + (t.clientY - dgy);
-            nx = Math.max(MARGIN, Math.min(nx, window.innerWidth  - win.offsetWidth  - MARGIN));
-            ny = Math.max(MARGIN, Math.min(ny, window.innerHeight - win.offsetHeight - MARGIN));
-            win.style.left = nx + 'px';
-            win.style.top  = ny + 'px';
-        }, { passive: false });
-
-        document.addEventListener('touchend', () => {
-            if (!dragging) return;
-            dragging = false;
-            win.classList.remove('cr-dragging');
+    _initMobileKeyboardFix() {
+        if (window.innerWidth > 768) return;
+        if (!window.visualViewport) return;
+        window.visualViewport.addEventListener('resize', () => {
+            if (this.isOpen && !this.isMinimized) {
+                const keyboardHeight = window.innerHeight - window.visualViewport.height;
+                this.el.window.style.bottom = (keyboardHeight > 0 ? keyboardHeight : 0) + 'px';
+            }
         });
+    }
+
+    _initMobileResize() {
+        if (window.innerWidth <= 768) {
+            this._bindResizeHandlers();
+        }
     }
 }
 
-// Launch
-window.aphimChat = new APFilmChat();
+// Auto-healing & Binding helper
+function ensureChatInteraction() {
+    const win = document.getElementById('chatWindow');
+    if (win && !win.querySelector('.cr-resize-handle')) {
+        const positions = ['nw', 'ne', 'se', 'sw'];
+        positions.forEach(pos => {
+            const div = document.createElement('div');
+            div.className = `cr-resize-handle cr-resize-${pos}`;
+            win.appendChild(div);
+        });
+        if (window.apFilmChat) window.apFilmChat._bindResizeHandlers();
+        console.log('[APFilmChat] Resize system re-initialized ✓');
+    }
+}
+setInterval(ensureChatInteraction, 4000);
+
+window.apFilmChat = new APFilmChat();

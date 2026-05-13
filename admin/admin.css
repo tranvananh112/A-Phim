@@ -1259,3 +1259,21 @@ body {
 
 .animate-fade-in { animation: fadeIn 0.3s ease !important; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── Admin Chat Management Enhancements ── */
+.admin-msg-row {
+    background: rgba(245, 158, 11, 0.03) !important;
+}
+
+.admin-msg-row:hover {
+    background: rgba(245, 158, 11, 0.08) !important;
+}
+
+.admin-msg-row .badge-admin {
+    background: #f59e0b;
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 800;
+}

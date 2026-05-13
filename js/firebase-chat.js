@@ -14,64 +14,43 @@
         storageBucket    : "chat-a-phim.firebasestorage.app",
         messagingSenderId: "450796005025",
         appId            : "1:450796005025:web:c36985db03de84c6a972e0"
-        // measurementId đã được gỡ bỏ để tránh lỗi Tracking Prevention
     };
 
-    // Tabs supported
     const TABS = ['general', 'movies', 'support'];
-    // Max messages loaded per tab
     const MSG_LIMIT = 80;
 
     class FirebaseChat {
         constructor() {
             this.app       = null;
             this.db        = null;
-            this.analytics = null;
             this.ready     = false;
-            this._listeners = {}; // active Firestore unsubscribe fns
-            this._onReady   = []; // callbacks waiting for init
+            this._listeners = {};
+            this._onReady   = [];
 
             this._init();
         }
 
-        // ── Init ───────────────────────────────────────────────────────
         _init() {
             try {
                 if (typeof firebase === 'undefined') {
-                    console.warn('[APFilmChat] Firebase SDK not loaded yet, retrying...');
                     setTimeout(() => this._init(), 500);
                     return;
                 }
 
-                // Initialize app (avoid duplicate)
                 if (!firebase.apps.length) {
                     this.app = firebase.initializeApp(firebaseConfig);
                 } else {
                     this.app = firebase.apps[0];
                 }
 
-                // Dùng FirestoreSettings.cache (API mới, không deprecated)
-                if (firebase.firestore.setLogLevel) {
-                    firebase.firestore.setLogLevel('silent');
-                }
                 this.db = firebase.firestore();
-                // Offline cache qua localCache settings (compat SDK)
                 this.db.settings({
                     cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
                     merge: true
                 });
 
-                // Analytics đã bị vô hiệu hóa
-                /*
-                if (typeof firebase.analytics === 'function') {
-                    this.analytics = firebase.analytics();
-                }
-                */
-
                 this.ready = true;
                 console.log('[APFilmChat] Firebase Firestore initialized ✓');
-
-                // Flush pending callbacks
                 this._onReady.forEach(fn => fn());
                 this._onReady = [];
 
@@ -80,156 +59,197 @@
             }
         }
 
-        // ── Wait for ready ─────────────────────────────────────────────
         onReady(fn) {
             if (this.ready) { fn(); return; }
             this._onReady.push(fn);
         }
 
-        // ── Collection reference ───────────────────────────────────────
         _msgCol(tab) {
-            return this.db
-                .collection('chats')
-                .doc(tab)
-                .collection('messages');
+            return this.db.collection('chats').doc(tab).collection('messages');
         }
 
-        // ── Send a message ─────────────────────────────────────────────
-        async sendMessage(tab, { user, text, color }) {
+        // MODERN SEND MESSAGE (Supports Avatar, Role, Frame)
+        async sendMessage(tab, msg) {
             if (!this.db) return null;
             if (!TABS.includes(tab)) tab = 'general';
 
             try {
-                const ref = await this._msgCol(tab).add({
-                    user     : user || 'Khách',
-                    text     : text,
-                    color    : color || '#ffd709',
+                const docRef = await this._msgCol(tab).add({
+                    userId: msg.userId || 'guest',
+                    user: msg.user || 'Khách',
+                    avatar: msg.avatar || '/favicon.png',
+                    chatRole: msg.chatRole || 'user',
+                    frame: msg.frame || '',
+                    text: msg.text || '',
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    time     : new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+                    isPinned: false
                 });
-                return ref.id;
+
+                // Đồng bộ sang MongoDB Backend
+                fetch(`${typeof API_CONFIG !== 'undefined' ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api'}/chat/message`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ ...msg, tab, firebaseId: docRef.id })
+                }).catch(e => console.warn('[APFilmChat] Sync to MongoDB failed:', e));
+
+                return docRef.id;
             } catch (err) {
-                console.error('[APFilmChat] sendMessage error:', err);
+                console.error('[APFilmChat] Send error:', err);
                 return null;
             }
         }
 
-        // ── Listen to messages (realtime) ──────────────────────────────
-        // callback(messages: Array<{id, user, text, color, time, isOwn}>)
-        listenMessages(tab, currentUserName, callback) {
-            if (!this.db) { callback([]); return () => {}; }
+        // ── Realtime Listening ─────────────────────────────────────────
+        listenMessages(tab, userId, callback) {
+            if (!this.db) return;
             if (!TABS.includes(tab)) tab = 'general';
 
-            // Unsubscribe previous listener for this tab
-            if (this._listeners[tab]) {
-                this._listeners[tab]();
-            }
+            if (this._listeners[tab]) this._listeners[tab]();
 
-            const unsubscribe = this._msgCol(tab)
-                .orderBy('timestamp', 'asc')
-                .limitToLast(MSG_LIMIT)
-                .onSnapshot(snapshot => {
-                    const msgs = [];
-                    snapshot.forEach(doc => {
-                        const d = doc.data();
-                        msgs.push({
-                            id   : doc.id,
-                            user : d.user,
-                            text : d.text,
-                            color: d.color || '#ffd709',
-                            time : d.time || '',
-                            isOwn: d.user === currentUserName,
-                        });
-                    });
-                    callback(msgs);
-                }, err => {
-                    console.warn('[APFilmChat] listenMessages error:', err.code);
-                    callback([]);
-                });
-
-            this._listeners[tab] = unsubscribe;
-            return unsubscribe;
-        }
-
-        // ── Stop listening to a tab ────────────────────────────────────
-        stopListening(tab) {
-            if (this._listeners[tab]) {
-                this._listeners[tab]();
-                delete this._listeners[tab];
-            }
-        }
-
-        // ── Online presence ────────────────────────────────────────────
-        // Returns an unsubscribe fn. callback(count: number)
-        trackPresence(userId, callback) {
-            const getBase = () => {
-                const hour = new Date().getHours();
-                let base = (hour >= 19 && hour <= 23) ? 3500 : (hour >= 0 && hour <= 6 ? 400 : 1500);
-                return base + ((new Date().getDate() * 17) % 250);
-            };
-
-            if (!this.db) { 
-                callback(getBase() + 1); 
-                return () => {}; 
-            }
-
-            const presenceRef = this.db.collection('presence').doc(userId);
-            const onlineColRef = this.db.collection('presence');
-
-            // Write own presence
-            presenceRef.set({
-                online   : true,
-                lastSeen : firebase.firestore.FieldValue.serverTimestamp(),
-                userId   : userId,
-            }).catch(() => {});
-
-            // Clean up on page unload
-            window.addEventListener('beforeunload', () => {
-                presenceRef.delete().catch(() => {});
-            });
-
-            // Listen to total online count (users active in last 2 min)
-            const twoMinAgo = new Date(Date.now() - 2 * 60 * 1000);
-            const unsubscribe = onlineColRef
-                .where('online', '==', true)
-                .where('lastSeen', '>=', twoMinAgo)
+            this._listeners[tab] = this._msgCol(tab)
+                .orderBy('timestamp', 'desc')
+                .limit(MSG_LIMIT)
                 .onSnapshot(snap => {
-                    // Calculate a dynamic baseline based on time of day
-                    const hour = new Date().getHours();
-                    let baseOnline = 1200;
-                    if (hour >= 19 && hour <= 23) baseOnline = 3500; // Peak hours
-                    else if (hour >= 0 && hour <= 6) baseOnline = 400; // Late night
-                    else baseOnline = 1500; // Daytime
+                    // Collect all messages from snapshot
+                    const msgs = [];
+                    snap.forEach(doc => {
+                        msgs.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    // Reverse to show newest at bottom
+                    callback(msgs.reverse());
+                }, err => console.error(`[APFilmChat] Listen error (${tab}):`, err));
 
-                    // Add a small pseudo-random salt based on the current day to make it feel organic
-                    const today = new Date().getDate();
-                    baseOnline += (today * 17) % 250;
+            return this._listeners[tab];
+        }
 
-                    const realCount = snap.size > 0 ? snap.size : 1;
-                    callback(baseOnline + realCount);
-                }, () => {
-                    const fallbackBase = 1250 + (new Date().getDate() * 17) % 250;
-                    callback(fallbackBase + 1);
+        // ── Pinning Logic ──────────────────────────────────────────────
+        async pinMessage(tab, messageId) {
+            if (!this.db) return;
+            try {
+                // 1. Unpin existing
+                const pinnedDocs = await this.db.collection('chats').doc(tab).collection('pinned').get();
+                const batch = this.db.batch();
+                pinnedDocs.forEach(doc => batch.delete(doc.ref));
+                await batch.commit();
+
+                // 2. Get message data
+                const msgSnap = await this._msgCol(tab).doc(messageId).get();
+                if (!msgSnap.exists) return;
+                const msgData = msgSnap.data();
+
+                // 3. Set new pin in Firestore
+                await this.db.collection('chats').doc(tab).collection('pinned').doc('current').set({
+                    id: messageId,
+                    ...msgData,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-            // Refresh own presence every 60s
-            const refreshInterval = setInterval(() => {
-                presenceRef.set({
-                    online   : true,
-                    lastSeen : firebase.firestore.FieldValue.serverTimestamp(),
-                    userId   : userId,
-                }, { merge: true }).catch(() => {});
-            }, 60000);
+                // 4. Sync to MongoDB
+                await fetch(`${typeof API_CONFIG !== 'undefined' ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api'}/chat/pin/${messageId}`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
 
-            return () => {
-                clearInterval(refreshInterval);
-                unsubscribe();
-                presenceRef.delete().catch(() => {});
-            };
+            } catch (err) {
+                console.error('[APFilmChat] Pin error:', err);
+            }
+        }
+
+        listenPinned(tab, callback) {
+            if (!this.db) return;
+            return this.db.collection('chats').doc(tab).collection('pinned')
+                .onSnapshot(snap => {
+                    const doc = snap.docs.find(d => d.id === 'current');
+                    callback(doc ? { id: doc.id, ...doc.data() } : null);
+                });
+        }
+
+        async unpinAll(tab) {
+            if (!this.db) return;
+            try {
+                const snap = await this.db.collection('chats').doc(tab).collection('pinned').get();
+                const batch = this.db.batch();
+                snap.forEach(doc => batch.delete(doc.ref));
+                await batch.commit();
+            } catch (err) {
+                console.error('[APFilmChat] Unpin error:', err);
+            }
+        }
+
+        // ── Moderation ────────────────────────────────────────────────
+        async deleteMessage(tab, messageId) {
+            if (!this.db) return;
+            try {
+                await this._msgCol(tab).doc(messageId).delete();
+                // Sync to MongoDB
+                fetch(`${typeof API_CONFIG !== 'undefined' ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api'}/chat/${messageId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+            } catch (err) {
+                console.error('[APFilmChat] Delete error:', err);
+            }
+        }
+
+        async banUser(userId, username) {
+            if (!this.db) return;
+            try {
+                await this.db.collection('banned').doc(userId).set({
+                    username,
+                    bannedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                // Sync to MongoDB
+                fetch(`${typeof API_CONFIG !== 'undefined' ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api'}/users/${userId}/chat-ban`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+            } catch (err) {
+                console.error('[APFilmChat] Ban error:', err);
+            }
+        }
+
+        async isBanned(userId) {
+            if (!this.db || !userId) return false;
+            const doc = await this.db.collection('banned').doc(userId).get();
+            return doc.exists;
+        }
+
+        // ── Reactions ────────────────────────────────────────────────
+        async toggleReaction(tab, messageId, emoji, userId, avatar, name) {
+            try {
+                // Sync to MongoDB (which broadcasts via Socket.io)
+                await fetch(`${typeof API_CONFIG !== 'undefined' ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api'}/chat/reaction`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({
+                        tab,
+                        firebaseId: messageId,
+                        emoji,
+                        avatar,
+                        name
+                    })
+                });
+            } catch (err) {
+                console.error('[APFilmChat] Reaction sync error:', err);
+            }
+        }
+
+        // ── Presence ──────────────────────────────────────────────────
+        trackPresence(userId, onUpdate) {
+            if (!this.db) return;
+            const ref = this.db.collection('presence').doc('stats');
+            return ref.onSnapshot(snap => {
+                if (snap.exists) onUpdate(snap.data().onlineCount || 0);
+            });
         }
     }
 
-    // ── Singleton ──────────────────────────────────────────────────────
     window.firebaseChat = new FirebaseChat();
-
 })();

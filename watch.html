@@ -532,146 +532,15 @@
     <script src="js/sticky-nav.js?v=16"></script>
 
 
-<button id="chatFab" class="chat-fab" aria-label="Mo chat cong dong" title="Chat Cong Dong">
-        <span class="fab-icon material-icons">forum</span>
-        <span class="chat-fab-badge" id="chatFabBadge">0</span>
-    </button>
-    <div id="chatWindow" class="chat-window" role="dialog">
-        <div class="chat-header" id="chatHeader">
-            <div class="chat-header-info">
-                <div class="chat-header-avatar"><span class="material-icons">forum</span></div>
-                <div class="chat-header-text">
-                    <div class="chat-header-title">Cong Dong A Phim</div>
-                    <div class="chat-header-status">
-                        <div class="online-dot"></div>
-                        <span class="chat-header-online-text" id="headerOnlineCount">42 nguoi truc tuyen</span>
-                    </div>
-                </div>
-            </div>
-            <div class="chat-header-actions">
-                <button class="chat-header-btn" id="chatMinimizeBtn" title="Thu nho"><span class="material-icons">remove</span></button>
-                <button class="chat-header-btn" id="chatCloseBtn" title="Dong"><span class="material-icons">close</span></button>
-            </div>
-        </div>
-        <div class="chat-body" id="chatBody">
-            <div class="chat-screen chat-screen-welcome active" id="screenWelcome">
-                <div class="welcome-glow"><img src="/favicon.png" alt="A Phim" style="width:42px;height:42px;object-fit:contain;"></div>
-                <div><h2 class="welcome-title">Chao mung den <span>Kenh A Phim</span></h2><p class="welcome-desc" style="margin-top:8px;">Ket noi, thao luan va tan huong dien anh.</p></div>
-                <div class="welcome-stats">
-                    <div class="welcome-stat"><div class="welcome-stat-num" id="welcomeOnline">1,284</div><div class="welcome-stat-label">Truc tuyen</div></div>
-                    <div class="welcome-stat"><div class="welcome-stat-num">50K+</div><div class="welcome-stat-label">Thanh vien</div></div>
-                    <div class="welcome-stat"><div class="welcome-stat-num">24/7</div><div class="welcome-stat-label">Hoat dong</div></div>
-                </div>
-                <div class="welcome-features">
-                    <div class="welcome-feature"><span class="material-icons">movie</span><div class="welcome-feature-text"><strong>Thao luan phim</strong><span>Review, rating va kham pha phim moi</span></div></div>
-                    <div class="welcome-feature"><span class="material-icons">groups</span><div class="welcome-feature-text"><strong>Cong dong soi noi</strong><span>Ket noi voi nguoi xem cung so thich</span></div></div>
-                    <div class="welcome-feature"><span class="material-icons">bolt</span><div class="welcome-feature-text"><strong>Chat thoi gian thuc</strong><span>Nhan tin ngay lap tuc</span></div></div>
-                </div>
-                <button class="welcome-start-btn" id="welcomeStartBtn">Bat dau chat ngay <span class="material-icons">arrow_forward</span></button>
-            </div>
-            <div class="chat-screen chat-screen-name" id="screenEnterName">
-                <div class="enter-name-header">
-                    <button class="enter-name-back-btn" id="enterNameBackBtn"><span class="material-icons">arrow_back</span></button>
-                    <div class="enter-name-title-wrap"><h2>Tao ho so</h2><p>Chon biet danh va mau sac cua ban</p></div>
-                </div>
-                <div>
-                    <span class="name-color-label">Mau dai dien</span>
-                    <div class="color-picker-row" id="colorPickerRow">
-                        <div class="color-option selected" data-color="#ffd709" style="background:#ffd709"></div>
-                        <div class="color-option" data-color="#22c55e" style="background:#22c55e"></div>
-                        <div class="color-option" data-color="#3b82f6" style="background:#3b82f6"></div>
-                        <div class="color-option" data-color="#ef4444" style="background:#ef4444"></div>
-                        <div class="color-option" data-color="#a855f7" style="background:#a855f7"></div>
-                        <div class="color-option" data-color="#f97316" style="background:#f97316"></div>
-                        <div class="color-option" data-color="#06b6d4" style="background:#06b6d4"></div>
-                        <div class="color-option" data-color="#ec4899" style="background:#ec4899"></div>
-                    </div>
-                </div>
-                <div class="name-input-group">
-                    <div class="name-input-label"><span>Biet danh cua ban</span><span class="name-char-count" id="nameCharCount">0 / 20</span></div>
-                    <div class="name-input-wrapper">
-                        <input type="text" id="chatNameInput" class="name-input" placeholder="VD: MovieLover_99" maxlength="20" autocomplete="off">
-                        <span class="name-input-icon material-icons">person</span>
-                    </div>
-                    <div class="name-error-msg" id="nameErrorMsg">Ten phai tu 3-20 ky tu.</div>
-                </div>
-                <div class="name-preview">
-                    <div class="name-preview-avatar" id="previewAvatar" style="background:#ffd709;">A</div>
-                    <div class="name-preview-info"><strong id="previewName">Biet danh cua ban</strong><span>Thanh vien moi . Hom nay</span></div>
-                </div>
-                <div class="online-preview">
-                    <div class="online-avatars">
-                        <div class="online-avatar-mini" style="background:#ffd709;color:#1a1200;font-weight:700;">K</div>
-                        <div class="online-avatar-mini" style="background:#22c55e;color:#fff;font-weight:700;">L</div>
-                        <div class="online-avatar-mini" style="background:#3b82f6;color:#fff;font-weight:700;">M</div>
-                        <div class="online-avatar-mini more">+39</div>
-                    </div>
-                    <div class="online-info"><strong><span style="display:inline-block;width:7px;height:7px;background:#22c55e;border-radius:50%;margin-right:5px;vertical-align:middle;"></span>42 truc tuyen</strong><span>Dang thao luan soi noi</span></div>
-                </div>
-                <button class="join-btn" id="chatJoinBtn" disabled><span class="material-icons">login</span>Tham gia phong chat</button>
-            </div>
-            <div class="chat-screen chat-screen-room" id="screenRoom">
-                <div class="messages-area" id="messagesArea">
-                    <div class="date-separator"><span>Hom Nay</span></div>
-                    <div class="sys-msg"><span>Chao mung den voi Kenh A Phim!</span></div>
-                    <div class="typing-indicator" id="typingIndicator">
-                        <div class="typing-avatar" style="background:#a855f7;border-radius:50%;"></div>
-                        <div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
-                    </div>
-                </div>
-                <div class="quick-reactions" id="quickReactions">
-                    <button class="quick-react-btn" data-text="Tuyet voi!">Tuyet voi</button>
-                    <button class="quick-react-btn" data-text="Qua dinh!">Qua dinh</button>
-                    <button class="quick-react-btn" data-text="Dang xem">Dang xem</button>
-                    <button class="quick-react-btn" data-text="10/10">10/10</button>
-                </div>
-            </div>
-            <div class="chat-screen chat-screen-support" id="screenSupport">
-                <div class="support-inner">
-                    <div class="support-icon-wrap"><span class="material-icons">support_agent</span></div>
-                    <h3 class="support-title">Ho tro truc tuyen</h3>
-                    <p class="support-desc">Doi ngu ho tro cua A Phim luon san sang.</p>
-                    <div class="support-info-cards">
-                        <div class="support-info-card"><span class="material-icons">schedule</span><div><strong>Gio hoat dong</strong><span>24/7</span></div></div>
-                        <div class="support-info-card"><span class="material-icons">translate</span><div><strong>Ngon ngu</strong><span>Tieng Viet - Tieng Anh</span></div></div>
-                        <div class="support-info-card"><span class="material-icons">verified</span><div><strong>Chuyen nghiep</strong><span>Dao tao bai ban</span></div></div>
-                    </div>
-                    <button class="support-start-btn" id="supportStartTawk"><span class="material-icons">chat</span>Bat dau chat ho tro</button>
-                    <p class="support-note">Nhan de mo cua so chat voi nhan vien ho tro</p>
-                </div>
-            </div>
-        </div>
-        <div class="chat-input-area" id="chatInputArea">
-            <div class="chat-tabs-bar">
-                <button class="chat-tab active" data-tab="general" id="tabGeneral"><span class="material-icons">public</span>Chung</button>
-                <button class="chat-tab" data-tab="movies" id="tabMovies"><span class="material-icons">movie</span>Phim</button>
-                <button class="chat-tab" data-tab="support" id="tabSupport"><span class="material-icons">help</span>Ho tro</button>
-            </div>
-            <div class="input-row">
-                <button class="input-icon-btn" id="emojiToggleBtn" title="Emoji"><span class="material-icons">mood</span></button>
-                <input type="text" id="chatMessageInput" placeholder="Viet tin nhan..." maxlength="500" autocomplete="off">
-                <button class="send-btn" id="chatSendBtn" disabled><span class="material-icons">send</span></button>
-            </div>
-            <div class="input-footer">
-                <div class="current-user-tag">
-                    <div class="current-user-avatar" id="currentUserAvatar" style="background:#ffd709;">A</div>
-                    <span id="currentUserName">Khach</span>
-                </div>
-                <span class="change-name-link" id="changeNameLink">Doi ten</span>
-            </div>
-        </div>
-        <div class="emoji-picker-panel" id="emojiPickerPanel">
-            <div class="emoji-grid" id="emojiGrid"></div>
-        </div>
-    </div>
+    <!-- Community Chat will be injected by chat-room.js -->
 
     <!-- ====== Firebase SDK (Compat CDN) ====== -->
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js" crossorigin="anonymous"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" crossorigin="anonymous"></script>
     <!-- <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script> -->
-    <script src="js/firebase-chat.js?v=13"></script>
-    <script src="js/chat-room.js?v=13"></script>
-    <script src="js/auth-modal.js?v=13"></script>
+    <script src="js/firebase-chat.js?v=35"></script>
+    <script src="js/chat-room.js?v=35"></script>
+    <script src="js/auth-modal.js?v=15"></script>
     <script src="js/firebase-comments.js?v=13"></script>
     <script type="text/javascript">
         var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
@@ -685,7 +554,7 @@
             s0.parentNode.insertBefore(s1, s0);
         })();
     </script>
-<script src="js/nav-active-indicator.js?v=13"></script>
+    <script src="js/nav-active-indicator.js?v=13"></script>
     <script src="js/realtime-sync.js"></script>
 </body>
 </html>
