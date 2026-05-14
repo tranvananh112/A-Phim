@@ -569,10 +569,27 @@ class APFilmChat {
             });
         });
 
+        // Optimize input performance with debounce and RAF
+        let inputRAF = null;
+        let lastInputValue = '';
+
         el.messageInput?.addEventListener('input', () => {
-            el.messageInput.style.height = 'auto';
-            el.messageInput.style.height = (el.messageInput.scrollHeight) + 'px';
-            el.sendBtn.disabled = el.messageInput.value.trim() === '';
+            const currentValue = el.messageInput.value;
+
+            // Update send button state immediately (no lag)
+            el.sendBtn.disabled = currentValue.trim() === '';
+
+            // Debounce height calculation to avoid lag
+            if (inputRAF) cancelAnimationFrame(inputRAF);
+
+            inputRAF = requestAnimationFrame(() => {
+                // Only recalculate height if value actually changed
+                if (currentValue !== lastInputValue) {
+                    el.messageInput.style.height = 'auto';
+                    el.messageInput.style.height = (el.messageInput.scrollHeight) + 'px';
+                    lastInputValue = currentValue;
+                }
+            });
         });
 
         el.messageInput?.addEventListener('keydown', e => {
@@ -1066,18 +1083,25 @@ class APFilmChat {
         const bubble = div.querySelector('.tg-msg-bubble');
 
         // Attachment events to BUBBLE for better hit area
+        // Desktop: Right Click
         bubble.addEventListener('contextmenu', e => {
             e.preventDefault();
-            this._showContextMenu(e, msg);
+            // Only on desktop (screen width > 768px)
+            if (window.innerWidth > 768) {
+                this._showContextMenu(e, msg);
+            }
         });
 
-        // Mobile Long Press
+        // Mobile: Long Press (600ms)
         let touchTimer;
         bubble.addEventListener('touchstart', e => {
-            touchTimer = setTimeout(() => {
-                if (window.navigator.vibrate) window.navigator.vibrate(50);
-                this._showContextMenu(e.touches[0], msg);
-            }, 600);
+            // Only on mobile (screen width <= 768px)
+            if (window.innerWidth <= 768) {
+                touchTimer = setTimeout(() => {
+                    if (window.navigator.vibrate) window.navigator.vibrate(50);
+                    this._showContextMenu(e.touches[0], msg);
+                }, 600);
+            }
         }, { passive: true });
 
         bubble.addEventListener('touchend', () => clearTimeout(touchTimer));

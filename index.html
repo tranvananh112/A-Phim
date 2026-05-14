@@ -1898,6 +1898,14 @@
 
         // Fallback function - load Vietnamese movies
         async function loadVietnameseMoviesHome() {
+            const grid = document.getElementById('vietnamMoviesGrid');
+
+            // Exit if element doesn't exist on this page
+            if (!grid) {
+                console.log('Vietnamese movies section not on this page');
+                return;
+            }
+
             try {
                 const response = await fetch('https://ophim1.com/v1/api/quoc-gia/viet-nam?page=1', {
                     method: 'GET',
@@ -1912,15 +1920,22 @@
                 }
             } catch (error) {
                 console.error('Error loading Vietnamese movies:', error);
-                document.getElementById('vietnamLoading').innerHTML = `
-                    <p class="text-red-400">Không thể tải phim Việt Nam</p>
-                `;
+                const loading = document.getElementById('vietnamLoading');
+                if (loading) {
+                    loading.innerHTML = `<p class="text-red-400">Không thể tải phim Việt Nam</p>`;
+                }
             }
         }
 
         function renderVietnameseMovies(movies) {
             const loading = document.getElementById('vietnamLoading');
             const grid = document.getElementById('vietnamMoviesGrid');
+
+            // Null check - exit if elements don't exist
+            if (!loading || !grid) {
+                console.warn('Vietnamese movies section not found on this page');
+                return;
+            }
 
             loading.classList.add('hidden');
             grid.classList.remove('hidden');

@@ -22,10 +22,15 @@ class AuthService {
         this.refreshInterval = null;
 
         // Background auto-sync to pull latest avatar/favorites/history from MongoDB
-        setTimeout(() => this.syncProfile(), 100);
+        // Only sync if user is logged in
+        if (this.isLoggedIn()) {
+            setTimeout(() => this.syncProfile(), 100);
+        }
 
-        // Start auto token refresh
-        this.startTokenRefresh();
+        // Start auto token refresh ONLY if user is logged in
+        if (this.isLoggedIn()) {
+            this.startTokenRefresh();
+        }
 
         console.log('🔐 AuthService initialized:', {
             backendURL: this.backendURL,
@@ -329,10 +334,19 @@ class AuthService {
     }
 
     async refreshToken() {
-        if (!this.isLoggedIn()) return;
+        // Don't refresh if not logged in or no token
+        if (!this.isLoggedIn()) {
+            console.log('⏭️ Skip token refresh - not logged in');
+            return false;
+        }
+
+        const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+        if (!token) {
+            console.log('⏭️ Skip token refresh - no token found');
+            return false;
+        }
 
         try {
-            const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
             const rememberMe = this.getRememberMe();
 
             console.log('🔄 Refreshing token... Remember Me:', rememberMe);
@@ -345,6 +359,18 @@ class AuthService {
                 },
                 body: JSON.stringify({ rememberMe })
             });
+
+            // Handle 401 - token expired, logout user
+            if (response.status === 401) {
+                console.warn('⚠️ Token expired, logging out...');
+                this.stopTokenRefresh();
+                localStorage.removeItem(STORAGE_KEYS.USER);
+                localStorage.removeItem(STORAGE_KEYS.TOKEN);
+                localStorage.removeItem(STORAGE_KEYS.TOKEN_EXPIRY);
+                localStorage.removeItem(STORAGE_KEYS.REMEMBER_ME);
+                this.currentUser = null;
+                return false;
+            }
 
             const data = await response.json();
 
@@ -366,17 +392,23 @@ class AuthService {
         // Clear any existing interval
         this.stopTokenRefresh();
 
+        // Don't start refresh if not logged in
+        if (!this.isLoggedIn()) {
+            console.log('⏭️ Skip token refresh setup - not logged in');
+            return;
+        }
+
         // Check token expiry every 6 hours
         this.refreshInterval = setInterval(async () => {
-            if (this.isTokenExpiringSoon()) {
+            if (this.isLoggedIn() && this.isTokenExpiringSoon()) {
                 console.log('⏰ Token expiring soon, refreshing...');
                 await this.refreshToken();
             }
         }, 6 * 60 * 60 * 1000); // 6 hours
 
-        // Also check immediately on startup
+        // Also check immediately on startup (after 5 seconds)
         setTimeout(async () => {
-            if (this.isTokenExpiringSoon()) {
+            if (this.isLoggedIn() && this.isTokenExpiringSoon()) {
                 console.log('⏰ Token expiring soon on startup, refreshing...');
                 await this.refreshToken();
             }

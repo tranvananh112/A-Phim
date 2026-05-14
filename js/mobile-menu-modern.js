@@ -17,7 +17,7 @@
         try {
             const cached = JSON.parse(localStorage.getItem('cinestream_public_settings') || '{}');
             if (typeof cached.enablePhimX === 'boolean') return cached.enablePhimX;
-        } catch (e) {}
+        } catch (e) { }
         return false; // default: hidden
     }
 
@@ -26,7 +26,7 @@
             if (typeof authService !== 'undefined') {
                 return authService.getCurrentUser();
             }
-        } catch (e) {}
+        } catch (e) { }
         return null;
     }
 
@@ -51,16 +51,16 @@
         const userId = user ? (user._id || user.id || user.email) : null;
         const avatarKey = userId ? `avatar_${userId}` : 'user_avatar';
         const savedAvatar = user ? (localStorage.getItem(avatarKey) || user.avatar || localStorage.getItem('user_avatar') || user.photoURL) : null;
-        
+
         const avatarHtml = user
             ? (savedAvatar
                 ? `<img src="${escHtml(savedAvatar)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'U')}&background=random'">`
                 : escHtml((user.name || user.email || 'U').charAt(0).toUpperCase()))
             : icon('person', 'font-size:26px;color:rgba(255,255,255,0.3)');
 
-        const userName  = user ? escHtml(user.name || user.email || 'Người dùng') : 'Khách';
+        const userName = user ? escHtml(user.name || user.email || 'Người dùng') : 'Khách';
         const userBadge = user ? 'Thành viên Vàng' : 'Chưa đăng nhập';
-        const userHref  = user ? 'profile.html' : '#';
+        const userHref = user ? 'profile.html' : '#';
         const userClick = user ? '' : `onclick="if(window.showAuthModal){event.preventDefault(); if(window.closeMobileMenu) window.closeMobileMenu(); window.showAuthModal('login'); return false;}"`;
 
         const frameClass = user ? (user.equippedFrameClass || localStorage.getItem('ap_frame_class') || '') : '';
@@ -97,7 +97,7 @@
             <button class="mm-nav-full mm-glass mm-phim-btn" id="mmPhimBtn">
                 ${icon('movie', 'font-size:24px;color:#aaabad;')}
                 <span class="mm-nav-full-text">Phim</span>
-                <div style="margin-left:auto;">${icon('expand_more', 'font-size:22px;color:rgba(255,255,255,0.3);transition:transform 0.25s;' )}</div>
+                <div style="margin-left:auto;">${icon('expand_more', 'font-size:22px;color:rgba(255,255,255,0.3);transition:transform 0.25s;')}</div>
             </button>
             <div id="mmPhimDrop" style="display:none;padding:0 4px 4px;">
                 <div class="mm-dropdown-panel-blue">
@@ -117,7 +117,7 @@
             <button class="mm-nav-full mm-glass mm-phim-btn" id="mmLoaiBtn">
                 ${icon('theaters', 'font-size:24px;color:#aaabad;')}
                 <span class="mm-nav-full-text">Thể Loại</span>
-                <div style="margin-left:auto;">${icon('expand_more', 'font-size:22px;color:rgba(255,255,255,0.3);transition:transform 0.25s;' )}</div>
+                <div style="margin-left:auto;">${icon('expand_more', 'font-size:22px;color:rgba(255,255,255,0.3);transition:transform 0.25s;')}</div>
             </button>
             <div id="mmLoaiDrop" style="display:none;padding:0 4px 4px;">
                 <div class="mm-dropdown-panel-blue">
@@ -177,14 +177,14 @@
                         <a href="profile.html" class="mm-footer-link">
                             ${icon('settings', 'font-size:16px;')} Cài đặt
                         </a>
-                        ${user 
-                            ? `<button class="mm-footer-link danger" onclick="try{authService.logout()}catch(e){window.location.href='login.html'}">
+                        ${user
+                ? `<button class="mm-footer-link danger" onclick="try{authService.logout()}catch(e){window.location.href='login.html'}">
                                    ${icon('logout', 'font-size:16px;')} Đăng xuất
                                </button>`
-                            : `<a href="login.html" onclick="if(window.showAuthModal){event.preventDefault(); if(window.closeMobileMenu) window.closeMobileMenu(); window.showAuthModal('login'); return false;}" class="mm-footer-link" style="color:#fcd576; font-weight:700; background: rgba(252,213,118,0.1); padding: 6px 12px; border-radius: 20px;">
+                : `<a href="login.html" onclick="if(window.showAuthModal){event.preventDefault(); if(window.closeMobileMenu) window.closeMobileMenu(); window.showAuthModal('login'); return false;}" class="mm-footer-link" style="color:#fcd576; font-weight:700; background: rgba(252,213,118,0.1); padding: 6px 12px; border-radius: 20px;">
                                    ${icon('login', 'font-size:16px;')} Đăng nhập
                                </a>`
-                        }
+            }
                     </div>
                 </div>
             </div>
@@ -194,14 +194,17 @@
 
         document.body.appendChild(drawer);
 
-        document.getElementById('mmCloseBtn').addEventListener('click', closeMenu);
+        const mmCloseBtn = document.getElementById('mmCloseBtn');
+        if (mmCloseBtn) {
+            mmCloseBtn.addEventListener('click', closeMenu);
+        }
 
         // 1. Phim dropdown toggle
-        const phimBtn     = document.getElementById('mmPhimBtn');
-        const phimDrop    = document.getElementById('mmPhimDrop');
-        const expandIconPhim  = phimBtn?.querySelector('.material-icons-round:last-of-type');
+        const phimBtn = document.getElementById('mmPhimBtn');
+        const phimDrop = document.getElementById('mmPhimDrop');
+        const expandIconPhim = phimBtn?.querySelector('.material-icons-round:last-of-type');
         let phimOpen = false;
-        if (phimBtn) {
+        if (phimBtn && phimDrop) {
             phimBtn.addEventListener('click', () => {
                 phimOpen = !phimOpen;
                 phimDrop.style.display = phimOpen ? 'block' : 'none';
@@ -210,9 +213,9 @@
         }
 
         // 2. Thể Loại dropdown toggle
-        const loaiBtn     = document.getElementById('mmLoaiBtn');
-        const loaiDrop    = document.getElementById('mmLoaiDrop');
-        const expandIconLoai  = loaiBtn?.querySelector('.material-icons-round:last-of-type');
+        const loaiBtn = document.getElementById('mmLoaiBtn');
+        const loaiDrop = document.getElementById('mmLoaiDrop');
+        const expandIconLoai = loaiBtn?.querySelector('.material-icons-round:last-of-type');
         let loaiOpen = false;
         if (loaiBtn) {
             loaiBtn.addEventListener('click', () => {
@@ -263,10 +266,10 @@
                     <span class="mm-card-label" style="margin-left: 4px;">Tất Cả</span>
                 </a>
             `;
-            
+
             html += countries.map(c => {
                 const code = flagCodes[c.slug] || 'globe';
-                const iconHtml = (code === 'globe') 
+                const iconHtml = (code === 'globe')
                     ? `<span style="font-size: 20px; line-height: 1;">🌍</span>`
                     : `<img src="https://flagcdn.com/16x12/${code}.png" alt="${code}" style="width:16px;height:12px;object-fit:cover;border-radius:2px;">`;
 
@@ -277,7 +280,7 @@
                     </a>
                 `;
             }).join('');
-            
+
             mmPhimDropGrid.innerHTML = html;
         }
 
@@ -341,8 +344,8 @@
 
         const scrollY = window.scrollY;
         document.body.style.position = 'fixed';
-        document.body.style.top      = `-${scrollY}px`;
-        document.body.style.width    = '100%';
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.width = '100%';
         document.body.dataset.scrollY = scrollY;
 
         const burger = document.querySelector('.mm-burger-btn');
@@ -352,7 +355,7 @@
     function closeMenu() {
         const overlay = document.getElementById('mm-overlay');
         const drawer = document.getElementById('mm-drawer');
-        
+
         if (overlay) {
             overlay.classList.remove('open');
             // Ensure it's hidden even if class transition fails
@@ -363,16 +366,16 @@
                 }
             }, 300);
         }
-        
+
         if (drawer) {
             drawer.classList.remove('open');
         }
 
         const scrollY = parseInt(document.body.dataset.scrollY || '0');
         document.body.style.position = '';
-        document.body.style.top      = '';
-        document.body.style.width    = '';
-        
+        document.body.style.top = '';
+        document.body.style.width = '';
+
         if (scrollY > 0) {
             window.scrollTo(0, scrollY);
         }
@@ -386,12 +389,12 @@
         const drawer = document.getElementById('mm-drawer');
         const overlay = document.getElementById('mm-overlay');
         const wasOpen = drawer && drawer.classList.contains('open');
-        
+
         if (drawer) drawer.remove();
         if (overlay) overlay.remove();
-        
+
         buildDrawer();
-        
+
         if (wasOpen) {
             document.getElementById('mm-overlay').classList.add('open');
             document.getElementById('mm-drawer').classList.add('open');
@@ -455,7 +458,7 @@
         init();
     }
 
-    window.openMobileMenu  = openMenu;
+    window.openMobileMenu = openMenu;
     window.closeMobileMenu = closeMenu;
     window.rebuildMobileMenu = rebuildMenu;
 })();

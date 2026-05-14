@@ -22,7 +22,7 @@ function updateUserUI() {
 
         // 1. Lấy khung đang trang bị (Ưu tiên từ Object User để đồng bộ đa thiết bị)
         const frameClass = user.equippedFrameClass || localStorage.getItem('ap_frame_class') || '';
-        
+
         // 2. Render Avatar với hệ thống Frame (Sử dụng trực tiếp container làm wrap)
         const avatarHtml = `
         <div class="shop-frame-wrap ${frameClass} size-xs" style="position:relative; flex-shrink:0; overflow: visible !important;">
@@ -399,13 +399,13 @@ function getToastStack() {
     return stack;
 }
 
-window.showMessage = function(message, type = 'info', duration = 4000) {
+window.showMessage = function (message, type = 'info', duration = 4000) {
     const stack = getToastStack();
     const toast = document.createElement('div');
     toast.className = `ap-toast ap-toast-${type}`;
-    
+
     const titleLabels = { success: 'Thành Công', error: 'Lỗi Hệ Thống', warning: 'Cảnh Báo', info: 'Thông Báo' };
-    
+
     toast.innerHTML = `
         <div class="ap-toast-icon-wrap">${TOAST_ICONS[type] || TOAST_ICONS.info}</div>
         <div class="ap-toast-content">
@@ -415,7 +415,7 @@ window.showMessage = function(message, type = 'info', duration = 4000) {
     `;
     stack.appendChild(toast);
     setTimeout(() => toast.classList.add('show'), 10);
-    
+
     const hide = () => {
         toast.classList.remove('show');
         toast.style.transform = 'translateX(150%) scale(0.9)';
@@ -425,11 +425,11 @@ window.showMessage = function(message, type = 'info', duration = 4000) {
     toast.onclick = hide;
 };
 
-window.showCoinChange = function(amount, reason = 'Giao dịch thành công') {
+window.showCoinChange = function (amount, reason = 'Giao dịch thành công') {
     const stack = getToastStack();
     const isPlus = amount > 0;
     const diffText = isPlus ? `+${amount.toLocaleString('vi-VN')}` : `${amount.toLocaleString('vi-VN')}`;
-    
+
     const toast = document.createElement('div');
     toast.className = `ap-toast ap-toast-coin-change ${!isPlus ? 'ap-toast-shake' : ''}`;
     toast.innerHTML = `
@@ -443,10 +443,10 @@ window.showCoinChange = function(amount, reason = 'Giao dịch thành công') {
             <span style="font-size: 11px; opacity: 0.7; font-weight:700; letter-spacing:0.5px;">XU</span>
         </div>
     `;
-    
+
     stack.appendChild(toast);
     setTimeout(() => toast.classList.add('show'), 10);
-    
+
     const hide = () => {
         toast.classList.remove('show');
         toast.style.transform = 'translateX(150%) scale(0.9)';
@@ -456,7 +456,7 @@ window.showCoinChange = function(amount, reason = 'Giao dịch thành công') {
     toast.onclick = hide;
 };
 
-window.showConfirm = function(title, message) {
+window.showConfirm = function (title, message) {
     return new Promise((resolve) => {
         const overlay = document.createElement('div');
         overlay.className = 'ap-confirm-overlay';
@@ -471,80 +471,94 @@ window.showConfirm = function(title, message) {
             </div>
         `;
         document.body.appendChild(overlay);
-        
+
         overlay.querySelector('#confirm-cancel').onclick = () => { overlay.remove(); resolve(false); };
         overlay.querySelector('#confirm-ok').onclick = () => { overlay.remove(); resolve(true); };
     });
 };
 
 // ── NOTIFICATION SERVICE ──────────────────────────────────────────
-window.syncNotifications = async function() {
+window.syncNotifications = async function () {
     const user = (typeof authService !== 'undefined') ? authService.getCurrentUser() : null;
-    if (!user) return;
+    if (!user) {
+        console.log('⏭️ Skip syncNotifications - not logged in');
+        return;
+    }
+
+    const token = localStorage.getItem('cinestream_token');
+    if (!token) {
+        console.log('⏭️ Skip syncNotifications - no token');
+        return;
+    }
+
     const userId = user._id || user.id;
 
     try {
-        const token = localStorage.getItem('cinestream_token');
-        if (!token) return;
-
         const response = await fetch(`${API_CONFIG.BACKEND_URL}/notifications`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
+
+        // Handle 401 - token expired
+        if (response.status === 401) {
+            console.warn('⚠️ Notifications 401 - token expired');
+            return;
+        }
+
         const data = await response.json();
         if (data.success) {
             localStorage.setItem(`ap_notifs_${userId}`, JSON.stringify(data.data));
             renderNotifications();
             updateNotifBadge();
-            
+
             // 🚀 DELIVER PENDING UNREAD TOASTS (User returned to site)
             // Filter unread, sort oldest-to-newest to queue properly
-            const unread = (data.data || []).filter(n => !n.isRead && !n.read).reverse(); 
+            const unread = (data.data || []).filter(n => !n.isRead && !n.read).reverse();
             let toastCount = 0;
-            
+
             unread.forEach((n) => {
                 const notifId = n._id || n.id;
                 if (!notifId) return;
-                
+
                 const toastKey = `ap_toast_seen_${notifId}`;
                 // Check local delivery guard to prevent duplicate spamming on every F5 refresh
                 if (!localStorage.getItem(toastKey) && toastCount < 2) {
                     toastCount++;
-                    
+
                     setTimeout(() => {
-                         if (n.type === 'coin' || n.type === 'success') {
-                              let msg = n.message || '';
-                              let reason = 'Giao dịch thành công';
-                              
-                              // Attempt intelligent string extraction from backend format: 
-                              // "[+1.000 Xu] Bạn vừa nhận... \nNội dung: Admin nap"
-                              if(msg.includes('\nNội dung:')) {
-                                   const parts = msg.split('\nNội dung:');
-                                   // Reason is the second part, keep it clean
-                                   reason = parts[1].trim() || 'Biến động tài khoản';
-                              } else if (n.title) {
-                                   reason = n.title;
-                              }
-                              
-                              // Highly resilient REGEX search for numeric currency pattern (+/- then digit)
-                              const numMatch = msg.match(/([+-]?[\d\.,]+)\s*Xu/i);
-                              if(numMatch && typeof showCoinChange === 'function') {
-                                   // Clean numeric separators (. or ,) to parse int
-                                   const valStr = numMatch[1].replace(/\./g, '').replace(/,/g, '');
-                                   const val = parseInt(valStr, 10);
-                                   if (!isNaN(val)) {
-                                        showCoinChange(val, reason);
-                                   } else {
-                                        showMessage(n.message, n.type);
-                                   }
-                              } else {
-                                   showMessage(n.message, n.type);
-                              }
-                         } else {
-                              // Standard push for info / other types
-                              showMessage(n.message, n.type === 'promotion' ? 'success' : 'info');
-                         }
-                         // Lock the delivery so it never repeats
-                         localStorage.setItem(toastKey, 'true');
+                        if (n.type === 'coin' || n.type === 'success') {
+                            let msg = n.message || '';
+                            let reason = 'Giao dịch thành công';
+
+                            // Attempt intelligent string extraction from backend format: 
+                            // "[+1.000 Xu] Bạn vừa nhận... \nNội dung: Admin nap"
+                            if (msg.includes('\nNội dung:')) {
+                                const parts = msg.split('\nNội dung:');
+                                // Reason is the second part, keep it clean
+                                reason = parts[1].trim() || 'Biến động tài khoản';
+                            } else if (n.title) {
+                                reason = n.title;
+                            }
+
+                            // Highly resilient REGEX search for numeric currency pattern (+/- then digit)
+                            const numMatch = msg.match(/([+-]?[\d\.,]+)\s*Xu/i);
+                            if (numMatch && typeof showCoinChange === 'function') {
+                                // Clean numeric separators (. or ,) to parse int
+                                const valStr = numMatch[1].replace(/\./g, '').replace(/,/g, '');
+                                const val = parseInt(valStr, 10);
+                                if (!isNaN(val)) {
+                                    showCoinChange(val, reason);
+                                } else {
+                                    showMessage(n.message, n.type);
+                                }
+                            } else {
+                                showMessage(n.message, n.type);
+                            }
+                        } else {
+                            // Standard push for info / other types
+                            showMessage(n.message, n.type === 'promotion' ? 'success' : 'info');
+                        }
+                        // Lock the delivery so it never repeats
+                        localStorage.setItem(toastKey, 'true');
                     }, 1500 + (toastCount * 2000)); // Delayed stagger to prevent collision lag
                 }
             });
@@ -554,19 +568,19 @@ window.syncNotifications = async function() {
     }
 };
 
-window.getNotifications = function() {
+window.getNotifications = function () {
     const user = (typeof authService !== 'undefined') ? authService.getCurrentUser() : null;
     if (!user) return [];
     const userId = user._id || user.id;
     return JSON.parse(localStorage.getItem(`ap_notifs_${userId}`) || '[]');
 };
 
-window.addNotification = function(title, message, type = 'admin') {
+window.addNotification = function (title, message, type = 'admin') {
     const user = (typeof authService !== 'undefined') ? authService.getCurrentUser() : null;
     if (!user) return;
     const userId = user._id || user.id;
     const notifs = getNotifications();
-    
+
     const newNotif = {
         id: Date.now().toString(),
         title,
@@ -575,13 +589,13 @@ window.addNotification = function(title, message, type = 'admin') {
         createdAt: new Date().toISOString(),
         read: false
     };
-    
+
     notifs.unshift(newNotif);
     localStorage.setItem(`ap_notifs_${userId}`, JSON.stringify(notifs.slice(0, 50))); // Keep last 50
-    
+
     renderNotifications();
     updateNotifBadge();
-    
+
     // Shake bell for attention
     const bell = document.querySelector('#navNotificationBtn .material-icons-round');
     if (bell) {
@@ -590,10 +604,10 @@ window.addNotification = function(title, message, type = 'admin') {
     }
 };
 
-window.renderNotifications = function() {
+window.renderNotifications = function () {
     const container = document.getElementById('notifListContainer');
     if (!container) return;
-    
+
     const notifs = getNotifications();
     if (notifs.length === 0) {
         container.innerHTML = `
@@ -607,7 +621,7 @@ window.renderNotifications = function() {
         `;
         return;
     }
-    
+
     container.innerHTML = notifs.map(n => {
         const isUnread = !n.isRead && !n.read;
         const iconColor = n.type === 'coin' || n.type === 'success' ? '#e8b94f' : '#a78bfa';
@@ -637,11 +651,11 @@ window.renderNotifications = function() {
     }).join('');
 };
 
-window.updateNotifBadge = function() {
+window.updateNotifBadge = function () {
     const badge = document.getElementById('navNotifBadge');
     const panelBadge = document.getElementById('notifCountBadge');
     if (!badge) return;
-    
+
     const unreadCount = getNotifications().filter(n => !n.isRead && !n.read).length;
     if (unreadCount > 0) {
         badge.classList.remove('hidden');
@@ -659,7 +673,7 @@ window.updateNotifBadge = function() {
     }
 };
 
-window.markNotifRead = function(id) {
+window.markNotifRead = function (id) {
     const user = (typeof authService !== 'undefined') ? authService.getCurrentUser() : null;
     if (!user) return;
     const userId = user._id || user.id;
@@ -673,15 +687,15 @@ window.markNotifRead = function(id) {
     }
 };
 
-window.toggleNotif = async function(id, element) {
+window.toggleNotif = async function (id, element) {
     const user = (typeof authService !== 'undefined') ? authService.getCurrentUser() : null;
     if (!user) return;
-    
+
     // 1. Mark as read in storage & Backend
     const userId = user._id || user.id;
     const notifs = getNotifications();
     const idx = notifs.findIndex(n => (n._id === id || n.id === id));
-    
+
     if (idx !== -1 && !notifs[idx].isRead && !notifs[idx].read) {
         notifs[idx].isRead = true;
         notifs[idx].read = true;
@@ -694,15 +708,15 @@ window.toggleNotif = async function(id, element) {
             fetch(`${API_CONFIG.BACKEND_URL}/notifications/${id}/read`, {
                 method: 'PUT',
                 headers: { 'Authorization': `Bearer ${token}` }
-            }).catch(() => {});
+            }).catch(() => { });
         }
     }
-    
+
     // 2. Update UI manually without re-rendering everything
     element.classList.remove('unread');
     const unreadDot = element.querySelector('.notif-unread-dot');
     if (unreadDot) unreadDot.remove();
-    
+
     // 3. Toggle expand
     const msg = element.querySelector('.notif-msg');
     const expandBtn = element.querySelector('.notif-expand-btn');
@@ -712,17 +726,17 @@ window.toggleNotif = async function(id, element) {
             msg.classList.remove('line-clamp-2');
             msg.style.color = 'rgba(255,255,255,0.9)';
             element.style.backgroundColor = 'rgba(255,255,255,0.03)';
-            if(expandBtn) expandBtn.textContent = 'Thu gọn';
+            if (expandBtn) expandBtn.textContent = 'Thu gọn';
         } else {
             msg.classList.add('line-clamp-2');
             msg.style.color = 'rgba(255,255,255,0.4)';
             element.style.backgroundColor = 'transparent';
-            if(expandBtn) expandBtn.textContent = 'Xem chi tiết';
+            if (expandBtn) expandBtn.textContent = 'Xem chi tiết';
         }
     }
 };
 
-window.markAllNotifsRead = async function() {
+window.markAllNotifsRead = async function () {
     const user = (typeof authService !== 'undefined') ? authService.getCurrentUser() : null;
     if (!user) return;
     const userId = user._id || user.id;
@@ -741,7 +755,7 @@ window.markAllNotifsRead = async function() {
         fetch(`${API_CONFIG.BACKEND_URL}/notifications/read-all`, {
             method: 'PUT',
             headers: { 'Authorization': `Bearer ${token}` }
-        }).catch(() => {});
+        }).catch(() => { });
     }
 };
 
@@ -749,7 +763,7 @@ function formatRelativeNotifTime(dateStr) {
     const date = new Date(dateStr);
     const now = new Date();
     const diff = Math.floor((now - date) / 1000);
-    
+
     if (diff < 60) return 'Vừa xong';
     if (diff < 3600) return `${Math.floor(diff / 60)} phút trước`;
     if (diff < 86400) return `${Math.floor(diff / 3600)} giờ trước`;
@@ -761,7 +775,7 @@ document.addEventListener('click', (e) => {
     const btn = document.getElementById('navNotificationBtn');
     const panel = document.getElementById('navNotifPanel');
     if (!btn || !panel) return;
-    
+
     if (btn.contains(e.target)) {
         const isVisible = !panel.classList.contains('invisible');
         if (isVisible) {
