@@ -69,6 +69,7 @@
         }
     </style>
     <link rel="stylesheet" href="css/chat-room.css?v=40">
+    <link rel="stylesheet" href="css/chat-mobile-fixed.css?v=44">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons"
         rel="stylesheet">
     <link rel="stylesheet" href="css/mobile-viewport-fix.css?v=35">
@@ -175,14 +176,14 @@
             <div
                 class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#facc15]/10 border border-[#facc15]/20 primary-color text-xs font-bold uppercase tracking-wider">
                 <span class="material-symbols-outlined text-sm">qr_code_scanner</span>
-                Quét mã ?ng h? nhanh chóng
+                Quï¿½t mï¿½ ?ng h? nhanh chï¿½ng
             </div>
             <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight">
-                ?ng h? duy trì <span class="primary-color">Server</span>
+                ?ng h? duy trï¿½ <span class="primary-color">Server</span>
             </h1>
             <p class="text-slate-400 text-base md:text-lg max-w-2xl leading-relaxed">
-                C?m on b?n dã d?ng hành cùng <strong>APHIM.IO.VN</strong>. Mã QR s? t? d?ng c?p nh?t n?i dung chuy?n
-                kho?n khi b?n nh?p thông tin bên du?i.
+                C?m on b?n dï¿½ d?ng hï¿½nh cï¿½ng <strong>APHIM.IO.VN</strong>. Mï¿½ QR s? t? d?ng c?p nh?t n?i dung chuy?n
+                kho?n khi b?n nh?p thï¿½ng tin bï¿½n du?i.
             </p>
         </div>
 
@@ -207,14 +208,14 @@
                                     <span class="text-blue-400 font-bold text-sm uppercase tracking-wide">MB BANK</span>
                                 </div>
                                 <div class="flex flex-col items-center gap-2">
-                                    <p class="text-slate-400 text-sm font-medium">S? tài kho?n</p>
+                                    <p class="text-slate-400 text-sm font-medium">S? tï¿½i kho?n</p>
                                     <div class="flex items-center justify-center gap-3 bg-[#25202b] px-5 py-3 rounded-xl border border-[#302839] group/copy cursor-pointer hover:border-[#facc15]/50 transition-all w-full max-w-xs mx-auto"
                                         onclick="copyAccountNumber()">
                                         <p class="text-white font-mono text-2xl font-bold tracking-wider">0488 8901 9999
                                         </p>
                                         <span
                                             class="material-symbols-outlined text-slate-500 group-hover/copy:text-[#facc15] transition-colors"
-                                            title="Sao chép">content_copy</span>
+                                            title="Sao chï¿½p">content_copy</span>
                                     </div>
                                 </div>
                             </div>
@@ -226,10 +227,10 @@
                 <div class="bg-[#1e1a24] rounded-xl p-6 border border-[#302839]">
                     <h3 class="text-white font-bold text-lg mb-4 flex items-center gap-2">
                         <span class="material-symbols-outlined text-yellow-500">stars</span>
-                        ?ng h? g?n dây
+                        ?ng h? g?n dï¿½y
                     </h3>
                     <div id="recent-supporters" class="space-y-3">
-                        <div class="text-center text-slate-500 py-4">Ðang t?i...</div>
+                        <div class="text-center text-slate-500 py-4">ï¿½ang t?i...</div>
                     </div>
                 </div>
             </div>
@@ -237,8 +238,8 @@
             <!-- Form Section -->
             <div class="lg:col-span-5 flex flex-col gap-6 lg:sticky lg:top-24 order-1 lg:order-2">
                 <div class="bg-[#1e1a24] rounded-2xl p-6 md:p-8 border border-[#302839] relative overflow-hidden">
-                    <h2 class="text-2xl font-bold text-white mb-2 relative z-10">Thông tin ?ng h?</h2>
-                    <p class="text-slate-400 text-sm mb-6 relative z-10">Nh?p thông tin d? t?o mã QR chính xác</p>
+                    <h2 class="text-2xl font-bold text-white mb-2 relative z-10">Thï¿½ng tin ?ng h?</h2>
+                    <p class="text-slate-400 text-sm mb-6 relative z-10">Nh?p thï¿½ng tin d? t?o mï¿½ QR chï¿½nh xï¿½c</p>
 
                     <form id="support-form" class="flex flex-col gap-5 relative z-10">
                         <!-- Amount Selection -->
@@ -246,7 +247,7 @@
                             <label class="text-sm font-medium text-slate-300">Ch?n m?c ?ng h?</label>
                             <div id="amount-error"
                                 class="hidden text-red-400 text-sm mb-2 p-2 bg-red-500/10 rounded-lg border border-red-500/20">
-                                Vui lòng ch?n s? ti?n ?ng h?
+                                Vui lï¿½ng ch?n s? ti?n ?ng h?
                             </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <button
@@ -265,13 +266,13 @@
                                     class="amount-btn group flex flex-col items-center justify-center gap-1 p-3 rounded-xl border border-[#302839] bg-[#25202b] text-slate-400 transition-all hover:border-[#facc15] hover:text-white hover:bg-[#302839]"
                                     type="button" data-amount="100000">
                                     <span class="font-bold text-lg">100.000d</span>
-                                    <span class="text-xs opacity-80">Vé xem phim</span>
+                                    <span class="text-xs opacity-80">Vï¿½ xem phim</span>
                                 </button>
                                 <button
                                     class="amount-btn group flex flex-col items-center justify-center gap-1 p-3 rounded-xl border border-[#302839] bg-[#25202b] text-slate-400 transition-all hover:border-[#facc15] hover:text-white hover:bg-[#302839]"
                                     type="button" data-amount="custom">
-                                    <span class="font-bold text-lg">S? khác</span>
-                                    <span class="text-xs opacity-80">Tùy tâm</span>
+                                    <span class="font-bold text-lg">S? khï¿½c</span>
+                                    <span class="text-xs opacity-80">Tï¿½y tï¿½m</span>
                                 </button>
                             </div>
 
@@ -279,28 +280,28 @@
                             <div id="custom-amount-input" class="hidden mt-3">
                                 <input type="number" id="custom-amount"
                                     class="w-full bg-[#25202b] border border-[#302839] rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:border-[#facc15] focus:ring-1 focus:ring-[#facc15] outline-none transition-colors"
-                                    placeholder="Nh?p s? ti?n (VNÐ) - T?i thi?u 2.000d" min="2000" step="1000" />
+                                    placeholder="Nh?p s? ti?n (VNï¿½) - T?i thi?u 2.000d" min="2000" step="1000" />
                             </div>
                         </div>
 
                         <!-- Name Input -->
                         <div class="flex flex-col gap-2">
-                            <label class="text-sm font-medium text-slate-300" for="name">Tên c?a b?n <span
-                                    class="text-slate-500 font-normal">(Tùy ch?n)</span></label>
+                            <label class="text-sm font-medium text-slate-300" for="name">Tï¿½n c?a b?n <span
+                                    class="text-slate-500 font-normal">(Tï¿½y ch?n)</span></label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <span class="material-symbols-outlined text-slate-500 text-lg">person</span>
                                 </div>
                                 <input
                                     class="w-full bg-[#25202b] border border-[#302839] rounded-xl pl-10 pr-4 py-3 text-white placeholder:text-slate-600 focus:border-[#facc15] focus:ring-1 focus:ring-[#facc15] outline-none transition-colors"
-                                    id="name" placeholder="Nh?p tên hi?n th?" type="text" />
+                                    id="name" placeholder="Nh?p tï¿½n hi?n th?" type="text" />
                             </div>
                         </div>
 
                         <!-- Message Input -->
                         <div class="flex flex-col gap-2">
                             <label class="text-sm font-medium text-slate-300" for="message">L?i nh?n <span
-                                    class="text-slate-500 font-normal">(Tùy ch?n)</span></label>
+                                    class="text-slate-500 font-normal">(Tï¿½y ch?n)</span></label>
                             <div class="relative">
                                 <div class="absolute top-3 left-3 pointer-events-none">
                                     <span class="material-symbols-outlined text-slate-500 text-lg">chat</span>
@@ -310,7 +311,7 @@
                                     id="message" placeholder="Web hay l?m, ?ng h? admin..." rows="3"
                                     maxlength="50"></textarea>
                             </div>
-                            <p class="text-xs text-slate-500 text-right"><span id="char-count">0</span>/50 ký t?</p>
+                            <p class="text-xs text-slate-500 text-right"><span id="char-count">0</span>/50 kï¿½ t?</p>
                         </div>
 
                         <!-- Summary -->
@@ -330,14 +331,14 @@
                         <button type="submit"
                             class="w-full bg-gradient-to-r from-[#facc15] to-yellow-600 hover:from-[#facc15]/90 hover:to-yellow-600/90 text-black font-bold py-4 rounded-xl shadow-lg transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 mt-2 group">
                             <span class="material-symbols-outlined group-hover:animate-bounce">qr_code_2</span>
-                            C?p nh?t mã QR
+                            C?p nh?t mï¿½ QR
                         </button>
 
                         <!-- Confirm Donation Button (Hidden by default) -->
                         <button type="button" id="confirm-donation-btn" onclick="confirmDonation()"
                             class="hidden w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-500 text-white font-bold py-4 rounded-xl shadow-lg transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 mt-2 group">
                             <span class="material-symbols-outlined">check_circle</span>
-                            Tôi dã ?ng h?
+                            Tï¿½i dï¿½ ?ng h?
                         </button>
                     </form>
                 </div>
@@ -345,7 +346,7 @@
                 <div class="px-4 py-3 rounded-xl bg-green-500/10 border border-green-500/20 flex gap-3 items-start">
                     <span class="material-symbols-outlined text-green-400 shrink-0 mt-0.5">verified</span>
                     <p class="text-sm text-green-200/80 leading-snug">
-                        H? th?ng s? d?ng VietQR chu?n qu?c gia. Chuy?n kho?n 24/7, hoàn toàn mi?n phí.
+                        H? th?ng s? d?ng VietQR chu?n qu?c gia. Chuy?n kho?n 24/7, hoï¿½n toï¿½n mi?n phï¿½.
                     </p>
                 </div>
             </div>
@@ -439,25 +440,25 @@
                 <!-- Links -->
                 <div
                     class="flex flex-wrap text-center justify-center md:justify-start gap-6 mb-6 text-sm font-semibold text-gray-300">
-                    <a href="#" class="hover:text-primary transition-colors">H?i-Ðáp</a>
-                    <a href="#" class="hover:text-primary transition-colors">Chính sách b?o m?t</a>
-                    <a href="#" class="hover:text-primary transition-colors">Ði?u kho?n s? d?ng</a>
+                    <a href="#" class="hover:text-primary transition-colors">H?i-ï¿½ï¿½p</a>
+                    <a href="#" class="hover:text-primary transition-colors">Chï¿½nh sï¿½ch b?o m?t</a>
+                    <a href="#" class="hover:text-primary transition-colors">ï¿½i?u kho?n s? d?ng</a>
                     <a href="#" class="hover:text-primary transition-colors">Gi?i thi?u</a>
                     <a href="https://web.telegram.org/k/#@aphimiovn" target="_blank"
-                        class="hover:text-primary transition-colors">Liên h?</a>
+                        class="hover:text-primary transition-colors">Liï¿½n h?</a>
                 </div>
 
                 <!-- Text block -->
                 <p class="text-sm text-gray-400 leading-relaxed max-w-5xl text-center md:text-left mb-6">
-                    A Phim - Phim hay c? r? - trang xem phim online mi?n phí Full HD Vietsub, thuy?t minh + l?ng ti?ng.
-                    Kho phim m?i kh?ng l?, phim chi?u r?p, phim b?, phim l? t? nhi?u qu?c gia nhu Vi?t Nam, Hàn Qu?c,
-                    Trung Qu?c, Thái Lan, Nh?t B?n, Âu M?... da d?ng th? lo?i. Khám phá n?n t?ng phim tr?c tuy?n hay
+                    A Phim - Phim hay c? r? - trang xem phim online mi?n phï¿½ Full HD Vietsub, thuy?t minh + l?ng ti?ng.
+                    Kho phim m?i kh?ng l?, phim chi?u r?p, phim b?, phim l? t? nhi?u qu?c gia nhu Vi?t Nam, Hï¿½n Qu?c,
+                    Trung Qu?c, Thï¿½i Lan, Nh?t B?n, ï¿½u M?... da d?ng th? lo?i. Khï¿½m phï¿½ n?n t?ng phim tr?c tuy?n hay
                     nh?t nam 2025 ch?t lu?ng 4K!
                 </p>
 
                 <!-- Copyright -->
                 <div class="text-xs text-gray-500 font-medium text-center md:text-left">
-                    Copyright ©2025 A Phim
+                    Copyright ï¿½2025 A Phim
                 </div>
             </div>
         </div>
@@ -475,8 +476,9 @@
     <!-- ====== Chat Widget A Phim ====== -->
     <!-- CSS -->
     <link rel="stylesheet" href="css/chat-room.css?v=40">
+    <link rel="stylesheet" href="css/chat-mobile-fixed.css?v=44">
     <!-- FAB Button -->
-    <button id="chatFab" class="chat-fab" aria-label="M? chat c?ng d?ng" title="Chat C?ng Ð?ng">
+    <button id="chatFab" class="chat-fab" aria-label="M? chat c?ng d?ng" title="Chat C?ng ï¿½?ng">
         <span class="fab-icon material-icons">forum</span>
         <span class="chat-fab-badge" id="chatFabBadge">0</span>
     </button>
@@ -489,7 +491,7 @@
                     <span class="material-icons">forum</span>
                 </div>
                 <div class="chat-header-text">
-                    <div class="chat-header-title">C?ng Ð?ng A Phim</div>
+                    <div class="chat-header-title">C?ng ï¿½?ng A Phim</div>
                     <div class="chat-header-status">
                         <div class="online-dot"></div>
                         <span class="chat-header-online-text" id="headerOnlineCount">42 ngu?i tr?c tuy?n</span>
@@ -499,7 +501,7 @@
             <div class="chat-header-actions">
                 <button class="chat-header-btn" id="chatMinimizeBtn" title="Thu nh?"><span
                         class="material-icons">remove</span></button>
-                <button class="chat-header-btn" id="chatCloseBtn" title="Ðóng"><span
+                <button class="chat-header-btn" id="chatCloseBtn" title="ï¿½ï¿½ng"><span
                         class="material-icons">close</span></button>
             </div>
         </div>
@@ -511,9 +513,9 @@
                         style="width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.15));">
                 </div>
                 <div>
-                    <h2 class="welcome-title">Chào m?ng d?n <span>Kênh A Phim</span></h2>
-                    <p class="welcome-desc" style="margin-top:8px;">K?t n?i, th?o lu?n và t?n hu?ng di?n ?nh cùng hàng
-                        ngàn tín d? phim ?nh.</p>
+                    <h2 class="welcome-title">Chï¿½o m?ng d?n <span>Kï¿½nh A Phim</span></h2>
+                    <p class="welcome-desc" style="margin-top:8px;">K?t n?i, th?o lu?n vï¿½ t?n hu?ng di?n ?nh cï¿½ng hï¿½ng
+                        ngï¿½n tï¿½n d? phim ?nh.</p>
                 </div>
                 <div class="welcome-stats">
                     <div class="welcome-stat">
@@ -522,7 +524,7 @@
                     </div>
                     <div class="welcome-stat">
                         <div class="welcome-stat-num">50K+</div>
-                        <div class="welcome-stat-label">Thành viên</div>
+                        <div class="welcome-stat-label">Thï¿½nh viï¿½n</div>
                     </div>
                     <div class="welcome-stat">
                         <div class="welcome-stat-num">24/7</div>
@@ -531,16 +533,16 @@
                 </div>
                 <div class="welcome-features">
                     <div class="welcome-feature"><span class="material-icons">movie</span>
-                        <div class="welcome-feature-text"><strong>Th?o lu?n phim</strong><span>Review, rating và khám
-                                phá phim m?i</span></div>
+                        <div class="welcome-feature-text"><strong>Th?o lu?n phim</strong><span>Review, rating vï¿½ khï¿½m
+                                phï¿½ phim m?i</span></div>
                     </div>
                     <div class="welcome-feature"><span class="material-icons">groups</span>
-                        <div class="welcome-feature-text"><strong>C?ng d?ng sôi n?i</strong><span>K?t n?i v?i ngu?i xem
-                                cùng s? thích</span></div>
+                        <div class="welcome-feature-text"><strong>C?ng d?ng sï¿½i n?i</strong><span>K?t n?i v?i ngu?i xem
+                                cï¿½ng s? thï¿½ch</span></div>
                     </div>
                     <div class="welcome-feature"><span class="material-icons">bolt</span>
                         <div class="welcome-feature-text"><strong>Chat th?i gian th?c</strong><span>Nh?n tin ngay l?p
-                                t?c, không d? tr?</span></div>
+                                t?c, khï¿½ng d? tr?</span></div>
                     </div>
                 </div>
                 <button class="welcome-start-btn" id="welcomeStartBtn">B?t d?u chat ngay <span
@@ -553,11 +555,11 @@
                             class="material-icons">arrow_back</span></button>
                     <div class="enter-name-title-wrap">
                         <h2>T?o h? so</h2>
-                        <p>Ch?n bi?t danh và màu s?c c?a b?n</p>
+                        <p>Ch?n bi?t danh vï¿½ mï¿½u s?c c?a b?n</p>
                     </div>
                 </div>
                 <div>
-                    <span class="name-color-label">Màu d?i di?n</span>
+                    <span class="name-color-label">Mï¿½u d?i di?n</span>
                     <div class="color-picker-row" id="colorPickerRow">
                         <div class="color-option selected" data-color="#ffd709" style="background:#ffd709"></div>
                         <div class="color-option" data-color="#22c55e" style="background:#22c55e"></div>
@@ -579,13 +581,13 @@
                             maxlength="20" autocomplete="off">
                         <span class="name-input-icon material-icons">person</span>
                     </div>
-                    <div class="name-error-msg" id="nameErrorMsg">Tên ph?i t? 3–20 ký t?, không ch?a ký t? d?c bi?t.
+                    <div class="name-error-msg" id="nameErrorMsg">Tï¿½n ph?i t? 3ï¿½20 kï¿½ t?, khï¿½ng ch?a kï¿½ t? d?c bi?t.
                     </div>
                 </div>
                 <div class="name-preview">
                     <div class="name-preview-avatar" id="previewAvatar" style="background:#ffd709;">A</div>
-                    <div class="name-preview-info"><strong id="previewName">Bi?t danh c?a b?n</strong><span>Thành viên
-                            m?i · Hôm nay</span></div>
+                    <div class="name-preview-info"><strong id="previewName">Bi?t danh c?a b?n</strong><span>Thï¿½nh viï¿½n
+                            m?i ï¿½ Hï¿½m nay</span></div>
                 </div>
                 <div class="online-preview">
                     <div class="online-avatars">
@@ -597,21 +599,21 @@
                     </div>
                     <div class="online-info"><strong><span
                                 style="display:inline-block;width:7px;height:7px;background:#22c55e;border-radius:50%;margin-right:5px;vertical-align:middle;"></span>42
-                            tr?c tuy?n</strong><span>Ðang th?o lu?n sôi n?i</span></div>
+                            tr?c tuy?n</strong><span>ï¿½ang th?o lu?n sï¿½i n?i</span></div>
                 </div>
                 <button class="join-btn" id="chatJoinBtn" disabled><span class="material-icons">login</span>Tham gia
-                    phòng chat</button>
+                    phï¿½ng chat</button>
             </div>
             <!-- SCREEN 3: CHAT ROOM -->
             <div class="chat-screen chat-screen-room" id="screenRoom">
                 <div class="messages-area" id="messagesArea">
-                    <div class="date-separator"><span>Hôm Nay</span></div>
-                    <div class="sys-msg"><span>?? Chào m?ng d?n v?i Kênh A Phim!</span></div>
+                    <div class="date-separator"><span>Hï¿½m Nay</span></div>
+                    <div class="sys-msg"><span>?? Chï¿½o m?ng d?n v?i Kï¿½nh A Phim!</span></div>
                     <div class="msg-group">
                         <div class="msg-avatar" style="background:#3b82f6;color:#fff;">M</div>
                         <div class="msg-content">
                             <div class="msg-name">MovieFan</div>
-                            <div class="msg-bubble">M?i ngu?i th?y Dune: Part Two th? nào? Hình ?nh choáng ng?p luôn! ??
+                            <div class="msg-bubble">M?i ngu?i th?y Dune: Part Two th? nï¿½o? Hï¿½nh ?nh choï¿½ng ng?p luï¿½n! ??
                             </div>
                             <div class="msg-meta"><span class="msg-time">20:20</span></div>
                         </div>
@@ -620,7 +622,7 @@
                         <div class="msg-avatar" style="background:#22c55e;color:#fff;">L</div>
                         <div class="msg-content">
                             <div class="msg-name">LinhChi</div>
-                            <div class="msg-bubble">Nh?c phim c?a Hans Zimmer n?a, nghe mà rung d?ng c? phòng chi?u ??
+                            <div class="msg-bubble">Nh?c phim c?a Hans Zimmer n?a, nghe mï¿½ rung d?ng c? phï¿½ng chi?u ??
                             </div>
                             <div class="msg-meta"><span class="msg-time">20:21</span></div>
                         </div>
@@ -636,8 +638,8 @@
                 </div>
                 <div class="quick-reactions" id="quickReactions">
                     <button class="quick-react-btn" data-text="?? Tuy?t v?i!">?? Tuy?t v?i</button>
-                    <button class="quick-react-btn" data-text="?? Quá d?nh!">?? Quá d?nh</button>
-                    <button class="quick-react-btn" data-text="?? Ðang xem">?? Ðang xem</button>
+                    <button class="quick-react-btn" data-text="?? Quï¿½ d?nh!">?? Quï¿½ d?nh</button>
+                    <button class="quick-react-btn" data-text="?? ï¿½ang xem">?? ï¿½ang xem</button>
                     <button class="quick-react-btn" data-text="? 10/10">? 10/10</button>
                     <button class="quick-react-btn" data-text="?? R?t ngh?">?? R?t ngh?</button>
                     <button class="quick-react-btn" data-text="?? C?c hay!">?? C?c hay</button>
@@ -650,26 +652,26 @@
                         <span class="material-icons">support_agent</span>
                     </div>
                     <h3 class="support-title">H? tr? tr?c tuy?n</h3>
-                    <p class="support-desc">Ð?i ngu h? tr? c?a A Phim luôn s?n sàng gi?i dáp m?i th?c m?c c?a b?n.</p>
+                    <p class="support-desc">ï¿½?i ngu h? tr? c?a A Phim luï¿½n s?n sï¿½ng gi?i dï¿½p m?i th?c m?c c?a b?n.</p>
                     <div class="support-info-cards">
                         <div class="support-info-card">
                             <span class="material-icons">schedule</span>
-                            <div><strong>Gi? ho?t d?ng</strong><span>24/7 — Ph?n h?i nhanh</span></div>
+                            <div><strong>Gi? ho?t d?ng</strong><span>24/7 ï¿½ Ph?n h?i nhanh</span></div>
                         </div>
                         <div class="support-info-card">
                             <span class="material-icons">translate</span>
-                            <div><strong>Ngôn ng?</strong><span>Ti?ng Vi?t — Ti?ng Anh</span></div>
+                            <div><strong>Ngï¿½n ng?</strong><span>Ti?ng Vi?t ï¿½ Ti?ng Anh</span></div>
                         </div>
                         <div class="support-info-card">
                             <span class="material-icons">verified</span>
-                            <div><strong>Chuyên nghi?p</strong><span>Ðu?c dào t?o bài b?n</span></div>
+                            <div><strong>Chuyï¿½n nghi?p</strong><span>ï¿½u?c dï¿½o t?o bï¿½i b?n</span></div>
                         </div>
                     </div>
                     <button class="support-start-btn" id="supportStartTawk">
                         <span class="material-icons">chat</span>
                         B?t d?u chat h? tr?
                     </button>
-                    <p class="support-note">Nh?n d? m? c?a s? chat v?i nhân viên h? tr?</p>
+                    <p class="support-note">Nh?n d? m? c?a s? chat v?i nhï¿½n viï¿½n h? tr?</p>
                 </div>
             </div>
         </div>
@@ -693,9 +695,9 @@
             <div class="input-footer">
                 <div class="current-user-tag">
                     <div class="current-user-avatar" id="currentUserAvatar" style="background:#ffd709;">A</div>
-                    <span id="currentUserName">Khách</span>
+                    <span id="currentUserName">Khï¿½ch</span>
                 </div>
-                <span class="change-name-link" id="changeNameLink">Ð?i tên</span>
+                <span class="change-name-link" id="changeNameLink">ï¿½?i tï¿½n</span>
             </div>
         </div>
         <!-- Emoji picker -->

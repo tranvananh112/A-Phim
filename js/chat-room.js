@@ -1479,6 +1479,11 @@ class APFilmChat {
         this.el.window.classList.add('active');
         if (this.el.fab) this.el.fab.style.display = 'none';
 
+        // Add body class for mobile to prevent background scroll
+        if (window.innerWidth <= 768) {
+            document.body.classList.add('chat-open');
+        }
+
         // Auto-enter room if user is logged in
         if (this.user) {
             console.log('[APFilmChat] User logged in, entering room directly');
@@ -1521,6 +1526,9 @@ class APFilmChat {
         this.el.window.classList.remove('active');
         this.el.window.classList.remove('minimized');
         if (this.el.fab) this.el.fab.style.display = '';
+
+        // Remove body class for mobile
+        document.body.classList.remove('chat-open');
     }
 
     /* ── Desktop Interaction ── */
