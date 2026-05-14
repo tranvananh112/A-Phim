@@ -1,0 +1,453 @@
+/**
+ * PWA SAFE AREA INSETS
+ * Fix cho iPhone notch/Dynamic Island khi thêm vào màn hình chính
+ * Theo chuẩn của Instagram, Twitter, Netflix, TikTok
+ */
+
+/* ============================================
+   ROOT VARIABLES - Safe Area Insets
+   ============================================ */
+:root {
+    /* iOS Safe Area Insets */
+    --sat: env(safe-area-inset-top);
+    --sar: env(safe-area-inset-right);
+    --sab: env(safe-area-inset-bottom);
+    --sal: env(safe-area-inset-left);
+
+    /* Fallback values for non-PWA */
+    --sat: env(safe-area-inset-top, 0px);
+    --sar: env(safe-area-inset-right, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+}
+
+/* ============================================
+   DETECT PWA MODE (Standalone)
+   ============================================ */
+@media (display-mode: standalone) {
+    /* PWA mode detected - apply safe area fixes */
+
+    /* BODY - Prevent content from going under notch */
+    body {
+        padding-top: var(--sat) !important;
+        padding-right: var(--sar) !important;
+        padding-bottom: var(--sab) !important;
+        padding-left: var(--sal) !important;
+    }
+
+    /* NAVIGATION HEADER - Push down from notch */
+    nav,
+    header,
+    .nav-container,
+    .navigation-modern,
+    .sticky-nav,
+    [class*="nav-"],
+    [class*="header-"] {
+        padding-top: calc(var(--sat) + 12px) !important;
+        margin-top: 0 !important;
+    }
+
+    /* BACK BUTTON - Adjust position */
+    .back-button,
+    .btn-back,
+    [class*="back-btn"] {
+        top: calc(var(--sat) + 16px) !important;
+    }
+
+    /* PROFILE HEADER - Adjust for notch */
+    .profile-cover,
+    .profile-header {
+        padding-top: calc(var(--sat) + 16px) !important;
+    }
+
+    /* FIXED HEADERS - All pages */
+    .fixed-header,
+    .sticky-header,
+    [style*="position: fixed"][style*="top: 0"] {
+        top: var(--sat) !important;
+    }
+
+    /* SEARCH BAR - Adjust position */
+    .search-container,
+    .search-bar,
+    [class*="search-"] {
+        margin-top: calc(var(--sat) + 8px) !important;
+    }
+
+    /* MODAL HEADERS */
+    .modal-header,
+    .dialog-header {
+        padding-top: calc(var(--sat) + 16px) !important;
+    }
+
+    /* BOTTOM NAVIGATION - Adjust for home indicator */
+    .bottom-nav,
+    .tab-bar,
+    [class*="bottom-"] {
+        padding-bottom: calc(var(--sab) + 8px) !important;
+    }
+
+    /* FLOATING ACTION BUTTON - Adjust for home indicator */
+    .fab,
+    .floating-button,
+    .chat-fab {
+        bottom: calc(var(--sab) + 20px) !important;
+    }
+}
+
+/* ============================================
+   SPECIFIC PAGE FIXES
+   ============================================ */
+
+/* PROFILE PAGE */
+@media (display-mode: standalone) {
+
+    /* Profile page body */
+    .profile-page {
+        padding-top: var(--sat) !important;
+    }
+
+    /* Profile back button */
+    .profile-page .back-button,
+    .profile-page .btn-back,
+    .profile-page button[onclick*="history.back"],
+    .profile-page a[onclick*="history.back"] {
+        top: calc(var(--sat) + 20px) !important;
+        left: calc(var(--sal) + 16px) !important;
+        z-index: 100 !important;
+    }
+
+    /* Profile cover/header */
+    .profile-cover,
+    .profile-header {
+        padding-top: calc(var(--sat) + 16px) !important;
+        margin-top: 0 !important;
+    }
+
+    /* Profile avatar - push down */
+    .profile-avatar-container {
+        margin-top: calc(var(--sat) + 0px) !important;
+    }
+
+    /* Profile tabs navigation */
+    .profile-tabs,
+    .tab-navigation,
+    .tab-btn {
+        margin-top: 8px !important;
+    }
+
+    /* All tab content sections */
+    .tab-content {
+        padding-top: 16px !important;
+    }
+
+    /* Profile cards inside tabs */
+    .profile-card {
+        margin-top: 0 !important;
+    }
+
+    /* Tiến trình (Progress) section */
+    #progressTab,
+    #progressTab .profile-card,
+    .stat-card,
+    .progress-section {
+        margin-top: 0 !important;
+        padding-top: 16px !important;
+    }
+
+    /* Thông tin cá nhân (Personal Info) section */
+    #infoTab,
+    #infoTab .profile-card {
+        margin-top: 0 !important;
+        padding-top: 16px !important;
+    }
+
+    /* Cửa hàng (Shop) section */
+    #shopTab,
+    #shopTab .profile-card,
+    .shop-tabs,
+    .shop-grid {
+        margin-top: 0 !important;
+        padding-top: 16px !important;
+    }
+
+    /* Gói thành viên (Subscription) section */
+    #subscriptionTab,
+    #subscriptionTab .profile-card,
+    .subscription-card {
+        margin-top: 0 !important;
+        padding-top: 16px !important;
+    }
+
+    /* Phim yêu thích (Favorites) section */
+    #favoritesTab,
+    #favoritesTab .profile-card,
+    #favoritesList,
+    .favorites-grid-container {
+        margin-top: 0 !important;
+        padding-top: 16px !important;
+    }
+
+    /* Lịch sử xem (History) section */
+    #historyTab,
+    #historyTab .profile-card,
+    #historyList {
+        margin-top: 0 !important;
+        padding-top: 16px !important;
+    }
+
+    /* Giao dịch (Transactions) section */
+    #transactionsTab,
+    #transactionsTab .profile-card,
+    #transactionsList {
+        margin-top: 0 !important;
+        padding-top: 16px !important;
+    }
+
+    /* Danh sách (Lists) section - if exists */
+    #listsTab,
+    #listsTab .profile-card {
+        margin-top: 0 !important;
+        padding-top: 16px !important;
+    }
+
+    /* Settings section - if exists */
+    #settingsTab,
+    #settingsTab .profile-card {
+        margin-top: 0 !important;
+        padding-top: 16px !important;
+    }
+
+    /* Menu buttons in profile */
+    .profile-menu,
+    .profile-menu-item,
+    .menu-list {
+        margin-top: 8px !important;
+    }
+
+    /* First element in each tab should have extra top padding */
+    .tab-content>*:first-child {
+        padding-top: calc(var(--sat) + 24px) !important;
+    }
+}
+
+/* HISTORY PAGE (Lịch sử xem) */
+@media (display-mode: standalone) {
+
+    .history-page nav,
+    .history-page header {
+        padding-top: calc(var(--sat) + 16px) !important;
+    }
+
+    .history-page .back-button {
+        top: calc(var(--sat) + 20px) !important;
+    }
+}
+
+/* FAVORITES PAGE (Phim yêu thích) */
+@media (display-mode: standalone) {
+
+    .favorites-page nav,
+    .favorites-page header {
+        padding-top: calc(var(--sat) + 16px) !important;
+    }
+
+    .favorites-page .back-button {
+        top: calc(var(--sat) + 20px) !important;
+    }
+}
+
+/* SHOP PAGE (Cửa hàng) */
+@media (display-mode: standalone) {
+
+    .shop-page nav,
+    .shop-page header {
+        padding-top: calc(var(--sat) + 16px) !important;
+    }
+
+    .shop-page .back-button {
+        top: calc(var(--sat) + 20px) !important;
+    }
+
+    /* Shop tabs */
+    .shop-tabs {
+        padding-top: 8px !important;
+    }
+}
+
+/* SUBSCRIPTION PAGE (Gói thành viên) */
+@media (display-mode: standalone) {
+
+    .subscription-page nav,
+    .subscription-page header {
+        padding-top: calc(var(--sat) + 16px) !important;
+    }
+
+    .subscription-page .back-button {
+        top: calc(var(--sat) + 20px) !important;
+    }
+}
+
+/* ============================================
+   LANDSCAPE MODE ADJUSTMENTS
+   ============================================ */
+@media (display-mode: standalone) and (orientation: landscape) {
+
+    /* In landscape, notch is on the side */
+    nav,
+    header {
+        padding-left: calc(var(--sal) + 16px) !important;
+        padding-right: calc(var(--sar) + 16px) !important;
+    }
+
+    /* Reduce top padding in landscape */
+    nav,
+    header {
+        padding-top: calc(var(--sat) + 8px) !important;
+    }
+}
+
+/* ============================================
+   IPHONE SPECIFIC FIXES
+   ============================================ */
+
+/* iPhone X, XS, 11 Pro, 12 mini, 13 mini (notch) */
+@supports (padding: max(0px)) {
+    @media (display-mode: standalone) {
+        body {
+            padding-top: max(var(--sat), 44px) !important;
+        }
+
+        nav,
+        header {
+            padding-top: max(calc(var(--sat) + 12px), 56px) !important;
+        }
+    }
+}
+
+/* iPhone 14 Pro, 15 Pro (Dynamic Island) */
+@supports (padding: max(0px)) {
+    @media (display-mode: standalone) and (min-height: 852px) {
+        body {
+            padding-top: max(var(--sat), 59px) !important;
+        }
+
+        nav,
+        header {
+            padding-top: max(calc(var(--sat) + 12px), 71px) !important;
+        }
+    }
+}
+
+/* ============================================
+   ANDROID PWA SUPPORT
+   ============================================ */
+@media (display-mode: standalone) {
+    /* Android typically has smaller safe areas */
+    @supports not (padding: env(safe-area-inset-top)) {
+        body {
+            padding-top: 24px !important;
+        }
+
+        nav,
+        header {
+            padding-top: 36px !important;
+        }
+    }
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+/* Add safe area padding manually */
+.safe-top {
+    padding-top: var(--sat) !important;
+}
+
+.safe-right {
+    padding-right: var(--sar) !important;
+}
+
+.safe-bottom {
+    padding-bottom: var(--sab) !important;
+}
+
+.safe-left {
+    padding-left: var(--sal) !important;
+}
+
+.safe-all {
+    padding-top: var(--sat) !important;
+    padding-right: var(--sar) !important;
+    padding-bottom: var(--sab) !important;
+    padding-left: var(--sal) !important;
+}
+
+/* Margin variants */
+.safe-mt {
+    margin-top: var(--sat) !important;
+}
+
+.safe-mr {
+    margin-right: var(--sar) !important;
+}
+
+.safe-mb {
+    margin-bottom: var(--sab) !important;
+}
+
+.safe-ml {
+    margin-left: var(--sal) !important;
+}
+
+/* ============================================
+   DEBUG MODE (Development only)
+   ============================================ */
+.debug-safe-area {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 999999;
+}
+
+.debug-safe-area::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--sat);
+    background: rgba(255, 0, 0, 0.3);
+    border-bottom: 2px solid red;
+}
+
+.debug-safe-area::after {
+    content: 'Safe Area Top: ' var(--sat);
+    position: absolute;
+    top: calc(var(--sat) + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: monospace;
+}
+
+/* ============================================
+   SMOOTH TRANSITIONS
+   ============================================ */
+@media (display-mode: standalone) {
+
+    nav,
+    header,
+    .back-button,
+    .profile-cover {
+        transition: padding 0.3s ease, margin 0.3s ease, top 0.3s ease !important;
+    }
+}

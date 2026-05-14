@@ -923,7 +923,13 @@ class APFilmChat {
     _renderAllMessages(msgs) {
         if (!this.el.messagesArea) return;
         this.lastMessages = msgs; // Keep for re-renders
-        this.el.messagesArea.innerHTML = '';
+
+        // Check if user is at bottom before rendering
+        const shouldScroll = this._shouldAutoScroll();
+
+        // Use DocumentFragment for better performance
+        const fragment = document.createDocumentFragment();
+        const tempContainer = document.createElement('div');
 
         let lastUserId = null;
         let lastTime = null;
@@ -934,16 +940,46 @@ class APFilmChat {
             msg.isOwn = !!currentId && !!msg.userId && msg.userId === currentId;
 
             const isSameUser = msg.userId === lastUserId && lastTime === msg.time;
-            this._appendMessage(msg, false, isSameUser);
+
+            // Create message element
+            const msgElement = this._createMessageElement(msg, isSameUser);
+            tempContainer.appendChild(msgElement);
+
             lastUserId = msg.userId;
             lastTime = msg.time;
         });
 
-        this._scrollToBottom();
+        // Batch DOM update
+        requestAnimationFrame(() => {
+            this.el.messagesArea.innerHTML = '';
+            this.el.messagesArea.appendChild(tempContainer);
+
+            // Only scroll if user was at bottom
+            if (shouldScroll) {
+                this._scrollToBottom(false);
+            }
+        });
     }
 
     _appendMessage(msg, doScroll = true, isSameUser = false) {
         if (!this.el.messagesArea) return;
+
+        // Check if should auto-scroll before adding message
+        const shouldScroll = doScroll && this._shouldAutoScroll();
+
+        const msgElement = this._createMessageElement(msg, isSameUser);
+
+        // Use requestAnimationFrame for smooth rendering
+        requestAnimationFrame(() => {
+            this.el.messagesArea.appendChild(msgElement);
+
+            if (shouldScroll) {
+                this._scrollToBottom(false);
+            }
+        });
+    }
+
+    _createMessageElement(msg, isSameUser = false) {
 
         const own = msg.isOwn ? 'own' : '';
         const isAdmin = (msg.chatRole && msg.chatRole.toLowerCase() === 'admin') ||
@@ -1126,8 +1162,7 @@ class APFilmChat {
             this._toggleMessageSelection(div, msg.id);
         };
 
-        this.el.messagesArea.appendChild(div);
-        if (doScroll) this._scrollToBottom();
+        return div;
     }
 
     _handleReaction(msgId, emoji) {
@@ -1542,10 +1577,31 @@ class APFilmChat {
         }
     }
 
-    _scrollToBottom() {
-        if (this.el.messagesArea) {
-            this.el.messagesArea.scrollTop = this.el.messagesArea.scrollHeight;
-        }
+    _scrollToBottom(smooth = false) {
+        if (!this.el.messagesArea) return;
+
+        // Use requestAnimationFrame for smooth rendering
+        requestAnimationFrame(() => {
+            const area = this.el.messagesArea;
+            if (smooth) {
+                area.scrollTo({
+                    top: area.scrollHeight,
+                    behavior: 'smooth'
+                });
+            } else {
+                area.scrollTop = area.scrollHeight;
+            }
+        });
+    }
+
+    _shouldAutoScroll() {
+        if (!this.el.messagesArea) return true;
+
+        const area = this.el.messagesArea;
+        const threshold = 100; // pixels from bottom
+        const distanceFromBottom = area.scrollHeight - area.scrollTop - area.clientHeight;
+
+        return distanceFromBottom < threshold;
     }
 
     _now() {

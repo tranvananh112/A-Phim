@@ -5,11 +5,11 @@
 // ================================================================
 
 // ── State ──────────────────────────────────────────────────────
-let currentAdminBanner  = null;   // Banner admin mặc định (index 0)
-let heroSlides          = [];     // [adminBanner, thumb1, thumb2, ...]
-let currentSlideIndex   = 0;
-let isTransitioning     = false;
-let autoReturnTimer     = null;   // Timer tự động về index 0
+let currentAdminBanner = null;   // Banner admin mặc định (index 0)
+let heroSlides = [];     // [adminBanner, thumb1, thumb2, ...]
+let currentSlideIndex = 0;
+let isTransitioning = false;
+let autoReturnTimer = null;   // Timer tự động về index 0
 const AUTO_RETURN_DELAY = 6000;   // 6 giây sau khi không tương tác
 
 // ── Entry Point ─────────────────────────────────────────────────
@@ -31,7 +31,7 @@ async function loadHeroBanner() {
         const apiUrl = (typeof getBackendBaseURL === 'function') ? window.getBackendBaseURL() : '';
         if (!apiUrl) throw new Error('API URL undefined');
 
-        const res  = await fetch(`${apiUrl}/api/banners/active`, {
+        const res = await fetch(`${apiUrl}/api/banners/active`, {
             method: 'GET', headers: { 'Content-Type': 'application/json' }
         });
         const data = await res.json();
@@ -64,7 +64,7 @@ async function loadHeroBanner() {
 // ── Fallback từ ophim API ────────────────────────────────────────
 async function loadFallbackBanner() {
     try {
-        const res  = await fetch('https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=1', {
+        const res = await fetch('https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=1', {
             headers: { accept: 'application/json' }
         });
         const data = await res.json();
@@ -84,19 +84,19 @@ async function loadFallbackBanner() {
 // ── Convert banner API format → movie format ────────────────────
 function convertBannerToMovie(banner) {
     return {
-        slug:            banner.movieSlug || banner.slug,
-        name:            banner.name,
-        origin_name:     banner.originName  || banner.origin_name,
-        thumb_url:       banner.thumbUrl    || banner.thumb_url,
-        poster_url:      banner.posterUrl   || banner.poster_url,
-        content:         banner.content,
-        year:            banner.year,
-        quality:         banner.quality,
-        lang:            banner.lang,
+        slug: banner.movieSlug || banner.slug,
+        name: banner.name,
+        origin_name: banner.originName || banner.origin_name,
+        thumb_url: banner.thumbUrl || banner.thumb_url,
+        poster_url: banner.posterUrl || banner.poster_url,
+        content: banner.content,
+        year: banner.year,
+        quality: banner.quality,
+        lang: banner.lang,
         episode_current: banner.episodeCurrent || banner.episode_current,
-        category:        banner.category || [],
-        tmdb:            banner.tmdb    || {},
-        imdb:            banner.imdb    || {}
+        category: banner.category || [],
+        tmdb: banner.tmdb || {},
+        imdb: banner.imdb || {}
     };
 }
 
@@ -151,9 +151,9 @@ function switchHeroSlide(newIndex, skipThumbnailHighlight, isAutoReturn) {
     }
 
     // ── PHASE 1: Fade OUT (nhanh hơn) ──
-    const heroImage   = document.getElementById('heroImage');
+    const heroImage = document.getElementById('heroImage');
     const heroContent = document.getElementById('heroContent');
-    if (heroImage)   heroImage.classList.add('hero-img-out');
+    if (heroImage) heroImage.classList.add('hero-img-out');
     if (heroContent) heroContent.classList.add('hero-content-out');
 
     // ── PHASE 2 (160ms — đủ để fade out, ngắn nhất có thể) ──
@@ -224,13 +224,13 @@ function buildImageUrl(rawUrl, width) {
 
 // ── Update chỉ phần text của hero banner ───────────────────────
 function updateHeroBannerText(movie) {
-    const heroTitle       = document.getElementById('heroTitle');
-    const heroSubtitle    = document.getElementById('heroSubtitle');
-    const heroBadges      = document.getElementById('heroBadges');
-    const heroGenres      = document.getElementById('heroGenres');
+    const heroTitle = document.getElementById('heroTitle');
+    const heroSubtitle = document.getElementById('heroSubtitle');
+    const heroBadges = document.getElementById('heroBadges');
+    const heroGenres = document.getElementById('heroGenres');
     const heroDescription = document.getElementById('heroDescription');
 
-    if (heroTitle)    heroTitle.textContent = movie.name || '';
+    if (heroTitle) heroTitle.textContent = movie.name || '';
     if (heroSubtitle) heroSubtitle.textContent = movie.origin_name || '';
 
     if (heroBadges) {
@@ -288,19 +288,19 @@ function attachSwipeHandler() {
     const heroEl = document.querySelector('main.relative.h-screen');
     if (!heroEl) return;
 
-    let startX      = 0;
-    let startY      = 0;
-    let isDragging  = false;
-    let swipeDir    = null; // 'h' = horizontal, 'v' = vertical, null = unknown
+    let startX = 0;
+    let startY = 0;
+    let isDragging = false;
+    let swipeDir = null; // 'h' = horizontal, 'v' = vertical, null = unknown
     const SWIPE_THRESHOLD = 45;
-    const AXIS_LOCK_PX    = 8;  // px di chuyển để xác định hướng
+    const AXIS_LOCK_PX = 8;  // px di chuyển để xác định hướng
 
     // ── TOUCH (Mobile) ───────────────────────────────────
     heroEl.addEventListener('touchstart', (e) => {
         // Bỏ qua nếu chạm vào thumbnail
         if (e.target.closest('.hero-thumb-item')) return;
-        startX   = e.touches[0].clientX;
-        startY   = e.touches[0].clientY;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
         swipeDir = null;
         clearAutoReturnTimer();
     }, { passive: true });
@@ -355,8 +355,8 @@ function attachSwipeHandler() {
     // ── MOUSE (Desktop) ─────────────────────────────────
     heroEl.addEventListener('mousedown', (e) => {
         if (e.target.closest('a, button, .hero-thumb-item')) return;
-        startX     = e.clientX;
-        startY     = e.clientY;
+        startX = e.clientX;
+        startY = e.clientY;
         isDragging = true;
         clearAutoReturnTimer();
         heroEl.style.cursor = 'grabbing';
@@ -437,14 +437,14 @@ async function loadThumbnailMovies() {
                 applyThumbnails(convertThumbnailsFromAPI(movies));
             }
         }
-    } catch (e) {}
+    } catch (e) { }
 
     // 2. Fetch fresh từ backend
     try {
         const apiUrl = (typeof getBackendBaseURL === 'function') ? window.getBackendBaseURL() : '';
         if (!apiUrl) throw new Error('API URL undefined');
 
-        const res  = await fetch(`${apiUrl}/api/banners/thumbnails`);
+        const res = await fetch(`${apiUrl}/api/banners/thumbnails`);
         const data = await res.json();
 
         if (data.success && data.data && data.data.length > 0) {
@@ -462,25 +462,25 @@ async function loadThumbnailMovies() {
 
 function convertThumbnailsFromAPI(banners) {
     return banners.map(b => ({
-        slug:            b.movieSlug,
-        name:            b.name,
-        origin_name:     b.originName,
-        thumb_url:       b.thumbUrl,
-        poster_url:      b.posterUrl,
-        year:            b.year,
-        content:         b.content,
-        quality:         b.quality,
-        lang:            b.lang,
+        slug: b.movieSlug,
+        name: b.name,
+        origin_name: b.originName,
+        thumb_url: b.thumbUrl,
+        poster_url: b.posterUrl,
+        year: b.year,
+        content: b.content,
+        quality: b.quality,
+        lang: b.lang,
         episode_current: b.episodeCurrent,
-        category:        b.category || [],
-        tmdb:            b.tmdb || {},
-        imdb:            b.imdb || {}
+        category: b.category || [],
+        tmdb: b.tmdb || {},
+        imdb: b.imdb || {}
     }));
 }
 
 async function loadVietnameseThumbnailsFallback() {
     try {
-        const res  = await fetch('https://ophim1.com/v1/api/quoc-gia/viet-nam?page=1', {
+        const res = await fetch('https://ophim1.com/v1/api/quoc-gia/viet-nam?page=1', {
             headers: { accept: 'application/json' }
         });
         const data = await res.json();
@@ -537,6 +537,7 @@ function renderThumbnails(movies) {
         return `
         <div class="hero-thumb-item flex-shrink-0 snap-start"
              data-slide-index="${slideIndex}"
+             data-movie-index="${i}"
              role="button"
              tabindex="0"
              title="${movie.name || ''}"
@@ -562,6 +563,98 @@ function renderThumbnails(movies) {
             }
         });
     });
+
+    // Hover preview - show large poster in hero banner (desktop only)
+    let hoverTimer = null;
+    let isPreviewMode = false;
+    let savedSlideIndex = currentSlideIndex;
+
+    container.querySelectorAll('.hero-thumb-item').forEach(el => {
+        el.addEventListener('mouseenter', (e) => {
+            // Only on desktop
+            if (window.innerWidth <= 768) return;
+
+            const movieIndex = parseInt(el.getAttribute('data-movie-index'));
+            const movie = movies[movieIndex];
+            if (!movie) return;
+
+            // Debounce hover - wait 200ms before showing preview
+            hoverTimer = setTimeout(() => {
+                if (!isPreviewMode) {
+                    savedSlideIndex = currentSlideIndex;
+                    isPreviewMode = true;
+                }
+                previewHeroPoster(movie);
+            }, 200);
+        });
+
+        el.addEventListener('mouseleave', () => {
+            clearTimeout(hoverTimer);
+            if (isPreviewMode) {
+                isPreviewMode = false;
+                // Return to current slide
+                returnToCurrentSlide(savedSlideIndex);
+            }
+        });
+    });
+}
+
+// ================================================================
+// THUMBNAIL HOVER PREVIEW
+// ================================================================
+function previewHeroPoster(movie) {
+    const heroImage = document.getElementById('heroImage');
+    if (!heroImage || !movie) return;
+
+    // Use poster_url (large cover image) NOT thumb_url
+    const posterUrl = movie.poster_url || movie.thumb_url;
+    if (!posterUrl) return;
+
+    const optUrl = buildImageUrl(posterUrl, 1200);
+    if (!optUrl) return;
+
+    // Fade out current image
+    heroImage.style.opacity = '0.3';
+
+    // Preload new image
+    const img = new Image();
+    img.onload = () => {
+        heroImage.src = optUrl;
+        heroImage.style.opacity = '1';
+    };
+    img.src = optUrl;
+
+    // Update text content
+    updateHeroBannerText(movie);
+    updateHeroButtons(movie);
+}
+
+function returnToCurrentSlide(slideIndex) {
+    if (slideIndex < 0 || slideIndex >= heroSlides.length) return;
+    const movie = heroSlides[slideIndex];
+    if (!movie) return;
+
+    // Restore original slide
+    const heroImage = document.getElementById('heroImage');
+    if (!heroImage) return;
+
+    const posterUrl = movie.poster_url || movie.thumb_url;
+    if (!posterUrl) return;
+
+    const optUrl = buildImageUrl(posterUrl, 1200);
+    if (!optUrl) return;
+
+    heroImage.style.opacity = '0.3';
+
+    const img = new Image();
+    img.onload = () => {
+        heroImage.src = optUrl;
+        heroImage.style.opacity = '1';
+    };
+    img.src = optUrl;
+
+    updateHeroBannerText(movie);
+    updateHeroButtons(movie);
 }
 
 // ================================================================
@@ -608,9 +701,9 @@ function showHeroText() {
 
 function showHeroImage() {
     const heroImage = document.getElementById('heroImage');
-    const skeleton  = document.getElementById('heroImageSkeleton');
+    const skeleton = document.getElementById('heroImageSkeleton');
     if (heroImage) heroImage.style.opacity = '1';
-    if (skeleton)  setTimeout(() => { skeleton.style.display = 'none'; }, 300);
+    if (skeleton) setTimeout(() => { skeleton.style.display = 'none'; }, 300);
 }
 
 // ================================================================
@@ -619,7 +712,7 @@ function showHeroImage() {
 async function fetchLatestEpisodeCount(movie) {
     if (!movie?.slug) return;
     try {
-        const res  = await fetch(`https://ophim1.com/v1/api/phim/${movie.slug}`, {
+        const res = await fetch(`https://ophim1.com/v1/api/phim/${movie.slug}`, {
             headers: { accept: 'application/json' }
         });
         const data = await res.json();
@@ -651,7 +744,7 @@ async function fetchLatestEpisodeCount(movie) {
 // HERO ACTION BUTTONS (Favorite + Info)
 // ================================================================
 function setupHeroActions(movie) {
-    const favBtn  = document.getElementById('heroFavBtn');
+    const favBtn = document.getElementById('heroFavBtn');
     const infoBtn = document.getElementById('heroInfoBtn');
 
     if (!movie) return;

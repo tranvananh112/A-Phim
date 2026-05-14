@@ -888,6 +888,15 @@
     flex-direction: column;
     gap: 4px;
     background: var(--c-bg);
+    /* Performance optimizations to prevent jank */
+    scroll-behavior: auto;
+    overscroll-behavior: contain;
+    will-change: scroll-position;
+    contain: layout style paint;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 .messages-area::-webkit-scrollbar {
@@ -1009,17 +1018,22 @@
     max-width: 85%;
     margin-bottom: 28px;
     animation: tgMsgIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Performance optimizations */
+    will-change: transform, opacity;
+    contain: layout style;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
 
 @keyframes tgMsgIn {
     from {
         opacity: 0;
-        transform: translateY(8px) scale(0.98);
+        transform: translateY(8px) scale(0.98) translateZ(0);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(0) scale(1) translateZ(0);
     }
 }
 

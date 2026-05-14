@@ -14,12 +14,27 @@
     </script>
 
     <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport" />
+    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no"
+        name="viewport" />
     <title>Tài khoản của tôi - A Phim</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/favicon.png">
+
+    <!-- Apple Mobile Web App -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="A Phim">
+
+    <!-- PWA Theme -->
+    <meta name="theme-color" content="#0a0a1a">
+
+    <!-- PWA Safe Area CSS - LOAD FIRST -->
+    <link rel="stylesheet" href="css/pwa-safe-area.css?v=1">
     <link rel="stylesheet" href="css/tailwind.min.css?v=13">
     <link rel="stylesheet" href="css/navigation-modern.css?v=13">
     <link rel="stylesheet" href="css/navigation-pill-v2.css?v=13">
@@ -544,8 +559,51 @@
             transform: scale(1.1) !important;
         }
 
+        /* Favorites Grid Responsive */
+        #favoritesList {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(140px, 100%), 1fr));
+            gap: 16px;
+            max-height: 700px;
+            overflow-y: auto;
+            padding: 4px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(232, 185, 79, 0.4) transparent;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 640px) {
+            #favoritesList {
+                grid-template-columns: repeat(auto-fill, minmax(min(120px, 45%), 1fr));
+                gap: 12px;
+                max-height: 500px;
+            }
+        }
+
+        @media (min-width: 641px) and (max-width: 768px) {
+            #favoritesList {
+                grid-template-columns: repeat(auto-fill, minmax(min(130px, 30%), 1fr));
+                gap: 14px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            #favoritesList {
+                grid-template-columns: repeat(auto-fill, minmax(min(140px, 23%), 1fr));
+                gap: 16px;
+            }
+        }
+
+        @media (min-width: 1025px) {
+            #favoritesList {
+                grid-template-columns: repeat(auto-fill, minmax(min(160px, 18%), 1fr));
+                gap: 20px;
+            }
+        }
+
         /* Hide scrollbar but keep functionality */
         #favoritesList::-webkit-scrollbar {
+            width: 6px;
             height: 4px;
         }
 
@@ -557,15 +615,22 @@
             background: rgba(232, 185, 79, 0.3);
             border-radius: 10px;
         }
+
+        #favoritesList::-webkit-scrollbar-thumb:hover {
+            background: rgba(232, 185, 79, 0.5);
+        }
     </style>
     <link rel="stylesheet" href="css/ambient-bg.css?v=13">
     <link rel="stylesheet" href="css/nav-desktop-v2.css?v=13">
     <link rel="stylesheet" href="css/design-tokens.css?v=13">
     <script src="js/anti-devtools.js?v=10"></script>
     <link rel="stylesheet" href="css/profile-progress.css?v=18">
+
+    <!-- PWA Detector JS -->
+    <script src="js/pwa-detector.js?v=1"></script>
 </head>
 
-<body class="bg-background-dark text-gray-100 font-display min-h-screen">
+<body class="bg-background-dark text-gray-100 font-display min-h-screen profile-page">
     <!-- Ambient Background (7 Orbs for Full Coverage) -->
     <div class="ambient-bg">
         <div class="ambient-orb ambient-orb-1"></div>
@@ -1250,17 +1315,15 @@
                     </div>
 
                     <div id="favoritesTab" class="tab-content active-tab">
-                        <div class="profile-card" style="padding:20px 24px;">
+                        <div class="profile-card" style="padding:20px 16px;">
                             <h2
-                                style="font-size:1.25rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px;">
+                                style="font-size:1.25rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px;">
                                 <span class="material-icons-round" style="color:#e8b94f;font-size:22px;">favorite</span>
                                 Phim yêu thích
                             </h2>
-                            <!-- Horizontal scroll container -->
-                            <div style="position:relative;">
-                                <div id="favoritesList"
-                                    style="display:grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap:20px; max-height: 700px; overflow-y: auto; padding: 4px 4px 20px 4px; scrollbar-width: thin; scrollbar-color: rgba(232,185,79,0.4) transparent;">
-                                </div>
+                            <!-- Netflix-style Grid Container -->
+                            <div id="favoritesList" class="favorites-grid-container">
+                                <!-- Will be filled by JavaScript -->
                             </div>
                         </div>
                     </div>

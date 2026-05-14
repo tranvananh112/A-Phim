@@ -259,6 +259,34 @@
         height: 32px !important;
     }
 
+    /* Avatar Frame Performance Optimization on Mobile */
+    .tg-avatar-wrap .shop-frame-wrap,
+    .current-user-avatar .shop-frame-wrap {
+        /* GPU acceleration for smooth animations */
+        transform: translateZ(0) !important;
+        -webkit-transform: translateZ(0) !important;
+        backface-visibility: hidden !important;
+        -webkit-backface-visibility: hidden !important;
+        perspective: 1000px !important;
+        -webkit-perspective: 1000px !important;
+    }
+
+    /* Optimize animated frames on mobile */
+    .tg-avatar-wrap .shop-frame-wrap::before,
+    .tg-avatar-wrap .shop-frame-wrap::after,
+    .current-user-avatar .shop-frame-wrap::before,
+    .current-user-avatar .shop-frame-wrap::after {
+        will-change: transform, opacity !important;
+        transform: translateZ(0) !important;
+        -webkit-transform: translateZ(0) !important;
+    }
+
+    /* Reduce animation complexity for better performance */
+    .tg-avatar-wrap .shop-frame-wrap[class*="av-frame-"]::before {
+        /* Use GPU-accelerated properties only */
+        transition: transform 0.3s ease, opacity 0.3s ease !important;
+    }
+
     /* CONTEXT MENU - Bottom Sheet Style on Mobile */
     .tg-context-menu {
         position: fixed !important;
