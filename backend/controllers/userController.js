@@ -200,10 +200,10 @@ exports.manageUserGamification = async (req, res) => {
         // --- DETECT CHANGES FOR NOTIFICATION ---
         const isCoinUpdate = typeof coins === 'number' && coins !== user.coins;
         const isPlanUpdate = subscription && subscription.plan && subscription.plan.toUpperCase() !== (user.subscription?.plan || 'FREE');
-        
+
         let notificationMsg = req.body.message || 'Hệ thống vừa cập nhật tài khoản của bạn';
         let coinDiffCalculated = 0; // HOISTED for Socket event
-        
+
         // DYNAMIC QUANTIFICATION: Append precise delta for transparency if applicable
         if (isCoinUpdate) {
             coinDiffCalculated = coins - user.coins;
@@ -260,17 +260,17 @@ exports.manageUserGamification = async (req, res) => {
         // Log coin changes if it was a modification
         if (isCoinUpdate) {
             const diff = coins - user.coins;
-            user.transactions.push({ 
-                title: 'Admin điều chỉnh số dư Xu', 
-                amount: diff, 
-                type: 'recharge', 
-                date: new Date() 
+            user.transactions.push({
+                title: 'Admin điều chỉnh số dư Xu',
+                amount: diff,
+                type: 'recharge',
+                date: new Date()
             });
             user.coins = coins;
             user.xu = coins; // SYNC BOTH FIELDS
         }
         if (typeof xp === 'number') user.xp = xp;
-        
+
         // --- PERSISTENT NOTIFICATION ---
         try {
             await Notification.create({
@@ -325,7 +325,7 @@ exports.manageUserGamification = async (req, res) => {
 exports.broadcastNotification = async (req, res) => {
     try {
         const { title, message, type } = req.body;
-        
+
         // Emit to all users via Socket.IO
         const socketUtil = require('../utils/socket');
         if (socketUtil.isInitialized()) {
@@ -374,6 +374,102 @@ exports.getUserStats = async (req, res) => {
                 blockedUsers,
                 premiumUsers,
                 freeUsers: totalUsers - premiumUsers
+            }
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// @desc    Toggle chat ban for user (Admin only)
+// @route   PUT /api/users/:id/chat-ban
+// @access  Private/Admin
+exports.toggleChatBan = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'Không tìm thấy người dùng'
+            });
+        }
+
+        // Toggle ban status
+        user.isChatBanned = !user.isChatBanned;
+        await user.save();
+
+        // Broadcast realtime update via Socket.io
+        const socketUtil = require('../utils/socket');
+        if (socketUtil.isInitialized()) {
+            console.log(`📡 [Socket] Emitting CHAT_BAN_UPDATE for user ${user._id}`);
+            socketUtil.emitEvent(`USER_UPDATE_${user._id}`, {
+                userId: user._id,
+                isChatBanned: user.isChatBanned,
+                message: user.isChatBanned ? 'Bạn đã bị cấm chat' : 'Bạn đã được gỡ cấm chat'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: user.isChatBanned ? 'Đã cấm chat người dùng' : 'Đã gỡ cấm chat người dùng',
+            data: {
+                isChatBanned: user.isChatBanned
+            }
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// @desc    Update chat role for user (Admin only)
+// @route   PUT /api/users/:id/chat-role
+// @access  Private/Admin
+exports.updateChatRole = async (req, res) => {
+    try {
+        const { role } = req.body;
+
+        if (!role || !['admin', 'user'].includes(role)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Role phải là "admin" hoặc "user"'
+            });
+        }
+
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'Không tìm thấy người dùng'
+            });
+        }
+
+        user.chatRole = role;
+        await user.save();
+
+        // Broadcast realtime update via Socket.io
+        const socketUtil = require('../utils/socket');
+        if (socketUtil.isInitialized()) {
+            console.log(`📡 [Socket] Emitting CHAT_ROLE_UPDATE for user ${user._id} | role: ${role}`);
+            socketUtil.emitEvent(`USER_UPDATE_${user._id}`, {
+                userId: user._id,
+                chatRole: role,
+                message: role === 'admin' ? 'Bạn đã được cấp quyền Admin chat' : 'Quyền Admin chat đã bị thu hồi'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: `Đã cập nhật quyền chat thành ${role}`,
+            data: {
+                chatRole: user.chatRole
             }
         });
     } catch (error) {

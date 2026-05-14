@@ -2,7 +2,7 @@
 <html lđang="vi">
 
 <head>
-    
+
     <script src="js/chat-init-guard.js?v=37"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -25,7 +25,8 @@
     <!-- <script src="js/phim-x-analytics.js"></script> -->
 
     <link rel="stylesheet" href="css/tailwind.min.css?v=13">
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons"
+        rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     <meta name="robots" content="noindex, nofollow">
@@ -373,8 +374,15 @@
         }
 
         @keyframes contentFadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Modernized Video Card */
@@ -420,7 +428,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 40%, transparent 100%);
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 40%, transparent 100%);
             opacity: 0.8;
             transition: opacity 0.3s;
         }
@@ -442,7 +450,7 @@
             padding: 3px 7px;
             border-radius: 4px;
             z-index: 2;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .vc-hd {
@@ -457,7 +465,7 @@
             border-radius: 4px;
             letter-spacing: 0.5px;
             z-index: 2;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
             text-transform: uppercase;
         }
 
@@ -487,7 +495,7 @@
 
         .vc-meta {
             font-size: 12px;
-            color: rgba(255,255,255,0.5);
+            color: rgba(255, 255, 255, 0.5);
             margin-top: auto;
             display: flex;
             align-items: center;
@@ -505,7 +513,8 @@
         #player-section {
             display: none;
             margin: 0 auto 40px;
-            max-width: 1400px; /* Nới rộng để chứa Sidebar */
+            max-width: 1400px;
+            /* Nới rộng để chứa Sidebar */
             position: relative;
             z-index: 20;
             animation: slideUpIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -513,7 +522,8 @@
 
         .watch-grid-container {
             display: grid;
-            grid-template-columns: 1fr; /* Mobile default */
+            grid-template-columns: 1fr;
+            /* Mobile default */
             gap: 24px;
             align-items: start;
         }
@@ -521,7 +531,8 @@
         /* Desktop structure like watch.html */
         @media (min-width: 1024px) {
             .watch-grid-container {
-                grid-template-columns: 9fr 3fr; /* Split main and sidebar */
+                grid-template-columns: 9fr 3fr;
+                /* Split main and sidebar */
             }
         }
 
@@ -532,9 +543,9 @@
         }
 
         .watch-sidebar {
-            background: rgba(255,255,255,0.02);
+            background: rgba(255, 255, 255, 0.02);
             border-radius: 16px;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             padding: 20px;
             position: sticky;
             top: 80px;
@@ -549,7 +560,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 12px;
         }
 
@@ -578,7 +589,7 @@
         }
 
         .related-card:hover {
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             transform: translateX(5px);
         }
 
@@ -589,7 +600,7 @@
             border-radius: 8px;
             overflow: hidden;
             position: relative;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .related-thumb img {
@@ -625,15 +636,22 @@
 
         .related-meta {
             font-size: 11px;
-            color: rgba(255,255,255,0.5);
+            color: rgba(255, 255, 255, 0.5);
             display: flex;
             align-items: center;
             gap: 5px;
         }
 
         @keyframes slideUpIn {
-            from { opacity: 0; transform: translateY(30px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         #player-box {
@@ -662,7 +680,7 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 16px;
             padding: 28px;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
 
         #vp-title {
@@ -697,7 +715,7 @@
             font-weight: 600;
             transition: all 0.2s;
         }
-        
+
         .vp-meta span:hover {
             background: rgba(255, 255, 255, 0.08);
             color: #fff;
@@ -719,7 +737,7 @@
             z-index: 100;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             color: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
         }
 
         .close-player-btn:hover {
@@ -736,7 +754,7 @@
             align-items: center;
             margin-bottom: 16px;
         }
-        
+
         .back-to-list-btn {
             display: inline-flex;
             align-items: center;
@@ -745,13 +763,13 @@
             font-weight: 600;
             font-size: 14px;
             padding: 10px 18px;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             cursor: pointer;
             transition: all 0.2s;
         }
-        
+
         .back-to-list-btn:hover {
             background: var(--orange);
             border-color: var(--orange);
@@ -973,14 +991,14 @@
             }
         }
     </style>
-    <link rel="stylesheet" href="css/chat-room.css?v=13">
-<link rel="stylesheet" href="css/mobile-viewport-fix.css?v=35">
-<link rel="stylesheet" href="css/mobile-menu-modern.css?v=35">
+    <link rel="stylesheet" href="css/chat-room.css?v=40">
+    <link rel="stylesheet" href="css/mobile-viewport-fix.css?v=35">
+    <link rel="stylesheet" href="css/mobile-menu-modern.css?v=35">
 
     <!-- A Phim: Hardcode Dropdown Blue Override inside HTML to bypass all cache/specificity -->
-            <style id="dropdown-blue-override">
+    <style id="dropdown-blue-override">
         @media (min-width: 1024px) {
-            nav .relative.group > .absolute.top-full {
+            nav .relative.group>.absolute.top-full {
                 background-color: #3d5a96 !important;
                 background-image: linear-gradient(145deg, #3d5a96 0%, #25385e 100%) !important;
                 backdrop-filter: blur(16px) !important;
@@ -988,17 +1006,20 @@
                 border: 1px solid rgba(255, 255, 255, 0.15) !important;
                 box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
             }
-            nav .relative.group > .absolute.top-full a {
+
+            nav .relative.group>.absolute.top-full a {
                 color: #eff6ff !important;
                 font-weight: 500 !important;
-                text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
             }
-            nav .relative.group > .absolute.top-full a:hover {
+
+            nav .relative.group>.absolute.top-full a:hover {
                 color: #f2f20d !important;
                 background-color: rgba(255, 255, 255, 0.1) !important;
-                text-shadow: 0 0 10px rgba(242,242,13,0.5);
+                text-shadow: 0 0 10px rgba(242, 242, 13, 0.5);
             }
-            nav .relative.group > .absolute.top-full * {
+
+            nav .relative.group>.absolute.top-full * {
                 /* Ensure no child elements are painting a black background covering the blue */
             }
         }
@@ -1010,11 +1031,23 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- Google Fonts: Space Grotesk + Be Vietnam Pro (non-blocking) -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Be+Vietnam+Pro:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Be+Vietnam+Pro:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
+    <link rel="preload"
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Be+Vietnam+Pro:wght@400;600;700&display=swap"
+        as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Be+Vietnam+Pro:wght@400;600;700&display=swap"
+            rel="stylesheet">
+    </noscript>
     <!-- Material Icons (non-blocking) -->
-    <link rel="preload" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons" rel="stylesheet"></noscript>
+    <link rel="preload"
+        href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons"
+        as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link
+            href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons"
+            rel="stylesheet">
+    </noscript>
     <!-- Base CSS -->
     <link rel="stylesheet" href="css/tailwind.min.css?v=13">
     <link rel="stylesheet" href="css/design-tokens.css?v=13">
@@ -1089,7 +1122,7 @@
 
     <!-- Header -->
     <header id="site-header">
-    <script src="js/chat-init-guard.js?v=37"></script>
+        <script src="js/chat-init-guard.js?v=37"></script>
         <div class="header-inner">
             <a href="/" class="logo">
                 <div class="logo-badge">A</div>
@@ -1122,7 +1155,7 @@
                 </div>
 
                 <div class="search-box">
-                <input type="text" id="search-input" placeholder="Tìm kiếm phim...">
+                    <input type="text" id="search-input" placeholder="Tìm kiếm phim...">
                     <button class="search-btn" onclick="doSearch()">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
@@ -1139,7 +1172,8 @@
     <div id="cat-nav">
         <div class="cat-nav-inner">
             <button class="cat-btn active" data-q="hot trending" onclick="selectCat(this, event)">Thịnh hành</button>
-            <button class="cat-btn sister-hot" data-q="Sister hot" onclick="selectCat(this, event)">Sister Hot 🔥</button>
+            <button class="cat-btn sister-hot" data-q="Sister hot" onclick="selectCat(this, event)">Sister Hot
+                🔥</button>
             <button class="cat-btn" data-q="asian vietnam" onclick="selectCat(this, event)">Phim Việt</button>
             <button class="cat-btn" data-q="japanese teen" onclick="selectCat(this, event)">Nhật Bản</button>
             <button class="cat-btn" data-q="korean bj" onclick="selectCat(this, event)">Hàn Quốc</button>
@@ -1509,7 +1543,7 @@
             // Pre-store variables to memory so the independent watch page starts loading instantly
             sessionStorage.setItem('phimX_CurrentVideo', JSON.stringify(video));
             sessionStorage.setItem('phimX_RelatedPool', JSON.stringify(currentVideos));
-            
+
             // SAVE EXACT STATE: Remember current URL (with query params, search, page) to restore later
             sessionStorage.setItem('phimX_ReturnURL', window.location.href);
 
@@ -1517,7 +1551,7 @@
             window.location.href = 'phim-x-watch.html';
         }
 
-        
+
 
         // Enter key to search
         document.getElementById('search-input').addEventListener('keypress', (e) => {
@@ -1977,7 +2011,8 @@
                     <a href="#" class="hover:text-primary transition-colors">Ch�nh s�ch b?o m?t</a>
                     <a href="#" class="hover:text-primary transition-colors">�Điều khoản sử dụng</a>
                     <a href="#" class="hover:text-primary transition-colors">Giới thiệu</a>
-                    <a href="https://web.telegram.org/k/#@aphimiovn" target="_blank" class="hover:text-primary transition-colors">Li�n h?</a>
+                    <a href="https://web.telegram.org/k/#@aphimiovn" target="_blank"
+                        class="hover:text-primary transition-colors">Li�n h?</a>
                 </div>
 
                 <!-- Text block -->
@@ -2067,14 +2102,14 @@
     <!-- Mobile Menu Script -->
     <script src="js/mobile-menu-modern.js?v=36"></script>
 
-        }
-        document.addEventListener('click', firePopunder);
-        document.addEventListener('touchend', firePopunder);
+    }
+    document.addEventListener('click', firePopunder);
+    document.addEventListener('touchend', firePopunder);
     })();
-</script>
-<!-- ====== Chat Widget A Phim ====== -->
+    </script>
+    <!-- ====== Chat Widget A Phim ====== -->
     <!-- CSS -->
-    <link rel="stylesheet" href="css/chat-room.css?v=13">
+    <link rel="stylesheet" href="css/chat-room.css?v=40">
     <!-- FAB Button -->
     <button id="chatFab" class="chat-fab" aria-label="M? chat cộng dịch" title="Chat Cộng �đồng">
         <span class="fab-icon material-icons">forum</span>
@@ -2097,36 +2132,64 @@
                 </div>
             </div>
             <div class="chat-header-actions">
-                <button class="chat-header-btn" id="chatMinimizeBtn" title="Thu nhỏ"><span class="material-icons">remove</span></button>
-                <button class="chat-header-btn" id="chatCloseBtn" title="��ng"><span class="material-icons">close</span></button>
+                <button class="chat-header-btn" id="chatMinimizeBtn" title="Thu nhỏ"><span
+                        class="material-icons">remove</span></button>
+                <button class="chat-header-btn" id="chatCloseBtn" title="��ng"><span
+                        class="material-icons">close</span></button>
             </div>
         </div>
         <!-- BODY -->
         <div class="chat-body" id="chatBody">
             <!-- SCREEN 1: WELCOME -->
             <div class="chat-screen chat-screen-welcome active" id="screenWelcome">
-                <div class="welcome-glow"><img src="/favicon.png" alt="A Phim" style="width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.15));"></div>
+                <div class="welcome-glow"><img src="/favicon.png" alt="A Phim"
+                        style="width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.15));">
+                </div>
                 <div>
                     <h2 class="welcome-title">Ch�o mở d?n <span>K�nh A Phim</span></h2>
-                    <p class="welcome-desc" style="margin-top:8px;">K?t nổi, thảo luận v� t?n huđồng di?n ?nh c�ng h�ng ng�n t�n d? phim ?nh.</p>
+                    <p class="welcome-desc" style="margin-top:8px;">K?t nổi, thảo luận v� t?n huđồng di?n ?nh c�ng h�ng
+                        ng�n t�n d? phim ?nh.</p>
                 </div>
                 <div class="welcome-stats">
-                    <div class="welcome-stat"><div class="welcome-stat-num" id="welcomeOnline">1,284</div><div class="welcome-stat-label">Trực tuyến</div></div>
-                    <div class="welcome-stat"><div class="welcome-stat-num">50K+</div><div class="welcome-stat-label">Th�nh vi�n</div></div>
-                    <div class="welcome-stat"><div class="welcome-stat-num">24/7</div><div class="welcome-stat-label">Ho?t dịch</div></div>
+                    <div class="welcome-stat">
+                        <div class="welcome-stat-num" id="welcomeOnline">1,284</div>
+                        <div class="welcome-stat-label">Trực tuyến</div>
+                    </div>
+                    <div class="welcome-stat">
+                        <div class="welcome-stat-num">50K+</div>
+                        <div class="welcome-stat-label">Th�nh vi�n</div>
+                    </div>
+                    <div class="welcome-stat">
+                        <div class="welcome-stat-num">24/7</div>
+                        <div class="welcome-stat-label">Ho?t dịch</div>
+                    </div>
                 </div>
                 <div class="welcome-features">
-                    <div class="welcome-feature"><span class="material-icons">movie</span><div class="welcome-feature-text"><strong>Thảo luận phim</strong><span>Review, rating v� kh�m ph� phim m?i</span></div></div>
-                    <div class="welcome-feature"><span class="material-icons">groups</span><div class="welcome-feature-text"><strong>Cộng dịch s�i nổi</strong><span>K?t nổi v?i người xem c�ng s? th�ch</span></div></div>
-                    <div class="welcome-feature"><span class="material-icons">bolt</span><div class="welcome-feature-text"><strong>Chat thời gian thực</strong><span>Nh?n tin ngay l?p t?c, kh�ng d? tr?</span></div></div>
+                    <div class="welcome-feature"><span class="material-icons">movie</span>
+                        <div class="welcome-feature-text"><strong>Thảo luận phim</strong><span>Review, rating v� kh�m
+                                ph� phim m?i</span></div>
+                    </div>
+                    <div class="welcome-feature"><span class="material-icons">groups</span>
+                        <div class="welcome-feature-text"><strong>Cộng dịch s�i nổi</strong><span>K?t nổi v?i người xem
+                                c�ng s? th�ch</span></div>
+                    </div>
+                    <div class="welcome-feature"><span class="material-icons">bolt</span>
+                        <div class="welcome-feature-text"><strong>Chat thời gian thực</strong><span>Nh?n tin ngay l?p
+                                t?c, kh�ng d? tr?</span></div>
+                    </div>
                 </div>
-                <button class="welcome-start-btn" id="welcomeStartBtn">B?t d?u chat ngay <span class="material-icons">arrow_forward</span></button>
+                <button class="welcome-start-btn" id="welcomeStartBtn">B?t d?u chat ngay <span
+                        class="material-icons">arrow_forward</span></button>
             </div>
             <!-- SCREEN 2: ENTER NAME -->
             <div class="chat-screen chat-screen-name" id="screenEnterName">
                 <div class="enter-name-header">
-                    <button class="enter-name-back-btn" id="enterNameBackBtn"><span class="material-icons">arrow_back</span></button>
-                    <div class="enter-name-title-wrap"><h2>Tạo hồ sơ</h2><p>Ch?n bi?t danh v� m�u s?c c?a b?n</p></div>
+                    <button class="enter-name-back-btn" id="enterNameBackBtn"><span
+                            class="material-icons">arrow_back</span></button>
+                    <div class="enter-name-title-wrap">
+                        <h2>Tạo hồ sơ</h2>
+                        <p>Ch?n bi?t danh v� m�u s?c c?a b?n</p>
+                    </div>
                 </div>
                 <div>
                     <span class="name-color-label">M�u d?i di?n</span>
@@ -2147,25 +2210,32 @@
                         <span class="name-char-count" id="nameCharCount">0 / 20</span>
                     </div>
                     <div class="name-input-wrapper">
-                        <input type="text" id="chatNameInput" class="name-input" placeholder="VD: MovieLover_99" maxlength="20" autocomplete="off">
+                        <input type="text" id="chatNameInput" class="name-input" placeholder="VD: MovieLover_99"
+                            maxlength="20" autocomplete="off">
                         <span class="name-input-icon material-icons">person</span>
                     </div>
-                    <div class="name-error-msg" id="nameErrorMsg">T�n ph?i t? 3�20 k� t?, kh�ng ch?a k� t? d?c bi?t.</div>
+                    <div class="name-error-msg" id="nameErrorMsg">T�n ph?i t? 3�20 k� t?, kh�ng ch?a k� t? d?c bi?t.
+                    </div>
                 </div>
                 <div class="name-preview">
                     <div class="name-preview-avatar" id="previewAvatar" style="background:#ffd709;">A</div>
-                    <div class="name-preview-info"><strong id="previewName">Biệt danh của bạn</strong><span>Th�nh vi�n m?i � H�m nay</span></div>
+                    <div class="name-preview-info"><strong id="previewName">Biệt danh của bạn</strong><span>Th�nh vi�n
+                            m?i � H�m nay</span></div>
                 </div>
                 <div class="online-preview">
                     <div class="online-avatars">
-                        <div class="online-avatar-mini" style="background:#ffd709;color:#1a1200;font-weight:700;">K</div>
+                        <div class="online-avatar-mini" style="background:#ffd709;color:#1a1200;font-weight:700;">K
+                        </div>
                         <div class="online-avatar-mini" style="background:#22c55e;color:#fff;font-weight:700;">L</div>
                         <div class="online-avatar-mini" style="background:#3b82f6;color:#fff;font-weight:700;">M</div>
                         <div class="online-avatar-mini more">+39</div>
                     </div>
-                    <div class="online-info"><strong><span style="display:inline-block;width:7px;height:7px;background:#22c55e;border-radius:50%;margin-right:5px;vertical-align:middle;"></span>42 tr?c tuy?n</strong><span>�đang thảo luận s�i nổi</span></div>
+                    <div class="online-info"><strong><span
+                                style="display:inline-block;width:7px;height:7px;background:#22c55e;border-radius:50%;margin-right:5px;vertical-align:middle;"></span>42
+                            tr?c tuy?n</strong><span>�đang thảo luận s�i nổi</span></div>
                 </div>
-                <button class="join-btn" id="chatJoinBtn" disabled><span class="material-icons">login</span>Tham gia ph�ng chat</button>
+                <button class="join-btn" id="chatJoinBtn" disabled><span class="material-icons">login</span>Tham gia
+                    ph�ng chat</button>
             </div>
             <!-- SCREEN 3: CHAT ROOM -->
             <div class="chat-screen chat-screen-room" id="screenRoom">
@@ -2176,7 +2246,8 @@
                         <div class="msg-avatar" style="background:#3b82f6;color:#fff;">M</div>
                         <div class="msg-content">
                             <div class="msg-name">MovieFan</div>
-                            <div class="msg-bubble">M?i người th?y Dune: Part Two th? n�o? H�nh ?nh cho�ng ngợp lu�n! 🎬</div>
+                            <div class="msg-bubble">M?i người th?y Dune: Part Two th? n�o? H�nh ?nh cho�ng ngợp lu�n! 🎬
+                            </div>
                             <div class="msg-meta"><span class="msg-time">20:20</span></div>
                         </div>
                     </div>
@@ -2184,13 +2255,18 @@
                         <div class="msg-avatar" style="background:#22c55e;color:#fff;">L</div>
                         <div class="msg-content">
                             <div class="msg-name">LinhChi</div>
-                            <div class="msg-bubble">Nhạc phim của Hans Zimmer n?a, nghe m� rung dịch c? ph�ng chiếu! 👏</div>
+                            <div class="msg-bubble">Nhạc phim của Hans Zimmer n?a, nghe m� rung dịch c? ph�ng chiếu! 👏
+                            </div>
                             <div class="msg-meta"><span class="msg-time">20:21</span></div>
                         </div>
                     </div>
                     <div class="typing-indicator" id="typingIndicator">
                         <div class="typing-avatar" style="background:#a855f7;border-radius:50%;"></div>
-                        <div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
+                        <div class="typing-dots">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="quick-reactions" id="quickReactions">
@@ -2235,13 +2311,18 @@
         <!-- INPUT AREA -->
         <div class="chat-input-area" id="chatInputArea">
             <div class="chat-tabs-bar">
-                <button class="chat-tab active" data-tab="general" id="tabGeneral"><span class="material-icons">public</span>Chung</button>
-                <button class="chat-tab" data-tab="movies" id="tabMovies"><span class="material-icons">movie</span>Phim</button>
-                <button class="chat-tab" data-tab="support" id="tabSupport"><span class="material-icons">help</span>H? tr?</button>
+                <button class="chat-tab active" data-tab="general" id="tabGeneral"><span
+                        class="material-icons">public</span>Chung</button>
+                <button class="chat-tab" data-tab="movies" id="tabMovies"><span
+                        class="material-icons">movie</span>Phim</button>
+                <button class="chat-tab" data-tab="support" id="tabSupport"><span class="material-icons">help</span>H?
+                    tr?</button>
             </div>
             <div class="input-row">
-                <button class="input-icon-btn" id="emojiToggleBtn" title="Emoji"><span class="material-icons">mood</span></button>
-                <input type="text" id="chatMessageInput" placeholder="Viết tin nhắn..." maxlength="500" autocomplete="off">
+                <button class="input-icon-btn" id="emojiToggleBtn" title="Emoji"><span
+                        class="material-icons">mood</span></button>
+                <input type="text" id="chatMessageInput" placeholder="Viết tin nhắn..." maxlength="500"
+                    autocomplete="off">
                 <button class="send-btn" id="chatSendBtn" disabled><span class="material-icons">send</span></button>
             </div>
             <div class="input-footer">
@@ -2263,16 +2344,16 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script>
     <!-- Firebase Chat Service -->
-    <script src="js/firebase-chat.js?v=13"></script>
+    <script src="js/firebase-chat.js?v=40"></script>
     <!-- Chat Widget Logic -->
-    <script src="js/chat-room.js?v=13"></script>
+    <script src="js/chat-room.js?v=43"></script>
 
-    
-    
 
-    
+
+
+
     <!-- ====== End Chat Widget ====== -->
-<script src="js/nav-active-indicator.js?v=13"></script>
+    <script src="js/nav-active-indicator.js?v=13"></script>
     <script src="js/config.js?v=13"></script>
     <script src="js/auth.js?v=38"></script>
     <script src="js/auth-modal.js?v=13"></script>

@@ -6,15 +6,15 @@
 class RealtimeSync {
     constructor() {
         this.socket = null;
-        this.backendUrl = (typeof API_CONFIG !== 'undefined' && API_CONFIG.BACKEND_URL) 
-            ? API_CONFIG.BACKEND_URL.replace(/\/api$/, '') 
+        this.backendUrl = (typeof API_CONFIG !== 'undefined' && API_CONFIG.BACKEND_URL)
+            ? API_CONFIG.BACKEND_URL.replace(/\/api$/, '')
             : 'http://localhost:5000';
-        
+
         console.log('🚀 [Realtime] Module starting...');
-        
+
         // Robust Event Driven Initialization + Fallback Polling
         this._setupListeners();
-        
+
         if (document.readyState === 'complete') {
             this.delayedInit();
         } else {
@@ -28,7 +28,7 @@ class RealtimeSync {
             console.log('🔑 [Realtime] Login detected via event, initializing...');
             this.init();
         });
-        
+
         // Periodic sanity check (every 8 seconds) to catch deferred initialization states
         setInterval(() => {
             if (!this.socket && typeof authService !== 'undefined' && authService.isLoggedIn()) {
@@ -55,7 +55,7 @@ class RealtimeSync {
 
     async init() {
         if (this.socket && this.socket.connected) return; // Prevent duplicate concurrent tunnels
-        
+
         // 1. Dynamically load Socket.io Client if not present
         if (typeof io === 'undefined') {
             try {
@@ -69,7 +69,7 @@ class RealtimeSync {
         const user = authService.getCurrentUser();
         // Robust ID check - MongoDB uses _id, some legacy code might use id
         const userId = user._id || user.id;
-        
+
         if (!userId) {
             console.warn('⚠️ [Realtime] userId missing from auth record. Cannot listen for updates.');
             return;
@@ -93,20 +93,52 @@ class RealtimeSync {
             console.error('❌ [Realtime] Connection error:', err.message);
         });
 
-        // 3. LISTEN FOR ACCOUNT UPDATES (Xu, XP, Inventory)
+        // 3. LISTEN FOR ACCOUNT UPDATES (Xu, XP, Inventory, Chat Role, Chat Ban)
         this.socket.on(`USER_UPDATE_${userId}`, async (data) => {
             console.warn('⚡ [Realtime] ACCOUNT UPDATE RECEIVED:', data);
-            
-            console.warn('⚡ [Realtime] ACCOUNT UPDATE RECEIVED:', data);
-            
+
             const oldUser = authService.getCurrentUser();
             const oldCoins = oldUser ? (oldUser.coins || oldUser.xu || 0) : 0;
 
             // Trigger data re-fetch from /api/auth/me to sync localStorage
             await authService.syncProfile();
-            
+
             const newUser = authService.getCurrentUser();
             const newCoins = newUser ? (newUser.coins || newUser.xu || 0) : (data.coins !== undefined ? data.coins : oldCoins);
+
+            // Handle Chat Role Update
+            if (data.chatRole !== undefined) {
+                console.log(`🔐 [Realtime] Chat role updated to: ${data.chatRole}`);
+                if (newUser) {
+                    newUser.chatRole = data.chatRole;
+                    localStorage.setItem('cinestream_user', JSON.stringify(newUser));
+                }
+                // Refresh chat UI if chat widget exists
+                if (window.apChat && typeof window.apChat._restoreUser === 'function') {
+                    window.apChat._restoreUser();
+                    window.apChat._syncUserUI();
+                }
+            }
+
+            // Handle Chat Ban Update
+            if (data.isChatBanned !== undefined) {
+                console.log(`🚫 [Realtime] Chat ban status updated: ${data.isChatBanned}`);
+                if (newUser) {
+                    newUser.isChatBanned = data.isChatBanned;
+                    localStorage.setItem('cinestream_user', JSON.stringify(newUser));
+                }
+                // Update chat input state
+                if (window.apChat) {
+                    window.apChat.isBanned = data.isChatBanned;
+                    const input = document.getElementById('chatMessageInput');
+                    const sendBtn = document.getElementById('chatSendBtn');
+                    if (input) {
+                        input.placeholder = data.isChatBanned ? 'Tài khoản đã bị cấm chat.' : 'Viết tin nhắn...';
+                        input.disabled = data.isChatBanned;
+                    }
+                    if (sendBtn) sendBtn.disabled = data.isChatBanned;
+                }
+            }
 
             // Trigger global UI updates (Selectors like navbar, sidebar, etc.)
             this.updateGlobalSelectors(data);
@@ -124,10 +156,10 @@ class RealtimeSync {
                 console.log('[Realtime] Refreshing Balance Displays...');
                 updateBalanceDisplay();
             }
-            
+
             // Show notifications
             const displayMsg = data.message || 'Hệ thống đã cập nhật tài khoản của bạn';
-            
+
             // Sync persistent notifications from backend
             if (typeof window.syncNotifications === 'function') {
                 window.syncNotifications();
@@ -139,7 +171,7 @@ class RealtimeSync {
             } else if (typeof showMessage === 'function') {
                 showMessage(displayMsg, 'success');
             }
-            
+
             // Prevent this incoming realtime socket notification from firing AGAIN as persistent on next reload
             // (Backend Notification will match by ID shortly, we save local keys to suppress redundant deliveries)
             // We dynamically derive IDs after sync completes
@@ -162,22 +194,22 @@ class RealtimeSync {
         if (data.coins !== undefined) {
             const coinValue = Number(data.coins);
             const coinIds = [
-                'sidebarXuBalance', 
-                'shopBalance', 
-                'xuModalBalance', 
-                'userCoinsText', 
-                'heroXuBalance', 
+                'sidebarXuBalance',
+                'shopBalance',
+                'xuModalBalance',
+                'userCoinsText',
+                'heroXuBalance',
                 'navXuText',
                 'heroCoinPill'
             ];
-            
+
             coinIds.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
                     el.style.transition = 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
                     el.style.transform = 'scale(1.4)';
                     el.style.color = '#4ade80';
-                    
+
                     // Simple text update
                     el.textContent = coinValue.toLocaleString('vi-VN');
 
@@ -238,7 +270,7 @@ class RealtimeSync {
         if (data.subscription) {
             const plan = data.subscription.plan || 'FREE';
             const subIds = ['heroPlanBadge', 'sidebarPlanLabel', 'epPlanBadge'];
-            
+
             subIds.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
@@ -246,7 +278,7 @@ class RealtimeSync {
                     el.style.animation = 'pulse-gold 1.5s infinite';
                 }
             });
-            
+
             // Auto-refresh subscription tab if visible
             if (typeof loadSubscriptionInfo === 'function') {
                 loadSubscriptionInfo();

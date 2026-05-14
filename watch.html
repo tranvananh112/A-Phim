@@ -2,7 +2,7 @@
 <html class="dark" lang="vi">
 
 <head>
-    
+
     <script src="js/chat-init-guard.js?v=37"></script>
 
     <!-- ⚡ TOUCH SPEED — Load NGAY, không defer/async -->
@@ -27,7 +27,8 @@
     </script>
 
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
     <title>Xem phim - A Phim</title>
 
     <!-- Favicon -->
@@ -53,18 +54,19 @@
     <link rel="stylesheet" href="css/navigation-modern.css?v=13">
     <link rel="stylesheet" href="css/navigation-pill-v2.css?v=13">
     <link rel="stylesheet" href="css/navigation-smooth.css?v=13">
-    <link rel="stylesheet" href="css/chat-room.css?v=13">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons" rel="stylesheet">
-<link rel="stylesheet" href="css/mobile-viewport-fix.css?v=35">
-<link rel="stylesheet" href="css/mobile-menu-modern.css?v=35">
-<link rel="stylesheet" href="css/progressive-image.css?v=13">
-<link rel="stylesheet" href="css/ambient-bg.css?v=13">
-<link rel="stylesheet" href="css/avatar-frames.css?v=15">
+    <link rel="stylesheet" href="css/chat-room.css?v=42">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/mobile-viewport-fix.css?v=35">
+    <link rel="stylesheet" href="css/mobile-menu-modern.css?v=35">
+    <link rel="stylesheet" href="css/progressive-image.css?v=13">
+    <link rel="stylesheet" href="css/ambient-bg.css?v=13">
+    <link rel="stylesheet" href="css/avatar-frames.css?v=15">
 
     <!-- A Phim: Hardcode Dropdown Blue Override inside HTML to bypass all cache/specificity -->
-            <style id="dropdown-blue-override">
+    <style id="dropdown-blue-override">
         @media (min-width: 1024px) {
-            nav .relative.group > .absolute.top-full {
+            nav .relative.group>.absolute.top-full {
                 background-color: #3d5a96 !important;
                 background-image: linear-gradient(145deg, #3d5a96 0%, #25385e 100%) !important;
                 backdrop-filter: blur(16px) !important;
@@ -72,17 +74,20 @@
                 border: 1px solid rgba(255, 255, 255, 0.15) !important;
                 box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
             }
-            nav .relative.group > .absolute.top-full a {
+
+            nav .relative.group>.absolute.top-full a {
                 color: #eff6ff !important;
                 font-weight: 500 !important;
-                text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
             }
-            nav .relative.group > .absolute.top-full a:hover {
+
+            nav .relative.group>.absolute.top-full a:hover {
                 color: #f2f20d !important;
                 background-color: rgba(255, 255, 255, 0.1) !important;
-                text-shadow: 0 0 10px rgba(242,242,13,0.5);
+                text-shadow: 0 0 10px rgba(242, 242, 13, 0.5);
             }
-            nav .relative.group > .absolute.top-full * {
+
+            nav .relative.group>.absolute.top-full * {
                 /* Ensure no child elements are painting a black background covering the blue */
             }
         }
@@ -112,11 +117,14 @@
 
             <!-- ZONE 1: Logo -->
             <a href="index.html" class="flex items-center gap-2.5 group flex-shrink-0" style="text-decoration:none;">
-                <div class="w-9 h-9 rounded-full border-2 border-primary flex items-center justify-center bg-black/40 group-hover:bg-primary/20 transition-colors duration-300 overflow-hidden">
-                    <img src="/favicon.png" alt="A Phim Logo" class="w-5 h-5 object-contain group-hover:scale-110 transition-transform" />
+                <div
+                    class="w-9 h-9 rounded-full border-2 border-primary flex items-center justify-center bg-black/40 group-hover:bg-primary/20 transition-colors duration-300 overflow-hidden">
+                    <img src="/favicon.png" alt="A Phim Logo"
+                        class="w-5 h-5 object-contain group-hover:scale-110 transition-transform" />
                 </div>
                 <div class="flex flex-col leading-none">
-                    <span class="text-xl font-bold text-white tracking-wide">A <span class="text-primary">Phim</span></span>
+                    <span class="text-xl font-bold text-white tracking-wide">A <span
+                            class="text-primary">Phim</span></span>
                     <span class="text-[9px] text-white/40 uppercase tracking-widest">Cinema</span>
                 </div>
             </a>
@@ -124,7 +132,8 @@
             <!-- Mobile Inline Search -->
             <form action="search.html" method="GET" class="mobile-inline-search">
                 <span class="material-icons-round mobile-inline-search-icon">search</span>
-                <input type="text" name="q" placeholder="Tìm kiếm phim..." autocomplete="off" class="mobile-inline-search-input">
+                <input type="text" name="q" placeholder="Tìm kiếm phim..." autocomplete="off"
+                    class="mobile-inline-search-input">
             </form>
 
             <!-- ZONE 2: Desktop Search + Links (hidden on mobile) -->
@@ -135,11 +144,14 @@
                     <!-- Search Bar -->
                     <form action="search.html" method="GET" class="nav-search-v2">
                         <span class="material-icons-round search-icon">search</span>
-                        <input type="text" name="q" placeholder="Tìm kiếm phim, diễn viên..." autocomplete="off" required>
+                        <input type="text" name="q" placeholder="Tìm kiếm phim, diễn viên..." autocomplete="off"
+                            required>
                     </form>
 
                     <!-- Divider -->
-                    <div style="width:1px; height:20px; background:rgba(255,255,255,0.12); margin:0 6px; flex-shrink:0;"></div>
+                    <div
+                        style="width:1px; height:20px; background:rgba(255,255,255,0.12); margin:0 6px; flex-shrink:0;">
+                    </div>
 
                     <!-- Nav Links — flat, no pill -->
                     <nav-links class="flex items-center" style="gap:2px;">
@@ -163,21 +175,73 @@
                                 <span class="material-icons-round nav-caret">expand_more</span>
                             </button>
                             <div class="nav-dropdown-panel" style="min-width:560px;">
-                                <div style="background:linear-gradient(160deg,#1e4d8c 0%,#2563b8 40%,#1a3d7a 100%);border-radius:12px;padding:6px;border:1px solid rgba(59,130,246,0.25);box-shadow:0 20px 50px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);">
+                                <div
+                                    style="background:linear-gradient(160deg,#1e4d8c 0%,#2563b8 40%,#1a3d7a 100%);border-radius:12px;padding:6px;border:1px solid rgba(59,130,246,0.25);box-shadow:0 20px 50px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);">
                                     <div class="grid grid-cols-3 gap-0">
-                                        <a href="danh-sach.html?list=phim-moi" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Mới</a>
-                                        <a href="danh-sach.html?list=phim-bo" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Bộ</a>
-                                        <a href="danh-sach.html?list=phim-le" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Lẻ</a>
-                                        <a href="danh-sach.html?list=tv-shows" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">TV Shows</a>
-                                        <a href="danh-sach.html?list=hoat-hinh" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Hoạt Hình</a>
-                                        <a href="danh-sach.html?list=phim-vietsub" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Vietsub</a>
-                                        <a href="danh-sach.html?list=phim-thuyet-minh" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Thuyết Minh</a>
-                                        <a href="danh-sach.html?list=phim-long-tien" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Lồng Tiếng</a>
-                                        <a href="danh-sach.html?list=phim-bo-dang-chieu" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Bộ Đang Chiếu</a>
-                                        <a href="danh-sach.html?list=phim-bo-hoan-thanh" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Bộ Đã Xong</a>
-                                        <a href="danh-sach.html?list=phim-sap-chieu" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Sắp Chiếu</a>
-                                        <a href="danh-sach.html?list=subteam" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Subteam</a>
-                                        <a href="danh-sach.html?list=phim-chieu-rap" style="display:flex;align-items:center;justify-content:center;padding:11px 16px;color:rgba(255,255,255,0.95);font-size:0.82rem;font-weight:700;border-top:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;grid-column:span 3;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.95)';">🎬 Phim Chiếu Rạp</a>
+                                        <a href="danh-sach.html?list=phim-moi"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim
+                                            Mới</a>
+                                        <a href="danh-sach.html?list=phim-bo"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim
+                                            Bộ</a>
+                                        <a href="danh-sach.html?list=phim-le"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim
+                                            Lẻ</a>
+                                        <a href="danh-sach.html?list=tv-shows"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">TV
+                                            Shows</a>
+                                        <a href="danh-sach.html?list=hoat-hinh"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Hoạt
+                                            Hình</a>
+                                        <a href="danh-sach.html?list=phim-vietsub"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim
+                                            Vietsub</a>
+                                        <a href="danh-sach.html?list=phim-thuyet-minh"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Thuyết
+                                            Minh</a>
+                                        <a href="danh-sach.html?list=phim-long-tien"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Lồng
+                                            Tiếng</a>
+                                        <a href="danh-sach.html?list=phim-bo-dang-chieu"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim
+                                            Bộ Đang Chiếu</a>
+                                        <a href="danh-sach.html?list=phim-bo-hoan-thanh"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Bộ
+                                            Đã Xong</a>
+                                        <a href="danh-sach.html?list=phim-sap-chieu"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Sắp
+                                            Chiếu</a>
+                                        <a href="danh-sach.html?list=subteam"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Subteam</a>
+                                        <a href="danh-sach.html?list=phim-chieu-rap"
+                                            style="display:flex;align-items:center;justify-content:center;padding:11px 16px;color:rgba(255,255,255,0.95);font-size:0.82rem;font-weight:700;border-top:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;grid-column:span 3;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.95)';">🎬
+                                            Phim Chiếu Rạp</a>
                                     </div>
                                 </div>
                             </div>
@@ -207,8 +271,8 @@
                 <!-- Auth Container (filled by auth.js / user-ui.js) -->
                 <div id="authContainer" class="flex items-center">
                     <a href="login.html"
-                       onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');return false;}"
-                       class="nav-auth-btn hidden lg:inline-flex">
+                        onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');return false;}"
+                        class="nav-auth-btn hidden lg:inline-flex">
                         <span class="material-icons-round" style="font-size:16px;">person</span>
                         Đăng Nhập
                     </a>
@@ -272,23 +336,27 @@
                         class="flex items-center justify-between w-full xl:w-auto xl:flex-shrink-0 gap-2 sm:gap-4 font-semibold mt-3 xl:mt-0">
                         <button id="cinemaModeBtn" onclick="toggleCinemaMode()"
                             class="flex-1 xl:flex-none flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2.5 px-2 sm:px-5 py-2.5 sm:py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-gray-300 hover:text-white rounded-xl backdrop-blur-md shadow-lg transition-all duration-300 hover:-translate-y-0.5 active:scale-95 group text-xs sm:text-sm">
-                            <span class="material-icons-round text-base sm:text-xl transition-transform group-hover:scale-110">theaters</span>
+                            <span
+                                class="material-icons-round text-base sm:text-xl transition-transform group-hover:scale-110">theaters</span>
                             <span class="whitespace-nowrap">Rạp phim <span id="cinemaModeBadge"
                                     class="ml-1 px-1 py-0.5 rounded bg-white/10 text-[8px] text-gray-400 font-bold">OFF</span></span>
                         </button>
                         <button id="favoriteMovieBtn"
                             class="flex-1 xl:flex-none flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2.5 px-2 sm:px-5 py-2.5 sm:py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-gray-300 hover:text-white rounded-xl backdrop-blur-md shadow-lg transition-all duration-300 hover:-translate-y-0.5 active:scale-95 group text-xs sm:text-sm">
-                            <span class="material-icons-round text-base sm:text-xl transition-transform group-hover:scale-110 group-hover:text-red-400">favorite_border</span>
+                            <span
+                                class="material-icons-round text-base sm:text-xl transition-transform group-hover:scale-110 group-hover:text-red-400">favorite_border</span>
                             <span class="whitespace-nowrap">Yêu thích</span>
                         </button>
                         <button id="saveMovieBtn"
                             class="flex-1 xl:flex-none flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2.5 px-2 sm:px-5 py-2.5 sm:py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-gray-300 hover:text-white rounded-xl backdrop-blur-md shadow-lg transition-all duration-300 hover:-translate-y-0.5 active:scale-95 group text-xs sm:text-sm">
-                            <span class="material-icons-round text-base sm:text-xl transition-transform group-hover:scale-110 group-hover:text-blue-400">playlist_add</span>
+                            <span
+                                class="material-icons-round text-base sm:text-xl transition-transform group-hover:scale-110 group-hover:text-blue-400">playlist_add</span>
                             <span class="whitespace-nowrap">Thêm vào</span>
                         </button>
                         <button onclick="shareMovie()"
                             class="flex-1 xl:flex-none flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2.5 px-2 sm:px-5 py-2.5 sm:py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-gray-300 hover:text-white rounded-xl backdrop-blur-md shadow-lg transition-all duration-300 hover:-translate-y-0.5 active:scale-95 group text-xs sm:text-sm">
-                            <span class="material-icons-round text-base sm:text-xl transition-transform group-hover:scale-110 group-hover:text-yellow-400">share</span>
+                            <span
+                                class="material-icons-round text-base sm:text-xl transition-transform group-hover:scale-110 group-hover:text-yellow-400">share</span>
                             <span class="whitespace-nowrap">Chia sẻ</span>
                         </button>
                     </div>
@@ -519,7 +587,7 @@
     <script src="js/watch.js?v=37"></script>
     <script src="js/categories-dropdown.js?v=13"></script>
     <script src="js/countries-dropdown.js?v=13"></script>
-    
+
     <script src="js/dropdown-hover-fix.js?v=13"></script>
 
     <!-- Defer non-critical scripts -->
@@ -536,25 +604,27 @@
 
     <!-- ====== Firebase SDK (Compat CDN) ====== -->
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js" crossorigin="anonymous"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"
+        crossorigin="anonymous"></script>
     <!-- <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script> -->
-    <script src="js/firebase-chat.js?v=35"></script>
-    <script src="js/chat-room.js?v=35"></script>
+    <script src="js/firebase-chat.js?v=42"></script>
+    <script src="js/chat-room.js?v=43"></script>
     <script src="js/auth-modal.js?v=15"></script>
     <script src="js/firebase-comments.js?v=13"></script>
     <script type="text/javascript">
         var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-        Tawk_API.onLoad = function() { Tawk_API.hideWidget(); };
-        (function(){
+        Tawk_API.onLoad = function () { Tawk_API.hideWidget(); };
+        (function () {
             var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
             s1.async = true;
             s1.src = 'https://embed.tawk.to/69c7d8abf493031c356334cf/1jkqaco0t';
             s1.charset = 'UTF-8';
-            s1.setAttribute('crossorigin','*');
+            s1.setAttribute('crossorigin', '*');
             s0.parentNode.insertBefore(s1, s0);
         })();
     </script>
     <script src="js/nav-active-indicator.js?v=13"></script>
     <script src="js/realtime-sync.js"></script>
 </body>
+
 </html>

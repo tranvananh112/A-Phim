@@ -201,8 +201,8 @@ class MovieAPI {
 
     // Get image URL
     getImageURL(imagePath, width = 400, quality = 80, isPriority = false) {
-        if (!imagePath) return 'https://via.placeholder.com/400x600?text=No+Image';
-        
+        if (!imagePath) return '/favicon.png';
+
         let fullUrl = imagePath;
         if (!imagePath.startsWith('http')) {
             fullUrl = `${API_CONFIG.IMAGE_BASE}${imagePath}`;

@@ -8,7 +8,7 @@
     <link rel="prefetch" href="index.html" as="document">
     <link rel="prefetch" href="search.html" as="document">
 
-    
+
     <script src="js/chat-init-guard.js?v=37"></script>
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1617450652619669"
@@ -23,7 +23,8 @@
     </script>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
     <title>Danh Sách Phim - A Phim</title>
 
     <link rel="icon" type="image/png" href="/favicon.png">
@@ -92,16 +93,16 @@
     <!-- Material Icons Loader -->
     <script src="js/material-icons-loader.js?v=13"></script>
 
-    <link rel="stylesheet" href="css/chat-room.css?v=13">
-<link rel="stylesheet" href="css/mobile-viewport-fix.css?v=35">
-<link rel="stylesheet" href="css/mobile-menu-modern.css?v=35">
-<link rel="stylesheet" href="css/progressive-image.css?v=13">
-<link rel="stylesheet" href="css/ambient-bg.css?v=13">
+    <link rel="stylesheet" href="css/chat-room.css?v=40">
+    <link rel="stylesheet" href="css/mobile-viewport-fix.css?v=35">
+    <link rel="stylesheet" href="css/mobile-menu-modern.css?v=35">
+    <link rel="stylesheet" href="css/progressive-image.css?v=13">
+    <link rel="stylesheet" href="css/ambient-bg.css?v=13">
 
     <!-- A Phim: Hardcode Dropdown Blue Override inside HTML to bypass all cache/specificity -->
-            <style id="dropdown-blue-override">
+    <style id="dropdown-blue-override">
         @media (min-width: 1024px) {
-            nav .relative.group > .absolute.top-full {
+            nav .relative.group>.absolute.top-full {
                 background-color: #3d5a96 !important;
                 background-image: linear-gradient(145deg, #3d5a96 0%, #25385e 100%) !important;
                 backdrop-filter: blur(16px) !important;
@@ -109,17 +110,20 @@
                 border: 1px solid rgba(255, 255, 255, 0.15) !important;
                 box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
             }
-            nav .relative.group > .absolute.top-full a {
+
+            nav .relative.group>.absolute.top-full a {
                 color: #eff6ff !important;
                 font-weight: 500 !important;
-                text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
             }
-            nav .relative.group > .absolute.top-full a:hover {
+
+            nav .relative.group>.absolute.top-full a:hover {
                 color: #f2f20d !important;
                 background-color: rgba(255, 255, 255, 0.1) !important;
-                text-shadow: 0 0 10px rgba(242,242,13,0.5);
+                text-shadow: 0 0 10px rgba(242, 242, 13, 0.5);
             }
-            nav .relative.group > .absolute.top-full * {
+
+            nav .relative.group>.absolute.top-full * {
                 /* Ensure no child elements are painting a black background covering the blue */
             }
         }
@@ -150,17 +154,20 @@
             document.write('<style>#categoriesGrid { display: none !important; }</style>');
         }
     </script>
-        <!-- Navigation -->
+    <!-- Navigation -->
     <nav class="fixed top-0 w-full z-50 pt-safe" id="mainNav">
         <div class="container mx-auto px-6 flex items-center justify-between" style="height:56px;">
 
             <!-- ZONE 1: Logo -->
             <a href="index.html" class="flex items-center gap-2.5 group flex-shrink-0" style="text-decoration:none;">
-                <div class="w-9 h-9 rounded-full border-2 border-primary flex items-center justify-center bg-black/40 group-hover:bg-primary/20 transition-colors duration-300 overflow-hidden">
-                    <img src="/favicon.png" alt="A Phim Logo" class="w-5 h-5 object-contain group-hover:scale-110 transition-transform" />
+                <div
+                    class="w-9 h-9 rounded-full border-2 border-primary flex items-center justify-center bg-black/40 group-hover:bg-primary/20 transition-colors duration-300 overflow-hidden">
+                    <img src="/favicon.png" alt="A Phim Logo"
+                        class="w-5 h-5 object-contain group-hover:scale-110 transition-transform" />
                 </div>
                 <div class="flex flex-col leading-none">
-                    <span class="text-xl font-bold text-white tracking-wide">A <span class="text-primary">Phim</span></span>
+                    <span class="text-xl font-bold text-white tracking-wide">A <span
+                            class="text-primary">Phim</span></span>
                     <span class="text-[9px] text-white/40 uppercase tracking-widest">Cinema</span>
                 </div>
             </a>
@@ -168,7 +175,8 @@
             <!-- Mobile Inline Search -->
             <form action="search.html" method="GET" class="mobile-inline-search">
                 <span class="material-icons-round mobile-inline-search-icon">search</span>
-                <input type="text" name="q" placeholder="Tìm kiếm phim..." autocomplete="off" class="mobile-inline-search-input">
+                <input type="text" name="q" placeholder="Tìm kiếm phim..." autocomplete="off"
+                    class="mobile-inline-search-input">
             </form>
 
             <!-- ZONE 2: Desktop Search + Links (hidden on mobile) -->
@@ -179,11 +187,14 @@
                     <!-- Search Bar -->
                     <form action="search.html" method="GET" class="nav-search-v2">
                         <span class="material-icons-round search-icon">search</span>
-                        <input type="text" name="q" placeholder="Tìm kiếm phim, diễn viên..." autocomplete="off" required>
+                        <input type="text" name="q" placeholder="Tìm kiếm phim, diễn viên..." autocomplete="off"
+                            required>
                     </form>
 
                     <!-- Divider -->
-                    <div style="width:1px; height:20px; background:rgba(255,255,255,0.12); margin:0 6px; flex-shrink:0;"></div>
+                    <div
+                        style="width:1px; height:20px; background:rgba(255,255,255,0.12); margin:0 6px; flex-shrink:0;">
+                    </div>
 
                     <!-- Nav Links — flat, no pill -->
                     <nav-links class="flex items-center" style="gap:2px;">
@@ -207,21 +218,73 @@
                                 <span class="material-icons-round nav-caret">expand_more</span>
                             </button>
                             <div class="nav-dropdown-panel" style="min-width:560px;">
-                                <div style="background:linear-gradient(160deg,#1e4d8c 0%,#2563b8 40%,#1a3d7a 100%);border-radius:12px;padding:6px;border:1px solid rgba(59,130,246,0.25);box-shadow:0 20px 50px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);">
+                                <div
+                                    style="background:linear-gradient(160deg,#1e4d8c 0%,#2563b8 40%,#1a3d7a 100%);border-radius:12px;padding:6px;border:1px solid rgba(59,130,246,0.25);box-shadow:0 20px 50px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);">
                                     <div class="grid grid-cols-3 gap-0">
-                                        <a href="danh-sach.html?list=phim-moi" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Mới</a>
-                                        <a href="danh-sach.html?list=phim-bo" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Bộ</a>
-                                        <a href="danh-sach.html?list=phim-le" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Lẻ</a>
-                                        <a href="danh-sach.html?list=tv-shows" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">TV Shows</a>
-                                        <a href="danh-sach.html?list=hoat-hinh" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Hoạt Hình</a>
-                                        <a href="danh-sach.html?list=phim-vietsub" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Vietsub</a>
-                                        <a href="danh-sach.html?list=phim-thuyet-minh" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Thuyết Minh</a>
-                                        <a href="danh-sach.html?list=phim-long-tien" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Lồng Tiếng</a>
-                                        <a href="danh-sach.html?list=phim-bo-dang-chieu" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Bộ Đang Chiếu</a>
-                                        <a href="danh-sach.html?list=phim-bo-hoan-thanh" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Bộ Đã Xong</a>
-                                        <a href="danh-sach.html?list=phim-sap-chieu" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Sắp Chiếu</a>
-                                        <a href="danh-sach.html?list=subteam" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Subteam</a>
-                                        <a href="danh-sach.html?list=phim-chieu-rap" style="display:flex;align-items:center;justify-content:center;padding:11px 16px;color:rgba(255,255,255,0.95);font-size:0.82rem;font-weight:700;border-top:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;grid-column:span 3;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.95)';">🎬 Phim Chiếu Rạp</a>
+                                        <a href="danh-sach.html?list=phim-moi"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim
+                                            Mới</a>
+                                        <a href="danh-sach.html?list=phim-bo"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim
+                                            Bộ</a>
+                                        <a href="danh-sach.html?list=phim-le"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim
+                                            Lẻ</a>
+                                        <a href="danh-sach.html?list=tv-shows"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">TV
+                                            Shows</a>
+                                        <a href="danh-sach.html?list=hoat-hinh"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Hoạt
+                                            Hình</a>
+                                        <a href="danh-sach.html?list=phim-vietsub"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim
+                                            Vietsub</a>
+                                        <a href="danh-sach.html?list=phim-thuyet-minh"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Thuyết
+                                            Minh</a>
+                                        <a href="danh-sach.html?list=phim-long-tien"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Lồng
+                                            Tiếng</a>
+                                        <a href="danh-sach.html?list=phim-bo-dang-chieu"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim
+                                            Bộ Đang Chiếu</a>
+                                        <a href="danh-sach.html?list=phim-bo-hoan-thanh"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Bộ
+                                            Đã Xong</a>
+                                        <a href="danh-sach.html?list=phim-sap-chieu"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Sắp
+                                            Chiếu</a>
+                                        <a href="danh-sach.html?list=subteam"
+                                            style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;text-decoration:none;transition:background 0.18s,color 0.18s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Subteam</a>
+                                        <a href="danh-sach.html?list=phim-chieu-rap"
+                                            style="display:flex;align-items:center;justify-content:center;padding:11px 16px;color:rgba(255,255,255,0.95);font-size:0.82rem;font-weight:700;border-top:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;grid-column:span 3;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';"
+                                            onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.95)';">🎬
+                                            Phim Chiếu Rạp</a>
                                     </div>
                                 </div>
                             </div>
@@ -251,8 +314,8 @@
                 <!-- Auth Container (filled by auth.js / user-ui.js) -->
                 <div id="authContainer" class="flex items-center">
                     <a href="login.html"
-                       onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');return false;}"
-                       class="nav-auth-btn hidden lg:inline-flex">
+                        onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');return false;}"
+                        class="nav-auth-btn hidden lg:inline-flex">
                         <span class="material-icons-round" style="font-size:16px;">person</span>
                         Đăng Nhập
                     </a>
@@ -571,15 +634,15 @@
     <script src="js/mobile-menu-modern.js?v=36"></script>
     <script src="js/categories-dropdown.js?v=13"></script>
     <script src="js/countries-dropdown.js?v=13"></script>
-    
+
     <script src="js/sticky-nav.js?v=16"></script>
     <script src="js/danh-sach.js?v=13"></script>
     <script src="js/dropdown-hover-fix.js?v=13"></script>
 
 
-<!-- ====== Chat Widget A Phim ====== -->
+    <!-- ====== Chat Widget A Phim ====== -->
     <!-- CSS -->
-    <link rel="stylesheet" href="css/chat-room.css?v=13">
+    <link rel="stylesheet" href="css/chat-room.css?v=40">
     <!-- FAB Button -->
     <button id="chatFab" class="chat-fab" aria-label="Mở chat cộng đồng" title="Chat Cộng Đồng">
         <span class="fab-icon material-icons">forum</span>
@@ -602,36 +665,64 @@
                 </div>
             </div>
             <div class="chat-header-actions">
-                <button class="chat-header-btn" id="chatMinimizeBtn" title="Thu nhỏ"><span class="material-icons">remove</span></button>
-                <button class="chat-header-btn" id="chatCloseBtn" title="Đóng"><span class="material-icons">close</span></button>
+                <button class="chat-header-btn" id="chatMinimizeBtn" title="Thu nhỏ"><span
+                        class="material-icons">remove</span></button>
+                <button class="chat-header-btn" id="chatCloseBtn" title="Đóng"><span
+                        class="material-icons">close</span></button>
             </div>
         </div>
         <!-- BODY -->
         <div class="chat-body" id="chatBody">
             <!-- SCREEN 1: WELCOME -->
             <div class="chat-screen chat-screen-welcome active" id="screenWelcome">
-                <div class="welcome-glow"><img src="/favicon.png" alt="A Phim" style="width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.15));"></div>
+                <div class="welcome-glow"><img src="/favicon.png" alt="A Phim"
+                        style="width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.15));">
+                </div>
                 <div>
                     <h2 class="welcome-title">Chào mừng đến <span>Kênh A Phim</span></h2>
-                    <p class="welcome-desc" style="margin-top:8px;">Kết nối, thảo luận và tận hưởng điện ảnh cùng hàng ngàn tín đồ phim ảnh.</p>
+                    <p class="welcome-desc" style="margin-top:8px;">Kết nối, thảo luận và tận hưởng điện ảnh cùng hàng
+                        ngàn tín đồ phim ảnh.</p>
                 </div>
                 <div class="welcome-stats">
-                    <div class="welcome-stat"><div class="welcome-stat-num" id="welcomeOnline">1,284</div><div class="welcome-stat-label">Trực tuyến</div></div>
-                    <div class="welcome-stat"><div class="welcome-stat-num">50K+</div><div class="welcome-stat-label">Thành viên</div></div>
-                    <div class="welcome-stat"><div class="welcome-stat-num">24/7</div><div class="welcome-stat-label">Hoạt động</div></div>
+                    <div class="welcome-stat">
+                        <div class="welcome-stat-num" id="welcomeOnline">1,284</div>
+                        <div class="welcome-stat-label">Trực tuyến</div>
+                    </div>
+                    <div class="welcome-stat">
+                        <div class="welcome-stat-num">50K+</div>
+                        <div class="welcome-stat-label">Thành viên</div>
+                    </div>
+                    <div class="welcome-stat">
+                        <div class="welcome-stat-num">24/7</div>
+                        <div class="welcome-stat-label">Hoạt động</div>
+                    </div>
                 </div>
                 <div class="welcome-features">
-                    <div class="welcome-feature"><span class="material-icons">movie</span><div class="welcome-feature-text"><strong>Thảo luận phim</strong><span>Review, rating và khám phá phim mới</span></div></div>
-                    <div class="welcome-feature"><span class="material-icons">groups</span><div class="welcome-feature-text"><strong>Cộng đồng sôi nổi</strong><span>Kết nối với người xem cùng sở thích</span></div></div>
-                    <div class="welcome-feature"><span class="material-icons">bolt</span><div class="welcome-feature-text"><strong>Chat thời gian thực</strong><span>Nhắn tin ngay lập tức, không độ trễ</span></div></div>
+                    <div class="welcome-feature"><span class="material-icons">movie</span>
+                        <div class="welcome-feature-text"><strong>Thảo luận phim</strong><span>Review, rating và khám
+                                phá phim mới</span></div>
+                    </div>
+                    <div class="welcome-feature"><span class="material-icons">groups</span>
+                        <div class="welcome-feature-text"><strong>Cộng đồng sôi nổi</strong><span>Kết nối với người xem
+                                cùng sở thích</span></div>
+                    </div>
+                    <div class="welcome-feature"><span class="material-icons">bolt</span>
+                        <div class="welcome-feature-text"><strong>Chat thời gian thực</strong><span>Nhắn tin ngay lập
+                                tức, không độ trễ</span></div>
+                    </div>
                 </div>
-                <button class="welcome-start-btn" id="welcomeStartBtn">Bắt đầu chat ngay <span class="material-icons">arrow_forward</span></button>
+                <button class="welcome-start-btn" id="welcomeStartBtn">Bắt đầu chat ngay <span
+                        class="material-icons">arrow_forward</span></button>
             </div>
             <!-- SCREEN 2: ENTER NAME -->
             <div class="chat-screen chat-screen-name" id="screenEnterName">
                 <div class="enter-name-header">
-                    <button class="enter-name-back-btn" id="enterNameBackBtn"><span class="material-icons">arrow_back</span></button>
-                    <div class="enter-name-title-wrap"><h2>Tạo hồ sơ</h2><p>Chọn biệt danh và màu sắc của bạn</p></div>
+                    <button class="enter-name-back-btn" id="enterNameBackBtn"><span
+                            class="material-icons">arrow_back</span></button>
+                    <div class="enter-name-title-wrap">
+                        <h2>Tạo hồ sơ</h2>
+                        <p>Chọn biệt danh và màu sắc của bạn</p>
+                    </div>
                 </div>
                 <div>
                     <span class="name-color-label">Màu đại diện</span>
@@ -652,25 +743,32 @@
                         <span class="name-char-count" id="nameCharCount">0 / 20</span>
                     </div>
                     <div class="name-input-wrapper">
-                        <input type="text" id="chatNameInput" class="name-input" placeholder="VD: MovieLover_99" maxlength="20" autocomplete="off">
+                        <input type="text" id="chatNameInput" class="name-input" placeholder="VD: MovieLover_99"
+                            maxlength="20" autocomplete="off">
                         <span class="name-input-icon material-icons">person</span>
                     </div>
-                    <div class="name-error-msg" id="nameErrorMsg">Tên phải từ 3–20 ký tự, không chứa ký tự đặc biệt.</div>
+                    <div class="name-error-msg" id="nameErrorMsg">Tên phải từ 3–20 ký tự, không chứa ký tự đặc biệt.
+                    </div>
                 </div>
                 <div class="name-preview">
                     <div class="name-preview-avatar" id="previewAvatar" style="background:#ffd709;">A</div>
-                    <div class="name-preview-info"><strong id="previewName">Biệt danh của bạn</strong><span>Thành viên mới · Hôm nay</span></div>
+                    <div class="name-preview-info"><strong id="previewName">Biệt danh của bạn</strong><span>Thành viên
+                            mới · Hôm nay</span></div>
                 </div>
                 <div class="online-preview">
                     <div class="online-avatars">
-                        <div class="online-avatar-mini" style="background:#ffd709;color:#1a1200;font-weight:700;">K</div>
+                        <div class="online-avatar-mini" style="background:#ffd709;color:#1a1200;font-weight:700;">K
+                        </div>
                         <div class="online-avatar-mini" style="background:#22c55e;color:#fff;font-weight:700;">L</div>
                         <div class="online-avatar-mini" style="background:#3b82f6;color:#fff;font-weight:700;">M</div>
                         <div class="online-avatar-mini more">+39</div>
                     </div>
-                    <div class="online-info"><strong><span style="display:inline-block;width:7px;height:7px;background:#22c55e;border-radius:50%;margin-right:5px;vertical-align:middle;"></span>42 trực tuyến</strong><span>Đang thảo luận sôi nổi</span></div>
+                    <div class="online-info"><strong><span
+                                style="display:inline-block;width:7px;height:7px;background:#22c55e;border-radius:50%;margin-right:5px;vertical-align:middle;"></span>42
+                            trực tuyến</strong><span>Đang thảo luận sôi nổi</span></div>
                 </div>
-                <button class="join-btn" id="chatJoinBtn" disabled><span class="material-icons">login</span>Tham gia phòng chat</button>
+                <button class="join-btn" id="chatJoinBtn" disabled><span class="material-icons">login</span>Tham gia
+                    phòng chat</button>
             </div>
             <!-- SCREEN 3: CHAT ROOM -->
             <div class="chat-screen chat-screen-room" id="screenRoom">
@@ -681,7 +779,8 @@
                         <div class="msg-avatar" style="background:#3b82f6;color:#fff;">M</div>
                         <div class="msg-content">
                             <div class="msg-name">MovieFan</div>
-                            <div class="msg-bubble">Mọi người thấy Dune: Part Two thế nào? Hình ảnh choáng ngợp luôn! 🤩</div>
+                            <div class="msg-bubble">Mọi người thấy Dune: Part Two thế nào? Hình ảnh choáng ngợp luôn! 🤩
+                            </div>
                             <div class="msg-meta"><span class="msg-time">20:20</span></div>
                         </div>
                     </div>
@@ -689,13 +788,18 @@
                         <div class="msg-avatar" style="background:#22c55e;color:#fff;">L</div>
                         <div class="msg-content">
                             <div class="msg-name">LinhChi</div>
-                            <div class="msg-bubble">Nhạc phim của Hans Zimmer nữa, nghe mà rung động cả phòng chiếu 🎵</div>
+                            <div class="msg-bubble">Nhạc phim của Hans Zimmer nữa, nghe mà rung động cả phòng chiếu 🎵
+                            </div>
                             <div class="msg-meta"><span class="msg-time">20:21</span></div>
                         </div>
                     </div>
                     <div class="typing-indicator" id="typingIndicator">
                         <div class="typing-avatar" style="background:#a855f7;border-radius:50%;"></div>
-                        <div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
+                        <div class="typing-dots">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="quick-reactions" id="quickReactions">
@@ -740,13 +844,18 @@
         <!-- INPUT AREA -->
         <div class="chat-input-area" id="chatInputArea">
             <div class="chat-tabs-bar">
-                <button class="chat-tab active" data-tab="general" id="tabGeneral"><span class="material-icons">public</span>Chung</button>
-                <button class="chat-tab" data-tab="movies" id="tabMovies"><span class="material-icons">movie</span>Phim</button>
-                <button class="chat-tab" data-tab="support" id="tabSupport"><span class="material-icons">help</span>Hỗ trợ</button>
+                <button class="chat-tab active" data-tab="general" id="tabGeneral"><span
+                        class="material-icons">public</span>Chung</button>
+                <button class="chat-tab" data-tab="movies" id="tabMovies"><span
+                        class="material-icons">movie</span>Phim</button>
+                <button class="chat-tab" data-tab="support" id="tabSupport"><span class="material-icons">help</span>Hỗ
+                    trợ</button>
             </div>
             <div class="input-row">
-                <button class="input-icon-btn" id="emojiToggleBtn" title="Emoji"><span class="material-icons">mood</span></button>
-                <input type="text" id="chatMessageInput" placeholder="Viết tin nhắn..." maxlength="500" autocomplete="off">
+                <button class="input-icon-btn" id="emojiToggleBtn" title="Emoji"><span
+                        class="material-icons">mood</span></button>
+                <input type="text" id="chatMessageInput" placeholder="Viết tin nhắn..." maxlength="500"
+                    autocomplete="off">
                 <button class="send-btn" id="chatSendBtn" disabled><span class="material-icons">send</span></button>
             </div>
             <div class="input-footer">
@@ -768,16 +877,16 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script>
     <!-- Firebase Chat Service -->
-    <script src="js/firebase-chat.js?v=13"></script>
+    <script src="js/firebase-chat.js?v=40"></script>
     <!-- Chat Widget Logic -->
-    <script src="js/chat-room.js?v=13"></script>
+    <script src="js/chat-room.js?v=43"></script>
 
-    
-    
 
-    
+
+
+
     <!-- ====== End Chat Widget ====== -->
-<script src="js/nav-active-indicator.js?v=13"></script>
+    <script src="js/nav-active-indicator.js?v=13"></script>
 </body>
 
 </html>

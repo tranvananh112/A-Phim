@@ -10,7 +10,9 @@ const {
     updateSubscription,
     manageUserGamification,
     getUserStats,
-    broadcastNotification
+    broadcastNotification,
+    toggleChatBan,
+    updateChatRole
 } = require('../controllers/userController');
 
 // Admin only routes
@@ -25,6 +27,8 @@ router.put('/:id', updateUser);
 router.put('/:id/block', blockUser);
 router.put('/:id/subscription', updateSubscription);
 router.put('/:id/gamification', manageUserGamification);
+router.put('/:id/chat-ban', toggleChatBan);
+router.put('/:id/chat-role', updateChatRole);
 router.delete('/:id', deleteUser);
 
 module.exports = router;

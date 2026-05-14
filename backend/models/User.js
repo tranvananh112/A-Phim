@@ -86,6 +86,15 @@ const UserSchema = new mongoose.Schema({
         enum: ['user', 'admin'],
         default: 'user'
     },
+    chatRole: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user'
+    },
+    isChatBanned: {
+        type: Boolean,
+        default: false
+    },
     subscription: {
         plan: {
             type: String,

@@ -62,15 +62,15 @@
     position: fixed;
     bottom: 28px;
     right: 28px;
-    width: 58px;
-    height: 58px;
+    width: 52px;
+    height: 52px;
     background: linear-gradient(135deg, #ffd709 0%, #f59e0b 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 8px 28px rgba(255, 215, 9, 0.45), 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 20px rgba(255, 215, 9, 0.4), 0 2px 6px rgba(0, 0, 0, 0.12);
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     z-index: 9998;
     border: none;
@@ -78,12 +78,12 @@
 }
 
 .chat-fab:hover {
-    transform: scale(1.12) translateY(-2px);
-    box-shadow: 0 12px 36px rgba(255, 215, 9, 0.55), 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: scale(1.1) translateY(-2px);
+    box-shadow: 0 10px 28px rgba(255, 215, 9, 0.5), 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .chat-fab:active {
-    transform: scale(0.96);
+    transform: scale(0.95);
 }
 
 .chat-fab::before {
@@ -110,7 +110,7 @@
 }
 
 .chat-fab .fab-icon {
-    font-size: 26px;
+    font-size: 24px;
     color: #7a5a00;
 }
 
@@ -1045,15 +1045,15 @@
 
 .tg-msg-bubble {
     position: relative;
-    padding: 8px 14px 6px;
+    padding: 6px 12px 5px;
     background: #ffffff;
-    border-radius: 18px 18px 18px 6px;
-    box-shadow: 0 1.5px 3px rgba(0, 0, 0, 0.08);
+    border-radius: 16px 16px 16px 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
     color: #1e293b;
     font-size: 14px;
-    line-height: 1.55;
+    line-height: 1.5;
     word-break: break-word;
-    min-width: 60px;
+    min-width: 50px;
 }
 
 /* Removed Telegram Beak (Tail) as requested */
@@ -1061,20 +1061,20 @@
 .tg-msg-wrapper.own .tg-msg-bubble {
     background: linear-gradient(165deg, #ffd709 0%, #f59e0b 100%);
     color: #7a5a00;
-    border-radius: 18px 18px 6px 18px;
-    box-shadow: 0 3px 12px rgba(255, 215, 9, 0.4);
+    border-radius: 16px 16px 4px 16px;
+    box-shadow: 0 2px 8px rgba(255, 215, 9, 0.35);
 }
 
 .tg-msg-wrapper.same-user .tg-msg-bubble {
-    border-radius: 16px !important;
+    border-radius: 14px !important;
 }
 
 .tg-msg-name {
-    font-size: 12.5px;
-    font-weight: 800;
+    font-size: 12px;
+    font-weight: 700;
     color: #475569;
     /* Neutral Slate Blue for users */
-    margin-bottom: 3px;
+    margin-bottom: 2px;
     display: flex;
     align-items: center;
     gap: 4px;
@@ -1142,24 +1142,9 @@
     font-size: 11px;
 }
 
+/* Admin avatar - NO GLOW */
 .admin-glow .shop-frame-wrap::before {
-    box-shadow: 0 0 15px #ffd700 !important;
-    animation: adminAvatarPulse 2s infinite !important;
-}
-
-@keyframes adminAvatarPulse {
-
-    0%,
-    100% {
-        transform: scale(1);
-        opacity: 0.8;
-    }
-
-    50% {
-        transform: scale(1.1);
-        opacity: 1;
-        filter: brightness(1.2);
-    }
+    /* Removed glow effect */
 }
 
 /* Multi-select Mode */
@@ -1334,15 +1319,15 @@
 .chat-input-area {
     background: var(--c-surface);
     border-top: 1px solid var(--c-border);
-    padding: 10px 14px 12px;
+    padding: 8px 12px 10px;
     flex-shrink: 0;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
 }
 
 .chat-tabs-bar {
     display: flex;
     gap: 4px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     background: #f1f5f9;
     border-radius: 12px;
     padding: 4px;
@@ -1351,7 +1336,7 @@
 
 .chat-tab {
     flex: 1;
-    padding: 8px 6px;
+    padding: 6px 4px;
     background: transparent;
     border: none;
     border-radius: 9px;
@@ -1359,9 +1344,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
+    gap: 4px;
     color: #64748b;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
     font-family: 'Manrope', sans-serif;
@@ -1386,9 +1371,53 @@
     filter: drop-shadow(0 1px 3px rgba(122, 90, 0, 0.4));
 }
 
+/* Disabled tab state */
+.chat-tab.tab-disabled,
+.chat-tab[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+    background: #e2e8f0 !important;
+    color: #94a3b8 !important;
+    pointer-events: auto !important;
+}
+
+.chat-tab.tab-disabled:hover,
+.chat-tab[disabled]:hover {
+    background: #e2e8f0 !important;
+    color: #94a3b8 !important;
+    transform: none !important;
+}
+
+.chat-tab.tab-disabled .material-icons,
+.chat-tab[disabled] .material-icons {
+    opacity: 0.6;
+}
+
+/* Force disabled state even if active class is present */
+.chat-tab.tab-disabled.active,
+.chat-tab[disabled].active {
+    background: #e2e8f0 !important;
+    color: #94a3b8 !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.chat-tab[data-tab="movies"] {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    background: #e2e8f0 !important;
+    color: #94a3b8 !important;
+}
+
+.chat-tab[data-tab="movies"].active {
+    background: #e2e8f0 !important;
+    color: #94a3b8 !important;
+    box-shadow: none !important;
+}
+
 /* ── Context Menu & Reactions ── */
 .tg-context-menu {
-    position: absolute;
+    position: fixed;
     z-index: 10001;
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(20px);
@@ -1472,17 +1501,17 @@
 .input-row {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     background: var(--c-bg);
     border: 1.5px solid var(--c-border);
-    border-radius: 14px;
-    padding: 8px 10px;
-    transition: all 0.25s;
+    border-radius: 12px;
+    padding: 6px 8px;
+    transition: all 0.2s;
 }
 
 .input-row:focus-within {
     border-color: var(--c-gold-dim);
-    box-shadow: 0 0 0 3px rgba(255, 215, 9, 0.12);
+    box-shadow: 0 0 0 2px rgba(255, 215, 9, 0.1);
     background: #fffbea;
 }
 
@@ -1491,8 +1520,8 @@
     border: none;
     color: var(--c-text-faint);
     cursor: pointer;
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -1517,16 +1546,20 @@
     outline: none !important;
     box-shadow: none !important;
     color: var(--c-text);
-    font-size: 16px;
-    /* ≥16px: ngăn iOS auto-zoom */
+    font-size: 15px;
+    /* Optimized for mobile */
     font-family: 'Manrope', sans-serif;
     min-width: 0;
     -webkit-text-size-adjust: none;
     text-size-adjust: none;
+    resize: none;
+    max-height: 80px;
+    transition: none;
 }
 
 #chatMessageInput::placeholder {
     color: var(--c-text-faint);
+    opacity: 0.7;
 }
 
 /* Trên desktop giữ font nhỏ hơn */
@@ -2260,15 +2293,17 @@
     /* ── Floating Bulk Action Bar ── */
     .bulk-action-bar {
         display: none;
-        position: absolute;
-        bottom: 20px;
-        left: 20px;
-        right: 20px;
+        position: fixed;
+        bottom: 90px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 40px);
+        max-width: 500px;
         background: #ffffff;
         border-radius: 16px;
-        padding: 8px 16px;
+        padding: 10px 16px;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-        z-index: 1000;
+        z-index: 9999;
         align-items: center;
         gap: 16px;
         animation: slideInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -2276,6 +2311,11 @@
 
     .bulk-action-bar.active {
         display: flex;
+    }
+
+    /* Hide bulk action bar when not in select mode */
+    .chat-window:not(.select-mode) .bulk-action-bar {
+        display: none !important;
     }
 
     .bulk-info {
@@ -3111,25 +3151,9 @@
     background: rgba(245, 158, 11, 0.05) !important;
 }
 
-/* Glow Animation for Admin Avatars */
+/* Admin Avatar - NO GLOW */
 .admin-glow .tg-avatar {
-    box-shadow: 0 0 15px #f59e0b;
-    border: 2px solid #f59e0b;
-    animation: adminGlowPulse 2s infinite ease-in-out;
-}
-
-@keyframes adminGlowPulse {
-
-    0%,
-    100% {
-        box-shadow: 0 0 8px #f59e0b;
-        filter: brightness(1);
-    }
-
-    50% {
-        box-shadow: 0 0 18px #f59e0b;
-        filter: brightness(1.2);
-    }
+    /* Removed glow animation */
 }
 
 
@@ -3140,38 +3164,62 @@
 /* Trên mobile, tin nhắn rộng hơn để tận dụng không gian */
 @media (max-width: 768px) {
 
-    /* Tin nhắn rộng hơn - từ 85% lên 95% */
+    /* Tin nhắn rộng hơn - từ 85% lên 92% */
     .tg-msg-wrapper {
-        max-width: 95% !important;
+        max-width: 92% !important;
     }
 
     /* Messages area padding nhỏ hơn để có thêm không gian */
     .messages-area {
-        padding: 12px 8px !important;
+        padding: 10px 6px !important;
     }
 
-    /* Bubble padding tối ưu */
+    /* Bubble padding compact hơn trên mobile */
     .tg-msg-bubble {
-        padding: 8px 12px 6px !important;
+        padding: 5px 10px 4px !important;
+        font-size: 13.5px !important;
+        line-height: 1.45 !important;
+        border-radius: 14px 14px 14px 3px !important;
     }
 
-    /* Avatar nhỏ hơn một chút để tiết kiệm không gian */
+    .tg-msg-wrapper.own .tg-msg-bubble {
+        border-radius: 14px 14px 3px 14px !important;
+    }
+
+    /* Name và meta nhỏ hơn */
+    .tg-msg-name {
+        font-size: 11px !important;
+        margin-bottom: 1px !important;
+    }
+
+    .tg-msg-meta {
+        font-size: 9px !important;
+        margin-top: 2px !important;
+    }
+
+    .tg-msg-time {
+        font-size: 9px !important;
+    }
+
+    /* Avatar nhỏ hơn để tiết kiệm không gian */
     .tg-avatar-wrap {
-        width: 28px !important;
+        width: 26px !important;
+        height: 26px !important;
     }
 
     .tg-avatar {
-        width: 28px !important;
-        height: 28px !important;
+        width: 26px !important;
+        height: 26px !important;
     }
 
     .tg-avatar-spacer {
-        width: 28px !important;
+        width: 26px !important;
     }
 
     /* Gap giữa avatar và bubble nhỏ hơn */
     .tg-msg-wrapper {
-        gap: 8px !important;
+        gap: 6px !important;
+        margin-bottom: 4px !important;
     }
 
     /* Font size tối ưu cho mobile */
@@ -3284,26 +3332,26 @@
         display: none !important;
     }
 
-    /* FAB lớn hơn và đẹp hơn trên mobile */
+    /* FAB vừa phải trên mobile */
     .chat-fab {
-        width: 64px !important;
-        height: 64px !important;
+        width: 56px !important;
+        height: 56px !important;
         bottom: 20px !important;
         right: 20px !important;
-        box-shadow: 0 8px 24px rgba(255, 215, 9, 0.5),
-            0 4px 12px rgba(0, 0, 0, 0.2) !important;
+        box-shadow: 0 6px 20px rgba(255, 215, 9, 0.45),
+            0 3px 10px rgba(0, 0, 0, 0.18) !important;
     }
 
     .chat-fab .fab-icon {
-        font-size: 28px !important;
+        font-size: 26px !important;
     }
 
-    /* Badge lớn hơn trên mobile */
+    /* Badge vừa phải trên mobile */
     .chat-fab-badge {
-        min-width: 24px !important;
-        height: 24px !important;
-        font-size: 12px !important;
-        top: -6px !important;
+        min-width: 22px !important;
+        height: 22px !important;
+        font-size: 11px !important;
+        top: -5px !important;
         right: -6px !important;
     }
 
@@ -3324,31 +3372,79 @@
         font-size: 22px !important;
     }
 
-    /* Input area lớn hơn trên mobile */
+    /* Ẩn input footer trên mobile để tiết kiệm không gian */
+    .input-footer {
+        padding: 4px 2px 0 !important;
+        font-size: 10px !important;
+    }
+
+    .current-user-avatar {
+        width: 20px !important;
+        height: 20px !important;
+    }
+
+    .current-user-name {
+        font-size: 10px !important;
+    }
+
+    .change-name-link {
+        font-size: 10px !important;
+    }
+
+    /* Bulk action bar trên mobile */
+    .bulk-action-bar {
+        bottom: 70px !important;
+        width: calc(100% - 24px) !important;
+        padding: 8px 12px !important;
+        font-size: 13px !important;
+    }
+
+    .bulk-btn {
+        padding: 6px 10px !important;
+        font-size: 13px !important;
+    }
+
+    /* Input area compact trên mobile - giống Messenger */
     .chat-input-area {
-        padding: 12px 16px 16px !important;
+        padding: 8px 10px 10px !important;
+    }
+
+    /* Tabs bar nhỏ gọn trên mobile */
+    .chat-tabs-bar {
+        padding: 3px !important;
+        margin-bottom: 6px !important;
+    }
+
+    .chat-tab {
+        padding: 6px 4px !important;
+        font-size: 11px !important;
     }
 
     .input-row {
-        padding: 10px 12px !important;
+        padding: 6px 8px !important;
+        gap: 6px !important;
     }
 
-    /* Send button lớn hơn */
+    /* Send button vừa phải */
     .send-btn {
-        width: 44px !important;
-        height: 44px !important;
+        width: 36px !important;
+        height: 36px !important;
     }
 
-    /* Emoji button lớn hơn */
+    /* Icon buttons nhỏ gọn */
     .input-icon-btn {
-        width: 40px !important;
-        height: 40px !important;
+        width: 32px !important;
+        height: 32px !important;
     }
 
-    /* Tab buttons lớn hơn */
+    .input-icon-btn .material-icons {
+        font-size: 20px !important;
+    }
+
+    /* Tab buttons compact trên mobile - KHÔNG ẨN */
     .chat-tab {
-        padding: 10px 8px !important;
-        font-size: 13px !important;
+        font-size: 11px !important;
+        padding: 6px 4px !important;
     }
 
     /* Animation mượt hơn khi mở chat */

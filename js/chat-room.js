@@ -253,7 +253,10 @@ class APFilmChat {
                 <div class="chat-input-area" id="chatInputArea" style="display: none;">
                     <div class="chat-tabs-bar">
                         <button class="chat-tab active" data-tab="general">Chung</button>
-                        <button class="chat-tab" data-tab="movies">Phim</button>
+                        <button class="chat-tab tab-disabled" data-tab="movies" disabled title="Tính năng đang được nâng cấp">
+                            <span class="material-icons" style="font-size: 14px;">construction</span>
+                            Phim
+                        </button>
                         <button class="chat-tab" data-tab="support">Hỗ trợ</button>
                     </div>
                     <div class="chat-input-prefix" id="inputPrefix" style="display: none;">
@@ -442,7 +445,17 @@ class APFilmChat {
 
     _syncUserUI() {
         if (!this.user) return;
-        if (this.el.currentUserName) this.el.currentUserName.textContent = this.user.name;
+
+        // Hiển thị tên + badge admin nếu có
+        if (this.el.currentUserName) {
+            const isAdmin = this.user.chatRole === 'admin' || this.user.role === 'admin';
+            if (isAdmin) {
+                this.el.currentUserName.innerHTML = `${this.user.name} <span style="color: #fbbf24; font-size: 10px; font-weight: 700;">(admin)</span>`;
+            } else {
+                this.el.currentUserName.textContent = this.user.name;
+            }
+        }
+
         if (this.el.currentUserAvatar) {
             const frame = this.user.frame || '';
             this.el.currentUserAvatar.innerHTML = `
@@ -526,6 +539,17 @@ class APFilmChat {
         el.tabs?.forEach(tab => {
             tab.addEventListener('click', (e) => {
                 e.stopPropagation();
+
+                // Check if tab is disabled
+                if (tab.disabled || tab.classList.contains('tab-disabled')) {
+                    if (window.showMessage) {
+                        window.showMessage('⚠️ Tính năng đang được nâng cấp', 'info');
+                    } else {
+                        alert('Tính năng đang được nâng cấp');
+                    }
+                    return;
+                }
+
                 this._switchTab(tab.dataset.tab);
             });
         });
@@ -599,6 +623,16 @@ class APFilmChat {
     }
 
     _switchTab(tabName) {
+        // Block movies tab
+        if (tabName === 'movies') {
+            if (window.showMessage) {
+                window.showMessage('⚠️ Tính năng đang được nâng cấp', 'info');
+            } else {
+                alert('Tính năng đang được nâng cấp');
+            }
+            return; // Don't switch to movies tab
+        }
+
         if (tabName === 'support') {
             this._showScreen('support');
         } else {
@@ -1424,6 +1458,11 @@ class APFilmChat {
 
     async open() {
         if (!this.el.window) return;
+
+        // Force switch away from movies tab if currently on it
+        if (this.currentTab === 'movies') {
+            this.currentTab = 'general';
+        }
 
         // Check if user is logged in before opening
         if (!this.user) {

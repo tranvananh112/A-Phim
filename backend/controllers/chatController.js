@@ -111,25 +111,49 @@ exports.deleteMessage = async (req, res) => {
 // @access  Private (Admin)
 exports.togglePin = async (req, res) => {
     try {
+        console.log('[Pin] Request from user:', req.user.name, 'Role:', req.user.role, 'ChatRole:', req.user.chatRole);
+        console.log('[Pin] Message ID:', req.params.id);
+
         if (req.user.role !== 'admin' && req.user.chatRole !== 'admin') {
-            return res.status(403).json({ success: false, message: 'Unauthorized' });
+            return res.status(403).json({ success: false, message: 'Unauthorized: Admin only' });
         }
 
-        // Find by ID or FirebaseId
-        let msg = await ChatMessage.findById(req.params.id);
-        if (!msg) msg = await ChatMessage.findOne({ firebaseId: req.params.id });
+        // Find by MongoDB ID or FirebaseId
+        let msg = null;
 
-        if (!msg) return res.status(404).json({ success: false, message: 'Not found' });
+        // Try MongoDB ObjectId first
+        if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+            msg = await ChatMessage.findById(req.params.id);
+            console.log('[Pin] Found by MongoDB ID:', !!msg);
+        }
+
+        // Try FirebaseId if not found
+        if (!msg) {
+            msg = await ChatMessage.findOne({ firebaseId: req.params.id });
+            console.log('[Pin] Found by Firebase ID:', !!msg);
+        }
+
+        if (!msg) {
+            console.log('[Pin] Message not found in MongoDB. Available messages:', await ChatMessage.countDocuments());
+            return res.status(404).json({
+                success: false,
+                message: 'Message not found in database. Please ensure the message is saved to MongoDB first.'
+            });
+        }
+
+        console.log('[Pin] Message found:', msg.text.substring(0, 50), 'Tab:', msg.tab, 'Current isPinned:', msg.isPinned);
 
         const newState = !msg.isPinned;
 
         if (newState) {
             // Unpin all others in the same tab
-            await ChatMessage.updateMany({ tab: msg.tab }, { isPinned: false });
+            const unpinResult = await ChatMessage.updateMany({ tab: msg.tab }, { isPinned: false });
+            console.log('[Pin] Unpinned', unpinResult.modifiedCount, 'messages in tab:', msg.tab);
         }
 
         msg.isPinned = newState;
         await msg.save();
+        console.log('[Pin] Message updated. New isPinned:', msg.isPinned);
 
         // Broadcast to all clients via Socket.io
         const socketUtil = require('../utils/socket');
@@ -143,10 +167,16 @@ exports.togglePin = async (req, res) => {
                     id: msg.firebaseId // for compatibility
                 } : null
             });
+            console.log('[Pin] Broadcast sent via Socket.io');
         }
 
-        res.json({ success: true, isPinned: msg.isPinned });
+        res.json({
+            success: true,
+            isPinned: msg.isPinned,
+            message: newState ? 'Message pinned successfully' : 'Message unpinned successfully'
+        });
     } catch (err) {
+        console.error('[Pin] Error:', err);
         res.status(500).json({ success: false, message: err.message });
     }
 };
