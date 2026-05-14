@@ -1779,24 +1779,27 @@
     }
 
     /* ═══════════════════════════════════════════════════
-       HIDE ALL RESIZE HANDLES ON MOBILE
+       HIDE ALL RESIZE HANDLES ON MOBILE ONLY
        ═══════════════════════════════════════════════════ */
-    .cr-resize-handle,
-    .cr-touch-handle,
-    .cr-resize-nw,
-    .cr-resize-ne,
-    .cr-resize-se,
-    .cr-resize-sw,
-    .cr-resize-n,
-    .cr-resize-s,
-    .cr-resize-e,
-    .cr-resize-w {
-        display: none !important;
-    }
+    @media (max-width: 768px) {
 
-    /* Header — no drag cursor on mobile */
-    .chat-header {
-        cursor: default !important;
+        .cr-resize-handle,
+        .cr-touch-handle,
+        .cr-resize-nw,
+        .cr-resize-ne,
+        .cr-resize-se,
+        .cr-resize-sw,
+        .cr-resize-n,
+        .cr-resize-s,
+        .cr-resize-e,
+        .cr-resize-w {
+            display: none !important;
+        }
+
+        /* Header — no drag cursor on mobile */
+        .chat-header {
+            cursor: default !important;
+        }
     }
 
     /* Larger touch targets for buttons */
@@ -3486,5 +3489,243 @@
 @media (max-width: 768px) and (orientation: landscape) {
     .chat-window {
         border-radius: 0 !important;
+    }
+}
+
+/* ============================================
+   RESIZE HANDLES (Desktop Only)
+   ============================================ */
+.cr-resize-handle {
+    position: absolute;
+    z-index: 1000;
+    transition: background 0.2s;
+}
+
+/* Corner Handles - Larger and inside to avoid clipping */
+.cr-resize-nw,
+.cr-resize-ne,
+.cr-resize-se,
+.cr-resize-sw {
+    width: 20px;
+    height: 20px;
+}
+
+/* Positioned at 0 to avoid overflow clipping */
+.cr-resize-nw {
+    top: 0;
+    left: 0;
+    cursor: nw-resize;
+    border-top: 3px solid var(--c-gold);
+    border-left: 3px solid var(--c-gold);
+    border-radius: 20px 0 0 0;
+}
+
+.cr-resize-ne {
+    top: 0;
+    right: 0;
+    cursor: ne-resize;
+    border-top: 3px solid var(--c-gold);
+    border-right: 3px solid var(--c-gold);
+    border-radius: 0 20px 0 0;
+}
+
+.cr-resize-se {
+    bottom: 0;
+    right: 0;
+    cursor: se-resize;
+    border-bottom: 3px solid var(--c-gold);
+    border-right: 3px solid var(--c-gold);
+    border-radius: 0 0 20px 0;
+}
+
+.cr-resize-sw {
+    bottom: 0;
+    left: 0;
+    cursor: sw-resize;
+    border-bottom: 3px solid var(--c-gold);
+    border-left: 3px solid var(--c-gold);
+    border-radius: 0 0 0 20px;
+}
+
+/* Side Handles */
+.cr-resize-n,
+.cr-resize-s {
+    height: 10px;
+    left: 20px;
+    right: 20px;
+}
+
+.cr-resize-n {
+    top: 0;
+    cursor: n-resize;
+}
+
+.cr-resize-s {
+    bottom: 0;
+    cursor: s-resize;
+}
+
+.cr-resize-e,
+.cr-resize-w {
+    width: 10px;
+    top: 20px;
+    bottom: 20px;
+}
+
+.cr-resize-e {
+    right: 0;
+    cursor: e-resize;
+}
+
+.cr-resize-w {
+    left: 0;
+    cursor: w-resize;
+}
+
+/* Hover effect to show handles when near */
+.chat-window:hover .cr-resize-handle {
+    background: rgba(255, 215, 9, 0.05);
+}
+
+.cr-resize-handle:hover {
+    background: rgba(255, 215, 9, 0.2) !important;
+}
+
+.chat-window.is-resizing {
+    user-select: none;
+    cursor: grabbing !important;
+}
+
+.chat-window.is-resizing .cr-resize-handle {
+    pointer-events: all;
+}
+
+
+
+
+/* ============================================
+   TOAST NOTIFICATION
+   ============================================ */
+.chat-toast {
+    position: fixed;
+    top: 80px;
+    right: 24px;
+    background: rgba(30, 30, 40, 0.98);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #ffffff;
+    padding: 14px 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    z-index: 10000;
+    min-width: 280px;
+    max-width: 400px;
+    opacity: 0;
+    transform: translateX(400px);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.chat-toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.chat-toast-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.chat-toast-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chat-toast-message {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.chat-toast-action {
+    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.chat-toast-action:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+.chat-toast-action:active {
+    transform: translateY(0);
+}
+
+.chat-toast-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: color 0.2s;
+}
+
+.chat-toast-close:hover {
+    color: #ffffff;
+}
+
+/* Toast types */
+.chat-toast-warning {
+    border-left: 4px solid #f59e0b;
+}
+
+.chat-toast-error {
+    border-left: 4px solid #ef4444;
+}
+
+.chat-toast-success {
+    border-left: 4px solid #10b981;
+}
+
+.chat-toast-success .chat-toast-action {
+    background: #10b981;
+    border-color: #10b981;
+}
+
+.chat-toast-success .chat-toast-action:hover {
+    background: #059669;
+}
+
+.chat-toast-info {
+    border-left: 4px solid #3b82f6;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .chat-toast {
+        top: 20px;
+        right: 16px;
+        left: 16px;
+        min-width: auto;
+        max-width: none;
     }
 }

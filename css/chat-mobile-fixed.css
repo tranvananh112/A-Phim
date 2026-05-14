@@ -585,13 +585,110 @@
    ============================================ */
 @media (min-width: 1025px) {
 
-    /* Keep original desktop styles */
+    /* Larger chat window on desktop - iPhone 17 Pro Max inspired */
     .chat-window {
         position: fixed !important;
-        bottom: 100px !important;
-        right: 28px !important;
-        width: 390px !important;
-        height: 600px !important;
-        border-radius: 20px !important;
+        bottom: 80px !important;
+        right: 24px !important;
+        width: 480px !important;
+        height: 720px !important;
+        border-radius: 24px !important;
+        box-shadow: 0 12px 48px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+    }
+
+    /* Ensure resize handles are visible and functional on desktop */
+    .cr-resize-handle {
+        display: block !important;
+        position: absolute !important;
+        z-index: 10001 !important;
+        opacity: 0 !important;
+        transition: opacity 0.2s !important;
+    }
+
+    /* Show handles on hover or when resizing */
+    .chat-window:hover .cr-resize-handle,
+    .chat-window.is-resizing .cr-resize-handle {
+        opacity: 0.6 !important;
+    }
+
+    .chat-window.is-resizing .cr-resize-handle {
+        opacity: 1 !important;
+    }
+
+    /* Corner handles - 4 góc */
+    .cr-resize-nw {
+        top: -5px !important;
+        left: -5px !important;
+        width: 20px !important;
+        height: 20px !important;
+        cursor: nw-resize !important;
+    }
+
+    .cr-resize-ne {
+        top: -5px !important;
+        right: -5px !important;
+        width: 20px !important;
+        height: 20px !important;
+        cursor: ne-resize !important;
+    }
+
+    .cr-resize-se {
+        bottom: -5px !important;
+        right: -5px !important;
+        width: 20px !important;
+        height: 20px !important;
+        cursor: se-resize !important;
+    }
+
+    .cr-resize-sw {
+        bottom: -5px !important;
+        left: -5px !important;
+        width: 20px !important;
+        height: 20px !important;
+        cursor: sw-resize !important;
+    }
+
+    /* Visual indicator - dot grid */
+    .cr-resize-nw::before,
+    .cr-resize-ne::before,
+    .cr-resize-se::before,
+    .cr-resize-sw::before {
+        content: '' !important;
+        position: absolute !important;
+        width: 10px !important;
+        height: 10px !important;
+        background-image: radial-gradient(circle, rgba(255, 215, 9, 0.8) 1.5px, transparent 1.5px) !important;
+        background-size: 4px 4px !important;
+        background-position: 0 0 !important;
+        opacity: 0.8 !important;
+    }
+
+    .cr-resize-nw::before {
+        top: 7px !important;
+        left: 7px !important;
+    }
+
+    .cr-resize-ne::before {
+        top: 7px !important;
+        right: 7px !important;
+    }
+
+    .cr-resize-se::before {
+        bottom: 7px !important;
+        right: 7px !important;
+    }
+
+    .cr-resize-sw::before {
+        bottom: 7px !important;
+        left: 7px !important;
+    }
+
+    /* Brighter on hover */
+    .cr-resize-nw:hover::before,
+    .cr-resize-ne:hover::before,
+    .cr-resize-se:hover::before,
+    .cr-resize-sw:hover::before {
+        background-image: radial-gradient(circle, #f59e0b 1.8px, transparent 1.8px) !important;
+        opacity: 1 !important;
     }
 }

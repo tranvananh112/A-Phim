@@ -49,6 +49,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
     const terms = document.getElementById('terms').checked;
+    const rememberMe = document.getElementById('rememberMe')?.checked || false;
 
     // Validation
     if (!name || !email || !phone || !password || !confirmPassword) {
@@ -82,7 +83,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     }
 
     // Register
-    const result = await authService.register(email, password, name, phone);
+    const result = await authService.register(email, password, name, phone, rememberMe);
 
     if (result.success) {
         showMessage('Đăng ký thành công! Vui lòng đăng nhập để tiếp tục...', 'success');

@@ -8,7 +8,8 @@ const {
     updatePassword,
     forgotPassword,
     resetPassword,
-    logout
+    logout,
+    refreshToken
 } = require('../controllers/authController'); // Using MongoDB version
 
 const { protect } = require('../middleware/auth'); // Using real auth
@@ -25,5 +26,6 @@ router.get('/me', protect, getMe);
 router.put('/updatedetails', protect, updateDetails);
 router.put('/updatepassword', protect, updatePassword);
 router.get('/logout', protect, logout);
+router.post('/refresh', protect, refreshToken);
 
 module.exports = router;

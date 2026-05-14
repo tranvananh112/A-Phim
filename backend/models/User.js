@@ -181,11 +181,15 @@ UserSchema.methods.matchPassword = async function (enteredPassword) {
 };
 
 // Generate JWT Token
-UserSchema.methods.getSignedJwtToken = function () {
+UserSchema.methods.getSignedJwtToken = function (rememberMe = false) {
+    const expiresIn = rememberMe
+        ? (process.env.JWT_EXPIRE_REMEMBER_ME || '90d')
+        : (process.env.JWT_EXPIRE || '30d');
+
     return jwt.sign(
         { id: this._id, role: this.role },
         process.env.JWT_SECRET,
-        { expiresIn: process.env.JWT_EXPIRE }
+        { expiresIn }
     );
 };
 

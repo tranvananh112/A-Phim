@@ -71,6 +71,12 @@ class APFilmChat {
             this._restoreUser();
             this._attachEvents();
             this._initDragResize();
+
+            // Ensure resize handles exist (desktop only)
+            if (window.innerWidth > 768) {
+                this._ensureResizeHandles();
+            }
+
             this._initMobileKeyboardFix();
             this._initMobileResize();
 
@@ -102,6 +108,9 @@ class APFilmChat {
                     }
                 });
             }
+
+            // Listen for login success event
+            this._setupLoginListener();
 
             console.log('[APFilmChat] Community Chat initialized successfully ✓');
         } catch (err) {
@@ -204,7 +213,11 @@ class APFilmChat {
                     </div>
                 </div>
 
-                <!-- Multi-corner Resize Handles -->
+                <!-- 8-way Resize Handles -->
+                <div class="cr-resize-handle cr-resize-n"></div>
+                <div class="cr-resize-handle cr-resize-s"></div>
+                <div class="cr-resize-handle cr-resize-e"></div>
+                <div class="cr-resize-handle cr-resize-w"></div>
                 <div class="cr-resize-handle cr-resize-nw"></div>
                 <div class="cr-resize-handle cr-resize-ne"></div>
                 <div class="cr-resize-handle cr-resize-se"></div>
@@ -513,10 +526,12 @@ class APFilmChat {
                 this._showScreen('room');
                 this._enterRoomFirebase();
             } else {
+                // Always use auth modal - never redirect to login page
                 if (window.authModal && typeof window.authModal.open === 'function') {
                     window.authModal.open('login');
                 } else {
-                    window.location.href = '/login.html';
+                    console.error('[APFilmChat] Auth modal not available');
+                    this._showNotification('Vui lòng đăng nhập để sử dụng chat', 'warning');
                 }
             }
         });
@@ -779,6 +794,87 @@ class APFilmChat {
         };
         if (window.firebaseChat?.ready) init();
         else window.firebaseChat?.onReady(init);
+    }
+
+    _showNotification(message, type = 'info', options = {}) {
+        // Create toast notification element
+        const toast = document.createElement('div');
+        toast.className = `chat-toast chat-toast-${type}`;
+
+        const icon = type === 'warning' ? '⚠️' : type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+
+        let html = `
+            <div class="chat-toast-icon">${icon}</div>
+            <div class="chat-toast-content">
+                <div class="chat-toast-message">${message}</div>
+        `;
+
+        // Add action button if provided
+        if (options.action) {
+            html += `
+                <button class="chat-toast-action" onclick="${options.action.onClick}">
+                    ${options.action.text}
+                </button>
+            `;
+        }
+
+        html += `</div>`;
+
+        if (!options.persistent) {
+            html += `<button class="chat-toast-close" onclick="this.parentElement.remove()">×</button>`;
+        }
+
+        toast.innerHTML = html;
+
+        // Add to body
+        document.body.appendChild(toast);
+
+        // Trigger animation
+        setTimeout(() => toast.classList.add('show'), 10);
+
+        // Auto remove after duration (default 3s, or never if persistent)
+        if (!options.persistent) {
+            const duration = options.duration || 3000;
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+
+        return toast;
+    }
+
+    _setupLoginListener() {
+        // Check if user was not logged in initially
+        const wasLoggedOut = !this.user;
+
+        // Listen for storage changes (when user logs in via auth modal)
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'cinestream_token' && e.newValue && wasLoggedOut) {
+                this._showLoginSuccessNotification();
+            }
+        });
+
+        // Also listen for custom event from auth modal
+        document.addEventListener('userLoggedIn', () => {
+            if (wasLoggedOut) {
+                this._showLoginSuccessNotification();
+            }
+        });
+    }
+
+    _showLoginSuccessNotification() {
+        this._showNotification(
+            'Đăng nhập thành công! Vui lòng tải lại trang để sử dụng chat.',
+            'success',
+            {
+                persistent: true,
+                action: {
+                    text: '🔄 Tải lại trang',
+                    onClick: 'window.location.reload()'
+                }
+            }
+        );
     }
 
     _listenTab(tab) {
@@ -1548,7 +1644,7 @@ class APFilmChat {
         if (savedW) win.style.width = savedW;
         if (savedH) win.style.height = savedH;
 
-        // Drag logic (Header only)
+        // Drag logic (Header only) with boundary constraints
         let dragging = false, ox, oy;
         header.onmousedown = e => {
             if (e.target.closest('button')) return;
@@ -1559,8 +1655,25 @@ class APFilmChat {
 
             const onDragMove = (ev) => {
                 if (!dragging) return;
-                win.style.left = (ev.clientX - ox) + 'px';
-                win.style.top = (ev.clientY - oy) + 'px';
+
+                // Calculate new position
+                let newLeft = ev.clientX - ox;
+                let newTop = ev.clientY - oy;
+
+                // Get window dimensions
+                const winWidth = win.offsetWidth;
+                const winHeight = win.offsetHeight;
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+
+                // Apply boundary constraints
+                // Minimum 50px visible on each edge
+                const minVisible = 50;
+                newLeft = Math.max(-winWidth + minVisible, Math.min(newLeft, viewportWidth - minVisible));
+                newTop = Math.max(0, Math.min(newTop, viewportHeight - minVisible));
+
+                win.style.left = newLeft + 'px';
+                win.style.top = newTop + 'px';
                 win.style.right = 'auto';
                 win.style.bottom = 'auto';
             };
@@ -1579,6 +1692,33 @@ class APFilmChat {
         this._bindResizeHandlers();
     }
 
+    _ensureResizeHandles() {
+        const win = this.el.window;
+        if (!win) return;
+
+        // Check if handles already exist
+        if (win.querySelector('.cr-resize-handle')) {
+            // Check if we have all 8 handles (n, s, e, w, nw, ne, se, sw)
+            if (win.querySelectorAll('.cr-resize-handle').length >= 8) {
+                return;
+            }
+            // If some missing, clear and re-create
+            win.querySelectorAll('.cr-resize-handle').forEach(h => h.remove());
+        }
+
+        // Create 8 handles
+        const positions = ['n', 's', 'e', 'w', 'nw', 'ne', 'se', 'sw'];
+        positions.forEach(pos => {
+            const div = document.createElement('div');
+            div.className = `cr-resize-handle cr-resize-${pos}`;
+            win.appendChild(div);
+        });
+
+        // Bind events to new handles
+        this._bindResizeHandlers();
+        console.log('[APFilmChat] 8-way Resize handles created ✓');
+    }
+
     _bindResizeHandlers() {
         // Skip on mobile
         if (window.innerWidth <= 768) return;
@@ -1588,6 +1728,7 @@ class APFilmChat {
         let hideTimeout;
 
         const onResizeStart = (e, type) => {
+            if (this.isMinimized) return;
             e.preventDefault();
             e.stopPropagation();
             win.style.transition = 'none';
@@ -1602,30 +1743,62 @@ class APFilmChat {
             const startL = win.offsetLeft;
             const startT = win.offsetTop;
 
+            // Clear right/bottom to allow left/top to control position
+            win.style.right = 'auto';
+            win.style.bottom = 'auto';
+            win.style.left = startL + 'px';
+            win.style.top = startT + 'px';
+
             const onMove = (ev) => {
                 const curX = isTouch ? ev.touches[0].clientX : ev.clientX;
                 const curY = isTouch ? ev.touches[0].clientY : ev.clientY;
 
+                // Viewport constraints
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+
+                // Horizontal resize
                 if (type.includes('w')) {
-                    const newW = startW + (startX - curX);
-                    if (newW > 300 && newW < 1200) {
-                        win.style.width = newW + 'px';
-                        win.style.left = (startL - (newW - startW)) + 'px';
-                    }
+                    const diff = startX - curX;
+                    let newW = startW + diff;
+                    let newL = startL - diff;
+
+                    if (newW < 300) { newW = 300; newL = startL + (startW - 300); }
+                    if (newW > 1200) { newW = 1200; newL = startL + (startW - 1200); }
+                    if (newL < 0) { newL = 0; newW = startW + startL; }
+
+                    win.style.width = newW + 'px';
+                    win.style.left = newL + 'px';
+                    win.style.right = 'auto';
                 } else if (type.includes('e')) {
-                    const newW = startW + (curX - startX);
-                    if (newW > 300 && newW < 1200) win.style.width = newW + 'px';
+                    let newW = startW + (curX - startX);
+                    if (newW < 300) newW = 300;
+                    if (newW > 1200) newW = 1200;
+                    if (startL + newW > vw) newW = vw - startL;
+
+                    win.style.width = newW + 'px';
                 }
 
+                // Vertical resize
                 if (type.includes('n')) {
-                    const newH = startH + (startY - curY);
-                    if (newH > 350 && newH < 950) {
-                        win.style.height = newH + 'px';
-                        win.style.top = (startT - (newH - startH)) + 'px';
-                    }
+                    const diff = startY - curY;
+                    let newH = startH + diff;
+                    let newT = startT - diff;
+
+                    if (newH < 350) { newH = 350; newT = startT + (startH - 350); }
+                    if (newH > 950) { newH = 950; newT = startT + (startH - 950); }
+                    if (newT < 0) { newT = 0; newH = startH + startT; }
+
+                    win.style.height = newH + 'px';
+                    win.style.top = newT + 'px';
+                    win.style.bottom = 'auto';
                 } else if (type.includes('s')) {
-                    const newH = startH + (curY - startY);
-                    if (newH > 350 && newH < 950) win.style.height = newH + 'px';
+                    let newH = startH + (curY - startY);
+                    if (newH < 350) newH = 350;
+                    if (newH > 950) newH = 950;
+                    if (startT + newH > vh) newH = vh - startT;
+
+                    win.style.height = newH + 'px';
                 }
             };
 
@@ -1647,9 +1820,15 @@ class APFilmChat {
         };
 
         win.querySelectorAll('.cr-resize-handle').forEach(h => {
-            const type = h.classList.contains('cr-resize-nw') ? 'nw' :
-                h.classList.contains('cr-resize-ne') ? 'ne' :
-                    h.classList.contains('cr-resize-se') ? 'se' : 'sw';
+            let type = '';
+            if (h.classList.contains('cr-resize-n')) type = 'n';
+            else if (h.classList.contains('cr-resize-s')) type = 's';
+            else if (h.classList.contains('cr-resize-e')) type = 'e';
+            else if (h.classList.contains('cr-resize-w')) type = 'w';
+            else if (h.classList.contains('cr-resize-nw')) type = 'nw';
+            else if (h.classList.contains('cr-resize-ne')) type = 'ne';
+            else if (h.classList.contains('cr-resize-se')) type = 'se';
+            else if (h.classList.contains('cr-resize-sw')) type = 'sw';
 
             // Mouse
             h.onmousedown = (e) => onResizeStart(e, type);
@@ -1677,17 +1856,25 @@ class APFilmChat {
 // Auto-healing & Binding helper
 function ensureChatInteraction() {
     const win = document.getElementById('chatWindow');
-    if (win && !win.querySelector('.cr-resize-handle')) {
-        const positions = ['nw', 'ne', 'se', 'sw'];
+    if (win && (!win.querySelector('.cr-resize-handle') || win.querySelectorAll('.cr-resize-handle').length < 8)) {
+        // Clear existing handles if any to avoid duplicates or partials
+        win.querySelectorAll('.cr-resize-handle').forEach(h => h.remove());
+
+        const positions = ['n', 's', 'e', 'w', 'nw', 'ne', 'se', 'sw'];
         positions.forEach(pos => {
             const div = document.createElement('div');
             div.className = `cr-resize-handle cr-resize-${pos}`;
             win.appendChild(div);
         });
         if (window.apFilmChat) window.apFilmChat._bindResizeHandlers();
-        console.log('[APFilmChat] Resize system re-initialized ✓');
+        console.log('[APFilmChat] 8-way Resize system re-initialized ✓');
     }
 }
 setInterval(ensureChatInteraction, 4000);
+
+// Call immediately on load
+window.addEventListener('DOMContentLoaded', () => {
+    ensureChatInteraction();
+});
 
 window.apFilmChat = new APFilmChat();

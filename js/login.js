@@ -44,6 +44,7 @@ function setupLoginForm() {
 
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
+        const rememberMe = document.getElementById('rememberMe')?.checked || false;
 
         if (!email || !password) {
             showMessage('Vui lòng nhập đầy đủ thông tin', 'error');
@@ -57,7 +58,7 @@ function setupLoginForm() {
         submitBtn.textContent = 'Đang đăng nhập...';
 
         try {
-            const result = await authService.login(email, password);
+            const result = await authService.login(email, password, rememberMe);
 
             if (result.success) {
                 showMessage('Đăng nhập thành công!', 'success');
@@ -483,7 +484,7 @@ function showTelegramPopup(redirectUrl) {
     document.body.appendChild(overlay);
 
     // Close on backdrop click
-    overlay.addEventListener('click', function(e) {
+    overlay.addEventListener('click', function (e) {
         if (e.target === overlay) {
             overlay.remove();
             window.location.href = redirectUrl;

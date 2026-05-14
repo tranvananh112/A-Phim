@@ -2,6 +2,8 @@
 const STORAGE_KEYS = {
     USER: 'cinestream_user',
     TOKEN: 'cinestream_token',
+    TOKEN_EXPIRY: 'cinestream_token_expiry',
+    REMEMBER_ME: 'cinestream_remember_me',
     THEME: 'cinestream_theme',
     FAVORITES: 'cinestream_favorites',
     WATCH_HISTORY: 'cinestream_watch_history',
@@ -17,9 +19,13 @@ class AuthService {
         // Always use backend for authentication
         this.useBackend = typeof API_CONFIG !== 'undefined' ? API_CONFIG.USE_BACKEND_FOR_AUTH : true;
         this.currentUser = this.loadUser();
+        this.refreshInterval = null;
 
         // Background auto-sync to pull latest avatar/favorites/history from MongoDB
         setTimeout(() => this.syncProfile(), 100);
+
+        // Start auto token refresh
+        this.startTokenRefresh();
 
         console.log('🔐 AuthService initialized:', {
             backendURL: this.backendURL,
@@ -54,7 +60,7 @@ class AuthService {
                 } else {
                     // Background update localStorage
                     this.saveUser(serverUser);
-                    
+
                     // Đồng bộ Playlists chuyên sâu
                     if (serverUser.playlists && typeof playlistService !== 'undefined') {
                         playlistService.syncFromProfile(serverUser.playlists);
@@ -73,7 +79,7 @@ class AuthService {
     saveUser(user) {
         localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
         this.currentUser = user;
-        
+
         // Sync arrays back to local storage
         if (user.favorites) {
             localStorage.setItem('cinestream_favorites', JSON.stringify(user.favorites));
@@ -97,14 +103,14 @@ class AuthService {
     }
 
     // Register new user
-    async register(email, password, name, phone = '') {
+    async register(email, password, name, phone = '', rememberMe = false) {
         if (this.useBackend) {
             try {
                 console.log('📝 Registering via backend:', email);
                 const response = await fetch(`${this.backendURL}/auth/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password, name, phone })
+                    body: JSON.stringify({ email, password, name, phone, rememberMe })
                 });
 
                 const data = await response.json();
@@ -112,7 +118,9 @@ class AuthService {
 
                 if (data.success) {
                     this.saveUser(data.user);
-                    this.saveToken(data.token);
+                    this.saveToken(data.token, data.expiresIn);
+                    this.saveRememberMe(rememberMe);
+                    this.startTokenRefresh();
                     console.log('✅ Registration successful');
                     return { success: true, user: data.user };
                 }
@@ -132,14 +140,14 @@ class AuthService {
     }
 
     // Login user
-    async login(email, password) {
+    async login(email, password, rememberMe = false) {
         if (this.useBackend) {
             try {
-                console.log('🔐 Logging in via backend:', email);
+                console.log('🔐 Logging in via backend:', email, 'Remember Me:', rememberMe);
                 const response = await fetch(`${this.backendURL}/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify({ email, password, rememberMe })
                 });
 
                 const data = await response.json();
@@ -147,8 +155,10 @@ class AuthService {
 
                 if (data.success) {
                     this.saveUser(data.user);
-                    this.saveToken(data.token);
-                    console.log('✅ Login successful, token saved');
+                    this.saveToken(data.token, data.expiresIn);
+                    this.saveRememberMe(rememberMe);
+                    this.startTokenRefresh();
+                    console.log('✅ Login successful, token saved with expiry:', data.expiresIn);
                     return { success: true, user: data.user };
                 }
                 console.log('❌ Login failed:', data.message);
@@ -168,8 +178,11 @@ class AuthService {
 
     // Logout
     logout() {
+        this.stopTokenRefresh();
         localStorage.removeItem(STORAGE_KEYS.USER);
         localStorage.removeItem(STORAGE_KEYS.TOKEN);
+        localStorage.removeItem(STORAGE_KEYS.TOKEN_EXPIRY);
+        localStorage.removeItem(STORAGE_KEYS.REMEMBER_ME);
         this.currentUser = null;
         window.location.href = 'index.html';
     }
@@ -267,8 +280,114 @@ class AuthService {
         return btoa(JSON.stringify({ id: user.id, email: user.email, timestamp: Date.now() }));
     }
 
-    saveToken(token) {
+    saveToken(token, expiresIn = '30d') {
         localStorage.setItem(STORAGE_KEYS.TOKEN, token);
+
+        // Calculate expiry timestamp
+        const expiryMs = this.parseExpiry(expiresIn);
+        const expiryTimestamp = Date.now() + expiryMs;
+        localStorage.setItem(STORAGE_KEYS.TOKEN_EXPIRY, expiryTimestamp.toString());
+    }
+
+    saveRememberMe(rememberMe) {
+        localStorage.setItem(STORAGE_KEYS.REMEMBER_ME, rememberMe ? 'true' : 'false');
+    }
+
+    getRememberMe() {
+        return localStorage.getItem(STORAGE_KEYS.REMEMBER_ME) === 'true';
+    }
+
+    parseExpiry(expiresIn) {
+        // Parse expiry string like "30d", "90d", "7d" to milliseconds
+        const match = expiresIn.match(/^(\d+)([dhms])$/);
+        if (!match) return 30 * 24 * 60 * 60 * 1000; // Default 30 days
+
+        const value = parseInt(match[1]);
+        const unit = match[2];
+
+        switch (unit) {
+            case 'd': return value * 24 * 60 * 60 * 1000;
+            case 'h': return value * 60 * 60 * 1000;
+            case 'm': return value * 60 * 1000;
+            case 's': return value * 1000;
+            default: return 30 * 24 * 60 * 60 * 1000;
+        }
+    }
+
+    getTokenExpiry() {
+        const expiry = localStorage.getItem(STORAGE_KEYS.TOKEN_EXPIRY);
+        return expiry ? parseInt(expiry) : null;
+    }
+
+    isTokenExpiringSoon() {
+        const expiry = this.getTokenExpiry();
+        if (!expiry) return true;
+
+        // Refresh if token expires in less than 7 days
+        const sevenDays = 7 * 24 * 60 * 60 * 1000;
+        return (expiry - Date.now()) < sevenDays;
+    }
+
+    async refreshToken() {
+        if (!this.isLoggedIn()) return;
+
+        try {
+            const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+            const rememberMe = this.getRememberMe();
+
+            console.log('🔄 Refreshing token... Remember Me:', rememberMe);
+
+            const response = await fetch(`${this.backendURL}/auth/refresh`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ rememberMe })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                this.saveToken(data.token, data.expiresIn);
+                console.log('✅ Token refreshed successfully, new expiry:', data.expiresIn);
+                return true;
+            } else {
+                console.warn('⚠️ Token refresh failed:', data.message);
+                return false;
+            }
+        } catch (error) {
+            console.error('❌ Token refresh error:', error);
+            return false;
+        }
+    }
+
+    startTokenRefresh() {
+        // Clear any existing interval
+        this.stopTokenRefresh();
+
+        // Check token expiry every 6 hours
+        this.refreshInterval = setInterval(async () => {
+            if (this.isTokenExpiringSoon()) {
+                console.log('⏰ Token expiring soon, refreshing...');
+                await this.refreshToken();
+            }
+        }, 6 * 60 * 60 * 1000); // 6 hours
+
+        // Also check immediately on startup
+        setTimeout(async () => {
+            if (this.isTokenExpiringSoon()) {
+                console.log('⏰ Token expiring soon on startup, refreshing...');
+                await this.refreshToken();
+            }
+        }, 5000); // 5 seconds after startup
+    }
+
+    stopTokenRefresh() {
+        if (this.refreshInterval) {
+            clearInterval(this.refreshInterval);
+            this.refreshInterval = null;
+        }
     }
 
     // Social login

@@ -51,9 +51,9 @@ exports.register = async (req, res) => {
 // @access  Public
 exports.login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, rememberMe } = req.body;
 
-        console.log('Login attempt:', { email, passwordLength: password?.length });
+        console.log('Login attempt:', { email, passwordLength: password?.length, rememberMe });
 
         // Validate email & password
         if (!email || !password) {
@@ -100,7 +100,7 @@ exports.login = async (req, res) => {
         user.lastLogin = new Date();
         await user.save();
 
-        sendTokenResponse(user, 200, res);
+        sendTokenResponse(user, 200, res, rememberMe);
     } catch (error) {
         res.status(500).json({
             success: false,
@@ -145,7 +145,7 @@ exports.updateDetails = async (req, res) => {
         if (req.body.watchHistory !== undefined) fieldsToUpdate.watchHistory = req.body.watchHistory;
         if (req.body.watchProgress !== undefined) fieldsToUpdate.watchProgress = req.body.watchProgress;
         if (req.body.playlists !== undefined) fieldsToUpdate.playlists = req.body.playlists;
-        
+
         // Bổ sung Whitelist cho Gamification / Shop
         if (req.body.coins !== undefined) fieldsToUpdate.coins = req.body.coins;
         if (req.body.xu !== undefined) fieldsToUpdate.xu = req.body.xu; // Fallback tương thích
@@ -311,14 +311,51 @@ exports.logout = async (req, res) => {
     });
 };
 
+// @desc    Refresh token
+// @route   POST /api/auth/refresh
+// @access  Private
+exports.refreshToken = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'Người dùng không tồn tại'
+            });
+        }
+
+        if (user.isBlocked) {
+            return res.status(403).json({
+                success: false,
+                message: 'Tài khoản của bạn đã bị khóa'
+            });
+        }
+
+        // Check if rememberMe was used (from request body)
+        const rememberMe = req.body.rememberMe || false;
+
+        sendTokenResponse(user, 200, res, rememberMe);
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
 // Helper function to get token from model, create cookie and send response
-const sendTokenResponse = (user, statusCode, res) => {
-    // Create token
-    const token = user.getSignedJwtToken();
+const sendTokenResponse = (user, statusCode, res, rememberMe = false) => {
+    // Create token with rememberMe option
+    const token = user.getSignedJwtToken(rememberMe);
+
+    const cookieExpireDays = rememberMe
+        ? 90
+        : (process.env.JWT_COOKIE_EXPIRE || 30);
 
     const options = {
         expires: new Date(
-            Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+            Date.now() + cookieExpireDays * 24 * 60 * 60 * 1000
         ),
         httpOnly: true
     };
@@ -330,6 +367,7 @@ const sendTokenResponse = (user, statusCode, res) => {
     res.status(statusCode).json({
         success: true,
         token,
+        expiresIn: rememberMe ? '90d' : '30d',
         user: {
             id: user._id,
             name: user.name,
