@@ -27,9 +27,9 @@
 @media (display-mode: standalone) {
     /* PWA mode detected - apply safe area fixes */
 
-    /* BODY - Prevent content from going under notch */
+    /* BODY - Only horizontal and bottom padding */
     body {
-        padding-top: var(--sat) !important;
+        padding-top: 0px !important;
         padding-right: var(--sar) !important;
         padding-bottom: var(--sab) !important;
         padding-left: var(--sal) !important;
@@ -40,11 +40,15 @@
     header,
     .nav-container,
     .navigation-modern,
-    .sticky-nav,
-    [class*="nav-"],
-    [class*="header-"] {
+    .sticky-nav {
         padding-top: calc(var(--sat) + 12px) !important;
         margin-top: 0 !important;
+    }
+
+    /* Navigation with pt-safe class */
+    nav.pt-safe,
+    header.pt-safe {
+        padding-top: calc(var(--sat) + 12px) !important;
     }
 
     /* BACK BUTTON - Adjust position */
@@ -54,10 +58,26 @@
         top: calc(var(--sat) + 16px) !important;
     }
 
-    /* PROFILE HEADER - Adjust for notch */
+    /* PROFILE PAGE - Special handling */
+    body.profile-page {
+        padding-top: 0px !important;
+    }
+
+    /* MAIN CONTENT - Reduce padding-top in PWA mode */
+    body.profile-page main {
+        padding-top: 70px !important;
+    }
+
+    /* PROFILE HEADER - NO extra padding, nav already has it */
     .profile-cover,
     .profile-header {
-        padding-top: calc(var(--sat) + 16px) !important;
+        padding-top: 0px !important;
+        margin-top: 0px !important;
+    }
+
+    /* Profile cover edit button - adjust for nav height */
+    .profile-cover-edit-btn {
+        top: 14px !important;
     }
 
     /* FIXED HEADERS - All pages */
@@ -147,28 +167,41 @@
     }
 
     /* Tiến trình (Progress) section */
-    #progressTab,
-    #progressTab .profile-card,
+    #journeyTab,
+    #journeyTab .journey-container {
+        margin-top: 0 !important;
+        padding-top: 0px !important;
+    }
+
+    #journeyTab .journey-section {
+        margin-top: 0px !important;
+        padding-top: 0px !important;
+    }
+
     .stat-card,
     .progress-section {
         margin-top: 0 !important;
-        padding-top: 16px !important;
     }
 
     /* Thông tin cá nhân (Personal Info) section */
-    #infoTab,
-    #infoTab .profile-card {
+    #profileTab,
+    #profileTab .profile-card {
         margin-top: 0 !important;
-        padding-top: 16px !important;
+        padding-top: 0px !important;
     }
 
     /* Cửa hàng (Shop) section */
     #shopTab,
+    #shopTab .shop-container {
+        margin-top: 0 !important;
+        padding-top: 0px !important;
+    }
+
     #shopTab .profile-card,
     .shop-tabs,
     .shop-grid {
         margin-top: 0 !important;
-        padding-top: 16px !important;
+        padding-top: 0px !important;
     }
 
     /* Gói thành viên (Subscription) section */
@@ -176,7 +209,7 @@
     #subscriptionTab .profile-card,
     .subscription-card {
         margin-top: 0 !important;
-        padding-top: 16px !important;
+        padding-top: 0px !important;
     }
 
     /* Phim yêu thích (Favorites) section */
@@ -185,7 +218,7 @@
     #favoritesList,
     .favorites-grid-container {
         margin-top: 0 !important;
-        padding-top: 16px !important;
+        padding-top: 0px !important;
     }
 
     /* Lịch sử xem (History) section */
@@ -193,7 +226,7 @@
     #historyTab .profile-card,
     #historyList {
         margin-top: 0 !important;
-        padding-top: 16px !important;
+        padding-top: 0px !important;
     }
 
     /* Giao dịch (Transactions) section */
@@ -201,7 +234,7 @@
     #transactionsTab .profile-card,
     #transactionsList {
         margin-top: 0 !important;
-        padding-top: 16px !important;
+        padding-top: 0px !important;
     }
 
     /* Danh sách (Lists) section - if exists */
@@ -228,6 +261,81 @@
     /* First element in each tab should have extra top padding */
     .tab-content>*:first-child {
         padding-top: calc(var(--sat) + 24px) !important;
+    }
+
+    /* Mobile View Header - "Quay lại menu" */
+    #mobileContentHeader,
+    .mobile-view-header {
+        margin-top: 0px !important;
+        padding-top: 12px !important;
+    }
+
+    /* Profile main container - NO extra padding */
+    .profile-container,
+    [class*="profile-"] {
+        padding-top: 0px !important;
+    }
+
+    /* All section headers in profile - NO extra padding */
+    .section-header,
+    .profile-section-header {
+        padding-top: 0px !important;
+        margin-top: 0px !important;
+    }
+
+    /* Journey container (Tiến trình) - NO extra padding */
+    .journey-container {
+        padding-top: 0px !important;
+    }
+
+    /* Journey section header */
+    .journey-section {
+        margin-top: 0px !important;
+    }
+
+    /* Journey label */
+    .journey-label {
+        padding-top: 0px !important;
+        margin-top: 0px !important;
+    }
+
+    /* Shop container - NO extra padding */
+    .shop-container {
+        padding-top: 0px !important;
+    }
+
+    /* Shop header */
+    .shop-header {
+        margin-top: 0px !important;
+        padding-top: 0px !important;
+    }
+
+    /* All h2, h3 inside tabs - NO extra padding */
+    .tab-content h2,
+    .tab-content h3 {
+        padding-top: 0px !important;
+        margin-top: 0px !important;
+    }
+
+    /* Profile cards - NO extra padding */
+    .profile-card {
+        padding-top: 20px !important;
+    }
+
+    /* First profile card in each tab - NO extra padding */
+    .tab-content .profile-card:first-child {
+        padding-top: 20px !important;
+    }
+
+    /* Tab content - NO extra padding */
+    .tab-content {
+        padding-top: 0px !important;
+    }
+
+    /* First element in each tab - NO extra padding */
+    .tab-content>*:first-child {
+        padding-top: 0px !important;
+        margin-top: 0px !important;
     }
 }
 
