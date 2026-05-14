@@ -22,6 +22,13 @@
 }
 
 /* ============================================
+   PT-SAFE CLASS - Always apply safe area
+   ============================================ */
+.pt-safe {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+}
+
+/* ============================================
    DETECT PWA MODE (Standalone)
    ============================================ */
 @media (display-mode: standalone) {
@@ -45,10 +52,42 @@
         margin-top: 0 !important;
     }
 
-    /* Navigation with pt-safe class */
+    /* Navigation with pt-safe class - override to add extra padding */
     nav.pt-safe,
     header.pt-safe {
         padding-top: calc(var(--sat) + 12px) !important;
+    }
+
+    /* Navigation container inside nav */
+    nav .container,
+    nav>div {
+        /* Container height should remain fixed */
+        min-height: 56px !important;
+    }
+
+    /* Mobile inline search - ensure proper positioning */
+    .mobile-inline-search {
+        margin-top: 0px !important;
+        position: relative !important;
+    }
+
+    .mobile-inline-search-icon,
+    .mobile-inline-search-input {
+        /* Ensure search elements don't have extra top margin */
+        margin-top: 0px !important;
+    }
+
+    /* Auth container and mobile menu button */
+    #authContainer,
+    #mobileMenuBtn {
+        margin-top: 0px !important;
+    }
+
+    /* Mobile Menu Dropdown - Already has safe area in sticky-nav.css */
+    /* Just ensure no extra top padding */
+    #mobileMenu {
+        padding-top: 0px !important;
+        margin-top: 0px !important;
     }
 
     /* BACK BUTTON - Adjust position */
@@ -63,9 +102,15 @@
         padding-top: 0px !important;
     }
 
-    /* MAIN CONTENT - Reduce padding-top in PWA mode */
+    /* MAIN CONTENT - Minimal padding-top in PWA mode */
     body.profile-page main {
-        padding-top: 70px !important;
+        padding-top: 60px !important;
+        /* Reduced from 70px */
+    }
+
+    /* PROFILE HERO CARD - NO extra margin */
+    .profile-hero-card {
+        margin-top: 0px !important;
     }
 
     /* PROFILE HEADER - NO extra padding, nav already has it */
@@ -258,16 +303,13 @@
         margin-top: 8px !important;
     }
 
-    /* First element in each tab should have extra top padding */
-    .tab-content>*:first-child {
-        padding-top: calc(var(--sat) + 24px) !important;
-    }
-
     /* Mobile View Header - "Quay lại menu" */
     #mobileContentHeader,
     .mobile-view-header {
         margin-top: 0px !important;
         padding-top: 12px !important;
+        margin-bottom: 20px !important;
+        /* Keep original margin-bottom */
     }
 
     /* Profile main container - NO extra padding */
@@ -317,24 +359,37 @@
         margin-top: 0px !important;
     }
 
-    /* Profile cards - NO extra padding */
+    /* Profile cards - Standard padding only */
     .profile-card {
         padding-top: 20px !important;
+        margin-top: 0px !important;
     }
 
     /* First profile card in each tab - NO extra padding */
     .tab-content .profile-card:first-child {
         padding-top: 20px !important;
+        margin-top: 0px !important;
     }
 
     /* Tab content - NO extra padding */
     .tab-content {
         padding-top: 0px !important;
+        margin-top: 0px !important;
     }
 
     /* First element in each tab - NO extra padding */
     .tab-content>*:first-child {
         padding-top: 0px !important;
+        margin-top: 0px !important;
+    }
+
+    /* Journey stats grid - NO extra margin */
+    .stats-grid {
+        margin-top: 0px !important;
+    }
+
+    /* Shop grid - NO extra margin */
+    .shop-grid {
         margin-top: 0px !important;
     }
 }
