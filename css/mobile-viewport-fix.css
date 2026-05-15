@@ -205,16 +205,17 @@ select option {
    flex-1 → tự dãn ra để lấp đầy khoảng trống
    ======================================================== */
 .mobile-inline-search {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    min-width: 0;
-    height: 32px;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    height: 32px !important;
     background: rgba(255, 255, 255, 0.07);
     border: 1px solid rgba(255, 255, 255, 0.10);
     border-radius: 9999px;
     padding: 0 10px;
-    gap: 6px;
+    gap: 6px !important;
     margin: 0 8px;
     transition: border-color 0.2s ease, background 0.2s ease;
 }
