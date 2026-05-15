@@ -364,6 +364,9 @@ const sendTokenResponse = (user, statusCode, res, rememberMe = false) => {
         options.secure = true;
     }
 
+    // 🚀 FIX: Actually send the token in the response cookie so that browsers cache it
+    res.cookie('token', token, options);
+
     res.status(statusCode).json({
         success: true,
         token,

@@ -18,6 +18,10 @@ class AuthService {
         this.backendURL = (typeof API_CONFIG !== 'undefined' && API_CONFIG.BACKEND_URL) ? API_CONFIG.BACKEND_URL : 'http://localhost:5000/api';
         // Always use backend for authentication
         this.useBackend = typeof API_CONFIG !== 'undefined' ? API_CONFIG.USE_BACKEND_FOR_AUTH : true;
+        
+        // 🚀 FIX SAFARI SESSION LOSS: Restore data from secure persistent cookies if localStorage got cleared
+        this.restoreFromCookies();
+
         this.currentUser = this.loadUser();
         this.refreshInterval = null;
 
@@ -36,6 +40,53 @@ class AuthService {
             backendURL: this.backendURL,
             useBackend: this.useBackend
         });
+    }
+
+    // 🍪 SECURE COOKIE DOUBLE-LOCK MECHANISM
+    // This fixes Safari losing session upon browser closing
+    setCookie(name, value, days) {
+        let expires = "";
+        if (days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        // Use domain-wide path, secure and lax attributes
+        document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax" + (window.location.protocol === 'https:' ? '; Secure' : '');
+    }
+
+    getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+
+    eraseCookie(name) {
+        document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    }
+
+    restoreFromCookies() {
+        try {
+            const cookieToken = this.getCookie(STORAGE_KEYS.TOKEN);
+            const localToken = localStorage.getItem(STORAGE_KEYS.TOKEN);
+            
+            if (cookieToken && !localToken) {
+                console.log('🔄 [Safari Protection] Restoring authentication token from persistent Cookie...');
+                localStorage.setItem(STORAGE_KEYS.TOKEN, cookieToken);
+                
+                const cookieUser = this.getCookie(STORAGE_KEYS.USER);
+                if (cookieUser) {
+                    localStorage.setItem(STORAGE_KEYS.USER, decodeURIComponent(cookieUser));
+                }
+            }
+        } catch (e) {
+            console.warn('[AuthService] Restore from cookies failed', e);
+        }
     }
 
     // Load user from localStorage
@@ -84,6 +135,11 @@ class AuthService {
     saveUser(user) {
         localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
         this.currentUser = user;
+
+        // Backup serialized user object to a persistent cookie
+        const rememberMe = this.getRememberMe();
+        const days = rememberMe ? 90 : 30;
+        this.setCookie(STORAGE_KEYS.USER, encodeURIComponent(JSON.stringify(user)), days);
 
         // Sync arrays back to local storage
         if (user.favorites) {
@@ -188,6 +244,11 @@ class AuthService {
         localStorage.removeItem(STORAGE_KEYS.TOKEN);
         localStorage.removeItem(STORAGE_KEYS.TOKEN_EXPIRY);
         localStorage.removeItem(STORAGE_KEYS.REMEMBER_ME);
+        
+        // Wipe corresponding cookies
+        this.eraseCookie(STORAGE_KEYS.TOKEN);
+        this.eraseCookie(STORAGE_KEYS.USER);
+
         this.currentUser = null;
         window.location.href = 'index.html';
     }
@@ -292,6 +353,10 @@ class AuthService {
         const expiryMs = this.parseExpiry(expiresIn);
         const expiryTimestamp = Date.now() + expiryMs;
         localStorage.setItem(STORAGE_KEYS.TOKEN_EXPIRY, expiryTimestamp.toString());
+
+        // Save backup token to persistent cookie
+        const days = Math.ceil(expiryMs / (24 * 60 * 60 * 1000));
+        this.setCookie(STORAGE_KEYS.TOKEN, token, days);
     }
 
     saveRememberMe(rememberMe) {
@@ -368,6 +433,11 @@ class AuthService {
                 localStorage.removeItem(STORAGE_KEYS.TOKEN);
                 localStorage.removeItem(STORAGE_KEYS.TOKEN_EXPIRY);
                 localStorage.removeItem(STORAGE_KEYS.REMEMBER_ME);
+                
+                // Erase Cookies on force expired 401
+                this.eraseCookie(STORAGE_KEYS.TOKEN);
+                this.eraseCookie(STORAGE_KEYS.USER);
+
                 this.currentUser = null;
                 return false;
             }
