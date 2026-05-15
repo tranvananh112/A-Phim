@@ -19,8 +19,14 @@
         right: 20px !important;
         width: 48px !important;
         height: 48px !important;
+        min-width: 48px !important;
+        min-height: 48px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
         z-index: 9998 !important;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 8px 24px rgba(255, 215, 9, 0.3) !important;
+        line-height: 1 !important;
     }
 
     /* Icon bên trong FAB cũng nhỏ hơn */
@@ -38,12 +44,16 @@
         bottom: 0 !important;
         width: 100% !important;
         height: 100% !important;
+        height: 100dvh !important; /* 🔥 CRITICAL: Dynamic viewport height respects Safari bottom toolbar */
         max-width: 100% !important;
         max-height: 100% !important;
+        max-height: 100dvh !important;
         border-radius: 0 !important;
         margin: 0 !important;
         z-index: 9999 !important;
         transform: none !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
     }
 
     /* Prevent body scroll when chat is open */
@@ -294,83 +304,172 @@
         left: 0 !important;
         right: 0 !important;
         top: auto !important;
-        transform: none !important;
-        border-radius: 24px 24px 0 0 !important;
-        max-height: 75vh !important;
+        width: 100vw !important;
+        min-width: 100vw !important;
+        
+        /* Premium Acrylic Obsidian Dark Theme */
+        background: rgba(21, 22, 26, 0.97) !important;
+        backdrop-filter: blur(35px) saturate(190%) !important;
+        -webkit-backdrop-filter: blur(35px) saturate(190%) !important;
+        
+        /* Generous top rounding */
+        border-radius: 28px 28px 0 0 !important;
+        border: 1px solid rgba(255, 255, 255, 0.09) !important;
+        border-bottom: none !important;
+        
+        height: auto !important;
+        max-height: 50vh !important; /* Compact sizing: occupying max 50% screen height */
+        min-height: 35vh !important;
+        box-shadow: 0 -15px 45px rgba(0, 0, 0, 0.5) !important;
+        
+        display: flex;
+        flex-direction: column !important;
+        gap: 0 !important;
+        padding: 0 0 calc(12px + env(safe-area-inset-bottom, 10px)) 0 !important;
+        z-index: 9999999 !important;
+        animation: slideUpMenu 0.3s cubic-bezier(0.28, 0.84, 0.42, 1) !important;
         overflow-y: auto !important;
-        animation: slideUpMenu 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3) !important;
-        padding-bottom: env(safe-area-inset-bottom) !important;
+        -webkit-overflow-scrolling: touch !important;
     }
 
     @keyframes slideUpMenu {
-        from {
-            transform: translateY(100%) !important;
-            opacity: 0 !important;
-        }
-
-        to {
-            transform: translateY(0) !important;
-            opacity: 1 !important;
-        }
+        from { transform: translateY(100%) !important; }
+        to { transform: translateY(0) !important; }
     }
 
-    /* Backdrop for context menu */
+    /* Backdrop dimming overlay focused ABOVE sheet */
     .tg-context-menu::before {
         content: '' !important;
         position: fixed !important;
-        inset: 0 !important;
-        background: rgba(0, 0, 0, 0.6) !important;
+        inset: -300vh 0 0 0 !important;
+        background: rgba(0, 0, 0, 0.62) !important;
         backdrop-filter: blur(4px) !important;
+        -webkit-backdrop-filter: blur(4px) !important;
         z-index: -1 !important;
-        animation: fadeIn 0.3s !important;
+        animation: fadeIn 0.25s ease !important;
     }
 
     @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-
-        to {
-            opacity: 1;
-        }
+        from { opacity: 0; }
+        to { opacity: 1; }
     }
 
-    /* Handle bar at top of bottom sheet */
+    /* Sleek, centered thin drag handle */
     .tg-context-menu::after {
         content: '' !important;
+        display: block !important;
         position: absolute !important;
-        top: 10px !important;
+        top: 9px !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
-        width: 40px !important;
+        width: 36px !important;
         height: 4px !important;
-        background: rgba(0, 0, 0, 0.2) !important;
+        background: rgba(255, 255, 255, 0.25) !important;
         border-radius: 2px !important;
+        z-index: 10 !important;
     }
 
-    /* Emoji reactions - Larger on mobile */
-    .reaction-bar {
-        padding: 16px 12px !important;
-        gap: 8px !important;
+    /* 💎 Embedded Reaction Row - Sleek & Compact */
+    .tg-context-menu.mobile-bottom-sheet .reaction-bubble {
+        align-self: stretch !important;
+        background: transparent !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+        padding: 24px 16px 10px 16px !important; /* Tighter spacing */
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        gap: 10px !important;
+        justify-content: center !important;
     }
 
-    .react-emoji {
-        font-size: 32px !important;
-        padding: 10px !important;
-        min-width: 52px !important;
-        min-height: 52px !important;
+    .tg-context-menu.mobile-bottom-sheet .react-emoji {
+        font-size: 20px !important; /* 36-40px bound native feel */
+        width: 36px !important;
+        height: 36px !important;
+        flex-shrink: 0 !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: transform 0.1s !important;
     }
 
-    /* Menu items - Touch friendly */
-    .menu-item {
-        padding: 16px 24px !important;
-        font-size: 16px !important;
-        min-height: 56px !important;
+    .tg-context-menu.mobile-bottom-sheet .react-emoji:active {
+        transform: scale(0.85) !important;
+        background: rgba(255, 255, 255, 0.12) !important;
+    }
+
+    /* Premium Item Container Wrap */
+    .tg-context-menu.mobile-bottom-sheet .menu-items-container {
+        width: 100% !important;
+        background: transparent !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 2px 0 !important;
+        flex: 1 !important;
+    }
+
+    /* Highly Native Space-saving Items (similar to Telegram/WhatsApp) */
+    .tg-context-menu.mobile-bottom-sheet .menu-item {
+        padding: 12px 22px !important; /* Streamlined top/bottom padding */
+        font-size: 15px !important; /* Crisp text sizing */
+        border-left: none !important;
+        min-height: 46px !important; /* Native-compact touch target */
+        color: rgba(255, 255, 255, 0.92) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
         display: flex !important;
         align-items: center !important;
         gap: 14px !important;
-        border-left-width: 4px !important;
+    }
+
+    /* Remove divider on last child items of dynamic blocks */
+    .tg-context-menu.mobile-bottom-sheet .menu-item:last-child {
+        border-bottom: none !important;
+    }
+
+    /* 💡 HIGH CONTRAST ICONS */
+    .tg-context-menu.mobile-bottom-sheet .menu-item .material-icons {
+        font-size: 21px !important; /* Scaled down for compact harmony */
+        color: rgba(255, 255, 255, 0.78) !important;
+        opacity: 1 !important;
+    }
+
+    /* Danger actions stylized on Dark Base */
+    .tg-context-menu.mobile-bottom-sheet .menu-item.danger {
+        color: #ff6b6b !important;
+    }
+    
+    .tg-context-menu.mobile-bottom-sheet .menu-item.danger .material-icons {
+        color: rgba(255, 107, 107, 0.9) !important;
+    }
+
+    /* Active Tap Indication */
+    .tg-context-menu.mobile-bottom-sheet .menu-item:active {
+        background: rgba(255, 255, 255, 0.07) !important;
+    }
+
+    /* Clearer, highly pronounced logical grouping divider block */
+    .tg-context-menu.mobile-bottom-sheet .menu-separator {
+        height: 7px !important;
+        background: rgba(0, 0, 0, 0.35) !important; /* Noticeably clearer separator */
+        border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+        margin: 3px 0 !important;
+    }
+
+    .tg-context-menu.mobile-bottom-sheet .menu-items-container::before {
+        display: none !important;
     }
 
     .menu-item .material-icons {
@@ -514,17 +613,37 @@
         -webkit-backdrop-filter: blur(10px) !important;
     }
 
-    /* BULK ACTION BAR - Fixed on mobile */
+    /* BULK ACTION BAR - Đưa về flow tự nhiên nằm trên ô input, không được đè lên viewport */
     .bulk-action-bar {
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        z-index: 101 !important;
+        position: relative !important;
+        bottom: auto !important;
+        left: auto !important;
+        right: auto !important;
+        z-index: 10 !important;
         background: #ffffff !important;
-        box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.15) !important;
-        padding: 12px !important;
-        padding-bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+        border-radius: 12px !important;
+        margin-bottom: 8px !important;
+        padding: 8px 12px !important;
+        display: none !important; /* Sẽ được bật flex bởi selector active */
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .bulk-action-bar.active {
+        display: flex !important;
+    }
+
+    .bulk-info,
+    .bulk-actions {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        flex-wrap: nowrap !important;
     }
 
     /* WELCOME SCREEN - Scrollable on mobile */

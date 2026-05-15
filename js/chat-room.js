@@ -119,13 +119,28 @@ class APFilmChat {
     }
 
     _injectHtmlIfNeeded() {
-        const cssId = 'aphim-chat-css';
-        if (!document.getElementById(cssId)) {
+        // 1. Auto-inject Base Core Styles (chat-room.css) if missing
+        const hasBaseCss = Array.from(document.querySelectorAll('link')).some(l => l.href && l.href.includes('chat-room.css'));
+        if (!hasBaseCss) {
             const link = document.createElement('link');
-            link.id = cssId;
+            link.id = 'aphim-chat-css';
             link.rel = 'stylesheet';
-            link.href = 'css/chat-room.css?v=15';
+            link.href = 'css/chat-room.css?v=45';
             document.head.appendChild(link);
+        }
+
+        // 2. Auto-inject Mobile Specific Overrides (chat-mobile-fixed.css) if missing
+        const hasMobileCss = Array.from(document.querySelectorAll('link')).some(l => l.href && l.href.includes('chat-mobile-fixed.css'));
+        if (!hasMobileCss) {
+            const linkMobile = document.createElement('link');
+            linkMobile.id = 'aphim-chat-mobile-css';
+            linkMobile.rel = 'stylesheet';
+            linkMobile.href = 'css/chat-mobile-fixed.css?v=45';
+            document.head.appendChild(linkMobile);
+        }
+
+        // 3. Inject Context Menu if not already present in the DOM
+        if (!document.getElementById('chatContextMenu')) {
 
             // Inject Context Menu to BODY to avoid any container overflow/z-index issues
             const menu = document.createElement('div');
@@ -135,7 +150,7 @@ class APFilmChat {
             menu.style.position = 'fixed';
             menu.style.zIndex = '999999';
             menu.innerHTML = `
-                <div class="reaction-bar">
+                <div class="reaction-bubble">
                     <span class="react-emoji" data-emoji="❤️">❤️</span>
                     <span class="react-emoji" data-emoji="😍">😍</span>
                     <span class="react-emoji" data-emoji="👍">👍</span>
@@ -147,13 +162,16 @@ class APFilmChat {
                     <span class="react-emoji" data-emoji="💯">💯</span>
                     <span class="react-emoji" data-emoji="🎉">🎉</span>
                 </div>
-                <div class="menu-item" id="ctxReply"><span class="material-icons">reply</span> Trả lời</div>
-                <div class="menu-item" id="ctxForward"><span class="material-icons">forward</span> Chuyển tiếp</div>
-                <div class="menu-item" id="ctxCopy"><span class="material-icons">content_copy</span> Sao chép</div>
-                <div class="menu-item" id="ctxSelect"><span class="material-icons">check_circle</span> Chọn nhiều</div>
-                <div class="menu-item" id="ctxPin" style="display: none;"><span class="material-icons">push_pin</span> Ghim tin nhắn</div>
-                <div class="menu-item danger" id="ctxBan" style="display: none;"><span class="material-icons">block</span> Chặn người dùng</div>
-                <div class="menu-item danger" id="ctxDelete" style="display: none;"><span class="material-icons">delete</span> Xóa tin nhắn</div>
+                <div class="menu-items-container">
+                    <div class="menu-item" id="ctxReply"><span class="material-icons">reply</span> <span>Trả lời</span></div>
+                    <div class="menu-item" id="ctxForward"><span class="material-icons">forward</span> <span>Chuyển tiếp</span></div>
+                    <div class="menu-item" id="ctxCopy"><span class="material-icons">content_copy</span> <span>Sao chép</span></div>
+                    <div class="menu-item" id="ctxSelect"><span class="material-icons">check_circle</span> <span>Chọn nhiều</span></div>
+                    <div class="menu-item" id="ctxPin" style="display: none;"><span class="material-icons">push_pin</span> <span>Ghim tin nhắn</span></div>
+                    <div class="menu-separator" id="ctxDangerSep" style="display: none;"></div>
+                    <div class="menu-item danger" id="ctxBan" style="display: none;"><span class="material-icons">block</span> <span>Chặn người dùng</span></div>
+                    <div class="menu-item danger" id="ctxDelete" style="display: none;"><span class="material-icons">delete</span> <span>Xóa tin nhắn</span></div>
+                </div>
             `;
             document.body.appendChild(menu);
         }
@@ -178,10 +196,29 @@ class APFilmChat {
             }
         }
 
-        if (document.getElementById('chatFab')) return;
+        // 🔄 AUTOMATIC MODERNIZATION UPGRADE CHECK:
+        // If we detect a legacy hardcoded chat UI implementation (which lacks critical modern features like the
+        // Avatar Main component or Pinned Message slots), we programmatically purge the obsolete nodes
+        // so the script can dynamically inject the 100% correct master Telegram widget instead.
+        const needsUpgrade = document.getElementById('chatFab') && !document.querySelector('.chat-header-avatar-main');
+        
+        if (needsUpgrade) {
+            console.log('[APFilmChat] Legacy static chat detected on this page. Upgrading to modern dynamic engine...');
+            const legacyFab = document.getElementById('chatFab');
+            const legacyWin = document.getElementById('chatWindow');
+            const legacyContainer = document.getElementById('aphimChatInjectedContainer');
+            
+            if (legacyFab) legacyFab.remove();
+            if (legacyWin) legacyWin.remove();
+            if (legacyContainer) legacyContainer.remove();
+        }
+
+        // Only skip injection if the fully-featured modern chat widget is already present.
+        if (document.getElementById('chatFab') && document.querySelector('.chat-header-avatar-main')) {
+            return;
+        }
 
         const html = `
-        <div id="aphimChatInjectedContainer">
             <button id="chatFab" class="chat-fab" aria-label="Mở chat cộng đồng" title="Chat Cộng Đồng">
                 <span class="fab-icon material-icons">forum</span>
                 <span class="chat-fab-badge" id="chatFabBadge">0</span>
@@ -190,12 +227,15 @@ class APFilmChat {
             <div id="chatWindow" class="chat-window tg-theme" role="dialog">
                 <div class="chat-header" id="chatHeader">
                     <div class="chat-header-info">
-                        <div class="chat-header-avatar-main">
+                        <div class="chat-header-avatar chat-header-avatar-main">
                             <img src="/favicon.png" alt="A" id="headerGroupAvatar">
                         </div>
                         <div class="chat-header-text">
                             <div class="chat-header-title">Cộng Đồng A Phim</div>
-                            <div class="chat-header-status" id="headerOnlineCount">... người trực tuyến</div>
+                            <div class="chat-header-status">
+                                <span class="online-dot"></span>
+                                <span class="chat-header-online-text" id="headerOnlineCount">... người trực tuyến</span>
+                            </div>
                         </div>
                     </div>
                     <div class="chat-header-actions">
@@ -311,7 +351,6 @@ class APFilmChat {
                     <div class="emoji-grid" id="emojiGrid"></div>
                 </div>
             </div>
-        </div>
         `;
         document.body.insertAdjacentHTML('beforeend', html);
     }
@@ -569,24 +608,38 @@ class APFilmChat {
             });
         });
 
-        // Optimize input performance with debounce and RAF
+        // ⚡ ULTRA-FAST TEXTAREA AUTO-GROW ENGINE (No layout thrashing)
         let inputRAF = null;
         let lastInputValue = '';
+        let lastScrollHeight = 0;
 
         el.messageInput?.addEventListener('input', () => {
             const currentValue = el.messageInput.value;
 
-            // Update send button state immediately (no lag)
+            // Step 1: Toggle send button state instantly
             el.sendBtn.disabled = currentValue.trim() === '';
 
-            // Debounce height calculation to avoid lag
+            // Step 2: Debounce height checks using requestAnimationFrame
             if (inputRAF) cancelAnimationFrame(inputRAF);
 
             inputRAF = requestAnimationFrame(() => {
-                // Only recalculate height if value actually changed
                 if (currentValue !== lastInputValue) {
-                    el.messageInput.style.height = 'auto';
-                    el.messageInput.style.height = (el.messageInput.scrollHeight) + 'px';
+                    // HYPER-OPTIMIZATION: Only reset height to 'auto' (causes reflow) when DELETING text
+                    // because shrinking needs a reset. Growing just reads scrollHeight, which is 20x cheaper!
+                    const isDeleting = currentValue.length < lastInputValue.length;
+                    
+                    if (isDeleting || currentValue === '') {
+                        el.messageInput.style.height = 'auto';
+                    }
+
+                    const newH = el.messageInput.scrollHeight;
+                    
+                    // Only update DOM node if the absolute height metric actually changed!
+                    if (newH !== lastScrollHeight || currentValue === '') {
+                        el.messageInput.style.height = newH + 'px';
+                        lastScrollHeight = newH;
+                    }
+
                     lastInputValue = currentValue;
                 }
             });
@@ -1261,70 +1314,112 @@ class APFilmChat {
     }
 
     _showContextMenu(e, msg) {
-        console.log('[APFilmChat] _showContextMenu called', { msgUser: msg.user });
+        console.log('[APFilmChat] _showContextMenu entering...', { msgUser: msg.user });
         const menu = document.getElementById('chatContextMenu');
-        if (!menu) {
-            console.error('[APFilmChat] Context menu element NOT found in DOM!');
-            return;
-        }
+        if (!menu) return;
 
         const isAdmin = this.user && (this.user.chatRole === 'admin' || this.user.role === 'admin');
+        
+        // 1. Reset dynamic visibility states
+        const ctxDangerSep = document.getElementById('ctxDangerSep');
+        if (ctxDangerSep) ctxDangerSep.style.display = 'none';
 
-        menu.style.display = 'block';
+        // Reset styles
+        menu.style.display = 'flex';
+        menu.style.flexDirection = 'column';
 
-        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+        const isMobile = window.innerWidth <= 768;
 
-        // Get menu dimensions after display (for accurate calculation)
-        const menuRect = menu.getBoundingClientRect();
-        const menuWidth = menuRect.width || 200;
-        const menuHeight = menuRect.height || 300;
+        if (!isMobile) {
+            // 🚀 DESKTOP PRESETS
+            menu.classList.remove('mobile-bottom-sheet');
+            
+            // Fetch coordinates and bounds
+            const clientX = e.clientX;
+            const clientY = e.clientY;
+            
+            // Safely acquire active message bubble context for precise anchoring
+            const targetEl = e.target ? e.target.closest('.tg-msg-bubble') : null;
+            const bubbleRect = targetEl ? targetEl.getBoundingClientRect() : null;
 
-        // Calculate viewport dimensions
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
+            // Cache measured menu constraints
+            const menuRect = menu.getBoundingClientRect();
+            const menuW = 220; // Exact layout width from css
+            const menuH = 320; // Approx menu height
+            const viewportW = window.innerWidth;
+            const viewportH = window.innerHeight;
+            
+            let left = clientX;
+            let top = clientY;
 
-        // Smart positioning with padding from edges
-        const padding = 10; // Minimum distance from screen edges
-        let left = clientX;
-        let top = clientY;
-
-        // Horizontal positioning
-        if (left + menuWidth + padding > viewportWidth) {
-            // Menu would overflow right edge - position to the left of touch point
-            left = Math.max(padding, clientX - menuWidth);
-        }
-
-        // Ensure menu doesn't overflow left edge
-        if (left < padding) {
-            left = padding;
-        }
-
-        // Vertical positioning
-        if (top + menuHeight + padding > viewportHeight) {
-            // Menu would overflow bottom edge - position above touch point
-            top = Math.max(padding, clientY - menuHeight);
-        }
-
-        // Ensure menu doesn't overflow top edge
-        if (top < padding) {
-            top = padding;
-        }
-
-        // On mobile, center horizontally if there's enough space
-        if (window.innerWidth <= 768) {
-            const centerX = (viewportWidth - menuWidth) / 2;
-            // Use centered position if it's reasonable
-            if (Math.abs(centerX - left) < 100) {
-                left = Math.max(padding, Math.min(centerX, viewportWidth - menuWidth - padding));
+            if (bubbleRect) {
+                // Intelligent positioning aligned with parent bubble
+                const msgRow = targetEl.closest('.message-row');
+                const isOutgoing = msgRow && msgRow.classList.contains('outgoing');
+                
+                if (isOutgoing) {
+                    // Align stack to flush against message end 
+                    left = bubbleRect.right - menuW;
+                } else {
+                    // Align stack to start edge of bubble
+                    left = bubbleRect.left;
+                }
+                top = bubbleRect.bottom + 6; // Directly beneath message bubble
             }
+
+            // Right boundary overlap correction
+            if (left + menuW > viewportW - 16) {
+                left = viewportW - menuW - 16;
+            }
+            // Left boundary overlap correction
+            if (left < 16) {
+                left = 16;
+            }
+
+            // Bottom boundary overlap correction - AUTO VERTICAL FLIP
+            let isFlipped = false;
+            if (top + menuH > viewportH - 20) {
+                isFlipped = true;
+                if (bubbleRect) {
+                    top = bubbleRect.top - menuH - 6; // Position ABOVE bubble
+                } else {
+                    top = clientY - menuH - 6;
+                }
+            }
+            // Top boundary safety lock
+            if (top < 16) {
+                top = 16;
+            }
+
+            // Apply styles to fixed container
+            menu.style.left = `${left}px`;
+            menu.style.top = `${top}px`;
+            menu.style.bottom = 'auto';
+            menu.style.right = 'auto';
+            menu.style.transform = 'none';
+            menu.style.width = 'auto';
+
+            // 🚀 UX Magic: If the menu flipped ABOVE the message, reverse flex layout 
+            // to keep floating reaction bubbles absolutely closest to the text content!
+            if (isFlipped) {
+                menu.style.flexDirection = 'column-reverse';
+            } else {
+                menu.style.flexDirection = 'column';
+            }
+        } else {
+            // 📱 MOBILE BOTTOM SHEET TRIGGER
+            menu.classList.add('mobile-bottom-sheet');
+            
+            // Flush all specific coordinate metrics to inherit Bottom Sheet layout
+            menu.style.left = '0';
+            menu.style.top = 'auto';
+            menu.style.bottom = '0';
+            menu.style.right = '0';
+            menu.style.width = '100%';
+            menu.style.flexDirection = 'column';
         }
 
-        menu.style.left = left + 'px';
-        menu.style.top = top + 'px';
-        console.log('[APFilmChat] Menu positioned at:', { left, top, menuWidth, menuHeight });
-        console.log('[APFilmChat] Menu shown at:', { left, top });
-
+        // Setup Click Handlers
         document.getElementById('ctxReply').onclick = () => { this._setReply(msg); menu.style.display = 'none'; };
         document.getElementById('ctxForward').onclick = () => { this._forwardMessage(msg); menu.style.display = 'none'; };
         document.getElementById('ctxCopy').onclick = () => {
@@ -1363,6 +1458,7 @@ class APFilmChat {
             ctxPin.style.display = 'flex';
             ctxBan.style.display = 'flex';
             ctxDelete.style.display = 'flex';
+            if (ctxDangerSep) ctxDangerSep.style.display = 'block';
 
             ctxPin.onclick = () => {
                 if (window.firebaseChat?.ready) window.firebaseChat.pinMessage(this.currentTab, msg.id);

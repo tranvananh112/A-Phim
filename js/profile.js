@@ -14,28 +14,62 @@ document.addEventListener('DOMContentLoaded', function () {
     setupProfileForm();
     setupPasswordForm();
 
-    // Check URL for active tab
-    const urlParams = new URLSearchParams(window.location.search);
-    const tabFromUrl = urlParams.get('tab') || window.location.hash.substring(1);
+    // Define Global Path-to-Tab routing mapping
+    const pathToTab = {
+        '/profile.html': 'journey',
+        '/profile': 'journey',
+        '/profile/': 'journey',
+        '/profile/cua-hang.html': 'shop',
+        '/profile/goi-thanh-vien.html': 'subscription',
+        '/profile/phim-yeu-thich.html': 'favorites',
+        '/profile/lich-su-xem.html': 'history',
+        '/profile/giao-dich.html': 'transactions',
+        '/profile/danh-sach.html': 'playlists'
+    };
+    window.__pathToTab = pathToTab; // Expose for popstate
+
+    // Check current path or falling back to query params
+    const currentPath = window.location.pathname;
+    let tabFromUrl = pathToTab[currentPath] || pathToTab[currentPath.replace(/\/$/, '')];
+
+    if (!tabFromUrl) {
+        const urlParams = new URLSearchParams(window.location.search);
+        tabFromUrl = urlParams.get('tab') || window.location.hash.substring(1);
+    }
     
-    // Default to 'journey' if no tab in URL
+    // Default to 'journey' if no tab parsed
     const activeTabName = tabFromUrl || 'journey';
     
     // Slight delay to ensure DOM is ready
     setTimeout(() => {
-        // MOBILE: By default show the full Menu view, don't enter sub-tabs instantly
+        // MOBILE: By default show the Menu view ONLY IF the user lands on the root Profile page
         if (window.innerWidth <= 1024) {
-            if (typeof goBackToMenu === 'function') {
-                goBackToMenu();
+            if (activeTabName === 'journey') {
+                if (typeof goBackToMenu === 'function') {
+                    goBackToMenu();
+                }
+                return;
             }
-            return;
+            // Else: If deep-linked directly to a tab, fall-through to show it!
         }
 
-        // DESKTOP: Proceed with direct tab rendering
+        // Proceed with direct tab rendering
         if (document.getElementById(activeTabName + 'Tab')) {
-            showTab(activeTabName);
+            showTab(activeTabName, true); // true = initial load, skip pushState
         }
     }, 50);
+
+    // Listen for browser back/forward button popstate navigation
+    window.addEventListener('popstate', function(event) {
+        const popPath = window.location.pathname;
+        const popTab = window.__pathToTab[popPath] || window.__pathToTab[popPath.replace(/\/$/, '')] || 'journey';
+        
+        if (window.innerWidth <= 1024 && popTab === 'journey') {
+            if (typeof goBackToMenu === 'function') goBackToMenu(true); // skip state
+        } else {
+            showTab(popTab, true); // skip state to prevent loop
+        }
+    });
 
     // Listen for background profile sync
     window.addEventListener('auth:profileSynced', function(e) {
@@ -399,18 +433,33 @@ function loadFavorites() {
         }
 
         container.innerHTML = favorites.map(movie => `
-            <div class="fav-movie-card group">
-                <a href="movie-detail.html?slug=${movie.slug}" class="block w-full h-full">
-                    <img src="${movieAPI.getImageURL(movie.thumb_url)}" 
-                         alt="${movie.name}"
-                         onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
-                    <div class="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/95 via-black/40 to-transparent">
-                        <h4 style="font-size:11px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${movie.name}</h4>
-                    </div>
+            <div class="relative flex gap-4 p-4 bg-black/30 border border-white/5 rounded-lg hover:border-primary/50 transition-all group">
+                <div class="relative w-24 aspect-[2/3] flex-shrink-0 rounded-md overflow-hidden bg-black/40">
+                    <a href="movie-detail.html?slug=${movie.slug}" class="block w-full h-full">
+                        <img src="${movieAPI.getImageURL(movie.thumb_url)}" 
+                             alt="${movie.name}"
+                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                             onerror="this.src='https://via.placeholder.com/100x150?text=No+Image'" />
+                    </a>
+                    <button onclick="event.preventDefault(); event.stopPropagation(); removeFavorite('${movie.slug}')" 
+                            class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center shadow-md border border-white/10 transition-all active:scale-90 z-10"
+                            style="cursor:pointer;"
+                            title="Xóa khỏi yêu thích">
+                        <span class="material-icons-round" style="font-size:14px;">close</span>
+                    </button>
+                </div>
+                <a href="movie-detail.html?slug=${movie.slug}" class="flex-1 min-w-0 flex flex-col justify-center" style="text-decoration:none;">
+                    <h4 class="font-bold text-white group-hover:text-primary transition-colors truncate text-[15px]">
+                        ${movie.name}
+                    </h4>
+                    <p class="text-sm text-gray-400 mt-1">
+                        ${movie.year ? `${movie.year}` : 'Phim Lẻ/Bộ'} • ${movie.quality || 'Full HD'}
+                    </p>
+                    <p class="text-xs text-gray-500 mt-2 flex items-center gap-1.5">
+                        <span class="material-icons-round text-[#e8b94f]" style="font-size:12px;">favorite</span>
+                        Đã thêm vào danh sách yêu thích
+                    </p>
                 </a>
-                <button onclick="removeFavorite('${movie.slug}')" class="fav-delete-btn" title="Xóa khỏi yêu thích">
-                    <span class="material-icons-round" style="font-size:14px;">close</span>
-                </button>
             </div>
         `).join('');
         
@@ -762,7 +811,24 @@ window.clearHistory = function () {
 };
 
 // Show tab
-window.showTab = function (tabName) {
+window.showTab = function (tabName, isInitialOrPop = false) {
+    // 🚀 Hybrid SPA Routing: Update URL state gracefully without full page reloads
+    if (!isInitialOrPop) {
+        const tabToPath = {
+            'journey': '/profile.html',
+            'shop': '/profile/cua-hang.html',
+            'subscription': '/profile/goi-thanh-vien.html',
+            'favorites': '/profile/phim-yeu-thich.html',
+            'history': '/profile/lich-su-xem.html',
+            'transactions': '/profile/giao-dich.html',
+            'playlists': '/profile/danh-sach.html'
+        };
+        const newPath = tabToPath[tabName];
+        if (newPath && window.location.pathname !== newPath) {
+            window.history.pushState({ tab: tabName }, '', newPath);
+        }
+    }
+
     // Hide all tab-content elements
     document.querySelectorAll('.tab-content').forEach(tab => {
         tab.classList.remove('active-tab');
@@ -799,8 +865,14 @@ window.showTab = function (tabName) {
     if (window.innerWidth <= 1024) {
         const sidebar = document.querySelector('.profile-sidebar');
         const contentHeader = document.getElementById('mobileContentHeader');
+        const mainNav = document.getElementById('mainNav');
+        
         if (sidebar) sidebar.style.display = 'none';
         if (contentHeader) contentHeader.style.display = 'flex';
+        
+        // 🚀 NATIVE APP UX: Hide the global main navbar when inside a detailed Sub-Tab
+        // This permanently stops all header collisions and allows the Back Header to sit flush with the Safe Area Notch.
+        if (mainNav) mainNav.style.display = 'none';
         
         // Ensure hero card (banner) is hidden or smaller on mobile detail view to save space
         const heroCard = document.querySelector('.profile-hero-card');
@@ -844,15 +916,24 @@ window.showTab = function (tabName) {
 };
 
 // Back to Menu Logic for Mobile
-window.goBackToMenu = function() {
+window.goBackToMenu = function(isInitialOrPop = false) {
+    // 🚀 Restore root URL when navigating back to menu
+    if (!isInitialOrPop) {
+        if (window.location.pathname !== '/profile.html') {
+            window.history.pushState({ tab: 'journey' }, '', '/profile.html');
+        }
+    }
+
     if (window.innerWidth <= 1024) {
         const sidebar = document.querySelector('.profile-sidebar');
         const contentHeader = document.getElementById('mobileContentHeader');
         const heroCard = document.querySelector('.profile-hero-card');
+        const mainNav = document.getElementById('mainNav');
         
-        // Show Sidebar & Hero
+        // Show Sidebar, Hero & Restore Main Navbar
         if (sidebar) sidebar.style.display = 'flex';
         if (heroCard) heroCard.style.display = 'block';
+        if (mainNav) mainNav.style.display = ''; // Restore default display stylesheet styles
         
         // Hide all tabs
         document.querySelectorAll('.tab-content').forEach(tab => {

@@ -96,23 +96,23 @@ function updateUserUI() {
                     
                     <!-- Dropdown Menu -->
                     <div class="absolute right-0 top-[100%] w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[9999] transform origin-top-right scale-95 group-hover:scale-100 bg-surface-elevated border border-white/10 rounded-xl shadow-2xl py-2 flex flex-col" style="background-color: #1a1b2e;">
-                        <a href="profile.html?tab=profile" class="flex items-center gap-3 px-4 py-2.5 text-gray-300 hover:text-white hover:bg-white/5 transition-colors" style="text-decoration:none;">
+                        <a href="/profile.html" class="flex items-center gap-3 px-4 py-2.5 text-gray-300 hover:text-white hover:bg-white/5 transition-colors" style="text-decoration:none;">
                             <span class="material-icons-round text-lg">person</span>
                             <span class="text-sm font-medium">Trang cá nhân</span>
                         </a>
-                        <a href="profile.html?tab=subscription" class="flex items-center gap-3 px-4 py-2.5 text-gray-300 hover:text-white hover:bg-white/5 transition-colors" style="text-decoration:none;">
+                        <a href="/profile/goi-thanh-vien.html" class="flex items-center gap-3 px-4 py-2.5 text-gray-300 hover:text-white hover:bg-white/5 transition-colors" style="text-decoration:none;">
                             <span class="material-icons-round text-lg">card_membership</span>
                             <span class="text-sm font-medium">Gói thành viên</span>
                         </a>
-                        <a href="profile.html?tab=favorites" class="flex items-center gap-3 px-4 py-2.5 text-gray-300 hover:text-white hover:bg-white/5 transition-colors" style="text-decoration:none;">
+                        <a href="/profile/phim-yeu-thich.html" class="flex items-center gap-3 px-4 py-2.5 text-gray-300 hover:text-white hover:bg-white/5 transition-colors" style="text-decoration:none;">
                             <span class="material-icons-round text-lg">favorite</span>
                             <span class="text-sm font-medium">Phim yêu thích</span>
                         </a>
-                        <a href="profile.html?tab=history" class="flex items-center gap-3 px-4 py-2.5 text-gray-300 hover:text-white hover:bg-white/5 transition-colors" style="text-decoration:none;">
+                        <a href="/profile/lich-su-xem.html" class="flex items-center gap-3 px-4 py-2.5 text-gray-300 hover:text-white hover:bg-white/5 transition-colors" style="text-decoration:none;">
                             <span class="material-icons-round text-lg">history</span>
                             <span class="text-sm font-medium">Lịch sử xem</span>
                         </a>
-                        <a href="profile.html?tab=playlists" class="flex items-center gap-3 px-4 py-2.5 text-gray-300 hover:text-white hover:bg-white/5 transition-colors" style="text-decoration:none;">
+                        <a href="/profile/danh-sach.html" class="flex items-center gap-3 px-4 py-2.5 text-gray-300 hover:text-white hover:bg-white/5 transition-colors" style="text-decoration:none;">
                             <span class="material-icons-round text-lg">playlist_play</span>
                             <span class="text-sm font-medium">Danh sách</span>
                         </a>
