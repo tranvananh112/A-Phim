@@ -16,6 +16,29 @@ async function loadHomeMovies() {
                 const movies = data.data.items;
                 console.log('Processing movies from home API:', movies.length);
 
+                // 🚀 SEO STRUCTURED DATA BOOST: Inject dynamic ItemList Schema to boost Google suggestions
+                try {
+                    let allSEOList = [...movies];
+                    if (data.data.sections && Array.isArray(data.data.sections)) {
+                        data.data.sections.forEach(sec => {
+                            if (Array.isArray(sec.items)) allSEOList = allSEOList.concat(sec.items);
+                        });
+                    }
+                    const uniqueMap = {};
+                    const dedupedSEOList = [];
+                    allSEOList.forEach(m => {
+                        if (m.slug && !uniqueMap[m.slug]) {
+                            uniqueMap[m.slug] = true;
+                            dedupedSEOList.push(m);
+                        }
+                    });
+                    if (typeof SEO !== 'undefined' && typeof SEO.injectItemListSchema === 'function') {
+                        SEO.injectItemListSchema(dedupedSEOList);
+                    }
+                } catch (seoErr) {
+                    console.warn('SEO dynamic injection skipped:', seoErr);
+                }
+
                 // Không render "Latest Updates" section nữa vì đã có trong index.html
                 // renderLatestMoviesSection(movies);
 
