@@ -3,7 +3,21 @@ const TelegramBot = require('node-telegram-bot-api');
 const axios = require('axios');
 
 const token = process.env.BOT_TOKEN;
-const bot = new TelegramBot(token, { polling: true });
+const bot = new TelegramBot(token, { 
+    polling: {
+        autoStart: true,
+        params: { timeout: 10 }
+    } 
+});
+
+// 🛡️ XỬ LÝ LỖI TRANH GIÀNH KẾT NỐI (409 CONFLICT)ÊM ÁI
+bot.on('polling_error', (error) => {
+    if (error.code === 'ETELEGRAM' && error.message.includes('409 Conflict')) {
+        console.warn('⚠️ [Telegram Bot] Đang bị tranh giành Token (409 Conflict). Có một instance Bot khác vẫn đang chạy. Đang tự động thử lại...');
+    } else {
+        console.error('❌ [Telegram Bot Polling Error]:', error.message || error);
+    }
+});
 
 // Hàm chuyển tên phim thành slug
 function convertToSlug(text) {
