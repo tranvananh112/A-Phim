@@ -47,7 +47,7 @@ async function loadMovieAndPlay(slug, episodeSlug) {
 
             renderMovieInfo(currentMovie, currentEpisode);
             renderEpisodeList(currentMovie.episodes);
-            initializePlayer(currentEpisode);
+            renderPlayerPlaceholder(currentEpisode); // 🛡️ Anti-Bot Gate: Render interactive placeholder first
             setupActionButtons();
 
             // Add to watch history
@@ -91,6 +91,53 @@ function renderMovieInfo(movie, episode) {
         `;
     }
 }
+
+// 🛡️ PHASE 1: RENDER INTERACTIVE PLAYER PLACEHOLDER (Anti-DMCA Gate)
+function renderPlayerPlaceholder(episode) {
+    const playerContainer = document.querySelector('.aspect-video');
+    if (!playerContainer) return;
+
+    const posterUrl = currentMovie ? movieAPI.getImageURL(currentMovie.thumb_url, 1200, 90, true) : '';
+    
+    playerContainer.innerHTML = `
+        <div id="playerPlaceholder" class="absolute inset-0 w-full h-full flex flex-col items-center justify-center cursor-pointer bg-cover bg-center bg-no-repeat overflow-hidden" 
+             style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.88)), url('${posterUrl}'); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);"
+             onclick="window.startActualPlayback()">
+            
+            <!-- Ambient Glowing Rings Animation -->
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div class="absolute w-24 h-24 rounded-full bg-[#fcd576]/20 animate-ping opacity-50" style="animation-duration: 2.5s;"></div>
+                <div class="absolute w-32 h-32 rounded-full border border-[#fcd576]/10 animate-pulse"></div>
+            </div>
+            
+            <!-- Premium Floating Play Button -->
+            <button class="relative z-10 w-20 h-20 bg-[#fcd576] text-black rounded-full flex items-center justify-center shadow-[0_0_35px_rgba(252,213,118,0.45)] transform transition-all duration-300 hover:scale-110 active:scale-95 group">
+                <span class="material-icons-round text-5xl ml-1.5" style="color:#000; transition: transform 0.2s;">play_arrow</span>
+            </button>
+            
+            <!-- Text Context Details -->
+            <div class="relative z-10 mt-5 text-center px-4 pointer-events-none select-none">
+                <h3 class="text-white font-bold text-lg md:text-xl tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] uppercase mb-1">
+                    BẤM ĐỂ XEM NGAY ${episode ? `(${episode.name})` : ''}
+                </h3>
+                <div class="flex items-center justify-center gap-2">
+                    <span class="text-[#fcd576] text-[10px] md:text-xs tracking-widest font-bold bg-black/50 backdrop-blur-md px-3 py-1 rounded-full border border-[#fcd576]/30">
+                        FULL HD • VIETSUB
+                    </span>
+                    <span class="text-gray-400 text-[10px] md:text-xs tracking-widest font-semibold bg-white/5 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
+                        A PHIM
+                    </span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Global callback to start playback on click
+window.startActualPlayback = function() {
+    console.log('⚡ User interaction verified. Loading stream...');
+    initializePlayer(currentEpisode);
+};
 
 // Render episode list
 function renderEpisodeList(episodes) {
