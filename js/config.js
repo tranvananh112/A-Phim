@@ -11,12 +11,28 @@ const ADMIN_CONFIG = {
 };
 
 // API Configuration
+// ─── DYNAMIC AUTO-FAILOVER BACKEND RESOLVER ───
+// Fixes old backend expiring tomorrow by auto-detecting and promoting the new one
+const BACKEND_OPTIONS = {
+    NEW: 'https://a-phim-production-523d.up.railway.app',
+    OLD: 'https://a-phim-production-c87b.up.railway.app'
+};
+
+// Retrieve active backend. Defaults to OLD until NEW is responsive, or OLD dies.
+let chosenBackend = localStorage.getItem('cinestream_active_backend') || BACKEND_OPTIONS.OLD;
+
+if (localStorage.getItem('cinestream_new_backend_active') === 'true') {
+    chosenBackend = BACKEND_OPTIONS.NEW;
+}
+
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    chosenBackend = 'http://localhost:5000';
+}
+
 // Default Fallback configuration
 const API_CONFIG = {
     // Backend API - Auto-detect environment
-    BACKEND_URL: (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-        ? 'http://localhost:5000/api'
-        : 'https://a-phim-production-c87b.up.railway.app/api',
+    BACKEND_URL: chosenBackend + '/api',
 
     // Default Ophim API (primary)
     OPHIM_URL: 'https://ophim1.com/v1/api',
@@ -145,9 +161,7 @@ const APP_CONFIG = {
 };
 
 // Backward compatibility and Global Helper
-const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    ? 'http://localhost:5000'
-    : 'https://a-phim-production-c87b.up.railway.app';
+const API_BASE_URL = chosenBackend;
 
 // Global helper to get base URL without /api suffix
 window.getBackendBaseURL = function() {
@@ -219,3 +233,41 @@ window.getHiddenMovieOverlay = function(slug) {
     return { badge: '', imgClass: '', containerClass: '' };
 };
 
+
+// 🚀 AUTO-SWITCH ENGINE: Background Active Probe to Promote NEW Backend when online
+(async function probeAndMigrateBackend() {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+    
+    const checkUrl = `${BACKEND_OPTIONS.NEW}/api/settings/public`;
+    try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 4000); // 4s timeout
+        const res = await fetch(checkUrl, { signal: controller.signal });
+        clearTimeout(timeout);
+        
+        if (res.ok) {
+            console.log('🚀 [Backend Resolver] SUCCESS: New Railway backend is online! Setting as primary.');
+            localStorage.setItem('cinestream_active_backend', BACKEND_OPTIONS.NEW);
+            localStorage.setItem('cinestream_new_backend_active', 'true');
+            API_CONFIG.BACKEND_URL = BACKEND_OPTIONS.NEW + '/api';
+        } else {
+            console.log('⚠️ [Backend Resolver] New Railway backend returned non-ok status:', res.status, '(Staying on fallback today)');
+        }
+    } catch (e) {
+        console.warn('⚠️ [Backend Resolver] Probe on new backend failed (not fully booted yet):', e.message);
+        
+        // Auto-Failover: Check if OLD backend has expired completely
+        try {
+            const testOld = await fetch(`${BACKEND_OPTIONS.OLD}/api/settings/public`);
+            if (!testOld.ok) {
+                console.warn('🚨 [Backend Resolver] ALERT: Old backend is offline! Auto-promoting new backend to maintain continuity.');
+                localStorage.setItem('cinestream_active_backend', BACKEND_OPTIONS.NEW);
+                localStorage.setItem('cinestream_new_backend_active', 'true');
+            }
+        } catch (oldErr) {
+            console.warn('🚨 [Backend Resolver] CRITICAL: Old backend is fully down! Auto-switching to new railway.');
+            localStorage.setItem('cinestream_active_backend', BACKEND_OPTIONS.NEW);
+            localStorage.setItem('cinestream_new_backend_active', 'true');
+        }
+    }
+})();

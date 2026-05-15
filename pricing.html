@@ -2171,7 +2171,7 @@
             try {
                 const BACKEND = (typeof API_CONFIG !== 'undefined')
                     ? API_CONFIG.BACKEND_URL
-                    : (location.hostname === 'localhost' ? 'http://localhost:5000/api' : 'https://a-phim-production-c87b.up.railway.app/api');
+                    : (location.hostname === 'localhost' ? 'http://localhost:5000/api' : 'https://a-phim-production-523d\.up\.railway\.app/api');
 
                 const [settingsRes, paymentRes] = await Promise.allSettled([
                     fetch(`${BACKEND}/settings/public`),
