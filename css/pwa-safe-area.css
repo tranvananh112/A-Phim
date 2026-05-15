@@ -621,3 +621,31 @@ nav.pt-safe,
         transition: padding 0.3s ease, margin 0.3s ease, top 0.3s ease !important;
     }
 }
+
+/* ============================================
+   15. GLOBAL PROFILE VIEWPORT & SAFE AREA FIXES
+   Applied globally to both standard web and PWA
+   ============================================ */
+
+/* Force dynamic viewport height on all profile-page templates */
+body.profile-page {
+    min-height: 100dvh !important; /* Accounts for expanding/collapsing browser bars */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Extended bottom breathing room for mobile/tablet views */
+@media (max-width: 1024px) {
+    body.profile-page main {
+        /* Combines standard margin, iOS safe-area-inset-bottom, and browser address bar overhead (~60-80px) */
+        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 140px) !important;
+    }
+    
+    /* Ensure that lists with internal scrollbars have enough padding-bottom for the final element */
+    #favoritesList,
+    #historyList,
+    #transactionsList,
+    #playlistsList {
+        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 50px) !important;
+    }
+}
