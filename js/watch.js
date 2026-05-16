@@ -98,39 +98,82 @@ function renderPlayerPlaceholder(episode) {
     if (!playerContainer) return;
 
     const posterUrl = currentMovie ? movieAPI.getImageURL(currentMovie.thumb_url, 1200, 90, true) : '';
+    const movieName = currentMovie ? currentMovie.name : 'Đang tải...';
+    
+    // Thông minh hóa tên tập: Nếu là số thì thêm chữ "Tập", nếu là chữ (Full, Trailer...) thì giữ nguyên
+    let epName = 'Full HD';
+    if (episode && episode.name) {
+        if (episode.name.toLowerCase().includes('tập')) {
+            epName = episode.name;
+        } else if (!isNaN(episode.name)) {
+            epName = `Tập ${episode.name}`;
+        } else {
+            epName = episode.name;
+        }
+    }
+    
+    const quality = currentMovie ? currentMovie.quality : 'Full HD';
+    const lang = currentMovie ? currentMovie.lang : 'Vietsub';
     
     playerContainer.innerHTML = `
-        <div id="playerPlaceholder" class="absolute inset-0 w-full h-full flex flex-col items-center justify-center cursor-pointer bg-cover bg-center bg-no-repeat overflow-hidden" 
-             style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.88)), url('${posterUrl}'); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);"
+        <div id="playerPlaceholder" class="absolute inset-0 w-full h-full cursor-pointer overflow-hidden group/overlay" 
              onclick="window.startActualPlayback()">
             
-            <!-- Ambient Glowing Rings Animation -->
-            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div class="absolute w-24 h-24 rounded-full bg-[#fcd576]/20 animate-ping opacity-50" style="animation-duration: 2.5s;"></div>
-                <div class="absolute w-32 h-32 rounded-full border border-[#fcd576]/10 animate-pulse"></div>
+            <!-- Background Image with Ambient Blur -->
+            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-[1.5s] ease-out group-hover/overlay:scale-105" 
+                 style="background-image: url('${posterUrl}'); filter: brightness(0.5) blur(1px);"></div>
+            
+            <!-- Cinematic Dark Gradient (Bottom to Top) -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent opacity-90"></div>
+            
+            <!-- Central Interaction Hub (Perfectly Centered) -->
+            <div class="absolute inset-0 flex flex-col items-center justify-center z-10">
+                <div class="flex flex-col items-center transition-all duration-500 transform group-hover/overlay:scale-110">
+                    <!-- Premium Lottie Animated Play Button -->
+                    <div id="play-btn" style="width:85px; height:85px; cursor:pointer;" class="filter drop-shadow-[0_10px_40px_rgba(0,0,0,0.6)]"></div>
+                    
+                    <!-- Dynamic Context Details -->
+                    <div class="mt-4 text-center px-6 pointer-events-none select-none">
+                        <h3 class="text-white font-bold text-lg md:text-2xl tracking-tight drop-shadow-[0_2px_15px_rgba(0,0,0,0.9)] mb-0.5">
+                            ${movieName}
+                        </h3>
+                        <p class="text-white/60 text-xs md:text-sm font-medium tracking-wide">
+                            ${epName}
+                        </p>
+                    </div>
+                </div>
             </div>
             
-            <!-- Premium Floating Play Button -->
-            <button class="relative z-10 w-20 h-20 bg-[#fcd576] text-black rounded-full flex items-center justify-center shadow-[0_0_35px_rgba(252,213,118,0.45)] transform transition-all duration-300 hover:scale-110 active:scale-95 group">
-                <span class="material-icons-round text-5xl ml-1.5" style="color:#000; transition: transform 0.2s;">play_arrow</span>
-            </button>
-            
-            <!-- Text Context Details -->
-            <div class="relative z-10 mt-5 text-center px-4 pointer-events-none select-none">
-                <h3 class="text-white font-bold text-lg md:text-xl tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] uppercase mb-1">
-                    BẤM ĐỂ XEM NGAY ${episode ? `(${episode.name})` : ''}
-                </h3>
-                <div class="flex items-center justify-center gap-2">
-                    <span class="text-[#fcd576] text-[10px] md:text-xs tracking-widest font-bold bg-black/50 backdrop-blur-md px-3 py-1 rounded-full border border-[#fcd576]/30">
-                        FULL HD • VIETSUB
-                    </span>
-                    <span class="text-gray-400 text-[10px] md:text-xs tracking-widest font-semibold bg-white/5 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
-                        A PHIM
+            <!-- Minimal Quality Badge (Bottom Left - Strictly Forced) -->
+            <div class="absolute z-20 flex flex-col gap-1.5 transition-all duration-500 transform group-hover/overlay:translate-x-1"
+                 style="position: absolute !important; bottom: 30px !important; left: 30px !important; top: auto !important; right: auto !important;">
+                <div class="flex items-center gap-1.5 bg-black/60 backdrop-blur-xl px-2.5 py-1 rounded border border-white/10 shadow-2xl">
+                    <div class="w-1.5 h-1.5 rounded-full bg-[#fcd576] shadow-[0_0_5px_#fcd576]"></div>
+                    <span class="text-[9px] md:text-[10px] font-black text-white uppercase tracking-wider">
+                        ${quality} • ${lang}
                     </span>
                 </div>
+                <span class="text-[8px] md:text-[9px] text-white/20 font-bold uppercase tracking-[0.2em] ml-1">APhim Studio</span>
             </div>
         </div>
     `;
+
+    // 🎬 Step 4 — Initialize Lottie Animation (Load from /icons/play.json)
+    if (typeof lottie !== 'undefined') {
+        const anim = lottie.loadAnimation({
+            container: document.getElementById('play-btn'),
+            renderer: 'svg',
+            loop: false,
+            autoplay: false,
+            path: '/icons/play.json'
+        });
+
+        const placeholder = document.getElementById('playerPlaceholder');
+        if (placeholder) {
+            placeholder.addEventListener('mouseenter', () => anim.play());
+            placeholder.addEventListener('mouseleave', () => anim.stop());
+        }
+    }
 }
 
 // Global callback to start playback on click

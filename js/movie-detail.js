@@ -11,6 +11,23 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     await loadMovieDetail(slug);
+
+    // 🎬 Initialize Lottie for Watch Now button
+    if (typeof lottie !== 'undefined' && document.getElementById('play-btn-lottie')) {
+        const playBtnAnim = lottie.loadAnimation({
+            container: document.getElementById('play-btn-lottie'),
+            renderer: 'svg',
+            loop: true,
+            autoplay: false,
+            path: '/icons/play-button.json?v=5'
+        });
+
+        const watchNowBtn = document.getElementById('watchNowBtn');
+        if (watchNowBtn) {
+            watchNowBtn.addEventListener('mouseenter', () => playBtnAnim.play());
+            watchNowBtn.addEventListener('mouseleave', () => playBtnAnim.stop());
+        }
+    }
 });
 
 // Load movie detail from API
