@@ -272,17 +272,74 @@ window.getHiddenMovieOverlay = function(slug) {
     }
 })();
 
-// Initialize Global Lottie Search Icon (Replaces static search icon)
+// Initialize Global Lottie Icons (Replaces static icons with premium Lottie animations)
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof lottie === 'undefined') {
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js';
         script.onload = () => {
+            injectGlobalLottieStyles();
             initLottieSearchGlobal();
+            initLottieUserGlobal();
         };
         document.head.appendChild(script);
     } else {
+        injectGlobalLottieStyles();
         initLottieSearchGlobal();
+        initLottieUserGlobal();
+    }
+
+    function injectGlobalLottieStyles() {
+        if (!document.getElementById('lottie-global-styles')) {
+            const style = document.createElement('style');
+            style.id = 'lottie-global-styles';
+            style.textContent = `
+                /* Global Search Lottie Icon Color overrides */
+                .search-lottie-icon svg path,
+                .search-lottie-icon svg [stroke] {
+                    stroke: #FFFA07 !important;
+                }
+                .search-lottie-icon svg [fill]:not([fill="none"]) {
+                    fill: #FFFA07 !important;
+                }
+
+                /* Hide the Lottie background box and any extra square outline layers */
+                .user-lottie-icon svg g[aria-label*="background"],
+                .user-lottie-icon svg g[id*="background"],
+                .user-lottie-icon svg g[class*="background"],
+                .user-lottie-icon svg [aria-label*="background"] path,
+                .user-lottie-icon svg [id*="background"] path {
+                    display: none !important;
+                    opacity: 0 !important;
+                    visibility: hidden !important;
+                }
+
+                /* Global User Profile Lottie Icon Color overrides (Black #000000 & Bolder Outline) */
+                .user-lottie-icon svg path,
+                .user-lottie-icon svg [stroke] {
+                    stroke: #000000 !important;
+                    stroke-width: 2.2px !important;
+                }
+                .user-lottie-icon svg [fill]:not([fill="none"]) {
+                    fill: #000000 !important;
+                }
+
+                /* Vertically align icon and text inside login button */
+                .nav-auth-btn {
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    gap: 6px !important;
+                }
+
+                .user-lottie-icon {
+                    vertical-align: middle !important;
+                    margin-bottom: 4px !important;
+                    margin-right: -4px !important;
+                }
+            `;
+            document.head.appendChild(style);
+        }
     }
 
     function initLottieSearchGlobal() {
@@ -336,6 +393,61 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
             }
+        });
+    }
+
+    function initLottieUserGlobal() {
+        const replaceUserIcon = (icon) => {
+            if (icon.hasAttribute('data-lottie-initialized')) return;
+            icon.setAttribute('data-lottie-initialized', 'true');
+
+            const lottieContainer = document.createElement('div');
+            lottieContainer.className = icon.className;
+            lottieContainer.classList.remove('material-icons-round', 'material-icons', 'material-icons-outlined', 'text-gray-500');
+            lottieContainer.classList.add('user-lottie-icon');
+
+            // Apply size & placement overrides to match perfectly inside button
+            lottieContainer.style.setProperty('width', '20px', 'important');
+            lottieContainer.style.setProperty('height', '20px', 'important');
+            lottieContainer.style.setProperty('box-sizing', 'content-box', 'important');
+            lottieContainer.style.setProperty('display', 'inline-flex', 'important');
+            lottieContainer.style.setProperty('align-items', 'center', 'important');
+            lottieContainer.style.setProperty('justify-content', 'center', 'important');
+
+            icon.parentNode.insertBefore(lottieContainer, icon);
+            icon.remove();
+
+            const anim = lottie.loadAnimation({
+                container: lottieContainer,
+                renderer: 'svg',
+                loop: true,
+                autoplay: true,
+                path: '/icons/user-profile.json?v=4'
+            });
+
+            anim.setSpeed(0.6); // 0.5-0.7x speed
+        };
+
+        const scanAndReplace = () => {
+            const authBtns = document.querySelectorAll('.nav-auth-btn');
+            authBtns.forEach(authBtn => {
+                const icon = authBtn.querySelector('.material-icons-round, .material-icons, .material-icons-outlined');
+                if (icon && (icon.textContent.trim() === 'person' || icon.classList.contains('person-icon'))) {
+                    replaceUserIcon(icon);
+                }
+            });
+        };
+
+        // 1. Initial scan & replace
+        scanAndReplace();
+
+        // 2. Set up MutationObserver to automatically handle dynamic updates (e.g. from user-ui.js)
+        const observer = new MutationObserver(() => {
+            scanAndReplace();
+        });
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
         });
     }
 });
