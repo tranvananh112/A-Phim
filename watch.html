@@ -94,6 +94,112 @@
         }
     </style>
 
+    <!-- 🎬 PREMIUM UNIFIED 3-LAYER DARK THEME (Netflix & YouTube inspired) -->
+    <style id="premium-dark-theme-3-layer">
+        /* ── LỚP 1: Nền tổng thể toàn trang (Overall darkest page bg) ── */
+        html, body, .bg-background-dark {
+            background-color: #0f0f0f !important;
+            background: #0f0f0f !important;
+        }
+
+        /* ── LỚP 2: Khung card chính, Sidebar containers, các Section lớn ── */
+        .bg-layer-2,
+        #comments-section > div,
+        .bg-surface-dark\/50 {
+            background-color: #1a1a1a !important;
+            background: #1a1a1a !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
+        }
+
+        /* ── LỚP 3: Các thành phần con bên trong (Comments, Input boxes, Episodes, Buttons) ── */
+        .bg-layer-3,
+        .ap-cmt-guest,
+        .ap-cmt-form-logged,
+        .ap-cmt-item,
+        .comment-item,
+        #comments-section div.bg-\[\#323447\],
+        #comments-section .bg-\[\#282a3a\],
+        #comments-section textarea,
+        #comments-section input,
+        .ap-ava-dropdown,
+        .ap-dropdown-menu {
+            background-color: #2a2a2a !important;
+            background: #2a2a2a !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        }
+
+        /* ── Override styles cho từng comment & input bên trong ── */
+        .ap-cmt-item {
+            padding: 16px !important;
+            border-radius: 12px !important;
+            margin-bottom: 14px !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+        }
+        .ap-cmt-replies {
+            border-left: 2px solid rgba(255, 255, 255, 0.08) !important;
+        }
+        .ap-cmt-textarea, .ap-cmt-textarea::placeholder, #commentInput::placeholder {
+            color: rgba(255, 255, 255, 0.4) !important;
+        }
+        .ap-form-user-bar {
+            background-color: rgba(255, 255, 255, 0.02) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
+        .ap-dropdown-item {
+            color: #e5e7eb !important;
+            background: transparent !important;
+        }
+        .ap-dropdown-item:hover {
+            background-color: #383838 !important;
+            background: #383838 !important;
+        }
+        .ap-ep-tag {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* Từng tập phim */
+        #episode-list a {
+            background-color: #2a2a2a !important;
+            background: #2a2a2a !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            color: #e5e7eb !important;
+            transition: all 0.2s ease-in-out !important;
+        }
+        #episode-list a:hover {
+            background-color: #fcd576 !important;
+            background: #fcd576 !important;
+            color: #000000 !important;
+            border-color: #fcd576 !important;
+            box-shadow: 0 0 12px rgba(252, 213, 118, 0.35) !important;
+        }
+        #episode-list a.active {
+            background-color: #fcd576 !important;
+            background: #fcd576 !important;
+            color: #000000 !important;
+            border-color: #fcd576 !important;
+            font-weight: 700 !important;
+        }
+
+        /* Sidebar recommendations */
+        #recommendations-list > a,
+        #recommendations-list [class*="bg-"] {
+            background-color: #1a1a1a !important;
+            background: #1a1a1a !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            border-radius: 12px !important;
+            overflow: hidden !important;
+            transition: all 0.3s ease !important;
+        }
+        #recommendations-list > a:hover {
+            transform: translateY(-4px) !important;
+            border-color: rgba(252, 213, 118, 0.3) !important;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+        }
+    </style>
+
+
     <link rel="stylesheet" href="css/nav-desktop-v2.css?v=13">
     <link rel="stylesheet" href="css/design-tokens.css?v=13">
     <script src="js/anti-devtools.js?v=10"></script>
@@ -365,7 +471,7 @@
                 </div>
 
                 <!-- Episodes -->
-                <div class="bg-surface-dark/50 border border-gray-800 rounded-xl p-4 md:p-6 mt-4">
+                <div class="bg-layer-2 border border-white/5 rounded-xl p-4 md:p-6 mt-4">
                     <h3 class="text-xl font-bold flex items-center gap-2 mb-4">
                         <span class="w-1 h-6 bg-primary rounded-full shadow-[0_0_10px_rgba(236,19,19,0.5)]"></span>
                         Danh sách tập
@@ -392,7 +498,7 @@
 
         <!-- DOM placeholder for Comments & Rating System -->
         <div id="comments-section" class="w-full mt-8 mb-8">
-            <div class="mt-8 bg-[#282a3a] border border-white/5 rounded-xl p-4 md:p-8 text-white w-full">
+            <div class="mt-8 bg-layer-2 border border-white/5 rounded-xl p-4 md:p-8 text-white w-full">
                 <h3 class="text-xl md:text-2xl font-bold mb-6 flex items-center gap-3">
                     <span class="material-icons-round text-primary outline-none">sentiment_satisfied_alt</span>
                     Bình luận (70)
@@ -410,7 +516,7 @@
                         class="text-[#fcd576] font-medium cursor-pointer hover:underline">đăng nhập</span> để tham gia
                     bình luận.</p>
 
-                <div class="space-y-4 border border-white/10 rounded-xl p-4 md:p-6 bg-[#323447]">
+                <div class="space-y-4 border border-white/10 rounded-xl p-4 md:p-6 bg-layer-3">
                     <textarea id="commentInput"
                         class="w-full bg-transparent border-none text-gray-300 placeholder-gray-500 focus:ring-0 resize-none"
                         rows="3" placeholder="Viết bình luận"></textarea>
@@ -420,13 +526,13 @@
                         <div>
                             <label class="block text-gray-400 text-sm mb-1">Tên của bạn</label>
                             <input type="text"
-                                class="w-full bg-[#282a3a] border border-white/10 rounded-lg p-3 text-white focus:border-primary focus:ring-1 focus:ring-primary"
+                                class="w-full bg-layer-3 border border-white/10 rounded-lg p-3 text-white focus:border-primary focus:ring-1 focus:ring-primary"
                                 placeholder="Tên của bạn">
                         </div>
                         <div>
                             <label class="block text-gray-400 text-sm mb-1">Email</label>
                             <input type="email"
-                                class="w-full bg-[#282a3a] border border-white/10 rounded-lg p-3 text-white focus:border-primary focus:ring-1 focus:ring-primary"
+                                class="w-full bg-layer-3 border border-white/10 rounded-lg p-3 text-white focus:border-primary focus:ring-1 focus:ring-primary"
                                 placeholder="Email (không bắt buộc)">
                         </div>
                     </div>
