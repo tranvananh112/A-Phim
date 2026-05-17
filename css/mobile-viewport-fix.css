@@ -370,3 +370,13 @@ select option {
         gap: 8px !important;
     }
 }
+
+/* Custom styling for Global Lottie Search Icon to set its color to yellow #FFFA07 */
+.search-lottie-icon svg path,
+.search-lottie-icon svg [stroke] {
+    stroke: #FFFA07 !important;
+}
+.search-lottie-icon svg [fill]:not([fill="none"]) {
+    fill: #FFFA07 !important;
+}
+

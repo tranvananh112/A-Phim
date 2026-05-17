@@ -271,3 +271,72 @@ window.getHiddenMovieOverlay = function(slug) {
         }
     }
 })();
+
+// Initialize Global Lottie Search Icon (Replaces static search icon)
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof lottie === 'undefined') {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js';
+        script.onload = () => {
+            initLottieSearchGlobal();
+        };
+        document.head.appendChild(script);
+    } else {
+        initLottieSearchGlobal();
+    }
+
+    function initLottieSearchGlobal() {
+        const icons = document.querySelectorAll('.material-icons, .material-icons-round, .material-icons-outlined');
+        icons.forEach(icon => {
+            if (icon.textContent.trim() === 'search' || icon.classList.contains('search-icon') || icon.classList.contains('mobile-inline-search-icon')) {
+                if (icon.hasAttribute('data-lottie-initialized')) return;
+                
+                const lottieContainer = document.createElement('div');
+                lottieContainer.className = icon.className;
+                lottieContainer.classList.remove('material-icons-round', 'material-icons', 'material-icons-outlined', 'text-gray-500');
+                lottieContainer.classList.add('search-lottie-icon');
+                
+                // Add specific styling - using content-box to keep padding outer bounds intact
+                lottieContainer.style.setProperty('width', '24px', 'important');
+                lottieContainer.style.setProperty('height', '24px', 'important');
+                lottieContainer.style.setProperty('box-sizing', 'content-box', 'important');
+                lottieContainer.style.setProperty('display', 'inline-flex', 'important');
+                lottieContainer.style.setProperty('align-items', 'center', 'important');
+                lottieContainer.style.setProperty('justify-content', 'center', 'important');
+                lottieContainer.style.setProperty('cursor', 'pointer', 'important');
+                lottieContainer.setAttribute('data-lottie-initialized', 'true');
+                
+                icon.parentNode.insertBefore(lottieContainer, icon);
+                icon.remove();
+
+                const anim = lottie.loadAnimation({
+                    container: lottieContainer,
+                    renderer: 'svg',
+                    loop: true,
+                    autoplay: false,
+                    path: '/icons/search-zoom.json?v=3'
+                });
+
+                const triggerArea = lottieContainer.closest('form') || lottieContainer.parentNode;
+                
+                triggerArea.addEventListener('mouseenter', () => {
+                    anim.play();
+                });
+                triggerArea.addEventListener('mouseleave', () => {
+                    anim.stop();
+                });
+
+                lottieContainer.addEventListener('click', (e) => {
+                    const input = triggerArea.querySelector('input');
+                    if (input) {
+                        e.preventDefault();
+                        input.focus();
+                    } else if (triggerArea.tagName === 'FORM') {
+                        triggerArea.submit();
+                    }
+                });
+            }
+        });
+    }
+});
+
