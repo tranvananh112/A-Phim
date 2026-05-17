@@ -207,7 +207,7 @@
     // ── Per-input instance ───────────────────────────────────────────────────────
     function attachSuggest(input) {
         const mobile = isMobileInput(input);
-        const maxResults = mobile ? 1 : 5;
+        const maxResults = 5;
 
         // Panel is appended to BODY — escapes any overflow:hidden parent
         const panel = document.createElement('div');
