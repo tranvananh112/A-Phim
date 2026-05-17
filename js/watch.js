@@ -97,7 +97,7 @@ function renderPlayerPlaceholder(episode) {
     const playerContainer = document.querySelector('.aspect-video');
     if (!playerContainer) return;
 
-    const posterUrl = currentMovie ? movieAPI.getImageURL(currentMovie.thumb_url, 1200, 90, true) : '';
+    const posterUrl = currentMovie ? movieAPI.getImageURL(currentMovie.poster_url || currentMovie.thumb_url, 1200, 90, true) : '';
     const movieName = currentMovie ? currentMovie.name : 'Đang tải...';
     
     // Thông minh hóa tên tập: Nếu là số thì thêm chữ "Tập", nếu là chữ (Full, Trailer...) thì giữ nguyên
@@ -116,44 +116,49 @@ function renderPlayerPlaceholder(episode) {
     const lang = currentMovie ? currentMovie.lang : 'Vietsub';
     
     playerContainer.innerHTML = `
-        <div id="playerPlaceholder" class="absolute inset-0 w-full h-full cursor-pointer overflow-hidden group/overlay" 
+        <div id="playerPlaceholder" class="absolute inset-0 w-full h-full cursor-pointer overflow-hidden rounded-xl group/overlay" 
+             style="transform: translate3d(0,0,0); -webkit-transform: translate3d(0,0,0); border-radius: 12px;"
              onclick="window.startActualPlayback()">
             
-            <!-- Background Image with Ambient Blur -->
-            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-[1.5s] ease-out group-hover/overlay:scale-105" 
-                 style="background-image: url('${posterUrl}'); filter: brightness(0.5) blur(1px);"></div>
+            <!-- Background Image with Cinematic Ambient Blur -->
+            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transform-gpu scale-105 transition-all duration-[1.5s] ease-out group-hover/overlay:scale-112" 
+                 style="background-image: url('${posterUrl}'); filter: brightness(0.55) blur(1.5px) contrast(1.05); border-radius: 12px; overflow: hidden;"></div>
             
-            <!-- Cinematic Dark Gradient (Bottom to Top) -->
-            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent opacity-90"></div>
+            <!-- Netflix/Disney+ Premium Double Gradients -->
+            <!-- Top Gradient (Fade out header backdrop) -->
+            <div class="absolute inset-0 bg-gradient-to-b from-black/95 via-black/30 to-transparent opacity-95" style="border-radius: 12px;"></div>
+            <!-- Bottom Gradient (Fade out text backdrop - cinematic) -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/65 to-transparent opacity-95" style="border-radius: 12px;"></div>
             
-            <!-- Central Interaction Hub (Perfectly Centered) -->
-            <div class="absolute inset-0 flex flex-col items-center justify-center z-10">
-                <div class="flex flex-col items-center transition-all duration-500 transform group-hover/overlay:scale-110">
-                    <!-- Premium Lottie Animated Play Button -->
-                    <div id="play-btn" style="width:85px; height:85px; cursor:pointer;" class="filter drop-shadow-[0_10px_40px_rgba(0,0,0,0.6)]"></div>
-                    
-                    <!-- Dynamic Context Details -->
-                    <div class="mt-4 text-center px-6 pointer-events-none select-none">
-                        <h3 class="text-white font-bold text-lg md:text-2xl tracking-tight drop-shadow-[0_2px_15px_rgba(0,0,0,0.9)] mb-0.5">
-                            ${movieName}
-                        </h3>
-                        <p class="text-white/60 text-xs md:text-sm font-medium tracking-wide">
-                            ${epName}
-                        </p>
-                    </div>
-                </div>
+            <!-- Central Play Button (Dead Centered - Absolute Horizontal & Vertical Center) -->
+            <div class="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+                <div id="play-btn" style="width: 80px; height: 80px; cursor: pointer;" class="pointer-events-auto transition-transform duration-500 transform group-hover/overlay:scale-110 filter drop-shadow-[0_10px_35px_rgba(252,211,77,0.35)]"></div>
             </div>
             
-            <!-- Minimal Quality Badge (Bottom Left - Strictly Forced) -->
-            <div class="absolute z-20 flex flex-col gap-1.5 transition-all duration-500 transform group-hover/overlay:translate-x-1"
-                 style="position: absolute !important; bottom: 30px !important; left: 30px !important; top: auto !important; right: auto !important;">
-                <div class="flex items-center gap-1.5 bg-black/60 backdrop-blur-xl px-2.5 py-1 rounded border border-white/10 shadow-2xl">
-                    <div class="w-1.5 h-1.5 rounded-full bg-[#fcd576] shadow-[0_0_5px_#fcd576]"></div>
-                    <span class="text-[9px] md:text-[10px] font-black text-white uppercase tracking-wider">
-                        ${quality} • ${lang}
+            <!-- Netflix-Style Bottom-Left Cinematic Movie Info & Meta -->
+            <div class="absolute z-20 flex flex-col gap-2 transition-all duration-500 transform group-hover/overlay:translate-x-1"
+                 style="position: absolute !important; bottom: 24px !important; left: 24px !important; top: auto !important; right: auto !important; pointer-events: none; -webkit-user-select: none; user-select: none;">
+                
+                <!-- Badges / Tags -->
+                <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded border border-white/10 shadow-lg">
+                        <div class="w-1.5 h-1.5 rounded-full bg-[#fcd576] shadow-[0_0_5px_#fcd576]"></div>
+                        <span class="text-[9px] md:text-[10px] font-black text-white uppercase tracking-wider">
+                            ${quality} • ${lang}
+                        </span>
+                    </div>
+                    <span class="text-[9px] md:text-[10px] text-white/40 font-bold uppercase tracking-[0.2em]">APhim Studio</span>
+                </div>
+
+                <!-- Movie Title & Episode Name (Premium layout) -->
+                <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3">
+                    <h3 class="text-white font-extrabold text-xl sm:text-2xl md:text-3xl tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)] max-w-[90vw] sm:max-w-[450px] md:max-w-[600px] truncate leading-tight">
+                        ${movieName}
+                    </h3>
+                    <span class="text-[#fcd576] font-bold text-xs sm:text-sm md:text-base tracking-wide drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] whitespace-nowrap">
+                        ${epName}
                     </span>
                 </div>
-                <span class="text-[8px] md:text-[9px] text-white/20 font-bold uppercase tracking-[0.2em] ml-1">APhim Studio</span>
             </div>
         </div>
     `;
@@ -178,8 +183,12 @@ function renderPlayerPlaceholder(episode) {
 
 // Global callback to start playback on click
 window.startActualPlayback = function() {
-    console.log('⚡ User interaction verified. Loading stream...');
-    initializePlayer(currentEpisode);
+    console.log('⚡ User interaction verified. Deferring stream load to complete touch lifecycle...');
+    // Defer by 100ms so that the click/touch event lifecycle completes fully on the placeholder,
+    // allowing the browser to cleanly transfer focus and future gestures to the new video element.
+    setTimeout(() => {
+        initializePlayer(currentEpisode);
+    }, 100);
 };
 
 // Render episode list
@@ -243,6 +252,7 @@ function initializePlayer(episode) {
         <video id="videoPlayer" 
             class="w-full h-full bg-black" 
             controls 
+            preload="auto"
             controlsList="nodownload"
             poster="${movieAPI.getImageURL(currentMovie.thumb_url, 1200, 90, true)}">
             Trình duyệt của bạn không hỗ trợ video.
@@ -250,6 +260,72 @@ function initializePlayer(episode) {
     `;
 
     player = document.getElementById('videoPlayer');
+
+    // Register mobile touch double-tap handler directly on the video element
+    let lastTap = 0;
+    player.addEventListener('touchend', (e) => {
+        const now = Date.now();
+        const DOUBLE_TAP_DELAY = 300;
+        
+        if (now - lastTap < DOUBLE_TAP_DELAY) {
+            e.preventDefault(); // Stop native double-tap-to-zoom
+            
+            // Calculate relative touch coordinate to find which side was tapped
+            const rect = player.getBoundingClientRect();
+            const touch = e.changedTouches[0] || e.touches[0];
+            if (touch) {
+                const tapX = touch.clientX - rect.left;
+                const isRightSide = tapX > (rect.width / 2);
+                
+                if (isRightSide) {
+                    player.currentTime = Math.min(player.duration, player.currentTime + 10);
+                    showSeekOverlay('+10s', true);
+                } else {
+                    player.currentTime = Math.max(0, player.currentTime - 10);
+                    showSeekOverlay('-10s', false);
+                }
+            }
+            lastTap = 0; // Reset tap tracking
+        } else {
+            lastTap = now;
+        }
+    });
+
+    // Register keyboard shortcuts (Space to toggle, ArrowRight/ArrowLeft to seek 10s)
+    if (window._watchKeydownHandler) {
+        document.removeEventListener('keydown', window._watchKeydownHandler, true);
+    }
+    
+    window._watchKeydownHandler = function (e) {
+        const active = document.activeElement;
+        // Skip hotkeys if typing in inputs/textareas
+        if (active && (
+            active.tagName === 'INPUT' || 
+            active.tagName === 'TEXTAREA' || 
+            active.isContentEditable
+        )) {
+            return;
+        }
+        
+        if (e.code === 'Space') {
+            e.preventDefault();
+            if (player.paused) {
+                player.play().catch(err => console.log(err));
+            } else {
+                player.pause();
+            }
+        } else if (e.code === 'ArrowRight') {
+            e.preventDefault();
+            player.currentTime = Math.min(player.duration, player.currentTime + 10);
+            showSeekOverlay('+10s', true);
+        } else if (e.code === 'ArrowLeft') {
+            e.preventDefault();
+            player.currentTime = Math.max(0, player.currentTime - 10);
+            showSeekOverlay('-10s', false);
+        }
+    };
+    
+    document.addEventListener('keydown', window._watchKeydownHandler, true);
 
     // Prefer native HLS on iOS and Safari for better stability and performance
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -270,6 +346,8 @@ function initializePlayer(episode) {
                 setTimeout(() => {
                     console.log('⏪ [SafeRestore-Delay] Resumed on Mobile:', progress.currentTime);
                     player.currentTime = progress.currentTime;
+                    // Force playback resume after mutating currentTime to prevent mobile freeze
+                    player.play().catch(e => console.log('iOS play after restore prevented:', e));
                 }, 200); // Độ trễ 200ms đảm bảo trình duyệt đã ổn định Buffer, không bị treo Touch
             }
         }, { once: true }); // Chỉ chạy 1 lần duy nhất
@@ -283,7 +361,12 @@ function initializePlayer(episode) {
         const hls = new Hls({
             debug: false,
             enableWorker: true,
-            lowLatencyMode: true,
+            lowLatencyMode: false, // Priority to aggressive buffer over ultra-low latency
+            maxBufferLength: 60, // Keep up to 60 seconds of video preloaded in buffer in advance
+            maxMaxBufferLength: 120, // Preload up to 120 seconds of stream segments
+            preload: true,
+            startLevel: -1,
+            capLevelToPlayerSize: true
         });
 
         console.log('📡 Loading source:', videoUrl);
@@ -298,9 +381,12 @@ function initializePlayer(episode) {
                 setTimeout(() => {
                     console.log('⏪ [SafeRestore-HLS] Resumed with Delay:', progress.currentTime);
                     player.currentTime = progress.currentTime;
+                    // Force playback resume after mutating currentTime to prevent HLS.js freeze
+                    player.play().catch(e => console.log('HLS play after restore prevented:', e));
                 }, 150); 
+            } else {
+                player.play().catch(e => console.log('Auto-play prevented:', e));
             }
-            player.play().catch(e => console.log('Auto-play prevented:', e));
         });
 
         hls.on(Hls.Events.ERROR, function (event, data) {
@@ -784,3 +870,48 @@ window.toggleCinemaMode = function() {
         cinemaModeBadge.classList.replace('border-gray-500', 'border-primary');
     }
 };
+
+// Show YouTube/Netflix-style visual seek notification overlay
+function showSeekOverlay(text, isRight) {
+    const container = document.querySelector('.aspect-video');
+    if (!container) return;
+    
+    // Remove existing seek indicators to avoid overlaps
+    const oldIndicator = container.querySelector('.seek-indicator');
+    if (oldIndicator) oldIndicator.remove();
+    
+    const indicator = document.createElement('div');
+    indicator.className = `seek-indicator absolute z-30 top-1/2 -translate-y-1/2 pointer-events-none flex flex-col items-center justify-center bg-black/70 text-white rounded-full w-24 h-24 backdrop-blur-md transition-all duration-300 scale-75 opacity-0`;
+    
+    // Explicitly enforce horizontal positioning on correct side of the parent player container
+    indicator.style.position = 'absolute';
+    indicator.style.top = '50%';
+    indicator.style.transform = 'translate(-50%, -50%)';
+    if (isRight) {
+        indicator.style.right = '20%';
+        indicator.style.left = 'auto';
+    } else {
+        indicator.style.left = '20%';
+        indicator.style.right = 'auto';
+    }
+    
+    const icon = isRight ? 'fast_forward' : 'fast_rewind';
+    indicator.innerHTML = `
+        <span class="material-icons-round text-4xl mb-1.5 animate-pulse">${icon}</span>
+        <span class="text-xs font-black tracking-wider">${text}</span>
+    `;
+    
+    container.appendChild(indicator);
+    
+    // Smooth fade & scale entrance
+    requestAnimationFrame(() => {
+        indicator.classList.remove('scale-75', 'opacity-0');
+        indicator.classList.add('scale-100', 'opacity-100');
+    });
+    
+    // Fade out and self-destruct after 800ms
+    setTimeout(() => {
+        indicator.classList.add('scale-75', 'opacity-0');
+        setTimeout(() => indicator.remove(), 300);
+    }, 800);
+}
