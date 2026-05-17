@@ -254,8 +254,8 @@
         }
 
         function hide(instant) {
-            if (instant) { panel.classList.remove('visible'); return; }
             clearTimeout(hideTimer);
+            if (instant) { panel.classList.remove('visible'); return; }
             hideTimer = setTimeout(() => panel.classList.remove('visible'), 180);
         }
 
@@ -296,10 +296,12 @@
             // Enter falls through to native form submit → search.html?q=…
         });
 
-        // Click outside → hide
-        document.addEventListener('click', e => {
+        // Click OR touch outside → hide immediately
+        function onOutside(e) {
             if (!panel.contains(e.target) && e.target !== input) { hide(true); }
-        }, true);
+        }
+        document.addEventListener('click', onOutside, true);
+        document.addEventListener('touchstart', onOutside, { capture: true, passive: true });
 
         // Keep panel aligned on scroll / resize
         window.addEventListener('scroll',
