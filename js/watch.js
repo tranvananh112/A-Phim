@@ -73,22 +73,100 @@ function renderMovieInfo(movie, episode) {
 
     const titleElement = document.querySelector('h1');
     if (titleElement) {
-        titleElement.textContent = `${movie.name} (${movie.year})`;
+        titleElement.textContent = movie.name;
     }
 
-    const infoElement = document.getElementById('movie-info') || document.querySelector('.flex.flex-wrap.items-center.gap-4.text-sm');
-    if (infoElement) {
+    // Populate new Netflix-style inline meta badges under player
+    const metaYearBadge = document.getElementById('meta-year-badge');
+    if (metaYearBadge) metaYearBadge.textContent = movie.year;
+
+    const metaRatingVal = document.getElementById('meta-rating-val');
+    if (metaRatingVal) {
         const avgRating = ratingService.getAverageRating(movie.slug);
-        infoElement.innerHTML = `
-            <span class="flex items-center text-primary font-bold">
-                <span class="material-icons-round text-base mr-1">star</span> ${avgRating}
+        metaRatingVal.textContent = avgRating;
+    }
+
+    const metaGenre = document.getElementById('meta-genre');
+    if (metaGenre && movie.category) {
+        metaGenre.textContent = movie.category.map(c => c.name).join(', ');
+    }
+
+    const metaDuration = document.getElementById('meta-duration');
+    if (metaDuration) metaDuration.textContent = movie.time || '-- phút';
+
+    // 🌟 Render Sidebar Premium Movie Card Details
+    const sidebarPoster = document.getElementById('sidebar-poster');
+    if (sidebarPoster) {
+        sidebarPoster.src = movieAPI.getImageURL(movie.poster_url || movie.thumb_url, 300, 85, true);
+        sidebarPoster.alt = movie.name;
+    }
+
+    const sidebarName = document.getElementById('sidebar-movie-name');
+    if (sidebarName) sidebarName.textContent = movie.name;
+
+    const sidebarOrigin = document.getElementById('sidebar-movie-origin');
+    if (sidebarOrigin) sidebarOrigin.textContent = `${movie.origin_name} (${movie.year})`;
+
+    const sidebarQuality = document.getElementById('sidebar-quality');
+    if (sidebarQuality) sidebarQuality.textContent = movie.quality || 'HD';
+
+    const sidebarLang = document.getElementById('sidebar-lang');
+    if (sidebarLang) sidebarLang.textContent = movie.lang || 'Vietsub';
+
+    const sidebarRatingVal = document.getElementById('sidebar-rating-val');
+    if (sidebarRatingVal) {
+        const avgRating = ratingService.getAverageRating(movie.slug);
+        sidebarRatingVal.textContent = avgRating;
+    }
+
+    const sidebarDuration = document.getElementById('sidebar-duration');
+    if (sidebarDuration) sidebarDuration.textContent = movie.time || '-- phút';
+
+    const sidebarGenres = document.getElementById('sidebar-genres');
+    if (sidebarGenres && movie.category) {
+        sidebarGenres.innerHTML = movie.category.map(cat => `
+            <span class="px-3.5 py-1.5 bg-white/5 border border-white/10 rounded-xl text-xs text-gray-200 hover:border-primary hover:text-primary transition-colors cursor-pointer font-semibold">
+                ${cat.name}
             </span>
-            <span>${movie.year}</span>
-            <span class="border border-gray-700 px-2 py-0.5 rounded text-xs uppercase">${movie.quality}</span>
-            <span>${movie.time}</span>
-            <span class="text-gray-500 px-1">•</span>
-            <span>${movie.category?.map(c => c.name).join(', ')}</span>
-        `;
+        `).join('');
+    }
+
+    // 🎭 Render Cast (Diễn viên) circular avatars in sidebar (limit to max 5-6)
+    const sidebarCastSection = document.getElementById('sidebar-cast-section');
+    const sidebarCast = document.getElementById('sidebar-cast');
+    if (sidebarCast && movie.actor && movie.actor.length > 0) {
+        if (sidebarCastSection) sidebarCastSection.classList.remove('hidden');
+        
+        sidebarCast.innerHTML = movie.actor.slice(0, 6).map((actor, index) => {
+            const colors = ['from-red-500 to-red-700', 'from-blue-500 to-blue-700', 'from-green-500 to-green-700', 'from-yellow-500 to-yellow-700', 'from-purple-500 to-purple-700', 'from-pink-500 to-pink-700', 'from-indigo-500 to-indigo-700', 'from-teal-500 to-teal-700'];
+            const colorClass = colors[index % colors.length];
+            const initial = actor.charAt(0).toUpperCase();
+
+            return `
+                <div class="flex-shrink-0 w-16 text-center group cursor-pointer" data-actor-name="${actor}">
+                    <div class="relative mb-1.5">
+                        <div class="actor-avatar-container w-14 h-14 mx-auto rounded-full bg-gradient-to-br ${colorClass} flex items-center justify-center text-white text-sm font-black border border-white/10 group-hover:border-primary transition-all duration-300 group-hover:scale-105 overflow-hidden shadow-lg">
+                            ${initial}
+                        </div>
+                    </div>
+                    <p class="text-gray-300 text-[11px] font-semibold truncate w-16 group-hover:text-primary transition-colors leading-tight">${actor}</p>
+                </div>
+            `;
+        }).join('');
+
+        // Trigger TMDB actor avatar loading in the background
+        if (typeof loadActorImagesFromTMDB === 'function') {
+            setTimeout(() => {
+                const actorElements = document.querySelectorAll('[data-actor-name]');
+                if (actorElements.length > 0) {
+                    loadActorImagesFromTMDB(movie).catch(err => {
+                        console.warn('⚠️ Failed to load actor images:', err);
+                    });
+                }
+            }, 500);
+        }
+    } else if (sidebarCastSection) {
+        sidebarCastSection.classList.add('hidden');
     }
 }
 
@@ -119,10 +197,13 @@ function renderPlayerPlaceholder(episode) {
         <div id="playerPlaceholder" class="absolute inset-0 w-full h-full cursor-pointer overflow-hidden rounded-xl group/overlay" 
              style="transform: translate3d(0,0,0); -webkit-transform: translate3d(0,0,0); border-radius: 12px;"
              onclick="window.startActualPlayback()">
+            <!-- Background Layer 1: Cinematic Ambient Blur (Covers everything with soft colors) -->
+            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transform-gpu scale-105" 
+                 style="background-image: url('${posterUrl}'); filter: brightness(0.25) blur(15px); border-radius: 12px; overflow: hidden;"></div>
             
-            <!-- Background Image with Cinematic Ambient Blur -->
-            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transform-gpu scale-105 transition-all duration-[1.5s] ease-out group-hover/overlay:scale-112" 
-                 style="background-image: url('${posterUrl}'); filter: brightness(0.55) blur(1.5px) contrast(1.05); border-radius: 12px; overflow: hidden;"></div>
+            <!-- Background Layer 2: Sharp Centered Image (Contain - displays the ENTIRE uncropped poster/backdrop) -->
+            <div class="absolute inset-0 bg-contain bg-center bg-no-repeat transition-all duration-[1.5s] ease-out group-hover/overlay:scale-103" 
+                 style="background-image: url('${posterUrl}'); filter: brightness(0.6) contrast(1.05); border-radius: 12px; overflow: hidden;"></div>
             
             <!-- Netflix/Disney+ Premium Double Gradients -->
             <!-- Top Gradient (Fade out header backdrop) -->
@@ -132,27 +213,28 @@ function renderPlayerPlaceholder(episode) {
             
             <!-- Central Play Button (Dead Centered - Absolute Horizontal & Vertical Center) -->
             <div class="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-                <div id="play-btn" style="width: 80px; height: 80px; cursor: pointer;" class="pointer-events-auto transition-transform duration-500 transform group-hover/overlay:scale-110 filter drop-shadow-[0_10px_35px_rgba(252,211,77,0.35)]"></div>
+                <div id="play-btn" class="w-[55px] h-[55px] sm:w-[80px] sm:h-[80px] pointer-events-auto transition-transform duration-500 transform group-hover/overlay:scale-110 filter drop-shadow-[0_10px_35px_rgba(252,211,77,0.35)]" style="cursor: pointer;"></div>
             </div>
             
             <!-- Netflix-Style Bottom-Left Cinematic Movie Info & Meta -->
-            <div class="absolute z-20 flex flex-col gap-2 transition-all duration-500 transform group-hover/overlay:translate-x-1"
-                 style="position: absolute !important; bottom: 24px !important; left: 24px !important; top: auto !important; right: auto !important; pointer-events: none; -webkit-user-select: none; user-select: none;">
+            <div class="absolute z-20 flex flex-col gap-2.5 sm:gap-3.5 transition-all duration-500 transform group-hover/overlay:translate-x-1 bottom-3 left-4 sm:bottom-6 sm:left-6"
+                 style="position: absolute !important; top: auto !important; right: auto !important; pointer-events: none; -webkit-user-select: none; user-select: none;">
                 
-                <!-- Badges / Tags -->
-                <div class="flex items-center gap-2">
-                    <div class="flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded border border-white/10 shadow-lg">
-                        <div class="w-1.5 h-1.5 rounded-full bg-[#fcd576] shadow-[0_0_5px_#fcd576]"></div>
-                        <span class="text-[9px] md:text-[10px] font-black text-white uppercase tracking-wider">
+                <!-- Badges / Tags (Stacked on Mobile, Horizontal on Desktop - Perfectly Left-Aligned & Spacious) -->
+                <div class="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-2.5">
+                    <span class="text-[10px] md:text-[11px] text-[#fcd576] font-black uppercase tracking-[0.15em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">APhim Studio</span>
+                    <span class="hidden sm:inline text-white/40 text-xs">|</span>
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_5px_rgba(255,255,255,0.8)]"></div>
+                        <span class="text-[9px] md:text-[10px] font-black text-white uppercase tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                             ${quality} • ${lang}
                         </span>
                     </div>
-                    <span class="text-[9px] md:text-[10px] text-white/40 font-bold uppercase tracking-[0.2em]">APhim Studio</span>
                 </div>
 
-                <!-- Movie Title & Episode Name (Premium layout) -->
-                <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3">
-                    <h3 class="text-white font-extrabold text-xl sm:text-2xl md:text-3xl tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)] max-w-[90vw] sm:max-w-[450px] md:max-w-[600px] truncate leading-tight">
+                <!-- Movie Title & Episode Name (Premium layout with extra top margin) -->
+                <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3 mt-1.5">
+                    <h3 class="text-white font-extrabold text-base sm:text-2xl md:text-3xl tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)] max-w-[65vw] sm:max-w-[450px] md:max-w-[600px] truncate leading-tight">
                         ${movieName}
                     </h3>
                     <span class="text-[#fcd576] font-bold text-xs sm:text-sm md:text-base tracking-wide drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] whitespace-nowrap">
@@ -200,16 +282,42 @@ function renderEpisodeList(episodes) {
 
     const serverData = episodes[0].server_data;
 
+    // Update dynamic episode count indicator
+    const episodeCountEl = document.getElementById('episode-count');
+    if (episodeCountEl) {
+        episodeCountEl.textContent = `(${serverData.length} tập)`;
+    }
+
     container.innerHTML = serverData.map(ep => {
         const isActive = currentEpisode && ep.slug === currentEpisode.slug;
+        const name = ep.name.trim();
+        let displayEpName = name;
+        if (/^\d+$/.test(name)) {
+            displayEpName = `Tập ${name.padStart(2, '0')}`;
+        } else {
+            displayEpName = name.startsWith('Tập') ? name : `Tập ${name}`;
+        }
+
         return `
             <button onclick="changeEpisode('${ep.slug}')"
-                class="${isActive ? 'bg-[#fcd576] text-black font-bold border-transparent' : 'bg-[#323447] hover:bg-white/10 text-gray-300 border-white/5'} px-4 py-3 rounded-lg flex items-center justify-center gap-2 transition-colors border whitespace-nowrap shadow-lg">
-                <span class="material-icons-round text-[18px]">${isActive ? 'play_arrow' : 'play_arrow'}</span>
-                ${ep.name}
+                class="${isActive ? 'bg-[#fcd576] text-black font-bold border-transparent shadow-[0_4px_12px_rgba(252,211,77,0.3)] scale-105 active' : 'bg-[#131314] hover:bg-white/5 text-gray-400 border border-white/5 hover:text-white'} transition-all duration-300 rounded-lg w-full py-1.5 text-[11px] sm:text-xs font-semibold cursor-pointer active:scale-95 text-center">
+                ${displayEpName}
             </button>
         `;
     }).join('');
+
+    // Dynamically update under-player control bar navigation buttons
+    if (typeof updateEpisodeNavButtons === 'function') {
+        updateEpisodeNavButtons();
+    }
+
+    // Automatically scroll the active episode into view inside the scrollable container
+    setTimeout(() => {
+        const activeBtn = container.querySelector('button.active');
+        if (activeBtn) {
+            activeBtn.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+    }, 100);
 }
 
 // Initialize video player
@@ -513,12 +621,7 @@ function addFullscreenButton() {
     });
 }
 
-// Change episode
-window.changeEpisode = function (episodeSlug) {
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set('episode', episodeSlug);
-    window.location.search = urlParams.toString();
-};
+// Change episode is defined globally as an instant transition helper below
 
 // Auto play next episode
 function autoPlayNext() {
@@ -547,11 +650,11 @@ async function loadRecommendations() {
         let movies = [];
         
         if (data && data.data && data.data.items) {
-            movies = data.data.items.slice(0, 4);
+            movies = data.data.items.slice(0, 6);
         } else if (data && data.items) {
-            movies = data.items.slice(0, 4);
+            movies = data.items.slice(0, 6);
         } else if (Array.isArray(data)) {
-            movies = data.slice(0, 4);
+            movies = data.slice(0, 6);
         }
         
         if (movies.length > 0) {
@@ -566,32 +669,38 @@ async function loadRecommendations() {
 
 // Render recommendations
 function renderRecommendations(movies, container) {
-    container.innerHTML = movies.map(movie => `
-        <a class="group bg-[#282a3a] rounded-xl overflow-hidden border border-white/5 hover:border-white/20 transition-all flex flex-col h-full" 
-           href="movie-detail.html?slug=${movie.slug}">
-            <div class="relative w-full aspect-[2/3] flex-shrink-0">
-                <img src="${movieAPI.getImageURL(movie.thumb_url)}" 
-                     alt="Xem Phim ${movie.name} (${movie.year}) Vietsub Full HD"
-                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                     onerror="this.src='https://via.placeholder.com/150x225?text=No+Image'" />
-                <span class="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-1.5 py-0.5 rounded">
-                    ${movie.quality || 'HD'}
-                </span>
-            </div>
-            <div class="p-3 flex flex-col flex-grow">
-                <h4 class="font-bold text-sm md:text-base text-gray-200 group-hover:text-primary line-clamp-2 mb-1">
-                    ${movie.name}
-                </h4>
-                <div class="mt-auto pt-2">
-                    <span class="text-xs text-gray-500 mb-1 block">${movie.year}</span>
-                    <div class="flex items-center text-xs text-yellow-500 gap-1">
-                        <span class="material-icons-round text-[14px]">star</span>
-                        <span class="text-gray-300 font-medium">${movie.tmdb?.vote_average?.toFixed(1) || 'N/A'}</span>
+    container.innerHTML = movies.map(movie => {
+        const rating = movie.tmdb?.vote_average ? movie.tmdb.vote_average.toFixed(1) : (movie.imdb || '7.1');
+        return `
+            <a class="group bg-[#1a1a1a] rounded-xl overflow-hidden border border-white/5 hover:border-primary/40 hover:bg-[#222222] transition-all flex flex-col h-full shadow-lg cursor-pointer" 
+               href="movie-detail.html?slug=${movie.slug}">
+                <!-- Thumbnail Poster (Top) -->
+                <div class="relative w-full aspect-[2/3] overflow-hidden bg-black flex-shrink-0">
+                    <img src="${movieAPI.getImageURL(movie.thumb_url, 300, 85, true)}" 
+                         alt="Xem Phim ${movie.name} (${movie.year}) Vietsub Full HD"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                         onerror="this.src='https://via.placeholder.com/150x225?text=No+Image'" />
+                    <!-- Badge HD top-left -->
+                    <span class="absolute top-2 left-2 bg-[#fcd576] text-black font-extrabold text-[9px] px-1.5 py-0.5 rounded uppercase shadow">
+                        ${movie.quality || 'HD'}
+                    </span>
+                </div>
+                <!-- Details below poster -->
+                <div class="p-3 flex flex-col flex-grow">
+                    <h4 class="font-bold text-[11px] sm:text-xs text-gray-200 group-hover:text-primary transition-colors line-clamp-1 leading-snug mb-1">
+                        ${movie.name}
+                    </h4>
+                    <div class="mt-auto flex items-center justify-between text-[10px] text-gray-400">
+                        <span>${movie.year}</span>
+                        <div class="flex items-center text-yellow-500 gap-0.5">
+                            <span class="material-icons-round text-[11px]">star</span>
+                            <span class="text-gray-300 font-medium">${rating}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </a>
-    `).join('');
+            </a>
+        `;
+    }).join('');
 }
 
 // Show error
@@ -611,38 +720,24 @@ function showError(message) {
 
 // Setup Share and Save buttons
 function setupActionButtons() {
-    const saveBtn = document.getElementById('saveMovieBtn');
-    const favBtn = document.getElementById('favoriteMovieBtn');
+    const saveBtns = [document.getElementById('saveMovieBtn'), document.getElementById('sidebarSaveMovieBtn')].filter(Boolean);
+    const favBtns = [document.getElementById('favoriteMovieBtn'), document.getElementById('sidebarFavoriteMovieBtn')].filter(Boolean);
 
-    // Find share button
-    const buttons = document.querySelectorAll('button');
-    let shareBtn = null;
-    buttons.forEach(btn => {
-        const text = btn.textContent.trim();
-        if (text.includes('Chia sẻ') || text.includes('share')) {
-            shareBtn = btn;
+    // Setup save buttons
+    saveBtns.forEach(btn => {
+        if (currentMovie) {
+            updateSaveButton(btn);
+            btn.addEventListener('click', () => toggleSaveMovie(btn));
         }
     });
 
-    // Setup share button
-    if (shareBtn) {
-        shareBtn.addEventListener('click', () => shareMovie());
-        console.log('✅ Share button setup');
-    }
-
-    // Setup save button
-    if (saveBtn && currentMovie) {
-        updateSaveButton(saveBtn);
-        saveBtn.addEventListener('click', () => toggleSaveMovie(saveBtn));
-        console.log('✅ Save button setup');
-    }
-
-    // Setup favorite button
-    if (favBtn && currentMovie) {
-        updateFavoriteButton(favBtn);
-        favBtn.addEventListener('click', () => toggleFavoriteMovie(favBtn));
-        console.log('✅ Favorite button setup');
-    }
+    // Setup favorite buttons
+    favBtns.forEach(btn => {
+        if (currentMovie) {
+            updateFavoriteButton(btn);
+            btn.addEventListener('click', () => toggleFavoriteMovie(btn));
+        }
+    });
 }
 
 // Share movie function
@@ -809,7 +904,9 @@ function toggleFavoriteMovie(button) {
         userService.addToFavorites(currentMovie);
     }
 
-    updateFavoriteButton(button);
+    // Synchronize both primary and sidebar favorite buttons
+    const favBtns = [document.getElementById('favoriteMovieBtn'), document.getElementById('sidebarFavoriteMovieBtn')].filter(Boolean);
+    favBtns.forEach(btn => updateFavoriteButton(btn));
 }
 
 // Update favorite button UI
@@ -855,7 +952,7 @@ window.toggleCinemaMode = function() {
         sidebarCol.classList.remove('hidden');
         sidebarCol.classList.add('lg:block'); 
         videoContainer.classList.remove('lg:col-span-12');
-        videoContainer.classList.add('lg:col-span-9');
+        videoContainer.classList.add('lg:col-span-8');
         cinemaModeBadge.textContent = 'OFF';
         cinemaModeBadge.classList.replace('text-primary', 'text-gray-400');
         cinemaModeBadge.classList.replace('border-primary', 'border-gray-500');
@@ -863,7 +960,7 @@ window.toggleCinemaMode = function() {
         // Turn ON Cinema
         sidebarCol.classList.add('hidden');
         sidebarCol.classList.remove('lg:block');
-        videoContainer.classList.remove('lg:col-span-9');
+        videoContainer.classList.remove('lg:col-span-8');
         videoContainer.classList.add('lg:col-span-12');
         cinemaModeBadge.textContent = 'ON';
         cinemaModeBadge.classList.replace('text-gray-400', 'text-primary');
@@ -914,4 +1011,348 @@ function showSeekOverlay(text, isRight) {
         indicator.classList.add('scale-75', 'opacity-0');
         setTimeout(() => indicator.remove(), 300);
     }, 800);
+}
+
+// Global changeEpisode helper to update query string parameters and transition instantly
+window.changeEpisode = function(episodeSlug) {
+    if (!currentMovie || !currentMovie.episodes || currentMovie.episodes.length === 0) return;
+    const serverData = currentMovie.episodes[0].server_data;
+    const foundEp = serverData.find(ep => ep.slug === episodeSlug);
+    if (!foundEp) return;
+
+    // 1. Update active state variables
+    currentEpisode = foundEp;
+
+    // 2. Update URL query parameter cleanly without page reload
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('episode', episodeSlug);
+    window.history.pushState({}, '', 'watch.html?' + urlParams.toString());
+
+    // 3. Update document title
+    document.title = `${currentMovie.name} - ${currentEpisode.name} - APhim`;
+
+    // 4. Update play stream (Re-initialize player or switch stream)
+    const videoPlayer = document.getElementById('videoPlayer');
+    if (videoPlayer) {
+        initializePlayer(currentEpisode);
+    } else {
+        renderPlayerPlaceholder(currentEpisode);
+    }
+
+    // 5. Update Watch History
+    if (typeof userService !== 'undefined' && typeof userService.addToHistory === 'function') {
+        userService.addToHistory(currentMovie, currentEpisode.name);
+    }
+
+    // 6. Rerender Episode List to update highlights
+    renderEpisodeList(currentMovie.episodes);
+
+    // 7. Update prev/next episode navigation buttons
+    updateEpisodeNavButtons();
+};
+
+// Update under-player navigation skip buttons (opacity, clickability)
+function updateEpisodeNavButtons() {
+    if (!currentMovie || !currentMovie.episodes || currentMovie.episodes.length === 0 || !currentEpisode) return;
+    const serverData = currentMovie.episodes[0].server_data;
+    const currentIndex = serverData.findIndex(ep => ep.slug === currentEpisode.slug);
+    
+    const prevBtn = document.getElementById('btn-prev-episode');
+    const nextBtn = document.getElementById('btn-next-episode');
+    
+    if (prevBtn) {
+        if (currentIndex <= 0) {
+            prevBtn.classList.add('opacity-30', 'cursor-not-allowed', 'pointer-events-none');
+            prevBtn.classList.remove('hover:text-primary');
+        } else {
+            prevBtn.classList.remove('opacity-30', 'cursor-not-allowed', 'pointer-events-none');
+            prevBtn.classList.add('hover:text-primary');
+        }
+    }
+    
+    if (nextBtn) {
+        if (currentIndex >= serverData.length - 1) {
+            nextBtn.classList.add('opacity-30', 'cursor-not-allowed', 'pointer-events-none');
+            nextBtn.classList.remove('hover:text-primary');
+        } else {
+            nextBtn.classList.remove('opacity-30', 'cursor-not-allowed', 'pointer-events-none');
+            nextBtn.classList.add('hover:text-primary');
+        }
+    }
+}
+
+// Navigation skip buttons action
+function playPreviousEpisode() {
+    if (!currentMovie || !currentMovie.episodes || currentMovie.episodes.length === 0 || !currentEpisode) return;
+    const serverData = currentMovie.episodes[0].server_data;
+    const currentIndex = serverData.findIndex(ep => ep.slug === currentEpisode.slug);
+    if (currentIndex > 0) {
+        window.changeEpisode(serverData[currentIndex - 1].slug);
+    }
+}
+
+function playNextEpisode() {
+    if (!currentMovie || !currentMovie.episodes || currentMovie.episodes.length === 0 || !currentEpisode) return;
+    const serverData = currentMovie.episodes[0].server_data;
+    const currentIndex = serverData.findIndex(ep => ep.slug === currentEpisode.slug);
+    if (currentIndex < serverData.length - 1) {
+        window.changeEpisode(serverData[currentIndex + 1].slug);
+    }
+}
+
+// Autoplay next episode with a gorgeous Netflix-style countdown overlay
+function autoPlayNext() {
+    if (!currentMovie || !currentMovie.episodes || currentMovie.episodes.length === 0 || !currentEpisode) return;
+    const serverData = currentMovie.episodes[0].server_data;
+    const currentIndex = serverData.findIndex(ep => ep.slug === currentEpisode.slug);
+    
+    // If it's the last episode, do nothing
+    if (currentIndex >= serverData.length - 1) return;
+    
+    const nextEpisode = serverData[currentIndex + 1];
+    const playerContainer = document.querySelector('.aspect-video');
+    if (!playerContainer) return;
+    
+    // Create the overlay container
+    const overlay = document.createElement('div');
+    overlay.id = 'netflix-next-countdown';
+    overlay.className = 'absolute inset-0 bg-black/85 flex flex-col items-center justify-center text-white z-[99] transition-opacity duration-300 opacity-0';
+    overlay.style.borderRadius = '12px';
+    
+    let countdownVal = 10;
+    
+    overlay.innerHTML = `
+        <div class="text-center p-6 space-y-4 max-w-sm select-none">
+            <p class="text-gray-400 font-bold uppercase tracking-widest text-[10px] md:text-xs">TẬP TIẾP THEO</p>
+            <h4 class="text-lg md:text-2xl font-black text-[#fcd576] truncate max-w-[280px] md:max-w-xs mx-auto">${nextEpisode.name}</h4>
+            
+            <div class="relative w-16 h-16 md:w-20 md:h-20 mx-auto flex items-center justify-center">
+                <!-- Circular SVG Countdown Progress Bar -->
+                <svg class="w-full h-full transform -rotate-90">
+                    <circle cx="40" cy="40" r="34" stroke="rgba(255,255,255,0.1)" stroke-width="4" fill="transparent" />
+                    <circle id="countdown-progress-bar" cx="40" cy="40" r="34" stroke="#fcd576" stroke-width="4" fill="transparent" 
+                            stroke-dasharray="213.6" stroke-dashoffset="0" style="transition: stroke-dashoffset 1s linear;" />
+                </svg>
+                <span id="countdown-number" class="absolute text-xl md:text-2xl font-black text-white">${countdownVal}</span>
+            </div>
+            
+            <div class="flex items-center justify-center gap-3 pt-2">
+                <button id="cancel-countdown-btn" class="px-4 py-1.5 bg-white/10 hover:bg-white/20 border border-white/10 text-white rounded-lg font-bold text-xs transition-colors cursor-pointer active:scale-95">
+                    Hủy
+                </button>
+                <button id="play-now-countdown-btn" class="px-4 py-1.5 bg-[#fcd576] hover:bg-white hover:text-black text-black rounded-lg font-bold text-xs transition-colors cursor-pointer active:scale-95">
+                    Phát ngay
+                </button>
+            </div>
+        </div>
+    `;
+    
+    playerContainer.appendChild(overlay);
+    
+    // Force reflow and fade in
+    requestAnimationFrame(() => {
+        overlay.classList.remove('opacity-0');
+        overlay.classList.add('opacity-100');
+    });
+    
+    const progressCircle = document.getElementById('countdown-progress-bar');
+    const countdownNumber = document.getElementById('countdown-number');
+    const maxOffset = 213.6;
+    
+    // Set initial stroke-dashoffset logic
+    if (progressCircle) {
+        progressCircle.setAttribute('cx', playerContainer.clientWidth > 640 ? '40' : '32');
+        progressCircle.setAttribute('cy', playerContainer.clientWidth > 640 ? '40' : '32');
+    }
+    
+    const intervalId = setInterval(() => {
+        countdownVal--;
+        if (countdownNumber) countdownNumber.textContent = countdownVal;
+        if (progressCircle) {
+            const offset = maxOffset - (maxOffset * (10 - countdownVal) / 10);
+            progressCircle.style.strokeDashoffset = offset;
+        }
+        
+        if (countdownVal <= 0) {
+            clearInterval(intervalId);
+            window.changeEpisode(nextEpisode.slug);
+        }
+    }, 1000);
+    
+    // Wire up events
+    document.getElementById('cancel-countdown-btn').onclick = () => {
+        clearInterval(intervalId);
+        overlay.classList.remove('opacity-100');
+        overlay.classList.add('opacity-0');
+        setTimeout(() => overlay.remove(), 300);
+    };
+    
+    document.getElementById('play-now-countdown-btn').onclick = () => {
+        clearInterval(intervalId);
+        window.changeEpisode(nextEpisode.slug);
+    };
+}
+
+// Cinema mode (Tắt đèn): Dim all surrounding elements for a true movie theater experience
+let isCinemaModeActive = false;
+let bodyClickCancelHandler = null;
+
+window.toggleCinemaMode = function() {
+    const targetElement = document.getElementById('player-and-controls');
+    const cinemaBtn = document.getElementById('cinemaModeBtn');
+    if (!targetElement) return;
+
+    const elementsToDim = [
+        document.querySelector('nav'),
+        document.getElementById('sidebar-col'),
+        document.getElementById('comments-section'),
+        document.querySelector('footer'),
+        document.getElementById('episode-list')?.parentElement
+    ].filter(Boolean);
+
+    isCinemaModeActive = !isCinemaModeActive;
+
+    if (isCinemaModeActive) {
+        // 1. Dim all surrounding elements with an elite blur and brightness reduction
+        elementsToDim.forEach(el => {
+            el.style.transition = 'all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)';
+            el.style.opacity = '0.08';
+            el.style.filter = 'brightness(0.15) blur(1.5px)';
+            el.style.pointerEvents = 'none';
+        });
+
+        // 2. Enhance active player wrapper with shadow and prominence
+        targetElement.style.transition = 'all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)';
+        targetElement.style.boxShadow = '0 30px 90px rgba(0, 0, 0, 0.95), 0 0 40px rgba(252, 211, 77, 0.05)';
+        targetElement.style.transform = 'scale(1.01)';
+
+        // 3. Update Cinema Button state
+        if (cinemaBtn) {
+            cinemaBtn.innerHTML = `
+                <span class="material-icons-round text-sm sm:text-base text-[#fcd576]">lightbulb</span>
+                <span class="text-[#fcd576]">Bật đèn</span>
+            `;
+        }
+
+        // 4. Click backdrop (any dimmed area) to turn light back on
+        bodyClickCancelHandler = function(e) {
+            if (!targetElement.contains(e.target) && e.target !== cinemaBtn && !cinemaBtn.contains(e.target)) {
+                window.toggleCinemaMode();
+            }
+        };
+        // Use setTimeout to avoid immediate event execution in the same click loop
+        setTimeout(() => {
+            document.addEventListener('click', bodyClickCancelHandler);
+        }, 50);
+
+    } else {
+        // 1. Restore all surrounding elements cleanly
+        elementsToDim.forEach(el => {
+            el.style.opacity = '';
+            el.style.filter = '';
+            el.style.pointerEvents = '';
+        });
+
+        // 2. Restore player styles
+        targetElement.style.boxShadow = '';
+        targetElement.style.transform = '';
+
+        // 3. Update Cinema Button state
+        if (cinemaBtn) {
+            cinemaBtn.innerHTML = `
+                <span class="material-icons-round text-sm sm:text-base">lightbulb</span>
+                <span>Tắt đèn</span>
+            `;
+        }
+
+        // 4. Clean up backdrop listener
+        if (bodyClickCancelHandler) {
+            document.removeEventListener('click', bodyClickCancelHandler);
+            bodyClickCancelHandler = null;
+        }
+    }
+    
+    // Clean up old cinema-overlay if it exists from previous attempts
+    const oldOverlay = document.getElementById('cinema-overlay');
+    if (oldOverlay) oldOverlay.remove();
+};
+
+// Toggle browser Fullscreen API on player container
+function toggleFullscreen() {
+    const playerContainer = document.querySelector('.aspect-video');
+    if (!playerContainer) return;
+    
+    const fsBtn = document.getElementById('fullscreenBtn');
+    
+    if (!document.fullscreenElement) {
+        playerContainer.requestFullscreen().then(() => {
+            if (fsBtn) {
+                fsBtn.innerHTML = `
+                    <span class="material-icons-round text-sm sm:text-base">fullscreen_exit</span>
+                    <span>Thu nhỏ</span>
+                `;
+            }
+        }).catch(err => {
+            console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+        });
+    } else {
+        document.exitFullscreen().then(() => {
+            if (fsBtn) {
+                fsBtn.innerHTML = `
+                    <span class="material-icons-round text-sm sm:text-base">fullscreen</span>
+                    <span>Toàn màn hình</span>
+                `;
+            }
+        });
+    }
+}
+
+// Sync fullscreen Escape exit
+document.addEventListener('fullscreenchange', () => {
+    const fsBtn = document.getElementById('fullscreenBtn');
+    if (!fsBtn) return;
+    if (document.fullscreenElement) {
+        fsBtn.innerHTML = `
+            <span class="material-icons-round text-sm sm:text-base">fullscreen_exit</span>
+            <span>Thu nhỏ</span>
+        `;
+    } else {
+        fsBtn.innerHTML = `
+            <span class="material-icons-round text-sm sm:text-base">fullscreen</span>
+            <span>Toàn màn hình</span>
+        `;
+    }
+});
+
+// Beautiful Premium Toast notification for reporting errors
+function reportError() {
+    let toast = document.getElementById('error-report-toast');
+    if (toast) {
+        toast.remove(); // Remove active instance to reset countdown
+    }
+    
+    toast = document.createElement('div');
+    toast.id = 'error-report-toast';
+    // Style with ultra-premium glassmorphic styling
+    toast.className = 'fixed top-24 left-1/2 -translate-x-1/2 z-[10005] flex items-center gap-3 px-6 py-4 bg-[#1a1a1a]/95 backdrop-blur-md border border-[#fcd576]/30 text-white rounded-2xl shadow-[0_15px_50px_rgba(0,0,0,0.8)] transition-all duration-300 opacity-0 -translate-y-4 select-none pointer-events-none';
+    
+    toast.innerHTML = `
+        <span class="material-icons-round text-[#fcd576] text-xl animate-bounce">check_circle</span>
+        <span class="text-sm font-extrabold tracking-wide text-gray-200">Đã ghi nhận báo lỗi, cảm ơn bạn</span>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Animate in
+    requestAnimationFrame(() => {
+        toast.classList.remove('opacity-0', '-translate-y-4');
+        toast.classList.add('opacity-100', 'translate-y-0');
+    });
+    
+    // Auto close after 3 seconds
+    setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', '-translate-y-4');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
 }
