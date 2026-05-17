@@ -205,7 +205,7 @@ function renderPagination(pagination) {
 
     // Page numbers
     for (let i = startPage; i <= endPage; i++) {
-        const isActive = i === currentPage;
+        const isActive = Number(i) === Number(currentPage);
         html += `
             <button onclick="goToPage(${i})" 
                     class="px-4 py-2 rounded-lg ${isActive ? 'bg-primary text-black font-bold' : 'bg-surface-dark text-white hover:bg-primary hover:text-black'} transition-colors">

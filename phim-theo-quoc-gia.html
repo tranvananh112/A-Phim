@@ -670,7 +670,7 @@
             const endPage = Math.min(totalPages, currentPage + 2);
 
             for (let i = startPage; i <= endPage; i++) {
-                if (i === currentPage) {
+                if (Number(i) === Number(currentPage)) {
                     paginationHTML += `
                         <button class="px-4 py-2 bg-primary text-black font-bold rounded-lg flex-shrink-0 transition-all duration-300">
                             ${i}

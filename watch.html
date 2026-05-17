@@ -96,6 +96,47 @@
 
     <!-- 🎬 PREMIUM UNIFIED 3-LAYER DARK THEME (Netflix & YouTube inspired) -->
     <style id="premium-dark-theme-3-layer">
+        /* Enforce absolute play button sizing for Chrome/Safari Mobile Lottie */
+        #play-btn {
+            width: 55px !important;
+            height: 55px !important;
+            min-width: 55px !important;
+            min-height: 55px !important;
+            max-width: 55px !important;
+            max-height: 55px !important;
+            flex-shrink: 0 !important;
+            flex-grow: 0 !important;
+        }
+        #play-btn svg {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+        }
+        @media (min-width: 640px) {
+            #play-btn {
+                width: 80px !important;
+                height: 80px !important;
+                min-width: 80px !important;
+                min-height: 80px !important;
+                max-width: 80px !important;
+                max-height: 80px !important;
+            }
+        }
+
+        /* 📺📱 Seamlessly fuse Video Player and Action Bar universally (both Desktop and Mobile) */
+        #player-and-controls > div:first-of-type {
+            border-bottom-left-radius: 0px !important;
+            border-bottom-right-radius: 0px !important;
+            border-bottom-width: 0px !important;
+        }
+        #player-and-controls > div:nth-of-type(2) {
+            margin-top: 0px !important;
+            border-top-left-radius: 0px !important;
+            border-top-right-radius: 0px !important;
+            border-top-width: 0px !important;
+        }
+
         /* ── LỚP 1: Nền tổng thể toàn trang (Overall darkest page bg) ── */
         html, body, .bg-background-dark {
             background-color: #0f0f0f !important;

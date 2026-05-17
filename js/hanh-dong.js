@@ -185,7 +185,7 @@ function renderPagination(params) {
     }
 
     for (let i = startPage; i <= endPage; i++) {
-        if (i === currentPageNum) {
+        if (Number(i) === Number(currentPageNum)) {
             paginationHTML += `
                 <button class="px-3 py-2 bg-primary text-black font-bold rounded-lg">
                     ${i}

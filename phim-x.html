@@ -1697,13 +1697,13 @@
                 btn.onclick = () => goToPage(i);
                 btn.style.cssText = `
                     padding: 8px 12px;
-                    background: ${i === S.currentPage ? 'var(--orange)' : 'var(--bg3)'};
-                    border: 1px solid ${i === S.currentPage ? 'var(--orange)' : 'var(--border)'};
+                    background: ${Number(i) === Number(S.currentPage) ? 'var(--orange)' : 'var(--bg3)'};
+                    border: 1px solid ${Number(i) === Number(S.currentPage) ? 'var(--orange)' : 'var(--border)'};
                     border-radius: 8px;
-                    color: ${i === S.currentPage ? '#fff' : 'var(--text2)'};
+                    color: ${Number(i) === Number(S.currentPage) ? '#fff' : 'var(--text2)'};
                     cursor: pointer;
                     transition: all 0.2s;
-                    font-weight: ${i === S.currentPage ? '700' : '400'};
+                    font-weight: ${Number(i) === Number(S.currentPage) ? '700' : '400'};
                 `;
                 pageNumbers.appendChild(btn);
             }

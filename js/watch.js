@@ -311,11 +311,37 @@ function renderEpisodeList(episodes) {
         updateEpisodeNavButtons();
     }
 
+    // Programmatically bind touch/click delegates on the container for iOS Safari compatibility
+    if (container && !container.hasAttribute('data-safari-bound')) {
+        container.setAttribute('data-safari-bound', 'true');
+        const handleEpisodeClick = (e) => {
+            const btn = e.target.closest('button');
+            if (btn) {
+                const onclickAttr = btn.getAttribute('onclick');
+                if (onclickAttr) {
+                    const match = onclickAttr.match(/changeEpisode\('([^']+)'\)/);
+                    if (match) {
+                        e.preventDefault();
+                        window.changeEpisode(match[1]);
+                    }
+                }
+            }
+        };
+        container.addEventListener('click', handleEpisodeClick);
+        container.addEventListener('touchend', handleEpisodeClick, { passive: false });
+    }
+
     // Automatically scroll the active episode into view inside the scrollable container
     setTimeout(() => {
         const activeBtn = container.querySelector('button.active');
         if (activeBtn) {
-            activeBtn.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            try {
+                activeBtn.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            } catch (e) {
+                try {
+                    activeBtn.scrollIntoView();
+                } catch (err) {}
+            }
         }
     }, 100);
 }
@@ -738,6 +764,52 @@ function setupActionButtons() {
             btn.addEventListener('click', () => toggleFavoriteMovie(btn));
         }
     });
+
+    // Programmatically bind click and touch handlers for Safari/iOS compatibility
+    const prevBtn = document.getElementById('btn-prev-episode');
+    const nextBtn = document.getElementById('btn-next-episode');
+    const cinemaBtn = document.getElementById('cinemaModeBtn');
+    const fsBtn = document.getElementById('fullscreenBtn');
+
+    if (prevBtn && !prevBtn.hasAttribute('data-safari-bound')) {
+        prevBtn.setAttribute('data-safari-bound', 'true');
+        const handlePrev = (e) => {
+            e.preventDefault();
+            if (typeof playPreviousEpisode === 'function') playPreviousEpisode();
+        };
+        prevBtn.addEventListener('click', handlePrev);
+        prevBtn.addEventListener('touchend', handlePrev, { passive: false });
+    }
+
+    if (nextBtn && !nextBtn.hasAttribute('data-safari-bound')) {
+        nextBtn.setAttribute('data-safari-bound', 'true');
+        const handleNext = (e) => {
+            e.preventDefault();
+            if (typeof playNextEpisode === 'function') playNextEpisode();
+        };
+        nextBtn.addEventListener('click', handleNext);
+        nextBtn.addEventListener('touchend', handleNext, { passive: false });
+    }
+
+    if (cinemaBtn && !cinemaBtn.hasAttribute('data-safari-bound')) {
+        cinemaBtn.setAttribute('data-safari-bound', 'true');
+        const handleCinema = (e) => {
+            e.preventDefault();
+            if (typeof toggleCinemaMode === 'function') toggleCinemaMode();
+        };
+        cinemaBtn.addEventListener('click', handleCinema);
+        cinemaBtn.addEventListener('touchend', handleCinema, { passive: false });
+    }
+
+    if (fsBtn && !fsBtn.hasAttribute('data-safari-bound')) {
+        fsBtn.setAttribute('data-safari-bound', 'true');
+        const handleFs = (e) => {
+            e.preventDefault();
+            if (typeof toggleFullscreen === 'function') toggleFullscreen();
+        };
+        fsBtn.addEventListener('click', handleFs);
+        fsBtn.addEventListener('touchend', handleFs, { passive: false });
+    }
 }
 
 // Share movie function

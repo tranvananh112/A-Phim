@@ -286,7 +286,7 @@ function renderPagination(paginationData) {
 
     // Page numbers
     for (let i = startPage; i <= endPage; i++) {
-        if (i === currentPage_api) {
+        if (Number(i) === Number(currentPage_api)) {
             paginationHTML += `
                 <button class="px-4 py-2 bg-primary text-black font-bold rounded-lg flex-shrink-0 transition-all duration-300">
                     ${i}
