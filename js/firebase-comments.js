@@ -480,7 +480,7 @@
         /* Mobile specific fixes (Catfish banner space) */
         @media (max-width: 768px) {
             .ap-cmt-wrapper {
-                padding-bottom: 110px !important; /* Đảm bảo không bị che bởi Catfish banner */
+                padding-bottom: 170px !important; /* Đảm bảo không bị che bởi Catfish banner 3 tầng dọc */
             }
         }
         `;
