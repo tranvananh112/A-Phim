@@ -1011,34 +1011,6 @@ function updateFavoriteButton(button) {
 }
 
 
-// Toggle Cinema Mode Function
-window.toggleCinemaMode = function() {
-    const videoContainer = document.getElementById('video-container');
-    const sidebarCol = document.getElementById('sidebar-col');
-    const cinemaModeBadge = document.getElementById('cinemaModeBadge');
-    
-    if (!videoContainer || !sidebarCol || !cinemaModeBadge) return;
-    
-    if (sidebarCol.classList.contains('hidden')) {
-        // Turn OFF Cinema
-        sidebarCol.classList.remove('hidden');
-        sidebarCol.classList.add('lg:block'); 
-        videoContainer.classList.remove('lg:col-span-12');
-        videoContainer.classList.add('lg:col-span-8');
-        cinemaModeBadge.textContent = 'OFF';
-        cinemaModeBadge.classList.replace('text-primary', 'text-gray-400');
-        cinemaModeBadge.classList.replace('border-primary', 'border-gray-500');
-    } else {
-        // Turn ON Cinema
-        sidebarCol.classList.add('hidden');
-        sidebarCol.classList.remove('lg:block');
-        videoContainer.classList.remove('lg:col-span-8');
-        videoContainer.classList.add('lg:col-span-12');
-        cinemaModeBadge.textContent = 'ON';
-        cinemaModeBadge.classList.replace('text-gray-400', 'text-primary');
-        cinemaModeBadge.classList.replace('border-gray-500', 'border-primary');
-    }
-};
 
 // Show YouTube/Netflix-style visual seek notification overlay
 function showSeekOverlay(text, isRight) {

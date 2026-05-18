@@ -134,6 +134,17 @@
             height: 2px;
             background: linear-gradient(90deg, transparent 5%, rgba(242,242,13,0.35) 50%, transparent 95%);
         }
+        /* ── Invisible backdrop: catches all outside clicks ── */
+        .ap-suggest-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 999998;
+            background: transparent;
+            display: none;
+        }
+        .ap-suggest-backdrop.active {
+            display: block;
+        }
     `;
 
     function injectCSS() {
@@ -209,9 +220,21 @@
         const mobile = isMobileInput(input);
         const maxResults = 5;
 
-        // Panel is appended to BODY — escapes any overflow:hidden parent
-        const panel = document.createElement('div');
-        panel.className = 'ap-suggest-panel';
+        // Panel + backdrop đều gắn vào BODY
+        const panel    = document.createElement('div');
+        const backdrop = document.createElement('div');
+        panel.className    = 'ap-suggest-panel';
+        backdrop.className = 'ap-suggest-backdrop';
+
+        // Set inline initial hidden states to guarantee they start invisible
+        panel.style.display = 'none';
+        panel.style.opacity = '0';
+        panel.style.pointerEvents = 'none';
+        panel.style.transform = 'translateY(-8px) scale(0.98)';
+        
+        backdrop.style.display = 'none';
+
+        document.body.appendChild(backdrop);
         document.body.appendChild(panel);
 
         function positionPanel() {
@@ -243,20 +266,50 @@
 
             panel.innerHTML = html;
 
-            // Prevent mousedown from stealing focus from input
+            // Chỉ cần ẩn panel + backdrop khi click vào row
             panel.querySelectorAll('.ap-suggest-row, .ap-suggest-footer').forEach(el => {
-                el.addEventListener('mousedown', e => e.preventDefault());
-                el.addEventListener('click', () => { panel.classList.remove('visible'); });
+                el.addEventListener('click', () => { 
+                    hide(); 
+                });
             });
 
             positionPanel();
-            requestAnimationFrame(() => panel.classList.add('visible'));
+            
+            // Set inline visible styles
+            panel.style.display = 'block';
+            backdrop.style.display = 'block';
+            
+            panel.classList.add('visible');
+            backdrop.classList.add('active');
+            
+            requestAnimationFrame(() => {
+                panel.style.opacity = '1';
+                panel.style.pointerEvents = 'all';
+                panel.style.transform = 'translateY(0) scale(1)';
+            });
         }
 
         function hide(instant) {
             clearTimeout(hideTimer);
-            if (instant) { panel.classList.remove('visible'); return; }
-            hideTimer = setTimeout(() => panel.classList.remove('visible'), 180);
+            
+            panel.classList.remove('visible');
+            backdrop.classList.remove('active');
+            
+            panel.style.opacity = '0';
+            panel.style.pointerEvents = 'none';
+            panel.style.transform = 'translateY(-8px) scale(0.98)';
+            
+            if (instant) {
+                panel.style.display = 'none';
+                backdrop.style.display = 'none';
+            } else {
+                hideTimer = setTimeout(() => {
+                    if (!panel.classList.contains('visible')) {
+                        panel.style.display = 'none';
+                    }
+                }, 220); // wait for CSS transitions to finish
+                backdrop.style.display = 'none';
+            }
         }
 
         async function onKeyword(kw) {
@@ -272,40 +325,66 @@
             }
         }
 
-        // ── Event listeners ──────────────────────────────────────────────────────
+        // ── Input typing listener ─────────────────────────────────────────────────
         input.addEventListener('input', () => {
             clearTimeout(debounceTimer);
             const v = input.value.trim();
-            if (!v || v.length < 2) { hide(true); lastKeyword = ''; return; }
+            if (!v || v.length < 2) { hide(); lastKeyword = ''; return; }
             debounceTimer = setTimeout(() => onKeyword(v), 180);
         });
 
+        // Re-show panel on focus if there was a previous result
         input.addEventListener('focus', () => {
             if (input.value.trim().length >= 2 && panel.innerHTML) {
-                clearTimeout(hideTimer);
                 positionPanel();
                 panel.classList.add('visible');
+                backdrop.classList.add('active');
             }
         });
 
-        input.addEventListener('blur', () => hide(false));
+        // ── Global click and touch listener for absolute reliability ─────────────
+        const handleOutsideInteraction = (e) => {
+            // If the panel is not visible, do nothing
+            if (!panel.classList.contains('visible')) return;
+            
+            // If clicking inside the search form, the input itself, or the panel, don't dismiss
+            if (input.contains(e.target) || panel.contains(e.target)) {
+                return;
+            }
+            
+            // Otherwise, dismiss instantly!
+            hide();
+            input.value = '';
+            lastKeyword = '';
+        };
 
-        // Enter / form submit → always go to search.html (DO NOT intercept)
-        input.addEventListener('keydown', e => {
-            if (e.key === 'Escape') { hide(true); input.blur(); }
-            // Enter falls through to native form submit → search.html?q=…
-        });
+        // Use capture phase (true) to run before event propagation can be stopped
+        document.addEventListener('click', handleOutsideInteraction, true);
+        document.addEventListener('touchstart', handleOutsideInteraction, { passive: true, capture: true });
 
-        // Click OR touch outside → hide panel + reset input completely
-        function onOutside(e) {
-            if (!panel.contains(e.target) && e.target !== input) {
-                hide(true);
+        // ── Global keydown listener for Escape key ───────────────────────────────
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && panel.classList.contains('visible')) {
+                hide();
                 input.value = '';
                 lastKeyword = '';
+                input.blur();
             }
-        }
-        document.addEventListener('click', onOutside, true);
-        document.addEventListener('touchstart', onOutside, { capture: true, passive: true });
+        });
+
+        // ── Input blur backup ────────────────────────────────────────────────────
+        input.addEventListener('blur', (e) => {
+            // If user clicked or tabbed into panel, don't hide yet
+            if (e.relatedTarget && e.relatedTarget instanceof Node && panel.contains(e.relatedTarget)) return;
+            // Otherwise hide with a slight delay to let click handlers complete
+            setTimeout(() => {
+                if (document.activeElement !== input) {
+                    hide();
+                    input.value = '';
+                    lastKeyword = '';
+                }
+            }, 150);
+        });
 
         // Keep panel aligned on scroll / resize
         window.addEventListener('scroll',
@@ -314,6 +393,7 @@
         window.addEventListener('resize',
             () => { if (panel.classList.contains('visible')) positionPanel(); },
             { passive: true });
+
     }
 
     // ── Bootstrap ────────────────────────────────────────────────────────────────
