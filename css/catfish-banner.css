@@ -22,7 +22,7 @@
     box-shadow: 0 -6px 36px rgba(0, 0, 0, 0.65), 0 0 50px rgba(252, 211, 77, 0.06);
     transform: translateY(110%);
     transition: transform 0.44s cubic-bezier(0.34, 1.4, 0.64, 1);
-    overflow: hidden;
+    /* Removed overflow: hidden so close button can be outside */
 }
 
 #aphim-catfish.visible {
@@ -38,7 +38,11 @@
     pointer-events: none;
 }
 
-.catfish-inner { display: flex; flex-direction: column; gap: 0; padding: 0; }
+.catfish-inner { 
+    display: flex; flex-direction: column; gap: 0; padding: 0; 
+    border-radius: inherit; 
+    overflow: hidden; 
+}
 .catfish-row { display: flex; align-items: stretch; }
 .catfish-row + .catfish-row { border-top: 1px solid rgba(0,0,0,0.4); }
 
@@ -55,7 +59,7 @@
 }
 
 #aphim-catfish-close {
-    position: absolute; top: 6px; right: 8px;
+    position: absolute; top: -32px; right: 10px; /* Đưa nút ra ngoài banner */
     background: rgba(0,0,0,0.65);
     border: 1px solid rgba(255,255,255,0.22);
     color: rgba(255,255,255,0.85);
@@ -82,8 +86,8 @@ body.aphim-has-catfish { /* card dưới không cần push body */ }
         max-width: calc(100vw - 8px);
         border-radius: 12px 12px 0 0;
     }
-    .catfish-item img { max-height: 52px; }
-    #aphim-catfish-close { top: 4px; right: 6px; width: 22px; height: 22px; font-size: 10px; }
+    .catfish-item img { max-height: 75px; } /* Tăng chiều cao banner mobile */
+    #aphim-catfish-close { top: -30px; right: 6px; width: 24px; height: 24px; font-size: 12px; }
 }
 
 

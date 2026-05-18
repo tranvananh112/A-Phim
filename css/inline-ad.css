@@ -228,8 +228,16 @@
     width: 100%;
     height: auto;
     min-height: 80px;
-    object-fit: contain;
+    max-height: 130px; /* Giới hạn chiều cao quá khổ trên desktop */
+    object-fit: cover; /* Cắt bớt trên dưới nếu quá cao, đảm bảo full width */
+    object-position: center;
     display: block;
+}
+
+@media (max-width: 768px) {
+    .aphim-inline-ad-inner[data-always-slideshow].is-slideshow .aphim-inline-ad-item img {
+        max-height: 100px;
+    }
 }
 
 /* ─────────────────────────────────────────────────────
