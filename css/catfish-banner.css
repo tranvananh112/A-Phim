@@ -1,0 +1,279 @@
+/* ═══════════════════════════════════════════════════════════
+   APhim — Catfish Banner + Welcome Popup CSS
+   Version: 4.0 | 2026-05-18
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── CATFISH STICKY 2-ROW BAR ────────────────────────────── */
+#aphim-catfish {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    width: 520px;
+    max-width: 96vw;
+    z-index: 9997;
+    background: rgba(6, 6, 10, 0.97);
+    border-top: 1px solid rgba(252, 211, 77, 0.25);
+    border-left: 1px solid rgba(252, 211, 77, 0.15);
+    border-right: 1px solid rgba(252, 211, 77, 0.15);
+    border-radius: 14px 14px 0 0;
+    box-shadow: 0 -6px 36px rgba(0, 0, 0, 0.65), 0 0 50px rgba(252, 211, 77, 0.06);
+    transform: translateY(110%);
+    transition: transform 0.44s cubic-bezier(0.34, 1.4, 0.64, 1);
+    overflow: hidden;
+}
+
+#aphim-catfish.visible {
+    transform: translateY(0);
+}
+
+#aphim-catfish::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(252, 211, 77, 0.5), rgba(252, 211, 77, 0.15), transparent);
+    pointer-events: none;
+}
+
+.catfish-inner { display: flex; flex-direction: column; gap: 0; padding: 0; }
+.catfish-row { display: flex; align-items: stretch; }
+.catfish-row + .catfish-row { border-top: 1px solid rgba(0,0,0,0.4); }
+
+.catfish-item {
+    display: block; flex: 1; overflow: hidden;
+    line-height: 0; text-decoration: none;
+    transition: filter 0.2s ease;
+}
+.catfish-row .catfish-item + .catfish-item { border-left: 1px solid rgba(0,0,0,0.4); }
+.catfish-item:hover { filter: brightness(1.08); }
+.catfish-item img {
+    width: 100%; height: auto; display: block;
+    object-fit: cover; max-height: 80px;
+}
+
+#aphim-catfish-close {
+    position: absolute; top: 6px; right: 8px;
+    background: rgba(0,0,0,0.65);
+    border: 1px solid rgba(255,255,255,0.22);
+    color: rgba(255,255,255,0.85);
+    width: 26px; height: 26px;
+    border-radius: 50%; cursor: pointer;
+    font-size: 12px; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, transform 0.25s;
+    z-index: 10; padding: 0; font-family: sans-serif;
+    backdrop-filter: blur(4px);
+}
+#aphim-catfish-close:hover {
+    background: rgba(239,68,68,0.85);
+    border-color: rgba(239,68,68,0.6);
+    color: #fff;
+    transform: scale(1.15) rotate(90deg);
+}
+
+body.aphim-has-catfish { /* card dưới không cần push body */ }
+
+@media (max-width: 768px) {
+    #aphim-catfish {
+        width: calc(100vw - 8px);
+        max-width: calc(100vw - 8px);
+        border-radius: 12px 12px 0 0;
+    }
+    .catfish-item img { max-height: 52px; }
+    #aphim-catfish-close { top: 4px; right: 6px; width: 22px; height: 22px; font-size: 10px; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   WELCOME POPUP — SLIDESHOW Style Bet365 / 1xBet
+   ═══════════════════════════════════════════════════════════ */
+
+/* Backdrop overlay */
+#aphim-popup-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99998;
+    background: rgba(0, 0, 0, 0.84);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+#aphim-popup-overlay.visible {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Wrapper: nút đóng + card */
+.aph-popup-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    width: 780px;
+    max-width: 94vw;
+}
+
+/* ── Nút "Đóng QC ×" — đỏ nổi bật, ngoài card ── */
+#aphim-popup-x {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+    border: none;
+    color: #fff;
+    padding: 7px 16px 7px 14px;
+    border-radius: 22px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    font-family: inherit;
+    box-shadow: 0 4px 18px rgba(197, 48, 48, 0.5);
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.3s ease 0.15s,
+                transform 0.35s cubic-bezier(0.34, 1.5, 0.64, 1) 0.15s,
+                background 0.18s,
+                box-shadow 0.18s;
+}
+#aphim-popup-overlay.visible #aphim-popup-x {
+    opacity: 1;
+    transform: translateY(0);
+}
+#aphim-popup-x:hover {
+    background: linear-gradient(135deg, #fc5151 0%, #e53e3e 100%);
+    box-shadow: 0 6px 24px rgba(197, 48, 48, 0.65);
+    transform: scale(1.04);
+}
+
+/* ── Popup card ── */
+#aphim-popup {
+    width: 100%;
+    background: #07070d;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        0 28px 70px rgba(0, 0, 0, 0.75),
+        0 0 60px rgba(252, 211, 77, 0.04);
+    opacity: 0;
+    transform: scale(0.9) translateY(12px);
+    transition: opacity 0.32s ease 0.05s,
+                transform 0.38s cubic-bezier(0.34, 1.5, 0.64, 1) 0.05s;
+}
+#aphim-popup-overlay.visible #aphim-popup {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+/* ── Slideshow container ── */
+.aph-slideshow {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    line-height: 0;
+}
+
+/* Mỗi slide */
+.aph-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.28s ease;
+    pointer-events: none;
+}
+.aph-slide.active {
+    position: relative;
+    opacity: 1;
+    pointer-events: all;
+}
+.aph-slide.prev {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.aph-slide-link {
+    display: block;
+    line-height: 0;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.aph-slide img {
+    width: 100%;
+    height: auto;
+    max-height: 380px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+.aph-slide-link:hover img {
+    transform: scale(1.015);
+}
+
+/* ── Progress bar (bottom of image) ── */
+.aph-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(255,255,255,0.12);
+    z-index: 5;
+}
+.aph-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #fcd34d, #f59e0b);
+    border-radius: 0 2px 2px 0;
+}
+
+/* ── Dot indicators ── */
+.aph-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 7px;
+    z-index: 6;
+}
+.aph-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.15);
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.25s, border-color 0.25s, transform 0.2s;
+}
+.aph-dot.active {
+    background: #fcd34d;
+    border-color: #fcd34d;
+    transform: scale(1.2);
+    box-shadow: 0 0 6px rgba(252,211,77,0.6);
+}
+.aph-dot:hover:not(.active) {
+    background: rgba(255,255,255,0.4);
+    border-color: rgba(255,255,255,0.7);
+}
+
+/* ── Mobile ── */
+@media (max-width: 560px) {
+    .aph-popup-wrapper { width: 100%; max-width: 100%; }
+    .aph-slide img { max-height: 180px; }
+    #aphim-popup-x { font-size: 11px; padding: 6px 12px; }
+}

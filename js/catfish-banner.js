@@ -1,0 +1,311 @@
+/**
+ * APhim — Catfish Banner + Welcome Popup Slideshow
+ * Version: 4.0 | 2026-05-18
+ *
+ * Catfish: sticky 2-hàng dưới màn hình
+ * Popup: SLIDESHOW 3 banner, style Bet365/1xBet, hiện 1 lần mỗi session
+ */
+
+(function () {
+    'use strict';
+
+    /* ─────────────────────────────────────────────────────────
+       CONFIG
+    ───────────────────────────────────────────────────────── */
+    var CONFIG = {
+
+        catfish: {
+            enabled: true,
+            sessionKey: 'aphim_catfish_closed_v4'  // per-page sessionStorage key
+        },
+
+        popup: {
+            enabled: true,
+            showAfterMs: 800,         // Delay trước khi popup hiện (ms)
+            slideIntervalMs: 2500,    // Tự chuyển slide sau N ms
+            sessionKey: 'aphim_popup_closed_v4',  // sessionStorage key
+            excludePaths: ['/admin']  // Chỉ loại trừ admin
+        },
+
+        banners: [
+            {
+                img: '/ads/catfish/vsbet.gif',
+                url: 'http://vsbet191.com/p/BSYk',
+                label: 'VSBet — Nạp Đầu Nhận 68,888,000đ'
+            },
+            {
+                img: '/ads/catfish/colatv.gif',
+                url: 'https://colatv.app/',
+                label: 'ColaTV — Xem Phim HD Miễn Phí'
+            },
+            {
+                img: '/ads/catfish/colascore.gif',
+                url: 'https://colascore.com/',
+                label: 'ColaScore — Tỷ Số Bóng Đá Trực Tiếp'
+            }
+        ]
+    };
+
+    /* ─────────────────────────────────────────────────────────
+       HELPERS
+    ───────────────────────────────────────────────────────── */
+
+    function isExpired(key, hours) {
+        try {
+            var ts = localStorage.getItem(key);
+            if (!ts) return true;
+            return (Date.now() - parseInt(ts, 10)) > (hours * 3600 * 1000);
+        } catch (e) { return true; }
+    }
+
+    function setLSTimestamp(key) {
+        try { localStorage.setItem(key, Date.now().toString()); } catch (e) {}
+    }
+
+    function getSession(key) {
+        try { return sessionStorage.getItem(key); } catch (e) { return null; }
+    }
+
+    function setSession(key) {
+        try { sessionStorage.setItem(key, '1'); } catch (e) {}
+    }
+
+    function currentPath() {
+        return window.location.pathname || '/';
+    }
+
+    function shouldShowPopup() {
+        if (!CONFIG.popup.enabled) return false;
+        var path = currentPath();
+        for (var i = 0; i < CONFIG.popup.excludePaths.length; i++) {
+            if (path.indexOf(CONFIG.popup.excludePaths[i]) !== -1) return false;
+        }
+        // Key riêng theo từng trang — mỗi trang có state độc lập
+        var pageKey = CONFIG.popup.sessionKey + '_' + path;
+        return !getSession(pageKey);
+    }
+
+    function shouldShowCatfish() {
+        if (!CONFIG.catfish.enabled) return false;
+        // Per-page sessionStorage — giống popup, hiện lại mỗi khi sang trang mới
+        var pageKey = CONFIG.catfish.sessionKey + '_' + currentPath();
+        return !getSession(pageKey);
+    }
+
+    /* ─────────────────────────────────────────────────────────
+       CATFISH STICKY BAR
+    ───────────────────────────────────────────────────────── */
+    function initCatfish() {
+        if (!shouldShowCatfish()) return;
+
+        var b = CONFIG.banners;
+        var bar = document.createElement('div');
+        bar.id = 'aphim-catfish';
+        bar.setAttribute('role', 'complementary');
+        bar.setAttribute('aria-label', 'Quảng cáo đối tác');
+        bar.innerHTML =
+            '<div class="catfish-inner">' +
+                '<div class="catfish-row">' +
+                    '<a class="catfish-item" href="' + b[0].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[0].label + '">' +
+                        '<img src="' + b[0].img + '" alt="' + b[0].label + '" loading="eager">' +
+                    '</a>' +
+                '</div>' +
+                '<div class="catfish-row">' +
+                    '<a class="catfish-item" href="' + b[1].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[1].label + '">' +
+                        '<img src="' + b[1].img + '" alt="' + b[1].label + '" loading="eager">' +
+                    '</a>' +
+                    '<a class="catfish-item" href="' + b[2].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[2].label + '">' +
+                        '<img src="' + b[2].img + '" alt="' + b[2].label + '" loading="eager">' +
+                    '</a>' +
+                '</div>' +
+            '</div>' +
+            '<button id="aphim-catfish-close" title="Đóng quảng cáo" aria-label="Đóng">&#10005;</button>';
+
+        document.body.appendChild(bar);
+        document.body.classList.add('aphim-has-catfish');
+
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () { bar.classList.add('visible'); });
+        });
+
+        var closeBtn = document.getElementById('aphim-catfish-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function () {
+                bar.classList.remove('visible');
+                document.body.classList.remove('aphim-has-catfish');
+                setTimeout(function () { if (bar.parentNode) bar.parentNode.removeChild(bar); }, 450);
+                // Đánh dấu đã đóng theo từng trang (sessionStorage)
+                var pageKey = CONFIG.catfish.sessionKey + '_' + currentPath();
+                setSession(pageKey);
+            });
+        }
+    }
+
+    /* ─────────────────────────────────────────────────────────
+       WELCOME POPUP — Slideshow style Bet365 / 1xBet
+       - 3 banner xoay vòng tự động mỗi 4 giây
+       - Hiện 1 lần / session (đóng → không hiện lại đến khi refresh)
+       - Nút "Đóng QC ×" đỏ nổi bật ngoài card
+       - Dot indicators + progress bar
+    ───────────────────────────────────────────────────────── */
+    function initPopup() {
+        if (!shouldShowPopup()) return;
+
+        var banners = CONFIG.banners;
+        var n = banners.length;
+
+        // --- Build slides HTML ---
+        var slidesHTML = '';
+        for (var i = 0; i < n; i++) {
+            slidesHTML +=
+                '<div class="aph-slide' + (i === 0 ? ' active' : '') + '" data-index="' + i + '">' +
+                    '<a href="' + banners[i].url + '" target="_blank" rel="noopener nofollow" ' +
+                       'class="aph-slide-link" aria-label="' + banners[i].label + '">' +
+                        '<img src="' + banners[i].img + '" alt="' + banners[i].label + '" loading="eager">' +
+                    '</a>' +
+                '</div>';
+        }
+
+        // --- Build dots HTML ---
+        var dotsHTML = '';
+        for (var j = 0; j < n; j++) {
+            dotsHTML += '<button class="aph-dot' + (j === 0 ? ' active' : '') + '" data-index="' + j + '" aria-label="Banner ' + (j + 1) + '"></button>';
+        }
+
+        // --- Overlay ---
+        var overlay = document.createElement('div');
+        overlay.id = 'aphim-popup-overlay';
+        overlay.setAttribute('role', 'dialog');
+        overlay.setAttribute('aria-modal', 'true');
+        overlay.setAttribute('aria-label', 'Quảng cáo đối tác');
+
+        overlay.innerHTML =
+            '<div class="aph-popup-wrapper">' +
+                // Nút đóng nổi bật bên ngoài card — top right
+                '<button id="aphim-popup-x" aria-label="Đóng quảng cáo">' +
+                    'Đóng QC&nbsp;&#10005;' +
+                '</button>' +
+                // Card popup
+                '<div id="aphim-popup">' +
+                    // Slideshow
+                    '<div class="aph-slideshow">' +
+                        slidesHTML +
+                        // Progress bar
+                        '<div class="aph-progress"><div class="aph-progress-bar" id="aph-progress-bar"></div></div>' +
+                        // Dots
+                        '<div class="aph-dots">' + dotsHTML + '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+
+        document.body.appendChild(overlay);
+
+        // --- Hiện popup ---
+        var showTimer = setTimeout(function () {
+            requestAnimationFrame(function () { overlay.classList.add('visible'); });
+            startSlideshow();
+        }, CONFIG.popup.showAfterMs);
+
+        // --- Slideshow logic ---
+        var currentSlide = 0;
+        var slideTimer = null;
+        var progressAnim = null;
+        var closed = false;
+
+        function goToSlide(idx) {
+            var slides = overlay.querySelectorAll('.aph-slide');
+            var dots   = overlay.querySelectorAll('.aph-dot');
+            if (!slides[idx]) return;
+
+            // Remove active from current
+            slides[currentSlide].classList.remove('active');
+            slides[currentSlide].classList.add('prev');
+            dots[currentSlide].classList.remove('active');
+
+            currentSlide = (idx + n) % n;
+
+            // Add active to new
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
+
+            // Clean up prev after transition
+            setTimeout(function () {
+                for (var s = 0; s < slides.length; s++) {
+                    slides[s].classList.remove('prev');
+                }
+            }, 500);
+
+            resetProgress();
+        }
+
+        function resetProgress() {
+            var bar = document.getElementById('aph-progress-bar');
+            if (!bar) return;
+            bar.style.transition = 'none';
+            bar.style.width = '0%';
+            setTimeout(function () {
+                bar.style.transition = 'width ' + CONFIG.popup.slideIntervalMs + 'ms linear';
+                bar.style.width = '100%';
+            }, 30);
+        }
+
+        function startSlideshow() {
+            resetProgress();
+            slideTimer = setInterval(function () {
+                if (!closed) goToSlide(currentSlide + 1);
+            }, CONFIG.popup.slideIntervalMs);
+        }
+
+        // Dot click
+        var dots = overlay.querySelectorAll('.aph-dot');
+        for (var d = 0; d < dots.length; d++) {
+            (function(dotEl) {
+                dotEl.addEventListener('click', function () {
+                    clearInterval(slideTimer);
+                    var target = parseInt(dotEl.getAttribute('data-index'), 10);
+                    goToSlide(target);
+                    slideTimer = setInterval(function () {
+                        if (!closed) goToSlide(currentSlide + 1);
+                    }, CONFIG.popup.slideIntervalMs);
+                });
+            })(dots[d]);
+        }
+
+        // --- Close ---
+        function closePopup() {
+            if (closed) return;
+            closed = true;
+            clearTimeout(showTimer);
+            clearInterval(slideTimer);
+            // Lưu key theo pathname — chỉ ẩn trên trang này
+            setSession(CONFIG.popup.sessionKey + '_' + currentPath());
+            overlay.classList.remove('visible');
+            setTimeout(function () {
+                if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            }, 360);
+        }
+
+        document.getElementById('aphim-popup-x').addEventListener('click', closePopup);
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) closePopup();
+        });
+        document.addEventListener('keydown', function escH(e) {
+            if (e.key === 'Escape') { closePopup(); document.removeEventListener('keydown', escH); }
+        });
+    }
+
+    /* ─────────────────────────────────────────────────────────
+       BOOTSTRAP
+    ───────────────────────────────────────────────────────── */
+    function boot() {
+        initCatfish();
+        initPopup();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+    } else {
+        boot();
+    }
+
+})();
