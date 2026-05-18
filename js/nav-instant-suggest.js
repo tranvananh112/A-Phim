@@ -296,9 +296,13 @@
             // Enter falls through to native form submit → search.html?q=…
         });
 
-        // Click OR touch outside → hide immediately
+        // Click OR touch outside → hide panel + reset input completely
         function onOutside(e) {
-            if (!panel.contains(e.target) && e.target !== input) { hide(true); }
+            if (!panel.contains(e.target) && e.target !== input) {
+                hide(true);
+                input.value = '';
+                lastKeyword = '';
+            }
         }
         document.addEventListener('click', onOutside, true);
         document.addEventListener('touchstart', onOutside, { capture: true, passive: true });
