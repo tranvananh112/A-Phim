@@ -88,7 +88,7 @@
 
 .aphim-inline-ad-item img {
     width: 100%;
-    height: 120px;          /* Tăng lên 120px to rõ nét hơn trên desktop */
+    height: 82px;           /* Giảm từ 120px xuống 82px để tránh bị thô và to quá khổ */
     object-fit: fill;       /* Đảm bảo chữ to, không bị cắt xén hai bên */
     display: block;
 }
@@ -203,7 +203,7 @@
 
 .aphim-inline-ad--premium .aphim-inline-ad-item img {
     width: 100%;
-    height: 135px;          /* Premium to nổi bật hơn hẳn trên desktop */
+    height: 92px;           /* Giảm từ 135px xuống 92px cho cực kì cân đối, chuẩn tỉ lệ */
     object-fit: fill;
     display: block;
 }
@@ -238,10 +238,10 @@
 /* Ảnh trong slideshow: full width, contain */
 .aphim-inline-ad-inner[data-always-slideshow].is-slideshow .aphim-inline-ad-item img {
     width: 100%;
-    height: auto;
+    height: 95px !important;  /* Khóa cứng chiều cao 95px mảnh dẻ thanh lịch */
     min-height: 80px;
-    max-height: 130px; /* Giới hạn chiều cao quá khổ trên desktop */
-    object-fit: cover; /* Cắt bớt trên dưới nếu quá cao, đảm bảo full width */
+    max-height: 95px;  
+    object-fit: fill !important; /* Dùng fill thay vì cover để giữ nguyên 100% khung viền ad và Mbappe không bị cắt đầu */
     object-position: center;
     display: block;
 }
