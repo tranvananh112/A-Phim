@@ -372,9 +372,17 @@
         }
 
         /* ── GIAO DIỆN BÌNH LUẬN TRẢ LỜI ĐẸP & THANH LỊCH NHƯ TIKTOK/YOUTUBE ── */
-        .ap-cmt-list { display: flex; flex-direction: column; text-align: left; }
-        .ap-cmt-item { display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.05); animation: ap-in 0.3s ease; position:relative; align-items: flex-start; text-align: left; }
-        .ap-cmt-item:last-child { border-bottom: none; }
+        .ap-cmt-list { 
+            display: flex; flex-direction: column; text-align: left; gap: 10px;
+            max-width: 900px; /* Giới hạn độ rộng để không loãng trên desktop */
+        }
+        .ap-cmt-item { 
+            display: flex; gap: 12px; padding: 14px 16px; 
+            background: rgba(255,255,255,0.02); /* Nền nhẹ thay vì viền thô */
+            border: 1px solid rgba(255,255,255,0.03); 
+            border-radius: 16px; /* Bo góc mềm mại hơn */
+            animation: ap-in 0.3s ease; position:relative; align-items: flex-start; text-align: left;
+        }
         
         /* ── AVATAR FRAME v9 INTEGRATION ── */
         .ap-cmt-avatar, .ap-form-user-ava {
@@ -403,14 +411,14 @@
             z-index: 1;
         }
         
-        .ap-cmt-body { flex: 1; min-width: 0; display:flex; flex-direction:column; align-items: flex-start; text-align: left; }
+        .ap-cmt-body { flex: 1; min-width: 0; display:flex; flex-direction:column; align-items: flex-start; text-align: left; margin-left: 2px; }
         
-        .ap-cmt-info { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap:wrap; width: 100%;}
+        .ap-cmt-info { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap:wrap; width: 100%;}
         .ap-cmt-badge {
             font-size: 9px; font-weight: 700; color: #10b981; border: 1px solid rgba(16,185,129,0.5); 
-            padding: 1px 5px; border-radius: 3px; background: transparent; letter-spacing: 0.5px;
+            padding: 1px 5px; border-radius: 4px; background: rgba(16,185,129,0.1); letter-spacing: 0.5px;
         }
-        .ap-cmt-name { font-weight: 700; font-size: 13px; color: #fff; display:flex; align-items:center; gap:4px; }
+        .ap-cmt-name { font-weight: 800; font-size: 14px; color: #fcd576; display:flex; align-items:center; gap:6px; letter-spacing: 0.2px; }
         .ap-cmt-name .infinity { color: #f59e0b; font-size: 15px; font-weight:bold; line-height: 1;}
         .ap-cmt-time { font-size: 11px; color: #6b7280; }
         
@@ -451,9 +459,9 @@
         .ap-dropdown-item .material-icons-round { font-size: 18px; color: #4b5563; }
 
         /* Nested Comments Layout */
-        .ap-cmt-replies { margin-top: 14px; display: flex; flex-direction: column; padding-left: 48px; border-left: 2px solid rgba(255,255,255,0.05); }
-        .ap-cmt-replies .ap-cmt-item { border-bottom: none; padding-top: 12px; padding-bottom:0; }
-        .ap-cmt-replies .ap-cmt-avatar { width: 32px; height: 32px; font-size: 12px; }
+        .ap-cmt-replies { margin-top: 10px; display: flex; flex-direction: column; padding-left: 36px; border-left: 2px solid rgba(255,255,255,0.05); gap: 8px; }
+        .ap-cmt-replies .ap-cmt-item { padding: 10px 12px; background: rgba(255,255,255,0.01); border-color: transparent; }
+        .ap-cmt-replies .ap-cmt-avatar { width: 28px; height: 28px; font-size: 11px; }
         
         /* Form Trả lời lồng nhau */
         .ap-reply-form-container { margin-top: 16px; display: none; margin-bottom: 8px;}
@@ -467,6 +475,13 @@
             padding:10px 20px; border-radius:24px; font-size:13px; font-weight:600;
             z-index:9999; opacity:0; transition:all 0.3s; white-space:nowrap;
             box-shadow:0 4px 20px rgba(0,0,0,0.3); color:#fff; pointer-events:none;
+        }
+
+        /* Mobile specific fixes (Catfish banner space) */
+        @media (max-width: 768px) {
+            .ap-cmt-wrapper {
+                padding-bottom: 110px !important; /* Đảm bảo không bị che bởi Catfish banner */
+            }
         }
         `;
         document.head.appendChild(s);
