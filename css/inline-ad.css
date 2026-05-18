@@ -247,8 +247,15 @@
 }
 
 @media (max-width: 768px) {
+    /* Ép tất cả các ảnh banner (inline, premium, slideshow, data-always-slideshow) về chiều cao 60px mảnh dẻ cực đẹp trên Mobile */
+    .aphim-inline-ad-item img,
+    .aphim-inline-ad-inner .aphim-inline-ad-item img,
+    .aphim-inline-ad-inner.is-slideshow .aphim-inline-ad-item img,
     .aphim-inline-ad-inner[data-always-slideshow].is-slideshow .aphim-inline-ad-item img {
-        max-height: 100px;
+        height: 60px !important;
+        min-height: 60px !important;
+        max-height: 60px !important;
+        object-fit: fill !important;
     }
 }
 
