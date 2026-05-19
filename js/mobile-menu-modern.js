@@ -332,15 +332,13 @@
     }
 
     function openMenu() {
-        // Chỉ cho phép mở trên mobile (< 1024px = Tailwind lg breakpoint)
-        if (window.innerWidth >= 1024) return;
-
         // Đảm bảo drawer đã được build (thường đã build khi init)
         ensureDrawerBuilt();
 
         // Toggle class NGAY - không setTimeout, không delay
         document.getElementById('mm-overlay')?.classList.add('open');
         document.getElementById('mm-drawer')?.classList.add('open');
+        document.body.classList.add('mm-open');
 
         const scrollY = window.scrollY;
         document.body.style.position = 'fixed';
@@ -370,6 +368,8 @@
         if (drawer) {
             drawer.classList.remove('open');
         }
+
+        document.body.classList.remove('mm-open');
 
         const scrollY = parseInt(document.body.dataset.scrollY || '0');
         document.body.style.position = '';
