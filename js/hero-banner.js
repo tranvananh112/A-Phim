@@ -236,12 +236,12 @@ function updateHeroBannerText(movie) {
     if (heroBadges) {
         const rating = movie.tmdb?.vote_average ? movie.tmdb.vote_average.toFixed(1) : 'N/A';
         heroBadges.innerHTML = `
-            <span class="border border-primary text-primary px-3 py-1 rounded bg-black/40 backdrop-blur-sm font-semibold">IMDb ${rating}</span>
-            <span class="border border-white/30 px-3 py-1 rounded bg-black/20 backdrop-blur-sm">${movie.year || '2024'}</span>
+            <span class="bg-black/30 text-[#fcd576] border border-[#fcd576] px-3 py-1 rounded font-bold backdrop-blur-sm shadow-[0_2px_8px_rgba(252,211,77,0.15)]">IMDb ${rating}</span>
+            <span class="border border-white/40 px-3 py-1 rounded bg-black/30 backdrop-blur-sm text-white font-bold">${movie.year || '2024'}</span>
             ${movie.episode_current
-                ? `<span data-ep-badge class="border border-white/30 px-3 py-1 rounded bg-black/20 backdrop-blur-sm">${movie.episode_current}</span>`
-                : `<span data-ep-badge class="border border-white/30 px-3 py-1 rounded bg-black/20 backdrop-blur-sm hidden"></span>`}
-            <span class="bg-red-600 text-white px-3 py-1 rounded font-bold text-xs uppercase ml-2">${movie.quality || 'HD'}</span>
+                ? `<span data-ep-badge class="border border-white/40 px-3 py-1 rounded bg-black/30 backdrop-blur-sm text-white font-bold">${movie.episode_current}</span>`
+                : `<span data-ep-badge class="border border-white/40 px-3 py-1 rounded bg-black/30 backdrop-blur-sm text-white font-bold hidden"></span>`}
+            <span class="bg-[#fcd576] text-black px-3 py-1 rounded font-extrabold text-xs uppercase ml-2 shadow-[0_0_12px_rgba(252,211,77,0.25)]">${movie.quality || 'HD'}</span>
         `;
     }
 
@@ -255,8 +255,8 @@ function updateHeroBannerText(movie) {
 
     if (heroDescription) {
         heroDescription.textContent = movie.content
-            ? movie.content.replace(/<[^>]*>/g, '').substring(0, 280) + '...'
-            : 'Khám phá bộ phim đặc sắc này ngay hôm nay!';
+            ? movie.content.replace(/<[^>]*>/g, '').substring(0, 180) + '...'
+            : 'Đang tải thông tin phim...';
     }
 }
 
@@ -719,6 +719,19 @@ async function fetchLatestEpisodeCount(movie) {
         if (data.status !== 'success' || !data.data?.item) return;
 
         const item = data.data.item;
+
+        // Sync and update real description from database/API
+        if (item.content) {
+            const cleanContent = item.content.replace(/<[^>]*>/g, '').trim();
+            const heroDescription = document.getElementById('heroDescription');
+            if (heroDescription) {
+                heroDescription.textContent = cleanContent.length > 180 
+                    ? cleanContent.substring(0, 180) + '...'
+                    : cleanContent;
+            }
+            movie.content = item.content; // Save so we don't refetch
+        }
+
         let latestEpLabel = item.episode_current || '';
         const eps = item.episodes;
         if (Array.isArray(eps) && eps.length > 0) {

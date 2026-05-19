@@ -58,13 +58,25 @@
     }
 
     /* Reduce play button size on mobile */
+    #heroPlayBtn .w-[68px],
+    #heroPlayBtn .w-20,
     #heroPlayBtn .w-24 {
-        width: 70px !important;
-        height: 70px !important;
+        width: 58px !important;
+        height: 58px !important;
+    }
+
+    #heroPlayBtn .absolute.inset-0.w-[68px] {
+        width: 58px !important;
+        height: 58px !important;
+    }
+
+    #heroPlayBtn svg {
+        width: 20px !important;
+        height: 20px !important;
     }
 
     #heroPlayBtn .material-icons-round {
-        font-size: 36px !important;
+        font-size: 32px !important;
     }
 
     /* Adjust thumbnails position */

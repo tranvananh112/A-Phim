@@ -390,3 +390,20 @@ main.hero-grabbing * {
     cursor: grabbing !important;
     pointer-events: none;
 }
+
+/* ── Custom Heartbeat Gold Glow for Play Button ── */
+.gold-heartbeat-glow {
+    animation: gold-heartbeat-glow 2s infinite ease-in-out;
+    box-shadow: 0 0 15px rgba(252, 211, 77, 0.45), 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+@keyframes gold-heartbeat-glow {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(252, 211, 77, 0.45), 0 0 0 0px rgba(252, 211, 77, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 35px rgba(252, 211, 77, 0.9), 0 0 0 14px rgba(252, 211, 77, 0), 0 4px 20px rgba(0, 0, 0, 0.4);
+        transform: scale(1.04);
+    }
+}

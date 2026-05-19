@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html class="dark" lang="vi">
 
 <head>
@@ -1014,7 +1014,7 @@
 
                 <!-- Description -->
                 <p id="heroDescription"
-                    class="text-gray-300 text-base md:text-lg leading-relaxed max-w-2xl line-clamp-3 md:line-clamp-none text-shadow">
+                    class="text-gray-400 text-sm leading-relaxed max-w-2xl line-clamp-3 text-shadow font-normal">
                     Đang tải thông tin phim...
                 </p>
 
@@ -1023,22 +1023,29 @@
                     <a id="heroPlayBtn" href="#" class="group inline-block">
                         <div class="relative">
                             <!-- Pulse Animation Rings -->
-                            <div class="absolute inset-0 w-16 h-16 bg-primary/30 rounded-full animate-ping"></div>
-                            <div class="absolute inset-0 w-16 h-16 bg-primary/20 rounded-full animate-pulse"></div>
+                            <div class="absolute inset-0 rounded-full animate-ping bg-[#fcd576]/60" style="width: 68px; height: 68px;"></div>
+                            <div class="absolute inset-0 rounded-full animate-pulse bg-[#fcd576]/40" style="width: 68px; height: 68px;"></div>
 
                             <!-- Main Button -->
                             <div
-                                class="relative w-16 h-16 bg-gradient-to-br from-primary via-yellow-400 to-amber-500 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(252,211,77,0.5),0_5px_20px_rgba(0,0,0,0.3)] group-hover:scale-110 group-hover:shadow-[0_0_50px_rgba(252,211,77,0.7),0_10px_30px_rgba(0,0,0,0.4)] transition-all duration-300">
-                                <!-- Inner Circle -->
-                                <div class="absolute inset-1.5 bg-black/5 rounded-full"></div>
-
-                                <!-- Play Icon -->
-                                <span
-                                    class="material-icons-round text-black text-3xl relative z-10 drop-shadow-lg flex items-center justify-center">play_arrow</span>
+                                class="relative bg-[#fcd576] rounded-full flex items-center justify-center gold-heartbeat-glow group-hover:scale-110 transition-all duration-300"
+                                style="width: 68px; height: 68px;">
+                                
+                                <!-- Play Icon (Rounded Modern SVG Triangle) -->
+                                <svg class="relative z-10 translate-x-[1.5px]" 
+                                     viewBox="0 0 24 24" 
+                                     fill="#000000" 
+                                     stroke="#000000" 
+                                     stroke-width="3" 
+                                     stroke-linejoin="round" 
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     style="width: 24px; height: 24px; color: #000000 !important; fill: #000000 !important; stroke: #000000 !important;">
+                                    <path d="M8 5v14l11-7z" fill="#000000" stroke="#000000" style="fill: #000000 !important; stroke: #000000 !important;" />
+                                </svg>
 
                                 <!-- Hover Ring -->
                                 <div
-                                    class="absolute inset-0 border-2 border-white/50 rounded-full scale-110 opacity-0 group-hover:opacity-100 group-hover:scale-125 transition-all duration-500">
+                                    class="absolute inset-0 border-2 border-[#fcd576]/50 rounded-full scale-110 opacity-0 group-hover:opacity-100 group-hover:scale-125 transition-all duration-500">
                                 </div>
                             </div>
                         </div>
