@@ -4,6 +4,7 @@
 # ------------------------------------------------------------
 # SECTION 1: Welcome Prime Search Engines (SEO Friendly)
 # ------------------------------------------------------------
+User-agent: Google-InspectionTool
 User-agent: Googlebot
 User-agent: Googlebot-Image
 User-agent: Googlebot-News
