@@ -13,7 +13,7 @@
 
     // Check if device is mobile/tablet
     function isMobileDevice() {
-        return window.innerWidth < 1024; // lg breakpoint
+        return window.innerWidth < 1200; // lg breakpoint
     }
 
     function updateNavOnScroll() {
@@ -95,8 +95,8 @@
     'use strict';
 
     function initDropdownDim() {
-        // Chỉ chạy trên desktop (>= 1024px)
-        if (window.innerWidth < 1024) return;
+        // Chỉ chạy trên desktop (>= 1200px)
+        if (window.innerWidth < 1200) return;
 
         // Tạo overlay element (1 lần)
         let overlay = document.getElementById('nav-dim-overlay');

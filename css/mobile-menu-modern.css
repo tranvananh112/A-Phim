@@ -565,7 +565,7 @@ body:has(#mm-drawer.open) #aphim-catfish {
     justify-content: center;
     -webkit-tap-highlight-color: transparent;
 }
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
     .mm-burger-btn {
         display: none !important;
     }

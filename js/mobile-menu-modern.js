@@ -446,7 +446,7 @@
         setupBtn();
         // Pre-build drawer ngay khi init (chỉ trên mobile)
         // → Khi user nhấn mở menu: DOM đã sẵn sàng, không cần tạo mới
-        if (window.innerWidth < 1024) {
+        if (window.innerWidth < 1200) {
             // Delay nhỏ để không cạnh tranh với critical page render
             setTimeout(ensureDrawerBuilt, 300);
         }

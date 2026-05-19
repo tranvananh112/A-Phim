@@ -8,7 +8,7 @@
    ========================================================== */
 
 /* ── Core Nav: Always Transparent ── */
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
     nav {
         background: transparent !important;
         backdrop-filter: none !important;
@@ -36,7 +36,7 @@
 }
 
 /* ── Desktop Nav Layout ── */
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
 
     /* Remove the old pill wrapper if any remain */
     .desktop-pill-wrapper {
@@ -389,5 +389,55 @@
         font-size: 0.7rem;
         font-weight: 700;
         color: #f2f20d;
+    }
+}
+
+/* ==========================================================
+   A PHIM — Navigation Responsive Override (SofaFlix-inspired Breakpoint)
+   Forces layout transition to mobile view below 1200px instead of 1024px.
+   ========================================================== */
+@media (max-width: 1199.98px) {
+    /* 1. Hide Desktop Navigation Container */
+    nav#mainNav div.hidden.lg\:flex {
+        display: none !important;
+    }
+
+    /* 2. Hide Desktop Login Button */
+    nav#mainNav .nav-auth-btn.hidden.lg\:inline-flex {
+        display: none !important;
+    }
+
+    /* 3. Force Show Mobile Menu Button (Hamburger) */
+    nav#mainNav button#mobileMenuBtn.lg\:hidden,
+    nav#mainNav .mm-burger-btn.lg\:hidden {
+        display: block !important;
+    }
+
+    /* 4. Force Show Mobile Inline Search Bar */
+    nav#mainNav .mobile-inline-search {
+        display: flex !important;
+    }
+}
+
+@media (min-width: 1200px) {
+    /* 1. Force Show Desktop Navigation Container */
+    nav#mainNav div.hidden.lg\:flex {
+        display: flex !important;
+    }
+
+    /* 2. Force Show Desktop Login Button */
+    nav#mainNav .nav-auth-btn.hidden.lg\:inline-flex {
+        display: inline-flex !important;
+    }
+
+    /* 3. Force Hide Mobile Menu Button (Hamburger) */
+    nav#mainNav button#mobileMenuBtn.lg\:hidden,
+    nav#mainNav .mm-burger-btn.lg\:hidden {
+        display: none !important;
+    }
+
+    /* 4. Force Hide Mobile Inline Search Bar */
+    nav#mainNav .mobile-inline-search {
+        display: none !important;
     }
 }
