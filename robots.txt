@@ -15,7 +15,8 @@ Disallow: /admin/
 Disallow: /backend/
 Disallow: /api/
 Disallow: /cgi-bin/
-Disallow: /*?*
+Disallow: /search.html
+Disallow: /filter.html
 Allow: /
 
 # ------------------------------------------------------------
