@@ -261,7 +261,7 @@
         if (!container) return;
 
         const isMobile = window.innerWidth <= 768;
-        const particleCount = isMobile ? 25 : 45; // 45 stars on desktop, 25 stars on mobile for great density
+        const particleCount = isMobile ? 45 : 85; // 85 stars on desktop, 45 stars on mobile for rich density
 
         for (let i = 0; i < particleCount; i++) {
             const particle = document.createElement('div');
@@ -271,7 +271,9 @@
             const size = Math.random() * 2.8 + 1.2; // size between 1.2px and 4.0px
             const left = Math.random() * 100; // random horizontal distribution (0% to 100%)
             const duration = Math.random() * 4 + 3.5; // animation float duration between 3.5s and 7.5s
-            const delay = Math.random() * 6; // random delay up to 6s before floating starts
+            
+            // Use negative delay so particles start instantly at various vertical positions instead of rising from bottom together
+            const delay = Math.random() * -8;
             
             particle.style.width = `${size}px`;
             particle.style.height = `${size}px`;
@@ -281,7 +283,7 @@
             
             // Premium bright yellow glow effect (box-shadow)
             particle.style.background = '#f2f20d';
-            particle.style.boxShadow = `0 0 ${size * 2}px #f2f20d, 0 0 ${size * 4}px rgba(242, 242, 13, 0.7)`;
+            particle.style.boxShadow = `0 0 ${size * 2.2}px #f2f20d, 0 0 ${size * 4.5}px rgba(242, 242, 13, 0.85)`;
             
             container.appendChild(particle);
         }
