@@ -1,0 +1,93 @@
+================================================================================
+                    A PHIM - KẾ HOẠCH TĂNG LƯỢT TRUY CẬP (TRAFFIC) 3 BANNER ADS
+================================================================================
+
+[THỐNG KÊ HIỆN TẠI (ƯỚC TÍNH)]
+- Số người dùng hoạt động/ngày: ~10,500 users
+- Tổng số lượt xem trang (Pageviews)/ngày: ~32,000 pageviews
+- Tỷ lệ click (CTR) hiện tại (Ước tính): ~0.5% (do quảng cáo tĩnh, dễ bị lờ đi)
+- Tổng số click hiện tại/ngày: ~160 clicks (chia đều cho 3 ảnh)
+
+[MỤC TIÊU SAU KHI NÂNG CẤP]
+- Tăng CTR từ 0.5% lên 1.8% - 2.2% (Tăng gấp ~4 lần số lượt click cho đối tác)
+- Tổng số click mục tiêu/ngày: ~580 - 700 clicks
+
+================================================================================
+1. BIỂU ĐỒ BỐ TRÍ MỚI & PHÉP TÍNH CHUYỂN ĐỔI (CONVERSION FLOW)
+================================================================================
+
++--------------------------------------------------------------------------+
+|                            TRANG XEM PHIM / TRANG CHỦ                    |
+|                                                                          |
+|   [ Banner 1: VSBet ] ---------> Hiệu ứng Pulse Glow + Nháy nhẹ Viền     |
+|   [ Banner 2: ColaTV ] --------> Thêm Huy hiệu "HOT / TRỰC TIẾP"         |
+|   [ Banner 3: ColaScore ] -----> Hiệu ứng Hover Phóng To (Scale 1.05x)   |
++--------------------------------------------------------------------------+
+                                    |
+                                    v (Tương tác động)
++--------------------------------------------------------------------------+
+|                  SO SÁNH LƯỢT CLICK/NGÀY GIỮA CŨ & MỚI                   |
+|                                                                          |
+|  Ads        Trạng thái cũ (Tĩnh)       Trạng thái mới (Động + Badge)      |
+|  ------     --------------------       -----------------------------     |
+|  VSBet      [████] 80 clicks           [████████████████] 320 clicks     |
+|  ColaTV     [██] 40 clicks             [████████] 160 clicks             |
+|  ColaScore  [██] 40 clicks             [████████] 160 clicks             |
++--------------------------------------------------------------------------+
+
+================================================================================
+2. CHI TIẾT 3 GIẢI PHÁP TĂNG TRUY CẬP LẬP TỨC
+================================================================================
+
+[Giải pháp A] TỰ ĐỘNG XOAY VÒNG QUẢNG CÁO (AUTO-ROTATION)
+- Cứ sau 8 giây, 2 vị trí quảng cáo ở hàng dưới (ColaTV & ColaScore) sẽ tự động
+  trượt nhẹ và chuyển đổi vị trí hoặc thay thế bằng banner ngẫu nhiên khác.
+- Điều này tạo ra chuyển động thu hút ánh nhìn của người dùng khi lướt web.
+
+[Giải pháp B] THÊM HUY HIỆU CTA (CALL TO ACTION) ĐỘNG
+- Phủ một góc huy hiệu nhỏ màu sắc nổi bật chớp nháy nhẹ (CSS animation):
+  + VSBet: Gắn tag "[ Nạp 1 Được 2 ]" hoặc "[ HOT ]" màu đỏ/vàng ở góc.
+  + ColaTV / ColaScore: Gắn tag "[ LIVE ]" hoặc "[ 4K ]" chớp nháy màu xanh lá.
+
+[Giải pháp C] HIỆU ỨNG DI CHUỘT / CHẠM CAO CẤP (HOVER EFFECT)
+- Thêm hiệu ứng hover phóng to nhẹ 1.03x + đổ bóng phát sáng màu vàng kim:
+  `box-shadow: 0 0 15px rgba(255, 215, 0, 0.6)`
+- Khiến quảng cáo trông như một phần tử tương tác cao cấp của trang web.
+
+================================================================================
+3. CÁC THAY ĐỔI CSS/JS CỤ THỂ SẼ TRIỂN KHAI
+================================================================================
+
+```css
+/* Phát sáng viền cho VSBet */
+.catfish-item:first-child::after {
+    content: 'HOT PROMO';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    background: #ff0055;
+    color: #fff;
+    font-size: 8px;
+    font-weight: 800;
+    padding: 2px 4px;
+    border-radius: 3px;
+    animation: pulseBadge 1.5s infinite;
+}
+
+@keyframes pulseBadge {
+    0% { opacity: 0.8; }
+    50% { opacity: 1; transform: scale(1.05); }
+    100% { opacity: 0.8; }
+}
+
+/* Hiệu ứng hover cho tất cả banner */
+.catfish-item {
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s;
+}
+.catfish-item:hover {
+    transform: scale(1.03) translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+}
+```
+
+================================================================================
