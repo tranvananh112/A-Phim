@@ -306,18 +306,21 @@
         setTimeout(hideSplashScreen, 100);
     }
 
-    // Listen to load events
-    if (document.readyState === 'complete') {
-        triggerLoadComplete();
+    // Listen to load events - Trigger on DOMContentLoaded for instant accessibility
+    if (document.readyState === 'interactive' || document.readyState === 'complete') {
+        setTimeout(triggerLoadComplete, 250);
     } else {
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(triggerLoadComplete, 250);
+        });
         window.addEventListener('load', triggerLoadComplete);
     }
 
-    // Fallback safety timeout (8 seconds)
+    // Fallback safety timeout (3.5 seconds)
     const safetyTimeout = setTimeout(() => {
         console.warn('Splash Loader: Safety timeout reached, forcing page display.');
         triggerLoadComplete();
-    }, 8000);
+    }, 3500);
 
     // Hide splash screen with smooth fade out
     function hideSplashScreen() {
