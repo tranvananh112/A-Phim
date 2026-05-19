@@ -8,7 +8,7 @@ const SEO = {
     baseUrl: window.location.origin,
     
     // Dynamic Movie Meta & Schema Injection
-    updateMovieSEO(movie) {
+    updateMovieSEO(movie, currentEpisode = null) {
         if (!movie) return;
 
         const title = movie.name || movie.title;
@@ -17,21 +17,93 @@ const SEO = {
         const quality = movie.quality || 'Full HD';
         const lang = movie.lang || 'Vietsub';
         
-        // 1. Target Optimized Title Construction
-        let pageTitle = `Phim ${title}`;
+        // 1. Determine the current episode info (for watch page or detail page)
+        let episodeInfo = '';
+        if (currentEpisode && currentEpisode.name) {
+            const epName = currentEpisode.name.trim();
+            if (/^\d+$/.test(epName)) {
+                episodeInfo = `Tập ${epName} ${lang}`;
+            } else {
+                episodeInfo = epName.toUpperCase().includes('TẬP') ? epName : `Tập ${epName}`;
+            }
+        } else if (movie.episode_current) {
+            const epCur = movie.episode_current.trim();
+            // Normalizing names to be highly SEO-friendly
+            if (/^\d+$/.test(epCur)) {
+                episodeInfo = `Tập ${epCur} ${lang}`;
+            } else {
+                episodeInfo = epCur;
+            }
+        }
+
+        // 2. Parse and clean movie content (synopsis) to extract readable text
+        let cleanSynopsis = '';
+        if (movie.content) {
+            // Strip HTML tags and clean up double spaces/newlines
+            cleanSynopsis = movie.content
+                .replace(/<[^>]*>?/gm, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        // 3. Target Optimized Title Construction (Motchill / Kenh14 Style)
+        let pageTitle = `Xem Phim ${title}`;
         if (originTitle && originTitle.toLowerCase() !== title.toLowerCase()) {
             pageTitle += ` (${originTitle})`;
         }
-        pageTitle += ` [${year}] ${quality} ${lang} - ${this.siteName}`;
+        
+        if (episodeInfo) {
+            pageTitle += ` ${episodeInfo}`;
+        }
+        
+        pageTitle += ` (${year}) - ${this.siteName}`;
         
         document.title = pageTitle;
 
-        // 2. Meta Tags Injection
-        const description = `Xem Phim ${title} (${originTitle}) năm ${year} chất lượng ${quality} ${lang} miễn phí. Nội dung hấp dẫn, tải phim cực nhanh không giật lag tại ${this.siteName}.`;
+        // 4. Target Optimized Meta Description Construction
+        let descPrefix = `Xem phim ${title}`;
+        if (originTitle && originTitle.toLowerCase() !== title.toLowerCase()) {
+            descPrefix += ` - ${originTitle}`;
+        }
+        descPrefix += ` (${year})`;
+        if (episodeInfo) {
+            descPrefix += ` ${episodeInfo}`;
+        }
+        descPrefix += `.`;
+
+        const maxDescLength = 155;
+        let description = '';
+
+        if (cleanSynopsis) {
+            const fullText = `${descPrefix} ${cleanSynopsis}`;
+            if (fullText.length > maxDescLength) {
+                let truncated = fullText.substring(0, maxDescLength);
+                const lastSpace = truncated.lastIndexOf(' ');
+                if (lastSpace > 0) {
+                    truncated = truncated.substring(0, lastSpace);
+                }
+                description = `${truncated}...`;
+            } else {
+                description = fullText;
+            }
+        } else {
+            const fallbackText = `${descPrefix} Xem phim nhanh chất lượng cao, cập nhật đầy đủ các tập tại ${this.siteName}.`;
+            if (fallbackText.length > maxDescLength) {
+                let truncated = fallbackText.substring(0, maxDescLength);
+                const lastSpace = truncated.lastIndexOf(' ');
+                if (lastSpace > 0) {
+                    truncated = truncated.substring(0, lastSpace);
+                }
+                description = `${truncated}...`;
+            } else {
+                description = fallbackText;
+            }
+        }
+
         this.setMeta('description', description);
         this.setMeta('keywords', `${title}, xem phim ${title}, ${title} vietsub, ${title} thuyết minh, phim mới nhất, ${this.siteName}`);
         
-        // 3. Open Graph / Facebook
+        // 5. Open Graph / Facebook
         this.setOG('og:title', pageTitle);
         this.setOG('og:description', description);
         if (movie.thumb_url) {
@@ -40,13 +112,13 @@ const SEO = {
         }
         this.setOG('og:url', window.location.href);
 
-        // 4. CANONICAL Link
+        // 6. CANONICAL Link
         this.setCanonical(window.location.href);
 
-        // 5. SCHEMA.ORG JSON-LD Movie Injection
+        // 7. SCHEMA.ORG JSON-LD Movie Injection
         this.injectMovieSchema(movie, description);
 
-        // 6. BreadcrumbList Schema Injection
+        // 8. BreadcrumbList Schema Injection
         this.injectBreadcrumbSchema(movie);
     },
 

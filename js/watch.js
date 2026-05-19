@@ -66,7 +66,7 @@ async function loadMovieAndPlay(slug, episodeSlug) {
 function renderMovieInfo(movie, episode) {
     // 🚀 INJECT DYNAMIC SEO - Overrides meta & title immediately
     if (typeof SEO !== 'undefined') {
-        SEO.updateMovieSEO(movie);
+        SEO.updateMovieSEO(movie, episode);
     } else {
         document.title = `${movie.name} - ${episode?.name || ''} - APhim`;
     }
