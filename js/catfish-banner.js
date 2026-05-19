@@ -182,8 +182,8 @@
         overlay.innerHTML =
             '<div class="aph-popup-wrapper">' +
                 // Nút đóng nổi bật bên ngoài card — top right
-                '<button id="aphim-popup-x" aria-label="Đóng quảng cáo">' +
-                    'Đóng QC&nbsp;&#10005;' +
+                '<button id="aphim-popup-x" aria-label="Bỏ qua quảng cáo">' +
+                    'Nh\u1ea5n b\u1ea5t k\u1ef3 \u0111\u00e2u \u0111\u1ec3 b\u1ecf qua' +
                 '</button>' +
                 // Card popup
                 '<div id="aphim-popup">' +
@@ -287,7 +287,8 @@
 
         document.getElementById('aphim-popup-x').addEventListener('click', closePopup);
         overlay.addEventListener('click', function (e) {
-            if (e.target === overlay) closePopup();
+            if (e.target.classList.contains('aph-dot')) return;
+            closePopup();
         });
         document.addEventListener('keydown', function escH(e) {
             if (e.key === 'Escape') { closePopup(); document.removeEventListener('keydown', escH); }

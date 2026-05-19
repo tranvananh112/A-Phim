@@ -303,7 +303,7 @@
         }
         
         // Hide splash screen after a short delay so user sees full load
-        setTimeout(hideSplashScreen, 350);
+        setTimeout(hideSplashScreen, 100);
     }
 
     // Listen to load events
@@ -347,7 +347,7 @@
                 if (splash && splash.parentNode) {
                     splash.parentNode.removeChild(splash);
                 }
-            }, 700); // Allow transition to complete fully
+            }, 500); // Allow transition to complete fully
         }
     }
 

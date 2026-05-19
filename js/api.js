@@ -8,6 +8,24 @@ class MovieAPI {
         this.useMultipleSources = API_CONFIG.USE_MULTIPLE_SOURCES;
     }
 
+    // Helper to fetch with timeout (default 6 seconds)
+    async fetchWithTimeout(url, options = {}) {
+        const { timeout = 6000, ...rest } = options;
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), timeout);
+        try {
+            const response = await fetch(url, {
+                ...rest,
+                signal: controller.signal
+            });
+            clearTimeout(id);
+            return response;
+        } catch (err) {
+            clearTimeout(id);
+            throw err;
+        }
+    }
+
     // Get auth token
     getAuthToken() {
         return localStorage.getItem(STORAGE_KEYS.TOKEN);
@@ -25,7 +43,7 @@ class MovieAPI {
             headers['Authorization'] = `Bearer ${token}`;
         }
 
-        const response = await fetch(url, {
+        const response = await this.fetchWithTimeout(url, {
             ...options,
             headers
         });
@@ -53,7 +71,7 @@ class MovieAPI {
                 // Always return data if we got a response
                 return data;
             } else {
-                const response = await fetch(`${this.ophimURL}/danh-sach/phim-moi-cap-nhat?page=${page}`, {
+                const response = await this.fetchWithTimeout(`${this.ophimURL}/danh-sach/phim-moi-cap-nhat?page=${page}`, {
                     headers: { 'accept': 'application/json' }
                 });
                 return await response.json();
@@ -77,7 +95,7 @@ class MovieAPI {
                 // The backend should handle the format
                 return data;
             } else {
-                const response = await fetch(`${this.ophimURL}/phim/${slug}`, {
+                const response = await this.fetchWithTimeout(`${this.ophimURL}/phim/${slug}`, {
                     headers: { 'accept': 'application/json' }
                 });
                 return await response.json();
@@ -103,7 +121,7 @@ class MovieAPI {
                 }
                 return null;
             } else {
-                const response = await fetch(`${this.ophimURL}/tim-kiem?keyword=${encodeURIComponent(keyword)}&page=${page}`, {
+                const response = await this.fetchWithTimeout(`${this.ophimURL}/tim-kiem?keyword=${encodeURIComponent(keyword)}&page=${page}`, {
                     headers: { 'accept': 'application/json' }
                 });
                 return await response.json();
@@ -130,7 +148,7 @@ class MovieAPI {
                 }
                 return null;
             } else {
-                const response = await fetch(`${this.ophimURL}/the-loai/${categorySlug}?page=${page}`, {
+                const response = await this.fetchWithTimeout(`${this.ophimURL}/the-loai/${categorySlug}?page=${page}`, {
                     headers: { 'accept': 'application/json' }
                 });
                 return await response.json();
@@ -157,7 +175,7 @@ class MovieAPI {
                 }
                 return null;
             } else {
-                const response = await fetch(`${this.ophimURL}/quoc-gia/${countrySlug}?page=${page}`, {
+                const response = await this.fetchWithTimeout(`${this.ophimURL}/quoc-gia/${countrySlug}?page=${page}`, {
                     headers: { 'accept': 'application/json' }
                 });
                 return await response.json();
@@ -219,7 +237,7 @@ class MovieAPI {
     // Get list of categories
     async getCategories() {
         try {
-            const response = await fetch(`${this.ophimURL}/the-loai`, {
+            const response = await this.fetchWithTimeout(`${this.ophimURL}/the-loai`, {
                 headers: { 'accept': 'application/json' }
             });
             const data = await response.json();
@@ -306,7 +324,7 @@ class MovieAPI {
     // Fetch from Ophim17 (secondary source)
     async getMovieListFromOphim17(page = 1) {
         try {
-            const response = await fetch(`${this.ophim17URL}/danh-sach/phim-moi-cap-nhat?page=${page}`, {
+            const response = await this.fetchWithTimeout(`${this.ophim17URL}/danh-sach/phim-moi-cap-nhat?page=${page}`, {
                 headers: { 'accept': 'application/json' }
             });
             return await response.json();
@@ -318,7 +336,7 @@ class MovieAPI {
 
     async getMoviesByCategoryFromOphim17(categorySlug, page = 1) {
         try {
-            const response = await fetch(`${this.ophim17URL}/v1/api/the-loai/${categorySlug}?page=${page}`, {
+            const response = await this.fetchWithTimeout(`${this.ophim17URL}/v1/api/the-loai/${categorySlug}?page=${page}`, {
                 headers: { 'accept': 'application/json' }
             });
             return await response.json();

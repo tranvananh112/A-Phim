@@ -13,10 +13,10 @@
     z-index: 99999;
     opacity: 1;
     visibility: visible;
-    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-        visibility 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-        transform 0.7s cubic-bezier(0.3, 0.8, 0.4, 1),
-        filter 0.6s ease-out;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        visibility 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.45s cubic-bezier(0.3, 0.8, 0.4, 1),
+        filter 0.4s ease-out;
 }
 
 #splashLoader.splash-fade-out {
