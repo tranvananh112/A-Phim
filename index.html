@@ -38,7 +38,7 @@
             left: 0 !important;
             width: 100% !important;
             height: 100% !important;
-            background: linear-gradient(135deg, var(--bg-void) 0%, var(--bg-deep) 50%, var(--bg-void) 100%) !important;
+            background: var(--bg-void) !important;
             z-index: 99999 !important;
             display: flex !important;
             flex-direction: column !important;
@@ -52,7 +52,7 @@
                 filter 0.6s ease-out;
         }
 
-        #splashLoader.hidden {
+        #splashLoader.splash-fade-out {
             opacity: 0 !important;
             visibility: hidden !important;
             pointer-events: none !important;
