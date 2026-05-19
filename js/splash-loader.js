@@ -54,7 +54,7 @@
                     <div class="splash-ring"></div>
                     <div class="splash-ring"></div>
                     <div class="splash-ring"></div>
-                    <img src="/favicon.png" alt="A Phim Logo" class="splash-logo">
+                    <img src="/favicon.png" alt="A Phim Logo" class="splash-logo" style="opacity: 0; transition: opacity 0.3s;" onload="this.style.opacity = '1'">
                 </div>
 
                 <!-- Brand name -->
@@ -80,10 +80,18 @@
     if (document.body) {
         document.body.insertAdjacentHTML('afterbegin', splashHTML);
         document.body.classList.add('splash-ready');
+        const logoImg = document.querySelector('#splashLoader .splash-logo');
+        if (logoImg && logoImg.complete) {
+            logoImg.style.opacity = '1';
+        }
     } else {
         document.addEventListener('DOMContentLoaded', function () {
             document.body.insertAdjacentHTML('afterbegin', splashHTML);
             document.body.classList.add('splash-ready');
+            const logoImg = document.querySelector('#splashLoader .splash-logo');
+            if (logoImg && logoImg.complete) {
+                logoImg.style.opacity = '1';
+            }
         });
     }
 

@@ -26,10 +26,11 @@
         })
         .catch(err => console.warn('[SW Updater] Lỗi đăng ký:', err));
 
-    // Lắng nghe reload sau khi SW mới kiểm soát trang
+    // Lắng nghe reload sau khi SW mới kiểm soát trang (chỉ reload khi cập nhật bản mới, tránh reload nháy màn hình ở lần truy cập đầu tiên)
     let refreshing = false;
+    const isControlled = !!navigator.serviceWorker.controller;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (!refreshing) {
+        if (isControlled && !refreshing) {
             refreshing = true;
             window.location.reload();
         }
