@@ -36,17 +36,7 @@
             <div class="splash-background-overlay"></div>
 
             <!-- Particles background -->
-            <div class="splash-particles" style="z-index: 3;">
-                <div class="splash-particle"></div>
-                <div class="splash-particle"></div>
-                <div class="splash-particle"></div>
-                <div class="splash-particle"></div>
-                <div class="splash-particle"></div>
-                <div class="splash-particle"></div>
-                <div class="splash-particle"></div>
-                <div class="splash-particle"></div>
-                <div class="splash-particle"></div>
-            </div>
+            <div class="splash-particles" style="z-index: 3;"></div>
 
             <!-- Logo with animated rings (elevated z-index) -->
             <div class="splash-content-container" style="position: relative; z-index: 4; display: flex; flex-direction: column; align-items: center; justify-content: center;">
@@ -265,6 +255,38 @@
             .catch(err => console.log('Collage dynamic update skipped:', err));
     }
 
+    // Build floating star particles dynamically
+    function buildParticles() {
+        const container = document.querySelector('#splashLoader .splash-particles');
+        if (!container) return;
+
+        const isMobile = window.innerWidth <= 768;
+        const particleCount = isMobile ? 25 : 45; // 45 stars on desktop, 25 stars on mobile for great density
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'splash-particle';
+            
+            // Randomize position, size, float duration, and starting delay
+            const size = Math.random() * 2.8 + 1.2; // size between 1.2px and 4.0px
+            const left = Math.random() * 100; // random horizontal distribution (0% to 100%)
+            const duration = Math.random() * 4 + 3.5; // animation float duration between 3.5s and 7.5s
+            const delay = Math.random() * 6; // random delay up to 6s before floating starts
+            
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${left}%`;
+            particle.style.animationDuration = `${duration}s`;
+            particle.style.animationDelay = `${delay}s`;
+            
+            // Premium bright yellow glow effect (box-shadow)
+            particle.style.background = '#f2f20d';
+            particle.style.boxShadow = `0 0 ${size * 2}px #f2f20d, 0 0 ${size * 4}px rgba(242, 242, 13, 0.7)`;
+            
+            container.appendChild(particle);
+        }
+    }
+
     // Trigger loader finish
     function triggerLoadComplete() {
         if (isLoaded) return;
@@ -327,11 +349,16 @@
         }
     }
 
-    // Initialize collage & base progress
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', buildCollage);
-    } else {
+    // Initialize collage, particles & base progress
+    function initSplashEffects() {
         buildCollage();
+        buildParticles();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSplashEffects);
+    } else {
+        initSplashEffects();
     }
     setTimeout(updateProgress, 50);
 
