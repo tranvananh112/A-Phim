@@ -84,6 +84,12 @@ class MovieAPI {
 
     // Fetch movie detail by slug
     async getMovieDetail(slug) {
+        // --- BLOCK DMCA REPORTED SLUGS ---
+        if (slug === 'moi-thu-la-loi-co-ay') {
+            window.location.href = '/index.html'; // Chuyển hướng về trang chủ
+            return null;
+        }
+        
         try {
             if (this.useBackend) {
                 const response = await this.fetchWithAuth(`${this.backendURL}/movies/${slug}`);

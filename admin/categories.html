@@ -548,6 +548,10 @@
                     <p>Quản lý thể loại, quốc gia, danh sách nội dung</p>
                 </div>
                 <div class="header-right">
+                    <div class="header-search">
+                        <i data-lucide="search" class="search-icon"></i>
+                        <input type="text" id="categorySearchInput" placeholder="Tìm nhanh thể loại, quốc gia..." oninput="filterCategories()">
+                    </div>
                     <button class="header-icon-btn" title="Làm mới" onclick="initPage()">
                         <i data-lucide="refresh-cw" style="width: 1em; height: 1em;"></i>
                     </button>
@@ -649,7 +653,14 @@
                             </span>
                             <span class="badge badge-primary" id="previewCount"> </span>
                         </div>
-                        <div id="previewPagCtrl" style="display:flex;gap:6px;align-items:center;"></div>
+                        
+                        <div style="display:flex; gap:12px; align-items:center; flex-wrap: wrap;">
+                            <div class="filter-search" style="min-width: 250px; position: relative;">
+                                <i data-lucide="search" class="search-icon" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text-muted);"></i>
+                                <input type="text" id="previewMovieSearch" placeholder="Lọc phim trong trang này..." onkeyup="filterPreviewMovies()" style="width: 100%; padding: 8px 12px 8px 36px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface-2); color: var(--text-primary); font-size: 13.5px; outline: none;">
+                            </div>
+                            <div id="previewPagCtrl" style="display:flex;gap:6px;align-items:center;"></div>
+                        </div>
                     </div>
 
                     <!-- Loading -->
@@ -1198,6 +1209,79 @@
             }
         };
 
+        function filterCategories() {
+            const input = document.getElementById('categorySearchInput');
+            if(!input) return;
+            const filter = input.value.toLowerCase();
+
+            // Lọc thể loại
+            const genreGrid = document.getElementById('genreGrid');
+            if (genreGrid) {
+                const chips = genreGrid.getElementsByClassName('genre-chip');
+                let count = 0;
+                for (let i = 0; i < chips.length; i++) {
+                    const text = chips[i].textContent || chips[i].innerText;
+                    if (text.toLowerCase().indexOf(filter) > -1) {
+                        chips[i].style.display = "";
+                        count++;
+                    } else {
+                        chips[i].style.display = "none";
+                    }
+                }
+                const countEl = document.getElementById('genreCount');
+                if (countEl) {
+                    countEl.innerText = filter === '' ? `${chips.length} thể loại` : `${count} kết quả`;
+                }
+            }
+
+            // Lọc quốc gia
+            const countryGrid = document.getElementById('countryGrid');
+            if (countryGrid) {
+                const cards = countryGrid.getElementsByClassName('country-card');
+                for (let i = 0; i < cards.length; i++) {
+                    const text = cards[i].textContent || cards[i].innerText;
+                    if (text.toLowerCase().indexOf(filter) > -1) {
+                        cards[i].style.display = "";
+                    } else {
+                        cards[i].style.display = "none";
+                    }
+                }
+            }
+
+            // Lọc danh sách phim
+            const listContainer = document.getElementById('listTypeContainer');
+            if (listContainer) {
+                const rows = listContainer.getElementsByClassName('list-type-row');
+                for (let i = 0; i < rows.length; i++) {
+                    const text = rows[i].textContent || rows[i].innerText;
+                    if (text.toLowerCase().indexOf(filter) > -1) {
+                        rows[i].style.display = "";
+                    } else {
+                        rows[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        // Lọc phim bên trong tab Preview (Xem phim)
+        function filterPreviewMovies() {
+            const input = document.getElementById('previewMovieSearch');
+            if(!input) return;
+            const filter = input.value.toLowerCase();
+            const grid = document.getElementById('previewGrid');
+            if (!grid) return;
+            const cards = grid.getElementsByClassName('movie-preview-card');
+            
+            for(let i = 0; i < cards.length; i++) {
+                const titleEl = cards[i].querySelector('.movie-preview-title');
+                const title = titleEl ? (titleEl.textContent || titleEl.innerText) : '';
+                if(title.toLowerCase().indexOf(filter) > -1) {
+                    cards[i].style.display = "";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
     </script>
     <script>lucide.createIcons();</script>
 
