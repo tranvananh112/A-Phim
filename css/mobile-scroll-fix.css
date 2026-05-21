@@ -1,16 +1,16 @@
 /* =====================================================
-   MOBILE SCROLL FIX v2
-   Fix 3 vấn đề:
-   1. Cả khung sáng lên khi chạm (tap-highlight)
-   2. Tự click vào phim khi vuốt ngang
-   3. Card nhảy lên xuống không đều
+   MOBILE SCROLL & TOUCH FIX v3
+   Fix:
+   1. Cả khung sáng khi chạm → tap-highlight off
+   2. Tự click khi vuốt → handled by swipe guard JS
+   3. Card nhảy lên xuống → align-self + aspect-ratio
+   4. Click chậm / nhận ngón tay không chính xác → touch-action: manipulation
    ===================================================== */
 
-/* ---- FIX 1: Tắt highlight cam/xanh khi chạm vào card ---- */
+/* ---- FIX 1: Tắt highlight cam/xanh toàn bộ slider ---- */
 .overflow-x-auto *,
 .snap-x *,
-.scrollbar-hide *,
-[class*="overflow-x-auto"] * {
+.scrollbar-hide * {
     -webkit-tap-highlight-color: transparent !important;
     -webkit-touch-callout: none;
     user-select: none;
@@ -26,34 +26,58 @@
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
     overscroll-behavior-y: none;
-    will-change: scroll-position;
-    /* Tắt highlight toàn container */
     -webkit-tap-highlight-color: transparent;
 }
 
-/* ---- FIX 3: Card trong slider — chiều cao đồng đều ---- */
+/* ---- FIX 3: Card chiều cao đồng đều ---- */
 .snap-x > *,
 .overflow-x-auto > * {
     flex-shrink: 0;
-    align-self: flex-start; /* Không kéo giãn theo container */
+    align-self: flex-start;
 }
 
-/* Ảnh trong card — tỉ lệ cố định, không nhảy khi load */
+/* Ảnh poster cố định tỉ lệ 2:3 */
 .snap-x img,
 .overflow-x-auto img {
     display: block;
     width: 100%;
-    /* Giữ tỉ lệ poster phim 2:3 */
     aspect-ratio: 2 / 3;
     object-fit: cover;
     object-position: center top;
-    /* Ngăn ảnh làm layout reflow */
     flex-shrink: 0;
 }
 
-/* ---- FIX 4: Hover effect chỉ trên desktop, không trên mobile ---- */
+/* ---- FIX 4: CLICK NHANH + CHÍNH XÁC ---- */
+/* touch-action: manipulation = xóa 300ms delay của double-tap zoom
+   Ngón tay chạm vào phim → nhận ngay, không chờ */
+
+/* Tất cả link, button, thẻ có onclick trên trang */
+a, button, [onclick],
+[role="button"],
+.movie-card, .film-card,
+[class*="card"],
+[class*="movie-item"],
+[class*="film-item"],
+[class*="premium-card"] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+}
+
+/* Cards cụ thể trong slider phim */
+.snap-x a,
+.snap-x [onclick],
+.overflow-x-auto a,
+.overflow-x-auto [onclick] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    /* GPU acceleration — render trước, nhận click nhanh hơn */
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* ---- FIX 5: Hover effect chỉ trên desktop ---- */
 @media (hover: hover) and (pointer: fine) {
-    /* Desktop: cho phép hover bình thường */
     .snap-x a:hover,
     .overflow-x-auto a:hover {
         opacity: 0.85;
@@ -61,14 +85,15 @@
 }
 
 @media (hover: none) and (pointer: coarse) {
-    /* Mobile/touch: TẮT hover để không bị sáng cả khung */
+    /* Mobile: TẮT hover toàn bộ để không bị sáng khung */
     .snap-x a:hover,
     .snap-x div:hover,
     .overflow-x-auto a:hover,
     .overflow-x-auto div:hover,
     [class*="card"]:hover,
     [class*="movie-item"]:hover,
-    [class*="film-item"]:hover {
+    [class*="film-item"]:hover,
+    [class*="premium-card"]:hover {
         transform: none !important;
         box-shadow: none !important;
         opacity: 1 !important;
@@ -77,22 +102,29 @@
     }
 }
 
-/* ---- FIX 5: Mobile riêng ---- */
+/* ---- FIX 6: Mobile riêng ---- */
 @media (max-width: 768px) {
     .overflow-x-auto,
     .snap-x,
     .scrollbar-hide {
         touch-action: pan-x;
         overflow-y: hidden !important;
-        /* Snap mượt hơn */
         scroll-snap-type: x mandatory;
-        -webkit-scroll-snap-type: x mandatory;
     }
 
-    /* Card chiều cao cố định — không để text dài làm nhảy card */
+    /* Xóa 300ms delay toàn trang trên mobile */
+    * {
+        touch-action: manipulation;
+    }
+
+    /* Nhưng slider vẫn là pan-x (ưu tiên cao hơn) */
+    .overflow-x-auto,
+    .snap-x {
+        touch-action: pan-x !important;
+    }
+
     .snap-x > *,
     .overflow-x-auto > * {
         align-self: flex-start !important;
-        vertical-align: top;
     }
 }
