@@ -46,58 +46,36 @@ const SEO = {
                 .trim();
         }
 
-        // 3. Target Optimized Title Construction (Motchill / Kenh14 Style)
-        let pageTitle = `Xem Phim ${title}`;
-        if (originTitle && originTitle.toLowerCase() !== title.toLowerCase()) {
-            pageTitle += ` (${originTitle})`;
-        }
-        
-        if (episodeInfo) {
-            pageTitle += ` ${episodeInfo}`;
-        }
-        
-        pageTitle += ` (${year}) - ${this.siteName}`;
-        
+        // 3. Title chuẩn SEO — công thức đúng cho từ khóa người dùng tìm kiếm
+        const isSeries = movie.type === 'series';
+        let pageTitle = `Phim ${title} Vietsub + Thuyết Minh - Full HD`;
         document.title = pageTitle;
 
-        // 4. Target Optimized Meta Description Construction
-        let descPrefix = `Xem phim ${title}`;
-        if (originTitle && originTitle.toLowerCase() !== title.toLowerCase()) {
-            descPrefix += ` - ${originTitle}`;
-        }
-        descPrefix += ` (${year})`;
-        if (episodeInfo) {
-            descPrefix += ` ${episodeInfo}`;
-        }
-        descPrefix += `.`;
+        // 4. Meta description chuẩn SEO, giới hạn 155 ký tự
+        const isSeries2 = movie.type === 'series';
+        const genre = Array.isArray(movie.category) && movie.category[0] ? movie.category[0].name : 'hành động';
+        const country = Array.isArray(movie.country) && movie.country[0] ? movie.country[0].name : '';
+        const eps = movie.episode_total || movie.episode_current || '?';
+        const shortSynopsis = cleanSynopsis ? cleanSynopsis.substring(0, 80) : '';
+        const originPart = (originTitle && originTitle.toLowerCase() !== title.toLowerCase()) ? ` (${originTitle})` : '';
 
-        const maxDescLength = 155;
-        let description = '';
-
-        if (cleanSynopsis) {
-            const fullText = `${descPrefix} ${cleanSynopsis}`;
-            if (fullText.length > maxDescLength) {
-                let truncated = fullText.substring(0, maxDescLength);
-                const lastSpace = truncated.lastIndexOf(' ');
-                if (lastSpace > 0) {
-                    truncated = truncated.substring(0, lastSpace);
-                }
-                description = `${truncated}...`;
-            } else {
-                description = fullText;
-            }
+        let descBase;
+        if (isSeries2) {
+            descBase = `${title}${originPart} là bộ phim ${genre} ${country} ra mắt năm ${year}, gồm ${eps} tập. ${shortSynopsis}`;
         } else {
-            const fallbackText = `${descPrefix} Xem phim nhanh chất lượng cao, cập nhật đầy đủ các tập tại ${this.siteName}.`;
-            if (fallbackText.length > maxDescLength) {
-                let truncated = fallbackText.substring(0, maxDescLength);
-                const lastSpace = truncated.lastIndexOf(' ');
-                if (lastSpace > 0) {
-                    truncated = truncated.substring(0, lastSpace);
-                }
-                description = `${truncated}...`;
-            } else {
-                description = fallbackText;
-            }
+            descBase = `${title}${originPart} là phim ${genre} ${country} năm ${year}. ${shortSynopsis}`;
+        }
+
+        const suffix = isSeries2 ? ' Xem miễn phí tại APhim.' : ' Xem Vietsub Full HD miễn phí tại APhim.';
+        const maxDescLength = 155;
+        let description;
+        if ((descBase + suffix).length <= maxDescLength) {
+            description = descBase + suffix;
+        } else {
+            let truncated = descBase.substring(0, maxDescLength - suffix.length);
+            const lastSpace = truncated.lastIndexOf(' ');
+            if (lastSpace > 50) truncated = truncated.substring(0, lastSpace);
+            description = truncated + '...' + suffix;
         }
 
         this.setMeta('description', description);
@@ -159,9 +137,10 @@ const SEO = {
         const name = movie.name || movie.title;
         const img = movie.thumb_url ? (movie.thumb_url.startsWith('http') ? movie.thumb_url : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`) : 'https://aphim.io.vn/favicon.png';
         
+        const schemaType = (movie.type === 'series') ? 'TVSeries' : 'Movie';
         const schemaData = {
             "@context": "https://schema.org",
-            "@type": "Movie",
+            "@type": schemaType,
             "name": name,
             "alternateName": movie.origin_name || "",
             "url": window.location.href,
