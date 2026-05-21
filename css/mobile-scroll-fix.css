@@ -1,0 +1,60 @@
+/* =====================================================
+   MOBILE SCROLL FIX — Chống lệch dọc khi vuốt ngang
+   Áp dụng cho tất cả slider phim trên trang chủ
+   ===================================================== */
+
+/* Tất cả container scroll ngang (slider phim) */
+.overflow-x-auto,
+[class*="overflow-x-auto"],
+.scrollbar-hide {
+    /* Chỉ cho phép vuốt NGANG trên mobile — chặn lệch dọc */
+    touch-action: pan-x;
+    /* Ẩn scroll dọc để không bị nhảy khi vuốt ngang */
+    overflow-y: hidden !important;
+    /* Đảm bảo cuộn mượt trên iOS */
+    -webkit-overflow-scrolling: touch;
+    /* Tăng tốc phần cứng */
+    will-change: scroll-position;
+    transform: translateZ(0);
+}
+
+/* Snap container — slider có snap point */
+.snap-x {
+    touch-action: pan-x;
+    overflow-y: hidden !important;
+    /* Scroll mượt thay vì giật cục */
+    scroll-behavior: smooth;
+    /* Đảm bảo snap hoạt động tốt trên mobile */
+    -webkit-scroll-snap-type: x mandatory;
+    scroll-snap-type: x mandatory;
+}
+
+/* Cards trong slider — chiều cao cố định để không bị nhảy layout */
+.snap-x > *,
+.snap-x > .snap-start,
+.snap-x > .snap-center {
+    scroll-snap-align: start;
+    /* Ngăn card co giãn làm layout nhảy */
+    flex-shrink: 0;
+}
+
+/* Fix riêng cho mobile */
+@media (max-width: 768px) {
+    .overflow-x-auto,
+    [class*="overflow-x-auto"],
+    .scrollbar-hide,
+    .snap-x {
+        touch-action: pan-x;
+        overflow-y: hidden !important;
+        /* Tránh bounce effect trên iOS làm lệch */
+        overscroll-behavior-x: contain;
+        overscroll-behavior-y: none;
+    }
+
+    /* Wrapper bên ngoài slider — cho phép scroll dọc trang bình thường */
+    .overflow-x-auto + *,
+    section:has(.overflow-x-auto),
+    section:has(.snap-x) {
+        touch-action: pan-y;
+    }
+}
