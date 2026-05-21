@@ -9,6 +9,103 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Routes requiring SSR MUST be before express.static
+const fs = require('fs');
+
+app.get(['/movie-detail', '/movie-detail.html'], async (req, res) => {
+    try {
+        const slug = req.query.slug;
+        let html = await fs.promises.readFile(path.join(__dirname, 'movie-detail.html'), 'utf-8');
+        
+        if (slug) {
+            try {
+                // Fetch SEO data from ophim1
+                const response = await axios.get('https://ophim1.com/phim/' + slug, { timeout: 5000 });
+                const data = response.data;
+                if (data && data.status && data.movie) {
+                    const movie = data.movie;
+                    const isSeries = movie.type === 'series';
+                    const name = movie.name || movie.title || '';
+                    const originName = movie.origin_name || '';
+                    const year = movie.year || new Date().getFullYear();
+                    const genre = (movie.category && movie.category[0]) ? movie.category[0].name : 'Phim mới';
+                    const country = (movie.country && movie.country[0]) ? movie.country[0].name : '';
+                    const eps = movie.episode_total || '?';
+                    const rawContent = movie.content ? movie.content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim() : '';
+                    const content = rawContent.substring(0, 100);
+
+                    // 1. Title
+                    const title = 'Phim ' + name + ' Vietsub + Thuyết Minh - Full HD';
+
+                    // 2. Meta description (max 155 chars)
+                    let desc;
+                    if (isSeries) {
+                        desc = name + ' (' + originName + ') là bộ phim ' + genre + ' ' + country + ' ra mắt năm ' + year + ', gồm ' + eps + ' tập. ' + content + '... Xem miễn phí tại APhim.';
+                    } else {
+                        desc = name + ' (' + originName + ') là phim ' + genre + ' ' + country + ' năm ' + year + '. ' + content + '... Xem Vietsub Full HD miễn phí tại APhim.';
+                    }
+                    desc = desc.substring(0, 155);
+
+                    // 3. Open Graph image
+                    const img = movie.thumb_url
+                        ? (movie.thumb_url.startsWith('http') ? movie.thumb_url : 'https://img.ophim.live/uploads/movies/' + movie.thumb_url)
+                        : 'https://aphim.io.vn/favicon.png';
+                    const pageUrl = 'https://aphim.io.vn/movie-detail.html?slug=' + slug;
+
+                    // 4. JSON-LD Schema
+                    const schema = {
+                        '@context': 'https://schema.org',
+                        '@type': isSeries ? 'TVSeries' : 'Movie',
+                        name: name,
+                        alternateName: originName,
+                        description: desc,
+                        datePublished: (movie.created && movie.created.time) ? movie.created.time : String(year),
+                        genre: Array.isArray(movie.category) ? movie.category.map(function(c) { return c.name; }) : ['Phim mới'],
+                        image: img,
+                        url: pageUrl
+                    };
+                    if (isSeries) {
+                        schema.numberOfEpisodes = parseInt(eps) || 0;
+                    }
+
+                    // Build SSR head block
+                    const seoBlock = '\n    <title>' + title + '</title>\n'
+                        + '    <meta name="description" content="' + desc.replace(/"/g, '&quot;') + '" />\n'
+                        + '    <meta property="og:title" content="' + title.replace(/"/g, '&quot;') + '" />\n'
+                        + '    <meta property="og:description" content="' + desc.replace(/"/g, '&quot;') + '" />\n'
+                        + '    <meta property="og:image" content="' + img + '" />\n'
+                        + '    <meta property="og:url" content="' + pageUrl + '" />\n'
+                        + '    <meta property="og:type" content="video.movie" />\n'
+                        + '    <link rel="canonical" href="' + pageUrl + '" />\n'
+                        + '    <script type="application/ld+json">' + JSON.stringify(schema) + '</script>\n';
+
+                    // Remove existing duplicate tags from static HTML
+                    html = html.replace(/<title>[\s\S]*?<\/title>/, '');
+                    html = html.replace(/<meta\s+name="description"[^>]*>/gi, '');
+                    html = html.replace(/<meta\s+property="og:title"[^>]*>/gi, '');
+                    html = html.replace(/<meta\s+property="og:description"[^>]*>/gi, '');
+                    html = html.replace(/<meta\s+property="og:image"[^>]*>/gi, '');
+                    html = html.replace(/<meta\s+property="og:url"[^>]*>/gi, '');
+                    html = html.replace(/<meta\s+property="og:type"[^>]*>/gi, '');
+                    html = html.replace(/<link\s+rel="canonical"[^>]*>/gi, '');
+
+                    // Inject SSR block right after <head>
+                    html = html.replace('<head>', '<head>' + seoBlock);
+                }
+            } catch (e) {
+                console.error('[SSR] SEO inject failed for slug:', slug, '-', e.message);
+                // Fallback: serve original HTML without SEO injection — better than crashing
+            }
+        }
+
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.send(html);
+    } catch (e) {
+        console.error('[SSR] File read error:', e.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 // Serve static files
 app.use(express.static(__dirname));
 
@@ -21,9 +118,7 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'login.html'));
 });
 
-app.get('/movie-detail', (req, res) => {
-    res.sendFile(path.join(__dirname, 'movie-detail.html'));
-});
+
 
 app.get('/watch', (req, res) => {
     res.sendFile(path.join(__dirname, 'watch.html'));
