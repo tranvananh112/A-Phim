@@ -70,14 +70,14 @@ function initializeAdminData() {
     // Initialize settings if not exists
     if (!localStorage.getItem(ADMIN_STORAGE_KEYS.SETTINGS)) {
         const defaultSettings = {
-            siteName: 'CineStream',
-            siteDescription: 'Trải nghiệm điện ảnh đỉnh cao',
+            siteName: 'APhim',
+            siteDescription: 'Xem phim online Full HD miễn phí',
             logo: '',
-            contactEmail: 'support@cinestream.vn',
+            contactEmail: 'support@aphim.io.vn',
             contactPhone: '1900-xxxx',
-            seoTitle: 'CineStream - Xem phim online chất lượng cao',
-            seoDescription: 'Website xem phim trực tuyến với hàng ngàn bộ phim bom tấn',
-            seoKeywords: 'xem phim, phim online, phim hay, phim mới',
+            seoTitle: 'APhim - Xem phìm online chất lượng cao',
+            seoDescription: 'APhim - Nền tảng xem phìm trực tuyến tốc độ cao, chất lượng Full HD Vietsub hoàn toàn miễn phí.',
+            seoKeywords: 'xem phim, phìm online, aphim, phim hay, phim vietsub, phim mới',
             paymentMomo: '',
             paymentZaloPay: '',
             paymentVNPay: ''
