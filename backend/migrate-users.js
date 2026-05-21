@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
-// The WRONG database connection
-const wrongUri = "mongodb+srv://cinestream_admin:vuRCrKzzCl26xzIV@cluster0.cc4bua2.mongodb.net/cinestreamretryWrites=true&w=majority";
-// The CORRECT database connection
-const correctUri = "mongodb+srv://cinestream_admin:vuRCrKzzCl26xzIV@cluster0.cc4bua2.mongodb.net/cinestream?retryWrites=true&w=majority";
+// Load from environment variables — KHÔNG hardcode credentials vào code
+const wrongUri = process.env.MONGODB_URI_WRONG || process.env.MONGODB_URI;
+const correctUri = process.env.MONGODB_URI;
 
 async function migrateUsers() {
     try {
