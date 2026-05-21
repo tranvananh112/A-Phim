@@ -106,6 +106,85 @@ app.get(['/movie-detail', '/movie-detail.html'], async (req, res) => {
     }
 });
 
+// ===== IMAGE SITEMAP — giúp Google index poster phim vào Google Images =====
+// Cache sitemap 6 tiếng để tránh gọi API liên tục
+let sitemapCache = { xml: null, timestamp: 0 };
+const SITEMAP_TTL = 6 * 60 * 60 * 1000; // 6 giờ
+
+app.get('/sitemap-images.xml', async (req, res) => {
+    try {
+        const now = Date.now();
+        if (sitemapCache.xml && (now - sitemapCache.timestamp < SITEMAP_TTL)) {
+            res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+            return res.send(sitemapCache.xml);
+        }
+
+        // Lấy nhiều trang phim mới nhất để có đủ ảnh
+        const pages = [1, 2, 3, 4, 5];
+        const allMovies = [];
+
+        await Promise.all(pages.map(async (page) => {
+            try {
+                const r = await axios.get('https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=' + page, { timeout: 6000 });
+                if (r.data && r.data.data && r.data.data.items) {
+                    allMovies.push(...r.data.data.items);
+                }
+            } catch (e) { /* bỏ qua trang lỗi */ }
+        }));
+
+        // Tạo từng <url> entry có <image:image>
+        const urlEntries = allMovies.map(function(movie) {
+            const slug = movie.slug || '';
+            const name = (movie.name || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            const pageUrl = 'https://aphim.io.vn/movie-detail.html?slug=' + slug;
+            const thumb = movie.thumb_url
+                ? (movie.thumb_url.startsWith('http') ? movie.thumb_url : 'https://img.ophim.live/uploads/movies/' + movie.thumb_url)
+                : '';
+            const poster = movie.poster_url
+                ? (movie.poster_url.startsWith('http') ? movie.poster_url : 'https://img.ophim.live/uploads/movies/' + movie.poster_url)
+                : '';
+
+            let imageEntries = '';
+            if (thumb) {
+                imageEntries += '\n        <image:image>\n            <image:loc>' + thumb + '</image:loc>\n            <image:title>' + name + '</image:title>\n        </image:image>';
+            }
+            if (poster && poster !== thumb) {
+                imageEntries += '\n        <image:image>\n            <image:loc>' + poster + '</image:loc>\n            <image:title>' + name + ' - Poster</image:title>\n        </image:image>';
+            }
+
+            if (!imageEntries) return '';
+
+            return '\n    <url>\n        <loc>' + pageUrl + '</loc>' + imageEntries + '\n    </url>';
+        }).filter(Boolean).join('');
+
+        const xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+            + '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n'
+            + '        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'
+            + urlEntries
+            + '\n</urlset>';
+
+        sitemapCache = { xml: xml, timestamp: now };
+
+        res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+        res.setHeader('Cache-Control', 'public, max-age=21600'); // Browser cache 6h
+        res.send(xml);
+    } catch (e) {
+        console.error('[Sitemap] Error:', e.message);
+        res.status(500).send('<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>');
+    }
+});
+
+// ===== GENERAL SITEMAP — khai báo các trang tĩnh cho Google =====
+app.get('/sitemap.xml', (req, res) => {
+    const staticPages = ['', 'search', 'pricing', 'danh-sach', 'hanh-dong', 'phim-theo-quoc-gia'];
+    const urls = staticPages.map(function(p) {
+        return '\n    <url><loc>https://aphim.io.vn/' + (p ? p + '.html' : '') + '</loc><changefreq>daily</changefreq><priority>' + (p === '' ? '1.0' : '0.8') + '</priority></url>';
+    }).join('');
+    const xml = '<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n    <sitemap><loc>https://aphim.io.vn/sitemap-images.xml</loc></sitemap>\n</sitemapindex>';
+    res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+    res.send(xml);
+});
+
 // Serve static files
 app.use(express.static(__dirname));
 
