@@ -1,10 +1,7 @@
 /* =====================================================
-   MOBILE SCROLL & TOUCH FIX v3
-   Fix:
-   1. Cả khung sáng khi chạm → tap-highlight off
-   2. Tự click khi vuốt → handled by swipe guard JS
-   3. Card nhảy lên xuống → align-self + aspect-ratio
-   4. Click chậm / nhận ngón tay không chính xác → touch-action: manipulation
+   MOBILE SCROLL & TOUCH FIX v4
+   Fix đúng: dùng overscroll-behavior thay vì pan-x
+   Không làm khựng lướt dọc trang trên mobile
    ===================================================== */
 
 /* ---- FIX 1: Tắt highlight cam/xanh toàn bộ slider ---- */
@@ -17,16 +14,20 @@
 }
 
 /* ---- FIX 2: Container scroll ngang ---- */
+/* KHÔNG dùng touch-action: pan-x — sẽ block lướt dọc trang!
+   Dùng overscroll-behavior-x: contain thay thế — nhẹ hơn, đúng hơn */
 .overflow-x-auto,
 [class*="overflow-x-auto"],
 .scrollbar-hide,
 .snap-x {
-    touch-action: pan-x;
-    overflow-y: hidden !important;
-    -webkit-overflow-scrolling: touch;
+    /* Chặn scroll ngang lan ra ngoài container (không ảnh hưởng lướt dọc) */
     overscroll-behavior-x: contain;
-    overscroll-behavior-y: none;
+    /* Scroll mượt trên iOS */
+    -webkit-overflow-scrolling: touch;
+    /* Tắt highlight */
     -webkit-tap-highlight-color: transparent;
+    /* Ẩn scroll dọc trong slider */
+    overflow-y: hidden !important;
 }
 
 /* ---- FIX 3: Card chiều cao đồng đều ---- */
@@ -48,13 +49,9 @@
 }
 
 /* ---- FIX 4: CLICK NHANH + CHÍNH XÁC ---- */
-/* touch-action: manipulation = xóa 300ms delay của double-tap zoom
-   Ngón tay chạm vào phim → nhận ngay, không chờ */
-
-/* Tất cả link, button, thẻ có onclick trên trang */
+/* Xóa 300ms double-tap delay — nhận click ngay */
 a, button, [onclick],
 [role="button"],
-.movie-card, .film-card,
 [class*="card"],
 [class*="movie-item"],
 [class*="film-item"],
@@ -64,19 +61,7 @@ a, button, [onclick],
     cursor: pointer;
 }
 
-/* Cards cụ thể trong slider phim */
-.snap-x a,
-.snap-x [onclick],
-.overflow-x-auto a,
-.overflow-x-auto [onclick] {
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-    /* GPU acceleration — render trước, nhận click nhanh hơn */
-    will-change: transform;
-    transform: translateZ(0);
-}
-
-/* ---- FIX 5: Hover effect chỉ trên desktop ---- */
+/* ---- FIX 5: Hover chỉ trên desktop ---- */
 @media (hover: hover) and (pointer: fine) {
     .snap-x a:hover,
     .overflow-x-auto a:hover {
@@ -85,7 +70,7 @@ a, button, [onclick],
 }
 
 @media (hover: none) and (pointer: coarse) {
-    /* Mobile: TẮT hover toàn bộ để không bị sáng khung */
+    /* Mobile: tắt hover để không bị sáng khung */
     .snap-x a:hover,
     .snap-x div:hover,
     .overflow-x-auto a:hover,
@@ -97,30 +82,23 @@ a, button, [onclick],
         transform: none !important;
         box-shadow: none !important;
         opacity: 1 !important;
-        background: initial !important;
-        border-color: initial !important;
     }
 }
 
-/* ---- FIX 6: Mobile riêng ---- */
+/* ---- FIX 6: Mobile ---- */
 @media (max-width: 768px) {
-    .overflow-x-auto,
-    .snap-x,
-    .scrollbar-hide {
-        touch-action: pan-x;
-        overflow-y: hidden !important;
-        scroll-snap-type: x mandatory;
-    }
-
-    /* Xóa 300ms delay toàn trang trên mobile */
-    * {
+    /* Xóa 300ms tap delay toàn trang — KHÔNG block scroll */
+    a, button, [onclick], [role="button"] {
         touch-action: manipulation;
     }
 
-    /* Nhưng slider vẫn là pan-x (ưu tiên cao hơn) */
     .overflow-x-auto,
-    .snap-x {
-        touch-action: pan-x !important;
+    .snap-x,
+    .scrollbar-hide {
+        /* Dùng overscroll thay vì pan-x để không block lướt dọc */
+        overscroll-behavior-x: contain;
+        overflow-y: hidden !important;
+        scroll-snap-type: x mandatory;
     }
 
     .snap-x > *,
