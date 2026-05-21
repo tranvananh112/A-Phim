@@ -12,6 +12,19 @@
     <meta name="description" content="APhim - Website xem phim online Full HD miễn phí, cập nhật phim mới nhất 2026, Phim Vietsub, Thuyết Minh, Phim Lồng Tiếng chất lượng cao." />
     <meta property="og:description" content="APhim - Website xem phim online Full HD miễn phí, cập nhật phim mới nhất 2026, Phim Vietsub, Thuyết Minh, Phim Lồng Tiếng chất lượng cao." />
     <meta property="twitter:description" content="APhim - Website xem phim online Full HD miễn phí, cập nhật phim mới nhất 2026, Phim Vietsub, Thuyết Minh, Phim Lồng Tiếng chất lượng cao." />
+    <!-- ✅ SEO: Canonical tự động — trỏ về movie-detail.html để tránh duplicate content -->
+    <script>
+        (function () {
+            var p = new URLSearchParams(window.location.search);
+            var slug = p.get('slug');
+            if (slug) {
+                var link = document.createElement('link');
+                link.rel = 'canonical';
+                link.href = 'https://aphim.io.vn/movie-detail.html?slug=' + encodeURIComponent(slug);
+                document.head.appendChild(link);
+            }
+        })();
+    </script>
 
     <script src="js/chat-init-guard.js?v=37"></script>
 

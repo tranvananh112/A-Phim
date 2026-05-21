@@ -16,8 +16,8 @@ Disallow: /admin/
 Disallow: /backend/
 Disallow: /api/
 Disallow: /cgi-bin/
-Disallow: /search.html
-Disallow: /filter.html
+Allow: /watch.html
+Allow: /movie-detail.html
 Allow: /
 
 # ------------------------------------------------------------
