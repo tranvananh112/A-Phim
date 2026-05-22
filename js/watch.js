@@ -994,8 +994,6 @@ function toggleSaveMovie(button) {
     if (!authService.isLoggedIn()) {
         if (typeof window.showAuthModal === 'function') {
             window.showAuthModal('login');
-        } else if (confirm('Bạn cần đăng nhập để thêm phim vào danh sách. Chuyển đến trang đăng nhập?')) {
-            window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
         }
         return;
     }
@@ -1029,8 +1027,8 @@ function toggleFavoriteMovie(button) {
 
     // Check if user is logged in
     if (!authService.isLoggedIn()) {
-        if (confirm('Bạn cần đăng nhập để thêm vào yêu thích. Chuyển đến trang đăng nhập?')) {
-            window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
+        if (typeof window.showAuthModal === 'function') {
+            window.showAuthModal('login');
         }
         return;
     }

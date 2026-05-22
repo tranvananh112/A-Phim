@@ -852,7 +852,7 @@
         // LIST
         const listEl = document.createElement('div');
         listEl.className = 'ap-cmt-list';
-        listEl.innerHTML = '<div style="text-align:center;color:#6b7280;padding:20px;">⏳ Đang tải bình luận...</div>';
+        listEl.innerHTML = '<div style="text-align:center;color:#6b7280;padding:20px;width:100%;">⏳ Đang tải bình luận...</div>';
         wrapper.appendChild(listEl);
 
         const user = getCurrentUser();
@@ -863,7 +863,7 @@
             window.firebaseComments.listen(slug, ({ comments, count }) => {
                 if (heading) heading.innerHTML = `<span class="material-icons-round text-primary outline-none">sentiment_satisfied_alt</span> Bình luận (${count})`;
                 if (comments.length === 0) {
-                    listEl.innerHTML = '<div style="text-align:center;color:#6b7280;padding:20px;">💬 Hãy là người đầu tiên bình luận!</div>';
+                    listEl.innerHTML = '<div style="text-align:center;color:#6b7280;padding:32px 20px;width:100%;">💬 Hãy là người đầu tiên bình luận!</div>';
                 } else {
                     listEl.innerHTML = comments.map(c => generateHtml(c, userEmail, false)).join('');
                 }

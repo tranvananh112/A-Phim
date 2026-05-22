@@ -323,6 +323,11 @@ function setupFavoriteButton() {
     `;
 
     favBtn.addEventListener('click', () => {
+        // ✅ Auth gate: hiện modal nếu chưa đăng nhập
+        if (!authService.isLoggedIn()) {
+            if (typeof window.showAuthModal === 'function') window.showAuthModal('login');
+            return;
+        }
         if (userService.isFavorite(currentMovie.slug)) {
             userService.removeFromFavorites(currentMovie.slug);
             favBtn.innerHTML = '<span class="material-icons-round text-base md:text-xl">favorite_border</span><span class="text-xs sm:text-sm md:text-base whitespace-nowrap">Lưu phim</span>';
@@ -343,6 +348,11 @@ function setupFavoriteButton() {
         <span class="text-xs sm:text-sm md:text-base whitespace-nowrap">Thêm vào</span>
     `;
     plBtn.addEventListener('click', () => {
+        // ✅ Auth gate: hiện modal nếu chưa đăng nhập
+        if (!authService.isLoggedIn()) {
+            if (typeof window.showAuthModal === 'function') window.showAuthModal('login');
+            return;
+        }
         if (typeof openPlaylistModal === 'function') {
             openPlaylistModal({
                 slug: currentMovie.slug,
@@ -374,6 +384,14 @@ function setupRatingSystem() {
     if (authService.isLoggedIn()) {
         setupRatingStars();
         setupRatingSubmit();
+    } else {
+        // ✅ Chưa đăng nhập: gắn click submitRating để hiện auth modal
+        const submitBtn = document.getElementById('submitRating');
+        if (submitBtn) {
+            submitBtn.addEventListener('click', () => {
+                if (typeof window.showAuthModal === 'function') window.showAuthModal('login');
+            });
+        }
     }
 }
 
