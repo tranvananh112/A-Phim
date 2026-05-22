@@ -805,6 +805,11 @@
                 if (b) { b.classList.remove('active'); b.innerHTML = ''; }
             }
             showToast('Bình luận đã được gửi! ✅', 'success');
+            // ✅ Auto-scroll xuống cuối list (như Facebook)
+            setTimeout(() => {
+                const cList = document.querySelector('.ap-cmt-list');
+                if (cList) cList.scrollTop = cList.scrollHeight;
+            }, 500);
         } else {
             showToast(res.msg, 'error');
             if(btn) { btn.disabled = false; btn.innerHTML = 'Gửi <span class="material-icons-round" style="font-size:16px">send</span>'; }
@@ -852,17 +857,18 @@
         wrapper.className = 'ap-cmt-wrapper';
         innerBox.appendChild(wrapper);
 
-        // FORM MAIN
-        const formWrap = document.createElement('div');
-        formWrap.innerHTML = renderInputForm(null);
-        wrapper.appendChild(formWrap);
-        setupInputEvents('main');
-
-        // LIST
+        // LIST trước (như Facebook — bình luận cũ ở trên, mới ở dưới)
         const listEl = document.createElement('div');
         listEl.className = 'ap-cmt-list';
         listEl.innerHTML = '<div style="text-align:center;color:#6b7280;padding:20px;width:100%;">⏳ Đang tải bình luận...</div>';
         wrapper.appendChild(listEl);
+
+        // FORM nhập ở dưới cùng (như Facebook)
+        const formWrap = document.createElement('div');
+        formWrap.style.cssText = 'margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 16px;';
+        formWrap.innerHTML = renderInputForm(null);
+        wrapper.appendChild(formWrap);
+        setupInputEvents('main');
 
         const user = getCurrentUser();
         const userEmail = user ? user.email : null;
