@@ -188,6 +188,9 @@
                     const commentMap = {};
                     const topLevelComments = [];
 
+                    // Sắp xếp tăng dần theo thời gian: cũ nhất ở trên, mới nhất ở dưới
+                    rawList.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
                     rawList.forEach(c => {
                         commentMap[c.id] = { ...c, replies: [] };
                     });
@@ -296,10 +299,11 @@
 
         .ap-cmt-textarea {
             width: 100%; background: transparent; border: none; outline: none;
-            color: #e5e7eb; font-size: 14px; line-height: 1.6;
-            padding: 16px; resize: none; font-family: inherit;
-            box-sizing: border-box; min-height: 90px;
+            color: #e5e7eb; font-size: 13px; line-height: 1.5;
+            padding: 10px 14px; resize: none; font-family: inherit;
+            box-sizing: border-box; min-height: 40px; max-height: 160px;
             -webkit-appearance: none; box-shadow: none !important; border-radius: 0;
+            overflow-y: auto;
         }
         .ap-cmt-textarea::placeholder { color: #6b7280; }
 
@@ -373,11 +377,11 @@
 
         /* ── GIAO DIỆN BÌNH LUẬN TRẢ LỜI ĐẸP & THANH LỊCH NHƯ TIKTOK/YOUTUBE ── */
         .ap-cmt-list { 
-            display: flex; flex-direction: column; text-align: left; gap: 10px;
+            display: flex; flex-direction: column; text-align: left; gap: 2px;
             max-width: 900px;
-            max-height: 600px;        /* Giới hạn chiều cao */
-            overflow-y: auto;         /* Scroll khi quá nhiều bình luận */
-            padding-right: 6px;       /* Tránh scrollbar đè lên nội dung */
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 6px;
             scroll-behavior: smooth;
         }
         /* Custom scrollbar cho comment list */
@@ -386,10 +390,10 @@
         .ap-cmt-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
         .ap-cmt-list::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
         .ap-cmt-item { 
-            display: flex; gap: 12px; padding: 14px 16px; 
-            background: rgba(255,255,255,0.02); /* Nền nhẹ thay vì viền thô */
-            border: 1px solid rgba(255,255,255,0.03); 
-            border-radius: 16px; /* Bo góc mềm mại hơn */
+            display: flex; gap: 8px; padding: 4px 2px; 
+            background: transparent; /* Không có card nền — giống Facebook */
+            border: none; 
+            border-radius: 0;
             animation: ap-in 0.3s ease; position:relative; align-items: flex-start; text-align: left;
         }
         
@@ -402,14 +406,14 @@
             position: relative;
             z-index: 1;
         }
-        /* Overwrite size-sm specifically for comment context if needed, but we use standard size-sm */
+        /* Overwrite size-sm specifically for comment context */
         .ap-cmt-avatar.shop-frame-wrap.size-sm {
-            width: 40px;
-            height: 40px;
+            width: 32px;  /* Giảm từ 40px — giống Facebook */
+            height: 32px;
         }
         .ap-form-user-ava.shop-frame-wrap.size-sm {
-            width: 36px;
-            height: 36px;
+            width: 30px;
+            height: 30px;
         }
         .ap-cmt-avatar img, .ap-form-user-ava img {
             width: 100% !important;
@@ -420,36 +424,40 @@
             z-index: 1;
         }
         
-        .ap-cmt-body { flex: 1; min-width: 0; display:flex; flex-direction:column; align-items: flex-start; text-align: left; margin-left: 2px; }
+        .ap-cmt-body { flex: 1; min-width: 0; display:flex; flex-direction:column; align-items: flex-start; text-align: left; margin-left: 0; }
         
-        .ap-cmt-info { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap:wrap; width: 100%;}
+        .ap-cmt-info { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; flex-wrap:wrap; width: 100%;}
         .ap-cmt-badge {
-            font-size: 9px; font-weight: 700; color: #10b981; border: 1px solid rgba(16,185,129,0.5); 
-            padding: 1px 5px; border-radius: 4px; background: rgba(16,185,129,0.1); letter-spacing: 0.5px;
+            font-size: 8px; font-weight: 700; color: #10b981; border: 1px solid rgba(16,185,129,0.5); 
+            padding: 1px 4px; border-radius: 4px; background: rgba(16,185,129,0.1); letter-spacing: 0.5px;
         }
-        .ap-cmt-name { font-weight: 800; font-size: 14px; color: #fcd576; display:flex; align-items:center; gap:6px; letter-spacing: 0.2px; }
-        .ap-cmt-name .infinity { color: #f59e0b; font-size: 15px; font-weight:bold; line-height: 1;}
-        .ap-cmt-time { font-size: 11px; color: #6b7280; }
+        .ap-cmt-name { font-weight: 700; font-size: 12.5px; color: #fcd576; display:flex; align-items:center; gap:4px; letter-spacing: 0.1px; }
+        .ap-cmt-name .infinity { color: #f59e0b; font-size: 13px; font-weight:bold; line-height: 1;}
+        .ap-cmt-time { font-size: 10px; color: #6b7280; }
         
         .ap-ep-tag { font-size: 12px; color: #9ca3af; padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); margin-left:auto; }
 
         .ap-cmt-text { 
-            font-size: 13.5px; color: #d1d5db; line-height: 1.5; margin-bottom: 8px;
+            font-size: 13px; color: #d1d5db; line-height: 1.45; margin-bottom: 4px;
             white-space: pre-wrap; word-break: break-word; transition: filter 0.3s;
             text-align: left; width: 100%;
+            /* Bubble nền nhẹ — giống Facebook */
+            background: rgba(255,255,255,0.05);
+            padding: 6px 10px; border-radius: 12px;
+            display: inline-block; max-width: 100%;
         }
         .ap-cmt-text.is-spoiler { filter: blur(6px); cursor: pointer; user-select: none; }
         .ap-cmt-text.is-spoiler.revealed { filter: blur(0); }
 
         /* Action Menu - Material Icons */
-        .ap-cmt-actions { display: flex; align-items: center; gap: 14px; color: #9ca3af; font-size: 12px; font-weight: 600; width: 100%;}
-        .ap-action-btn { background: none; border: none; padding: 4px 6px; border-radius: 6px; color: #9ca3af; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: color 0.2s, background 0.2s;}
+        .ap-cmt-actions { display: flex; align-items: center; gap: 8px; color: #9ca3af; font-size: 11px; font-weight: 600; width: 100%; margin-top: 2px; padding-left: 2px;}
+        .ap-action-btn { background: none; border: none; padding: 2px 4px; border-radius: 4px; color: #6b7280; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: color 0.2s; font-size: 11px;}
         .ap-action-btn:hover { color: #fff; }
         
         .ap-action-btn.upvote.active { color:#10b981; }
         .ap-action-btn.downvote.active { color:#ef4444; }
 
-        .ap-action-btn .material-icons-round { font-size: 17px; }
+        .ap-action-btn .material-icons-round { font-size: 14px; }
 
         /* Dropdown Thêm */
         .ap-dropdown-wrap { position: relative; }
@@ -857,32 +865,86 @@
         wrapper.className = 'ap-cmt-wrapper';
         innerBox.appendChild(wrapper);
 
-        // LIST trước (như Facebook — bình luận cũ ở trên, mới ở dưới)
+        // FORM nhập ở TRÊN (như layout cũ)
+        const formWrap = document.createElement('div');
+        formWrap.style.cssText = 'margin-bottom: 16px;';
+        formWrap.innerHTML = renderInputForm(null);
+        wrapper.appendChild(formWrap);
+        setupInputEvents('main');
+
+        // LIST bình luận ở DƯỚI
         const listEl = document.createElement('div');
         listEl.className = 'ap-cmt-list';
         listEl.innerHTML = '<div style="text-align:center;color:#6b7280;padding:20px;width:100%;">⏳ Đang tải bình luận...</div>';
         wrapper.appendChild(listEl);
 
-        // FORM nhập ở dưới cùng (như Facebook)
-        const formWrap = document.createElement('div');
-        formWrap.style.cssText = 'margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 16px;';
-        formWrap.innerHTML = renderInputForm(null);
-        wrapper.appendChild(formWrap);
-        setupInputEvents('main');
-
         const user = getCurrentUser();
         const userEmail = user ? user.email : null;
 
-        // Firebase Sync
+        // Firebase Sync — Smart re-render: giữ scroll, giữ reply form đang mở
+        let _lastCommentCount = -1;
+        let _lastCommentIds = '';
+
         window.firebaseComments.onReady(() => {
             window.firebaseComments.listen(slug, ({ comments, count }) => {
                 if (heading) heading.innerHTML = `<span class="material-icons-round text-primary outline-none">sentiment_satisfied_alt</span> Bình luận (${count})`;
-                if (comments.length === 0) {
-                    listEl.innerHTML = '<div style="text-align:center;color:#6b7280;padding:32px 20px;width:100%;">💬 Hãy là người đầu tiên bình luận!</div>';
-                } else {
-                    listEl.innerHTML = comments.map(c => generateHtml(c, userEmail, false)).join('');
-                }
-                setupInputEvents('main');
+
+                // ── Smart diff: chỉ re-render khi data thực sự thay đổi ──
+                const newIds = comments.map(c => c.id + (c.replies ? c.replies.length : 0)).join(',');
+                if (newIds === _lastCommentIds) return; // Không có gì mới → bỏ qua
+                _lastCommentIds = newIds;
+
+                // ── Lưu trạng thái trước khi re-render ──
+                const scrollTop = listEl.scrollTop;
+                const wasAtBottom = (listEl.scrollHeight - listEl.clientHeight - scrollTop) < 60;
+
+                // Lưu reply form đang mở (ID + nội dung đang gõ)
+                const openForms = {};
+                document.querySelectorAll('.ap-reply-form-container.active').forEach(el => {
+                    const id = el.id.replace('reply-form-', '');
+                    const ta = el.querySelector(`#ap-input-${id}`);
+                    openForms[id] = ta ? ta.value : '';
+                });
+
+                // ── Fade out nhẹ → re-render → fade in ──
+                listEl.style.transition = 'opacity 0.15s';
+                listEl.style.opacity = '0.4';
+
+                setTimeout(() => {
+                    if (comments.length === 0) {
+                        listEl.innerHTML = '<div style="text-align:center;color:#6b7280;padding:32px 20px;width:100%;">💬 Hãy là người đầu tiên bình luận!</div>';
+                    } else {
+                        listEl.innerHTML = comments.map(c => generateHtml(c, userEmail, false)).join('');
+                    }
+
+                    // ── Khôi phục reply form đang mở ──
+                    Object.entries(openForms).forEach(([id, draft]) => {
+                        const box = document.getElementById(`reply-form-${id}`);
+                        if (!box) return;
+                        // Tìm rootId từ comment cha
+                        const parentItem = box.closest('.ap-cmt-item');
+                        const rootId = parentItem ? parentItem.dataset.id : id;
+                        box.innerHTML = renderInputForm(id, rootId);
+                        box.classList.add('active');
+                        setupInputEvents(id);
+                        // Khôi phục draft đang gõ dở
+                        const ta = document.getElementById(`ap-input-${id}`);
+                        if (ta && draft) { ta.value = draft; ta.dispatchEvent(new Event('input')); }
+                    });
+
+                    setupInputEvents('main');
+
+                    // ── Khôi phục scroll ──
+                    if (wasAtBottom) {
+                        // Nếu đang ở cuối thì auto-scroll xuống (xem bình luận mới)
+                        listEl.scrollTop = listEl.scrollHeight;
+                    } else {
+                        // Giữ nguyên vị trí scroll
+                        listEl.scrollTop = scrollTop;
+                    }
+
+                    listEl.style.opacity = '1';
+                }, 150);
             });
         });
     }
