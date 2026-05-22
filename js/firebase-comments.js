@@ -374,8 +374,17 @@
         /* ── GIAO DIỆN BÌNH LUẬN TRẢ LỜI ĐẸP & THANH LỊCH NHƯ TIKTOK/YOUTUBE ── */
         .ap-cmt-list { 
             display: flex; flex-direction: column; text-align: left; gap: 10px;
-            max-width: 900px; /* Giới hạn độ rộng để không loãng trên desktop */
+            max-width: 900px;
+            max-height: 600px;        /* Giới hạn chiều cao */
+            overflow-y: auto;         /* Scroll khi quá nhiều bình luận */
+            padding-right: 6px;       /* Tránh scrollbar đè lên nội dung */
+            scroll-behavior: smooth;
         }
+        /* Custom scrollbar cho comment list */
+        .ap-cmt-list::-webkit-scrollbar { width: 5px; }
+        .ap-cmt-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); border-radius: 10px; }
+        .ap-cmt-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        .ap-cmt-list::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
         .ap-cmt-item { 
             display: flex; gap: 12px; padding: 14px 16px; 
             background: rgba(255,255,255,0.02); /* Nền nhẹ thay vì viền thô */
