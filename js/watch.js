@@ -49,6 +49,7 @@ async function loadMovieAndPlay(slug, episodeSlug) {
             renderEpisodeList(currentMovie.episodes);
             renderPlayerPlaceholder(currentEpisode); // 🛡️ Anti-Bot Gate: Render interactive placeholder first
             setupActionButtons();
+            injectVideoSchema(currentMovie, currentEpisode); // 🔍 SEO: VideoObject JSON-LD
 
             // Add to watch history
             userService.addToHistory(currentMovie, currentEpisode?.name);
@@ -59,6 +60,70 @@ async function loadMovieAndPlay(slug, episodeSlug) {
     } catch (error) {
         console.error('❌ Error loading movie:', error);
         showError('Đã xảy ra lỗi khi tải phim: ' + error.message);
+    }
+}
+
+// ─── SEO: VideoObject JSON-LD Schema ────────────────────────────────────────
+// Giúp Google index video trên trang watch — fix lỗi "videos from being indexed"
+function injectVideoSchema(movie, episode) {
+    try {
+        // Xóa schema cũ nếu có (khi đổi tập)
+        const old = document.getElementById('video-schema-ld');
+        if (old) old.remove();
+
+        const slug = new URLSearchParams(window.location.search).get('slug');
+        const epSlug = episode ? episode.slug : '';
+        const pageUrl = 'https://aphim.io.vn/watch.html?slug=' + encodeURIComponent(slug)
+                        + (epSlug ? '&episode=' + encodeURIComponent(epSlug) : '');
+        const canonicalUrl = 'https://aphim.io.vn/movie-detail.html?slug=' + encodeURIComponent(slug);
+
+        const thumbUrl = movieAPI.getImageURL(movie.poster_url || movie.thumb_url, 600, 85, true);
+        const videoUrl = (episode && (episode.link_m3u8 || episode.link_embed)) || pageUrl;
+        const epName = episode ? episode.name : '';
+        const fullName = epName ? (movie.name + ' - ' + epName) : movie.name;
+        const description = (movie.content || movie.description || movie.name)
+                            .replace(/<[^>]+>/g, '') // strip HTML tags
+                            .substring(0, 300);
+
+        // uploadDate: dùng năm phát hành, format ISO
+        const uploadDate = (movie.year ? movie.year + '-01-01' : new Date().getFullYear() + '-01-01');
+
+        const schema = {
+            '@context': 'https://schema.org',
+            '@type': 'VideoObject',
+            'name': fullName,
+            'description': description,
+            'thumbnailUrl': thumbUrl,
+            'uploadDate': uploadDate,
+            'contentUrl': videoUrl,
+            'embedUrl': pageUrl,
+            'url': canonicalUrl,
+            'inLanguage': 'vi',
+            'publisher': {
+                '@type': 'Organization',
+                'name': 'APhim',
+                'url': 'https://aphim.io.vn',
+                'logo': {
+                    '@type': 'ImageObject',
+                    'url': 'https://aphim.io.vn/favicon.png'
+                }
+            }
+        };
+
+        // Thêm duration nếu có (format PT1H30M)
+        if (movie.time) {
+            const timeStr = movie.time.replace(/phút/gi,'').trim();
+            const mins = parseInt(timeStr);
+            if (!isNaN(mins) && mins > 0) schema.duration = 'PT' + mins + 'M';
+        }
+
+        const script = document.createElement('script');
+        script.id = 'video-schema-ld';
+        script.type = 'application/ld+json';
+        script.textContent = JSON.stringify(schema);
+        document.head.appendChild(script);
+    } catch (e) {
+        console.warn('[SEO] VideoObject schema inject failed:', e);
     }
 }
 
