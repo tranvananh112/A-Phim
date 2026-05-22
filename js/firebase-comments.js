@@ -381,14 +381,12 @@
             max-width: 900px;
             max-height: 600px;
             overflow-y: auto;
-            padding-right: 6px;
+            padding-right: 0px; /* Bỏ padding vì không còn scrollbar đè */
             scroll-behavior: smooth;
+            scrollbar-width: none; /* Ẩn scrollbar trên Firefox */
         }
-        /* Custom scrollbar cho comment list */
-        .ap-cmt-list::-webkit-scrollbar { width: 5px; }
-        .ap-cmt-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); border-radius: 10px; }
-        .ap-cmt-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
-        .ap-cmt-list::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+        /* Ẩn scrollbar trên Chrome/Safari/Edge */
+        .ap-cmt-list::-webkit-scrollbar { display: none; }
         .ap-cmt-item { 
             display: flex; gap: 8px; padding: 4px 2px; 
             background: transparent; /* Không có card nền — giống Facebook */
@@ -883,7 +881,7 @@
 
         // Firebase Sync — Smart re-render: giữ scroll, giữ reply form đang mở
         let _lastCommentCount = -1;
-        let _lastCommentIds = '';
+        let _lastCommentIds = null;
 
         window.firebaseComments.onReady(() => {
             window.firebaseComments.listen(slug, ({ comments, count }) => {
