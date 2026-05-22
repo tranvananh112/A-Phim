@@ -776,6 +776,8 @@
   .app-btn-text-large { font-size: 0.9rem; }
 }
 </style>
+    <!-- Lottie Web — dùng cho icon chuyên mục -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
 </head>
 
 <body class="bg-background-dark text-gray-100 font-display min-h-screen">
@@ -1116,11 +1118,10 @@
                     <div class="interest-card" style="--card-color: #8b5cf6" data-api="danh-sach/phim-bo"
                         onclick="location.href='danh-sach.html?list=phim-bo'">
                         <div class="interest-bg-img"></div>
-                        <div class="interest-icon-circle"><span class="material-icons-round">tv</span></div>
+                        <div class="interest-lottie-circle"><div id="lottie-phim-bo"></div></div>
                         <div class="interest-content">
                             <h3 class="interest-title">Phim Bộ</h3>
-                            <div class="interest-action">XEM NGAY <span
-                                    class="material-icons-round">chevron_right</span></div>
+                            <div class="interest-action">XEM NGAY <span class="material-icons-round">chevron_right</span></div>
                         </div>
                     </div>
 
@@ -1128,11 +1129,10 @@
                     <div class="interest-card" style="--card-color: #ef4444" data-api="danh-sach/phim-moi-cap-nhat"
                         onclick="location.href='danh-sach.html?list=phim-moi-cap-nhat'">
                         <div class="interest-bg-img"></div>
-                        <div class="interest-icon-circle"><span class="material-icons-round">bolt</span></div>
+                        <div class="interest-lottie-circle"><div id="lottie-phim-moi"></div></div>
                         <div class="interest-content">
                             <h3 class="interest-title">Phim Mới</h3>
-                            <div class="interest-action">XEM NGAY <span
-                                    class="material-icons-round">chevron_right</span></div>
+                            <div class="interest-action">XEM NGAY <span class="material-icons-round">chevron_right</span></div>
                         </div>
                     </div>
 
@@ -1140,11 +1140,10 @@
                     <div class="interest-card" style="--card-color: #f97316" data-api="the-loai/hanh-dong"
                         onclick="location.href='categories.html?category=hanh-dong'">
                         <div class="interest-bg-img"></div>
-                        <div class="interest-icon-circle"><span class="material-icons-round">sports_mma</span></div>
+                        <div class="interest-lottie-circle"><div id="lottie-hanh-dong"></div></div>
                         <div class="interest-content">
                             <h3 class="interest-title">Hành Động</h3>
-                            <div class="interest-action">XEM NGAY <span
-                                    class="material-icons-round">chevron_right</span></div>
+                            <div class="interest-action">XEM NGAY <span class="material-icons-round">chevron_right</span></div>
                         </div>
                     </div>
 
@@ -1152,11 +1151,10 @@
                     <div class="interest-card" style="--card-color: #ec4899" data-api="the-loai/tinh-cam"
                         onclick="location.href='categories.html?category=tinh-cam'">
                         <div class="interest-bg-img"></div>
-                        <div class="interest-icon-circle"><span class="material-icons-round">favorite</span></div>
+                        <div class="interest-lottie-circle"><div id="lottie-tinh-cam"></div></div>
                         <div class="interest-content">
                             <h3 class="interest-title">Tình Cảm</h3>
-                            <div class="interest-action">XEM NGAY <span
-                                    class="material-icons-round">chevron_right</span></div>
+                            <div class="interest-action">XEM NGAY <span class="material-icons-round">chevron_right</span></div>
                         </div>
                     </div>
 
@@ -1164,12 +1162,10 @@
                     <div class="interest-card" style="--card-color: #eab308" data-api="the-loai/hai-huoc"
                         onclick="location.href='categories.html?category=hai-huoc'">
                         <div class="interest-bg-img"></div>
-                        <div class="interest-icon-circle"><span
-                                class="material-icons-round">sentiment_very_satisfied</span></div>
+                        <div class="interest-lottie-circle"><div id="lottie-hai-huoc"></div></div>
                         <div class="interest-content">
                             <h3 class="interest-title">Hài Hước</h3>
-                            <div class="interest-action">XEM NGAY <span
-                                    class="material-icons-round">chevron_right</span></div>
+                            <div class="interest-action">XEM NGAY <span class="material-icons-round">chevron_right</span></div>
                         </div>
                     </div>
 
@@ -1177,16 +1173,95 @@
                     <div class="interest-card" style="--card-color: #10b981" data-api="danh-sach/hoat-hinh"
                         onclick="location.href='danh-sach.html?list=hoat-hinh'">
                         <div class="interest-bg-img"></div>
-                        <div class="interest-icon-circle"><span class="material-icons-round">animation</span></div>
+                        <div class="interest-lottie-circle"><div id="lottie-hoat-hinh"></div></div>
                         <div class="interest-content">
                             <h3 class="interest-title">Hoạt Hình</h3>
-                            <div class="interest-action">XEM NGAY <span
-                                    class="material-icons-round">chevron_right</span></div>
+                            <div class="interest-action">XEM NGAY <span class="material-icons-round">chevron_right</span></div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+
+    <!-- ✅ Lottie Icons Init: load JSON → đổi màu → play once → đợi 2s → replay -->
+    <script>
+    (function () {
+        // Màu chính cho từng icon (định dạng Lottie normalized 0–1)
+        var ICONS = [
+            { id: 'lottie-phim-bo',   path: 'icons/icon-phim-bo.json',   color: [1.000, 1.000, 1.000] },  // #FFFFFF
+            { id: 'lottie-phim-moi',  path: 'icons/icon-phim-moi.json',  color: [1.000, 1.000, 1.000] },  // #FFFFFF
+            { id: 'lottie-hanh-dong', path: 'icons/icon-hanh-dong.json', color: [1.000, 1.000, 1.000] },  // #FFFFFF
+            { id: 'lottie-tinh-cam',  path: 'icons/icon-tinh-cam.json',  color: [1.000, 1.000, 1.000] },  // #FFFFFF
+            { id: 'lottie-hai-huoc',  path: 'icons/icon-hai-huoc.json',  color: [1.000, 1.000, 1.000] },  // #FFFFFF
+            { id: 'lottie-hoat-hinh', path: 'icons/icon-hoat-hinh.json', color: [1.000, 1.000, 1.000] },  // #FFFFFF
+        ];
+
+        // Đổi màu stroke/fill trong toàn bộ animation data (đệ quy)
+        function recolorLottie(data, rgb) {
+            function processShapes(shapes) {
+                if (!shapes) return;
+                shapes.forEach(function (s) {
+                    if ((s.ty === 'st' || s.ty === 'fl') && s.c) {
+                        if (Array.isArray(s.c.k) && typeof s.c.k[0] === 'number' && s.c.k.length >= 3) {
+                            s.c.k[0] = rgb[0]; s.c.k[1] = rgb[1]; s.c.k[2] = rgb[2];
+                        }
+                    }
+                    if (s.it) processShapes(s.it);
+                });
+            }
+            function processLayers(layers) {
+                if (!layers) return;
+                layers.forEach(function (l) {
+                    if (l.shapes) processShapes(l.shapes);
+                    if (l.layers) processLayers(l.layers);
+                });
+            }
+            processLayers(data.layers);
+            if (data.assets) data.assets.forEach(function (a) { if (a.layers) processLayers(a.layers); });
+        }
+
+        function initOne(icon) {
+            var el = document.getElementById(icon.id);
+            if (!el) return;
+            // Dùng timestamp để bypass hoàn toàn service worker cache
+            fetch(icon.path + '?v=' + Date.now())
+                .then(function (r) { return r.text(); })
+                .then(function (rawText) {
+                    // ✅ Replace cứng TẤT CẢ màu dạng [r,g,b,1] → [1,1,1,1] trên raw string
+                    // trước khi parse JSON — bypass cache triệt để
+                    var whiteText = rawText.replace(
+                        /"k":\[\s*[\d.]+\s*,\s*[\d.]+\s*,\s*[\d.]+\s*,\s*1\s*\]/g,
+                        '"k":[1,1,1,1]'
+                    );
+                    var animData = JSON.parse(whiteText);
+                    var anim = lottie.loadAnimation({
+                        container: el,
+                        renderer: 'svg',
+                        loop: false,
+                        autoplay: true,
+                        animationData: animData
+                    });
+                    anim.addEventListener('complete', function () {
+                        setTimeout(function () { anim.goToAndPlay(0, true); }, 1000);
+                    });
+                })
+                .catch(function (e) {
+                    console.warn('[Lottie] Không tải được:', icon.path, e);
+                });
+        }
+
+        function initLottieIcons() {
+            if (typeof lottie === 'undefined') { setTimeout(initLottieIcons, 150); return; }
+            ICONS.forEach(initOne);
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initLottieIcons);
+        } else {
+            initLottieIcons();
+        }
+    })();
+    </script>
 
         <!-- Consolidated Main Content Area -->
         <!-- Top Movies Hot Section -->
