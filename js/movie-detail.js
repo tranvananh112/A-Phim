@@ -86,6 +86,10 @@ function renderMovieDetail(movie) {
         `;
     }
 
+    // ✅ Update breadcrumb — hiện tên phim thực thay vì hardcode
+    const breadcrumb = document.getElementById('breadcrumb-movie-name');
+    if (breadcrumb) breadcrumb.textContent = movie.name;
+
     // Update info
     const infoContainer = document.querySelector('.movie-info-container') || document.querySelector('.flex.flex-wrap.items-center.gap-4.mb-8');
     if (infoContainer) {
