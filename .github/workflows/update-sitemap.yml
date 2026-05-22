@@ -5,6 +5,10 @@ on:
     - cron: '0 2 * * *'   # Chạy mỗi ngày lúc 2:00 AM UTC (9:00 AM giờ VN)
   workflow_dispatch:       # Cho phép chạy thủ công từ GitHub Actions tab
 
+# ✅ Fix exit code 128: Cấp quyền write để bot có thể push sitemap lên repo
+permissions:
+  contents: write
+
 jobs:
   update-sitemap:
     runs-on: ubuntu-latest
@@ -16,7 +20,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'   # ✅ Nâng lên Node.js 24 (Node 20 bị xóa sau 2/6/2026)
 
       - name: Install dependencies
         run: npm install axios
