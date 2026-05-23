@@ -151,8 +151,8 @@ function updateUserUI() {
             <a href="login.html"
                onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');return false;}"
                class="nav-auth-btn" 
-               style="display: inline-flex !important;">
-                <span class="material-icons-round" style="font-size:16px;">person</span>
+               style="display: inline-flex !important; align-items: center !important; justify-content: center !important; gap: 6px;">
+                <span class="material-icons-round" style="font-size:22px; font-weight:700; -webkit-text-stroke:0.5px currentColor; display:flex; align-items:center; justify-content:center; line-height:1; margin-left:-4px;">person</span>
                 <span class="auth-btn-text">Đăng Nhập</span>
             </a>
         `;
@@ -383,6 +383,47 @@ const TOAST_ICONS = {
             }
             #notifArrow {
                 display: none !important;
+            }
+        }
+
+        /* ── MOBILE: Ẩn chữ "Đăng Nhập", chỉ hiện icon → tiết kiệm diện tích ── */
+        @media (max-width: 768px) {
+            .auth-btn-text {
+                display: none !important;
+            }
+            .nav-auth-btn {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                padding: 0 !important;
+                width: 38px !important;
+                height: 38px !important;
+                min-width: unset !important;
+                gap: 0 !important;
+                position: relative !important;
+            }
+            .nav-auth-btn .material-icons-round {
+                font-size: 20px !important;
+                position: absolute !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                line-height: 1 !important;
+                /* Làm icon đậm hơn */
+                -webkit-text-stroke: 0.6px currentColor !important;
+                font-weight: 700 !important;
+            }
+            /* Search bar mở rộng khi button thu nhỏ */
+            .mobile-inline-search,
+            input[placeholder*="Tìm kiếm"],
+            .nav-search-input {
+                flex: 1 !important;
+                max-width: none !important;
+                text-align: left !important;
+            }
+            /* Placeholder text căn trái */
+            input::placeholder {
+                text-align: left !important;
             }
         }
     `;

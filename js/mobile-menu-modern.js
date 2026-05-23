@@ -340,11 +340,9 @@
         document.getElementById('mm-drawer')?.classList.add('open');
         document.body.classList.add('mm-open');
 
-        const scrollY = window.scrollY;
-        document.body.style.position = 'fixed';
-        document.body.style.top = `-${scrollY}px`;
-        document.body.style.width = '100%';
-        document.body.dataset.scrollY = scrollY;
+        // FIX: dùng overflow:hidden thay vì position:fixed → không gây layout reflow
+        document.body.style.overflow = 'hidden';
+        document.body.style.overscrollBehavior = 'contain';
 
         const burger = document.querySelector('.mm-burger-btn');
         if (burger) burger.classList.add('open');
@@ -354,31 +352,17 @@
         const overlay = document.getElementById('mm-overlay');
         const drawer = document.getElementById('mm-drawer');
 
-        if (overlay) {
-            overlay.classList.remove('open');
-            // Ensure it's hidden even if class transition fails
-            setTimeout(() => {
-                if (!overlay.classList.contains('open')) {
-                    overlay.style.opacity = '0';
-                    overlay.style.pointerEvents = 'none';
-                }
-            }, 300);
-        }
-
-        if (drawer) {
-            drawer.classList.remove('open');
-        }
+        if (overlay) overlay.classList.remove('open');
+        if (drawer) drawer.classList.remove('open');
 
         document.body.classList.remove('mm-open');
+        // FIX index.html: giữ mm-closing để catfish/chat FAB ẩn trong lúc drawer đang slide ra
+        document.body.classList.add('mm-closing');
+        setTimeout(() => document.body.classList.remove('mm-closing'), 350);
 
-        const scrollY = parseInt(document.body.dataset.scrollY || '0');
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
-
-        if (scrollY > 0) {
-            window.scrollTo(0, scrollY);
-        }
+        // FIX: khôi phục overflow, không cần scroll restore vì không dùng position:fixed
+        document.body.style.overflow = '';
+        document.body.style.overscrollBehavior = '';
 
         const burger = document.querySelector('.mm-burger-btn');
         if (burger) burger.classList.remove('open');

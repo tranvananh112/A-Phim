@@ -314,14 +314,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     visibility: hidden !important;
                 }
 
-                /* Global User Profile Lottie Icon Color overrides (Black #000000 & Bolder Outline) */
+                /* Global User Profile Lottie Icon Color — Trắng #FFFFFF trên nền vàng */
                 .user-lottie-icon svg path,
                 .user-lottie-icon svg [stroke] {
-                    stroke: #000000 !important;
+                    stroke: #FFFFFF !important;
                     stroke-width: 2.2px !important;
                 }
-                .user-lottie-icon svg [fill]:not([fill="none"]) {
+                .user-lottie-icon svg path {
                     fill: #000000 !important;
+                    fill-opacity: 1 !important;  /* Override fill-opacity="0" từ JSON */
                 }
 
                 /* Vertically align icon and text inside login button */
@@ -335,7 +336,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 .user-lottie-icon {
                     vertical-align: middle !important;
                     margin-bottom: 4px !important;
-                    margin-right: -4px !important;
+                    margin-right: -4px !important; /* Desktop: kéo chữ sát icon */
+                }
+
+                /* ── Mobile: icon đứng một mình → reset margin, căn giữa thực sự ── */
+                @media (max-width: 768px) {
+                    .user-lottie-icon {
+                        margin: 0 !important;
+                        width: 36px !important;
+                        height: 36px !important;
+                        overflow: hidden !important;
+                    }
+                    /* Scale SVG 2.2x → zoom vào hình người vốn chỉ chiếm 42% canvas 48x48 */
+                    .user-lottie-icon svg {
+                        transform: scale(1.9) translateY(-2px) !important;
+                        transform-origin: center !important;
+                    }
+                    /* Giảm stroke vì scale đã phóng to rồi */
+                    .user-lottie-icon svg path,
+                    .user-lottie-icon svg [stroke] {
+                        stroke-width: 1.8px !important;
+                    }
                 }
             `;
             document.head.appendChild(style);
@@ -406,9 +427,9 @@ document.addEventListener('DOMContentLoaded', () => {
             lottieContainer.classList.remove('material-icons-round', 'material-icons', 'material-icons-outlined', 'text-gray-500');
             lottieContainer.classList.add('user-lottie-icon');
 
-            // Apply size & placement overrides to match perfectly inside button
-            lottieContainer.style.setProperty('width', '20px', 'important');
-            lottieContainer.style.setProperty('height', '20px', 'important');
+            // Desktop: 20px (gốc). Mobile: CSS media query override lên 36px
+            lottieContainer.style.width = '20px';
+            lottieContainer.style.height = '20px';
             lottieContainer.style.setProperty('box-sizing', 'content-box', 'important');
             lottieContainer.style.setProperty('display', 'inline-flex', 'important');
             lottieContainer.style.setProperty('align-items', 'center', 'important');

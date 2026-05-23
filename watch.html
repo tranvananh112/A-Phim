@@ -335,7 +335,6 @@
                 min-width: 0 !important;
                 width: auto !important;
             }
-            /* Ẩn text label, chỉ giữ icon */
             #player-control-bar button span:last-child {
                 display: none !important;
             }
@@ -344,6 +343,124 @@
                 font-size: 22px !important;
                 margin: 0 !important;
             }
+        }
+
+        /* ══════════════════════════════════════════
+           MOBILE PLAYER OVERLAY & ACTION BAR
+           ══════════════════════════════════════════ */
+
+        /* Overlay controls bên trong video (chỉ mobile) */
+        #mob-player-ctrl {
+            display: none;
+        }
+        @media (max-width: 767px) {
+            /* Ẩn control bar cũ, thay bằng mobile action bar */
+            #player-control-bar {
+                display: none !important;
+            }
+            /* Overlay bên dưới iframe – luôn hiển thị trên mobile */
+            #mob-player-ctrl {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+                position: absolute;
+                bottom: 0; left: 0; right: 0;
+                z-index: 10;
+                background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.55) 60%, transparent 100%);
+                padding: 6px 10px 8px;
+                pointer-events: none; /* cho click xuyên qua iframe phần trên */
+            }
+            #mob-player-ctrl > * {
+                pointer-events: auto; /* nhưng controls thì click được */
+            }
+            /* Seekbar */
+            .mpb-bar {
+                width: 100%;
+                height: 3px;
+                background: rgba(255,255,255,0.25);
+                border-radius: 3px;
+                position: relative;
+                cursor: pointer;
+            }
+            .mpb-fill {
+                position: absolute;
+                left: 0; top: 0;
+                height: 100%;
+                width: 30%;
+                background: #fcd576;
+                border-radius: 3px;
+            }
+            .mpb-dot {
+                position: absolute;
+                right: -5px; top: -4px;
+                width: 11px; height: 11px;
+                background: #fcd576;
+                border-radius: 50%;
+                box-shadow: 0 0 6px rgba(252,213,118,0.8);
+            }
+            /* Controls row */
+            .mpb-row {
+                display: flex;
+                align-items: center;
+                gap: 2px;
+            }
+            .mpb-btn {
+                background: none;
+                border: none;
+                color: #fff;
+                padding: 5px 6px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 6px;
+                -webkit-tap-highlight-color: transparent;
+            }
+            .mpb-btn:active { background: rgba(255,255,255,0.12); }
+            .mpb-btn .material-icons-round { font-size: 22px; }
+            .mpb-btn.sm .material-icons-round { font-size: 19px; color: rgba(255,255,255,0.8); }
+            .mpb-time {
+                font-size: 10px;
+                color: rgba(255,255,255,0.75);
+                margin: 0 2px;
+                font-variant-numeric: tabular-nums;
+                white-space: nowrap;
+            }
+            .mpb-spacer { flex: 1; }
+
+            /* Mobile Action Bar bên dưới player */
+            #mob-action-bar {
+                display: flex !important;
+                align-items: center;
+                justify-content: space-around;
+                background: #1a1d2a;
+                border: 1px solid rgba(255,255,255,0.07);
+                border-top: none;
+                border-bottom-left-radius: 12px;
+                border-bottom-right-radius: 12px;
+                padding: 10px 4px;
+            }
+            .mab-btn {
+                background: none;
+                border: none;
+                color: rgba(255,255,255,0.65);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 3px;
+                padding: 4px 8px;
+                cursor: pointer;
+                border-radius: 8px;
+                -webkit-tap-highlight-color: transparent;
+                transition: color 0.18s;
+            }
+            .mab-btn:active { background: rgba(255,255,255,0.08); }
+            .mab-btn.mab-active { color: #fcd576 !important; }
+            .mab-btn .material-icons-round { font-size: 23px; }
+        }
+        /* Ẩn mob-action-bar trên desktop */
+        @media (min-width: 768px) {
+            #mob-action-bar { display: none !important; }
         }
     </style>
 
@@ -588,12 +705,76 @@
                     <img alt="Video thumbnail" class="w-full h-full object-cover opacity-60"
                         src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1200" />
                     <div class="absolute inset-0 flex items-center justify-center">
-                        <button
+                        <button id="play-btn"
                             class="w-20 h-20 bg-primary/90 text-black rounded-full flex items-center justify-center transform scale-100 group-hover:scale-110 transition-transform duration-300 hover:bg-white hover:text-primary">
                             <span class="material-icons-round text-5xl ml-2">play_arrow</span>
                         </button>
                     </div>
+
+                    <!-- ═══ MOBILE PLAYER OVERLAY CONTROLS ═══ -->
+                    <div id="mob-player-ctrl">
+                        <!-- Seekbar -->
+                        <div class="mpb-bar" id="mpbBar">
+                            <div class="mpb-fill" id="mpbFill"><div class="mpb-dot"></div></div>
+                        </div>
+                        <!-- Controls row -->
+                        <div class="mpb-row">
+                            <button class="mpb-btn" id="mpbPrev" aria-label="Tập trước">
+                                <span class="material-icons-round">skip_previous</span>
+                            </button>
+                            <button class="mpb-btn" id="mpbBack" aria-label="Tua lại 10s">
+                                <span class="material-icons-round">replay_10</span>
+                            </button>
+                            <button class="mpb-btn" id="mpbPlay" aria-label="Phát/Dừng" style="padding:5px 10px;">
+                                <span class="material-icons-round" id="mpbPlayIcon" style="font-size:28px;">play_arrow</span>
+                            </button>
+                            <button class="mpb-btn" id="mpbFwd" aria-label="Tua tiếp 10s">
+                                <span class="material-icons-round">forward_10</span>
+                            </button>
+                            <button class="mpb-btn" id="mpbNext" aria-label="Tập tiếp">
+                                <span class="material-icons-round">skip_next</span>
+                            </button>
+                            <button class="mpb-btn sm" id="mpbVol" aria-label="Âm thanh">
+                                <span class="material-icons-round">volume_up</span>
+                            </button>
+                            <span class="mpb-time" id="mpbTime">00:00 / 00:00</span>
+                            <div class="mpb-spacer"></div>
+                            <button class="mpb-btn sm" id="mpbSettings" aria-label="Cài đặt">
+                                <span class="material-icons-round">settings</span>
+                            </button>
+                            <button class="mpb-btn sm" id="mpbFs" aria-label="Toàn màn hình">
+                                <span class="material-icons-round">fullscreen</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- ═══ END MOBILE PLAYER OVERLAY ═══ -->
                 </div>
+
+                <!-- ═══ MOBILE ACTION BAR (chỉ hiện trên mobile) ═══ -->
+                <div id="mob-action-bar">
+                    <button class="mab-btn" id="mab-prev" aria-label="Tập trước">
+                        <span class="material-icons-round">skip_previous</span>
+                    </button>
+                    <button class="mab-btn" id="mab-next" aria-label="Tập tiếp">
+                        <span class="material-icons-round">skip_next</span>
+                    </button>
+                    <button class="mab-btn" id="mab-fav" aria-label="Yêu thích">
+                        <span class="material-icons-round">favorite_border</span>
+                    </button>
+                    <button class="mab-btn" id="mab-save" aria-label="Thêm vào">
+                        <span class="material-icons-round">playlist_add</span>
+                    </button>
+                    <button class="mab-btn" onclick="shareMovie()" aria-label="Chia sẻ">
+                        <span class="material-icons-round">share</span>
+                    </button>
+                    <button class="mab-btn" id="mab-cinema" aria-label="Tắt đèn">
+                        <span class="material-icons-round">lightbulb</span>
+                    </button>
+                    <button class="mab-btn" onclick="reportError()" aria-label="Báo lỗi">
+                        <span class="material-icons-round">flag</span>
+                    </button>
+                </div>
+                <!-- ═══ END MOBILE ACTION BAR ═══ -->
 
                 <!-- Solid Dark Integrated Control Bar (Grid on Mobile, Flex on Desktop - Elite Responsive) -->
                 <div id="player-control-bar" class="w-full bg-[#1e2130] border border-white/5 rounded-xl px-4 py-4 mt-5 grid grid-cols-4 gap-y-10 gap-x-2 md:flex md:flex-wrap md:items-center md:justify-between md:gap-y-0 text-xs text-gray-300 font-semibold select-none shadow-lg">
@@ -1012,7 +1193,7 @@
     <script defer src="js/analytics.js?v=13"></script>
     <!-- <script src="js/navigation-danh-sach.js?v=13"></script> -->
     <script src="js/search-icon-enhance.js?v=13"></script>
-    <script src="js/mobile-menu-modern.js?v=39"></script>
+    <script src="js/mobile-menu-modern.js?v=40"></script>
     <script src="js/nav-instant-suggest.js?v=5"></script>
 
     <!-- Sticky Navigation -->
@@ -1039,6 +1220,75 @@
     <link rel="stylesheet" href="/css/inline-ad.css?v=15">
     <script src="/js/catfish-banner.js?v=17" defer></script>
     <!-- ====== End Catfish Banner ====== -->
+
+    <!-- ====== Mobile Player Controls JS ====== -->
+    <script>
+    (function() {
+        'use strict';
+        // Helper: gửi postMessage tới iframe player
+        function msgPlayer(data) {
+            var iframe = document.querySelector('#video-container iframe, #player-frame, iframe[src*="player"]');
+            if (!iframe) return;
+            try { iframe.contentWindow.postMessage(data, '*'); } catch(e) {}
+            try { iframe.contentWindow.postMessage(JSON.stringify(data), '*'); } catch(e) {}
+        }
+
+        // ── Overlay Controls (bên trong player) ──
+        var mpbBack     = document.getElementById('mpbBack');
+        var mpbPlay     = document.getElementById('mpbPlay');
+        var mpbPlayIcon = document.getElementById('mpbPlayIcon');
+        var mpbFwd      = document.getElementById('mpbFwd');
+        var mpbPrev     = document.getElementById('mpbPrev');
+        var mpbNext     = document.getElementById('mpbNext');
+        var mpbFs       = document.getElementById('mpbFs');
+        var isPlaying   = false;
+
+        if (mpbBack)  mpbBack.addEventListener('click', function(e){ e.stopPropagation(); msgPlayer({action:'seek',value:-10}); });
+        if (mpbFwd)   mpbFwd.addEventListener('click',  function(e){ e.stopPropagation(); msgPlayer({action:'seek',value:10}); });
+        if (mpbPlay)  mpbPlay.addEventListener('click', function(e){
+            e.stopPropagation();
+            isPlaying = !isPlaying;
+            mpbPlayIcon.textContent = isPlaying ? 'pause' : 'play_arrow';
+            msgPlayer({action: isPlaying ? 'play' : 'pause'});
+        });
+        if (mpbPrev)  mpbPrev.addEventListener('click', function(e){ e.stopPropagation(); var b=document.getElementById('btn-prev-episode'); if(b)b.click(); });
+        if (mpbNext)  mpbNext.addEventListener('click', function(e){ e.stopPropagation(); var b=document.getElementById('btn-next-episode'); if(b)b.click(); });
+        if (mpbFs)    mpbFs.addEventListener('click', function(e){
+            e.stopPropagation();
+            var wrap = document.getElementById('player-and-controls') || document.querySelector('.aspect-video');
+            if (!wrap) return;
+            if (document.fullscreenElement) { document.exitFullscreen(); mpbFs.querySelector('.material-icons-round').textContent = 'fullscreen'; }
+            else { wrap.requestFullscreen().catch(function(){}); mpbFs.querySelector('.material-icons-round').textContent = 'fullscreen_exit'; }
+        });
+
+        // ── Mobile Action Bar ──
+        var mabPrev   = document.getElementById('mab-prev');
+        var mabNext   = document.getElementById('mab-next');
+        var mabFav    = document.getElementById('mab-fav');
+        var mabSave   = document.getElementById('mab-save');
+        var mabCinema = document.getElementById('mab-cinema');
+
+        if (mabPrev)   mabPrev.addEventListener('click',   function(){ var b=document.getElementById('btn-prev-episode'); if(b)b.click(); });
+        if (mabNext)   mabNext.addEventListener('click',   function(){ var b=document.getElementById('btn-next-episode'); if(b)b.click(); });
+        if (mabFav)    mabFav.addEventListener('click',    function(){ var b=document.getElementById('favoriteMovieBtn'); if(b)b.click(); mabFav.classList.toggle('mab-active'); var ic=mabFav.querySelector('.material-icons-round'); if(ic) ic.textContent = mabFav.classList.contains('mab-active') ? 'favorite' : 'favorite_border'; });
+        if (mabSave)   mabSave.addEventListener('click',   function(){ var b=document.getElementById('saveMovieBtn'); if(b)b.click(); });
+        if (mabCinema) mabCinema.addEventListener('click', function(){ var b=document.getElementById('cinemaModeBtn'); if(b)b.click(); mabCinema.classList.toggle('mab-active'); });
+
+        // ── Đồng bộ trạng thái favorite từ button gốc ──
+        document.addEventListener('DOMContentLoaded', function() {
+            var origFav = document.getElementById('favoriteMovieBtn');
+            if (origFav && mabFav) {
+                var obs = new MutationObserver(function() {
+                    var isActive = origFav.classList.contains('active') || origFav.querySelector('[data-active]');
+                    var ic = mabFav.querySelector('.material-icons-round');
+                    if (ic && isActive) { ic.textContent = 'favorite'; mabFav.classList.add('mab-active'); }
+                });
+                obs.observe(origFav, { attributes: true, childList: true, subtree: true });
+            }
+        });
+    })();
+    </script>
+    <!-- ====== End Mobile Player Controls JS ====== -->
 </body>
 
 </html>

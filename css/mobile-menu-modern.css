@@ -18,16 +18,23 @@
     opacity: 1;
     pointer-events: auto !important;
     visibility: visible !important;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    /* FIX: bỏ backdrop-filter blur → đắt tiền render trên mobile */
 }
 
-/* HIDE HEAVY ANIMATED CATFISH GIF BANNERS WHEN MOBILE DRAWER IS OPEN TO AVOID RENDERING LAG */
+/* HIDE HEAVY ANIMATED CATFISH GIF BANNERS WHEN MOBILE DRAWER IS OPEN OR CLOSING */
 body.mm-open #aphim-catfish,
+body.mm-closing #aphim-catfish,
 body:has(#mm-drawer.open) #aphim-catfish {
     visibility: hidden !important;
     opacity: 0 !important;
     pointer-events: none !important;
+}
+/* Giữ chat FAB ẩn trong lúc drawer đang close để tránh pop animation */
+body.mm-open .chat-fab-btn,
+body.mm-closing .chat-fab-btn {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: none !important;
 }
 
 /* DRAWER - trượt từ bên PHẢI vào */
