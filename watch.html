@@ -159,6 +159,14 @@
             border-top-right-radius: 0px !important;
             border-top-width: 0px !important;
         }
+        /* Mobile: player + action bar = 1 khối đen liền mạch */
+        @media (max-width: 767px) {
+            #player-and-controls .relative.aspect-video {
+                border-bottom-left-radius: 0 !important;
+                border-bottom-right-radius: 0 !important;
+                border-bottom: none !important;
+            }
+        }
 
         /* ── LỚP 1: Nền tổng thể toàn trang (Overall darkest page bg) ── */
         html, body, .bg-background-dark {
@@ -428,39 +436,147 @@
             }
             .mpb-spacer { flex: 1; }
 
-            /* Mobile Action Bar bên dưới player */
+            /* ══ Mobile Action Bar — 1 hàng cinema style ══ */
             #mob-action-bar {
                 display: flex !important;
+                flex-direction: row;
                 align-items: center;
-                justify-content: space-around;
-                background: #1a1d2a;
-                border: 1px solid rgba(255,255,255,0.07);
-                border-top: none;
-                border-bottom-left-radius: 12px;
-                border-bottom-right-radius: 12px;
-                padding: 10px 4px;
+                justify-content: space-between;
+                background: #0d0d0d;
+                border: none;
+                border-radius: 0 0 12px 12px;
+                padding: 6px 12px;
+                min-height: 48px;
+                /* ✨ FIX: phải cao hơn catfish overlay (z-index 99998) */
+                position: relative;
+                z-index: 99999;
             }
+            /* Nhóm trái: prev + next */
+            .mab-left {
+                display: flex;
+                align-items: center;
+                gap: 2px;
+            }
+            /* Ngăn cách */
+            .mab-sep {
+                width: 1px;
+                height: 22px;
+                background: rgba(255,255,255,0.15);
+                margin: 0 8px;
+                flex-shrink: 0;
+            }
+            /* Nhóm phải: fav + save + share + fs + more */
+            .mab-right {
+                display: flex;
+                align-items: center;
+                gap: 0;
+                flex: 1;
+                justify-content: space-around;
+            }
+            /* Ẩn cột giữa (tên tập) — không dùng nữa */
+            .mab-mid { display: none; }
+            /* Button chung — icon TRẮNG, click 2được trên mobile */
             .mab-btn {
                 background: none;
                 border: none;
-                color: rgba(255,255,255,0.65);
+                color: #ffffff;
                 display: flex;
-                flex-direction: column;
                 align-items: center;
-                gap: 3px;
-                padding: 4px 8px;
+                justify-content: center;
+                padding: 6px 8px;
                 cursor: pointer;
                 border-radius: 8px;
                 -webkit-tap-highlight-color: transparent;
-                transition: color 0.18s;
+                touch-action: manipulation;   /* loại bỏ 300ms tap delay */
+                pointer-events: auto;          /* đảm bảo nhận touch */
+                transition: opacity 0.15s, transform 0.12s;
             }
-            .mab-btn:active { background: rgba(255,255,255,0.08); }
+            .mab-btn:active { opacity: 0.5; transform: scale(0.88); }
             .mab-btn.mab-active { color: #fcd576 !important; }
-            .mab-btn .material-icons-round { font-size: 23px; }
+            /* Tất cả icon đồng bộ 22px */
+            .mab-btn .material-icons-round { font-size: 22px; }
+
+            /* Overflow menu — popup khi nhấn ··· */
+            #mab-more-menu {
+                display: none;
+                position: absolute;
+                bottom: calc(100% + 6px);
+                right: 0;
+                background: #1a1a1a;
+                border: 1px solid rgba(255,255,255,0.15);
+                border-radius: 12px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+                z-index: 9999;
+                min-width: 160px;
+                padding: 6px 0;
+                overflow: hidden;
+            }
+            #mab-more-menu.open { display: block; }
+            .mab-more-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 11px 16px;
+                color: #ffffff;
+                font-size: 13px;
+                font-weight: 500;
+                border: none;
+                background: none;
+                width: 100%;
+                text-align: left;
+                cursor: pointer;
+                -webkit-tap-highlight-color: transparent;
+                transition: background 0.14s;
+            }
+            .mab-more-item:active { background: rgba(255,255,255,0.1); }
+            .mab-more-item .material-icons-round { font-size: 19px; color: rgba(255,255,255,0.6); }
+            /* Wrapper chứa more btn + menu */
+            #mab-more-wrap {
+                position: relative;
+            }
         }
         /* Ẩn mob-action-bar trên desktop */
         @media (min-width: 768px) {
             #mob-action-bar { display: none !important; }
+        }
+
+        /* ══════════════════════════════════════════
+           CSS PSEUDO-FULLSCREEN (iOS Safari safe)
+           ══════════════════════════════════════════ */
+
+        /* Khi tôi fullscreen bằng CSS (fallback cho iOS) */
+        .aphim-pseudo-fs {
+            position: fixed !important;
+            top: 0 !important; left: 0 !important;
+            width: 100vw !important;
+            height: 100dvh !important; /* dvh = dynamic viewport height, iOS-aware */
+            z-index: 2147483647 !important; /* MAX int — trên tất cả mọi thứ */
+            border-radius: 0 !important;
+            border: none !important;
+            margin: 0 !important;
+            background: #000 !important;
+            overflow: hidden !important;
+        }
+        /* iframe bên trong phải fill hết */
+        .aphim-pseudo-fs iframe {
+            width: 100% !important;
+            height: 100% !important;
+            border: none !important;
+        }
+        /* Overlay controls khi pseudo-fs: hiện luôn, rõ hơn */
+        .aphim-pseudo-fs #mob-player-ctrl {
+            display: flex !important;
+            opacity: 1 !important;
+        }
+        /* Nút thoát pseudo-fs nổi bật */
+        .aphim-pseudo-fs #mpbFs .material-icons-round {
+            color: #fcd576 !important;
+        }
+        /* Khoá scroll của body khi pseudo-fs */
+        body.aphim-fs-lock {
+            overflow: hidden !important;
+            position: fixed !important;
+            width: 100% !important;
         }
     </style>
 
@@ -750,29 +866,54 @@
                     <!-- ═══ END MOBILE PLAYER OVERLAY ═══ -->
                 </div>
 
-                <!-- ═══ MOBILE ACTION BAR (chỉ hiện trên mobile) ═══ -->
+                <!-- ═══ MOBILE ACTION BAR — 1 hàng cinema style ═══ -->
                 <div id="mob-action-bar">
-                    <button class="mab-btn" id="mab-prev" aria-label="Tập trước">
-                        <span class="material-icons-round">skip_previous</span>
-                    </button>
-                    <button class="mab-btn" id="mab-next" aria-label="Tập tiếp">
-                        <span class="material-icons-round">skip_next</span>
-                    </button>
-                    <button class="mab-btn" id="mab-fav" aria-label="Yêu thích">
-                        <span class="material-icons-round">favorite_border</span>
-                    </button>
-                    <button class="mab-btn" id="mab-save" aria-label="Thêm vào">
-                        <span class="material-icons-round">playlist_add</span>
-                    </button>
-                    <button class="mab-btn" onclick="shareMovie()" aria-label="Chia sẻ">
-                        <span class="material-icons-round">share</span>
-                    </button>
-                    <button class="mab-btn" id="mab-cinema" aria-label="Tắt đèn">
-                        <span class="material-icons-round">lightbulb</span>
-                    </button>
-                    <button class="mab-btn" onclick="reportError()" aria-label="Báo lỗi">
-                        <span class="material-icons-round">flag</span>
-                    </button>
+
+                    <!-- Nhóm TRÁI: điều hướng tập -->
+                    <div class="mab-left">
+                        <button class="mab-btn" id="mab-prev" aria-label="Tập trước">
+                            <span class="material-icons-round">skip_previous</span>
+                        </button>
+                        <button class="mab-btn" id="mab-next" aria-label="Tập tiếp">
+                            <span class="material-icons-round">skip_next</span>
+                        </button>
+                    </div>
+
+                    <!-- Ngăn cách -->
+                    <div class="mab-sep"></div>
+
+                    <!-- Nhóm PHẢI: tính năng -->
+                    <div class="mab-right">
+                        <button class="mab-btn" id="mab-fav" aria-label="Yêu thích">
+                            <span class="material-icons-round">favorite_border</span>
+                        </button>
+                        <button class="mab-btn" id="mab-save" aria-label="Thêm vào">
+                            <span class="material-icons-round">playlist_add</span>
+                        </button>
+                        <button class="mab-btn" onclick="shareMovie()" aria-label="Chia sẻ">
+                            <span class="material-icons-round">share</span>
+                        </button>
+                        <button class="mab-btn" id="mab-fs" aria-label="Toàn màn hình">
+                            <span class="material-icons-round">fullscreen</span>
+                        </button>
+                        <!-- Nút ··· -->
+                        <div id="mab-more-wrap">
+                            <button class="mab-btn" id="mab-more-btn" aria-label="Thêm">
+                                <span class="material-icons-round">more_vert</span>
+                            </button>
+                            <div id="mab-more-menu" role="menu">
+                                <button class="mab-more-item" id="mab-cinema" role="menuitem">
+                                    <span class="material-icons-round">lightbulb</span>
+                                    Tắt đèn
+                                </button>
+                                <button class="mab-more-item" onclick="reportError()" role="menuitem">
+                                    <span class="material-icons-round">flag</span>
+                                    Báo lỗi
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
                 <!-- ═══ END MOBILE ACTION BAR ═══ -->
 
@@ -1221,7 +1362,110 @@
     <script src="/js/catfish-banner.js?v=17" defer></script>
     <!-- ====== End Catfish Banner ====== -->
 
-    <!-- ====== Mobile Player Controls JS ====== -->
+    <!-- ====== Mobile Action Bar JS (standalone, no strict mode) ====== -->
+    <script>
+    // Chạy sau khi toàn bộ DOM sẵn sàng
+    (function initMobActionBar() {
+
+        // ── Helper: delegate click tới desktop button (vẫn hoạt động dù bị hide)
+        function tapDesk(id) {
+            var el = document.getElementById(id);
+            if (el) el.dispatchEvent(new MouseEvent('click', {bubbles:true, cancelable:true}));
+        }
+
+        // ── Helper: gắn sự kiện click + touchend để chắc chắn nhận trên mobile
+        function on(id, fn) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('click', fn);
+            el.addEventListener('touchend', function(e) {
+                e.preventDefault(); // tránh double-fire
+                fn(e);
+            }, { passive: false });
+        }
+
+        // ── ⁠⏮ Tập trước
+        on('mab-prev', function() { tapDesk('btn-prev-episode'); });
+
+        // ── ⁠⏭ Tập tiếp
+        on('mab-next', function() { tapDesk('btn-next-episode'); });
+
+        // ── ⁠♡ Yêu thích
+        on('mab-fav', function() {
+            tapDesk('favoriteMovieBtn');
+            var btn = document.getElementById('mab-fav');
+            if (!btn) return;
+            btn.classList.toggle('mab-active');
+            var ic = btn.querySelector('.material-icons-round');
+            if (ic) ic.textContent = btn.classList.contains('mab-active') ? 'favorite' : 'favorite_border';
+        });
+
+        // ── ⁠➕ Thêm vào danh sách
+        on('mab-save', function() { tapDesk('saveMovieBtn'); });
+
+        // ── ⁠⛶ Toàn màn hình — gọi trực tiếp window.aphimFullscreen (global)
+        on('mab-fs', function() {
+            if (typeof window.aphimFullscreen === 'function') {
+                window.aphimFullscreen();
+            } else {
+                // Fallback: dispatch toi mpbFs nếu IIFE chưa chạy xong
+                var mpbFsEl = document.getElementById('mpbFs');
+                if (mpbFsEl) mpbFsEl.dispatchEvent(new MouseEvent('click', {bubbles:true, cancelable:true}));
+            }
+        });
+
+        // ── ⁠↗ Chia sẻ
+        on('mab-share', function() {
+            if (typeof shareMovie === 'function') shareMovie();
+        });
+        // Fallback: gắn lại onclick cho nút share nếu có
+        var shareBtn = document.querySelector('#mob-action-bar button[onclick]');
+        // (onclick đã có sẵn trong HTML, không cần thêm)
+
+        // ── ⁠⋮ Menu ···
+        var moreBtn  = document.getElementById('mab-more-btn');
+        var moreMenu = document.getElementById('mab-more-menu');
+        if (moreBtn && moreMenu) {
+            function toggleMore(e) {
+                e.stopPropagation();
+                moreMenu.classList.toggle('open');
+            }
+            moreBtn.addEventListener('click', toggleMore);
+            moreBtn.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                toggleMore(e);
+            }, { passive: false });
+            // Đóng khi bấm ra ngoài
+            document.addEventListener('click', function() { moreMenu.classList.remove('open'); });
+            document.addEventListener('touchend', function() { moreMenu.classList.remove('open'); });
+            moreMenu.addEventListener('click', function(e) { e.stopPropagation(); });
+            moreMenu.addEventListener('touchend', function(e) { e.stopPropagation(); });
+        }
+
+        // ── Tắt đèn (Cinema mode)
+        on('mab-cinema', function() {
+            tapDesk('cinemaModeBtn');
+            var btn = document.getElementById('mab-cinema');
+            if (btn) btn.classList.toggle('mab-active');
+            if (moreMenu) moreMenu.classList.remove('open');
+        });
+
+        // ── Đồng bộ yêu thích từ button gốc
+        var origFav = document.getElementById('favoriteMovieBtn');
+        var mabFav  = document.getElementById('mab-fav');
+        if (origFav && mabFav) {
+            new MutationObserver(function() {
+                var ic = mabFav.querySelector('.material-icons-round');
+                var isActive = origFav.classList.contains('active')
+                            || origFav.querySelector('.text-red-500, [data-active]');
+                if (ic && isActive) { ic.textContent = 'favorite'; mabFav.classList.add('mab-active'); }
+                else if (ic) { ic.textContent = 'favorite_border'; mabFav.classList.remove('mab-active'); }
+            }).observe(origFav, { attributes: true, childList: true, subtree: true });
+        }
+
+    })();
+    </script>
+    <!-- ====== End Mobile Action Bar JS ====== -->
     <script>
     (function() {
         'use strict';
@@ -1255,24 +1499,163 @@
         if (mpbNext)  mpbNext.addEventListener('click', function(e){ e.stopPropagation(); var b=document.getElementById('btn-next-episode'); if(b)b.click(); });
         if (mpbFs)    mpbFs.addEventListener('click', function(e){
             e.stopPropagation();
-            var wrap = document.getElementById('player-and-controls') || document.querySelector('.aspect-video');
-            if (!wrap) return;
-            if (document.fullscreenElement) { document.exitFullscreen(); mpbFs.querySelector('.material-icons-round').textContent = 'fullscreen'; }
-            else { wrap.requestFullscreen().catch(function(){}); mpbFs.querySelector('.material-icons-round').textContent = 'fullscreen_exit'; }
+            enterOrExitFullscreen();
         });
 
-        // ── Mobile Action Bar ──
-        var mabPrev   = document.getElementById('mab-prev');
-        var mabNext   = document.getElementById('mab-next');
-        var mabFav    = document.getElementById('mab-fav');
-        var mabSave   = document.getElementById('mab-save');
-        var mabCinema = document.getElementById('mab-cinema');
+        // ════ Hàm fullscreen 3 tầng: native → webkit → CSS pseudo ════
+        function getPlayerEl() {
+            // Chỉ fullscreen phần video, không kèm action bar
+            return document.querySelector('#player-and-controls .relative.aspect-video,
+                                          #player-and-controls > div:first-child') ||
+                   document.querySelector('.aspect-video');
+        }
 
-        if (mabPrev)   mabPrev.addEventListener('click',   function(){ var b=document.getElementById('btn-prev-episode'); if(b)b.click(); });
-        if (mabNext)   mabNext.addEventListener('click',   function(){ var b=document.getElementById('btn-next-episode'); if(b)b.click(); });
-        if (mabFav)    mabFav.addEventListener('click',    function(){ var b=document.getElementById('favoriteMovieBtn'); if(b)b.click(); mabFav.classList.toggle('mab-active'); var ic=mabFav.querySelector('.material-icons-round'); if(ic) ic.textContent = mabFav.classList.contains('mab-active') ? 'favorite' : 'favorite_border'; });
-        if (mabSave)   mabSave.addEventListener('click',   function(){ var b=document.getElementById('saveMovieBtn'); if(b)b.click(); });
-        if (mabCinema) mabCinema.addEventListener('click', function(){ var b=document.getElementById('cinemaModeBtn'); if(b)b.click(); mabCinema.classList.toggle('mab-active'); });
+        function setFsIcon(isFs) {
+            var icon = mpbFs ? mpbFs.querySelector('.material-icons-round') : null;
+            var iconDesk = document.querySelector('#fullscreenBtn .material-icons-round');
+            var txt = isFs ? 'fullscreen_exit' : 'fullscreen';
+            if (icon) icon.textContent = txt;
+            if (iconDesk) iconDesk.textContent = txt;
+        }
+
+        function exitPseudoFs() {
+            var el = document.querySelector('.aphim-pseudo-fs');
+            if (el) el.classList.remove('aphim-pseudo-fs');
+            document.body.classList.remove('aphim-fs-lock');
+            setFsIcon(false);
+        }
+
+        function enterPseudoFs(playerEl) {
+            playerEl.classList.add('aphim-pseudo-fs');
+            document.body.classList.add('aphim-fs-lock');
+            setFsIcon(true);
+            // ESC hoặc swipe để thoát
+            playerEl.addEventListener('touchstart', function handleSwipe(ev) {
+                var startY = ev.touches[0].clientY;
+                playerEl.addEventListener('touchend', function done(ev2) {
+                    playerEl.removeEventListener('touchend', done);
+                    if (ev2.changedTouches[0].clientY - startY > 80) { exitPseudoFs(); playerEl.removeEventListener('touchstart', handleSwipe); }
+                }, { once: true });
+            }, { passive: true });
+        }
+
+        function enterOrExitFullscreen() {
+            var playerEl = getPlayerEl();
+            if (!playerEl) return;
+
+            // Kiểm tra đang pseudo-fs
+            if (playerEl.classList.contains('aphim-pseudo-fs')) {
+                exitPseudoFs(); return;
+            }
+            // Kiểm tra đang native fs
+            var nativeFs = document.fullscreenElement || document.webkitFullscreenElement;
+            if (nativeFs) {
+                (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+                return;
+            }
+
+            // Thử native fullscreen (Android Chrome OK, iOS fail)
+            var reqFs = playerEl.requestFullscreen
+                     || playerEl.webkitRequestFullscreen
+                     || playerEl.mozRequestFullScreen
+                     || playerEl.msRequestFullscreen;
+
+            if (reqFs) {
+                var p = reqFs.call(playerEl);
+                if (p && typeof p.then === 'function') {
+                    p.then(function() { setFsIcon(true); })
+                     .catch(function() {
+                         // Native thất bại (iOS) → dùng CSS pseudo-fs
+                         enterPseudoFs(playerEl);
+                     });
+                } else {
+                    // Không có Promise (trình duyệt cũ) → chập nhận
+                    setFsIcon(true);
+                }
+            } else {
+                // Không hỗ trợ native fullscreen (iOS Safari) → CSS pseudo-fs
+                enterPseudoFs(playerEl);
+            }
+        }
+
+        // Lắng nghe sự kiện native fullscreenchange để cập nhật icon
+        document.addEventListener('fullscreenchange', function() { setFsIcon(!!document.fullscreenElement); });
+        document.addEventListener('webkitfullscreenchange', function() { setFsIcon(!!document.webkitFullscreenElement); });
+
+        // ✨ Expose ra global để initMobActionBar gọi được
+        window.aphimFullscreen = enterOrExitFullscreen;
+        window.aphimSetFsIcon = function(isFs) {
+            setFsIcon(isFs);
+            // Cập nhật luôn icon trên mab-fs
+            var mabFsIcon = document.querySelector('#mab-fs .material-icons-round');
+            if (mabFsIcon) mabFsIcon.textContent = isFs ? 'fullscreen_exit' : 'fullscreen';
+        };
+        // override setFsIcon luôn sync mab-fs
+        var _origSetFsIcon = setFsIcon;
+        setFsIcon = function(isFs) {
+            _origSetFsIcon(isFs);
+            var mabFsIcon = document.querySelector('#mab-fs .material-icons-round');
+            if (mabFsIcon) mabFsIcon.textContent = isFs ? 'fullscreen_exit' : 'fullscreen';
+        };
+
+        // Nút fullscreen desktop (đã có trong #player-control-bar)
+        var fullscreenBtnDesk = document.getElementById('fullscreenBtn');
+        if (fullscreenBtnDesk) fullscreenBtnDesk.addEventListener('click', function() { enterOrExitFullscreen(); });
+
+        // ── Mobile Action Bar ──
+        var mabPrev     = document.getElementById('mab-prev');
+        var mabNext     = document.getElementById('mab-next');
+        var mabFav      = document.getElementById('mab-fav');
+        var mabSave     = document.getElementById('mab-save');
+        var mabCinema   = document.getElementById('mab-cinema');
+        var mabFsBtn    = document.getElementById('mab-fs');
+        var mabMoreBtn  = document.getElementById('mab-more-btn');
+        var mabMoreMenu = document.getElementById('mab-more-menu');
+
+        if (mabPrev)  mabPrev.addEventListener('click',  function(){ var b=document.getElementById('btn-prev-episode'); if(b)b.click(); });
+        if (mabNext)  mabNext.addEventListener('click',  function(){ var b=document.getElementById('btn-next-episode'); if(b)b.click(); });
+        if (mabFav)   mabFav.addEventListener('click',   function(){ var b=document.getElementById('favoriteMovieBtn'); if(b)b.click(); mabFav.classList.toggle('mab-active'); var ic=mabFav.querySelector('.material-icons-round'); if(ic) ic.textContent = mabFav.classList.contains('mab-active') ? 'favorite' : 'favorite_border'; });
+        if (mabSave)  mabSave.addEventListener('click',  function(){ var b=document.getElementById('saveMovieBtn'); if(b)b.click(); });
+        if (mabCinema)mabCinema.addEventListener('click',function(){ var b=document.getElementById('cinemaModeBtn'); if(b)b.click(); mabCinema.classList.toggle('mab-active'); if(mabMoreMenu) mabMoreMenu.classList.remove('open'); });
+
+        // Nút fullscreen ở action bar (mab-fs) — dùng cùng hàm enterOrExitFullscreen
+        if (mabFsBtn) mabFsBtn.addEventListener('click', function(){ enterOrExitFullscreen(); });
+
+        // Cập nhật icon fullscreen cho cả mab-fs
+        var _origSetFsIcon = setFsIcon;
+        setFsIcon = function(isFs) {
+            _origSetFsIcon(isFs);
+            var mabFsIcon = mabFsBtn ? mabFsBtn.querySelector('.material-icons-round') : null;
+            if (mabFsIcon) mabFsIcon.textContent = isFs ? 'fullscreen_exit' : 'fullscreen';
+        };
+
+        // ··· Menu toggle
+        if (mabMoreBtn && mabMoreMenu) {
+            mabMoreBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                mabMoreMenu.classList.toggle('open');
+            });
+            // Đóng menu khi click ra ngoài
+            document.addEventListener('click', function() {
+                if (mabMoreMenu) mabMoreMenu.classList.remove('open');
+            });
+            mabMoreMenu.addEventListener('click', function(e) { e.stopPropagation(); });
+        }
+
+        // ── Đồng bộ tên tập vào cột giữa ──
+        function syncEpName() {
+            var nameEl = document.getElementById('mab-ep-name');
+            if (!nameEl) return;
+            // Ưu tiên: nút tập đang active
+            var activeEpBtn = document.querySelector('#episode-list button.active');
+            if (activeEpBtn) { nameEl.textContent = activeEpBtn.textContent.trim(); return; }
+            // Fallback: lấy từ tiêu đề trang
+            var titleEl = document.querySelector('.movie-title, h1, [data-movie-title]');
+            if (titleEl) { nameEl.textContent = titleEl.textContent.trim().substring(0, 24); }
+        }
+        // Chạy sau khi JS render episode list xong
+        setTimeout(syncEpName, 1200);
+        document.addEventListener('episodeChanged', syncEpName); // custom event từ watch.js nếu có
 
         // ── Đồng bộ trạng thái favorite từ button gốc ──
         document.addEventListener('DOMContentLoaded', function() {
