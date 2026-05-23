@@ -2,126 +2,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=wanda-sykes-legacy</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/wanda-sykes-legacy-thumb.jpg</image:loc><image:title>Wanda Sykes: Legacy</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/wanda-sykes-legacy-poster.jpg</image:loc><image:title>Wanda Sykes: Legacy - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=tan-hong-trang</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/tan-hong-trang-thumb.jpg</image:loc><image:title>Tẫn Hồng Trang</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/tan-hong-trang-poster.jpg</image:loc><image:title>Tẫn Hồng Trang - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=cu-ke-chien-ky</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/cu-ke-chien-ky-thumb.jpg</image:loc><image:title>Cự Kê Chiến Ký</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/cu-ke-chien-ky-poster.jpg</image:loc><image:title>Cự Kê Chiến Ký - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=tinh-yeu-o-bortala</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/tinh-yeu-o-bortala-thumb.jpg</image:loc><image:title>Tình Yêu Ở Bortala</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/tinh-yeu-o-bortala-poster.jpg</image:loc><image:title>Tình Yêu Ở Bortala - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=normal</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/normal-thumb.jpg</image:loc><image:title>Normal</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/normal-poster.jpg</image:loc><image:title>Normal - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=tinh-yeu-phan-boi</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/tinh-yeu-phan-boi-thumb.jpg</image:loc><image:title>Tình Yêu Phản Bội</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/tinh-yeu-phan-boi-poster.jpg</image:loc><image:title>Tình Yêu Phản Bội - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=bi-an-thi-tran-widows-bay</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/bi-an-thi-tran-widows-bay-thumb.jpg</image:loc><image:title>Bí Ẩn Thị Trấn Widow's Bay</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/bi-an-thi-tran-widows-bay-poster.jpg</image:loc><image:title>Bí Ẩn Thị Trấn Widow's Bay - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=rac-roi-tien-bac-cua-margo</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/rac-roi-tien-bac-cua-margo-thumb.jpg</image:loc><image:title>Rắc Rối Tiền Bạc Của Margo</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/rac-roi-tien-bac-cua-margo-poster.jpg</image:loc><image:title>Rắc Rối Tiền Bạc Của Margo - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=ho-so-toi-pham-phan-2</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/ho-so-toi-pham-phan-2-thumb.jpg</image:loc><image:title>Hồ Sơ Tội Phạm (Phần 2)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/ho-so-toi-pham-phan-2-poster.jpg</image:loc><image:title>Hồ Sơ Tội Phạm (Phần 2) - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=reborn</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/reborn-thumb.jpg</image:loc><image:title>Reborn</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/reborn-poster.jpg</image:loc><image:title>Reborn - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=magic-move-tien-tri-tinh-yeu</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/magic-move-tien-tri-tinh-yeu-thumb.jpg</image:loc><image:title>Magic Move: Tiên Tri Tình Yêu</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/magic-move-tien-tri-tinh-yeu-poster.jpg</image:loc><image:title>Magic Move: Tiên Tri Tình Yêu - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=mai-moi-cho-doc-su</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/mai-moi-cho-doc-su-thumb.jpg</image:loc><image:title>Mai Mối Cho Độc Sư</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/mai-moi-cho-doc-su-poster.jpg</image:loc><image:title>Mai Mối Cho Độc Sư - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=duc-vong-tham-kin</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/duc-vong-tham-kin-thumb.jpg</image:loc><image:title>Dục Vọng Thầm Kín</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/duc-vong-tham-kin-poster.jpg</image:loc><image:title>Dục Vọng Thầm Kín - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=suu-than-ky</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/suu-than-ky-thumb.jpg</image:loc><image:title>Sưu Thần Ký</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/suu-than-ky-poster.jpg</image:loc><image:title>Sưu Thần Ký - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=tu-xuyen-phan-2-2025</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/tu-xuyen-phan-2-2025-thumb.jpg</image:loc><image:title>Tử Xuyên (Phần 2)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/tu-xuyen-phan-2-2025-poster.jpg</image:loc><image:title>Tử Xuyên (Phần 2) - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=tu-la-vo-than-phan-2</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/tu-la-vo-than-phan-2-thumb.jpg</image:loc><image:title>Tu La Võ Thần (Phần 2)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/tu-la-vo-than-phan-2-poster.jpg</image:loc><image:title>Tu La Võ Thần (Phần 2) - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=tracker-phan-3</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/tracker-phan-3-thumb-1761239638607.jpg</image:loc><image:title>Tracker (Phần 3)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/tracker-phan-3-poster.jpg</image:loc><image:title>Tracker (Phần 3) - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=nu-vuong-trum-cuoi-tan-doc-can-nguyen-cua-moi-tham-kich-se-doc-suc-vi-nguoi-dan-phan-2</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/nu-vuong-trum-cuoi-tan-doc-can-nguyen-cua-moi-tham-kich-se-doc-suc-vi-nguoi-dan-phan-2-thumb.jpg</image:loc><image:title>Nữ Vương Trùm Cuối Tàn Độc Căn Nguyên Của Mọi Thảm Kịch Sẽ Dốc Sức Vì Người Dân (Phần 2)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/nu-vuong-trum-cuoi-tan-doc-can-nguyen-cua-moi-tham-kich-se-doc-suc-vi-nguoi-dan-phan-2-poster.jpg</image:loc><image:title>Nữ Vương Trùm Cuối Tàn Độc Căn Nguyên Của Mọi Thảm Kịch Sẽ Dốc Sức Vì Người Dân (Phần 2) - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=伪钞重案</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/伪钞重案-thumb.jpg</image:loc><image:title>Trọng Án Tiền Giả</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/伪钞重案-poster.jpg</image:loc><image:title>Trọng Án Tiền Giả - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=trang-trai-dutton</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/trang-trai-dutton-thumb.jpg</image:loc><image:title>Trang Trại Dutton</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/trang-trai-dutton-poster.jpg</image:loc><image:title>Trang Trại Dutton - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=biet-doi-tu-bao-short-drama</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/biet-doi-tu-bao-short-drama-thumb.jpg</image:loc><image:title>Biệt Đội Tứ Bảo</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/biet-doi-tu-bao-short-drama-poster.jpg</image:loc><image:title>Biệt Đội Tứ Bảo - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=ngoc-trai-trong-suong-mu</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/ngoc-trai-trong-suong-mu-thumb.jpg</image:loc><image:title>Ngọc trai trong sương mù</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/ngoc-trai-trong-suong-mu-poster.jpg</image:loc><image:title>Ngọc trai trong sương mù - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=pinecone</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/pinecone-thumb.jpg</image:loc><image:title>Pinecone</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/pinecone-poster.jpg</image:loc><image:title>Pinecone - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=cuoc-chien-sinh-tu-ii</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/cuoc-chien-sinh-tu-ii-thumb.jpg</image:loc><image:title>Cuộc Chiến Sinh Tử II</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/cuoc-chien-sinh-tu-ii-poster.jpg</image:loc><image:title>Cuộc Chiến Sinh Tử II - Poster</image:title></image:image>
-    </url>
-    <url>
         <loc>https://aphim.io.vn/movie-detail.html?slug=minh-chau-ky-dam-phan-3</loc>
         <image:image><image:loc>https://img.ophim.live/uploads/movies/minh-chau-ky-dam-phan-3-thumb.jpg</image:loc><image:title>Minh Châu Kỳ Đàm (Phần 3)</image:title></image:image>
         <image:image><image:loc>https://img.ophim.live/uploads/movies/minh-chau-ky-dam-phan-3-poster.jpg</image:loc><image:title>Minh Châu Kỳ Đàm (Phần 3) - Poster</image:title></image:image>
@@ -240,246 +120,6 @@
         <loc>https://aphim.io.vn/movie-detail.html?slug=xin-nhuong-phai-dep</loc>
         <image:image><image:loc>https://img.ophim.live/uploads/movies/xin-nhuong-phai-dep-thumb.jpg</image:loc><image:title>Xin Nhường Phái Đẹp</image:title></image:image>
         <image:image><image:loc>https://img.ophim.live/uploads/movies/xin-nhuong-phai-dep-poster.jpg</image:loc><image:title>Xin Nhường Phái Đẹp - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=nhung-bong-hoa-ac</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/nhung-bong-hoa-ac-thumb.jpg</image:loc><image:title>Những Bông Hoa Ác</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/nhung-bong-hoa-ac-poster.jpg</image:loc><image:title>Những Bông Hoa Ác - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=di-thu-ma-do-phan-2</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/di-thu-ma-do-phan-2-thumb.jpg</image:loc><image:title>Dị thú ma đô (Phần 2)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/di-thu-ma-do-phan-2-poster.jpg</image:loc><image:title>Dị thú ma đô (Phần 2) - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=sieu-diep-vien-jack-ryan-bong-ma-chien-tranh</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/sieu-diep-vien-jack-ryan-bong-ma-chien-tranh-thumb.jpg</image:loc><image:title>Siêu Điệp Viên Jack Ryan: Bóng Ma Chiến Tranh</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/sieu-diep-vien-jack-ryan-bong-ma-chien-tranh-poster.jpg</image:loc><image:title>Siêu Điệp Viên Jack Ryan: Bóng Ma Chiến Tranh - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=vu-dieu-tinh-thu</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/vu-dieu-tinh-thu-thumb.jpg</image:loc><image:title>Vũ Điệu Tình Thù</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/vu-dieu-tinh-thu-poster.jpg</image:loc><image:title>Vũ Điệu Tình Thù - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=rezero-−-bat-dau-o-the-gioi-khac-phan-4</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/rezero-−-bat-dau-o-the-gioi-khac-phan-4-thumb.jpg</image:loc><image:title>Re:Zero − Bắt Đầu Ở Thế Giới Khác (Phần 4)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/rezero-−-bat-dau-o-the-gioi-khac-phan-4-poster.jpg</image:loc><image:title>Re:Zero − Bắt Đầu Ở Thế Giới Khác (Phần 4) - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=lan-nua-den-ben-em</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/lan-nua-den-ben-em-thumb.jpg</image:loc><image:title>Lần Nữa Đến Bên Em</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/lan-nua-den-ben-em-poster.jpg</image:loc><image:title>Lần Nữa Đến Bên Em - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=huong-ve-sao-bang-cau-nguyen</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/huong-ve-sao-bang-cau-nguyen-thumb.jpg</image:loc><image:title>Hướng Về Sao Băng Cầu Nguyện</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/huong-ve-sao-bang-cau-nguyen-poster.jpg</image:loc><image:title>Hướng Về Sao Băng Cầu Nguyện - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=chao-mung-den-voi-lop-hoc-de-cao-thuc-luc-phan-4</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/chao-mung-den-voi-lop-hoc-de-cao-thuc-luc-phan-4-thumb.jpg</image:loc><image:title>Chào mừng đến với lớp học đề cao thực lực (Phần 4)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/chao-mung-den-voi-lop-hoc-de-cao-thuc-luc-phan-4-poster.jpg</image:loc><image:title>Chào mừng đến với lớp học đề cao thực lực (Phần 4) - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=kylie</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/kylie-thumb.jpg</image:loc><image:title>Kylie</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/kylie-poster.jpg</image:loc><image:title>Kylie - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=carizzma</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/carizzma-thumb.jpg</image:loc><image:title>Caro tuyệt phẩm</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/carizzma-poster.jpg</image:loc><image:title>Caro tuyệt phẩm - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=bi-mat-gioi-the-thao-anh-quoc-phep-mau-istanbul-cua-liverpool</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/bi-mat-gioi-the-thao-anh-quoc-phep-mau-istanbul-cua-liverpool-thumb.jpg</image:loc><image:title>Bí mật giới thể thao Anh quốc: Phép màu Istanbul của Liverpool</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/bi-mat-gioi-the-thao-anh-quoc-phep-mau-istanbul-cua-liverpool-poster.jpg</image:loc><image:title>Bí mật giới thể thao Anh quốc: Phép màu Istanbul của Liverpool - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=hoac-phu-nhan-ra-tay-short-drama</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/hoac-phu-nhan-ra-tay-short-drama-thumb.jpg</image:loc><image:title>Hoắc Phu Nhân Ra Tay</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/hoac-phu-nhan-ra-tay-short-drama-poster.jpg</image:loc><image:title>Hoắc Phu Nhân Ra Tay - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=the-he-diem-10</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/the-he-diem-10-thumb.jpg</image:loc><image:title>Thế Hệ Điểm 10</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/the-he-diem-10-poster.jpg</image:loc><image:title>Thế Hệ Điểm 10 - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=kill-it-slay-toi-ben</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/kill-it-slay-toi-ben-thumb.jpg</image:loc><image:title>Kill It: Slay Tới Bến</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/kill-it-slay-toi-ben-poster.jpg</image:loc><image:title>Kill It: Slay Tới Bến - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=dia-nguc-hiem-ac</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/dia-nguc-hiem-ac-thumb.jpg</image:loc><image:title>Địa ngục hiểm ác</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/dia-nguc-hiem-ac-poster.jpg</image:loc><image:title>Địa ngục hiểm ác - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=co-giao-cua-toi-noi-am-anh-cua-toi</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/co-giao-cua-toi-noi-am-anh-cua-toi-thumb.jpg</image:loc><image:title>Cô giáo của tôi, nỗi ám ảnh của tôi</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/co-giao-cua-toi-noi-am-anh-cua-toi-poster.jpg</image:loc><image:title>Cô giáo của tôi, nỗi ám ảnh của tôi - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=wellwood</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/wellwood-thumb.jpg</image:loc><image:title>Wellwood</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/wellwood-poster.jpg</image:loc><image:title>Wellwood - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=huyen-thoai-linh-bep</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/huyen-thoai-linh-bep-thumb.jpg</image:loc><image:title>Huyền Thoại Lính Bếp</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/huyen-thoai-linh-bep-poster.jpg</image:loc><image:title>Huyền Thoại Lính Bếp - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=co-dau-tu-qua-khu</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/co-dau-tu-qua-khu-thumb.jpg</image:loc><image:title>Cô Dâu Từ Quá Khứ</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/co-dau-tu-qua-khu-poster.jpg</image:loc><image:title>Cô Dâu Từ Quá Khứ - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=k-everything-a-cnn-original-series</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/k-everything-a-cnn-original-series-thumb.jpg</image:loc><image:title>K-Everything: A CNN Original Series</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/k-everything-a-cnn-original-series-poster.jpg</image:loc><image:title>K-Everything: A CNN Original Series - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=nhip-dieu-thu-han</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/nhip-dieu-thu-han-thumb.jpg</image:loc><image:title>Nhịp Điệu Thù Hận</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/nhip-dieu-thu-han-poster.jpg</image:loc><image:title>Nhịp Điệu Thù Hận - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=the-boys-phan-5</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/the-boys-phan-5-thumb-1775624659696.jpg</image:loc><image:title>The Boys (Phần 5)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/the-boys-phan-5-poster.jpg</image:loc><image:title>The Boys (Phần 5) - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=cam-ket-thoa-man-tot-cung</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/cam-ket-thoa-man-tot-cung-thumb.jpg</image:loc><image:title>Cam Kết Thỏa Mãn Tột Cùng</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/cam-ket-thoa-man-tot-cung-poster.jpg</image:loc><image:title>Cam Kết Thỏa Mãn Tột Cùng - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=cia-phan-1</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/cia-phan-1-thumb.jpg</image:loc><image:title>CIA (Phần 1)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/cia-phan-1-poster.jpg</image:loc><image:title>CIA (Phần 1) - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=mua-giao-phoi</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/mua-giao-phoi-thumb.jpg</image:loc><image:title>Mùa Giao Phối</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/mua-giao-phoi-poster.jpg</image:loc><image:title>Mùa Giao Phối - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=van-yeu</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/van-yeu-thumb.jpg</image:loc><image:title>Vấn Yêu</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/van-yeu-poster.jpg</image:loc><image:title>Vấn Yêu - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=thinh-duong-ky-an</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/thinh-duong-ky-an-thumb.jpg</image:loc><image:title>Thịnh Đường Kỳ Án</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/thinh-duong-ky-an-poster.jpg</image:loc><image:title>Thịnh Đường Kỳ Án - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=tron-khong-thoat-toi</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/tron-khong-thoat-toi-thumb.jpg</image:loc><image:title>Trốn Không Thoát Tội</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/tron-khong-thoat-toi-poster.jpg</image:loc><image:title>Trốn Không Thoát Tội - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=chuyen-kinh-hoang-phan-3</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/chuyen-kinh-hoang-phan-3-thumb.jpg</image:loc><image:title>Chuyện Kinh Hoàng (Phần 3)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/chuyen-kinh-hoang-phan-3-poster.jpg</image:loc><image:title>Chuyện Kinh Hoàng (Phần 3) - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=rat-muon-den-the-gioi-cua-em-de-yeu-em</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/rat-muon-den-the-gioi-cua-em-de-yeu-em-thumb.jpg</image:loc><image:title>Rất Muốn Đến Thế Giới Của Em Để Yêu Em</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/rat-muon-den-the-gioi-cua-em-de-yeu-em-poster.jpg</image:loc><image:title>Rất Muốn Đến Thế Giới Của Em Để Yêu Em - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=nhat-the-tinh-thu-short-drama</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/nhat-the-tinh-thu-short-drama-thumb.jpg</image:loc><image:title>Nhất Thế Tình Thù</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/nhat-the-tinh-thu-short-drama-poster.jpg</image:loc><image:title>Nhất Thế Tình Thù - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=troi-xanh-tren-may</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/troi-xanh-tren-may-thumb.jpg</image:loc><image:title>Trời Xanh Trên Mây</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/troi-xanh-tren-may-poster.jpg</image:loc><image:title>Trời Xanh Trên Mây - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=ke-thu-chung-giuong</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/ke-thu-chung-giuong-thumb.jpg</image:loc><image:title>Kẻ Thù Chung Giường</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/ke-thu-chung-giuong-poster.jpg</image:loc><image:title>Kẻ Thù Chung Giường - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=hoa-thuc-dieu-doi-cuu-hoa-borotobi-vung-ushu</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/hoa-thuc-dieu-doi-cuu-hoa-borotobi-vung-ushu-thumb.jpg</image:loc><image:title>Hỏa Thực Điểu: Đội cứu hỏa Borotobi vùng Ushu</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/hoa-thuc-dieu-doi-cuu-hoa-borotobi-vung-ushu-poster.jpg</image:loc><image:title>Hỏa Thực Điểu: Đội cứu hỏa Borotobi vùng Ushu - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=duc-vong-ben-song-trang</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/duc-vong-ben-song-trang-thumb.jpg</image:loc><image:title>Dục Vọng Bên Sông Trắng</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/duc-vong-ben-song-trang-poster.jpg</image:loc><image:title>Dục Vọng Bên Sông Trắng - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=dance-of-the-lion</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/dance-of-the-lion-thumb.jpg</image:loc><image:title>Dance of the Lion</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/dance-of-the-lion-poster.jpg</image:loc><image:title>Dance of the Lion - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=buc-tuong-bang</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/buc-tuong-bang-thumb.jpg</image:loc><image:title>Bức Tường Băng</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/buc-tuong-bang-poster.jpg</image:loc><image:title>Bức Tường Băng - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=linh-vu-dai-luc</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/linh-vu-dai-luc-thumb.jpg</image:loc><image:title>Linh Vũ Đại Lục</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/linh-vu-dai-luc-poster.jpg</image:loc><image:title>Linh Vũ Đại Lục - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=lai-co-an-mang-nua-roi-thua-tham-tu</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/lai-co-an-mang-nua-roi-thua-tham-tu-thumb.jpg</image:loc><image:title>Lại Bị Giết Nữa À, Thưa Thám Tử?</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/lai-co-an-mang-nua-roi-thua-tham-tu-poster.jpg</image:loc><image:title>Lại Bị Giết Nữa À, Thưa Thám Tử? - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=mon-qua-cua-kluay</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/mon-qua-cua-kluay-thumb.jpg</image:loc><image:title>Món Quà Của Kluay</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/mon-qua-cua-kluay-poster.jpg</image:loc><image:title>Món Quà Của Kluay - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=james</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/james-thumb.jpg</image:loc><image:title>James.</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/james-poster.jpg</image:loc><image:title>James. - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=phien-quan-toc-xam</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/phien-quan-toc-xam-thumb.jpg</image:loc><image:title>Phiến Quân Tóc Xám</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/phien-quan-toc-xam-poster.jpg</image:loc><image:title>Phiến Quân Tóc Xám - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=fight-against-evil-3</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/fight-against-evil-3-thumb.jpg</image:loc><image:title>Fight Against Evil 3</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/fight-against-evil-3-poster.jpg</image:loc><image:title>Fight Against Evil 3 - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=lure</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/lure-thumb.jpg</image:loc><image:title>Lure</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/lure-poster.jpg</image:loc><image:title>Lure - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=nhip-dap-trai-tim-phan-5</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/nhip-dap-trai-tim-phan-5-thumb.jpg</image:loc><image:title>Nhịp Đập Trái Tim (Phần 5)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/nhip-dap-trai-tim-phan-5-poster.jpg</image:loc><image:title>Nhịp Đập Trái Tim (Phần 5) - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=tien-si-da-hoi-sinh-the-gioi-phan-4</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/tien-si-da-hoi-sinh-the-gioi-phan-4-thumb.jpg</image:loc><image:title>Tiến Sĩ Đá: Hồi Sinh Thế Giới (Phần 4)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/tien-si-da-hoi-sinh-the-gioi-phan-4-poster.jpg</image:loc><image:title>Tiến Sĩ Đá: Hồi Sinh Thế Giới (Phần 4) - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=mother-mary-hao-quang-don-doc</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/mother-mary-hao-quang-don-doc-thumb-1779333810498.jpg</image:loc><image:title>Mother Mary: Hào Quang Đơn Độc</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/mother-mary-hao-quang-don-doc-poster-1779333811679.jpg</image:loc><image:title>Mother Mary: Hào Quang Đơn Độc - Poster</image:title></image:image>
-    </url>
-    <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=diep-vien-so-0</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/diep-vien-so-0-thumb.jpg</image:loc><image:title>Điệp Viên Số 0</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/diep-vien-so-0-poster.jpg</image:loc><image:title>Điệp Viên Số 0 - Poster</image:title></image:image>
     </url>
     <url>
         <loc>https://aphim.io.vn/movie-detail.html?slug=devil-may-cry-phan-2</loc>
@@ -722,124 +362,124 @@
         <image:image><image:loc>https://img.ophim.live/uploads/movies/sat-nhan-hat-de-phan-2-poster.jpg</image:loc><image:title>Sát Nhân Hạt Dẻ (Phần 2) - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=hom-nay-lai-ban-het</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/hom-nay-lai-ban-het-thumb.jpg</image:loc><image:title>Hôm Nay Lại Bán Hết</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/hom-nay-lai-ban-het-poster.jpg</image:loc><image:title>Hôm Nay Lại Bán Hết - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=wanda-sykes-legacy</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/wanda-sykes-legacy-thumb.jpg</image:loc><image:title>Wanda Sykes: Legacy</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/wanda-sykes-legacy-poster.jpg</image:loc><image:title>Wanda Sykes: Legacy - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=citadel-phan-2</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/citadel-phan-2-thumb.jpg</image:loc><image:title>Citadel (Phần 2)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/citadel-phan-2-poster.jpg</image:loc><image:title>Citadel (Phần 2) - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=tan-hong-trang</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/tan-hong-trang-thumb.jpg</image:loc><image:title>Tẫn Hồng Trang</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/tan-hong-trang-poster.jpg</image:loc><image:title>Tẫn Hồng Trang - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=wu</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/wu-thumb.jpg</image:loc><image:title>WU</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/wu-poster.jpg</image:loc><image:title>WU - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=cu-ke-chien-ky</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/cu-ke-chien-ky-thumb.jpg</image:loc><image:title>Cự Kê Chiến Ký</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/cu-ke-chien-ky-poster.jpg</image:loc><image:title>Cự Kê Chiến Ký - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=vung-dat-vang</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/vung-dat-vang-thumb.jpg</image:loc><image:title>Vùng Đất Vàng</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/vung-dat-vang-poster.jpg</image:loc><image:title>Vùng Đất Vàng - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=tinh-yeu-o-bortala</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/tinh-yeu-o-bortala-thumb.jpg</image:loc><image:title>Tình Yêu Ở Bortala</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/tinh-yeu-o-bortala-poster.jpg</image:loc><image:title>Tình Yêu Ở Bortala - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=fire-country-phan-4</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/fire-country-phan-4-thumb.jpg</image:loc><image:title>Vùng Đất Lửa (Phần 4)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/fire-country-phan-4-poster.jpg</image:loc><image:title>Vùng Đất Lửa (Phần 4) - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=normal</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/normal-thumb.jpg</image:loc><image:title>Normal</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/normal-poster.jpg</image:loc><image:title>Normal - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=mat-trai-cua-mat-tich-ban-thai</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/mat-trai-cua-mat-tich-ban-thai-thumb.jpg</image:loc><image:title>Mặt Trái Của Mất Tích (Bản Thái)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/mat-trai-cua-mat-tich-ban-thai-poster.jpg</image:loc><image:title>Mặt Trái Của Mất Tích (Bản Thái) - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=tinh-yeu-phan-boi</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/tinh-yeu-phan-boi-thumb.jpg</image:loc><image:title>Tình Yêu Phản Bội</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/tinh-yeu-phan-boi-poster.jpg</image:loc><image:title>Tình Yêu Phản Bội - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=tuong-tu-ky</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/tuong-tu-ky-thumb.jpg</image:loc><image:title>Tường Tự Ký</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/tuong-tu-ky-poster.jpg</image:loc><image:title>Tường Tự Ký - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=bi-an-thi-tran-widows-bay</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/bi-an-thi-tran-widows-bay-thumb.jpg</image:loc><image:title>Bí Ẩn Thị Trấn Widow's Bay</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/bi-an-thi-tran-widows-bay-poster.jpg</image:loc><image:title>Bí Ẩn Thị Trấn Widow's Bay - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=bat-song-tinh-duyen</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/bat-song-tinh-duyen-thumb.jpg</image:loc><image:title>Bắt Sóng Tình Duyên</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/bat-song-tinh-duyen-poster.jpg</image:loc><image:title>Bắt Sóng Tình Duyên - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=rac-roi-tien-bac-cua-margo</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/rac-roi-tien-bac-cua-margo-thumb.jpg</image:loc><image:title>Rắc Rối Tiền Bạc Của Margo</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/rac-roi-tien-bac-cua-margo-poster.jpg</image:loc><image:title>Rắc Rối Tiền Bạc Của Margo - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=troi-buoc-boi-thuy-trieu</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/troi-buoc-boi-thuy-trieu-thumb.jpg</image:loc><image:title>Trói Buộc Bởi Thuỷ Triều</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/troi-buoc-boi-thuy-trieu-poster.jpg</image:loc><image:title>Trói Buộc Bởi Thuỷ Triều - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=ho-so-toi-pham-phan-2</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/ho-so-toi-pham-phan-2-thumb.jpg</image:loc><image:title>Hồ Sơ Tội Phạm (Phần 2)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/ho-so-toi-pham-phan-2-poster.jpg</image:loc><image:title>Hồ Sơ Tội Phạm (Phần 2) - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=luong-tran-my-cam</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/luong-tran-my-cam-thumb.jpg</image:loc><image:title>Lương Trần Mỹ Cẩm</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/luong-tran-my-cam-poster.jpg</image:loc><image:title>Lương Trần Mỹ Cẩm - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=reborn</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/reborn-thumb.jpg</image:loc><image:title>Reborn</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/reborn-poster.jpg</image:loc><image:title>Reborn - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=xuyen-vao-kich-ban-yeu-tong-tai-short-drama</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/xuyen-vao-kich-ban-yeu-tong-tai-short-drama-thumb.jpg</image:loc><image:title>Xuyên Vào Kịch Bản Yêu Tổng Tài</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/xuyen-vao-kich-ban-yeu-tong-tai-short-drama-poster.jpg</image:loc><image:title>Xuyên Vào Kịch Bản Yêu Tổng Tài - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=magic-move-tien-tri-tinh-yeu</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/magic-move-tien-tri-tinh-yeu-thumb.jpg</image:loc><image:title>Magic Move: Tiên Tri Tình Yêu</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/magic-move-tien-tri-tinh-yeu-poster.jpg</image:loc><image:title>Magic Move: Tiên Tri Tình Yêu - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=ngoanh-dau-lai-lau-nuoc-mat-cho-cau</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/ngoanh-dau-lai-lau-nuoc-mat-cho-cau-thumb.jpg</image:loc><image:title>Ngoảnh Đầu Lại Lau Nước Mắt Cho Cậu</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/ngoanh-dau-lai-lau-nuoc-mat-cho-cau-poster.jpg</image:loc><image:title>Ngoảnh Đầu Lại Lau Nước Mắt Cho Cậu - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=mai-moi-cho-doc-su</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/mai-moi-cho-doc-su-thumb.jpg</image:loc><image:title>Mai Mối Cho Độc Sư</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/mai-moi-cho-doc-su-poster.jpg</image:loc><image:title>Mai Mối Cho Độc Sư - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=phu-thuy-keu-goi</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/phu-thuy-keu-goi-thumb.jpg</image:loc><image:title>Phù thủy kêu gọi</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/phu-thuy-keu-goi-poster.jpg</image:loc><image:title>Phù thủy kêu gọi - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=duc-vong-tham-kin</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/duc-vong-tham-kin-thumb.jpg</image:loc><image:title>Dục Vọng Thầm Kín</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/duc-vong-tham-kin-poster.jpg</image:loc><image:title>Dục Vọng Thầm Kín - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=xanh-cham-day-troi</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/xanh-cham-day-troi-thumb.jpg</image:loc><image:title>Xanh Chạm Đáy Trời</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/xanh-cham-day-troi-poster.jpg</image:loc><image:title>Xanh Chạm Đáy Trời - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=suu-than-ky</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/suu-than-ky-thumb.jpg</image:loc><image:title>Sưu Thần Ký</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/suu-than-ky-poster.jpg</image:loc><image:title>Sưu Thần Ký - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=omukade-con-ret-nguoi</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/omukade-con-ret-nguoi-thumb.jpg</image:loc><image:title>Omukade: Con Rết Người</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/omukade-con-ret-nguoi-poster.jpg</image:loc><image:title>Omukade: Con Rết Người - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=tu-xuyen-phan-2-2025</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/tu-xuyen-phan-2-2025-thumb.jpg</image:loc><image:title>Tử Xuyên (Phần 2)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/tu-xuyen-phan-2-2025-poster.jpg</image:loc><image:title>Tử Xuyên (Phần 2) - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=kiem-lai-phan-2</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/kiem-lai-phan-2-thumb.jpg</image:loc><image:title>Kiếm Lai (Phần 2)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/kiem-lai-phan-2-poster.jpg</image:loc><image:title>Kiếm Lai (Phần 2) - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=tu-la-vo-than-phan-2</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/tu-la-vo-than-phan-2-thumb.jpg</image:loc><image:title>Tu La Võ Thần (Phần 2)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/tu-la-vo-than-phan-2-poster.jpg</image:loc><image:title>Tu La Võ Thần (Phần 2) - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=the-gioi-hoan-my</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/the-gioi-hoan-my-thumb.jpg</image:loc><image:title>Thế Giới Hoàn Mỹ</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/the-gioi-hoan-my-poster.jpg</image:loc><image:title>Thế Giới Hoàn Mỹ - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=tracker-phan-3</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/tracker-phan-3-thumb-1761239638607.jpg</image:loc><image:title>Tracker (Phần 3)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/tracker-phan-3-poster.jpg</image:loc><image:title>Tracker (Phần 3) - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=ban-long</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/ban-long-thumb.jpg</image:loc><image:title>Bàn Long</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/ban-long-poster.jpg</image:loc><image:title>Bàn Long - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=nu-vuong-trum-cuoi-tan-doc-can-nguyen-cua-moi-tham-kich-se-doc-suc-vi-nguoi-dan-phan-2</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/nu-vuong-trum-cuoi-tan-doc-can-nguyen-cua-moi-tham-kich-se-doc-suc-vi-nguoi-dan-phan-2-thumb.jpg</image:loc><image:title>Nữ Vương Trùm Cuối Tàn Độc Căn Nguyên Của Mọi Thảm Kịch Sẽ Dốc Sức Vì Người Dân (Phần 2)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/nu-vuong-trum-cuoi-tan-doc-can-nguyen-cua-moi-tham-kich-se-doc-suc-vi-nguoi-dan-phan-2-poster.jpg</image:loc><image:title>Nữ Vương Trùm Cuối Tàn Độc Căn Nguyên Của Mọi Thảm Kịch Sẽ Dốc Sức Vì Người Dân (Phần 2) - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=de-xong-mat-la-ca-to-nhung-ca-toi-cau-duoc-lai-con-to-hon</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/de-xong-mat-la-ca-to-nhung-ca-toi-cau-duoc-lai-con-to-hon-thumb.jpg</image:loc><image:title>Để xổng mất là cá to, nhưng cá tôi câu được lại còn to hơn</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/de-xong-mat-la-ca-to-nhung-ca-toi-cau-duoc-lai-con-to-hon-poster.jpg</image:loc><image:title>Để xổng mất là cá to, nhưng cá tôi câu được lại còn to hơn - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=伪钞重案</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/伪钞重案-thumb.jpg</image:loc><image:title>Trọng Án Tiền Giả</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/伪钞重案-poster.jpg</image:loc><image:title>Trọng Án Tiền Giả - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=vi-vua-manh-nhat-lam-gi-o-kiep-thu-hai-phan-2</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/vi-vua-manh-nhat-lam-gi-o-kiep-thu-hai-phan-2-thumb.jpg</image:loc><image:title>Vị vua mạnh nhất làm gì ở kiếp thứ hai? (Phần 2)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/vi-vua-manh-nhat-lam-gi-o-kiep-thu-hai-phan-2-poster.jpg</image:loc><image:title>Vị vua mạnh nhất làm gì ở kiếp thứ hai? (Phần 2) - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=trang-trai-dutton</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/trang-trai-dutton-thumb.jpg</image:loc><image:title>Trang Trại Dutton</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/trang-trai-dutton-poster.jpg</image:loc><image:title>Trang Trại Dutton - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=dacoit</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/dacoit-thumb.jpg</image:loc><image:title>Dacoit</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/dacoit-poster.jpg</image:loc><image:title>Dacoit - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=biet-doi-tu-bao-short-drama</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/biet-doi-tu-bao-short-drama-thumb.jpg</image:loc><image:title>Biệt Đội Tứ Bảo</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/biet-doi-tu-bao-short-drama-poster.jpg</image:loc><image:title>Biệt Đội Tứ Bảo - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=cay-co-thu-dieu-ky</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/cay-co-thu-dieu-ky-thumb.jpg</image:loc><image:title>Cây Cổ Thụ Diệu Kỳ</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/cay-co-thu-dieu-ky-poster.jpg</image:loc><image:title>Cây Cổ Thụ Diệu Kỳ - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=ngoc-trai-trong-suong-mu</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/ngoc-trai-trong-suong-mu-thumb.jpg</image:loc><image:title>Ngọc trai trong sương mù</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/ngoc-trai-trong-suong-mu-poster.jpg</image:loc><image:title>Ngọc trai trong sương mù - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=mot-minh-giua-bien-dem</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/mot-minh-giua-bien-dem-thumb.jpg</image:loc><image:title>Một Mình Giữa Biển Đêm</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/mot-minh-giua-bien-dem-poster.jpg</image:loc><image:title>Một Mình Giữa Biển Đêm - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=pinecone</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/pinecone-thumb.jpg</image:loc><image:title>Pinecone</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/pinecone-poster.jpg</image:loc><image:title>Pinecone - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=che-nhao-kevin-hart</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/che-nhao-kevin-hart-thumb.jpg</image:loc><image:title>Chế nhạo Kevin Hart</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/che-nhao-kevin-hart-poster.jpg</image:loc><image:title>Chế nhạo Kevin Hart - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=cuoc-chien-sinh-tu-ii</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/cuoc-chien-sinh-tu-ii-thumb.jpg</image:loc><image:title>Cuộc Chiến Sinh Tử II</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/cuoc-chien-sinh-tu-ii-poster.jpg</image:loc><image:title>Cuộc Chiến Sinh Tử II - Poster</image:title></image:image>
     </url>
     <url>
         <loc>https://aphim.io.vn/movie-detail.html?slug=khuc-ca-linh-hon-shinsengumi</loc>
@@ -962,6 +602,246 @@
         <image:image><image:loc>https://img.ophim.live/uploads/movies/toi-o-nhan-gian-pha-quy-su-poster.jpg</image:loc><image:title>Tôi Ở Nhân Gian Phá Quỷ Sự - Poster</image:title></image:image>
     </url>
     <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=mua-he-cua-thuong-bao</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/mua-he-cua-thuong-bao-thumb.jpg</image:loc><image:title>Mùa Hè Của Thường Bảo</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/mua-he-cua-thuong-bao-poster.jpg</image:loc><image:title>Mùa Hè Của Thường Bảo - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=nguoi-ngoai-toc-phan-8</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/nguoi-ngoai-toc-phan-8-thumb.jpg</image:loc><image:title>Người Ngoại Tộc (Phần 8)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/nguoi-ngoai-toc-phan-8-poster.jpg</image:loc><image:title>Người Ngoại Tộc (Phần 8) - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=mat-chang-theo-long</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/mat-chang-theo-long-thumb.jpg</image:loc><image:title>Mặt Chẳng Theo Lòng</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/mat-chang-theo-long-poster.jpg</image:loc><image:title>Mặt Chẳng Theo Lòng - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=huong-vi-cua-bien-phan-3</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/huong-vi-cua-bien-phan-3-thumb.jpg</image:loc><image:title>Hương Vị Của Biển (Phần 3)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/huong-vi-cua-bien-phan-3-poster.jpg</image:loc><image:title>Hương Vị Của Biển (Phần 3) - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=dau-pha-thuong-khung-ngoai-truyen</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/dau-pha-thuong-khung-ngoai-truyen-thumb.jpg</image:loc><image:title>Đấu Phá Thương Khung Ngoại Truyện</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/dau-pha-thuong-khung-ngoai-truyen-poster.jpg</image:loc><image:title>Đấu Phá Thương Khung Ngoại Truyện - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=dau-la-dai-luc-2-tuyet-the-duong-mon</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/dau-la-dai-luc-2-tuyet-the-duong-mon-thumb.jpg</image:loc><image:title>Đấu La Đại Lục 2: Tuyệt Thế Đường Môn</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/dau-la-dai-luc-2-tuyet-the-duong-mon-poster.jpg</image:loc><image:title>Đấu La Đại Lục 2: Tuyệt Thế Đường Môn - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=con-ra-the-thong-gi-nua-phan-2</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/con-ra-the-thong-gi-nua-phan-2-thumb.jpg</image:loc><image:title>Còn Ra Thể Thống Gì Nữa? (Phần 2)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/con-ra-the-thong-gi-nua-phan-2-poster.jpg</image:loc><image:title>Còn Ra Thể Thống Gì Nữa? (Phần 2) - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=song-menh-coi-hoang-tuyen</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/song-menh-coi-hoang-tuyen-thumb.jpg</image:loc><image:title>Song Mệnh Cõi Hoàng Tuyền</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/song-menh-coi-hoang-tuyen-poster.jpg</image:loc><image:title>Song Mệnh Cõi Hoàng Tuyền - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=su-gia-bon-mua-vu-dieu-mua-xuan</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/su-gia-bon-mua-vu-dieu-mua-xuan-thumb.jpg</image:loc><image:title>Sứ Giả Bốn Mùa - Vũ Điệu Mùa Xuân</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/su-gia-bon-mua-vu-dieu-mua-xuan-poster.jpg</image:loc><image:title>Sứ Giả Bốn Mùa - Vũ Điệu Mùa Xuân - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=phu-nhan-dai-quan-the-ky-21</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/phu-nhan-dai-quan-the-ky-21-thumb.jpg</image:loc><image:title>Phu Nhân Đại Quân Thế Kỷ 21</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/phu-nhan-dai-quan-the-ky-21-poster.jpg</image:loc><image:title>Phu Nhân Đại Quân Thế Kỷ 21 - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=rj-decker</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/rj-decker-thumb.jpg</image:loc><image:title>Thám Tử R.J. Decker</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/rj-decker-poster.jpg</image:loc><image:title>Thám Tử R.J. Decker - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=gia-dinh-heck-phan-7</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-7-thumb.jpg</image:loc><image:title>Gia đình Heck (Phần 7)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-7-poster.jpg</image:loc><image:title>Gia đình Heck (Phần 7) - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=gia-dinh-heck-phan-6</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-6-thumb.jpg</image:loc><image:title>Gia đình Heck (Phần 6)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-6-poster.jpg</image:loc><image:title>Gia đình Heck (Phần 6) - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=gia-dinh-heck-phan-5</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-5-thumb.jpg</image:loc><image:title>Gia đình Heck (Phần 5)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-5-poster.jpg</image:loc><image:title>Gia đình Heck (Phần 5) - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=love-silom</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/รักแห่งสีลม-thumb.jpg</image:loc><image:title>Love of Silom</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/รักแห่งสีลม-poster.jpg</image:loc><image:title>Love of Silom - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=gia-tri-tuyet-doi-cua-lang-man</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-tri-tuyet-doi-cua-lang-man-thumb.jpg</image:loc><image:title>Giá Trị Tuyệt Đối Của Lãng Mạn</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-tri-tuyet-doi-cua-lang-man-poster.jpg</image:loc><image:title>Giá Trị Tuyệt Đối Của Lãng Mạn - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=gia-dinh-heck-phan-4</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-4-thumb.jpg</image:loc><image:title>Gia đình Heck (Phần 4)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-4-poster.jpg</image:loc><image:title>Gia đình Heck (Phần 4) - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=gia-dinh-heck-phan-3</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-3-thumb.jpg</image:loc><image:title>Gia đình Heck (Phần 3)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-3-poster.jpg</image:loc><image:title>Gia đình Heck (Phần 3) - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=gia-dinh-heck-phan-2</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-2-thumb.jpg</image:loc><image:title>Gia đình Heck (Phần 2)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-2-poster.jpg</image:loc><image:title>Gia đình Heck (Phần 2) - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=psoty</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/psoty-thumb.jpg</image:loc><image:title>Psoty</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/psoty-poster.jpg</image:loc><image:title>Psoty - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=nghia-vu</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/nghia-vu-thumb.jpg</image:loc><image:title>Nghĩa Vụ</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/nghia-vu-poster.jpg</image:loc><image:title>Nghĩa Vụ - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=good-boys-go-to-heaven</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/good-boys-go-to-heaven-thumb.jpg</image:loc><image:title>Good Boys Go to Heaven</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/good-boys-go-to-heaven-poster.jpg</image:loc><image:title>Good Boys Go to Heaven - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=co-dau-cua-nam</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/co-dau-cua-nam-thumb.jpg</image:loc><image:title>Cô Dâu Của Năm</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/co-dau-cua-nam-poster.jpg</image:loc><image:title>Cô Dâu Của Năm - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=biet-doi-sieu-kho</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/biet-doi-sieu-kho-thumb.jpg</image:loc><image:title>Biệt Đội Siêu Khờ</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/biet-doi-sieu-kho-poster.jpg</image:loc><image:title>Biệt Đội Siêu Khờ - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=mua-giao-phoi</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/mua-giao-phoi-thumb.jpg</image:loc><image:title>Mùa Giao Phối</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/mua-giao-phoi-poster.jpg</image:loc><image:title>Mùa Giao Phối - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=van-yeu</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/van-yeu-thumb.jpg</image:loc><image:title>Vấn Yêu</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/van-yeu-poster.jpg</image:loc><image:title>Vấn Yêu - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=thinh-duong-ky-an</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/thinh-duong-ky-an-thumb.jpg</image:loc><image:title>Thịnh Đường Kỳ Án</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/thinh-duong-ky-an-poster.jpg</image:loc><image:title>Thịnh Đường Kỳ Án - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=tron-khong-thoat-toi</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/tron-khong-thoat-toi-thumb.jpg</image:loc><image:title>Trốn Không Thoát Tội</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/tron-khong-thoat-toi-poster.jpg</image:loc><image:title>Trốn Không Thoát Tội - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=chuyen-kinh-hoang-phan-3</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/chuyen-kinh-hoang-phan-3-thumb.jpg</image:loc><image:title>Chuyện Kinh Hoàng (Phần 3)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/chuyen-kinh-hoang-phan-3-poster.jpg</image:loc><image:title>Chuyện Kinh Hoàng (Phần 3) - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=rat-muon-den-the-gioi-cua-em-de-yeu-em</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/rat-muon-den-the-gioi-cua-em-de-yeu-em-thumb.jpg</image:loc><image:title>Rất Muốn Đến Thế Giới Của Em Để Yêu Em</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/rat-muon-den-the-gioi-cua-em-de-yeu-em-poster.jpg</image:loc><image:title>Rất Muốn Đến Thế Giới Của Em Để Yêu Em - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=nhat-the-tinh-thu-short-drama</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/nhat-the-tinh-thu-short-drama-thumb.jpg</image:loc><image:title>Nhất Thế Tình Thù</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/nhat-the-tinh-thu-short-drama-poster.jpg</image:loc><image:title>Nhất Thế Tình Thù - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=troi-xanh-tren-may</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/troi-xanh-tren-may-thumb.jpg</image:loc><image:title>Trời Xanh Trên Mây</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/troi-xanh-tren-may-poster.jpg</image:loc><image:title>Trời Xanh Trên Mây - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=ke-thu-chung-giuong</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/ke-thu-chung-giuong-thumb.jpg</image:loc><image:title>Kẻ Thù Chung Giường</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/ke-thu-chung-giuong-poster.jpg</image:loc><image:title>Kẻ Thù Chung Giường - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=hoa-thuc-dieu-doi-cuu-hoa-borotobi-vung-ushu</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/hoa-thuc-dieu-doi-cuu-hoa-borotobi-vung-ushu-thumb.jpg</image:loc><image:title>Hỏa Thực Điểu: Đội cứu hỏa Borotobi vùng Ushu</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/hoa-thuc-dieu-doi-cuu-hoa-borotobi-vung-ushu-poster.jpg</image:loc><image:title>Hỏa Thực Điểu: Đội cứu hỏa Borotobi vùng Ushu - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=duc-vong-ben-song-trang</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/duc-vong-ben-song-trang-thumb.jpg</image:loc><image:title>Dục Vọng Bên Sông Trắng</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/duc-vong-ben-song-trang-poster.jpg</image:loc><image:title>Dục Vọng Bên Sông Trắng - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=dance-of-the-lion</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/dance-of-the-lion-thumb.jpg</image:loc><image:title>Dance of the Lion</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/dance-of-the-lion-poster.jpg</image:loc><image:title>Dance of the Lion - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=buc-tuong-bang</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/buc-tuong-bang-thumb.jpg</image:loc><image:title>Bức Tường Băng</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/buc-tuong-bang-poster.jpg</image:loc><image:title>Bức Tường Băng - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=linh-vu-dai-luc</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/linh-vu-dai-luc-thumb.jpg</image:loc><image:title>Linh Vũ Đại Lục</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/linh-vu-dai-luc-poster.jpg</image:loc><image:title>Linh Vũ Đại Lục - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=lai-co-an-mang-nua-roi-thua-tham-tu</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/lai-co-an-mang-nua-roi-thua-tham-tu-thumb.jpg</image:loc><image:title>Lại Bị Giết Nữa À, Thưa Thám Tử?</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/lai-co-an-mang-nua-roi-thua-tham-tu-poster.jpg</image:loc><image:title>Lại Bị Giết Nữa À, Thưa Thám Tử? - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=mon-qua-cua-kluay</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/mon-qua-cua-kluay-thumb.jpg</image:loc><image:title>Món Quà Của Kluay</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/mon-qua-cua-kluay-poster.jpg</image:loc><image:title>Món Quà Của Kluay - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=james</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/james-thumb.jpg</image:loc><image:title>James.</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/james-poster.jpg</image:loc><image:title>James. - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=phien-quan-toc-xam</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/phien-quan-toc-xam-thumb.jpg</image:loc><image:title>Phiến Quân Tóc Xám</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/phien-quan-toc-xam-poster.jpg</image:loc><image:title>Phiến Quân Tóc Xám - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=fight-against-evil-3</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/fight-against-evil-3-thumb.jpg</image:loc><image:title>Fight Against Evil 3</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/fight-against-evil-3-poster.jpg</image:loc><image:title>Fight Against Evil 3 - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=lure</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/lure-thumb.jpg</image:loc><image:title>Lure</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/lure-poster.jpg</image:loc><image:title>Lure - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=nhip-dap-trai-tim-phan-5</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/nhip-dap-trai-tim-phan-5-thumb.jpg</image:loc><image:title>Nhịp Đập Trái Tim (Phần 5)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/nhip-dap-trai-tim-phan-5-poster.jpg</image:loc><image:title>Nhịp Đập Trái Tim (Phần 5) - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=tien-si-da-hoi-sinh-the-gioi-phan-4</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/tien-si-da-hoi-sinh-the-gioi-phan-4-thumb.jpg</image:loc><image:title>Tiến Sĩ Đá: Hồi Sinh Thế Giới (Phần 4)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/tien-si-da-hoi-sinh-the-gioi-phan-4-poster.jpg</image:loc><image:title>Tiến Sĩ Đá: Hồi Sinh Thế Giới (Phần 4) - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=mother-mary-hao-quang-don-doc</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/mother-mary-hao-quang-don-doc-thumb-1779333810498.jpg</image:loc><image:title>Mother Mary: Hào Quang Đơn Độc</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/mother-mary-hao-quang-don-doc-poster-1779333811679.jpg</image:loc><image:title>Mother Mary: Hào Quang Đơn Độc - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=diep-vien-so-0</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/diep-vien-so-0-thumb.jpg</image:loc><image:title>Điệp Viên Số 0</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/diep-vien-so-0-poster.jpg</image:loc><image:title>Điệp Viên Số 0 - Poster</image:title></image:image>
+    </url>
+    <url>
         <loc>https://aphim.io.vn/movie-detail.html?slug=tien-kiem-ky-hiep-truyen-3</loc>
         <image:image><image:loc>https://img.ophim.live/uploads/movies/tien-kiem-ky-hiep-truyen-3-thumb.jpg</image:loc><image:title>Tiên Kiếm Kỳ Hiệp Truyện 3</image:title></image:image>
         <image:image><image:loc>https://img.ophim.live/uploads/movies/tien-kiem-ky-hiep-truyen-3-poster.jpg</image:loc><image:title>Tiên Kiếm Kỳ Hiệp Truyện 3 - Poster</image:title></image:image>
@@ -1082,123 +962,243 @@
         <image:image><image:loc>https://img.ophim.live/uploads/movies/huyen-thoai-lang-hai-phan-5-poster.jpg</image:loc><image:title>Huyền Thoại Làng Hài (Phần 5) - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=mua-he-cua-thuong-bao</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/mua-he-cua-thuong-bao-thumb.jpg</image:loc><image:title>Mùa Hè Của Thường Bảo</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/mua-he-cua-thuong-bao-poster.jpg</image:loc><image:title>Mùa Hè Của Thường Bảo - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=nhung-bong-hoa-ac</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/nhung-bong-hoa-ac-thumb.jpg</image:loc><image:title>Những Bông Hoa Ác</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/nhung-bong-hoa-ac-poster.jpg</image:loc><image:title>Những Bông Hoa Ác - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=nguoi-ngoai-toc-phan-8</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/nguoi-ngoai-toc-phan-8-thumb.jpg</image:loc><image:title>Người Ngoại Tộc (Phần 8)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/nguoi-ngoai-toc-phan-8-poster.jpg</image:loc><image:title>Người Ngoại Tộc (Phần 8) - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=di-thu-ma-do-phan-2</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/di-thu-ma-do-phan-2-thumb.jpg</image:loc><image:title>Dị thú ma đô (Phần 2)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/di-thu-ma-do-phan-2-poster.jpg</image:loc><image:title>Dị thú ma đô (Phần 2) - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=mat-chang-theo-long</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/mat-chang-theo-long-thumb.jpg</image:loc><image:title>Mặt Chẳng Theo Lòng</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/mat-chang-theo-long-poster.jpg</image:loc><image:title>Mặt Chẳng Theo Lòng - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=sieu-diep-vien-jack-ryan-bong-ma-chien-tranh</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/sieu-diep-vien-jack-ryan-bong-ma-chien-tranh-thumb.jpg</image:loc><image:title>Siêu Điệp Viên Jack Ryan: Bóng Ma Chiến Tranh</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/sieu-diep-vien-jack-ryan-bong-ma-chien-tranh-poster.jpg</image:loc><image:title>Siêu Điệp Viên Jack Ryan: Bóng Ma Chiến Tranh - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=huong-vi-cua-bien-phan-3</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/huong-vi-cua-bien-phan-3-thumb.jpg</image:loc><image:title>Hương Vị Của Biển (Phần 3)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/huong-vi-cua-bien-phan-3-poster.jpg</image:loc><image:title>Hương Vị Của Biển (Phần 3) - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=vu-dieu-tinh-thu</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/vu-dieu-tinh-thu-thumb.jpg</image:loc><image:title>Vũ Điệu Tình Thù</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/vu-dieu-tinh-thu-poster.jpg</image:loc><image:title>Vũ Điệu Tình Thù - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=dau-pha-thuong-khung-ngoai-truyen</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/dau-pha-thuong-khung-ngoai-truyen-thumb.jpg</image:loc><image:title>Đấu Phá Thương Khung Ngoại Truyện</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/dau-pha-thuong-khung-ngoai-truyen-poster.jpg</image:loc><image:title>Đấu Phá Thương Khung Ngoại Truyện - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=rezero-−-bat-dau-o-the-gioi-khac-phan-4</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/rezero-−-bat-dau-o-the-gioi-khac-phan-4-thumb.jpg</image:loc><image:title>Re:Zero − Bắt Đầu Ở Thế Giới Khác (Phần 4)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/rezero-−-bat-dau-o-the-gioi-khac-phan-4-poster.jpg</image:loc><image:title>Re:Zero − Bắt Đầu Ở Thế Giới Khác (Phần 4) - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=dau-la-dai-luc-2-tuyet-the-duong-mon</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/dau-la-dai-luc-2-tuyet-the-duong-mon-thumb.jpg</image:loc><image:title>Đấu La Đại Lục 2: Tuyệt Thế Đường Môn</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/dau-la-dai-luc-2-tuyet-the-duong-mon-poster.jpg</image:loc><image:title>Đấu La Đại Lục 2: Tuyệt Thế Đường Môn - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=lan-nua-den-ben-em</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/lan-nua-den-ben-em-thumb.jpg</image:loc><image:title>Lần Nữa Đến Bên Em</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/lan-nua-den-ben-em-poster.jpg</image:loc><image:title>Lần Nữa Đến Bên Em - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=con-ra-the-thong-gi-nua-phan-2</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/con-ra-the-thong-gi-nua-phan-2-thumb.jpg</image:loc><image:title>Còn Ra Thể Thống Gì Nữa? (Phần 2)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/con-ra-the-thong-gi-nua-phan-2-poster.jpg</image:loc><image:title>Còn Ra Thể Thống Gì Nữa? (Phần 2) - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=huong-ve-sao-bang-cau-nguyen</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/huong-ve-sao-bang-cau-nguyen-thumb.jpg</image:loc><image:title>Hướng Về Sao Băng Cầu Nguyện</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/huong-ve-sao-bang-cau-nguyen-poster.jpg</image:loc><image:title>Hướng Về Sao Băng Cầu Nguyện - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=song-menh-coi-hoang-tuyen</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/song-menh-coi-hoang-tuyen-thumb.jpg</image:loc><image:title>Song Mệnh Cõi Hoàng Tuyền</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/song-menh-coi-hoang-tuyen-poster.jpg</image:loc><image:title>Song Mệnh Cõi Hoàng Tuyền - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=chao-mung-den-voi-lop-hoc-de-cao-thuc-luc-phan-4</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/chao-mung-den-voi-lop-hoc-de-cao-thuc-luc-phan-4-thumb.jpg</image:loc><image:title>Chào mừng đến với lớp học đề cao thực lực (Phần 4)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/chao-mung-den-voi-lop-hoc-de-cao-thuc-luc-phan-4-poster.jpg</image:loc><image:title>Chào mừng đến với lớp học đề cao thực lực (Phần 4) - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=su-gia-bon-mua-vu-dieu-mua-xuan</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/su-gia-bon-mua-vu-dieu-mua-xuan-thumb.jpg</image:loc><image:title>Sứ Giả Bốn Mùa - Vũ Điệu Mùa Xuân</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/su-gia-bon-mua-vu-dieu-mua-xuan-poster.jpg</image:loc><image:title>Sứ Giả Bốn Mùa - Vũ Điệu Mùa Xuân - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=kylie</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/kylie-thumb.jpg</image:loc><image:title>Kylie</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/kylie-poster.jpg</image:loc><image:title>Kylie - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=phu-nhan-dai-quan-the-ky-21</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/phu-nhan-dai-quan-the-ky-21-thumb.jpg</image:loc><image:title>Phu Nhân Đại Quân Thế Kỷ 21</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/phu-nhan-dai-quan-the-ky-21-poster.jpg</image:loc><image:title>Phu Nhân Đại Quân Thế Kỷ 21 - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=carizzma</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/carizzma-thumb.jpg</image:loc><image:title>Caro tuyệt phẩm</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/carizzma-poster.jpg</image:loc><image:title>Caro tuyệt phẩm - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=rj-decker</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/rj-decker-thumb.jpg</image:loc><image:title>Thám Tử R.J. Decker</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/rj-decker-poster.jpg</image:loc><image:title>Thám Tử R.J. Decker - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=bi-mat-gioi-the-thao-anh-quoc-phep-mau-istanbul-cua-liverpool</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/bi-mat-gioi-the-thao-anh-quoc-phep-mau-istanbul-cua-liverpool-thumb.jpg</image:loc><image:title>Bí mật giới thể thao Anh quốc: Phép màu Istanbul của Liverpool</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/bi-mat-gioi-the-thao-anh-quoc-phep-mau-istanbul-cua-liverpool-poster.jpg</image:loc><image:title>Bí mật giới thể thao Anh quốc: Phép màu Istanbul của Liverpool - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=gia-dinh-heck-phan-7</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-7-thumb.jpg</image:loc><image:title>Gia đình Heck (Phần 7)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-7-poster.jpg</image:loc><image:title>Gia đình Heck (Phần 7) - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=hoac-phu-nhan-ra-tay-short-drama</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/hoac-phu-nhan-ra-tay-short-drama-thumb.jpg</image:loc><image:title>Hoắc Phu Nhân Ra Tay</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/hoac-phu-nhan-ra-tay-short-drama-poster.jpg</image:loc><image:title>Hoắc Phu Nhân Ra Tay - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=gia-dinh-heck-phan-6</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-6-thumb.jpg</image:loc><image:title>Gia đình Heck (Phần 6)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-6-poster.jpg</image:loc><image:title>Gia đình Heck (Phần 6) - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=the-he-diem-10</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/the-he-diem-10-thumb.jpg</image:loc><image:title>Thế Hệ Điểm 10</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/the-he-diem-10-poster.jpg</image:loc><image:title>Thế Hệ Điểm 10 - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=gia-dinh-heck-phan-5</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-5-thumb.jpg</image:loc><image:title>Gia đình Heck (Phần 5)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-5-poster.jpg</image:loc><image:title>Gia đình Heck (Phần 5) - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=kill-it-slay-toi-ben</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/kill-it-slay-toi-ben-thumb.jpg</image:loc><image:title>Kill It: Slay Tới Bến</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/kill-it-slay-toi-ben-poster.jpg</image:loc><image:title>Kill It: Slay Tới Bến - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=love-silom</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/รักแห่งสีลม-thumb.jpg</image:loc><image:title>Love of Silom</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/รักแห่งสีลม-poster.jpg</image:loc><image:title>Love of Silom - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=dia-nguc-hiem-ac</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/dia-nguc-hiem-ac-thumb.jpg</image:loc><image:title>Địa ngục hiểm ác</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/dia-nguc-hiem-ac-poster.jpg</image:loc><image:title>Địa ngục hiểm ác - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=gia-tri-tuyet-doi-cua-lang-man</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-tri-tuyet-doi-cua-lang-man-thumb.jpg</image:loc><image:title>Giá Trị Tuyệt Đối Của Lãng Mạn</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-tri-tuyet-doi-cua-lang-man-poster.jpg</image:loc><image:title>Giá Trị Tuyệt Đối Của Lãng Mạn - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=co-giao-cua-toi-noi-am-anh-cua-toi</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/co-giao-cua-toi-noi-am-anh-cua-toi-thumb.jpg</image:loc><image:title>Cô giáo của tôi, nỗi ám ảnh của tôi</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/co-giao-cua-toi-noi-am-anh-cua-toi-poster.jpg</image:loc><image:title>Cô giáo của tôi, nỗi ám ảnh của tôi - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=gia-dinh-heck-phan-4</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-4-thumb.jpg</image:loc><image:title>Gia đình Heck (Phần 4)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-4-poster.jpg</image:loc><image:title>Gia đình Heck (Phần 4) - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=wellwood</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/wellwood-thumb.jpg</image:loc><image:title>Wellwood</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/wellwood-poster.jpg</image:loc><image:title>Wellwood - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=gia-dinh-heck-phan-3</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-3-thumb.jpg</image:loc><image:title>Gia đình Heck (Phần 3)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-3-poster.jpg</image:loc><image:title>Gia đình Heck (Phần 3) - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=huyen-thoai-linh-bep</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/huyen-thoai-linh-bep-thumb.jpg</image:loc><image:title>Huyền Thoại Lính Bếp</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/huyen-thoai-linh-bep-poster.jpg</image:loc><image:title>Huyền Thoại Lính Bếp - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=gia-dinh-heck-phan-2</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-2-thumb.jpg</image:loc><image:title>Gia đình Heck (Phần 2)</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/gia-dinh-heck-phan-2-poster.jpg</image:loc><image:title>Gia đình Heck (Phần 2) - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=co-dau-tu-qua-khu</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/co-dau-tu-qua-khu-thumb.jpg</image:loc><image:title>Cô Dâu Từ Quá Khứ</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/co-dau-tu-qua-khu-poster.jpg</image:loc><image:title>Cô Dâu Từ Quá Khứ - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=psoty</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/psoty-thumb.jpg</image:loc><image:title>Psoty</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/psoty-poster.jpg</image:loc><image:title>Psoty - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=k-everything-a-cnn-original-series</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/k-everything-a-cnn-original-series-thumb.jpg</image:loc><image:title>K-Everything: A CNN Original Series</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/k-everything-a-cnn-original-series-poster.jpg</image:loc><image:title>K-Everything: A CNN Original Series - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=nghia-vu</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/nghia-vu-thumb.jpg</image:loc><image:title>Nghĩa Vụ</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/nghia-vu-poster.jpg</image:loc><image:title>Nghĩa Vụ - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=nhip-dieu-thu-han</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/nhip-dieu-thu-han-thumb.jpg</image:loc><image:title>Nhịp Điệu Thù Hận</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/nhip-dieu-thu-han-poster.jpg</image:loc><image:title>Nhịp Điệu Thù Hận - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=good-boys-go-to-heaven</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/good-boys-go-to-heaven-thumb.jpg</image:loc><image:title>Good Boys Go to Heaven</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/good-boys-go-to-heaven-poster.jpg</image:loc><image:title>Good Boys Go to Heaven - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=the-boys-phan-5</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/the-boys-phan-5-thumb-1775624659696.jpg</image:loc><image:title>The Boys (Phần 5)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/the-boys-phan-5-poster.jpg</image:loc><image:title>The Boys (Phần 5) - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=co-dau-cua-nam</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/co-dau-cua-nam-thumb.jpg</image:loc><image:title>Cô Dâu Của Năm</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/co-dau-cua-nam-poster.jpg</image:loc><image:title>Cô Dâu Của Năm - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=cam-ket-thoa-man-tot-cung</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/cam-ket-thoa-man-tot-cung-thumb.jpg</image:loc><image:title>Cam Kết Thỏa Mãn Tột Cùng</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/cam-ket-thoa-man-tot-cung-poster.jpg</image:loc><image:title>Cam Kết Thỏa Mãn Tột Cùng - Poster</image:title></image:image>
     </url>
     <url>
-        <loc>https://aphim.io.vn/movie-detail.html?slug=biet-doi-sieu-kho</loc>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/biet-doi-sieu-kho-thumb.jpg</image:loc><image:title>Biệt Đội Siêu Khờ</image:title></image:image>
-        <image:image><image:loc>https://img.ophim.live/uploads/movies/biet-doi-sieu-kho-poster.jpg</image:loc><image:title>Biệt Đội Siêu Khờ - Poster</image:title></image:image>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=cia-phan-1</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/cia-phan-1-thumb.jpg</image:loc><image:title>CIA (Phần 1)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/cia-phan-1-poster.jpg</image:loc><image:title>CIA (Phần 1) - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=hom-nay-lai-ban-het</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/hom-nay-lai-ban-het-thumb.jpg</image:loc><image:title>Hôm Nay Lại Bán Hết</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/hom-nay-lai-ban-het-poster.jpg</image:loc><image:title>Hôm Nay Lại Bán Hết - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=citadel-phan-2</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/citadel-phan-2-thumb.jpg</image:loc><image:title>Citadel (Phần 2)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/citadel-phan-2-poster.jpg</image:loc><image:title>Citadel (Phần 2) - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=wu</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/wu-thumb.jpg</image:loc><image:title>WU</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/wu-poster.jpg</image:loc><image:title>WU - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=vung-dat-vang</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/vung-dat-vang-thumb.jpg</image:loc><image:title>Vùng Đất Vàng</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/vung-dat-vang-poster.jpg</image:loc><image:title>Vùng Đất Vàng - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=fire-country-phan-4</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/fire-country-phan-4-thumb.jpg</image:loc><image:title>Vùng Đất Lửa (Phần 4)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/fire-country-phan-4-poster.jpg</image:loc><image:title>Vùng Đất Lửa (Phần 4) - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=mat-trai-cua-mat-tich-ban-thai</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/mat-trai-cua-mat-tich-ban-thai-thumb.jpg</image:loc><image:title>Mặt Trái Của Mất Tích (Bản Thái)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/mat-trai-cua-mat-tich-ban-thai-poster.jpg</image:loc><image:title>Mặt Trái Của Mất Tích (Bản Thái) - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=tuong-tu-ky</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/tuong-tu-ky-thumb.jpg</image:loc><image:title>Tường Tự Ký</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/tuong-tu-ky-poster.jpg</image:loc><image:title>Tường Tự Ký - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=bat-song-tinh-duyen</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/bat-song-tinh-duyen-thumb.jpg</image:loc><image:title>Bắt Sóng Tình Duyên</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/bat-song-tinh-duyen-poster.jpg</image:loc><image:title>Bắt Sóng Tình Duyên - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=troi-buoc-boi-thuy-trieu</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/troi-buoc-boi-thuy-trieu-thumb.jpg</image:loc><image:title>Trói Buộc Bởi Thuỷ Triều</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/troi-buoc-boi-thuy-trieu-poster.jpg</image:loc><image:title>Trói Buộc Bởi Thuỷ Triều - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=luong-tran-my-cam</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/luong-tran-my-cam-thumb.jpg</image:loc><image:title>Lương Trần Mỹ Cẩm</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/luong-tran-my-cam-poster.jpg</image:loc><image:title>Lương Trần Mỹ Cẩm - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=xuyen-vao-kich-ban-yeu-tong-tai-short-drama</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/xuyen-vao-kich-ban-yeu-tong-tai-short-drama-thumb.jpg</image:loc><image:title>Xuyên Vào Kịch Bản Yêu Tổng Tài</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/xuyen-vao-kich-ban-yeu-tong-tai-short-drama-poster.jpg</image:loc><image:title>Xuyên Vào Kịch Bản Yêu Tổng Tài - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=ngoanh-dau-lai-lau-nuoc-mat-cho-cau</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/ngoanh-dau-lai-lau-nuoc-mat-cho-cau-thumb.jpg</image:loc><image:title>Ngoảnh Đầu Lại Lau Nước Mắt Cho Cậu</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/ngoanh-dau-lai-lau-nuoc-mat-cho-cau-poster.jpg</image:loc><image:title>Ngoảnh Đầu Lại Lau Nước Mắt Cho Cậu - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=phu-thuy-keu-goi</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/phu-thuy-keu-goi-thumb.jpg</image:loc><image:title>Phù thủy kêu gọi</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/phu-thuy-keu-goi-poster.jpg</image:loc><image:title>Phù thủy kêu gọi - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=xanh-cham-day-troi</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/xanh-cham-day-troi-thumb.jpg</image:loc><image:title>Xanh Chạm Đáy Trời</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/xanh-cham-day-troi-poster.jpg</image:loc><image:title>Xanh Chạm Đáy Trời - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=omukade-con-ret-nguoi</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/omukade-con-ret-nguoi-thumb.jpg</image:loc><image:title>Omukade: Con Rết Người</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/omukade-con-ret-nguoi-poster.jpg</image:loc><image:title>Omukade: Con Rết Người - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=kiem-lai-phan-2</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/kiem-lai-phan-2-thumb.jpg</image:loc><image:title>Kiếm Lai (Phần 2)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/kiem-lai-phan-2-poster.jpg</image:loc><image:title>Kiếm Lai (Phần 2) - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=the-gioi-hoan-my</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/the-gioi-hoan-my-thumb.jpg</image:loc><image:title>Thế Giới Hoàn Mỹ</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/the-gioi-hoan-my-poster.jpg</image:loc><image:title>Thế Giới Hoàn Mỹ - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=ban-long</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/ban-long-thumb.jpg</image:loc><image:title>Bàn Long</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/ban-long-poster.jpg</image:loc><image:title>Bàn Long - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=de-xong-mat-la-ca-to-nhung-ca-toi-cau-duoc-lai-con-to-hon</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/de-xong-mat-la-ca-to-nhung-ca-toi-cau-duoc-lai-con-to-hon-thumb.jpg</image:loc><image:title>Để xổng mất là cá to, nhưng cá tôi câu được lại còn to hơn</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/de-xong-mat-la-ca-to-nhung-ca-toi-cau-duoc-lai-con-to-hon-poster.jpg</image:loc><image:title>Để xổng mất là cá to, nhưng cá tôi câu được lại còn to hơn - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=vi-vua-manh-nhat-lam-gi-o-kiep-thu-hai-phan-2</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/vi-vua-manh-nhat-lam-gi-o-kiep-thu-hai-phan-2-thumb.jpg</image:loc><image:title>Vị vua mạnh nhất làm gì ở kiếp thứ hai? (Phần 2)</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/vi-vua-manh-nhat-lam-gi-o-kiep-thu-hai-phan-2-poster.jpg</image:loc><image:title>Vị vua mạnh nhất làm gì ở kiếp thứ hai? (Phần 2) - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=dacoit</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/dacoit-thumb.jpg</image:loc><image:title>Dacoit</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/dacoit-poster.jpg</image:loc><image:title>Dacoit - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=cay-co-thu-dieu-ky</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/cay-co-thu-dieu-ky-thumb.jpg</image:loc><image:title>Cây Cổ Thụ Diệu Kỳ</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/cay-co-thu-dieu-ky-poster.jpg</image:loc><image:title>Cây Cổ Thụ Diệu Kỳ - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=mot-minh-giua-bien-dem</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/mot-minh-giua-bien-dem-thumb.jpg</image:loc><image:title>Một Mình Giữa Biển Đêm</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/mot-minh-giua-bien-dem-poster.jpg</image:loc><image:title>Một Mình Giữa Biển Đêm - Poster</image:title></image:image>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/movie-detail.html?slug=che-nhao-kevin-hart</loc>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/che-nhao-kevin-hart-thumb.jpg</image:loc><image:title>Chế nhạo Kevin Hart</image:title></image:image>
+        <image:image><image:loc>https://img.ophim.live/uploads/movies/che-nhao-kevin-hart-poster.jpg</image:loc><image:title>Chế nhạo Kevin Hart - Poster</image:title></image:image>
     </url>
 </urlset>
