@@ -521,10 +521,15 @@
             .ap-cmt-list {
                 width: 100% !important;
                 max-width: 100% !important;
-                max-height: none !important;
+                max-height: 55vh !important;   /* ngắn hơn desktop (600px) — scroll bên trong */
+                overflow-y: auto !important;    /* scroll trong khung */
                 overflow-x: hidden !important;
                 box-sizing: border-box !important;
+                /* Ẩn scrollbar nhưng vẫn scroll được */
+                scrollbar-width: none !important;
+                -ms-overflow-style: none !important;
             }
+            .ap-cmt-list::-webkit-scrollbar { display: none !important; }
 
             .ap-cmt-item {
                 width: 100% !important;
