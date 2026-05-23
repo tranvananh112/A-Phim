@@ -473,9 +473,17 @@
         .ap-dropdown-item:hover { background: #f3f4f6; }
         .ap-dropdown-item .material-icons-round { font-size: 18px; color: #4b5563; }
 
-        /* Nested Comments Layout */
-        .ap-cmt-replies { margin-top: 10px; display: flex; flex-direction: column; padding-left: 36px; border-left: 2px solid rgba(255,255,255,0.05); gap: 8px; }
-        .ap-cmt-replies .ap-cmt-item { padding: 10px 12px; background: rgba(255,255,255,0.01); border-color: transparent; }
+        /* Nested Comments Layout — flush với comment cha */
+        .ap-cmt-replies { 
+            margin-top: 8px; 
+            display: flex; flex-direction: column; 
+            padding-left: 0; /* Không thụt vào — cùng rộng với comment cha */
+            border-left: 2px solid rgba(255,255,255,0.08); 
+            margin-left: 20px; /* Chỉ shift dấu nhớ chú ý */
+            padding-left: 10px;
+            gap: 6px; 
+        }
+        .ap-cmt-replies .ap-cmt-item { padding: 4px 0; background: transparent; border-color: transparent; }
         .ap-cmt-replies .ap-cmt-avatar { width: 28px; height: 28px; font-size: 11px; }
         
         /* Form Trả lời lồng nhau */
@@ -492,10 +500,171 @@
             box-shadow:0 4px 20px rgba(0,0,0,0.3); color:#fff; pointer-events:none;
         }
 
-        /* Mobile specific fixes (Catfish banner space) */
+        /* ═══════════════════════════════════════════════════════
+           MOBILE COMPREHENSIVE FIX — ngăn lệch layout khi scroll
+           ═══════════════════════════════════════════════════════ */
         @media (max-width: 768px) {
+
+            /* Catfish space */
             .ap-cmt-wrapper {
-                padding-bottom: 170px !important; /* Đảm bảo không bị che bởi Catfish banner 3 tầng dọc */
+                padding-bottom: 120px !important;
+                /* Ngăn overflow ngang — nguyên nhân chính gây lệch */
+                overflow-x: hidden !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+
+            /* List container — khóa chiều ngang tuyệt đối */
+            .ap-cmt-list {
+                max-width: 100% !important;
+                width: 100% !important;
+                overflow-x: hidden !important;
+                box-sizing: border-box !important;
+                padding-right: 0 !important;
+                /* Tránh layout shift khi scroll dọc */
+                will-change: transform;
+                contain: layout style;
+            }
+
+            /* Mỗi comment item — flex cứng, không cho tràn */
+            .ap-cmt-item {
+                width: 100% !important;
+                box-sizing: border-box !important;
+                gap: 8px !important;
+                padding: 6px 0 !important;
+                /* Chống reflow khi scroll */
+                transform: translateZ(0);
+            }
+
+            /* Avatar top-level: fix 34px */
+            .ap-cmt-avatar.shop-frame-wrap.size-sm {
+                width: 34px !important;
+                height: 34px !important;
+                min-width: 34px !important;
+                flex-shrink: 0 !important;
+            }
+
+            /* Body chiếm phần còn lại, min-width: 0 để flex không overflow */
+            .ap-cmt-body {
+                flex: 1 1 0 !important;
+                min-width: 0 !important;
+                max-width: calc(100% - 42px) !important;
+                overflow: hidden !important;
+            }
+
+            /* Text bubble — không tràn ngang */
+            .ap-cmt-text {
+                max-width: 100% !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+                word-break: break-word !important;
+                overflow-wrap: anywhere !important;
+                font-size: 13px !important;
+            }
+
+            /* Info row — không wrap quá mức */
+            .ap-cmt-info {
+                flex-wrap: nowrap !important;
+                overflow: hidden !important;
+                gap: 4px !important;
+            }
+            .ap-cmt-name {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 140px;
+                font-size: 12px !important;
+            }
+            .ap-cmt-time {
+                white-space: nowrap;
+                flex-shrink: 0;
+                font-size: 10px !important;
+            }
+            .ap-ep-tag {
+                display: none !important; /* Ẩn episode tag trên mobile để tiết kiệm chỗ */
+            }
+
+            /* Action bar — compact, không wrap */
+            .ap-cmt-actions {
+                gap: 0 !important;
+                flex-wrap: nowrap !important;
+                width: 100% !important;
+                overflow: hidden !important;
+            }
+            .ap-action-btn {
+                padding: 4px 6px !important;
+                font-size: 11px !important;
+                gap: 2px !important;
+                flex-shrink: 0;
+            }
+            /* Ẩn chữ "Trả lời" và "Thêm" — giữ icon */
+            .ap-action-btn .action-label {
+                display: none !important;
+            }
+
+            /* REPLIES: flush với comment cha — chỉ indent nhỏ */
+            .ap-cmt-replies {
+                margin-left: 10px !important;
+                padding-left: 8px !important;
+                border-left: 2px solid rgba(255,255,255,0.1) !important;
+                gap: 4px !important;
+                margin-top: 6px !important;
+            }
+
+            /* Avatar trong reply — cùng size, chỉ nhỏ hơn chút */
+            .ap-cmt-replies .ap-cmt-avatar.shop-frame-wrap.size-sm {
+                width: 28px !important;
+                height: 28px !important;
+                min-width: 28px !important;
+            }
+            .ap-cmt-replies .ap-cmt-body {
+                max-width: calc(100% - 36px) !important;
+            }
+
+            /* Form nhập — không tràn ngang */
+            .ap-cmt-form-logged,
+            .ap-cmt-guest {
+                width: 100% !important;
+                box-sizing: border-box !important;
+                overflow: hidden !important;
+            }
+            .ap-form-footer {
+                flex-wrap: wrap !important;
+                gap: 6px !important;
+                padding: 8px 12px !important;
+            }
+            .ap-cmt-textarea {
+                font-size: 14px !important; /* iOS auto-zoom fix: min 14px */
+            }
+
+            /* Dropdown menu không tràn ra ngoài viewport */
+            .ap-dropdown-menu {
+                right: 0 !important;
+                left: auto !important;
+                min-width: 140px !important;
+                max-width: 80vw !important;
+            }
+
+            /* Avatar dropdown không bị che */
+            .ap-ava-dropdown {
+                right: 0 !important;
+                max-width: 75vw !important;
+            }
+        }
+
+        /* Màn hình rất nhỏ ≤ 390px */
+        @media (max-width: 390px) {
+            .ap-cmt-replies {
+                padding-left: 12px !important;
+            }
+            .ap-cmt-name {
+                max-width: 100px !important;
+            }
+            .ap-cmt-badge {
+                display: none !important;
+            }
+            .ap-action-btn {
+                padding: 4px 4px !important;
             }
         }
         `;
@@ -658,12 +827,12 @@
                         <span class="material-icons-round">arrow_circle_down</span>
                     </button>
                     <button class="ap-action-btn" onclick="window.actionReplyToggle('${c.id}', '${currentRootId}')">
-                        <span class="material-icons-round" style="transform: scaleX(-1)">reply</span> Trả lời
+                        <span class="material-icons-round" style="transform: scaleX(-1)">reply</span><span class="action-label"> Trả lời</span>
                     </button>
                     
                     <div class="ap-dropdown-wrap">
                         <button class="ap-action-btn" onclick="window.actionToggleMore('${c.id}')">
-                            <span class="material-icons-round">more_horiz</span> Thêm
+                            <span class="material-icons-round">more_horiz</span><span class="action-label"> Thêm</span>
                         </button>
                         <div class="ap-dropdown-menu" id="ap-menu-${c.id}">
                             <button class="ap-dropdown-item" onclick="window.actionToggleSpoiler('${c.id}', ${c.isSpoiler})">
