@@ -500,10 +500,10 @@
         }
 
         /* =================================================================
-           MOBILE FIX — chống lệch ngang khi scroll
+           MOBILE FIX — chỉ khóa scroll ngang, không phá layout chữ
            ================================================================= */
 
-        /* Cấp 0: Khóa trang không scroll ngang — quan trọng nhất */
+        /* Cấp page: KHÔNG cho scroll ngang */
         html, body {
             overflow-x: hidden !important;
             max-width: 100vw !important;
@@ -511,69 +511,58 @@
 
         @media (max-width: 768px) {
 
-            /* Wrapper */
             .ap-cmt-wrapper {
                 padding-bottom: 120px !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                box-sizing: border-box !important;
                 overflow-x: hidden !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
             }
 
-            /* Comment list */
             .ap-cmt-list {
                 width: 100% !important;
                 max-width: 100% !important;
-                max-height: none !important;   /* bỏ giới hạn 600px cứng — scroll toàn trang tự nhiên hơn */
-                overflow: visible !important;   /* không clip */
+                max-height: none !important;
+                overflow-x: hidden !important;
                 box-sizing: border-box !important;
-                padding-right: 0 !important;
             }
 
-            /* Mỗi comment */
             .ap-cmt-item {
                 width: 100% !important;
-                max-width: 100% !important;
                 box-sizing: border-box !important;
                 padding: 6px 0 !important;
-                gap: 8px !important;
             }
 
-            /* Avatar parent: 34px cố định */
+            /* Avatar cố định kích thước */
             .ap-cmt-avatar.shop-frame-wrap.size-sm {
                 width: 34px !important;
                 height: 34px !important;
                 min-width: 34px !important;
                 max-width: 34px !important;
                 flex-shrink: 0 !important;
-                flex-grow: 0 !important;
             }
 
-            /* Body — chiếm hết phần còn lại, KHÔNG cắt overflow */
+            /* Body: flex:1 + min-width:0 là đủ — ĐỪNG set width:0 */
             .ap-cmt-body {
-                flex: 1 1 0% !important;
+                flex: 1 !important;
                 min-width: 0 !important;
-                width: 0 !important;   /* trick: flex sẽ tự tính rộng đúng */
-                overflow: visible !important;
+                max-width: 100% !important;
             }
 
-            /* Text bubble */
+            /* Text: word-wrap bình thường, đừng bị vỡ */
             .ap-cmt-text {
-                width: 100% !important;
                 max-width: 100% !important;
+                width: 100% !important;
                 box-sizing: border-box !important;
                 word-break: break-word !important;
-                overflow-wrap: anywhere !important;
+                overflow-wrap: break-word !important;
+                white-space: normal !important;
                 font-size: 13px !important;
-                display: block !important;
             }
 
-            /* Info row */
             .ap-cmt-info {
                 gap: 4px !important;
                 flex-wrap: nowrap !important;
                 overflow: hidden !important;
-                max-width: 100% !important;
             }
             .ap-cmt-name {
                 font-size: 12px !important;
@@ -585,35 +574,28 @@
             .ap-cmt-time { font-size: 10px !important; white-space: nowrap !important; flex-shrink: 0 !important; }
             .ap-ep-tag { display: none !important; }
 
-            /* Action buttons — compact icon */
             .ap-cmt-actions {
                 flex-wrap: nowrap !important;
                 gap: 0 !important;
-                max-width: 100% !important;
                 overflow: hidden !important;
             }
             .ap-action-btn {
                 padding: 4px 5px !important;
                 font-size: 11px !important;
-                gap: 2px !important;
                 flex-shrink: 0 !important;
                 white-space: nowrap !important;
             }
             .ap-action-btn .action-label { display: none !important; }
 
-            /* REPLIES: canh theo avatar cha, không gây overflow */
+            /* Replies */
             .ap-cmt-replies {
-                margin-left: 20px !important;   /* căn lồng nhẹ */
+                margin-left: 20px !important;
                 padding-left: 10px !important;
                 border-left: 2px solid rgba(255,255,255,0.12) !important;
                 margin-top: 6px !important;
                 gap: 4px !important;
-                width: auto !important;
-                max-width: none !important;
                 box-sizing: border-box !important;
             }
-
-            /* Avatar trong reply — nhỏ hơn */
             .ap-cmt-replies .ap-cmt-avatar.shop-frame-wrap.size-sm {
                 width: 26px !important;
                 height: 26px !important;
@@ -621,7 +603,7 @@
                 max-width: 26px !important;
             }
 
-            /* Form đăng nhập / viết comment */
+            /* Form */
             .ap-cmt-form-logged, .ap-cmt-guest {
                 width: 100% !important;
                 max-width: 100% !important;
@@ -630,18 +612,15 @@
             .ap-form-footer { flex-wrap: wrap !important; gap: 6px !important; padding: 8px 12px !important; }
             .ap-cmt-textarea { font-size: 14px !important; }
 
-            /* Dropdown */
-            .ap-dropdown-menu { right: 0 !important; left: auto !important; max-width: 80vw !important; min-width: 140px !important; }
+            .ap-dropdown-menu { right: 0 !important; left: auto !important; max-width: 80vw !important; }
             .ap-ava-dropdown { right: 0 !important; max-width: 75vw !important; }
         }
 
-        /* Màn hình nhỏ ≤ 390px */
         @media (max-width: 390px) {
-            .ap-cmt-replies { margin-left: 10px !important; padding-left: 8px !important; }
+            .ap-cmt-replies { margin-left: 10px !important; }
             .ap-cmt-name { max-width: 35vw !important; }
         }
         `;
-        // Thêm thẳng vào head để ưu tiên cao
         document.head.insertBefore(s, document.head.firstChild);
     }
 
