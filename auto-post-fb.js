@@ -42,15 +42,43 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
     // Reverse to post the oldest of the "new" ones first (chronological order)
     newMovies.reverse();
 
-    // 3. Initialize Composio
-    const composio = new Composio({ apiKey: COMPOSIO_API_KEY });
-    let fbConnection = null;
-
+    // 3. Authenticate with Composio and get Facebook Page Token
+    let pageToken = '';
+    let pageId = '';
     try {
-        // Retrieve the Facebook connection set up via Composio Dashboard
-        fbConnection = await composio.getConnection('facebook');
-    } catch (e) {
-        console.error('Failed to connect to Facebook via Composio:', e.message);
+        const apiKey = process.env.COMPOSIO_API_KEY;
+        const composio = new Composio({ apiKey: apiKey });
+        
+        // Find active Facebook connection
+        const accountsRes = await composio.connectedAccounts.list({});
+        const fbAcc = accountsRes.items.find(a => a.appName === 'facebook' && a.status === 'ACTIVE');
+        
+        if (!fbAcc) {
+            console.error('❌ No active Facebook connection found in Composio!');
+            process.exit(1);
+        }
+
+        console.log('✅ Found Facebook connection. Fetching Page Access Token...');
+        // Proxy through Composio to get user's pages
+        const proxyRes = await axios.post('https://backend.composio.dev/api/v2/actions/proxy', {
+            connectedAccountId: fbAcc.id,
+            method: 'GET',
+            endpoint: 'https://graph.facebook.com/v19.0/me/accounts'
+        }, { headers: { 'x-api-key': apiKey } });
+
+        const pages = proxyRes.data.data.data;
+        if (!pages || pages.length === 0) {
+            console.error('❌ No Facebook Pages found for this account!');
+            process.exit(1);
+        }
+
+        const page = pages[0]; // Use the first page managed by the user
+        pageToken = page.access_token;
+        pageId = page.id;
+        console.log(`✅ Ready to post to Fanpage: ${page.name} (${pageId})`);
+
+    } catch (error) {
+        console.error('❌ Failed to initialize Facebook connection:', error.response?.data || error.message);
         process.exit(1);
     }
 
@@ -100,9 +128,10 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
             const message = `🎬 [PHIM MỚI CẬP NHẬT] - ${name}${year}\n\n👑 ${desc}\n\n👉 Xem ngay Full HD Vietsub tại: ${url}\n\n${hashtags}`;
 
             console.log(`Posting to Facebook: ${name}...`);
-            // Execute the Facebook post action via Composio
-            await fbConnection.executeAction('FACEBOOK_CREATE_POST', {
-                message: message
+            // Execute the Facebook post action directly via Graph API
+            await axios.post(`https://graph.facebook.com/v19.0/${pageId}/feed`, {
+                message: message,
+                access_token: pageToken
             });
             
             console.log(`✅ Successfully posted: ${slug}`);
@@ -112,7 +141,7 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
             // Wait 5 seconds to avoid rate limiting
             await delay(5000);
         } catch (e) {
-            console.error(`❌ Failed to process/post ${slug}:`, e.message);
+            console.error(`❌ Failed to process/post ${slug}:`, e.response?.data || e.message);
         }
     }
 
