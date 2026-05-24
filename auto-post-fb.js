@@ -126,13 +126,27 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 
             // Construct the Facebook post message
             const message = `🎬 [PHIM MỚI CẬP NHẬT] - ${name}${year}\n\n👑 ${desc}\n\n👉 Xem ngay Full HD Vietsub tại: ${url}\n\n${hashtags}`;
+            
+            // Get the image URL (prefer thumb_url for Facebook landscape, fallback to poster)
+            const imageUrl = mDetail.thumb_url || mDetail.poster_url;
 
             console.log(`Posting to Facebook: ${name}...`);
-            // Execute the Facebook post action directly via Graph API
-            await axios.post(`https://graph.facebook.com/v19.0/${pageId}/feed`, {
-                message: message,
-                access_token: pageToken
-            });
+            
+            if (imageUrl) {
+                // Post as a Photo post (much better engagement and visual appeal)
+                await axios.post(`https://graph.facebook.com/v19.0/${pageId}/photos`, {
+                    url: imageUrl,
+                    message: message,
+                    access_token: pageToken
+                });
+            } else {
+                // Fallback to text/link post if no image
+                await axios.post(`https://graph.facebook.com/v19.0/${pageId}/feed`, {
+                    message: message,
+                    link: url,
+                    access_token: pageToken
+                });
+            }
             
             console.log(`✅ Successfully posted: ${slug}`);
             postedMovies.push(slug);
