@@ -1,4 +1,4 @@
-// Register Page Script
+﻿// Register Page Script
 
 // Check if redirected from login page with highlight parameter
 document.addEventListener('DOMContentLoaded', function () {
@@ -86,15 +86,11 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     const result = await authService.register(email, password, name, phone, rememberMe);
 
     if (result.success) {
-        showMessage('Đăng ký thành công! Vui lòng đăng nhập để tiếp tục...', 'success');
+        showMessage('Đăng ký thành công!', 'success');
         setTimeout(() => {
-            // Chuyển về trang login, thêm from_register=1 để hiện popup Telegram
             const redirectParam = new URLSearchParams(window.location.search).get('redirect');
-            let loginUrl = redirectParam
-                ? `login.html?from_register=1&redirect=${encodeURIComponent(redirectParam)}`
-                : 'login.html?from_register=1';
-            window.location.href = loginUrl;
-        }, 1500);
+            window.location.href = redirectParam ? decodeURIComponent(redirectParam) : 'index.html';
+        }, 800);
     } else {
         showMessage(result.message || 'Đăng ký thất bại', 'error');
     }
@@ -273,3 +269,4 @@ document.getElementById('confirmPassword').addEventListener('input', function ()
         this.classList.remove('border-red-500');
     }
 });
+
