@@ -298,7 +298,7 @@
         .ap-form-logout-btn:hover { color: #ef4444; }
 
         .ap-cmt-textarea {
-            width: 100%; background: transparent; border: none; outline: none;
+            width: 100%; box-sizing: border-box !important; background: transparent; border: none; outline: none;
             color: #e5e7eb; font-size: 13px; line-height: 1.5;
             padding: 10px 14px; resize: none; font-family: inherit;
             box-sizing: border-box; min-height: 40px; max-height: 160px;
@@ -438,7 +438,7 @@
         .ap-cmt-text { 
             font-size: 13px; color: #d1d5db; line-height: 1.45; margin-bottom: 4px;
             white-space: pre-wrap; word-break: break-word; transition: filter 0.3s;
-            text-align: left; width: 100%;
+            text-align: left; width: 100%; box-sizing: border-box !important;
             /* Bubble nền nhẹ — giống Facebook */
             background: rgba(255,255,255,0.05);
             padding: 6px 10px; border-radius: 12px;
@@ -512,10 +512,12 @@
         @media (max-width: 768px) {
 
             .ap-cmt-wrapper {
-                padding-bottom: 120px !important;
+                padding: 0 12px 120px 12px !important;
                 overflow-x: hidden !important;
                 width: 100% !important;
                 box-sizing: border-box !important;
+                width: 100% !important;
+                max-width: 100% !important;
             }
 
             .ap-cmt-list {
@@ -533,6 +535,7 @@
 
             .ap-cmt-item {
                 width: 100% !important;
+                max-width: 100% !important;
                 box-sizing: border-box !important;
                 padding: 6px 0 !important;
             }

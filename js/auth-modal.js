@@ -24,7 +24,7 @@
             display: flex; align-items: center; justify-content: center;
             padding: 12px;
             animation: ap-modal-fadein 0.3s ease;
-            touch-action: none; /* Chặn touch event trên nền */
+            
         }
         @keyframes ap-modal-fadein {
             from { opacity:0; } to { opacity:1; }
@@ -33,6 +33,7 @@
         /* ── Modal box ── */
         #ap-auth-modal {
             width: 100%; max-width: 720px;
+            max-height: calc(100vh - 24px);
             background: #1e2030;
             border-radius: 24px;
             overflow: hidden;
@@ -85,14 +86,21 @@
             flex: 1; padding: 48px 40px;
             display: flex; flex-direction: column;
             gap: 0;
+            overflow-y: auto;
         }
-        @media (max-width: 600px) { 
-            .ap-auth-right { padding: 40px 24px; } 
+        @media (max-width: 600px) {
+            .ap-auth-right { padding: 24px 20px; }
             #ap-auth-modal { border-radius: 20px; }
+            .ap-auth-field { margin-bottom: 12px; }
+            .ap-auth-input { padding: 12px 14px; font-size: 14px; border-radius: 10px; }
+            .ap-auth-field label { margin-bottom: 6px; font-size: 11px; }
+            .ap-auth-submit { padding: 12px; font-size: 15px; margin-top: 6px; }
         }
         @media (max-width: 400px) {
-            .ap-auth-right { padding: 32px 20px; }
-            .ap-auth-title { font-size: 22px !important; }
+            .ap-auth-right { padding: 20px 16px; }
+            .ap-auth-title { font-size: 20px !important; margin-bottom: 4px; }
+            .ap-auth-input { padding: 10px 12px; font-size: 13px; }
+            .ap-auth-field { margin-bottom: 10px; }
         }
 
         .ap-auth-close {
@@ -178,9 +186,6 @@
         /* Scroll lock for mobile */
         body.ap-modal-open {
             overflow: hidden !important;
-            height: 100vh !important;
-            width: 100% !important;
-            position: fixed !important;
         }
         `;
         document.head.appendChild(s);
@@ -287,19 +292,14 @@
 
         
         // Lock scroll
-        const scrollY = window.scrollY;
-        document.body.dataset.scrollY = scrollY;
-        document.body.classList.add('ap-modal-open');
-        document.body.style.top = `-${scrollY}px`;
-
-        // ── Event listeners ──────────────────────────────────────────
+        document.body.classList.add("ap-modal-open");
+// ── Event listeners ──────────────────────────────────────────
         backdrop.addEventListener('click', (e) => {
             if (e.target === backdrop) removeModal();
         });
         // Mobile: touch on backdrop
-        backdrop.addEventListener('touchend', (e) => {
-            if (e.target === backdrop) { e.preventDefault(); removeModal(); }
-        }, { passive: false });
+        backdrop.addEventListener('touchend', (e) => { if (e.target === backdrop) { e.preventDefault(); removeModal(); } }, { passive: false });
+          backdrop.addEventListener('touchmove', (e) => { if (!e.target.closest('.ap-auth-right')) { e.preventDefault(); } }, { passive: false });
 
         const closeBtn2 = backdrop.querySelector('#ap-auth-close-btn');
         if (closeBtn2) {
@@ -421,10 +421,7 @@
             
             // Chỉ unlock scroll nếu không còn modal nào khác đang mở
             if (!document.getElementById('ap-auth-backdrop')) {
-                const scrollY = parseInt(document.body.dataset.scrollY || '0');
                 document.body.classList.remove('ap-modal-open');
-                document.body.style.top = '';
-                window.scrollTo(0, scrollY);
             }
             
             if (document._apModalEsc) {
