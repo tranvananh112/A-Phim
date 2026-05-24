@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html class="dark" lang="vi">
 
 <head>
@@ -81,14 +81,21 @@
                 }
             }
 
-            /* Nút XEM NGAY: Giới hạn độ rộng tối đa để không bị kéo dài thòng */
+                        /* Nút XEM NGAY: Giới hạn độ rộng tối đa và đồng bộ chiều cao 44px */
             .movie-actions-container>a {
                 flex: 0 1 auto !important;
-                min-width: 160px !important;
-                max-width: 220px !important;
+                min-width: 150px !important;
+                max-width: 180px !important;
                 width: auto !important;
-                padding-left: 20px !important;
-                padding-right: 20px !important;
+                height: 44px !important;
+                padding: 0 16px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+            .movie-actions-container>a #play-btn-lottie {
+                width: 28px !important;
+                height: 28px !important;
             }
 
             /* Các nút khác co thành hình tròn icon-only */
@@ -797,3 +804,4 @@
 </body>
 
 </html>
+
