@@ -503,13 +503,12 @@
            MOBILE FIX — chỉ khóa scroll ngang, không phá layout chữ
            ================================================================= */
 
-        /* Cấp page: KHÔNG cho scroll ngang */
-        html, body {
-            overflow-x: hidden !important;
-            max-width: 100vw !important;
-        }
-
         @media (max-width: 768px) {
+            /* Cấp page: KHÔNG cho scroll ngang (Chỉ áp dụng trên mobile) */
+            body {
+                overflow-x: hidden !important;
+                max-width: 100vw !important;
+            }
 
             .ap-cmt-wrapper {
                 padding: 0 12px 120px 12px !important;
