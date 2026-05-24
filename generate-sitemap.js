@@ -3,19 +3,40 @@ const fs = require('fs');
 
 (async () => {
     const allMovies = [];
-    const pages = [1,2,3,4,5,6,7,8,9,10];
+    const totalPages = 400; // Fetch 400 pages (~9600 movies) for much better SEO
+    const batchSize = 10; // Batch requests to prevent rate limiting
     
-    await Promise.all(pages.map(async (page) => {
-        try {
-            const r = await axios.get('https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=' + page, { timeout: 8000 });
-            if (r.data && r.data.data && r.data.data.items) {
-                allMovies.push(...r.data.data.items);
-                console.log('Page ' + page + ': ' + r.data.data.items.length + ' phim');
-            }
-        } catch(e) { console.log('Page ' + page + ' failed:', e.message); }
-    }));
+    console.log(`Starting to fetch ${totalPages} pages...`);
+    for (let i = 1; i <= totalPages; i += batchSize) {
+        const batch = [];
+        for (let j = 0; j < batchSize && (i + j) <= totalPages; j++) {
+            batch.push(i + j);
+        }
+        
+        await Promise.all(batch.map(async (page) => {
+            try {
+                const r = await axios.get('https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=' + page, { timeout: 15000 });
+                if (r.data && r.data.data && r.data.data.items) {
+                    allMovies.push(...r.data.data.items);
+                    console.log('Page ' + page + ' done: ' + r.data.data.items.length + ' movies');
+                }
+            } catch(e) { console.log('Page ' + page + ' failed:', e.message); }
+        }));
+        
+        // Anti-rate-limit delay
+        await new Promise(res => setTimeout(res, 500));
+    }
 
-    const urlEntries = allMovies.map(function(movie) {
+    // Deduplicate by slug
+    const uniqueMoviesMap = new Map();
+    allMovies.forEach(m => {
+        if (m.slug) uniqueMoviesMap.set(m.slug, m);
+    });
+    const uniqueMovies = Array.from(uniqueMoviesMap.values());
+
+    console.log(`Found ${uniqueMovies.length} unique movies. Generating XML...`);
+
+    const urlEntries = uniqueMovies.map(function(movie) {
         const slug = movie.slug || '';
         const name = (movie.name || '')
             .replace(/&/g,'&amp;')
