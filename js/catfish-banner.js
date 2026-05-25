@@ -81,14 +81,14 @@
             if (path.indexOf(CONFIG.popup.excludePaths[i]) !== -1) return false;
         }
         // Key riêng theo từng trang — mỗi trang có state độc lập
-        var pageKey = CONFIG.popup.sessionKey + '_' + path;
+        var pageKey = CONFIG.popup.sessionKey;
         return !getSession(pageKey);
     }
 
     function shouldShowCatfish() {
         if (!CONFIG.catfish.enabled) return false;
         // Per-page sessionStorage — giống popup, hiện lại mỗi khi sang trang mới
-        var pageKey = CONFIG.catfish.sessionKey + '_' + currentPath();
+        var pageKey = CONFIG.catfish.sessionKey;
         return !getSession(pageKey);
     }
 
@@ -135,7 +135,7 @@
                 document.body.classList.remove('aphim-has-catfish');
                 setTimeout(function () { if (bar.parentNode) bar.parentNode.removeChild(bar); }, 450);
                 // Đánh dấu đã đóng theo từng trang (sessionStorage)
-                var pageKey = CONFIG.catfish.sessionKey + '_' + currentPath();
+                var pageKey = CONFIG.catfish.sessionKey;
                 setSession(pageKey);
             });
         }
@@ -278,7 +278,7 @@
             clearTimeout(showTimer);
             clearInterval(slideTimer);
             // Lưu key theo pathname — chỉ ẩn trên trang này
-            setSession(CONFIG.popup.sessionKey + '_' + currentPath());
+            setSession(CONFIG.popup.sessionKey);
             overlay.classList.remove('visible');
             setTimeout(function () {
                 if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
