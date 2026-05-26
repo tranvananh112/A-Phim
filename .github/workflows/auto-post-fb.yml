@@ -22,11 +22,11 @@ jobs:
           node-version: '24'
 
       - name: Install dependencies
-        run: npm install axios composio-core
+        run: npm install axios
 
       - name: Run Facebook Poster Script
         env:
-          COMPOSIO_API_KEY: ${{ secrets.COMPOSIO_API_KEY }}
+          FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
         run: node auto-post-fb.js
 
       - name: Commit & push if posted-movies.json changed

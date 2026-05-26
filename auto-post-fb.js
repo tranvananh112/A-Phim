@@ -1,18 +1,17 @@
 const axios = require('axios');
 const fs = require('fs');
-const { Composio } = require('composio-core');
 
 // Constants
 const POSTED_MOVIES_FILE = 'posted-movies.json';
 const API_URL = 'https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=1';
-const COMPOSIO_API_KEY = process.env.COMPOSIO_API_KEY;
+const FB_PAGE_TOKEN = process.env.FB_PAGE_TOKEN;
 
 // Delay function for rate limit safety
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 (async () => {
-    if (!COMPOSIO_API_KEY) {
-        console.error('Missing COMPOSIO_API_KEY. Exiting...');
+    if (!FB_PAGE_TOKEN) {
+        console.error('Missing FB_PAGE_TOKEN. Exiting...');
         process.exit(1);
     }
 
@@ -42,43 +41,14 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
     // Reverse to post the oldest of the "new" ones first (chronological order)
     newMovies.reverse();
 
-    // 3. Authenticate with Composio and get Facebook Page Token
-    let pageToken = '';
-    let pageId = '';
+    // 3. Verify Facebook Page Token
+    let pageId = 'me';
     try {
-        const apiKey = process.env.COMPOSIO_API_KEY;
-        const composio = new Composio({ apiKey: apiKey });
-        
-        // Find active Facebook connection
-        const accountsRes = await composio.connectedAccounts.list({});
-        const fbAcc = accountsRes.items.find(a => a.appName === 'facebook' && a.status === 'ACTIVE');
-        
-        if (!fbAcc) {
-            console.error('❌ No active Facebook connection found in Composio!');
-            process.exit(1);
-        }
-
-        console.log('✅ Found Facebook connection. Fetching Page Access Token...');
-        // Proxy through Composio to get user's pages
-        const proxyRes = await axios.post('https://backend.composio.dev/api/v2/actions/proxy', {
-            connectedAccountId: fbAcc.id,
-            method: 'GET',
-            endpoint: 'https://graph.facebook.com/v19.0/me/accounts'
-        }, { headers: { 'x-api-key': apiKey } });
-
-        const pages = proxyRes.data.data.data;
-        if (!pages || pages.length === 0) {
-            console.error('❌ No Facebook Pages found for this account!');
-            process.exit(1);
-        }
-
-        const page = pages[0]; // Use the first page managed by the user
-        pageToken = page.access_token;
-        pageId = page.id;
-        console.log(`✅ Ready to post to Fanpage: ${page.name} (${pageId})`);
-
+        console.log('✅ Verifying Facebook Page Token...');
+        const verifyRes = await axios.get('https://graph.facebook.com/v19.0/me?access_token=' + FB_PAGE_TOKEN);
+        console.log(`✅ Ready to post to Fanpage: ${verifyRes.data.name} (${verifyRes.data.id})`);
     } catch (error) {
-        console.error('❌ Failed to initialize Facebook connection:', error.response?.data || error.message);
+        console.error('❌ Failed to verify Facebook Token:', error.response?.data || error.message);
         process.exit(1);
     }
 
@@ -196,14 +166,14 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
                 fbRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/photos`, {
                     url: imageUrl,
                     message: message,
-                    access_token: pageToken
+                    access_token: FB_PAGE_TOKEN
                 });
             } else {
                 // Fallback to text/link post if no image
                 fbRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/feed`, {
                     message: message,
                     link: url,
-                    access_token: pageToken
+                    access_token: FB_PAGE_TOKEN
                 });
             }
             
@@ -270,14 +240,14 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
                 await delay(2000);
                 await axios.post(`https://graph.facebook.com/v19.0/${postId}/comments`, {
                     message: randomComment,
-                    access_token: pageToken
+                    access_token: FB_PAGE_TOKEN
                 });
                 
                 // Post Comment 2 to re-emphasize the link
                 await delay(2000);
                 await axios.post(`https://graph.facebook.com/v19.0/${postId}/comments`, {
                     message: `👉 Link xem trực tiếp full HD Vietsub không giật lag: ${url}`,
-                    access_token: pageToken
+                    access_token: FB_PAGE_TOKEN
                 });
                 console.log(`💬 Added engagement comments to post: ${postId}`);
             }
