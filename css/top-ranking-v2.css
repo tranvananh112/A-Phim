@@ -6,7 +6,8 @@
     flex: none;
     width: 140px; /* Mobile */
     scroll-snap-align: start;
-    transition: transform 0.2s ease-out;
+    transition: transform 0.2s ease-out, z-index 0.2s ease-out;
+    perspective: 1000px; /* Tạo không gian 3D */
     padding: 1rem 0;
 }
 
@@ -16,9 +17,18 @@
     }
 }
 
+/* Lồi lõm (Staggered) Effect: So le cao thấp và nghiêng nhẹ */
+.ranking-item:nth-child(odd) {
+    transform: translateY(-8px) rotateZ(-1.5deg);
+}
+
+.ranking-item:nth-child(even) {
+    transform: translateY(8px) rotateZ(1.5deg);
+}
+
 /* Hover state: Fast, non-laggy lift */
 .ranking-item:hover {
-    transform: translateY(-8px) scale(1.03) !important;
+    transform: translateY(-15px) scale(1.05) rotateZ(0deg) !important;
     z-index: 20;
 }
 
