@@ -240,7 +240,8 @@ function renderPlayerPlaceholder(episode) {
     const playerContainer = document.querySelector('.aspect-video');
     if (!playerContainer) return;
 
-    const posterUrl = currentMovie ? movieAPI.getImageURL(currentMovie.poster_url || currentMovie.thumb_url, 1200, 90, true) : '';
+    // Use thumb_url (horizontal banner) instead of poster_url (vertical) for 16:9 video player
+    const posterUrl = currentMovie ? movieAPI.getImageURL(currentMovie.thumb_url || currentMovie.poster_url, 1200, 90, true) : '';
     const movieName = currentMovie ? currentMovie.name : 'Đang tải...';
     
     // Thông minh hóa tên tập: Nếu là số thì thêm chữ "Tập", nếu là chữ (Full, Trailer...) thì giữ nguyên
@@ -266,8 +267,8 @@ function renderPlayerPlaceholder(episode) {
             <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transform-gpu scale-105" 
                  style="background-image: url('${posterUrl}'); filter: brightness(0.25) blur(15px); border-radius: 12px; overflow: hidden;"></div>
             
-            <!-- Background Layer 2: Sharp Centered Image (Contain - displays the ENTIRE uncropped poster/backdrop) -->
-            <div class="absolute inset-0 bg-contain bg-center bg-no-repeat transition-all duration-[1.5s] ease-out group-hover/overlay:scale-103" 
+            <!-- Background Layer 2: Sharp Centered Image (Cover - fills the ENTIRE horizontal frame perfectly) -->
+            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-[1.5s] ease-out group-hover/overlay:scale-103" 
                  style="background-image: url('${posterUrl}'); filter: brightness(0.6) contrast(1.05); border-radius: 12px; overflow: hidden;"></div>
             
             <!-- Netflix/Disney+ Premium Double Gradients -->
