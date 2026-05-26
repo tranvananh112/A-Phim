@@ -6,29 +6,19 @@
     flex: none;
     width: 140px; /* Mobile */
     scroll-snap-align: start;
-    transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-    perspective: 1000px; /* Tạo không gian 3D */
+    transition: transform 0.2s ease-out;
     padding: 1rem 0;
 }
 
 @media (min-width: 768px) {
     .ranking-item {
-        width: 190px; /* Khai báo kích thước nhỏ gọn như yêu cầu */
+        width: 190px;
     }
 }
 
-/* Lồi lõm (Staggered) Effect: So le cao thấp và nghiêng nhẹ */
-.ranking-item:nth-child(odd) {
-    transform: translateY(-8px) rotateZ(-1.5deg);
-}
-
-.ranking-item:nth-child(even) {
-    transform: translateY(8px) rotateZ(1.5deg);
-}
-
-/* Hover state: Reset tilt and lift more */
+/* Hover state: Fast, non-laggy lift */
 .ranking-item:hover {
-    transform: translateY(-15px) scale(1.05) rotateZ(0deg) !important;
+    transform: translateY(-8px) scale(1.03) !important;
     z-index: 20;
 }
 
@@ -41,7 +31,12 @@
     background: #0f1016;
     border: 1.5px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-    transition: all 0.4s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover border highlight */
+.ranking-item:hover .ranking-poster-w {
+    border-color: rgba(255, 215, 0, 0.5);
 }
 
 /* Badges at bottom */
@@ -98,7 +93,12 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.6s ease;
+    transition: transform 0.3s ease-out;
+}
+
+/* Zoom image slightly on hover like other movie cards */
+.ranking-item:hover .ranking-poster-w img {
+    transform: scale(1.08);
 }
 
 /* Big Number Layout - horizontal with text */
