@@ -120,14 +120,30 @@ const SEO = {
         el.setAttribute('content', content);
     },
 
-    setCanonical(url) {
-        let link = document.querySelector('link[rel="canonical"]');
-        if (!link) {
-            link = document.createElement('link');
-            link.setAttribute('rel', 'canonical');
-            document.head.appendChild(link);
+    setCanonical(urlStr) {
+        try {
+            const url = new URL(urlStr);
+            // Remove common tracking parameters that cause duplicate content issues
+            const paramsToRemove = ['fbclid', 'gclid', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+            paramsToRemove.forEach(param => url.searchParams.delete(param));
+            
+            if (url.searchParams.get('page') === '1') {
+                url.searchParams.delete('page');
+            }
+            
+            const canonicalUrl = url.toString().split('#')[0]; // Remove hash fragment
+            
+            let link = document.querySelector('link[rel="canonical"]');
+            if (!link) {
+                link = document.createElement('link');
+                link.setAttribute('rel', 'canonical');
+                document.head.appendChild(link);
+            }
+            link.setAttribute('href', canonicalUrl);
+            console.log('✅ SEO: Canonical tag set ->', canonicalUrl);
+        } catch (e) {
+            console.error('Error setting canonical tag:', e);
         }
-        link.setAttribute('href', url);
     },
 
     injectMovieSchema(movie, desc) {

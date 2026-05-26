@@ -425,7 +425,72 @@ class MovieAPI {
             return await this.getMovieList(page);
         }
     }
+    // --- SEO Utilities ---
+    // Inject Canonical Tag to fix Google Search Console Duplicate Errors
+    injectCanonical() {
+        try {
+            const url = new URL(window.location.href);
+            // Remove common tracking parameters that cause duplicate content issues
+            const paramsToRemove = ['fbclid', 'gclid', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+            paramsToRemove.forEach(param => url.searchParams.delete(param));
+            
+            // Treat page=1 as identical to base URL
+            if (url.searchParams.get('page') === '1') {
+                url.searchParams.delete('page');
+            }
+            
+            const canonicalUrl = url.toString().split('#')[0]; // Remove hash fragment
+
+            let link = document.querySelector("link[rel='canonical']");
+            if (!link) {
+                link = document.createElement('link');
+                link.setAttribute('rel', 'canonical');
+                document.head.appendChild(link);
+            }
+            link.setAttribute('href', canonicalUrl);
+            console.log('✅ SEO: Canonical tag injected ->', canonicalUrl);
+        } catch (e) {
+            console.error('Error injecting canonical tag:', e);
+        }
+    }
+
+    // Dynamic Meta Tags Updater
+    updateSEOMeta(title, description, image) {
+        if (title) {
+            document.title = title;
+            let ogTitle = document.querySelector("meta[property='og:title']");
+            if (ogTitle) ogTitle.setAttribute('content', title);
+        }
+        if (description) {
+            // Trim description for SEO (optimal is ~150-160 chars)
+            const cleanDesc = description.replace(/(<([^>]+)>)/gi, "").substring(0, 160) + "...";
+            let metaDesc = document.querySelector("meta[name='description']");
+            if (!metaDesc) {
+                metaDesc = document.createElement('meta');
+                metaDesc.setAttribute('name', 'description');
+                document.head.appendChild(metaDesc);
+            }
+            metaDesc.setAttribute('content', cleanDesc);
+            
+            let ogDesc = document.querySelector("meta[property='og:description']");
+            if (ogDesc) ogDesc.setAttribute('content', cleanDesc);
+        }
+        if (image) {
+            let ogImage = document.querySelector("meta[property='og:image']");
+            if (!ogImage) {
+                ogImage = document.createElement('meta');
+                ogImage.setAttribute('property', 'og:image');
+                document.head.appendChild(ogImage);
+            }
+            ogImage.setAttribute('content', image);
+        }
+    }
 }
 
 // Initialize API
 const movieAPI = new MovieAPI();
+
+// 🚀 Auto-inject Canonical Tag on every page load
+document.addEventListener('DOMContentLoaded', () => {
+    movieAPI.injectCanonical();
+});
