@@ -44,9 +44,8 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 
     // 3. Verify Facebook Page Token
     let pageId = 'me';
-    let fbConnection = null;
-    let useComposio = false;
     let graphApiValid = false;
+    let fallbackToken = FB_PAGE_TOKEN;
 
     if (FB_PAGE_TOKEN) {
         try {
@@ -64,14 +63,40 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
         try {
             const { Composio } = require('composio-core');
             const composio = new Composio({ apiKey: COMPOSIO_API_KEY });
-            fbConnection = await composio.getConnection('facebook');
-            useComposio = true;
-            console.log('✅ Initialized Facebook connection via Composio.');
+            
+            const accountsRes = await composio.connectedAccounts.list({});
+            const fbAcc = accountsRes.items.find(a => a.appName === 'facebook' && a.status === 'ACTIVE');
+            
+            if (!fbAcc) {
+                console.error('❌ No active Facebook connection found in Composio!');
+                process.exit(1);
+            }
+            
+            console.log('✅ Found Facebook connection. Fetching Page Access Token via proxy...');
+            const proxyRes = await axios.post('https://backend.composio.dev/api/v2/actions/proxy', {
+                connectedAccountId: fbAcc.id,
+                method: 'GET',
+                endpoint: 'https://graph.facebook.com/v19.0/me/accounts'
+            }, { headers: { 'x-api-key': COMPOSIO_API_KEY } });
+
+            const pages = proxyRes.data.data.data;
+            if (!pages || pages.length === 0) {
+                console.error('❌ No Facebook Pages found for this Composio account!');
+                process.exit(1);
+            }
+
+            const page = pages[0];
+            fallbackToken = page.access_token;
+            pageId = page.id;
+            graphApiValid = true;
+            console.log(`✅ Ready to post to Fanpage via Composio proxy: ${page.name} (${pageId})`);
         } catch (e) {
-            console.error('❌ Failed to connect to Facebook via Composio:', e.message);
+            console.error('❌ Failed to connect to Facebook via Composio:', e.response?.data || e.message);
             process.exit(1);
         }
-    } else if (!graphApiValid) {
+    } 
+    
+    if (!graphApiValid) {
         console.error('❌ No valid posting method found. Exiting...');
         process.exit(1);
     }
@@ -184,104 +209,96 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 
             console.log(`Posting to Facebook: ${name} (Genre: ${genreType})...`);
             
-            if (useComposio) {
-                // Post via Composio
-                await fbConnection.executeAction('FACEBOOK_CREATE_POST', {
-                    message: message
+            let fbRes;
+            if (imageUrl) {
+                // Post as a Photo post (much better engagement and visual appeal)
+                fbRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/photos`, {
+                    url: imageUrl,
+                    message: message,
+                    access_token: fallbackToken
                 });
-                console.log(`✅ Successfully posted via Composio: ${slug}`);
             } else {
-                let fbRes;
-                if (imageUrl) {
-                    // Post as a Photo post (much better engagement and visual appeal)
-                    fbRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/photos`, {
-                        url: imageUrl,
-                        message: message,
-                        access_token: FB_PAGE_TOKEN
-                    });
-                } else {
-                    // Fallback to text/link post if no image
-                    fbRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/feed`, {
-                        message: message,
-                        link: url,
-                        access_token: FB_PAGE_TOKEN
-                    });
-                }
-                
-                console.log(`✅ Successfully posted via Graph API: ${slug}`);
-                
-                // Extract the Post ID. Photos API returns 'post_id' inside the response or just 'id'
-                const postId = fbRes.data.post_id || fbRes.data.id;
-                
-                if (postId) {
-                    // Context-aware Comments
-                    const commentTemplates = {
-                        action: [
-                            `Pha hành động cuối đỉnh vãi chưởng, ae xem chưa? 🔥`,
-                            `Phim cuốn dã man, đánh đấm mãn nhãn luôn ae ạ 🥊`,
-                            `Ai mê phim hành động mà bỏ qua bộ này là tiếc lắm nhé! 💥`
-                        ],
-                        romance: [
-                            `Nam chính/nữ chính ngọt ngào quá đi mất 😍💖`,
-                            `Cày bộ này khóc hết mấy cuộn giấy vệ sinh luôn mng ơi 😭`,
-                            `Mong hai anh chị tới với nhau quá, phim hay dã man 💕`
-                        ],
-                        horror: [
-                            `Hú vía mấy đoạn hù dọa, đang đêm xem sợ rớt tim ra ngoài 💀`,
-                            `Thề luôn là phim ám ảnh cực kỳ, ai yếu bóng vía đừng xem 😱`,
-                            `Kinh dị mà cuốn quá không dứt ra được ae ạ 👻`
-                        ],
-                        comedy: [
-                            `Cười đau cả bụng, diễn viên tấu hài ác thật 🤣`,
-                            `Đang stress xem bộ này xả xì trét cực mạnh luôn kkk 😂`,
-                            `Bộ này coi cùng lũ bạn thì cười lộn ruột mất 😆`
-                        ],
-                        anime: [
-                            `Nét vẽ 10 điểm, cốt truyện 10 điểm, tuyệt vời! ✨`,
-                            `Hóng ss tiếp theo quá, đoạn kết cuốn thực sự 🤩`,
-                            `Wibu chân chính không thể bỏ qua siêu phẩm này 🌸`
-                        ],
-                        historical: [
-                            `Tạo hình cổ trang bộ này xuất sắc thật sự, đẹp lung linh ⛩️`,
-                            `Nội dung huyền huyễn cực cuốn, xem một mạch hết mấy tập luôn 🐉`,
-                            `Mê phim cổ trang mà lỡ bộ này là tiếc hùi hụi nhé cả nhà 🎎`
-                        ],
-                        scifi: [
-                            `Kỹ xảo viễn tưởng đỉnh quá, nhìn như phim rạp luôn 🛸`,
-                            `Kịch bản hack não thực sự, xem mà phải suy ngẫm mãi 🧠`,
-                            `Ai đam mê khoa học viễn tưởng thì vào điểm danh ngay 👽`
-                        ],
-                        drama: [
-                            `Kịch bản plot twist liên tục, không đoán được đoạn kết luôn 🤯`,
-                            `Diễn viên đóng quá đạt, lột tả tâm lý nhân vật xuất sắc 🎭`,
-                            `Những góc khuất xã hội được bóc trần quá chân thực, đáng xem 🕵️`
-                        ],
-                        generic: [
-                            `Phim này hay quá anh em ơi, lưu lại tối cày thôi! 😍🍿`,
-                            `Ai hóng bộ này giống admin không? Điểm danh phát nào! 🙋‍♂️`,
-                            `Chờ mãi mới có vietsub chuẩn bộ này, cày xuyên đêm thôi! 🎬`,
-                            `Tag ngay đứa bạn thân vào cùng xem cho đỡ buồn nào mọi người 😆`
-                        ]
-                    };
+                // Fallback to text/link post if no image
+                fbRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/feed`, {
+                    message: message,
+                    link: url,
+                    access_token: fallbackToken
+                });
+            }
+            
+            console.log(`✅ Successfully posted: ${slug}`);
+            
+            // Extract the Post ID. Photos API returns 'post_id' inside the response or just 'id'
+            const postId = fbRes.data.post_id || fbRes.data.id;
+            
+            if (postId) {
+                // Context-aware Comments
+                const commentTemplates = {
+                    action: [
+                        `Pha hành động cuối đỉnh vãi chưởng, ae xem chưa? 🔥`,
+                        `Phim cuốn dã man, đánh đấm mãn nhãn luôn ae ạ 🥊`,
+                        `Ai mê phim hành động mà bỏ qua bộ này là tiếc lắm nhé! 💥`
+                    ],
+                    romance: [
+                        `Nam chính/nữ chính ngọt ngào quá đi mất 😍💖`,
+                        `Cày bộ này khóc hết mấy cuộn giấy vệ sinh luôn mng ơi 😭`,
+                        `Mong hai anh chị tới với nhau quá, phim hay dã man 💕`
+                    ],
+                    horror: [
+                        `Hú vía mấy đoạn hù dọa, đang đêm xem sợ rớt tim ra ngoài 💀`,
+                        `Thề luôn là phim ám ảnh cực kỳ, ai yếu bóng vía đừng xem 😱`,
+                        `Kinh dị mà cuốn quá không dứt ra được ae ạ 👻`
+                    ],
+                    comedy: [
+                        `Cười đau cả bụng, diễn viên tấu hài ác thật 🤣`,
+                        `Đang stress xem bộ này xả xì trét cực mạnh luôn kkk 😂`,
+                        `Bộ này coi cùng lũ bạn thì cười lộn ruột mất 😆`
+                    ],
+                    anime: [
+                        `Nét vẽ 10 điểm, cốt truyện 10 điểm, tuyệt vời! ✨`,
+                        `Hóng ss tiếp theo quá, đoạn kết cuốn thực sự 🤩`,
+                        `Wibu chân chính không thể bỏ qua siêu phẩm này 🌸`
+                    ],
+                    historical: [
+                        `Tạo hình cổ trang bộ này xuất sắc thật sự, đẹp lung linh ⛩️`,
+                        `Nội dung huyền huyễn cực cuốn, xem một mạch hết mấy tập luôn 🐉`,
+                        `Mê phim cổ trang mà lỡ bộ này là tiếc hùi hụi nhé cả nhà 🎎`
+                    ],
+                    scifi: [
+                        `Kỹ xảo viễn tưởng đỉnh quá, nhìn như phim rạp luôn 🛸`,
+                        `Kịch bản hack não thực sự, xem mà phải suy ngẫm mãi 🧠`,
+                        `Ai đam mê khoa học viễn tưởng thì vào điểm danh ngay 👽`
+                    ],
+                    drama: [
+                        `Kịch bản plot twist liên tục, không đoán được đoạn kết luôn 🤯`,
+                        `Diễn viên đóng quá đạt, lột tả tâm lý nhân vật xuất sắc 🎭`,
+                        `Những góc khuất xã hội được bóc trần quá chân thực, đáng xem 🕵️`
+                    ],
+                    generic: [
+                        `Phim này hay quá anh em ơi, lưu lại tối cày thôi! 😍🍿`,
+                        `Ai hóng bộ này giống admin không? Điểm danh phát nào! 🙋‍♂️`,
+                        `Chờ mãi mới có vietsub chuẩn bộ này, cày xuyên đêm thôi! 🎬`,
+                        `Tag ngay đứa bạn thân vào cùng xem cho đỡ buồn nào mọi người 😆`
+                    ]
+                };
 
-                    const hypeComments = commentTemplates[genreType] || commentTemplates['generic'];
-                    const randomComment = hypeComments[Math.floor(Math.random() * hypeComments.length)];
+                const hypeComments = commentTemplates[genreType] || commentTemplates['generic'];
+                const randomComment = hypeComments[Math.floor(Math.random() * hypeComments.length)];
 
-                    // Post Comment 1 to boost engagement
-                    await delay(2000);
-                    await axios.post(`https://graph.facebook.com/v19.0/${postId}/comments`, {
-                        message: randomComment,
-                        access_token: FB_PAGE_TOKEN
-                    });
-                    
-                    // Post Comment 2 to re-emphasize the link
-                    await delay(2000);
-                    await axios.post(`https://graph.facebook.com/v19.0/${postId}/comments`, {
-                        message: `👉 Link xem trực tiếp full HD Vietsub không giật lag: ${url}`,
-                        access_token: FB_PAGE_TOKEN
-                    });
-                    console.log(`💬 Added engagement comments to post: ${postId}`);
-                }
+                // Post Comment 1 to boost engagement
+                await delay(2000);
+                await axios.post(`https://graph.facebook.com/v19.0/${postId}/comments`, {
+                    message: randomComment,
+                    access_token: fallbackToken
+                });
+                
+                // Post Comment 2 to re-emphasize the link
+                await delay(2000);
+                await axios.post(`https://graph.facebook.com/v19.0/${postId}/comments`, {
+                    message: `👉 Link xem trực tiếp full HD Vietsub không giật lag: ${url}`,
+                    access_token: fallbackToken
+                });
+                console.log(`💬 Added engagement comments to post: ${postId}`);
             }
             postedMovies.push(slug);
             postedCount++;
