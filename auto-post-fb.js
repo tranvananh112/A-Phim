@@ -65,7 +65,18 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
             const composio = new Composio({ apiKey: COMPOSIO_API_KEY });
             
             const accountsRes = await composio.connectedAccounts.list({});
-            const fbAcc = accountsRes.items.find(a => a.appName === 'facebook' && a.status === 'ACTIVE');
+            
+            // Log actual structure so we can debug if needed
+            console.log('📋 Composio accounts response keys:', JSON.stringify(Object.keys(accountsRes || {})));
+            
+            // Handle different possible response shapes
+            const accountsList = accountsRes?.items || accountsRes?.data || accountsRes?.connectedAccounts || (Array.isArray(accountsRes) ? accountsRes : []);
+            console.log(`📋 Found ${accountsList.length} connected accounts`);
+            
+            const fbAcc = accountsList.find(a => 
+                (a.appName === 'facebook' || a.appName === 'facebook_page' || (a.appUniqueId && a.appUniqueId.includes('facebook'))) 
+                && (a.status === 'ACTIVE' || a.status === 'active')
+            );
             
             if (!fbAcc) {
                 console.error('❌ No active Facebook connection found in Composio!');
