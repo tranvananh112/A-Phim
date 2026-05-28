@@ -233,6 +233,10 @@ select option {
     font-size: 16px !important;
     flex-shrink: 0;
     transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
 }
 
 .mobile-inline-search:focus-within .mobile-inline-search-icon {
@@ -242,6 +246,9 @@ select option {
 .mobile-inline-search-input {
     flex: 1;
     min-width: 0;
+    height: 100%;
+    margin: 0;
+    padding: 0;
     background: transparent !important;
     border: none !important;
     outline: none !important;
@@ -249,11 +256,14 @@ select option {
     color: #fff;
     font-size: 13px;
     font-family: 'Space Grotesk', sans-serif;
+    line-height: normal;
+    -webkit-appearance: none;
 }
 
 .mobile-inline-search-input::placeholder {
     color: rgba(255, 255, 255, 0.38);
     font-size: 12px;
+    line-height: normal;
 }
 
 /* Ẩn hoàn toàn trên desktop */

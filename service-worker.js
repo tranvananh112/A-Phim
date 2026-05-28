@@ -8,10 +8,10 @@
 //   API OPhim           → Stale-While-Revalidate
 // =====================================================
 
-const CACHE_VERSION  = 'aphim-v14';
+const CACHE_VERSION  = 'aphim-v15';
 const FONT_CACHE     = 'aphim-fonts-v1';
 const IMAGE_CACHE    = 'aphim-images-v13';
-const API_CACHE      = 'aphim-api-v4';
+const API_CACHE      = 'aphim-api-v5';
 
 const ALL_CACHES = [CACHE_VERSION, FONT_CACHE, IMAGE_CACHE, API_CACHE];
 
@@ -81,6 +81,15 @@ self.addEventListener('fetch', event => {
     // Versioned assets: an toàn để cache lâu dài
     if (/\.(css|js)(\?.*)?$/.test(url.pathname)) {
         event.respondWith(cacheFirst(request, CACHE_VERSION));
+        return;
+    }
+
+    // ── X. Database/API/Config — Network First ────────
+    if (url.hostname.includes('firestore') || 
+        url.hostname.includes('firebaseio') || 
+        url.hostname.includes('api.') || 
+        url.pathname.endsWith('.json')) {
+        event.respondWith(networkFirst(request, API_CACHE));
         return;
     }
 
