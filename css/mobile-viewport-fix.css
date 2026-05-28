@@ -216,10 +216,12 @@ select option {
     background: rgba(255, 255, 255, 0.07);
     border: 1px solid rgba(255, 255, 255, 0.10);
     border-radius: 9999px;
-    padding: 0 10px;
+    padding: 0 10px !important;
     gap: 6px !important;
     margin: 0 8px;
     transition: border-color 0.2s ease, background 0.2s ease;
+    box-sizing: border-box !important;
+    overflow: hidden;
 }
 
 .mobile-inline-search:focus-within {
@@ -233,10 +235,13 @@ select option {
     font-size: 16px !important;
     flex-shrink: 0;
     transition: color 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
 }
 
 .mobile-inline-search:focus-within .mobile-inline-search-icon {
@@ -244,20 +249,23 @@ select option {
 }
 
 .mobile-inline-search-input {
-    flex: 1;
-    min-width: 0;
-    height: 100%;
-    margin: 0;
-    padding: 0;
+    flex: 1 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
     background: transparent !important;
     border: none !important;
     outline: none !important;
     box-shadow: none !important;
     color: #fff;
-    font-size: 13px;
+    font-size: 13px !important;
     font-family: 'Space Grotesk', sans-serif;
-    line-height: normal;
-    -webkit-appearance: none;
+    line-height: 30px !important;
+    -webkit-appearance: none !important;
+    box-sizing: border-box !important;
+    vertical-align: middle !important;
 }
 
 .mobile-inline-search-input::placeholder {

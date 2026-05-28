@@ -41,13 +41,6 @@ nav.pt-safe,
     /* PWA mode detected - apply safe area fixes */
 
     /* BODY - Only horizontal and bottom padding */
-    body {
-        padding-top: 0px !important;
-        padding-right: var(--sar) !important;
-        padding-bottom: var(--sab) !important;
-        padding-left: var(--sal) !important;
-    }
-
     /* NAVIGATION HEADER - Push down from notch */
     nav,
     header,
@@ -484,10 +477,6 @@ nav.pt-safe,
 /* iPhone X, XS, 11 Pro, 12 mini, 13 mini (notch) */
 @supports (padding: max(0px)) {
     @media (display-mode: standalone) {
-        body {
-            padding-top: max(var(--sat), 44px) !important;
-        }
-
         nav,
         header {
             padding-top: max(calc(var(--sat) + 12px), 56px) !important;
@@ -498,10 +487,6 @@ nav.pt-safe,
 /* iPhone 14 Pro, 15 Pro (Dynamic Island) */
 @supports (padding: max(0px)) {
     @media (display-mode: standalone) and (min-height: 852px) {
-        body {
-            padding-top: max(var(--sat), 59px) !important;
-        }
-
         nav,
         header {
             padding-top: max(calc(var(--sat) + 12px), 71px) !important;
@@ -515,10 +500,6 @@ nav.pt-safe,
 @media (display-mode: standalone) {
     /* Android typically has smaller safe areas */
     @supports not (padding: env(safe-area-inset-top)) {
-        body {
-            padding-top: 24px !important;
-        }
-
         nav,
         header {
             padding-top: 36px !important;
