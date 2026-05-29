@@ -61,13 +61,15 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 
     if (!graphApiValid && COMPOSIO_API_KEY) {
         try {
-            const { Composio } = require('composio-core');
-            const composio = new Composio({ apiKey: COMPOSIO_API_KEY });
+            console.log(`2026-05-29 - Fetching Composio accounts via direct REST API...`);
             
-            const accountsRes = await composio.connectedAccounts.list({});
+            const accountsReq = await axios.get('https://backend.composio.dev/api/v1/connectedAccounts', {
+                headers: { 'x-api-key': COMPOSIO_API_KEY }
+            });
             
+            const accountsRes = accountsReq.data;
             // Log actual structure so we can debug if needed
-            console.log('📋 Composio accounts response keys:', JSON.stringify(Object.keys(accountsRes || {})));
+            console.log('📋 Composio accounts response keys:', Object.keys(accountsRes || {}));
             
             // Handle different possible response shapes
             const accountsList = accountsRes?.items || accountsRes?.data || accountsRes?.connectedAccounts || (Array.isArray(accountsRes) ? accountsRes : []);
