@@ -63,7 +63,7 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
         try {
             console.log(`2026-05-29 - Fetching Composio accounts via direct REST API...`);
             
-            const accountsReq = await axios.get('https://backend.composio.dev/api/v1/connectedAccounts', {
+            const accountsReq = await axios.get('https://backend.composio.dev/api/v3/connected_accounts', {
                 headers: { 'x-api-key': COMPOSIO_API_KEY }
             });
             
