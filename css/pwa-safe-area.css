@@ -103,9 +103,9 @@ nav.pt-safe,
     }
 
     /* MAIN CONTENT - Minimal padding-top in PWA mode */
-    body.profile-page main {
-        padding-top: 60px !important;
-        /* Reduced from 70px */
+    body.profile-page main,
+    body.profile-page #profileMain {
+        padding-top: calc(var(--sat) + 68px) !important;
     }
 
     /* PROFILE HERO CARD - NO extra margin */
@@ -164,7 +164,20 @@ nav.pt-safe,
    SPECIFIC PAGE FIXES
    ============================================ */
 
+/* WATCH PAGE - Trang xem phim */
+@media (display-mode: standalone) {
+    body.watch-page {
+        padding-top: 0 !important;
+    }
+
+    /* Main content phải tránh nav có safe area */
+    body.watch-page #watchMain {
+        padding-top: calc(var(--sat) + 68px) !important;
+    }
+}
+
 /* PROFILE PAGE */
+
 @media (display-mode: standalone) {
 
     /* Profile page body */

@@ -81,6 +81,7 @@
     <link rel="stylesheet" href="css/chat-mobile-fixed.css?v=65">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons"
         rel="stylesheet">
+    <link rel="stylesheet" href="css/pwa-safe-area.css?v=3">
     <link rel="stylesheet" href="css/mobile-viewport-fix.css?v=36">
     <link rel="stylesheet" href="css/mobile-menu-modern.css?v=38">
     <link rel="stylesheet" href="css/progressive-image.css?v=13">
@@ -606,7 +607,7 @@
 </style>
 </head>
 
-<body class="bg-background-dark text-gray-100 font-display min-h-screen flex flex-col">
+<body class="bg-background-dark text-gray-100 font-display min-h-screen flex flex-col watch-page">
     <!-- Ambient Background (7 Orbs for Full Coverage) -->
     <div class="ambient-bg">
         <div class="ambient-orb ambient-orb-1"></div>
@@ -808,7 +809,7 @@
         }
     </script>
 
-    <main class="flex-grow max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 pt-24 pb-8">
+    <main class="flex-grow max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 pt-24 pb-8" id="watchMain">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-6 items-start">
             
             <!-- CỘT TRÁI (Chiếm ~70% - lg:col-span-8) -->
