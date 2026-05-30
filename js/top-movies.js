@@ -49,6 +49,16 @@ function renderTopMovies(movies) {
         // Episode & Info Badges
         const episodes = movie.episode_current || '';
         
+        // Normalize episode label: tránh "Tập Tập X" và "Tập Trailer"
+        let episodeLabel = '';
+        if (episodes) {
+            if (/trailer/i.test(episodes) || /^tập/i.test(episodes)) {
+                episodeLabel = episodes; // Giữ nguyên "Trailer" hoặc "Tập 4"
+            } else {
+                episodeLabel = `Tập ${episodes}`; // Thêm "Tập" vào trước số
+            }
+        }
+
         return `
             <div class="ranking-item group" data-rank="${rank}">
                 <a href="${detailUrl}">
@@ -80,12 +90,13 @@ function renderTopMovies(movies) {
                         <div class="ranking-text-content">
                             <h3 class="ranking-title">${movie.name}</h3>
                             <p class="ranking-sub">${movie.origin_name || ''}</p>
-                            ${episodes ? `<p class="ranking-extra">Tập ${episodes}</p>` : ''}
+                            ${episodeLabel ? `<p class="ranking-extra">${episodeLabel}</p>` : ''}
                         </div>
                     </div>
                 </a>
             </div>
         `;
+
     }).join('');
 }
 
