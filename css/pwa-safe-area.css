@@ -176,7 +176,19 @@ nav.pt-safe,
     }
 }
 
+/* PRICING PAGE - Trang thanh toán */
+@media (display-mode: standalone) {
+    body.pricing-page {
+        padding-top: 0 !important;
+    }
+
+    body.pricing-page #pricingMain {
+        padding-top: calc(var(--sat) + 68px) !important;
+    }
+}
+
 /* PROFILE PAGE */
+
 
 @media (display-mode: standalone) {
 
