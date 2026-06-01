@@ -143,7 +143,8 @@ function switchHeroSlide(newIndex, skipThumbnailHighlight, isAutoReturn) {
     const movie = heroSlides[newIndex];
 
     // Preload ảnh mới NGAY (song song với fade out)
-    const rawUrl = movie.poster_url || movie.thumb_url;
+    const isMobile = window.innerWidth < 768;
+    const rawUrl = isMobile ? (movie.thumb_url || movie.poster_url) : (movie.poster_url || movie.thumb_url);
     const optUrl = buildImageUrl(rawUrl, 1200);
     if (optUrl) {
         const preImg = new Image();
@@ -510,7 +511,8 @@ function preloadSlideImages(movies) {
     // Delay nhẹ để không tranh băng thông với initial hero image
     setTimeout(() => {
         movies.forEach((movie, i) => {
-            const rawUrl = movie.poster_url || movie.thumb_url;
+            const isMobile = window.innerWidth < 768;
+            const rawUrl = isMobile ? (movie.thumb_url || movie.poster_url) : (movie.poster_url || movie.thumb_url);
             if (!rawUrl) return;
             const url = buildImageUrl(rawUrl, 1200);
             if (url) {
@@ -575,7 +577,8 @@ function previewHeroPoster(movie) {
     if (!heroImage || !movie) return;
 
     // Use poster_url (large cover image) NOT thumb_url
-    const posterUrl = movie.poster_url || movie.thumb_url;
+    const isMobile = window.innerWidth < 768;
+    const posterUrl = isMobile ? (movie.thumb_url || movie.poster_url) : (movie.poster_url || movie.thumb_url);
     if (!posterUrl) return;
 
     const optUrl = buildImageUrl(posterUrl, 1200);
@@ -606,7 +609,8 @@ function returnToCurrentSlide(slideIndex) {
     const heroImage = document.getElementById('heroImage');
     if (!heroImage) return;
 
-    const posterUrl = movie.poster_url || movie.thumb_url;
+    const isMobile = window.innerWidth < 768;
+    const posterUrl = isMobile ? (movie.thumb_url || movie.poster_url) : (movie.poster_url || movie.thumb_url);
     if (!posterUrl) return;
 
     const optUrl = buildImageUrl(posterUrl, 1200);
@@ -639,7 +643,9 @@ function renderHeroBannerContent(movie, isInstant) {
     const heroImage = document.getElementById('heroImage');
     if (!heroImage) return;
 
-    const optUrl = buildImageUrl(movie.poster_url || movie.thumb_url, 1200);
+    const isMobile = window.innerWidth < 768;
+    const rawUrl = isMobile ? (movie.thumb_url || movie.poster_url) : (movie.poster_url || movie.thumb_url);
+    const optUrl = buildImageUrl(rawUrl, 1200);
     if (!optUrl) return;
 
     heroImage.setAttribute('data-current-src', optUrl);
