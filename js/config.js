@@ -11,23 +11,27 @@ const ADMIN_CONFIG = {
 };
 
 // API Configuration
-// ─── DYNAMIC AUTO-FAILOVER BACKEND RESOLVER ───
-// Fixes old backend expiring tomorrow by auto-detecting and promoting the new one
+// ─── RAILWAY BACKEND v3 (e45a) — Deployed 2026-06-01 ───
 const BACKEND_OPTIONS = {
-    NEW: 'https://a-phim-production-523d.up.railway.app',
-    OLD: 'https://a-phim-production-c87b.up.railway.app'
+    NEW: 'https://a-phim-production-e45a.up.railway.app',  // ✅ ACTIVE — Railway mới 2026-06-01
+    OLD: 'https://a-phim-production-523d.up.railway.app'   // ❌ Expired
 };
 
-// Retrieve active backend. Defaults to OLD until NEW is responsive, or OLD dies.
-let chosenBackend = localStorage.getItem('cinestream_active_backend') || BACKEND_OPTIONS.OLD;
-
-if (localStorage.getItem('cinestream_new_backend_active') === 'true') {
-    chosenBackend = BACKEND_OPTIONS.NEW;
-}
+// Luôn dùng backend mới, chỉ fallback localhost khi dev
+let chosenBackend = BACKEND_OPTIONS.NEW;
 
 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     chosenBackend = 'http://localhost:5000';
 }
+
+// Clear cache cũ để không bị stuck ở backend đã hết hạn
+try {
+    const cached = localStorage.getItem('cinestream_active_backend');
+    if (cached && cached !== BACKEND_OPTIONS.NEW && cached !== 'http://localhost:5000') {
+        localStorage.removeItem('cinestream_active_backend');
+        localStorage.removeItem('cinestream_new_backend_active');
+    }
+} catch(e) {}
 
 // Default Fallback configuration
 const API_CONFIG = {
@@ -234,41 +238,23 @@ window.getHiddenMovieOverlay = function(slug) {
 };
 
 
-// 🚀 AUTO-SWITCH ENGINE: Background Active Probe to Promote NEW Backend when online
-(async function probeAndMigrateBackend() {
+// 🚀 BACKEND HEALTH CHECK: Kiểm tra backend mới có sống không, log ra console
+(async function checkNewBackend() {
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
     
-    const checkUrl = `${BACKEND_OPTIONS.NEW}/api/settings/public`;
     try {
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 4000); // 4s timeout
-        const res = await fetch(checkUrl, { signal: controller.signal });
+        const timeout = setTimeout(() => controller.abort(), 5000);
+        const res = await fetch(`${BACKEND_OPTIONS.NEW}/api/settings/public`, { signal: controller.signal });
         clearTimeout(timeout);
         
         if (res.ok) {
-            console.log('🚀 [Backend Resolver] SUCCESS: New Railway backend is online! Setting as primary.');
-            localStorage.setItem('cinestream_active_backend', BACKEND_OPTIONS.NEW);
-            localStorage.setItem('cinestream_new_backend_active', 'true');
-            API_CONFIG.BACKEND_URL = BACKEND_OPTIONS.NEW + '/api';
+            console.log('✅ [Backend] Railway e45a is online and healthy.');
         } else {
-            console.log('⚠️ [Backend Resolver] New Railway backend returned non-ok status:', res.status, '(Staying on fallback today)');
+            console.warn('⚠️ [Backend] Railway e45a returned status:', res.status);
         }
     } catch (e) {
-        console.warn('⚠️ [Backend Resolver] Probe on new backend failed (not fully booted yet):', e.message);
-        
-        // Auto-Failover: Check if OLD backend has expired completely
-        try {
-            const testOld = await fetch(`${BACKEND_OPTIONS.OLD}/api/settings/public`);
-            if (!testOld.ok) {
-                console.warn('🚨 [Backend Resolver] ALERT: Old backend is offline! Auto-promoting new backend to maintain continuity.');
-                localStorage.setItem('cinestream_active_backend', BACKEND_OPTIONS.NEW);
-                localStorage.setItem('cinestream_new_backend_active', 'true');
-            }
-        } catch (oldErr) {
-            console.warn('🚨 [Backend Resolver] CRITICAL: Old backend is fully down! Auto-switching to new railway.');
-            localStorage.setItem('cinestream_active_backend', BACKEND_OPTIONS.NEW);
-            localStorage.setItem('cinestream_new_backend_active', 'true');
-        }
+        console.warn('⚠️ [Backend] Could not reach Railway e45a:', e.message);
     }
 })();
 
