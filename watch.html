@@ -204,17 +204,23 @@
         /* ── LỚP 3: Các thành phần con bên trong (Comments, Input boxes, Episodes, Buttons) ── */
         .bg-layer-3,
         .ap-cmt-guest,
-        .ap-cmt-form-logged,
         .comment-item,
         #comments-section div.bg-\[\#323447\],
         #comments-section .bg-\[\#282a3a\],
-        #comments-section textarea,
-        #comments-section input,
         .ap-ava-dropdown,
         .ap-dropdown-menu {
             background-color: #252836 !important;
             background: #252836 !important;
             border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        }
+
+        .ap-cmt-form-logged {
+            background: rgba(30, 33, 42, 0.85) !important; 
+            border: 1px solid rgba(255, 255, 255, 0.05) !important; 
+            border-radius: 20px !important; 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+            backdrop-filter: blur(12px) !important; 
+            -webkit-backdrop-filter: blur(12px) !important;
         }
 
         /* ── Override styles cho từng comment & input bên trong ── */
@@ -223,10 +229,20 @@
         }
         .ap-cmt-textarea, .ap-cmt-textarea::placeholder, #commentInput::placeholder {
             color: rgba(255, 255, 255, 0.4) !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
         }
         .ap-form-user-bar {
-            background-color: rgba(255, 255, 255, 0.02) !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+            background: transparent !important;
+            border-bottom: none !important;
+        }
+        .ap-form-footer-wrap {
+            background: rgba(0, 0, 0, 0.15) !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.03) !important;
+        }
+        .ap-spoiler-row, .ap-form-footer {
+            border-top: none !important;
         }
         .ap-dropdown-item {
             color: #e5e7eb !important;
@@ -971,9 +987,9 @@
                 </div>
                 </div> <!-- End Player & Controls Integrated Wrapper -->
     <!-- [INLINE-AD-PREMIUM] APhim Premium Placement -->
-    <div class="aphim-inline-ad aphim-inline-ad--premium">
+    <div class="aphim-inline-ad">
         <span class="aphim-inline-ad-label">Quảng cáo</span>
-        <div class="aphim-inline-ad-inner" data-always-slideshow data-no-padding>
+        <div class="aphim-inline-ad-inner">
             <a class="aphim-inline-ad-item" href="http://vsbet191.com/p/BSYk" target="_blank" rel="noopener nofollow" aria-label="VSBet">
                 <img src="/ads/catfish/vsbet.gif" alt="VSBet" loading="lazy">
             </a>
@@ -1159,7 +1175,7 @@
     <!-- [INLINE-AD] APhim Partner Banners -->
     <div class="aphim-inline-ad">
         <span class="aphim-inline-ad-label">Quảng cáo</span>
-        <div class="aphim-inline-ad-inner" data-always-slideshow data-no-padding>
+        <div class="aphim-inline-ad-inner">
             <a class="aphim-inline-ad-item" href="http://vsbet191.com/p/BSYk" target="_blank" rel="noopener nofollow" aria-label="VSBet">
                 <img src="/ads/catfish/vsbet.gif" alt="VSBet" loading="lazy">
             </a>

@@ -271,13 +271,22 @@
 
         /* ── BOX ĐÃ ĐĂNG NHẬP (LẤY LẠI GIAO DIỆN CŨ ĐẸP) ── */
         .ap-cmt-form-logged {
-            background: #323447; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; 
-            overflow: hidden; transition: border-color 0.2s ease; margin-bottom:24px;
+            background: rgba(30, 33, 42, 0.85); 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            border-radius: 20px; 
+            overflow: hidden; 
+            transition: all 0.3s ease; 
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
         }
-        .ap-cmt-form-logged:focus-within { border-color: rgba(255,255,255,0.55); }
+        .ap-cmt-form-logged:focus-within { 
+            border-color: rgba(252, 213, 118, 0.3); 
+            box-shadow: 0 8px 32px rgba(252, 213, 118, 0.05);
+        }
         .ap-form-user-bar {
-            display: flex; align-items: center; gap: 10px; padding: 12px 16px;
-            border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02);
+            display: flex; align-items: center; gap: 10px; padding: 14px 18px 4px 18px;
+            background: transparent; border-bottom: none;
         }
         .ap-form-user-ava {
             width: 32px; height: 32px; border-radius: 50%;
@@ -299,22 +308,29 @@
 
         .ap-cmt-textarea {
             width: 100%; box-sizing: border-box !important; background: transparent; border: none; outline: none;
-            color: #e5e7eb; font-size: 13px; line-height: 1.5;
-            padding: 10px 14px; resize: none; font-family: inherit;
-            box-sizing: border-box; min-height: 40px; max-height: 160px;
+            color: #e5e7eb; font-size: 14px; line-height: 1.6;
+            padding: 10px 18px; resize: none; font-family: inherit;
+            box-sizing: border-box; min-height: 60px; max-height: 160px;
             -webkit-appearance: none; box-shadow: none !important; border-radius: 0;
             overflow-y: auto;
         }
-        .ap-cmt-textarea::placeholder { color: #6b7280; }
+        .ap-cmt-textarea::placeholder { color: #6b7280; font-weight: 400; }
+
+        .ap-form-footer-wrap {
+            display: flex; flex-direction: column;
+            background: rgba(0, 0, 0, 0.15); /* Seamless slight contrast */
+            padding: 12px 18px;
+            border-top: 1px solid rgba(255,255,255,0.03);
+        }
 
         .ap-form-footer { flex-wrap: wrap; gap: 8px;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 10px 16px; border-top: 1px solid rgba(255,255,255,0.06);
+            padding: 0; border-top: none;
         }
         
         /* Chuyển Slider UI (Spoiler Toggle) của cũ */
         .ap-spoiler-row {
-            display: flex; align-items: center; gap: 10px; padding: 8px 16px; border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; gap: 10px; padding: 0 0 12px 0; border-top: none;
         }
         .ap-toggle-wrap { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
         .ap-toggle { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
@@ -618,6 +634,30 @@
             }
             .ap-form-footer { flex-wrap: wrap !important; gap: 6px !important; padding: 8px 12px !important; }
             .ap-cmt-textarea { font-size: 14px !important; }
+            
+            .ap-form-user-bar {
+                flex-wrap: nowrap !important;
+                gap: 6px !important;
+                padding: 12px 14px 4px 14px !important;
+            }
+            .ap-form-user-name {
+                font-size: 12px !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                max-width: 30vw !important;
+            }
+            .ap-form-user-badge {
+                font-size: 10px !important;
+                white-space: nowrap !important;
+                padding: 2px 6px !important;
+            }
+            .ap-form-logout-btn {
+                font-size: 10px !important;
+                white-space: nowrap !important;
+                padding: 4px 6px !important;
+                margin-left: auto !important;
+            }
 
             .ap-dropdown-menu { right: 0 !important; left: auto !important; max-width: 80vw !important; }
             .ap-ava-dropdown { right: 0 !important; max-width: 75vw !important; }
@@ -703,29 +743,31 @@
                 <button class="ap-form-logout-btn" onclick="try{ authService.logout(); } catch(e){ window.location.href = 'login.html'; }">Đăng xuất</button>
             </div>
             <textarea class="ap-cmt-textarea" id="ap-input-${pid}" placeholder="Chia sẻ cảm nhận của bạn về bộ phim này..." maxlength="1000"></textarea>
-            <div class="ap-spoiler-row">
-                <label class="ap-toggle-wrap">
-                    <span class="ap-toggle">
-                        <input type="checkbox" id="ap-spoiler-${pid}" onchange="this.parentElement.nextElementSibling.classList.toggle('active', this.checked)">
-                        <span class="ap-toggle-track"></span>
-                        <span class="ap-toggle-thumb"></span>
-                    </span>
-                    <span class="ap-spoiler-label">Tiết lộ nội dung?</span>
-                </label>
-            </div>
-            <div class="ap-form-footer">
-                <span class="ap-char-count" id="ap-count-${pid}">0 / 1000</span>
-                <div class="ap-ava-select" id="ap-ava-select-${pid}">
-                    <button class="ap-btn-ava" onclick="document.getElementById('ap-ava-drop-${pid}').classList.toggle('show')">
-                        ${previewHtml} Chọn đổi ảnh
-                    </button>
-                    <div class="ap-ava-dropdown" id="ap-ava-drop-${pid}">
-                        ${optionsHtml}
-                    </div>
+            <div class="ap-form-footer-wrap">
+                <div class="ap-spoiler-row">
+                    <label class="ap-toggle-wrap">
+                        <span class="ap-toggle">
+                            <input type="checkbox" id="ap-spoiler-${pid}" onchange="this.parentElement.nextElementSibling.classList.toggle('active', this.checked)">
+                            <span class="ap-toggle-track"></span>
+                            <span class="ap-toggle-thumb"></span>
+                        </span>
+                        <span class="ap-spoiler-label">Tiết lộ nội dung?</span>
+                    </label>
                 </div>
-                <button class="ap-send-btn" onclick="window.submitComment('${submitPid}', '${pid}')" id="ap-btn-${pid}" disabled style="margin-left:12px;">
-                    Gửi <span class="material-icons-round" style="font-size:16px">send</span>
-                </button>
+                <div class="ap-form-footer">
+                    <span class="ap-char-count" id="ap-count-${pid}">0 / 1000</span>
+                    <div class="ap-ava-select" id="ap-ava-select-${pid}">
+                        <button class="ap-btn-ava" onclick="document.getElementById('ap-ava-drop-${pid}').classList.toggle('show')">
+                            ${previewHtml} Chọn đổi ảnh
+                        </button>
+                        <div class="ap-ava-dropdown" id="ap-ava-drop-${pid}">
+                            ${optionsHtml}
+                        </div>
+                    </div>
+                    <button class="ap-send-btn" onclick="window.submitComment('${submitPid}', '${pid}')" id="ap-btn-${pid}" disabled style="margin-left:12px;">
+                        Gửi <span class="material-icons-round" style="font-size:16px">send</span>
+                    </button>
+                </div>
             </div>
         </div>
         `;
