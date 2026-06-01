@@ -63,14 +63,14 @@ function renderMovieDetail(movie) {
     // Update poster
     const posterImg = document.querySelector('.aspect-\\[2\\/3\\] img');
     if (posterImg) {
-        posterImg.src = movieAPI.getImageURL(movie.poster_url || movie.thumb_url, 600, 85, true);
+        posterImg.src = movieAPI.getImageURL(movie.thumb_url || movie.poster_url, 600, 85, true);
         posterImg.alt = `Xem Phim ${movie.name} (${movie.year}) Full HD Vietsub tại APhim`;
     }
 
     // Update background
     const bgImg = document.querySelector('.absolute.top-0 img');
     if (bgImg) {
-        bgImg.src = movieAPI.getImageURL(movie.thumb_url, 1200, 90, true);
+        bgImg.src = movieAPI.getImageURL(movie.poster_url || movie.thumb_url, 1200, 90, true);
     }
 
     // Update title

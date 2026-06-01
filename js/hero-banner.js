@@ -564,39 +564,7 @@ function renderThumbnails(movies) {
         });
     });
 
-    // Hover preview - show large poster in hero banner (desktop only)
-    let hoverTimer = null;
-    let isPreviewMode = false;
-    let savedSlideIndex = currentSlideIndex;
-
-    container.querySelectorAll('.hero-thumb-item').forEach(el => {
-        el.addEventListener('mouseenter', (e) => {
-            // Only on desktop
-            if (window.innerWidth <= 768) return;
-
-            const movieIndex = parseInt(el.getAttribute('data-movie-index'));
-            const movie = movies[movieIndex];
-            if (!movie) return;
-
-            // Debounce hover - wait 200ms before showing preview
-            hoverTimer = setTimeout(() => {
-                if (!isPreviewMode) {
-                    savedSlideIndex = currentSlideIndex;
-                    isPreviewMode = true;
-                }
-                previewHeroPoster(movie);
-            }, 200);
-        });
-
-        el.addEventListener('mouseleave', () => {
-            clearTimeout(hoverTimer);
-            if (isPreviewMode) {
-                isPreviewMode = false;
-                // Return to current slide
-                returnToCurrentSlide(savedSlideIndex);
-            }
-        });
-    });
+    // Hover preview removed per user request
 }
 
 // ================================================================

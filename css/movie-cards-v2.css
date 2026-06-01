@@ -15,7 +15,7 @@
         transform 0.32s cubic-bezier(0.4, 0, 0.2, 1),
         box-shadow 0.32s cubic-bezier(0.4, 0, 0.2, 1),
         border-color 0.32s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform, box-shadow;
+    /* will-change: transform, box-shadow; Disabled for scroll performance */
     flex: none;
     width: 100px;
     scroll-snap-align: start;
