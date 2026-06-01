@@ -86,9 +86,45 @@ function renderMovieDetail(movie) {
         `;
     }
 
-    // ✅ Update breadcrumb — hiện tên phim thực thay vì hardcode
+    // ✅ Update breadcrumb — hiện tên phim thực thay vì hardcode và thêm danh mục
     const breadcrumb = document.getElementById('breadcrumb-movie-name');
-    if (breadcrumb) breadcrumb.textContent = movie.name;
+    if (breadcrumb) {
+        breadcrumb.textContent = movie.name;
+        
+        if (!document.getElementById('breadcrumb-category')) {
+            let categoryName = '';
+            let categoryLink = '';
+            
+            if (movie.type === 'series') {
+                categoryName = 'Phim Bộ';
+                categoryLink = 'danh-sach.html?list=phim-bo';
+            } else if (movie.type === 'single') {
+                categoryName = 'Phim Lẻ';
+                categoryLink = 'danh-sach.html?list=phim-le';
+            } else if (movie.type === 'hoathinh') {
+                categoryName = 'Hoạt Hình';
+                categoryLink = 'danh-sach.html?list=hoat-hinh';
+            } else if (movie.type === 'tvshows') {
+                categoryName = 'TV Shows';
+                categoryLink = 'danh-sach.html?list=tv-shows';
+            }
+            
+            if (categoryName) {
+                const separator = document.createElement('span');
+                separator.className = 'material-icons-round text-base';
+                separator.textContent = 'chevron_right';
+                
+                const categoryElement = document.createElement('a');
+                categoryElement.id = 'breadcrumb-category';
+                categoryElement.className = 'hover:text-white transition-colors whitespace-nowrap';
+                categoryElement.href = categoryLink;
+                categoryElement.textContent = categoryName;
+                
+                breadcrumb.parentNode.insertBefore(categoryElement, breadcrumb);
+                breadcrumb.parentNode.insertBefore(separator, breadcrumb);
+            }
+        }
+    }
 
     // Update info
     const infoContainer = document.querySelector('.movie-info-container') || document.querySelector('.flex.flex-wrap.items-center.gap-4.mb-8');
