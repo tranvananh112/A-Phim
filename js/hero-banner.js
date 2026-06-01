@@ -712,9 +712,15 @@ async function fetchLatestEpisodeCount(movie) {
             const serverData = eps[0]?.server_data;
             if (Array.isArray(serverData) && serverData.length > 0) {
                 const count = serverData.length;
-                const match = latestEpLabel.match(/\d+/);
-                const storedNum = match ? parseInt(match[0]) : 0;
-                if (count > storedNum) latestEpLabel = `Tập ${count}`;
+                
+                // Preserve 'Full' if it's a single movie or already labeled as Full
+                if (latestEpLabel.toLowerCase().includes('full') || (item.type === 'single' && count === 1)) {
+                    latestEpLabel = 'Full';
+                } else {
+                    const match = latestEpLabel.match(/\d+/);
+                    const storedNum = match ? parseInt(match[0]) : 0;
+                    if (count > storedNum) latestEpLabel = `Tập ${count}`;
+                }
             }
         }
         if (!latestEpLabel) return;
