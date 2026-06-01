@@ -236,11 +236,20 @@ function updateHeroBannerText(movie) {
 
     if (heroBadges) {
         const rating = movie.tmdb?.vote_average ? movie.tmdb.vote_average.toFixed(1) : 'N/A';
+        
+        let epText = movie.episode_current || '';
+        if (epText) {
+            const lcText = epText.toLowerCase().trim();
+            if (lcText === 'tập' || lcText === 'tập ' || lcText.includes('hoàn tất') || lcText.includes('full')) {
+                epText = 'Full';
+            }
+        }
+
         heroBadges.innerHTML = `
             <span class="bg-black/30 text-[#fcd576] border border-[#fcd576] px-3 py-1 rounded font-bold backdrop-blur-sm shadow-[0_2px_8px_rgba(252,211,77,0.15)]">IMDb ${rating}</span>
             <span class="border border-white/40 px-3 py-1 rounded bg-black/30 backdrop-blur-sm text-white font-bold">${movie.year || '2024'}</span>
-            ${movie.episode_current
-                ? `<span data-ep-badge class="border border-white/40 px-3 py-1 rounded bg-black/30 backdrop-blur-sm text-white font-bold">${movie.episode_current}</span>`
+            ${epText
+                ? `<span data-ep-badge class="border border-white/40 px-3 py-1 rounded bg-black/30 backdrop-blur-sm text-white font-bold">${epText}</span>`
                 : `<span data-ep-badge class="border border-white/40 px-3 py-1 rounded bg-black/30 backdrop-blur-sm text-white font-bold hidden"></span>`}
             <span class="bg-[#fcd576] text-black px-3 py-1 rounded font-extrabold text-xs uppercase ml-2 shadow-[0_0_12px_rgba(252,211,77,0.25)]">${movie.quality || 'HD'}</span>
         `;
@@ -713,13 +722,18 @@ async function fetchLatestEpisodeCount(movie) {
             if (Array.isArray(serverData) && serverData.length > 0) {
                 const count = serverData.length;
                 
+                const lcLabel = latestEpLabel.toLowerCase().trim();
                 // Preserve 'Full' if it's a single movie or already labeled as Full
-                if (latestEpLabel.toLowerCase().includes('full') || (item.type === 'single' && count === 1)) {
+                if (item.type === 'single' || lcLabel.includes('full') || lcLabel.includes('hoàn tất')) {
                     latestEpLabel = 'Full';
                 } else {
                     const match = latestEpLabel.match(/\d+/);
                     const storedNum = match ? parseInt(match[0]) : 0;
-                    if (count > storedNum) latestEpLabel = `Tập ${count}`;
+                    if (count > storedNum) {
+                        latestEpLabel = `Tập ${count}`;
+                    } else if (lcLabel === 'tập' || lcLabel === 'tập ') {
+                        latestEpLabel = count > 0 ? `Tập ${count}` : 'Full';
+                    }
                 }
             }
         }
