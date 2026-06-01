@@ -9,6 +9,22 @@
         }
     </script>
     <meta charset="UTF-8">
+    <!-- ✅ SEO: Canonical động cho trang xem phim -->
+    <script>
+        (function() {
+            var p = new URLSearchParams(window.location.search);
+            var slug = p.get('slug');
+            var ep = p.get('ep');
+            var link = document.createElement('link');
+            link.rel = 'canonical';
+            if (slug) {
+                link.href = 'https://aphim.io.vn/watch.html?slug=' + encodeURIComponent(slug) + (ep ? '&ep=' + encodeURIComponent(ep) : '');
+            } else {
+                link.href = 'https://aphim.io.vn/watch.html';
+            }
+            document.head.appendChild(link);
+        })();
+    </script>
     <meta name="description" content="APhim - Website xem phim online Full HD miễn phí, cập nhật phim mới nhất 2026, Phim Vietsub, Thuyết Minh, Phim Lồng Tiếng chất lượng cao." />
     <meta property="og:description" content="APhim - Website xem phim online Full HD miễn phí, cập nhật phim mới nhất 2026, Phim Vietsub, Thuyết Minh, Phim Lồng Tiếng chất lượng cao." />
     <meta property="twitter:description" content="APhim - Website xem phim online Full HD miễn phí, cập nhật phim mới nhất 2026, Phim Vietsub, Thuyết Minh, Phim Lồng Tiếng chất lượng cao." />

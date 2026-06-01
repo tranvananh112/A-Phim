@@ -3,6 +3,18 @@
 
 <head>
     <meta charset="UTF-8">
+    <link rel="canonical" href="https://aphim.io.vn/danh-sach.html" />
+    <script>
+        // ✅ SEO: Canonical động cho ?list= URL để tránh 514 trang duplicate
+        (function() {
+            var p = new URLSearchParams(window.location.search);
+            var list = p.get('list');
+            if (list) {
+                var link = document.querySelector('link[rel="canonical"]');
+                if (link) link.href = 'https://aphim.io.vn/danh-sach.html?list=' + encodeURIComponent(list);
+            }
+        })();
+    </script>
     <meta name="description" content="APhim - Website xem phim online Full HD miễn phí, cập nhật phim mới nhất 2026, Phim Vietsub, Thuyết Minh, Phim Lồng Tiếng chất lượng cao." />
     <meta property="og:description" content="APhim - Website xem phim online Full HD miễn phí, cập nhật phim mới nhất 2026, Phim Vietsub, Thuyết Minh, Phim Lồng Tiếng chất lượng cao." />
     <meta property="twitter:description" content="APhim - Website xem phim online Full HD miễn phí, cập nhật phim mới nhất 2026, Phim Vietsub, Thuyết Minh, Phim Lồng Tiếng chất lượng cao." />
