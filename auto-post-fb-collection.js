@@ -134,110 +134,137 @@ async function createCollage(movies) {
     console.log("🎨 Creating collage image...");
 
     const PANEL_W  = 800;
-    const PANEL_H  = 310;   // 4 panels × 310 = 1240px → tỷ lệ 800:1240 ≈ hiển thị full trên Facebook
+    const PANEL_H  = 310;
     const CANVAS_H = PANEL_H * 4;
 
+    // Canvas nền đen — không bị "rò" màu trắng ra ngoài
     const canvas = new Jimp(PANEL_W, CANVAS_H, 0x111111FF);
 
-    // Preload fonts
-    const fontBig1   = await Jimp.loadFont(Jimp.FONT_SANS_128_WHITE);
-    const fontBig2   = await Jimp.loadFont(Jimp.FONT_SANS_128_BLACK);
-    const fontBadge  = await Jimp.loadFont(Jimp.FONT_SANS_16_WHITE);
+    const fontBig1  = await Jimp.loadFont(Jimp.FONT_SANS_128_WHITE);
+    const fontBig2  = await Jimp.loadFont(Jimp.FONT_SANS_128_BLACK);
+    const fontBadge = await Jimp.loadFont(Jimp.FONT_SANS_16_WHITE);
+
+    const BADGE_COLORS = [0xE50914FF, 0x1D4ED8FF, 0x15803DFF, 0xEA580CFF];
 
     for (let i = 0; i < 4; i++) {
         const movie = movies[i];
         const yOff  = i * PANEL_H;
-
         console.log(`  [${i+1}/4] ${movie.name}`);
 
         try {
-            // ── 1. Backdrop Background ──
+            // Ưu tiên thumb_url cho background ngang để hình ảnh không bị giãn xấu
             const bgUrl = buildImageUrl(movie.thumb_url || movie.poster_url);
-            let bg = await Jimp.read(bgUrl);
-            bg.cover(PANEL_W, PANEL_H);
-            bg.blur(2);
-            bg.color([{ apply: 'darken', params: [25] }]);
-            canvas.composite(bg, 0, yOff);
+            let bgImg = await Jimp.read(bgUrl);
+            bgImg.cover(PANEL_W, PANEL_H);
+            // Giữ hình trong rõ, không blur, chỉ giảm sáng nhẹ để chữ và poster vẫn nổi
+            bgImg.color([{ apply: 'darken', params: [15] }]);
+            canvas.composite(bgImg, 0, yOff);
 
-            // ── 2. Dark gradient overlay vùng trái (nơi đặt số) ──
-            const overlayW = 185;
-            for (let px = 0; px < overlayW; px++) {
-                const alpha = Math.round(210 * (1 - (px / overlayW) ** 0.55));
-                for (let py = 0; py < PANEL_H; py++) {
-                    canvas.setPixelColor(
-                        Jimp.rgbaToInt(0, 0, 0, alpha),
-                        px, yOff + py
-                    );
+            // ── 2. Overlay tối mờ vùng trái và dưới ──
+            // Dải tối mờ bên trái để làm nổi bật số
+            const leftOverlay = new Jimp(180, PANEL_H, 0x000000B3); // alpha 70%
+            canvas.composite(leftOverlay, 0, yOff, {
+                mode: Jimp.BLEND_SOURCE_OVER,
+                opacitySource: 1,
+                opacityDest: 1
+            });
+
+            // ── 3. Đường kẻ ngang trắng phân cách panel ──
+            if (i > 0) {
+                const sep = new Jimp(PANEL_W, 2, 0xFFFFFFFF);
+                canvas.composite(sep, 0, yOff);
+            }
+
+            // ── 4. Số thứ tự TO, RỖNG RUỘT (Viền trắng, trong suốt) ──
+            const numStr = `${i + 1}`;
+            
+            // Tạo canvas cho số
+            const nW = 150, nH = 150;
+            const numCanvas = new Jimp(nW, nH, 0x00000000);
+            
+            // In viền trắng: in nhiều lần theo hình tròn bán kính 3px để viền siêu đậm và không bị rách
+            for (let dx = -3; dx <= 3; dx++) {
+                for (let dy = -3; dy <= 3; dy++) {
+                    // Chỉ lấy các điểm nằm trong vòng tròn bán kính 3
+                    if (dx*dx + dy*dy <= 10) {
+                        numCanvas.print(fontBig1, 20 + dx, 10 + dy, numStr);
+                    }
                 }
             }
-
-            // ── 3. Separator line (vàng kim loại) ──
-            if (i > 0) {
-                const sep = new Jimp(PANEL_W, 3, 0x1A1A1AFF);
-                canvas.composite(sep, 0, yOff);
-                const accent = new Jimp(100, 2, 0xFCD34DFF);
-                canvas.composite(accent, 0, yOff + 1);
+            
+            // Tạo mask ruột số
+            const innerMask = new Jimp(nW, nH, 0x00000000);
+            innerMask.print(fontBig1, 20, 10, numStr);
+            
+            // Đục lỗ mượt mà (Anti-aliased erasure)
+            for (let py = 0; py < nH; py++) {
+                for (let px = 0; px < nW; px++) {
+                    const { a: maskA } = Jimp.intToRGBA(innerMask.getPixelColor(px, py));
+                    if (maskA > 0) {
+                        const current = Jimp.intToRGBA(numCanvas.getPixelColor(px, py));
+                        // Trừ alpha của viền bằng alpha của ruột để tạo độ mờ dần mượt mà ở rìa
+                        const newA = Math.max(0, current.a - maskA);
+                        numCanvas.setPixelColor(Jimp.rgbaToInt(current.r, current.g, current.b, newA), px, py);
+                    }
+                }
             }
+            
+            // Phóng to số lên 1.6 lần cho khổng lồ (dùng BEZIER cho mượt)
+            numCanvas.resize(nW * 1.6, nH * 1.6, Jimp.RESIZE_BEZIER);
+            
+            const numX = 10;
+            const numY = yOff + 40;
+            canvas.composite(numCanvas, numX, numY);
 
-            // ── 4. Số thứ tự ULTRA BOLD — shadow 16 lớp ──
-            const numStr = `${i + 1}`;
-            const numX = 6;
-            const numY = yOff + 55;   // Căn lại cho panel 310px
-            const shadowOffsets = [
-                [-5,0],[5,0],[0,-5],[0,5],
-                [-4,-4],[4,-4],[-4,4],[4,4],
-                [-6,0],[6,0],[0,-6],[0,6],
-                [-5,-5],[5,-5],[-5,5],[5,5],
-            ];
-            for (const [dx, dy] of shadowOffsets) {
-                canvas.print(fontBig2, numX + dx, numY + dy, numStr);
-            }
-            canvas.print(fontBig1, numX, numY, numStr);
+            // ── 5. Poster sắc nét — thu nhỏ cao để không cắt badge ──
+            const POSTER_W = 190;
+            const POSTER_H = PANEL_H - 45; // = 265px
+            const POSTER_X = 175;
+            const POSTER_Y = yOff + 10;
 
-            // ── 5. Poster TO HƠN — chiếm ~90% chiều cao panel ──
-            // PANEL_H = 310 → poster cao 276px → từ yOff+12 đến yOff+300
-            const POSTER_H   = 276;
-            const POSTER_W   = 210;
-            const POSTER_TOP = yOff + 14;
-
-            const postUrl = buildImageUrl(movie.poster_url || movie.thumb_url);
+            const postUrl = buildImageUrl(movie.poster_url);
             let poster = await Jimp.read(postUrl);
             poster.cover(POSTER_W, POSTER_H);
 
-            // Viền trắng mỏng 2px
-            const whiteBorder = new Jimp(POSTER_W + 4, POSTER_H + 4, 0xFFFFFFFF);
-            whiteBorder.composite(poster, 2, 2);
+            const border = new Jimp(POSTER_W + 6, POSTER_H + 6, 0xFFFFFFFF);
+            border.composite(poster, 3, 3);
+            canvas.composite(border, POSTER_X, POSTER_Y);
 
-            // Viền vàng ngoài 3px
-            const goldBorder = new Jimp(POSTER_W + 10, POSTER_H + 10, 0xFCD34DFF);
-            goldBorder.composite(whiteBorder, 3, 3);
-
-            // Đặt poster: bắt đầu từ x=150 để không che số
-            canvas.composite(goldBorder, 148, POSTER_TOP);
-
-            // ── 6. Badge đè lên đáy poster, màu đa dạng ──
-            const rawEp  = movie.episode_current || 'Full HD';
+            // ── 6. Badge đè lên đáy poster ──
+            let rawEp  = movie.episode_current || 'Full HD';
+            // Xử lý lỗi "Tập 0"
+            const epNumMatch = rawEp.match(/\d+/);
+            if (epNumMatch && parseInt(epNumMatch[0], 10) === 0) {
+                rawEp = 'Trailer';
+            }
+            
             const epText = removeAccents(rawEp);
-            const bW     = Math.max(120, epText.length * 12 + 30);
-            const BADGE_COLORS = [0xE50914FF, 0x1D4ED8FF, 0x15803DFF, 0xEA580CFF];
-            const badge = new Jimp(bW, 38, BADGE_COLORS[i % 4]);
-            badge.print(fontBadge, 14, 10, epText);
-            // Đặt badge đè lên phần đáy poster (overlap 8px từ dưới lên)
-            const bX = 148 + Math.floor((POSTER_W + 10 - bW) / 2);
-            canvas.composite(badge, bX, POSTER_TOP + POSTER_H - 10);
+            
+            // Dùng font nhỏ (16) nhưng in nhiều lần để tạo độ đậm (fake bold)
+            const bW     = Math.max(130, epText.length * 13 + 30);
+            const badge  = new Jimp(bW, 40, 0xE50914FF); // Màu Đỏ Netflix
+            
+            const tX = Math.floor((bW - Jimp.measureText(fontBadge, epText)) / 2);
+            badge.print(fontBadge, tX, 10, epText);
+            badge.print(fontBadge, tX + 1, 10, epText);
+            badge.print(fontBadge, tX, 11, epText);
+            badge.print(fontBadge, tX + 1, 11, epText);
+
+            const bX = POSTER_X + Math.floor((POSTER_W + 6 - bW) / 2);
+            canvas.composite(badge, bX, POSTER_Y + POSTER_H - 15);
 
         } catch (err) {
-            console.warn(`  ⚠️ Panel ${i+1} image error: ${err.message}`);
-            canvas.print(fontBig1, 8, yOff + 75, `${i+1}`);
+            console.warn(`  ⚠️ Panel ${i+1} error: ${err.message}`);
+            canvas.print(fontBig1, 12, yOff + 58, `${i+1}`);
         }
-
     }
 
     const outPath = process.env.GITHUB_ACTIONS ? '/tmp/aphim-collage.jpg' : 'temp-collage.jpg';
-    await canvas.quality(88).writeAsync(outPath);
-    console.log(`💾 Collage saved: ${outPath}`);
+    await canvas.quality(90).writeAsync(outPath);
+    console.log(`💾 Saved: ${outPath}`);
     return outPath;
 }
+
 
 // ── Generate Caption ─────────────────────────────────────────────
 async function generateCaption(movies, details) {
