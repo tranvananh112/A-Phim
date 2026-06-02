@@ -66,6 +66,26 @@ const COMMENT_INTRO_LINES = [
     "👇 Tổng hợp link cho cả nhà tiện theo dõi:\n",
 ];
 
+// ── Icon Pools (xoay vòng, mỗi bài đều khác nhau) ──────────────────
+// Mỗi SET gồm 4 icon → gán cho 4 bộ phim trong 1 bài
+const MOVIE_ICON_SETS = [
+    ['🔥', '⚡', '🌟', '💫'],
+    ['🎯', '🎭', '🎬', '🎦'],
+    ['👑', '💎', '🚀', '✨'],
+    ['🏆', '💥', '🌙', '⭐'],
+    ['🎪', '🎠', '🎡', '🎢'],
+    ['🍿', '🎥', '📽️', '🎞️'],
+    ['🌈', '💖', '🌺', '🦋'],
+    ['🤩', '😍', '🥹', '😮'],
+    ['🦁', '🐉', '🦊', '🐺'],
+    ['🌊', '🔮', '⚔️', '🛡️'],
+    ['🎸', '🎷', '🥁', '🎻'],
+    ['🏔️', '🌋', '🏝️', '🌃'],
+];
+
+// Icon dòng mô tả phim (xoay vòng ngẫu nhiên mỗi phim)
+const DESC_ICONS = ['💬', '📝', '💡', '🔍', '📖', '✍️', '💭', '🗒️', '🎙️', '🖊️', '📌', '🔎'];
+
 // ── Fetch & Select Movies ────────────────────────────────────────
 async function fetchMovies() {
     console.log("📥 Fetching movies from API...");
@@ -113,8 +133,8 @@ function buildImageUrl(url) {
 async function createCollage(movies) {
     console.log("🎨 Creating collage image...");
 
-    const PANEL_W = 800;
-    const PANEL_H = 360;
+    const PANEL_W  = 800;
+    const PANEL_H  = 310;   // 4 panels × 310 = 1240px → tỷ lệ 800:1240 ≈ hiển thị full trên Facebook
     const CANVAS_H = PANEL_H * 4;
 
     const canvas = new Jimp(PANEL_W, CANVAS_H, 0x111111FF);
@@ -135,49 +155,82 @@ async function createCollage(movies) {
             const bgUrl = buildImageUrl(movie.thumb_url || movie.poster_url);
             let bg = await Jimp.read(bgUrl);
             bg.cover(PANEL_W, PANEL_H);
-            bg.blur(3);
-            bg.color([{ apply: 'darken', params: [35] }]);
+            bg.blur(2);
+            bg.color([{ apply: 'darken', params: [25] }]);
             canvas.composite(bg, 0, yOff);
 
-            // ── 2. Separator line ──
-            if (i > 0) {
-                const sep = new Jimp(PANEL_W, 2, 0x222222FF);
-                canvas.composite(sep, 0, yOff);
+            // ── 2. Dark gradient overlay vùng trái (nơi đặt số) ──
+            const overlayW = 185;
+            for (let px = 0; px < overlayW; px++) {
+                const alpha = Math.round(210 * (1 - (px / overlayW) ** 0.55));
+                for (let py = 0; py < PANEL_H; py++) {
+                    canvas.setPixelColor(
+                        Jimp.rgbaToInt(0, 0, 0, alpha),
+                        px, yOff + py
+                    );
+                }
             }
 
-            // ── 3. Big Number (Drop Shadow Effect) ──
-            const numStr = `${i + 1}`;
-            // Shadow (offset black)
-            canvas.print(fontBig2, 48, yOff + 118, numStr);
-            canvas.print(fontBig2, 52, yOff + 118, numStr);
-            canvas.print(fontBig2, 50, yOff + 120, numStr);
-            canvas.print(fontBig2, 50, yOff + 116, numStr);
-            // Main white number
-            canvas.print(fontBig1, 50, yOff + 118, numStr);
+            // ── 3. Separator line (vàng kim loại) ──
+            if (i > 0) {
+                const sep = new Jimp(PANEL_W, 3, 0x1A1A1AFF);
+                canvas.composite(sep, 0, yOff);
+                const accent = new Jimp(100, 2, 0xFCD34DFF);
+                canvas.composite(accent, 0, yOff + 1);
+            }
 
-            // ── 4. Poster (viền trắng) ──
+            // ── 4. Số thứ tự ULTRA BOLD — shadow 16 lớp ──
+            const numStr = `${i + 1}`;
+            const numX = 6;
+            const numY = yOff + 55;   // Căn lại cho panel 310px
+            const shadowOffsets = [
+                [-5,0],[5,0],[0,-5],[0,5],
+                [-4,-4],[4,-4],[-4,4],[4,4],
+                [-6,0],[6,0],[0,-6],[0,6],
+                [-5,-5],[5,-5],[-5,5],[5,5],
+            ];
+            for (const [dx, dy] of shadowOffsets) {
+                canvas.print(fontBig2, numX + dx, numY + dy, numStr);
+            }
+            canvas.print(fontBig1, numX, numY, numStr);
+
+            // ── 5. Poster TO HƠN — chiếm ~90% chiều cao panel ──
+            // PANEL_H = 310 → poster cao 276px → từ yOff+12 đến yOff+300
+            const POSTER_H   = 276;
+            const POSTER_W   = 210;
+            const POSTER_TOP = yOff + 14;
+
             const postUrl = buildImageUrl(movie.poster_url || movie.thumb_url);
             let poster = await Jimp.read(postUrl);
-            poster.cover(170, 250);
-            const border = new Jimp(176, 256, 0xFFFFFFFF);
-            border.composite(poster, 3, 3);
-            canvas.composite(border, 165, yOff + 40);
+            poster.cover(POSTER_W, POSTER_H);
 
-            // ── 5. Badge (episode / Full) ──
+            // Viền trắng mỏng 2px
+            const whiteBorder = new Jimp(POSTER_W + 4, POSTER_H + 4, 0xFFFFFFFF);
+            whiteBorder.composite(poster, 2, 2);
+
+            // Viền vàng ngoài 3px
+            const goldBorder = new Jimp(POSTER_W + 10, POSTER_H + 10, 0xFCD34DFF);
+            goldBorder.composite(whiteBorder, 3, 3);
+
+            // Đặt poster: bắt đầu từ x=150 để không che số
+            canvas.composite(goldBorder, 148, POSTER_TOP);
+
+            // ── 6. Badge đè lên đáy poster, màu đa dạng ──
             const rawEp  = movie.episode_current || 'Full HD';
             const epText = removeAccents(rawEp);
-            const bW     = Math.max(100, epText.length * 11 + 28);
-            const badge  = new Jimp(bW, 34, 0xE50914FF); // Netflix red
-            badge.print(fontBadge, 14, 8, epText);
-            // Căn giữa badge dưới poster
-            const bX = 165 + Math.floor((176 - bW) / 2);
-            canvas.composite(badge, bX, yOff + 272);
+            const bW     = Math.max(120, epText.length * 12 + 30);
+            const BADGE_COLORS = [0xE50914FF, 0x1D4ED8FF, 0x15803DFF, 0xEA580CFF];
+            const badge = new Jimp(bW, 38, BADGE_COLORS[i % 4]);
+            badge.print(fontBadge, 14, 10, epText);
+            // Đặt badge đè lên phần đáy poster (overlap 8px từ dưới lên)
+            const bX = 148 + Math.floor((POSTER_W + 10 - bW) / 2);
+            canvas.composite(badge, bX, POSTER_TOP + POSTER_H - 10);
 
         } catch (err) {
             console.warn(`  ⚠️ Panel ${i+1} image error: ${err.message}`);
-            // Nếu lỗi ảnh, vẫn vẽ số thứ tự
-            canvas.print(fontBig1, 50, yOff + 118, `${i+1}`);
+            canvas.print(fontBig1, 8, yOff + 75, `${i+1}`);
         }
+
     }
 
     const outPath = process.env.GITHUB_ACTIONS ? '/tmp/aphim-collage.jpg' : 'temp-collage.jpg';
@@ -193,20 +246,38 @@ async function generateCaption(movies, details) {
     const opening = rand(OPENING_LINES);
     const closing = rand(CLOSING_LINES);
 
+    // Bốc ngẫu nhiên 1 bộ icon cho lần chạy này → mỗi bài đều khác nhau
+    const iconSet = rand(MOVIE_ICON_SETS);
+
     let body = '';
     for (let i = 0; i < 4; i++) {
         const m   = movies[i];
         const det = details[i];
+        const movieIcon = iconSet[i];        // icon khác nhau cho mỗi phim
+        const descIcon  = rand(DESC_ICONS);  // icon mô tả ngẫu nhiên mỗi dòng
 
         let desc = det?.content ? stripHtml(det.content) : '';
         if (!desc) desc = 'Kịch bản hấp dẫn, không thể bỏ qua!';
         if (desc.length > 130) desc = desc.substring(0, 130) + '...';
 
         const ep = m.episode_current ? ` | ${m.episode_current}` : '';
-        body += `\n👉 ${i+1}. ${m.name} (${m.year || ''})${ep}\n📝 ${desc}\n`;
+        body += `\n${movieIcon} ${i+1}. ${m.name} (${m.year || ''})${ep}\n${descIcon} ${desc}\n`;
     }
 
-    const hashtags = '#APhim #ReviewPhim #PhimHay #TrendingPhim #PhimMoi #XemPhimOnline #PhimHD';
+    // Hashtag xoay vòng — thêm 2 hashtag ngẫu nhiên mỗi bài để đa dạng
+    const extraHashtags = rand([
+        '#PhimChieuRap #PhimBo',
+        '#PhimHan #PhimTrung',
+        '#PhimMy #PhimNhat',
+        '#AnhEmCayPhim #TuiThich',
+        '#PhimHot2025 #MustWatch',
+        '#PhimLe #PhimRomance',
+        '#PhimHanhDong #PhimKinhDi',
+        '#PhimCayDem #TopPhim',
+        '#GocPhim #CayPhimCung',
+        '#PhimVietsub #FreeHD',
+    ]);
+    const hashtags = `#APhim #ReviewPhim #PhimHay #TrendingPhim #PhimMoi #XemPhimOnline #PhimHD ${extraHashtags}`;
 
     return `${opening}\n${body}\n${closing}\n\n${hashtags}`;
 }
