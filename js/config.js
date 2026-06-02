@@ -217,7 +217,7 @@ setInterval(async () => {
     } catch (e) {
         // Silently fail during polling if backend is unreachable
     }
-}, 3000); // Polling every 3 seconds
+}, 120000); // Polling every 120 seconds (2 minutes) to save server resources
 
 // Utility helper: Trả về đối tượng CSS class & HTML badge
 window.getHiddenMovieOverlay = function(slug) {
