@@ -144,7 +144,7 @@ function switchHeroSlide(newIndex, skipThumbnailHighlight, isAutoReturn) {
 
     // Preload ảnh mới NGAY (song song với fade out)
     const isMobile = window.innerWidth < 768;
-    const rawUrl = isMobile ? (movie.thumb_url || movie.poster_url) : (movie.poster_url || movie.thumb_url);
+    const rawUrl = movie.poster_url || movie.thumb_url;
     const optUrl = buildImageUrl(rawUrl, 1200);
     if (optUrl) {
         const preImg = new Image();
@@ -521,7 +521,7 @@ function preloadSlideImages(movies) {
     setTimeout(() => {
         movies.forEach((movie, i) => {
             const isMobile = window.innerWidth < 768;
-            const rawUrl = isMobile ? (movie.thumb_url || movie.poster_url) : (movie.poster_url || movie.thumb_url);
+            const rawUrl = movie.poster_url || movie.thumb_url;
             if (!rawUrl) return;
             const url = buildImageUrl(rawUrl, 1200);
             if (url) {
@@ -587,7 +587,7 @@ function previewHeroPoster(movie) {
 
     // Use poster_url (large cover image) NOT thumb_url
     const isMobile = window.innerWidth < 768;
-    const posterUrl = isMobile ? (movie.thumb_url || movie.poster_url) : (movie.poster_url || movie.thumb_url);
+    const posterUrl = movie.poster_url || movie.thumb_url;
     if (!posterUrl) return;
 
     const optUrl = buildImageUrl(posterUrl, 1200);
@@ -619,7 +619,7 @@ function returnToCurrentSlide(slideIndex) {
     if (!heroImage) return;
 
     const isMobile = window.innerWidth < 768;
-    const posterUrl = isMobile ? (movie.thumb_url || movie.poster_url) : (movie.poster_url || movie.thumb_url);
+    const posterUrl = movie.poster_url || movie.thumb_url;
     if (!posterUrl) return;
 
     const optUrl = buildImageUrl(posterUrl, 1200);
@@ -653,7 +653,7 @@ function renderHeroBannerContent(movie, isInstant) {
     if (!heroImage) return;
 
     const isMobile = window.innerWidth < 768;
-    const rawUrl = isMobile ? (movie.thumb_url || movie.poster_url) : (movie.poster_url || movie.thumb_url);
+    const rawUrl = movie.poster_url || movie.thumb_url;
     const optUrl = buildImageUrl(rawUrl, 1200);
     if (!optUrl) return;
 
