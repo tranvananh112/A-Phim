@@ -1,4 +1,5 @@
 const Setting = require('../models/Setting');
+const cache = require('../utils/cache');
 
 // Helper to ensure a single settings document exists
 const getOrCreateSettings = async () => {
@@ -43,6 +44,9 @@ exports.updateSettings = async (req, res) => {
             { new: true, upsert: true, runValidators: true }
         );
 
+        cache.del('public_settings'); // Xóa cache khi cấu hình thay đổi
+
+        cache.del('public_settings');
         res.json({ success: true, data: settings, message: 'Lưu cấu hình thành công' });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -84,6 +88,17 @@ exports.getPublicSettings = async (req, res) => {
     };
 
     try {
+        const cachedSettings = cache.get('public_settings');
+        if (cachedSettings) {
+            return res.json({ success: true, data: cachedSettings });
+        }
+
+        const cachedSettings = cache.get('public_settings');
+        if (cachedSettings) return res.json({ success: true, data: cachedSettings });
+
+        const cachedSettings = cache.get('public_settings');
+        if (cachedSettings) return res.json({ success: true, data: cachedSettings });
+
         const settings = await getOrCreateSettings();
 
         const publicData = {
@@ -111,6 +126,9 @@ exports.getPublicSettings = async (req, res) => {
             }
         };
 
+        cache.set('public_settings', publicData, 300); // Lưu cache 5 phút
+        cache.set('public_settings', publicData, 300);
+        cache.set('public_settings', publicData, 300);
         res.json({ success: true, data: publicData });
     } catch (error) {
         // Graceful degradation: return defaults so frontend config.js never crashes

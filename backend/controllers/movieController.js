@@ -1,6 +1,7 @@
 const Movie = require('../models/Movie');
 const HiddenMovie = require('../models/HiddenMovie');
 const ophimService = require('../services/ophimService');
+const cache = require('../utils/cache');
 
 // @desc    Get all movies
 // @route   GET /api/movies
@@ -405,9 +406,12 @@ exports.getStreamURL = async (req, res) => {
 // @access  Public
 exports.getHiddenMovies = async (req, res) => {
     try {
+        const cachedSlugs = cache.get('hidden_movies');
+        if (cachedSlugs) return res.json({ success: true, data: cachedSlugs });
+
         const hiddenList = await HiddenMovie.find().select('slug -_id');
         const slugs = hiddenList.map(item => item.slug);
-        
+        cache.set('hidden_movies', slugs, 30);
         res.json({
             success: true,
             data: slugs
@@ -430,6 +434,7 @@ exports.toggleHiddenMovie = async (req, res) => {
         
         if (exists) {
             await HiddenMovie.findOneAndDelete({ slug });
+            cache.del('hidden_movies');
             res.json({
                 success: true,
                 message: 'Phim đã được hiện lại',
@@ -437,6 +442,7 @@ exports.toggleHiddenMovie = async (req, res) => {
             });
         } else {
             await HiddenMovie.create({ slug });
+            cache.del('hidden_movies');
             res.json({
                 success: true,
                 message: 'Phim đã bị ẩn',
