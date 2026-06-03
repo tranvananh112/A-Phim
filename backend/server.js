@@ -48,9 +48,18 @@ app.use(cors({
 }));
 
 // Rate limiting
-// Exempt hidden movies list from rate limiting since it's polled every 3 seconds by clients
+// Exempt high-frequency & critical routes from rate limiting
+const rateLimitExemptPaths = [
+    '/movies/hidden/list',  // polled by all clients
+    '/settings/public',     // loaded on every page
+    '/settings/payment-public', // loaded on pricing page
+    '/health',              // health checks
+];
 app.use('/api/', (req, res, next) => {
-    if (req.path === '/movies/hidden/list') return next();
+    // Exempt admin routes from rate limiting entirely
+    if (req.path.startsWith('/dashboard') || req.path.startsWith('/admin')) return next();
+    // Exempt specific public high-frequency endpoints
+    if (rateLimitExemptPaths.some(p => req.path === p || req.path.startsWith(p))) return next();
     return apiLimiter(req, res, next);
 });
 
