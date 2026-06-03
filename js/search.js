@@ -82,22 +82,21 @@ function setupSearch() {
     });
 }
 
-// Setup filters
+// Setup filters - đọc từ hidden input của custom dropdown
 function setupFilters() {
-    document.getElementById('categoryFilter').addEventListener('change', (e) => {
-        currentFilters.category = e.target.value;
-    });
-
-    document.getElementById('countryFilter').addEventListener('change', (e) => {
-        currentFilters.country = e.target.value;
-    });
-
-    document.getElementById('yearFilter').addEventListener('change', (e) => {
-        currentFilters.year = e.target.value;
-    });
-
-    document.getElementById('sortFilter').addEventListener('change', (e) => {
-        currentFilters.sort = e.target.value;
+    var ids = {
+        categoryFilter: 'category',
+        countryFilter:  'country',
+        yearFilter:     'year',
+        sortFilter:     'sort'
+    };
+    Object.keys(ids).forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('change', function(e) {
+                currentFilters[ids[id]] = e.target.value;
+            });
+        }
     });
 }
 
@@ -105,31 +104,48 @@ function setupFilters() {
 async function loadCategories() {
     try {
         const categories = await movieAPI.getCategories();
+        if (!categories || categories.length === 0) return;
+
+        const csel = document.getElementById('csel-category');
         const categoryFilter = document.getElementById('categoryFilter');
+        if (!csel) return;
 
-        console.log('Categories received in search.js:', categories);
+        const list = csel.querySelector('.sp-csel-list');
+        const val  = csel.querySelector('.sp-csel-val');
 
-        if (categories && categories.length > 0) {
-            // Keep "Tất cả" option
-            const currentHTML = '<option value="">Tất cả</option>';
+        // Build option divs
+        let html = '<div class="sp-csel-opt selected" data-value="">Tất cả</div>';
+        categories
+            .filter(cat => cat && cat.slug && cat.name)
+            .forEach(cat => {
+                html += `<div class="sp-csel-opt" data-value="${cat.slug}">${cat.name}</div>`;
+            });
+        list.innerHTML = html;
 
-            // Add categories from API with safety checks
-            const optionsHTML = categories
-                .filter(cat => cat && cat.slug && cat.name) // Filter out invalid items
-                .map(cat => `<option value="${cat.slug}">${cat.name}</option>`)
-                .join('');
+        // Re-bind click events
+        list.querySelectorAll('.sp-csel-opt').forEach(function(opt) {
+            opt.addEventListener('click', function(e) {
+                e.stopPropagation();
+                categoryFilter.value = opt.dataset.value;
+                val.textContent = opt.textContent;
+                list.querySelectorAll('.sp-csel-opt').forEach(function(o){ o.classList.remove('selected'); });
+                opt.classList.add('selected');
+                csel.classList.remove('open');
+                categoryFilter.dispatchEvent(new Event('change'));
+            });
+        });
 
-            categoryFilter.innerHTML = currentHTML + optionsHTML;
-
-            // Set selected value if from URL
-            if (currentFilters.category) {
-                categoryFilter.value = currentFilters.category;
-            }
-
-            console.log(`Loaded ${categories.length} categories`);
-        } else {
-            console.warn('No categories loaded or empty array');
+        // Set selected from currentFilters
+        if (currentFilters.category) {
+            categoryFilter.value = currentFilters.category;
+            list.querySelectorAll('.sp-csel-opt').forEach(function(opt) {
+                if (opt.dataset.value === currentFilters.category) {
+                    opt.classList.add('selected');
+                    val.textContent = opt.textContent;
+                }
+            });
         }
+        console.log(`Loaded ${categories.length} categories into custom dropdown`);
     } catch (error) {
         console.error('Error loading categories:', error);
     }
@@ -139,31 +155,47 @@ async function loadCategories() {
 async function loadCountries() {
     try {
         const countries = await movieAPI.getCountries();
+        if (!countries || countries.length === 0) return;
+
+        const csel = document.getElementById('csel-country');
         const countryFilter = document.getElementById('countryFilter');
+        if (!csel) return;
 
-        console.log('Countries received in search.js:', countries);
+        const list = csel.querySelector('.sp-csel-list');
+        const val  = csel.querySelector('.sp-csel-val');
 
-        if (countries && countries.length > 0) {
-            // Keep "Tất cả" option
-            const currentHTML = '<option value="">Tất cả</option>';
+        let html = '<div class="sp-csel-opt selected" data-value="">Tất cả</div>';
+        countries
+            .filter(c => c && c.slug && c.name)
+            .forEach(c => {
+                html += `<div class="sp-csel-opt" data-value="${c.slug}">${c.name}</div>`;
+            });
+        list.innerHTML = html;
 
-            // Add countries from API with safety checks
-            const optionsHTML = countries
-                .filter(country => country && country.slug && country.name) // Filter out invalid items
-                .map(country => `<option value="${country.slug}">${country.name}</option>`)
-                .join('');
+        // Re-bind click events
+        list.querySelectorAll('.sp-csel-opt').forEach(function(opt) {
+            opt.addEventListener('click', function(e) {
+                e.stopPropagation();
+                countryFilter.value = opt.dataset.value;
+                val.textContent = opt.textContent;
+                list.querySelectorAll('.sp-csel-opt').forEach(function(o){ o.classList.remove('selected'); });
+                opt.classList.add('selected');
+                csel.classList.remove('open');
+                countryFilter.dispatchEvent(new Event('change'));
+            });
+        });
 
-            countryFilter.innerHTML = currentHTML + optionsHTML;
-
-            // Set selected value if from URL
-            if (currentFilters.country) {
-                countryFilter.value = currentFilters.country;
-            }
-
-            console.log(`Loaded ${countries.length} countries`);
-        } else {
-            console.warn('No countries loaded or empty array');
+        // Set selected from currentFilters
+        if (currentFilters.country) {
+            countryFilter.value = currentFilters.country;
+            list.querySelectorAll('.sp-csel-opt').forEach(function(opt) {
+                if (opt.dataset.value === currentFilters.country) {
+                    opt.classList.add('selected');
+                    val.textContent = opt.textContent;
+                }
+            });
         }
+        console.log(`Loaded ${countries.length} countries into custom dropdown`);
     } catch (error) {
         console.error('Error loading countries:', error);
     }
@@ -177,25 +209,95 @@ window.applyFilters = function () {
 
 // Reset filters
 window.resetFilters = function () {
-    currentFilters = {
-        category: '',
-        country: '',
-        year: '',
-        sort: 'latest'
-    };
+    currentFilters = { category: '', country: '', year: '', sort: 'latest', type: '' };
 
-    document.getElementById('categoryFilter').value = '';
-    document.getElementById('countryFilter').value = '';
-    document.getElementById('yearFilter').value = '';
-    document.getElementById('sortFilter').value = 'latest';
+    // Reset hidden inputs
+    ['categoryFilter','countryFilter','yearFilter'].forEach(function(id) {
+        var el = document.getElementById(id); if (el) el.value = '';
+    });
+    var sf = document.getElementById('sortFilter'); if (sf) sf.value = 'latest';
+
+    // Reset custom dropdown display
+    var resetMap = {
+        'csel-category': 'Tất cả',
+        'csel-country':  'Tất cả',
+        'csel-year':     'Tất cả',
+        'csel-sort':     'Mới nhất'
+    };
+    Object.keys(resetMap).forEach(function(id) {
+        var csel = document.getElementById(id); if (!csel) return;
+        var valEl = csel.querySelector('.sp-csel-val');
+        if (valEl) valEl.textContent = resetMap[id];
+        csel.querySelectorAll('.sp-csel-opt').forEach(function(opt) {
+            opt.classList.toggle('selected', opt.dataset.value === '' || opt.dataset.value === 'latest');
+        });
+    });
 
     currentPage = 1;
     performSearch();
 };
 
+// ─── Fetch combined filters from ophim API ────────────────────────────────────
+async function fetchWithCombinedFilters(page) {
+    const { category, country, year, sort, type } = currentFilters;
+
+    // Sort field mapping
+    let sortField = 'modified.time';
+    let sortType  = 'desc';
+    if (sort === 'year')   { sortField = 'year';  sortType = 'desc'; }
+    if (sort === 'views')  { sortField = 'view';  sortType = 'desc'; }
+    // 'rating' and 'latest' handled client-side / default
+
+    // Determine list type (phim-moi = default, phim-bo, phim-le)
+    let listType = 'phim-moi';
+    if (type === 'series') listType = 'phim-bo';
+    else if (type === 'single') listType = 'phim-le';
+
+    // Build URL with all combined params
+    const params = new URLSearchParams({
+        page:       page,
+        limit:      24,
+        sort_field: sortField,
+        sort_type:  sortType
+    });
+    if (category) params.append('category', category);
+    if (country)  params.append('country',  country);
+    if (year)     params.append('year',     year);
+
+    const url = `https://ophim1.com/v1/api/danh-sach/${listType}?${params.toString()}`;
+    console.log('Combined filter URL:', url);
+
+    const response = await fetch(url, { headers: { 'accept': 'application/json' } });
+    return response.json();
+}
+
+// ─── Build results title from active filters ──────────────────────────────────
+function buildResultsTitle() {
+    const { category, country, year, type } = currentFilters;
+    if (!category && !country && !year && !type) return 'Khám phá - Tất cả phim';
+
+    const parts = [];
+    if (type === 'series') parts.push('Phim Bộ');
+    else if (type === 'single') parts.push('Phim Lẻ');
+
+    // Get display names from dropdowns
+    function getLabel(cselId) {
+        var csel = document.getElementById(cselId);
+        if (!csel) return '';
+        var sel = csel.querySelector('.sp-csel-opt.selected');
+        return sel ? sel.textContent.trim() : '';
+    }
+
+    if (category) parts.push(getLabel('csel-category') || category);
+    if (country)  parts.push(getLabel('csel-country')  || country);
+    if (year)     parts.push(year);
+
+    return parts.length ? parts.join(' · ') : 'Kết quả lọc';
+}
+
 // Perform search
 async function performSearch() {
-    const resultsGrid = document.getElementById('resultsGrid');
+    const resultsGrid  = document.getElementById('resultsGrid');
     const resultsTitle = document.getElementById('resultsTitle');
     const resultsCount = document.getElementById('resultsCount');
 
@@ -211,36 +313,14 @@ async function performSearch() {
         let data;
 
         if (currentKeyword) {
-            // Search by keyword
+            // ── Tìm theo từ khoá ──────────────────────────────
             console.log('Searching with keyword:', currentKeyword);
             data = await movieAPI.searchMovies(currentKeyword, currentPage);
             resultsTitle.textContent = `Kết quả tìm kiếm: "${currentKeyword}"`;
-        } else if (currentFilters.type) {
-            // Filter by type (series/single) - use multiple sources
-            const typeMap = {
-                'series': 'phim-bo',
-                'single': 'phim-le'
-            };
-            const typeSlug = typeMap[currentFilters.type] || currentFilters.type;
-            console.log('Loading movies by type from multiple sources:', typeSlug);
-            data = await movieAPI.getMoviesFromMultipleSources(currentPage, typeSlug);
-            console.log('Type data received:', data);
-            resultsTitle.textContent = currentFilters.type === 'series' ? 'Phim Bộ' : 'Phim Lẻ';
-        } else if (currentFilters.category) {
-            // Filter by category - use multiple sources
-            console.log('Loading movies by category from multiple sources:', currentFilters.category);
-            data = await movieAPI.getMoviesFromMultipleSources(currentPage, currentFilters.category);
-            resultsTitle.textContent = 'Phim theo thể loại';
-        } else if (currentFilters.country) {
-            // Filter by country
-            console.log('Loading movies by country:', currentFilters.country);
-            data = await movieAPI.getMoviesByCountry(currentFilters.country, currentPage);
-            resultsTitle.textContent = 'Phim theo quốc gia';
         } else {
-            // Load all movies - use simple getMovieList instead
-            console.log('Loading all movies');
-            data = await movieAPI.getMovieList(currentPage);
-            resultsTitle.textContent = 'Khám phá - Tất cả phim';
+            // ── Kết hợp toàn bộ filter: category + country + year + sort ──
+            data = await fetchWithCombinedFilters(currentPage);
+            resultsTitle.textContent = buildResultsTitle();
         }
 
         console.log('Search data received:', data);
@@ -249,15 +329,14 @@ async function performSearch() {
             let movies = data.data.items || [];
             console.log('Movies array:', movies.length, 'items');
 
-            // Apply client-side filters
-            movies = applyClientFilters(movies);
-            console.log('After filters:', movies.length, 'items');
+            // Client-side sort by rating if needed (API doesn't support it)
+            if (currentFilters.sort === 'rating') {
+                movies.sort((a, b) => (b.tmdb?.vote_average || 0) - (a.tmdb?.vote_average || 0));
+            }
 
             if (movies.length > 0) {
                 renderResults(movies);
                 resultsCount.textContent = `Trang ${currentPage}: ${movies.length} phim`;
-
-                // Render pagination - pass the whole data object
                 renderPagination(data.data);
             } else {
                 console.warn('No movies after filtering');
@@ -276,36 +355,6 @@ async function performSearch() {
             </div>
         `;
     }
-}
-
-// Apply client-side filters
-function applyClientFilters(movies) {
-    let filtered = [...movies];
-
-    // Filter by year
-    if (currentFilters.year) {
-        filtered = filtered.filter(m => m.year == currentFilters.year);
-    }
-
-    // Sort
-    switch (currentFilters.sort) {
-        case 'rating':
-            filtered.sort((a, b) => {
-                const ratingA = a.tmdb?.vote_average || 0;
-                const ratingB = b.tmdb?.vote_average || 0;
-                return ratingB - ratingA;
-            });
-            break;
-        case 'year':
-            filtered.sort((a, b) => (b.year || 0) - (a.year || 0));
-            break;
-        case 'views':
-            filtered.sort((a, b) => (b.view || 0) - (a.view || 0));
-            break;
-        // 'latest' is default from API
-    }
-
-    return filtered;
 }
 
 // Load all movies
