@@ -55,9 +55,13 @@ const rateLimitExemptPaths = [
     '/settings/payment-public', // loaded on pricing page
     '/health',              // health checks
 ];
+const adminPrefixes = [
+    '/dashboard', '/admin', '/users', '/payments', '/settings', '/comments', '/auth'
+];
+
 app.use('/api/', (req, res, next) => {
-    // Exempt admin routes from rate limiting entirely
-    if (req.path.startsWith('/dashboard') || req.path.startsWith('/admin')) return next();
+    // Exempt admin & core operational routes from rate limiting entirely
+    if (adminPrefixes.some(prefix => req.path.startsWith(prefix))) return next();
     // Exempt specific public high-frequency endpoints
     if (rateLimitExemptPaths.some(p => req.path === p || req.path.startsWith(p))) return next();
     return apiLimiter(req, res, next);
