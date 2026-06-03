@@ -90,10 +90,12 @@ exports.getPublicSettings = async (req, res) => {
     };
 
     try {
-                    return res.json({ success: true, data: cachedSettings });
+        const cachedSettings = cache.get('public_settings');
+        if (cachedSettings) {
+            return res.json({ success: true, data: cachedSettings });
         }
 
-                        const settings = await getOrCreateSettings();
+        const settings = await getOrCreateSettings();
 
         const publicData = {
             general: {
