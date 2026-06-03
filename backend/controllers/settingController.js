@@ -106,7 +106,8 @@ exports.getPublicSettings = async (req, res) => {
                 enableMultipleSources:settings.content?.enableMultipleSources ?? false,
                 defaultServer:        settings.content?.defaultServer        ?? defaults.content.defaultServer,
                 autoplayDelay:        settings.content?.autoplayDelay        ?? defaults.content.autoplayDelay,
-                categoryBackgrounds:  settings.content?.categoryBackgrounds  ?? defaults.content.categoryBackgrounds
+                categoryBackgrounds:  settings.content?.categoryBackgrounds  ?? defaults.content.categoryBackgrounds,
+                heroThumbnails:       settings.content?.heroThumbnails       ?? []
             }
         };
 

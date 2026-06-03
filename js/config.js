@@ -57,7 +57,10 @@ const API_CONFIG = {
     // Use backend or direct Ophim FOR MOVIES
     USE_BACKEND_FOR_MOVIES: false,
     USE_BACKEND_FOR_AUTH: true,
-    USE_MULTIPLE_SOURCES: false
+    USE_MULTIPLE_SOURCES: false,
+    // Custom UI settings
+    CATEGORY_BACKGROUNDS: {},
+    HERO_THUMBNAILS: []
 };
 
 // ─ ─Dynamic Configuration Override ─ 
@@ -75,6 +78,8 @@ try {
         if (typeof cachedContent.maintenanceMode === 'boolean') API_CONFIG.MAINTENANCE_MODE = cachedContent.maintenanceMode;
         if (typeof cachedContent.allowRegister === 'boolean') API_CONFIG.ALLOW_REGISTER = cachedContent.allowRegister;
         if (typeof cachedContent.allowComments === 'boolean') API_CONFIG.ALLOW_COMMENTS = cachedContent.allowComments;
+        if (cachedContent.categoryBackgrounds) API_CONFIG.CATEGORY_BACKGROUNDS = cachedContent.categoryBackgrounds;
+        if (cachedContent.heroThumbnails) API_CONFIG.HERO_THUMBNAILS = cachedContent.heroThumbnails;
     }
 } catch (e) { console.error('Cache config read error:', e); }
 
@@ -98,7 +103,9 @@ try {
                 maintenanceMode: general?.maintenanceMode,
                 allowRegister: general?.allowRegister,
                 allowComments: general?.allowComments,
-                siteName: general?.siteName
+                siteName: general?.siteName,
+                categoryBackgrounds: content?.categoryBackgrounds,
+                heroThumbnails: content?.heroThumbnails
             };
             
             // Check diff
@@ -120,6 +127,8 @@ try {
                 if (typeof configMap.maintenanceMode === 'boolean') API_CONFIG.MAINTENANCE_MODE = configMap.maintenanceMode;
                 if (typeof configMap.allowRegister === 'boolean') API_CONFIG.ALLOW_REGISTER = configMap.allowRegister;
                 if (typeof configMap.allowComments === 'boolean') API_CONFIG.ALLOW_COMMENTS = configMap.allowComments;
+                if (configMap.categoryBackgrounds) API_CONFIG.CATEGORY_BACKGROUNDS = configMap.categoryBackgrounds;
+                if (configMap.heroThumbnails) API_CONFIG.HERO_THUMBNAILS = configMap.heroThumbnails;
             }
         }
     } catch (e) {

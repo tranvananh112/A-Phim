@@ -13,7 +13,7 @@ module.exports = {
     });
     
     io.on('connection', (socket) => {
-      console.log('🟢 Admin Dashboard Connected:', socket.id);
+      console.log('🟢 Client Connected to Socket:', socket.id);
       
       socket.on('disconnect', (reason) => {
         console.log('🔴 Client disconnected:', socket.id, 'Reason:', reason);
