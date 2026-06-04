@@ -132,11 +132,17 @@ nav.pt-safe,
         top: var(--sat) !important;
     }
 
-    /* SEARCH BAR - Adjust position */
+    /* SEARCH BAR - Adjust position (chỉ áp dụng cho search bar chính, không phải sp-search-*) */
     .search-container,
     .search-bar,
-    [class*="search-"] {
+    .searchbar,
+    .search-wrapper {
         margin-top: calc(var(--sat) + 8px) !important;
+    }
+    /* Reset: sp-search-* trên search page KHÔNG nhận margin-top thừa từ PWA */
+    [class^="sp-search"],
+    [class*=" sp-search"] {
+        margin-top: 0 !important;
     }
 
     /* MODAL HEADERS */
