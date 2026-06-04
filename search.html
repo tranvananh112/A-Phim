@@ -340,9 +340,13 @@
     <style>
     /* ─── Mobile PWA gap fix ─── */
     @media (max-width: 767px) {
-        /* Giảm padding-top main: chỉ cần đủ chỗ cho nav (~60px) + safe area */
+        /* Padding-top main: nav (~56px) + safe area + 8px thở */
         main.pt-safe-main {
-            padding-top: calc(62px + env(safe-area-inset-top, 0px)) !important;
+            padding-top: calc(64px + env(safe-area-inset-top, 0px)) !important;
+        }
+        /* Khoảng cách từ nav đến nút Quay Lại: thêm margin-top để thoáng hơn (như ảnh 2) */
+        main.pt-safe-main > div:first-child {
+            margin-top: 14px !important;
         }
         /* Đảm bảo sidebar HOÀN TOÀN collapsed trên mobile */
         .sp-sidebar.sp-filter-drawer:not(.open) {

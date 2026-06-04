@@ -188,8 +188,19 @@ nav.pt-safe,
         padding-top: 0 !important;
     }
 
+    /* Desktop pricing main */
     body.pricing-page #pricingMain {
-        padding-top: calc(var(--sat) + 68px) !important;
+        padding-top: calc(var(--sat) + 80px) !important;
+    }
+
+    /* Mobile swipe pricing: đẩy xuống đúng dưới nav + safe area */
+    body.pricing-page #pricingMobileSwipe {
+        padding-top: calc(var(--sat) + 70px) !important;
+    }
+
+    /* Tab toggle + cards không bị dính lên nav */
+    body.pricing-page .msw-tabs {
+        padding-top: 10px !important;
     }
 }
 
