@@ -980,6 +980,569 @@
 
 
 
+    <!-- ═══════════════════════════════════════════════════════════
+         MOBILE SWIPE PRICING UI (chỉ hiện trên mobile < 768px)
+         ═══════════════════════════════════════════════════════════ -->
+    <style>
+    /* ── Hide / Show breakpoint ─────────────────────────────────── */
+    @media (min-width: 768px) {
+        #pricingMobileSwipe { display: none !important; }
+    }
+    @media (max-width: 767px) {
+        #pricingMain { display: none !important; }
+    }
+
+    /* ── Wrapper ─────────────────────────────────────────────────── */
+    #pricingMobileSwipe {
+        display: flex;
+        flex-direction: column;
+        min-height: 100dvh;
+        background: #0a0a0f;
+        padding-top: var(--safe-top, 56px);
+        padding-bottom: 90px; /* space for fixed bar */
+    }
+
+    /* ── Ẩn nút chat cộng đồng (#chatFab) trên mobile pricing ── */
+    #chatFab,
+    .chat-fab {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+
+    /* ── Tab toggle ─────────────────────────────────────────────── */
+    .msw-tabs {
+        display: flex;
+        justify-content: center;
+        padding: 14px 0 8px;
+    }
+    .msw-tab-wrap {
+        display: inline-flex;
+        background: #1a1a1a;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 999px;
+        padding: 5px;
+        position: relative;
+    }
+    .msw-tab-bg {
+        position: absolute;
+        top: 5px; bottom: 5px; left: 5px;
+        width: 120px;
+        background: #e8b94f;
+        border-radius: 999px;
+        transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+        box-shadow: 0 4px 14px rgba(232,185,79,0.4);
+    }
+    .msw-tab-bg.coin-active { transform: translateX(120px); }
+    .msw-tab-btn {
+        position: relative; z-index: 1;
+        width: 120px; padding: 9px 0;
+        border: none; background: none;
+        font-size: 0.85rem; font-weight: 800;
+        color: #9ca3af; cursor: pointer;
+        border-radius: 999px;
+        transition: color 0.2s;
+    }
+    .msw-tab-btn.active { color: #000; }
+
+    /* ── Card track (scroll-snap) ───────────────────────────────── */
+    .msw-track {
+        display: flex;
+        overflow-x: scroll;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        gap: 14px;
+        padding: 16px 20px;          /* 20px peek ở 2 bên */
+        scroll-padding-left: 20px;
+    }
+    .msw-track::-webkit-scrollbar { display: none; }
+
+    /* ── Single swipe card ──────────────────────────────────────── */
+    .msw-card {
+        flex: none;
+        width: calc(100vw - 56px);   /* để lộ ~20px 2 bên */
+        border-radius: 24px;
+        padding: 20px 24px;
+        scroll-snap-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 180px;
+        max-height: 190px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        transition: transform 0.25s ease;
+    }
+    /* Glass shimmer overlay */
+    .msw-card::before {
+        content: '';
+        position: absolute; inset: 0;
+        background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.03));
+        border-radius: 24px;
+        pointer-events: none;
+        z-index: 0;
+    }
+    /* Content above glass */
+    .msw-card > * { position: relative; z-index: 1; }
+
+    /* Gradients per card */
+    .msw-card--free    { background: linear-gradient(135deg,#2a2a2a 0%,#1a1a1a 100%); }
+    .msw-card--premium { background: linear-gradient(135deg,#b8860b 0%,#e8b94f 60%,#f7c948 100%); }
+    .msw-card--family  { background: linear-gradient(135deg,#0d6e4f 0%,#10b981 100%); }
+    .msw-card--coin1   { background: linear-gradient(135deg,#1a5fa8 0%,#38bdf8 100%); }
+    .msw-card--coin2   { background: linear-gradient(135deg,#b8860b 0%,#e8b94f 100%); }
+    .msw-card--coin3   { background: linear-gradient(135deg,#5b21b6 0%,#a855f7 100%); }
+
+    /* Card inner text */
+    .msw-card-tag {
+        display: inline-block;
+        width: fit-content;
+        align-self: flex-start;         /* không stretch trong flex column */
+        font-size: 0.62rem; font-weight: 800;
+        letter-spacing: 0.1em; text-transform: uppercase;
+        background: rgba(0,0,0,0.25);
+        padding: 4px 12px; border-radius: 20px;
+        margin-bottom: 10px;
+        color: rgba(255,255,255,0.9);
+    }
+    .msw-card--premium .msw-card-tag { background: rgba(0,0,0,0.22); color: rgba(0,0,0,0.75); }
+    .msw-card--family  .msw-card-tag { background: rgba(0,0,0,0.2);  color: rgba(255,255,255,0.85); }
+
+    .msw-card-name {
+        font-size: 1.6rem; font-weight: 900;
+        color: #fff; line-height: 1;
+        margin-bottom: 6px;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .msw-card--premium .msw-card-name { color: #1a0f00; }
+
+    .msw-card-price {
+        font-size: 2.6rem; font-weight: 900;
+        color: #fff; letter-spacing: -1px;
+        line-height: 1;
+    }
+    .msw-card--premium .msw-card-price { color: #1a0f00; }
+
+    .msw-card-period {
+        font-size: 0.8rem; font-weight: 600;
+        color: rgba(255,255,255,0.65);
+        margin-left: 2px;
+    }
+    .msw-card--premium .msw-card-period { color: rgba(0,0,0,0.5); }
+
+    /* Chip / badge in card */
+    .msw-card-badge {
+        position: absolute; top: 24px; right: 24px;
+        font-size: 0.6rem; font-weight: 900;
+        background: rgba(255,255,255,0.25);
+        color: #fff; padding: 4px 10px;
+        border-radius: 999px; letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+    .msw-card--premium .msw-card-badge { background: rgba(0,0,0,0.18); color: #1a0f00; }
+
+    /* Dots indicator */
+    .msw-dots {
+        display: flex;
+        justify-content: center;
+        gap: 7px;
+        padding: 4px 0 16px;
+    }
+    .msw-dot {
+        width: 7px; height: 7px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.2);
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+    .msw-dot.active {
+        background: #fff;
+        width: 22px; border-radius: 4px;
+    }
+
+    /* ── Info panel ─────────────────────────────────────────────── */
+    .msw-info {
+        flex: 1;
+        padding: 8px 20px 0;
+    }
+    .msw-info-title {
+        font-size: 1.1rem; font-weight: 800;
+        color: #fff; margin-bottom: 12px;
+    }
+    .msw-feature-list {
+        list-style: none; margin: 0; padding: 0;
+        display: flex; flex-direction: column; gap: 10px;
+    }
+    .msw-feature-item {
+        display: flex; align-items: center; gap: 10px;
+        font-size: 0.88rem; color: rgba(255,255,255,0.8);
+    }
+    .msw-feature-item .material-icons-round {
+        font-size: 18px; color: #e8b94f; flex-shrink: 0;
+    }
+    .msw-bonus-row {
+        margin-top: 16px;
+        display: flex; align-items: center; gap: 10px;
+        background: rgba(232,185,79,0.08);
+        border: 1px solid rgba(232,185,79,0.2);
+        border-radius: 12px; padding: 12px 14px;
+    }
+    .msw-bonus-icon {
+        width: 32px; height: 32px; border-radius: 8px;
+        background: #e8b94f; flex-shrink: 0;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .msw-bonus-icon .material-icons-round { font-size: 18px; color: #000; }
+    .msw-bonus-text-main { font-size: 0.82rem; font-weight: 800; color: #e8b94f; }
+    .msw-bonus-text-sub  { font-size: 0.7rem;  color: rgba(255,255,255,0.4); }
+
+    /* ── Fixed bottom bar ───────────────────────────────────────── */
+    #mswBottomBar {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        z-index: 100;
+        background: #111111;
+        padding: 16px 20px;
+        display: flex; align-items: center; justify-content: space-between;
+        border-radius: 24px 24px 0 0;          /* bo 2 góc trên như sheet */
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
+        padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    }
+    #mswBottomBar.hidden-bar { display: none; }
+    .msw-bar-price {
+        display: flex; flex-direction: column;
+    }
+    .msw-bar-label { font-size: 0.7rem; color: rgba(255,255,255,0.4); margin-bottom: 2px; }
+    .msw-bar-amount { font-size: 1.5rem; font-weight: 900; color: #fff; line-height: 1; }
+    .msw-bar-period { font-size: 0.72rem; color: rgba(255,255,255,0.45); }
+    .msw-bar-btn {
+        background: #fff; color: #000;
+        font-size: 0.95rem; font-weight: 800;
+        border: none; border-radius: 50px;     /* pill tròn */
+        padding: 14px 28px; cursor: pointer;
+        letter-spacing: 0.01em;
+        box-shadow: 0 4px 16px rgba(255,255,255,0.15);
+        transition: background 0.15s, transform 0.1s;
+    }
+    .msw-bar-btn:active { transform: scale(0.97); background: #e8e8e8; }
+    </style>
+
+    <!-- MOBILE SWIPE SECTION -->
+    <div id="pricingMobileSwipe">
+
+        <!-- Tab toggle (synced với desktop) -->
+        <div class="msw-tabs">
+            <div class="msw-tab-wrap">
+                <div class="msw-tab-bg" id="mswTabBg"></div>
+                <button class="msw-tab-btn active" id="mswTabPlan" onclick="mswSwitchTab('plan')">Mua Gói</button>
+                <button class="msw-tab-btn" id="mswTabCoin" onclick="mswSwitchTab('coin')">Nạp Xu</button>
+            </div>
+        </div>
+
+        <!-- ── PLAN SWIPE ──────────────────────────────────────────── -->
+        <div id="mswPlanPanel">
+            <div class="msw-track" id="mswPlanTrack">
+
+                <!-- Card 1: Miễn Phí -->
+                <div class="msw-card msw-card--free">
+                    <div class="msw-card-tag">Gói Miễn Phí</div>
+                    <div class="msw-card-name">Miễn Phí</div>
+                    <div style="display:flex;align-items:baseline;gap:4px;">
+                        <div class="msw-card-price">0</div>
+                        <span class="msw-card-period">đ / tháng</span>
+                    </div>
+                </div>
+
+                <!-- Card 2: Cao Cấp -->
+                <div class="msw-card msw-card--premium">
+                    <div class="msw-card-badge">Phổ biến nhất</div>
+                    <div class="msw-card-tag">Gói Thành Viên</div>
+                    <div class="msw-card-name">Cao Cấp</div>
+                    <div style="display:flex;align-items:baseline;gap:4px;">
+                        <div class="msw-card-price">169.000</div>
+                        <span class="msw-card-period">đ / tháng</span>
+                    </div>
+                </div>
+
+                <!-- Card 3: Gia Đình -->
+                <div class="msw-card msw-card--family">
+                    <div class="msw-card-badge">Tiết kiệm 20%</div>
+                    <div class="msw-card-tag">Gói Gia Đình</div>
+                    <div class="msw-card-name">Gia Đình</div>
+                    <div style="display:flex;align-items:baseline;gap:4px;">
+                        <div class="msw-card-price">699.000</div>
+                        <span class="msw-card-period">đ / năm</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dots -->
+            <div class="msw-dots" id="mswPlanDots">
+                <div class="msw-dot active" onclick="mswScrollTo('plan',0)"></div>
+                <div class="msw-dot" onclick="mswScrollTo('plan',1)"></div>
+                <div class="msw-dot" onclick="mswScrollTo('plan',2)"></div>
+            </div>
+
+            <!-- Info panel — changes with swipe -->
+            <div class="msw-info" id="mswPlanInfo">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+
+        <!-- ── COIN SWIPE ──────────────────────────────────────────── -->
+        <div id="mswCoinPanel" style="display:none;">
+            <div class="msw-track" id="mswCoinTrack">
+
+                <!-- Coin Card 1 -->
+                <div class="msw-card msw-card--coin1">
+                    <div class="msw-card-tag">Gói Khởi Đầu</div>
+                    <div class="msw-card-name">5.000 Xu</div>
+                    <div style="display:flex;align-items:baseline;gap:4px;">
+                        <div class="msw-card-price">20.000</div>
+                        <span class="msw-card-period">đ</span>
+                    </div>
+                </div>
+
+                <!-- Coin Card 2 -->
+                <div class="msw-card msw-card--coin2">
+                    <div class="msw-card-badge">PHỔ BIẾN</div>
+                    <div class="msw-card-tag">Gói Đam Mê</div>
+                    <div class="msw-card-name">30.000 Xu</div>
+                    <div style="display:flex;align-items:baseline;gap:4px;">
+                        <div class="msw-card-price">100.000</div>
+                        <span class="msw-card-period">đ</span>
+                    </div>
+                </div>
+
+                <!-- Coin Card 3 -->
+                <div class="msw-card msw-card--coin3">
+                    <div class="msw-card-tag">Gói VIP Collector</div>
+                    <div class="msw-card-name">200.000 Xu</div>
+                    <div style="display:flex;align-items:baseline;gap:4px;">
+                        <div class="msw-card-price">500.000</div>
+                        <span class="msw-card-period">đ</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dots -->
+            <div class="msw-dots" id="mswCoinDots">
+                <div class="msw-dot active" onclick="mswScrollTo('coin',0)"></div>
+                <div class="msw-dot" onclick="mswScrollTo('coin',1)"></div>
+                <div class="msw-dot" onclick="mswScrollTo('coin',2)"></div>
+            </div>
+
+            <!-- Info panel -->
+            <div class="msw-info" id="mswCoinInfo">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Fixed bottom bar (mobile only) -->
+    <div id="mswBottomBar" class="hidden-bar">
+        <div class="msw-bar-price">
+            <div class="msw-bar-label">Tổng thanh toán</div>
+            <div class="msw-bar-amount" id="mswBarAmount">—</div>
+            <div class="msw-bar-period" id="mswBarPeriod"></div>
+        </div>
+        <button class="msw-bar-btn" onclick="mswBuyNow()">Mua Ngay →</button>
+    </div>
+
+    <script>
+    // ── Data ──────────────────────────────────────────────────────
+    const MSW_PLANS = [
+        {
+            key: 'free', payUrl: null,
+            name: 'Miễn Phí', amount: '0đ', period: '/tháng',
+            features: [
+                'Truy cập kho phim giới hạn',
+                'Chất lượng SD (480p)',
+                'Xem trên 1 thiết bị'
+            ],
+            bonus: null
+        },
+        {
+            key: 'premium', payUrl: 'payment.html?plan=premium',
+            name: 'Cao Cấp', amount: '169.000đ', period: '/tháng',
+            features: [
+                'Truy cập toàn bộ kho phim',
+                'Chất lượng Full HD & 4K',
+                'Không quảng cáo',
+                'Xem trên 2 thiết bị',
+                'Dùng thử miễn phí 7 ngày'
+            ],
+            bonus: { icon: 'redeem', main: 'Tặng 10.000 Xu Thưởng', sub: '+ 300 XP (Lên ngay 10 Cấp)' }
+        },
+        {
+            key: 'family', payUrl: 'payment.html?plan=family',
+            name: 'Gia Đình', amount: '699.000đ', period: '/năm',
+            features: [
+                'Tất cả quyền lợi Cao Cấp',
+                'Xem trên 4 thiết bị cùng lúc',
+                'Hỗ trợ ưu tiên 24/7'
+            ],
+            bonus: { icon: 'card_giftcard', main: 'Tặng 50.000 Xu Siêu Cấp', sub: '+ 1.000 XP Thần Thánh' }
+        }
+    ];
+    const MSW_COINS = [
+        {
+            key: 'xu_20k', payUrl: null, onclick: "openPaymentModal('xu_20k')",
+            name: 'Khởi Đầu', amount: '20.000đ', period: '',
+            features: [
+                '5.000 Xu nạp vào tài khoản',
+                'Dành cho người mới bắt đầu',
+                'Dùng mua khung Avatar & Banner'
+            ],
+            bonus: null
+        },
+        {
+            key: 'xu_100k', payUrl: null, onclick: "openPaymentModal('xu_100k')",
+            name: 'Đam Mê', amount: '100.000đ', period: '',
+            features: [
+                '30.000 Xu nạp vào tài khoản',
+                'Tặng thêm 5.000 Xu Thưởng',
+                'Mở khoá khung Avatar hiếm'
+            ],
+            bonus: { icon: 'stars', main: '+ Tặng 5.000 Xu Thưởng', sub: 'Giá trị tốt nhất!' }
+        },
+        {
+            key: 'xu_500k', payUrl: null, onclick: "openPaymentModal('xu_500k')",
+            name: 'VIP Collector', amount: '500.000đ', period: '',
+            features: [
+                '200.000 Xu nạp vào tài khoản',
+                'Tặng thêm 50.000 Xu Thưởng',
+                'Mở khoá toàn bộ khung VIP'
+            ],
+            bonus: { icon: 'diamond', main: '+ Tặng 50.000 Xu Thưởng', sub: 'Bộ sưu tập đỉnh cao' }
+        }
+    ];
+
+    // ── State ─────────────────────────────────────────────────────
+    let mswActiveTab = 'plan';
+    let mswPlanIdx = 0;
+    let mswCoinIdx = 0;
+
+    // ── Render info panel ─────────────────────────────────────────
+    function mswRenderInfo(tab, idx) {
+        const data = tab === 'plan' ? MSW_PLANS[idx] : MSW_COINS[idx];
+        const infoEl = document.getElementById(tab === 'plan' ? 'mswPlanInfo' : 'mswCoinInfo');
+        if (!infoEl || !data) return;
+
+        const bonusHTML = data.bonus ? `
+            <div class="msw-bonus-row">
+                <div class="msw-bonus-icon">
+                    <span class="material-icons-round">${data.bonus.icon}</span>
+                </div>
+                <div>
+                    <div class="msw-bonus-text-main">${data.bonus.main}</div>
+                    <div class="msw-bonus-text-sub">${data.bonus.sub}</div>
+                </div>
+            </div>` : '';
+
+        infoEl.innerHTML = `
+            <div class="msw-info-title">${data.name} — Quyền lợi</div>
+            <ul class="msw-feature-list">
+                ${data.features.map(f => `
+                <li class="msw-feature-item">
+                    <span class="material-icons-round">check_circle</span>${f}
+                </li>`).join('')}
+            </ul>
+            ${bonusHTML}
+        `;
+
+        // Update bottom bar
+        const bar = document.getElementById('mswBottomBar');
+        bar.classList.remove('hidden-bar');
+        document.getElementById('mswBarAmount').textContent = data.amount;
+        document.getElementById('mswBarPeriod').textContent = data.period;
+    }
+
+    // ── Scroll-snap detect ────────────────────────────────────────
+    function mswInitTrack(trackId, dotsId, tab) {
+        const track = document.getElementById(trackId);
+        const dots  = document.getElementById(dotsId);
+        if (!track) return;
+
+        let ticking = false;
+        track.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    const cards = track.querySelectorAll('.msw-card');
+                    let closest = 0, minDist = Infinity;
+                    cards.forEach((c, i) => {
+                        const dist = Math.abs(c.getBoundingClientRect().left - track.getBoundingClientRect().left - track.clientWidth * 0.075);
+                        if (dist < minDist) { minDist = dist; closest = i; }
+                    });
+
+                    // Update dots
+                    dots.querySelectorAll('.msw-dot').forEach((d, i) => d.classList.toggle('active', i === closest));
+
+                    // Update info + bar
+                    if (tab === 'plan') mswPlanIdx = closest;
+                    else mswCoinIdx = closest;
+                    mswRenderInfo(tab, closest);
+
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }, { passive: true });
+    }
+
+    // ── Programmatic scroll ───────────────────────────────────────
+    function mswScrollTo(tab, idx) {
+        const track = document.getElementById(tab === 'plan' ? 'mswPlanTrack' : 'mswCoinTrack');
+        if (!track) return;
+        const card = track.querySelectorAll('.msw-card')[idx];
+        if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+
+    // ── Tab switch ────────────────────────────────────────────────
+    function mswSwitchTab(tab) {
+        mswActiveTab = tab;
+        const bg = document.getElementById('mswTabBg');
+        const planBtn = document.getElementById('mswTabPlan');
+        const coinBtn = document.getElementById('mswTabCoin');
+        const planPanel = document.getElementById('mswPlanPanel');
+        const coinPanel = document.getElementById('mswCoinPanel');
+
+        if (tab === 'plan') {
+            bg.classList.remove('coin-active');
+            planBtn.classList.add('active'); coinBtn.classList.remove('active');
+            planPanel.style.display = ''; coinPanel.style.display = 'none';
+            mswRenderInfo('plan', mswPlanIdx);
+        } else {
+            bg.classList.add('coin-active');
+            coinBtn.classList.add('active'); planBtn.classList.remove('active');
+            coinPanel.style.display = ''; planPanel.style.display = 'none';
+            mswRenderInfo('coin', mswCoinIdx);
+        }
+    }
+
+    // ── Buy now ───────────────────────────────────────────────────
+    function mswBuyNow() {
+        if (mswActiveTab === 'plan') {
+            const d = MSW_PLANS[mswPlanIdx];
+            if (d.payUrl) window.location.href = d.payUrl;
+        } else {
+            const d = MSW_COINS[mswCoinIdx];
+            if (typeof openPaymentModal === 'function') openPaymentModal(d.key);
+        }
+    }
+
+    // ── Init on DOMContentLoaded ──────────────────────────────────
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.innerWidth >= 768) return; // desktop: skip
+        mswInitTrack('mswPlanTrack', 'mswPlanDots', 'plan');
+        mswInitTrack('mswCoinTrack', 'mswCoinDots', 'coin');
+        mswRenderInfo('plan', 0);
+    });
+    </script>
+
+    <!-- ── EXISTING DESKTOP MAIN (hidden on mobile) ──────────── -->
     <main id="pricingMain" class="flex-grow pb-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full relative" style="padding-top: 85px;">
         <div
             class="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[128px] pointer-events-none -z-10">
@@ -1039,7 +1602,7 @@
                         Phổ biến nhất</div>
                     <div class="p-title" style="color:var(--p-gold)">Cao Cấp</div>
                     <div class="p-price-wrap">
-                        <span class="p-price" id="price-premium" style="color:var(--p-gold)">69.000</span>
+                        <span class="p-price" id="price-premium" style="color:var(--p-gold)">169.000</span>
                         <span class="p-currency" style="color:var(--p-gold)">đ</span>
                         <span class="p-period">/tháng</span>
                     </div>
