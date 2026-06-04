@@ -338,6 +338,24 @@
 
     <!-- ===== SEARCH PAGE UI ===== -->
     <style>
+    /* ─── Mobile PWA gap fix ─── */
+    @media (max-width: 767px) {
+        /* Giảm padding-top main: chỉ cần đủ chỗ cho nav (~60px) + safe area */
+        main.pt-safe-main {
+            padding-top: calc(62px + env(safe-area-inset-top, 0px)) !important;
+        }
+        /* Đảm bảo sidebar HOÀN TOÀN collapsed trên mobile */
+        .sp-sidebar.sp-filter-drawer:not(.open) {
+            max-height: 0 !important;
+            min-height: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: hidden !important;
+        }
+        /* Không có margin-top thừa trên sp-layout mobile */
+        .sp-layout { margin-top: 0 !important; }
+    }
+
     /* ─── Layout wrapper ─── */
     .sp-wrap {
         max-width: 1400px;
