@@ -44,18 +44,11 @@
     inset: 0;
     background-size: cover;
     background-position: center 20%;
-    opacity: 0.12; /* Rất mờ theo yêu cầu */
+    opacity: 0.45; /* Sáng và trong nét như cũ */
     border-radius: 24px;
     z-index: 0;
     transition: opacity 0.3s ease;
     pointer-events: none;
-}
-.p-card-backdrop::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.8));
-    border-radius: 24px;
 }
 
 /* All direct children above backdrop */
@@ -118,6 +111,7 @@
     letter-spacing: -0.02em;
     margin-bottom: 6px;
     color: #fff;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.8);
 }
 
 .p-price-wrap {
@@ -132,18 +126,21 @@
     font-weight: 900;
     letter-spacing: -1.5px;
     line-height: 1;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.8);
 }
 
 .p-currency {
     font-size: 1.5rem;
     font-weight: 700;
-    opacity: 0.6;
+    opacity: 0.9;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.8);
 }
 
 .p-period {
     font-size: 1rem;
-    opacity: 0.4;
+    opacity: 0.8;
     font-weight: 500;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.8);
 }
 
 /* Features List */
@@ -161,7 +158,8 @@
     margin-bottom: 12px;
     font-size: 0.9rem;
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
 }
 
 .p-feature-item i {
