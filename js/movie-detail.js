@@ -95,21 +95,74 @@ function renderMovieDetail(movie) {
             let categoryName = '';
             let categoryLink = '';
             
-            if (movie.type === 'series') {
-                categoryName = 'Phim Bộ';
-                categoryLink = 'danh-sach.html?list=phim-bo';
-            } else if (movie.type === 'single') {
-                categoryName = 'Phim Lẻ';
-                categoryLink = 'danh-sach.html?list=phim-le';
-            } else if (movie.type === 'hoathinh') {
-                categoryName = 'Hoạt Hình';
-                categoryLink = 'danh-sach.html?list=hoat-hinh';
-            } else if (movie.type === 'tvshows') {
-                categoryName = 'TV Shows';
-                categoryLink = 'danh-sach.html?list=tv-shows';
+            // Xử lý breadcrumb thông minh: nhớ trang trước đó (referrer)
+            const referrer = document.referrer;
+            let refMatched = false;
+            
+            try {
+                if (referrer && referrer.includes(window.location.host)) {
+                    const refUrl = new URL(referrer);
+                    
+                    if (referrer.includes('phim-theo-quoc-gia.html')) {
+                        categoryName = (movie.country && movie.country.length > 0) ? movie.country[0].name : 'Quốc Gia';
+                        categoryLink = referrer;
+                        refMatched = true;
+                    } else if (referrer.includes('phim-theo-the-loai.html')) {
+                        categoryName = (movie.category && movie.category.length > 0) ? movie.category[0].name : 'Thể Loại';
+                        categoryLink = referrer;
+                        refMatched = true;
+                    } else if (referrer.includes('search.html')) {
+                        categoryName = 'Tìm Kiếm';
+                        categoryLink = referrer;
+                        refMatched = true;
+                    } else if (referrer.includes('danh-sach.html')) {
+                        const listParam = refUrl.searchParams.get('list');
+                        const listMap = {
+                            'phim-moi': 'Phim Mới',
+                            'phim-bo': 'Phim Bộ',
+                            'phim-le': 'Phim Lẻ',
+                            'tv-shows': 'TV Shows',
+                            'hoat-hinh': 'Hoạt Hình',
+                            'phim-vietsub': 'Phim Vietsub',
+                            'phim-thuyet-minh': 'Thuyết Minh',
+                            'phim-long-tien': 'Lồng Tiếng',
+                            'phim-bo-dang-chieu': 'Đang Chiếu',
+                            'phim-bo-hoan-thanh': 'Đã Hoàn Thành',
+                            'phim-sap-chieu': 'Sắp Chiếu'
+                        };
+                        if (listParam && listMap[listParam]) {
+                            categoryName = listMap[listParam];
+                            categoryLink = referrer;
+                            refMatched = true;
+                        }
+                    }
+                }
+            } catch(e) {
+                console.warn('Could not parse referrer URL for breadcrumb', e);
+            }
+            
+            // Fallback nếu không có referrer (vào thẳng link)
+            if (!refMatched) {
+                if (movie.type === 'series') {
+                    categoryName = 'Phim Bộ';
+                    categoryLink = 'danh-sach.html?list=phim-bo';
+                } else if (movie.type === 'single') {
+                    categoryName = 'Phim Lẻ';
+                    categoryLink = 'danh-sach.html?list=phim-le';
+                } else if (movie.type === 'hoathinh') {
+                    categoryName = 'Hoạt Hình';
+                    categoryLink = 'danh-sach.html?list=hoat-hinh';
+                } else if (movie.type === 'tvshows') {
+                    categoryName = 'TV Shows';
+                    categoryLink = 'danh-sach.html?list=tv-shows';
+                }
             }
             
             if (categoryName) {
+                // Lưu lại state cho trang watch.html dùng
+                sessionStorage.setItem('breadcrumbName', categoryName);
+                sessionStorage.setItem('breadcrumbLink', categoryLink);
+                
                 const separator = document.createElement('span');
                 separator.className = 'material-icons-round text-base';
                 separator.textContent = 'chevron_right';
