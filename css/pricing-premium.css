@@ -31,22 +31,59 @@
     border: 1px solid var(--p-border);
     border-radius: 24px;
     padding: 28px 24px;
-    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     box-shadow: 0 15px 30px rgba(0,0,0,0.3);
 }
 
-.p-card:hover {
-    transform: translateY(-12px);
-    border-color: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+/* ── Backdrop movie image overlay ── */
+.p-card-backdrop {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center 20%;
+    opacity: 0.12; /* Rất mờ theo yêu cầu */
+    border-radius: 24px;
+    z-index: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+.p-card-backdrop::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.8));
+    border-radius: 24px;
+}
+
+/* All direct children above backdrop */
+.p-card > *:not(.p-card-backdrop) {
+    position: relative;
+    z-index: 1;
+}
+
+/* ── VieON-style group hover: dim non-hovered cards ── */
+.p-pricing-grid:hover .p-card {
+    opacity: 0.72;
+    transform: scale(0.99);
+}
+
+.p-pricing-grid:hover .p-card:hover {
+    opacity: 1;
+    transform: scale(1.03);
+    border-color: #FFD700 !important;
+    box-shadow: 0 0 20px rgba(255,215,0,0.6), 0 20px 40px rgba(0,0,0,0.5) !important;
+}
+
+.p-pricing-grid:hover .p-card:hover .p-card-backdrop {
+    opacity: 0.38;
 }
 
 @keyframes p-float {
     0% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    50% { transform: translateY(-8px); }
     100% { transform: translateY(0); }
 }
 
@@ -58,12 +95,12 @@
     animation-play-state: paused;
 }
 
-/* Highlight for Featured/Premium */
+/* Highlight for Featured/Premium — always active gold border */
 .p-card-featured {
-    border: 2px solid var(--p-gold);
-    background: radial-gradient(circle at top right, rgba(232, 185, 79, 0.1), transparent), 
+    border: 2px solid #FFD700 !important;
+    background: radial-gradient(circle at top right, rgba(255,215,0,0.08), transparent),
                 var(--p-card-bg);
-    box-shadow: 0 0 40px rgba(232, 185, 79, 0.05);
+    box-shadow: 0 0 24px rgba(255,215,0,0.2), 0 15px 30px rgba(0,0,0,0.3);
 }
 
 .p-card-featured::before {
@@ -215,15 +252,31 @@
     border-radius: 28px;
     padding: 32px 24px;
     text-align: center;
-    transition: all 0.4s ease;
+    transition: all 0.3s ease;
     cursor: pointer;
     position: relative;
     overflow: hidden;
 }
 
-.p-coin-card:hover {
-    transform: translateY(-8px);
-    border-color: rgba(255, 255, 255, 0.2);
+/* Coin card backdrop z-index fix */
+.p-coin-card > *:not(.p-card-backdrop) {
+    position: relative;
+    z-index: 1;
+}
+
+/* VieON-style group hover for coin grid */
+.p-coin-grid:hover .p-coin-card {
+    opacity: 0.72;
+    transform: scale(0.99);
+}
+.p-coin-grid:hover .p-coin-card:hover {
+    opacity: 1;
+    transform: scale(1.03);
+    border-color: #FFD700 !important;
+    box-shadow: 0 0 20px rgba(255,215,0,0.6), 0 20px 40px rgba(0,0,0,0.5) !important;
+}
+.p-coin-grid:hover .p-coin-card:hover .p-card-backdrop {
+    opacity: 0.38;
 }
 
 .p-coin-icon {

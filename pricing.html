@@ -1063,13 +1063,13 @@
         flex: none;
         width: calc(100vw - 56px);   /* để lộ ~20px 2 bên */
         border-radius: 24px;
-        padding: 20px 24px;
+        padding: 24px 24px;
         scroll-snap-align: center;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        min-height: 180px;
-        max-height: 190px;
+        min-height: 240px;           /* Tăng chiều cao khung hình */
+        max-height: 250px;
         position: relative;
         overflow: hidden;
         box-shadow: 0 8px 32px rgba(0,0,0,0.4);
@@ -1087,61 +1087,79 @@
     /* Content above glass */
     .msw-card > * { position: relative; z-index: 1; }
 
-    /* Gradients per card */
-    .msw-card--free    { background: linear-gradient(135deg,#2a2a2a 0%,#1a1a1a 100%); }
-    .msw-card--premium { background: linear-gradient(135deg,#b8860b 0%,#e8b94f 60%,#f7c948 100%); }
-    .msw-card--family  { background: linear-gradient(135deg,#0d6e4f 0%,#10b981 100%); }
-    .msw-card--coin1   { background: linear-gradient(135deg,#1a5fa8 0%,#38bdf8 100%); }
-    .msw-card--coin2   { background: linear-gradient(135deg,#b8860b 0%,#e8b94f 100%); }
-    .msw-card--coin3   { background: linear-gradient(135deg,#5b21b6 0%,#a855f7 100%); }
+    /* ── Card backgrounds — khp desktop rgba(18,18,31,0.65) ── */
+    .msw-card--free    { background: rgba(15, 15, 25, 0.55); }
+    .msw-card--premium, .msw-card--coin2 { background: rgba(15, 15, 25, 0.50); border: 2px solid #FFD700 !important;
+                         box-shadow: 0 0 24px rgba(255,215,0,0.3); }
+    .msw-card--family  { background: rgba(15, 15, 25, 0.55); }
+    .msw-card--coin1   { background: rgba(15, 15, 35, 0.55); }
+    /* .msw-card--coin2 removed here since it's merged with premium above */
+    .msw-card--coin3   { background: rgba(25, 5,  35, 0.55); }
 
     /* Card inner text */
     .msw-card-tag {
         display: inline-block;
         width: fit-content;
-        align-self: flex-start;         /* không stretch trong flex column */
+        align-self: flex-start;
+        flex-shrink: 0;
         font-size: 0.62rem; font-weight: 800;
         letter-spacing: 0.1em; text-transform: uppercase;
-        background: rgba(0,0,0,0.25);
+        background: rgba(255,255,255,0.12);
+        border: 1px solid rgba(255,255,255,0.2);
         padding: 4px 12px; border-radius: 20px;
-        margin-bottom: 10px;
+        margin-bottom: 0;
         color: rgba(255,255,255,0.9);
+        white-space: nowrap;
+        backdrop-filter: blur(4px);
     }
-    .msw-card--premium .msw-card-tag { background: rgba(0,0,0,0.22); color: rgba(0,0,0,0.75); }
-    .msw-card--family  .msw-card-tag { background: rgba(0,0,0,0.2);  color: rgba(255,255,255,0.85); }
+    .msw-card--premium .msw-card-tag, .msw-card--coin2 .msw-card-tag { background: rgba(255,215,0,0.15); border-color: rgba(255,215,0,0.4); color: #FFD700; }
+    .msw-card--family  .msw-card-tag { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.9); }
 
     .msw-card-name {
         font-size: 1.6rem; font-weight: 900;
         color: #fff; line-height: 1;
         margin-bottom: 6px;
-        text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        text-shadow: 0 2px 12px rgba(0,0,0,0.6);
     }
-    .msw-card--premium .msw-card-name { color: #1a0f00; }
+    .msw-card--premium .msw-card-name, .msw-card--coin2 .msw-card-name { color: #FFD700; }
 
     .msw-card-price {
         font-size: 2.6rem; font-weight: 900;
         color: #fff; letter-spacing: -1px;
         line-height: 1;
+        text-shadow: 0 2px 12px rgba(0,0,0,0.5);
     }
-    .msw-card--premium .msw-card-price { color: #1a0f00; }
+    .msw-card--premium .msw-card-price, .msw-card--coin2 .msw-card-price { color: #FFD700; }
 
     .msw-card-period {
         font-size: 0.8rem; font-weight: 600;
-        color: rgba(255,255,255,0.65);
+        color: rgba(255,255,255,0.6);
         margin-left: 2px;
     }
-    .msw-card--premium .msw-card-period { color: rgba(0,0,0,0.5); }
+    .msw-card--premium .msw-card-period, .msw-card--coin2 .msw-card-period { color: rgba(255,215,0,0.7); }
 
-    /* Chip / badge in card */
+    /* ── Card header row: tag left + badge right ── */
+    .msw-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        gap: 8px;
+    }
+
+    /* Chip / badge in card — now inline in header */
     .msw-card-badge {
-        position: absolute; top: 24px; right: 24px;
-        font-size: 0.6rem; font-weight: 900;
+        position: static;
+        flex-shrink: 0;
+        font-size: 0.58rem; font-weight: 900;
         background: rgba(255,255,255,0.25);
         color: #fff; padding: 4px 10px;
         border-radius: 999px; letter-spacing: 0.08em;
         text-transform: uppercase;
+        white-space: nowrap;
     }
-    .msw-card--premium .msw-card-badge { background: rgba(0,0,0,0.18); color: #1a0f00; }
+    .msw-card--premium .msw-card-badge, .msw-card--coin2 .msw-card-badge { background: rgba(255,215,0,0.2); color: #FFD700; border: 1px solid rgba(255,215,0,0.4); }
+    .msw-card--family  .msw-card-badge { background: rgba(255,255,255,0.15); color: #fff; }
 
     /* Dots indicator */
     .msw-dots {
@@ -1227,6 +1245,24 @@
         transition: background 0.15s, transform 0.1s;
     }
     .msw-bar-btn:active { transform: scale(0.97); background: #e8e8e8; }
+
+    /* ── Mobile card backdrop ── */
+    .msw-card-backdrop {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center 20%;
+        opacity: 0.45;       /* Sáng, trong rõ nét như cũ */
+        border-radius: 24px;
+        z-index: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+    /* Ensure card content is above backdrop */
+    .msw-card > *:not(.msw-card-backdrop) {
+        position: relative;
+        z-index: 1;
+    }
     </style>
 
     <!-- MOBILE SWIPE SECTION -->
@@ -1247,7 +1283,10 @@
 
                 <!-- Card 1: Miễn Phí -->
                 <div class="msw-card msw-card--free">
-                    <div class="msw-card-tag">Gói Miễn Phí</div>
+                    <div class="msw-card-backdrop" id="msw-bd-free"></div>
+                    <div class="msw-card-header">
+                        <div class="msw-card-tag">Gói Miễn Phí</div>
+                    </div>
                     <div class="msw-card-name">Miễn Phí</div>
                     <div style="display:flex;align-items:baseline;gap:4px;">
                         <div class="msw-card-price">0</div>
@@ -1257,8 +1296,11 @@
 
                 <!-- Card 2: Cao Cấp -->
                 <div class="msw-card msw-card--premium">
-                    <div class="msw-card-badge">Phổ biến nhất</div>
-                    <div class="msw-card-tag">Gói Thành Viên</div>
+                    <div class="msw-card-backdrop" id="msw-bd-premium"></div>
+                    <div class="msw-card-header">
+                        <div class="msw-card-tag">Gói Thành Viên</div>
+                        <div class="msw-card-badge">Phổ biến nhất</div>
+                    </div>
                     <div class="msw-card-name">Cao Cấp</div>
                     <div style="display:flex;align-items:baseline;gap:4px;">
                         <div class="msw-card-price">169.000</div>
@@ -1268,8 +1310,11 @@
 
                 <!-- Card 3: Gia Đình -->
                 <div class="msw-card msw-card--family">
-                    <div class="msw-card-badge">Tiết kiệm 20%</div>
-                    <div class="msw-card-tag">Gói Gia Đình</div>
+                    <div class="msw-card-backdrop" id="msw-bd-family"></div>
+                    <div class="msw-card-header">
+                        <div class="msw-card-tag">Gói Gia Đình</div>
+                        <div class="msw-card-badge">Tiết kiệm 20%</div>
+                    </div>
                     <div class="msw-card-name">Gia Đình</div>
                     <div style="display:flex;align-items:baseline;gap:4px;">
                         <div class="msw-card-price">699.000</div>
@@ -1295,9 +1340,12 @@
         <div id="mswCoinPanel" style="display:none;">
             <div class="msw-track" id="mswCoinTrack">
 
-                <!-- Coin Card 1 -->
+                <!-- Coin Card 1: Khởi Đầu -->
                 <div class="msw-card msw-card--coin1">
-                    <div class="msw-card-tag">Gói Khởi Đầu</div>
+                    <div class="msw-card-backdrop" id="msw-bd-coin1"></div>
+                    <div class="msw-card-header">
+                        <div class="msw-card-tag">Gói Khởi Đầu</div>
+                    </div>
                     <div class="msw-card-name">5.000 Xu</div>
                     <div style="display:flex;align-items:baseline;gap:4px;">
                         <div class="msw-card-price">20.000</div>
@@ -1305,10 +1353,13 @@
                     </div>
                 </div>
 
-                <!-- Coin Card 2 -->
+                <!-- Coin Card 2: Đam Mê (Featured) -->
                 <div class="msw-card msw-card--coin2">
-                    <div class="msw-card-badge">PHỔ BIẾN</div>
-                    <div class="msw-card-tag">Gói Đam Mê</div>
+                    <div class="msw-card-backdrop" id="msw-bd-coin2"></div>
+                    <div class="msw-card-header">
+                        <div class="msw-card-tag">Gói Đam Mê</div>
+                        <div class="msw-card-badge">Phổ biến</div>
+                    </div>
                     <div class="msw-card-name">30.000 Xu</div>
                     <div style="display:flex;align-items:baseline;gap:4px;">
                         <div class="msw-card-price">100.000</div>
@@ -1316,9 +1367,12 @@
                     </div>
                 </div>
 
-                <!-- Coin Card 3 -->
+                <!-- Coin Card 3: VIP Collector -->
                 <div class="msw-card msw-card--coin3">
-                    <div class="msw-card-tag">Gói VIP Collector</div>
+                    <div class="msw-card-backdrop" id="msw-bd-coin3"></div>
+                    <div class="msw-card-header">
+                        <div class="msw-card-tag">Gói VIP Collector</div>
+                    </div>
                     <div class="msw-card-name">200.000 Xu</div>
                     <div style="display:flex;align-items:baseline;gap:4px;">
                         <div class="msw-card-price">500.000</div>
@@ -1578,6 +1632,7 @@
             <div class="p-pricing-grid">
                 <!-- Free Plan -->
                 <div class="p-card">
+                    <div class="p-card-backdrop" id="bd-free"></div>
                     <div class="p-title">Miễn Phí</div>
                     <div class="p-price-wrap">
                         <span class="p-price">0</span>
@@ -1597,6 +1652,7 @@
 
                 <!-- Premium Plan -->
                 <div class="p-card p-card-featured p-shine-effect">
+                    <div class="p-card-backdrop" id="bd-premium"></div>
                     <div
                         style="position:absolute; top:12px; right:32px; background:var(--p-gold); color:#000; font-size:10px; font-weight:900; padding:4px 12px; border-radius:10px; text-transform:uppercase;">
                         Phổ biến nhất</div>
@@ -1638,6 +1694,7 @@
 
                 <!-- Family Plan -->
                 <div class="p-card">
+                    <div class="p-card-backdrop" id="bd-family"></div>
                     <div
                         style="position:absolute; top:24px; right:24px; background:rgba(16,185,129,0.15); color:var(--p-emerald); font-size:10px; font-weight:800; padding:4px 10px; border-radius:8px;">
                         TIẾT KIỆM 20%</div>
@@ -1687,6 +1744,7 @@
 
                     <!-- Card 1: Khởi Đầu -->
                     <div class="p-coin-card" onclick="openPaymentModal('xu_20k')">
+                        <div class="p-card-backdrop" id="bd-coin1"></div>
                         <div class="p-coin-icon" style="background:rgba(56,189,248,0.1); color:var(--p-blue);">
                             <span class="material-icons-round">savings</span>
                         </div>
@@ -1706,6 +1764,7 @@
                     <div class="p-coin-card p-shine-effect"
                         style="border-color:var(--p-gold); background:rgba(232,185,79,0.04);"
                         onclick="openPaymentModal('xu_100k')">
+                        <div class="p-card-backdrop" id="bd-coin2"></div>
                         <div
                             style="position:absolute; top:12px; right:12px; background:var(--p-gold); color:#000; font-size:9px; font-weight:900; padding:3px 8px; border-radius:10px; text-transform:uppercase;">
                             PHỔ BIẾN</div>
@@ -1728,6 +1787,7 @@
 
                     <!-- Card 3: VIP Collector -->
                     <div class="p-coin-card" onclick="openPaymentModal('xu_500k')">
+                        <div class="p-card-backdrop" id="bd-coin3"></div>
                         <div class="p-coin-icon" style="background:rgba(168,85,247,0.1); color:var(--p-purple);">
                             <span class="material-icons-round">diamond</span>
                         </div>
@@ -1746,23 +1806,7 @@
             </div>
         </div> <!-- End coinSection -->
 </main>
-    <!-- [INLINE-AD] APhim Partner Banners -->
-    <div class="aphim-inline-ad">
-        <span class="aphim-inline-ad-label">Quảng cáo</span>
-        <div class="aphim-inline-ad-inner">
-            <a class="aphim-inline-ad-item" href="http://vsbet191.com/p/BSYk" target="_blank" rel="noopener nofollow" aria-label="VSBet">
-                <img src="/ads/catfish/vsbet.gif" alt="VSBet" loading="lazy">
-            </a>
-            <a class="aphim-inline-ad-item" href="https://colatv99.live/" target="_blank" rel="noopener nofollow" aria-label="ColaTV">
-                <img src="/ads/catfish/colatv.gif" alt="ColaTV" loading="lazy">
-            </a>
-            <a class="aphim-inline-ad-item" href="https://colascore.com/" target="_blank" rel="noopener nofollow" aria-label="ColaScore">
-                <img src="/ads/catfish/colascore.gif" alt="ColaScore" loading="lazy">
-            </a>
-        </div>
-    </div>
-    <!-- [/INLINE-AD] -->
-    <script src="/js/inline-ad-slideshow.js?v=3" defer></script>
+
 
                     <footer class="bg-[#07080a] border-t border-white/5 py-12 relative overflow-hidden">
         <!-- Background pattern/logo graphic -->
@@ -2970,11 +3014,31 @@
     </script>
     <script src="js/realtime-sync.js"></script>
 
-    <!-- ====== APhim Catfish Banner + Popup ====== -->
-    <link rel="stylesheet" href="/css/catfish-banner.css?v=17">
-    <link rel="stylesheet" href="/css/inline-ad.css?v=15">
-    <script src="/js/catfish-banner.js?v=18" defer></script>
-    <!-- ====== End Catfish Banner ====== -->
+    <!-- Catfish banner disabled on pricing page -->
+
+    <!-- ====== Pricing Card Backdrops — desktop + mobile ====== -->
+    <style>
+    /* Desktop plan cards */
+    #bd-free    { background-image: url('https://img.ophim.live/uploads/movies/nha-minh-di-thoi-thumb.jpg'); }
+    #bd-premium { background-image: url('https://img.ophim.live/uploads/movies/bo-gia-2021-thumb.jpg'); }
+    #bd-family  { background-image: url('https://img.ophim.live/uploads/movies/nha-ba-toi-mot-phong-thumb.jpg'); }
+
+    /* Desktop coin cards */
+    #bd-coin1 { background-image: url('https://img.ophim.live/uploads/movies/nha-ba-toi-mot-phong-thumb.jpg'); }
+    #bd-coin2 { background-image: url('https://img.ophim.live/uploads/movies/bo-gia-2021-thumb.jpg'); }
+    #bd-coin3 { background-image: url('https://img.ophim.live/uploads/movies/nha-minh-di-thoi-thumb.jpg'); }
+
+    /* Mobile swipe — card đã dark/trong suốt nên backdrop hiện rõ */
+    #msw-bd-free    { background-image: url('https://img.ophim.live/uploads/movies/nha-minh-di-thoi-thumb.jpg'); }
+    #msw-bd-premium { background-image: url('https://img.ophim.live/uploads/movies/bo-gia-2021-thumb.jpg'); }
+    #msw-bd-family  { background-image: url('https://img.ophim.live/uploads/movies/nha-ba-toi-mot-phong-thumb.jpg'); }
+
+    /* Mobile coin swipe backdrops */
+    #msw-bd-coin1   { background-image: url('https://img.ophim.live/uploads/movies/nha-ba-toi-mot-phong-thumb.jpg'); }
+    #msw-bd-coin2   { background-image: url('https://img.ophim.live/uploads/movies/bo-gia-2021-thumb.jpg'); }
+    #msw-bd-coin3   { background-image: url('https://img.ophim.live/uploads/movies/nha-minh-di-thoi-thumb.jpg'); }
+    </style>
+    <!-- ====== End Pricing Card Backdrops ====== -->
 </body>
 
 </html>
