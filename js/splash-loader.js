@@ -1,4 +1,4 @@
-// Splash Screen Loader - Show beautiful loading screen while page loads
+﻿// Splash Screen Loader - Show beautiful loading screen while page loads
 (function () {
     'use strict';
 
@@ -44,7 +44,7 @@
                     <div class="splash-ring"></div>
                     <div class="splash-ring"></div>
                     <div class="splash-ring"></div>
-                    <img src="/favicon.png" alt="A Phim Logo" class="splash-logo" style="opacity: 0; transition: opacity 0.3s;" onload="this.style.opacity = '1'">
+                    <img src="/apple-touch-icon.png" alt="A Phim Logo" class="splash-logo" style="opacity: 0; transition: opacity 0.3s;" onload="this.style.opacity = '1'">
                 </div>
 
                 <!-- Brand name -->
@@ -368,3 +368,4 @@
     setTimeout(updateProgress, 50);
 
 })();
+

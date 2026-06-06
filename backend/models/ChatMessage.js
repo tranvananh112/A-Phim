@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+﻿const mongoose = require('mongoose');
 
 const ChatMessageSchema = new mongoose.Schema({
     userId: {
@@ -12,7 +12,7 @@ const ChatMessageSchema = new mongoose.Schema({
     },
     avatar: {
         type: String,
-        default: '/favicon.png'
+        default: '/apple-touch-icon.png'
     },
     chatRole: {
         type: String,
@@ -55,3 +55,4 @@ const ChatMessageSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('ChatMessage', ChatMessageSchema);
+

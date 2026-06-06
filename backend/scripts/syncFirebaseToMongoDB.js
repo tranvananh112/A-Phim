@@ -1,4 +1,4 @@
-/**
+﻿/**
  * SYNC FIREBASE MESSAGES TO MONGODB
  * Script này đồng bộ tất cả tin nhắn từ Firebase Firestore vào MongoDB
  * để đảm bảo chức năng pin/delete hoạt động
@@ -61,7 +61,7 @@ async function syncMessages() {
                         firebaseId,
                         userId: data.userId || '000000000000000000000000', // Placeholder if missing
                         user: data.user || 'Khách',
-                        avatar: data.avatar || '/favicon.png',
+                        avatar: data.avatar || '/apple-touch-icon.png',
                         chatRole: data.chatRole || 'user',
                         frame: data.frame || '',
                         text: data.text || '',
@@ -91,3 +91,4 @@ async function syncMessages() {
 }
 
 syncMessages();
+

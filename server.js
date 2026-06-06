@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const axios = require('axios');const app = express();
@@ -49,7 +49,7 @@ app.get(['/movie-detail', '/movie-detail.html'], async (req, res) => {
                     // 3. Open Graph image
                     const img = movie.thumb_url
                         ? (movie.thumb_url.startsWith('http') ? movie.thumb_url : 'https://img.ophim.live/uploads/movies/' + movie.thumb_url)
-                        : 'https://aphim.io.vn/favicon.png';
+                        : 'https://aphim.io.vn/apple-touch-icon.png';
                     const pageUrl = 'https://aphim.io.vn/movie-detail.html?slug=' + slug;
 
                     // 4. JSON-LD Schema
@@ -616,3 +616,4 @@ process.on('SIGTERM', () => {
         console.log('HTTP server closed');
     });
 });
+

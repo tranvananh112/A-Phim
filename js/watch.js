@@ -1,4 +1,4 @@
-// Watch Page Script
+﻿// Watch Page Script
 let currentMovie = null;
 let currentEpisode = null;
 let player = null;
@@ -105,7 +105,7 @@ function injectVideoSchema(movie, episode) {
                 'url': 'https://aphim.io.vn',
                 'logo': {
                     '@type': 'ImageObject',
-                    'url': 'https://aphim.io.vn/favicon.png'
+                    'url': 'https://aphim.io.vn/apple-touch-icon.png'
                 }
             }
         };
@@ -1562,3 +1562,4 @@ function reportError() {
         setTimeout(() => toast.remove(), 300);
     }, 3000);
 }
+

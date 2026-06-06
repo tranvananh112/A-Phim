@@ -1,4 +1,4 @@
-/**
+﻿/**
  * APhim SEO Optimizer & Dynamic Schema Generator
  * Injects real-time SEO enhancements for Google Bots & Rich Results
  */
@@ -151,7 +151,7 @@ const SEO = {
         if (oldSchema) oldSchema.remove();
 
         const name = movie.name || movie.title;
-        const img = movie.thumb_url ? (movie.thumb_url.startsWith('http') ? movie.thumb_url : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`) : 'https://aphim.io.vn/favicon.png';
+        const img = movie.thumb_url ? (movie.thumb_url.startsWith('http') ? movie.thumb_url : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`) : 'https://aphim.io.vn/apple-touch-icon.png';
         
         const schemaType = (movie.type === 'series') ? 'TVSeries' : 'Movie';
         const schemaData = {
@@ -197,7 +197,7 @@ const SEO = {
 
         const itemListElement = movies.slice(0, 30).map((movie, index) => {
             const name = movie.name || movie.title;
-            const img = movie.thumb_url ? (movie.thumb_url.startsWith('http') ? movie.thumb_url : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`) : `${siteOrigin}/favicon.png`;
+            const img = movie.thumb_url ? (movie.thumb_url.startsWith('http') ? movie.thumb_url : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`) : `${siteOrigin}/apple-touch-icon.png`;
             const hasCustomLink = !!movieLinks[movie.slug];
             const slug = movie.slug || '';
             const movieUrl = `${siteOrigin}/${hasCustomLink ? 'watch-simple.html' : 'movie-detail.html'}?slug=${slug}`;
@@ -311,7 +311,7 @@ const SEO = {
             "@type": "Organization",
             "name": "APhim",
             "url": "https://aphim.io.vn/",
-            "logo": "https://aphim.io.vn/favicon.png",
+            "logo": "https://aphim.io.vn/apple-touch-icon.png",
             "sameAs": [
                 "https://t.me/+VsCfrulXuXw1NTE9" // Telegram Group Link
             ],
@@ -330,3 +330,4 @@ const SEO = {
         document.head.appendChild(script);
     });
 })();
+

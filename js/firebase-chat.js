@@ -1,4 +1,4 @@
-/**
+﻿/**
  * A PHIM - Firebase Chat Service (FIXED VERSION)
  * Sử dụng Firestore realtime cho chat cộng đồng
  */
@@ -101,7 +101,7 @@
                 const docRef = await this._msgCol(tab).add({
                     userId: msg.userId || 'guest',
                     user: msg.user || 'Khách',
-                    avatar: msg.avatar || '/favicon.png',
+                    avatar: msg.avatar || '/apple-touch-icon.png',
                     chatRole: msg.chatRole || 'user',
                     frame: msg.frame || '',
                     text: msg.text || '',
@@ -277,3 +277,4 @@
 
     window.firebaseChat = new FirebaseChat();
 })();
+

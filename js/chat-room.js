@@ -1,4 +1,4 @@
-/**
+﻿/**
  * A PHIM - Chat Widget Controller  v3.5  (Firebase Realtime + MongoDB Sync)
  * Flow: Welcome → Chat Room (Firestore realtime)
  */
@@ -228,7 +228,7 @@ class APFilmChat {
                 <div class="chat-header" id="chatHeader">
                     <div class="chat-header-info">
                         <div class="chat-header-avatar chat-header-avatar-main">
-                            <img src="/favicon.png" alt="A" id="headerGroupAvatar">
+                            <img src="/apple-touch-icon.png" alt="A" id="headerGroupAvatar">
                         </div>
                         <div class="chat-header-text">
                             <div class="chat-header-title">Cộng Đồng A Phim</div>
@@ -268,7 +268,7 @@ class APFilmChat {
                     <!-- SCREEN: WELCOME -->
                     <div class="chat-screen chat-screen-welcome" id="screenWelcome">
                         <div class="welcome-glow">
-                            <img src="/favicon.png" alt="A Phim" style="width:42px;height:42px;object-fit:contain;">
+                            <img src="/apple-touch-icon.png" alt="A Phim" style="width:42px;height:42px;object-fit:contain;">
                         </div>
                         <div>
                             <h2 class="welcome-title">Chào mừng đến <span>Kênh A Phim</span></h2>
@@ -449,7 +449,7 @@ class APFilmChat {
             this.user = {
                 id: userId,
                 name: currentUser.name || currentUser.user || 'User',
-                avatar: localStorage.getItem(avatarKey) || currentUser.avatar || localStorage.getItem('user_avatar') || '/favicon.png',
+                avatar: localStorage.getItem(avatarKey) || currentUser.avatar || localStorage.getItem('user_avatar') || '/apple-touch-icon.png',
                 frame: currentUser.equippedFrameClass || localStorage.getItem('ap_frame_class') || '',
                 chatRole: currentUser.chatRole || 'user',
                 role: currentUser.role
@@ -1050,7 +1050,7 @@ class APFilmChat {
         const avatarHtml = !isSameUser ? `
             <div class="tg-avatar-wrap ${isAdmin ? 'admin-glow' : ''}">
                 <div class="shop-frame-wrap ${msg.frame || ''} size-sm" style="width:34px; height:34px; position:relative;">
-                    <img src="${msg.avatar || '/favicon.png'}" class="tg-avatar" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+                    <img src="${msg.avatar || '/apple-touch-icon.png'}" class="tg-avatar" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
                 </div>
             </div>
         ` : '<div class="tg-avatar-spacer" style="width:34px; height:1px;"></div>';
@@ -1097,7 +1097,7 @@ class APFilmChat {
             // Calculate totals and first user data
             const firstEmoji = emojiList[0];
             const firstData = mergedReactions[firstEmoji];
-            const firstAvatar = (firstData.avatars && firstData.avatars[0]) ? firstData.avatars[0] : '/favicon.png';
+            const firstAvatar = (firstData.avatars && firstData.avatars[0]) ? firstData.avatars[0] : '/apple-touch-icon.png';
             const totalCount = Object.values(mergedReactions).reduce((acc, curr) => acc + (curr.uids ? curr.uids.length : 0), 0);
 
             // Build Detailed Tooltip
@@ -1228,7 +1228,7 @@ class APFilmChat {
 
         const myUid = this.user.id || this.user._id;
         const myName = this.user.user || this.user.name || 'Khách';
-        const myAvatar = this.user.avatar || '/favicon.png';
+        const myAvatar = this.user.avatar || '/apple-touch-icon.png';
 
         const idx = cache[emoji].uids.indexOf(myUid);
         if (idx !== -1) {
@@ -1254,7 +1254,7 @@ class APFilmChat {
                 if (pillContainer) pillContainer.remove();
             } else {
                 const firstEmoji = emojiList[0];
-                const firstAvatar = cache[firstEmoji].avatars[0] || '/favicon.png';
+                const firstAvatar = cache[firstEmoji].avatars[0] || '/apple-touch-icon.png';
                 const totalCount = Object.values(cache).reduce((acc, curr) => acc + curr.uids.length, 0);
                 const hasReactedAny = emojiList.some(emo => cache[emo].uids.includes(myUid));
 
@@ -2054,3 +2054,4 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 window.apFilmChat = new APFilmChat();
+

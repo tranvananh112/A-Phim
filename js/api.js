@@ -1,4 +1,4 @@
-// API Service for ophim17.cc and Backend
+﻿// API Service for ophim17.cc and Backend
 class MovieAPI {
     constructor() {
         this.useBackend = API_CONFIG.USE_BACKEND_FOR_MOVIES || false;
@@ -225,7 +225,7 @@ class MovieAPI {
 
     // Get image URL
     getImageURL(imagePath, width = 400, quality = 80, isPriority = false) {
-        if (!imagePath) return '/favicon.png';
+        if (!imagePath) return '/apple-touch-icon.png';
 
         let fullUrl = imagePath;
         if (!imagePath.startsWith('http')) {
@@ -494,3 +494,4 @@ const movieAPI = new MovieAPI();
 document.addEventListener('DOMContentLoaded', () => {
     movieAPI.injectCanonical();
 });
+

@@ -1,4 +1,4 @@
-const ChatMessage = require('../models/ChatMessage');
+﻿const ChatMessage = require('../models/ChatMessage');
 
 // @desc    Save chat message to MongoDB
 // @route   POST /api/chat/message
@@ -14,7 +14,7 @@ exports.saveMessage = async (req, res) => {
         const message = await ChatMessage.create({
             userId: req.user.id,
             user: req.user.user || req.user.name,
-            avatar: avatar || req.user.avatar || '/favicon.png',
+            avatar: avatar || req.user.avatar || '/apple-touch-icon.png',
             chatRole: chatRole || req.user.chatRole || 'user',
             frame: frame || req.user.equippedFrameClass || '',
             text,
@@ -298,3 +298,4 @@ exports.getPinned = async (req, res) => {
         res.status(500).json({ success: false, message: err.message });
     }
 };
+

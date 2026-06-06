@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+﻿const mongoose = require('mongoose');
 
 const SettingSchema = new mongoose.Schema({
     general: {
@@ -6,8 +6,8 @@ const SettingSchema = new mongoose.Schema({
         siteDesc: { type: String, default: 'Nền tảng xem phim trực tuyến hàng đầu Việt Nam' },
         siteDomain: { type: String, default: 'APhim.vn' },
         siteEmail: { type: String, default: 'admin@APhim.vn' },
-        logoUrl: { type: String, default: '../favicon.png' },
-        faviconUrl: { type: String, default: '../favicon.png' },
+        logoUrl: { type: String, default: '../apple-touch-icon.png' },
+        faviconUrl: { type: String, default: '../apple-touch-icon.png' },
         maintenanceMode: { type: Boolean, default: false },
         allowRegister: { type: Boolean, default: true },
         allowComments: { type: Boolean, default: true }
@@ -68,3 +68,4 @@ const SettingSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('Setting', SettingSchema);
+

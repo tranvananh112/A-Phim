@@ -1,4 +1,4 @@
-// Smart Splash Loader - Skip for fast-loading pages
+﻿// Smart Splash Loader - Skip for fast-loading pages
 (function () {
     'use strict';
 
@@ -43,7 +43,7 @@
                 <div class="splash-ring"></div>
                 <div class="splash-ring"></div>
                 <div class="splash-ring"></div>
-                <img src="/favicon.png" alt="A Phim Logo" class="splash-logo">
+                <img src="/apple-touch-icon.png" alt="A Phim Logo" class="splash-logo">
             </div>
 
             <!-- Brand name -->
@@ -107,3 +107,4 @@
     setTimeout(hideSplashScreen, 5000);
 
 })();
+

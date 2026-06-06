@@ -1,4 +1,4 @@
-const Setting = require('../models/Setting');
+﻿const Setting = require('../models/Setting');
 const cache = require('../utils/cache');
 
 // Helper to ensure a single settings document exists
@@ -65,8 +65,8 @@ exports.getPublicSettings = async (req, res) => {
             siteName: 'A Phim',
             siteDesc: 'Nền tảng xem phim trực tuyến hàng đầu Việt Nam',
             siteDomain: 'APhim.vn',
-            logoUrl: '../favicon.png',
-            faviconUrl: '../favicon.png',
+            logoUrl: '../apple-touch-icon.png',
+            faviconUrl: '../apple-touch-icon.png',
             maintenanceMode: false
         },
         content: {
@@ -171,3 +171,4 @@ exports.getPaymentPublic = async (req, res) => {
         res.json({ success: true, data: defaults });
     }
 };
+

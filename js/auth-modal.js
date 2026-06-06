@@ -1,4 +1,4 @@
-/**
+﻿/**
  * A PHIM - Auth Modal (Login / Register)
  * Hiện popup đăng nhập / đăng ký ngay tại trang mà không redirect
  */
@@ -232,7 +232,7 @@
 
                 <div class="ap-auth-brand">
                     <div class="ap-auth-brand-logo">
-                        <img src="/favicon.png" alt="A Phim">
+                        <img src="/apple-touch-icon.png" alt="A Phim">
                     </div>
                     <div class="ap-auth-brand-name">A <span>Phim</span></div>
                     <div class="ap-auth-brand-tagline">Phim hay cả rổ</div>
@@ -481,4 +481,5 @@
     }
 
 })();
+
 

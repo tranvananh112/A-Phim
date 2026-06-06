@@ -1,4 +1,4 @@
-/**
+﻿/**
  * ADD MESSAGE MANUALLY TO MONGODB
  * Script này thêm tin nhắn thủ công vào MongoDB để test chức năng pin
  */
@@ -68,7 +68,7 @@ async function addMessage() {
             firebaseId,
             userId: admin._id,
             user: admin.name,
-            avatar: admin.avatar || '/favicon.png',
+            avatar: admin.avatar || '/apple-touch-icon.png',
             chatRole: admin.chatRole || 'user',
             frame: admin.equippedFrameClass || '',
             text,
@@ -96,3 +96,4 @@ async function addMessage() {
 }
 
 addMessage();
+
