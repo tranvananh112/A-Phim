@@ -1036,79 +1036,7 @@
                     </div>
                 </div>
 
-                <!-- Comments & Rating System (Moved into Column) -->
-                <div id="comments-section" class="w-full mt-5">
-                    <div class="bg-layer-2 border border-white/5 rounded-xl p-4 md:p-6 text-white w-full">
-                        <h3 class="text-lg font-bold mb-6 flex items-center gap-3">
-                            <span class="material-icons-round text-primary outline-none">sentiment_satisfied_alt</span>
-                            Bình luận (70)
-                        </h3>
 
-                        <div class="flex gap-2 mb-6">
-                            <button class="px-6 py-2 bg-[#fcd576] text-black font-semibold rounded-full text-sm">Bình
-                                luận</button>
-                            <button
-                                class="px-6 py-2 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-full text-sm transition-colors">Đánh
-                                giá</button>
-                        </div>
-
-                        <p class="text-gray-400 text-sm mb-6">Bạn có thể không <span
-                                class="text-[#fcd576] font-medium cursor-pointer hover:underline"
-                                onclick="if(window.showAuthModal)window.showAuthModal('login')">đăng nhập</span> để tham gia
-                            bình luận.</p>
-
-                        <div class="space-y-4 border border-white/10 rounded-xl p-4 md:p-6 bg-layer-3">
-                            <textarea id="commentInput"
-                                class="w-full bg-transparent border-none text-gray-300 placeholder-gray-500 focus:ring-0 resize-none text-sm"
-                                rows="3" placeholder="Viết bình luận"></textarea>
-                            <div class="text-right text-xs text-gray-500 mb-4">0 / 1000</div>
-
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-gray-400 text-xs mb-1">Tên của bạn</label>
-                                    <input type="text"
-                                        class="w-full bg-layer-3 border border-white/10 rounded-lg p-2.5 text-sm text-white focus:border-primary focus:ring-1 focus:ring-primary"
-                                        placeholder="Tên của bạn">
-                                </div>
-                                <div>
-                                    <label class="block text-gray-400 text-xs mb-1">Email</label>
-                                    <input type="email"
-                                        class="w-full bg-layer-3 border border-white/10 rounded-lg p-2.5 text-sm text-white focus:border-primary focus:ring-1 focus:ring-primary"
-                                        placeholder="Email (không bắt buộc)">
-                                </div>
-                            </div>
-
-                            <div class="mt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                                <div class="flex items-center gap-4">
-                                    <label class="flex items-center cursor-pointer">
-                                        <div class="relative">
-                                            <input type="checkbox" class="sr-only">
-                                            <div class="block bg-gray-600 w-10 h-6 rounded-full"></div>
-                                            <div
-                                                class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition transform">
-                                            </div>
-                                        </div>
-                                        <div class="ml-3 text-gray-400 text-xs">Tiết lộ?</div>
-                                    </label>
-                                    <button
-                                        class="flex items-center gap-2 text-xs text-gray-400 bg-black/40 px-3 py-1.5 rounded-full border border-white/10">
-                                        <span class="w-3.5 h-3.5 rounded-full bg-gray-600"></span>
-                                        Ảnh đại diện
-                                    </button>
-                                </div>
-                            </div>
-
-                            <button id="submitRating"
-                                class="mt-6 w-full flex items-center justify-center gap-2 py-3 bg-[#fcd576] text-black font-bold rounded-full hover:bg-[#eabb5a] transition-colors shadow-lg text-sm">
-                                GỬI
-                                <span class="material-icons-round text-sm">play_arrow</span>
-                            </button>
-
-                            <p class="text-xs text-gray-500 mt-4 text-center">* Không cần đăng nhập. Bình luận vi phạm chính
-                                sách sẽ bị xoá.</p>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- CỘT PHẢI (Chiếm ~30% - lg:col-span-4) -->
@@ -1191,7 +1119,9 @@
 
             <!-- Comments & Rating System (Moved into Column) -->
             <div id="comments-section" class="w-full mt-5 lg:col-span-8 order-3 lg:order-none">
+            </div>
         </div>
+
 </main>
 
     <!-- Footer -->
