@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html class="dark" lang="vi">
 
 <head>
@@ -1026,6 +1026,16 @@
                     </div>
                 </div>
 
+                <!-- Mobile Recommendations Section (Visible only on < lg) -->
+                <div class="block lg:hidden w-full">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-bold text-base text-white border-l-4 border-primary pl-3">Có thể bạn sẽ thích</h3>
+                    </div>
+                    <div class="watch-rec-container">
+                        <!-- Placeholder -> will be rewritten by JS -->
+                    </div>
+                </div>
+
                 <!-- Comments & Rating System (Moved into Column) -->
                 <div id="comments-section" class="w-full mt-5">
                     <div class="bg-layer-2 border border-white/5 rounded-xl p-4 md:p-6 text-white w-full">
@@ -1102,7 +1112,7 @@
             </div>
 
             <!-- CỘT PHẢI (Chiếm ~30% - lg:col-span-4) -->
-            <aside id="sidebar-col" class="lg:col-span-4 space-y-6 lg:block self-start sticky top-24">
+            <aside id="sidebar-col" class="lg:col-span-4 space-y-6 lg:block self-start sticky top-24 order-2 lg:order-none lg:row-span-2">
                 <!-- Premium Movie Info Card (Breathing Space-y-6, 24px padding, spacious layout) -->
                 <div class="bg-layer-2 border border-white/5 rounded-2xl p-6 text-white space-y-6 shadow-2xl transition-all duration-300 hover:border-white/10">
                     <!-- Poster & Basic Info Row -->
@@ -1168,17 +1178,19 @@
                     </div>
                 </div>
 
-                <!-- Recommendations Section -->
-                <div class="space-y-4">
+                <!-- Desktop Recommendations Section -->
+                <div class="hidden lg:block space-y-4">
                     <div class="flex items-center justify-between">
                         <h3 class="font-bold text-base text-white border-l-4 border-primary pl-3">Có thể bạn sẽ thích</h3>
                     </div>
-                    <!-- Recommendations Container (2 columns x multiple rows, highly compact) -->
-                    <div id="recommendations-list" class="grid grid-cols-2 gap-4 pb-2">
+                    <div class="watch-rec-container">
                         <!-- Placeholder -> will be rewritten by JS -->
                     </div>
                 </div>
             </aside>
+
+            <!-- Comments & Rating System (Moved into Column) -->
+            <div id="comments-section" class="w-full mt-5 lg:col-span-8 order-3 lg:order-none">
         </div>
 </main>
 

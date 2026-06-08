@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html class="dark" lang="vi">
 
 <head>
@@ -509,7 +509,21 @@
         </div>
         <!-- [/INLINE-AD-PREMIUM] -->
             <!-- DOM placeholder for Comments & Rating System -->
-            <div id="comments-section" class="w-full mt-8 mb-16">
+            <style>
+                /* Custom CSS cho Desktop 2-column layout (Dùng Grid để chống sập layout) */
+                .ap-comments-layout { display: grid; grid-template-columns: 1fr; width: 100%; gap: 32px; }
+                .ap-comments-main { min-width: 0; width: 100%; margin-top: 0; order: 2; }
+                .ap-top-sidebar { display: block; width: 100%; margin-top: 16px; overflow: hidden; order: 1; }
+                @media (min-width: 1024px) {
+                    .ap-comments-layout { grid-template-columns: 1fr 420px; align-items: flex-start; }
+                    .ap-comments-main { order: 1; }
+                    /* Đồng bộ margin-top: 32px (mt-8) để ngang hàng với div.bg-[#282a3a] của bình luận */
+                    .ap-top-sidebar { width: 100%; margin-top: 32px; overflow: visible; order: 2; }
+                }
+            </style>
+            <div class="ap-comments-layout">
+                <!-- Cột trái: Bình luận -->
+                <div id="comments-section" class="ap-comments-main mb-16">
                 <div class="mt-8 bg-[#282a3a] border border-white/5 rounded-xl p-4 md:p-8 text-white w-full">
                     <h3 class="text-xl md:text-2xl font-bold mb-6 flex items-center gap-3">
                         <span class="material-icons-round text-red-500 outline-none">sentiment_satisfied_alt</span>
@@ -582,6 +596,12 @@
                             sách sẽ bị xoá.</p>
                     </div>
                 </div>
+            </div>
+
+            <!-- Cột phải: Top Phim Sidebar -->
+            <aside id="top-weekly-sidebar" class="ap-top-sidebar">
+                <!-- Nội dung được render từ js/top-weekly-sidebar.js -->
+            </aside>
             </div>
         </div>
 </main>
@@ -793,6 +813,7 @@
     <!-- <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script> -->
     <!-- Firebase Chat Service -->
     <script src="js/firebase-chat.js?v=42"></script>
+    <script src="js/top-weekly-sidebar.js?v=1"></script>
     <!-- Chat Widget Logic -->
     <script src="js/chat-room.js?v=65"></script>
     <!-- Auth Modal (Login/Register popup) -->

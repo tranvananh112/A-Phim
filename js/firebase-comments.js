@@ -404,105 +404,109 @@
         /* Ẩn scrollbar trên Chrome/Safari/Edge */
         .ap-cmt-list::-webkit-scrollbar { display: none; }
         .ap-cmt-item { 
-            display: flex; gap: 8px; padding: 4px 2px; 
-            background: transparent; /* Không có card nền — giống Facebook */
-            border: none; 
-            border-radius: 0;
+            display: flex; flex-direction: column; gap: 8px; padding: 6px 2px; 
+            background: transparent; /* Không có card nền */
+            border: none; border-radius: 0;
             animation: ap-in 0.3s ease; position:relative; align-items: flex-start; text-align: left;
+        }
+        
+        .ap-cmt-main-row {
+            display: flex; gap: 8px; width: 100%; align-items: flex-start;
         }
         
         /* ── AVATAR FRAME v9 INTEGRATION ── */
         .ap-cmt-avatar, .ap-form-user-ava {
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            z-index: 1;
+            flex-shrink: 0; display: flex; align-items: center; justify-content: center; position: relative; z-index: 1;
         }
         /* Overwrite size-sm specifically for comment context */
-        .ap-cmt-avatar.shop-frame-wrap.size-sm {
-            width: 32px;  /* Giảm từ 40px — giống Facebook */
-            height: 32px;
-        }
-        .ap-form-user-ava.shop-frame-wrap.size-sm {
-            width: 30px;
-            height: 30px;
-        }
+        .ap-cmt-avatar.shop-frame-wrap.size-sm { width: 44px; height: 44px; }
+        .ap-form-user-ava.shop-frame-wrap.size-sm { width: 30px; height: 30px; }
         .ap-cmt-avatar img, .ap-form-user-ava img {
-            width: 100% !important;
-            height: 100% !important;
-            border-radius: 50% !important;
-            object-fit: cover !important;
-            position: relative;
-            z-index: 1;
+            width: 100% !important; height: 100% !important; border-radius: 50% !important; object-fit: cover !important; position: relative; z-index: 1;
         }
         
-        .ap-cmt-body { flex: 1; min-width: 0; display:flex; flex-direction:column; align-items: flex-start; text-align: left; margin-left: 0; }
+        .ap-cmt-body { flex: 1; min-width: 0; overflow: hidden; display:flex; flex-direction:column; align-items: flex-start; text-align: left; margin-left: 0; }
         
         .ap-cmt-info { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; flex-wrap:wrap; width: 100%;}
-        .ap-cmt-badge {
-            font-size: 8px; font-weight: 700; color: #10b981; border: 1px solid rgba(16,185,129,0.5); 
-            padding: 1px 4px; border-radius: 4px; background: rgba(16,185,129,0.1); letter-spacing: 0.5px;
-        }
-        .ap-cmt-name { font-weight: 700; font-size: 12.5px; color: #fcd576; display:flex; align-items:center; gap:4px; letter-spacing: 0.1px; }
+        .ap-cmt-badge { font-size: 8px; font-weight: 700; color: #10b981; border: 1px solid rgba(16,185,129,0.5); padding: 1px 4px; border-radius: 4px; background: rgba(16,185,129,0.1); letter-spacing: 0.5px; }
+        .ap-cmt-name { font-weight: 600; font-size: 13.5px; color: #fff; display:flex; align-items:center; gap:4px; letter-spacing: 0.1px; }
         .ap-cmt-name .infinity { color: #f59e0b; font-size: 13px; font-weight:bold; line-height: 1;}
-        .ap-cmt-time { font-size: 10px; color: #6b7280; }
         
         .ap-ep-tag { font-size: 12px; color: #9ca3af; padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); margin-left:auto; }
 
         .ap-cmt-text { 
-            font-size: 13px; color: #d1d5db; line-height: 1.45; margin-bottom: 4px;
+            font-size: 15px; font-weight: 400; color: #FFFFFF; line-height: 1.45; margin-bottom: 4px; margin-top: 2px;
             white-space: pre-wrap; word-break: break-word; transition: filter 0.3s;
             text-align: left; width: 100%; box-sizing: border-box !important;
-            /* Bubble nền nhẹ — giống Facebook */
-            background: rgba(255,255,255,0.05);
-            padding: 6px 10px; border-radius: 12px;
+            background: transparent; padding: 0; border-radius: 0;
             display: inline-block; max-width: 100%;
         }
         .ap-cmt-text.is-spoiler { filter: blur(6px); cursor: pointer; user-select: none; }
         .ap-cmt-text.is-spoiler.revealed { filter: blur(0); }
 
-        /* Action Menu - Material Icons */
-        .ap-cmt-actions { display: flex; align-items: center; gap: 8px; color: #9ca3af; font-size: 11px; font-weight: 600; width: 100%; margin-top: 2px; padding-left: 2px;}
-        .ap-action-btn { background: none; border: none; padding: 2px 4px; border-radius: 4px; color: #6b7280; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: color 0.2s; font-size: 11px;}
-        .ap-action-btn:hover { color: #fff; }
+        .ap-cmt-actions-bottom { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+        .ap-cmt-time { font-size: 11px; color: #9ca3af; }
+        .ap-action-reply-btn { background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 12px; font-weight: 600; padding: 0; }
+        .ap-action-reply-btn:hover { color: #d1d5db; }
         
-        .ap-action-btn.upvote.active { color:#10b981; }
-        .ap-action-btn.downvote.active { color:#ef4444; }
+        .ap-cmt-right-actions { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; margin-left: 8px; margin-top: 2px; width: 32px; flex-shrink: 0; align-self: flex-start; }
+        .ap-right-btn { background: none; border: none; padding: 0; color: #6b7280; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 11px; font-weight: 600;}
+        .ap-right-btn .material-icons-round { font-size: 18px; transition: color 0.2s; }
+        .ap-right-btn.upvote:hover { color: #FFD700; }
+        .ap-right-btn.upvote.active { color: #FFD700; }
+        .ap-right-btn.downvote:hover { color: #fcd576; }
+        .ap-right-btn.downvote.active { color: #fcd576; }
 
-        .ap-action-btn .material-icons-round { font-size: 14px; }
+        /* ── DESKTOP ONLY TWEAKS (>= 768px) ── */
+        @media (min-width: 768px) {
+            .ap-cmt-avatar.shop-frame-wrap.size-sm { width: 34px; height: 34px; }
+            .ap-cmt-list { max-width: 720px; }
+            .ap-cmt-item { border-bottom: 1px solid rgba(255,255,255,0.06); padding: 12px 8px; transition: background 0.2s, border-radius 0.2s; }
+            .ap-cmt-item:last-child { border-bottom: none; }
+            .ap-cmt-item:hover { background: rgba(255,255,255,0.04); border-radius: 12px; border-bottom-color: transparent; }
+            
+            .ap-cmt-name { font-size: 13px; font-weight: bold; }
+            .ap-cmt-text { font-size: 14px; color: #FFFFFF; }
+            .ap-cmt-time { font-size: 12px; color: #9ca3af; }
+            .ap-action-reply-btn { font-size: 12px; color: #9ca3af; }
+            
+            .ap-cmt-right-actions { flex-direction: row; gap: 12px; margin-left: 12px; width: auto; align-items: center; justify-content: flex-end; }
+            .ap-right-btn { flex-direction: row; gap: 4px; font-size: 12px; color: #9ca3af; }
+            .ap-right-btn .material-icons-round { font-size: 16px; }
+        }
 
         /* Dropdown Thêm */
         .ap-dropdown-wrap { position: relative; }
         .ap-dropdown-menu {
-            position: absolute; bottom: 100%; left: 0; margin-bottom: 8px;
+            position: absolute; bottom: 100%; right: 0; left: auto; margin-bottom: 8px;
             background: #ffffff; border-radius: 8px; padding: 6px 0;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 50; min-width: 160px; pointer-events: none;
             opacity: 0; transform: translateY(10px); transition: all 0.2s ease;
         }
         .ap-dropdown-menu.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
-        .ap-dropdown-item {
-            display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
-            padding: 10px 16px; background: none; border: none; font-size: 14px; color: #1f2937; cursor: pointer;
-        }
+        .ap-dropdown-item { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 10px 16px; background: none; border: none; font-size: 14px; color: #1f2937; cursor: pointer; }
         .ap-dropdown-item:hover { background: #f3f4f6; }
         .ap-dropdown-item .material-icons-round { font-size: 18px; color: #4b5563; }
 
         /* Nested Comments Layout */
         .ap-cmt-replies { 
-            margin-top: 8px; 
             display: flex; flex-direction: column;
-            margin-left: 42px;       /* canh bằng avatar cha (34px) + gap (8px) */
-            padding-left: 10px;
-            border-left: 2px solid rgba(255,255,255,0.1);
+            margin-left: 52px;
+            padding-left: 12px;
+            border-left: 1px solid #4b5563;
             gap: 6px; 
+            margin-top: 4px;
         }
         .ap-cmt-replies .ap-cmt-item { padding: 4px 0; background: transparent; }
-        .ap-cmt-replies .ap-cmt-avatar { width: 28px; height: 28px; font-size: 11px; }
+        .ap-cmt-replies .ap-cmt-avatar.shop-frame-wrap.size-sm { width: 28px; height: 28px; }
+        .ap-cmt-replies .ap-cmt-name { font-size: 12px; }
+        .ap-cmt-replies .ap-cmt-text { font-size: 13px; }
+        .ap-cmt-replies .ap-cmt-time { font-size: 11px; }
+        .ap-more-replies-btn { color: #9ca3af; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; margin-top: 4px; }
+        .ap-more-replies-btn .line { width: 20px; height: 1px; background: #4b5563; margin-right: 8px; }
         
         /* Form Trả lời lồng nhau */
-        .ap-reply-form-container { margin-top: 16px; display: none; margin-bottom: 8px;}
+        .ap-reply-form-container { margin-top: 16px; display: none; margin-bottom: 8px; width: 100%; margin-left: 52px; box-sizing: border-box; padding-right: 52px;}
         .ap-reply-form-container.active { display: block; animation: ap-in 0.2s ease; }
 
         @keyframes ap-in { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
@@ -778,21 +782,40 @@
         const initial = sanitize((c.name || 'K').charAt(0).toUpperCase());
         const tAgo = sanitize(timeAgo(c.timestamp));
         const txt = sanitize(c.text);
-        
-        const liked = userEmail && c.likedBy.includes(userEmail);
-        const disliked = userEmail && c.dislikedBy.includes(userEmail);
+        // Like/Hide logic with localStorage
+        const localHidden = localStorage.getItem('ap_hide_' + c.id) === '1';
+        const hiddenStyle = localHidden ? 'opacity: 0.4; filter: blur(1.5px);' : '';
 
+        const localLiked = localStorage.getItem('ap_like_' + c.id) === '1';
+        const baseLikes = (c.likedBy && c.likedBy.length) ? c.likedBy.length : 0;
+        let finalLikes = baseLikes + (localLiked && (!c.likedBy || !c.likedBy.includes(userEmail)) ? 1 : 0);
+        const likeCountStr = finalLikes > 0 ? finalLikes : '';
+        const liked = localLiked;
+        const disliked = localHidden;
         const badgeHtml = `<span class="ap-cmt-badge">ROX</span>`; 
         const currentRootId = rootId || c.id;
 
         let repliesHtml = '';
         if (c.replies && c.replies.length > 0) {
-            repliesHtml = `<div class="ap-cmt-replies">${c.replies.map(r => generateHtml(r, userEmail, true, currentRootId)).join('')}</div>`;
+            let visibleReplies = c.replies.slice(0, 3);
+            let hiddenReplies = c.replies.slice(3);
+            
+            let visibleHtml = visibleReplies.map(r => generateHtml(r, userEmail, true, currentRootId)).join('');
+            let hiddenHtml = hiddenReplies.length > 0 ? `<div style="display:none; flex-direction:column; gap:6px;" id="hidden-replies-${c.id}">${hiddenReplies.map(r => generateHtml(r, userEmail, true, currentRootId)).join('')}</div>` : '';
+            let moreBtnHtml = hiddenReplies.length > 0 ? `
+                <div class="ap-more-replies-btn" id="more-btn-${c.id}" onclick="window.actionToggleReplies('${c.id}', ${hiddenReplies.length})">
+                    <div class="line"></div> <span class="btn-text">Xem thêm ${hiddenReplies.length} câu trả lời</span> <span class="material-icons-round btn-icon" style="font-size:16px; margin-left:2px;">expand_more</span>
+                </div>
+            ` : '';
+
+            repliesHtml = `
+            <div class="ap-cmt-replies">
+                ${visibleHtml}
+                ${hiddenHtml}
+                ${moreBtnHtml}
+            </div>`;
         }
 
-        // Like count
-        const likeCountStr = c.likedBy.length > 0 ? c.likedBy.length : '';
-        
         const fClass = c.frameClass || '';
         
         const currentUser = getCurrentUser();
@@ -809,53 +832,60 @@
             </div>`;
 
         return `
-        <div class="ap-cmt-item" data-id="${c.id}">
-            ${userAva}
-            <div class="ap-cmt-body">
-                <div class="ap-cmt-info">
-                    ${badgeHtml}
-                    <span class="ap-cmt-name">${sanitize(c.name)} <span class="infinity">∞</span></span>
-                    <span class="ap-cmt-time">${tAgo}</span>
-                    ${!isChild && c.episodeInfo ? `<span class="ap-ep-tag">${sanitize(c.episodeInfo)}</span>` : ''}
-                </div>
-                
-                <div class="ap-cmt-text ${c.isSpoiler ? 'is-spoiler' : ''}" onclick="this.classList.add('revealed')">${c.isSpoiler ? '<span class="material-icons-round" style="font-size:14px;vertical-align:middle">visibility_off</span> [Nội dung bị ẩn] CLICK ĐỂ XEM<br>' : ''}${txt}</div>
-                
-                <div class="ap-cmt-actions">
-                    <button class="ap-action-btn upvote ${liked ? 'active' : ''}" onclick="window.actionVote('${c.id}', 'up')">
-                        <span class="material-icons-round">arrow_circle_up</span> ${likeCountStr}
-                    </button>
-                    <button class="ap-action-btn downvote ${disliked ? 'active' : ''}" onclick="window.actionVote('${c.id}', 'down')">
-                        <span class="material-icons-round">arrow_circle_down</span>
-                    </button>
-                    <button class="ap-action-btn" onclick="window.actionReplyToggle('${c.id}', '${currentRootId}')">
-                        <span class="material-icons-round" style="transform: scaleX(-1)">reply</span><span class="action-label"> Trả lời</span>
-                    </button>
+        <div class="ap-cmt-item" data-id="${c.id}" style="${hiddenStyle}">
+            <div class="ap-cmt-main-row">
+                ${userAva}
+                <div class="ap-cmt-body">
+                    <div class="ap-cmt-info">
+                        ${badgeHtml}
+                        <span class="ap-cmt-name">${sanitize(c.name)} <span class="infinity">∞</span></span>
+                        ${!isChild && c.episodeInfo ? `<span class="ap-ep-tag">${sanitize(c.episodeInfo)}</span>` : ''}
+                    </div>
                     
-                    <div class="ap-dropdown-wrap">
-                        <button class="ap-action-btn" onclick="window.actionToggleMore('${c.id}')">
-                            <span class="material-icons-round">more_horiz</span><span class="action-label"> Thêm</span>
-                        </button>
-                        <div class="ap-dropdown-menu" id="ap-menu-${c.id}">
-                            <button class="ap-dropdown-item" onclick="window.actionToggleSpoiler('${c.id}', ${c.isSpoiler})">
-                                <span class="material-icons-round">visibility</span> Tiết lộ nội dung
-                            </button>
-                            <button class="ap-dropdown-item" onclick="showToast('Đã gửi báo cáo!', 'success'); document.getElementById('ap-menu-${c.id}').classList.remove('show');">
-                                <span class="material-icons-round">flag</span> Báo xấu
-                            </button>
-                        </div>
+                    <div class="ap-cmt-text ${c.isSpoiler ? 'is-spoiler' : ''}" onclick="this.classList.add('revealed')">${c.isSpoiler ? '<span class="material-icons-round" style="font-size:14px;vertical-align:middle">visibility_off</span> [Nội dung bị ẩn] CLICK ĐỂ XEM<br>' : ''}${txt}</div>
+                    
+                    <div class="ap-cmt-actions-bottom">
+                        <span class="ap-cmt-time">${tAgo}</span>
+                        <button class="ap-action-reply-btn" onclick="window.actionReplyToggle('${c.id}', '${currentRootId}')">Trả lời</button>
                     </div>
                 </div>
                 
-                <div class="ap-reply-form-container" id="reply-form-${c.id}"></div>
-
-                ${repliesHtml}
+                <div class="ap-cmt-right-actions">
+                    <button class="ap-right-btn upvote ${liked ? 'active' : ''}" onclick="window.actionVote('${c.id}', 'up', event)">
+                        <span class="material-icons-round">${liked ? 'favorite' : 'favorite_border'}</span>${likeCountStr ? `<span class="like-count">${likeCountStr}</span>` : ''}
+                    </button>
+                    <button class="ap-right-btn downvote ${disliked ? 'active' : ''}" onclick="window.actionVote('${c.id}', 'down', event)"><span class="material-icons-round">thumb_down</span></button>
+                </div>
             </div>
+            
+            <div class="ap-reply-form-container" id="reply-form-${c.id}"></div>
+
+            ${repliesHtml}
         </div>
         `;
     }
 
     // ── Global Handlers for clicks ────────────────────────────────────
+    window.actionToggleReplies = function(cmtId, count) {
+        const hiddenDiv = document.getElementById(`hidden-replies-${cmtId}`);
+        const btnText = document.querySelector(`#more-btn-${cmtId} .btn-text`);
+        const btnIcon = document.querySelector(`#more-btn-${cmtId} .btn-icon`);
+        if (!hiddenDiv) return;
+        
+        if (hiddenDiv.style.display === 'none') {
+            hiddenDiv.style.display = 'flex';
+            if (btnText) btnText.innerText = 'Ẩn ∧';
+            if (btnIcon) btnIcon.style.display = 'none';
+        } else {
+            hiddenDiv.style.display = 'none';
+            if (btnText) btnText.innerText = `Xem thêm ${count} câu trả lời`;
+            if (btnIcon) {
+                btnIcon.style.display = 'inline-block';
+                btnIcon.innerText = 'expand_more';
+            }
+        }
+    };
+
     window.actionReplyToggle = function(clickId, rootId) {
         const user = getCurrentUser();
         if (!user) { window.showAuthModal && window.showAuthModal('login'); return; }
@@ -933,13 +963,64 @@
         }
     });
 
-    window.actionVote = async function(commentId, type) {
-        const user = getCurrentUser();
-        if (!user) { window.showAuthModal && window.showAuthModal('login'); return; }
-        const btn = event.currentTarget;
-        const isActive = btn.classList.contains('active');
-        const trueType = isActive ? (type==='up'?'removeUp':'removeDown') : type;
-        await window.firebaseComments.vote(window.firebaseComments.currentSlug, commentId, trueType, user.email);
+    window.actionVote = async function(commentId, type, e) {
+        if (e) e.preventDefault();
+        const btn = e ? e.currentTarget : (event ? event.currentTarget : null);
+
+        if (type === 'down') {
+            if (!btn) return;
+            const isDisliked = localStorage.getItem('ap_hide_' + commentId) === '1';
+            const item = document.querySelector(`.ap-cmt-item[data-id="${commentId}"]`);
+            
+            if (isDisliked) {
+                localStorage.removeItem('ap_hide_' + commentId);
+                btn.classList.remove('active');
+                if (item) {
+                    item.style.opacity = '1';
+                    item.style.filter = 'none';
+                }
+            } else {
+                localStorage.setItem('ap_hide_' + commentId, '1');
+                btn.classList.add('active');
+                if (item) {
+                    item.style.opacity = '0.4';
+                    item.style.filter = 'blur(1.5px)';
+                }
+                showToast('Đã làm mờ bình luận!', 'info');
+            }
+            return;
+        }
+
+        if (type === 'up') {
+            if (!btn) return;
+            const isLiked = localStorage.getItem('ap_like_' + commentId) === '1';
+            
+            // Toggle local state
+            if (isLiked) {
+                localStorage.removeItem('ap_like_' + commentId);
+                btn.classList.remove('active');
+            } else {
+                localStorage.setItem('ap_like_' + commentId, '1');
+                btn.classList.add('active');
+            }
+
+            // Update UI count
+            const countSpan = btn.querySelector('.like-count');
+            let currentCount = countSpan ? parseInt(countSpan.innerText) : 0;
+            if (isNaN(currentCount)) currentCount = 0;
+            
+            let newCount = isLiked ? currentCount - 1 : currentCount + 1;
+            
+            if (newCount > 0) {
+                if (countSpan) {
+                    countSpan.innerText = newCount;
+                } else {
+                    btn.insertAdjacentHTML('beforeend', `<span class="like-count">${newCount}</span>`);
+                }
+            } else {
+                if (countSpan) countSpan.remove();
+            }
+        }
     }
 
     window.actionToggleSpoiler = async function(commentId, isCurrentlySpoiler) {
@@ -1058,10 +1139,7 @@
             window.firebaseComments.listen(slug, ({ comments, count }) => {
                 if (heading) heading.innerHTML = `<span class="material-icons-round text-primary outline-none">sentiment_satisfied_alt</span> Bình luận (${count})`;
 
-                // ── Smart diff: chỉ re-render khi data thực sự thay đổi ──
-                const newIds = comments.map(c => c.id + (c.replies ? c.replies.length : 0)).join(',');
-                if (newIds === _lastCommentIds) return; // Không có gì mới → bỏ qua
-                _lastCommentIds = newIds;
+                // ── Luôn re-render khi có cập nhật để đảm bảo dữ liệu like/dislike chính xác ──
 
                 // ── Lưu trạng thái trước khi re-render ──
                 const scrollTop = listEl.scrollTop;

@@ -1,4 +1,4 @@
-﻿// Watch Page Script
+// Watch Page Script
 let currentMovie = null;
 let currentEpisode = null;
 let player = null;
@@ -858,39 +858,138 @@ async function loadRecommendations() {
 }
 
 // Render recommendations
-function renderRecommendations(movies, container) {
-    container.innerHTML = movies.map(movie => {
-        const rating = movie.tmdb?.vote_average ? movie.tmdb.vote_average.toFixed(1) : (movie.imdb || '7.1');
+function renderRecommendations(movies) {
+    const containers = document.querySelectorAll('.watch-rec-container');
+    if (containers.length === 0) return;
+
+    // Inject CSS for the new list format
+    if (!document.getElementById('watch-recommendations-css')) {
+        const style = document.createElement('style');
+        style.id = 'watch-recommendations-css';
+        style.innerHTML = `
+            .watch-rec-list {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+            .watch-rec-item {
+                display: flex !important;
+                flex-direction: row !important;
+                align-items: center !important;
+                justify-content: flex-start !important;
+                gap: 16px !important;
+                padding: 8px !important;
+                border-radius: 12px;
+                background: transparent;
+                transition: background 0.2s ease;
+                text-decoration: none;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            .watch-rec-item:hover {
+                background: rgba(255, 255, 255, 0.05);
+            }
+            .watch-rec-thumb {
+                width: 60px !important;
+                height: 80px !important;
+                min-width: 60px !important;
+                max-width: 60px !important;
+                object-fit: cover !important;
+                border-radius: 8px !important;
+                flex-shrink: 0 !important;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
+                position: static !important;
+            }
+            .watch-rec-info {
+                flex: 1 !important;
+                min-width: 0 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                justify-content: center !important;
+                gap: 4px !important;
+            }
+            .watch-rec-name {
+                color: #e5e7eb;
+                font-size: 14px;
+                font-weight: 600;
+                margin: 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 100%;
+            }
+            .watch-rec-meta {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 11px;
+                color: #9ca3af;
+            }
+            .watch-rec-badge {
+                background: rgba(255, 255, 255, 0.1);
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-weight: bold;
+                color: #fff;
+            }
+            .watch-rec-dot {
+                font-size: 14px;
+            }
+            
+            /* --- Mobile Horizontal Scroll Layout --- */
+            @media (max-width: 1023px) {
+                .watch-rec-list {
+                    flex-direction: row;
+                    overflow-x: auto;
+                    overflow-y: hidden;
+                    scroll-snap-type: x mandatory;
+                    padding-bottom: 8px;
+                    scrollbar-width: none;
+                }
+                .watch-rec-list::-webkit-scrollbar {
+                    display: none;
+                }
+                .watch-rec-item {
+                    min-width: 260px !important;
+                    width: 260px !important;
+                    max-width: 260px !important;
+                    scroll-snap-align: start;
+                    background: rgba(255, 255, 255, 0.02);
+                    border: 1px solid rgba(255, 255, 255, 0.05);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    const html = movies.map(movie => {
+        let ratingNum = movie.tmdb?.vote_average || movie.imdb?.vote_average || 0;
+        const rating = ratingNum > 0 ? Number(ratingNum).toFixed(1) : '7.1';
+        const badge = movie.quality || 'HD';
+        const episode = movie.episode_current || 'Tập 1';
+        
         return `
-            <a class="group bg-[#1a1a1a] rounded-xl overflow-hidden border border-white/5 hover:border-primary/40 hover:bg-[#222222] transition-all flex flex-col h-full shadow-lg cursor-pointer" 
-               href="movie-detail.html?slug=${movie.slug}">
-                <!-- Thumbnail Poster (Top) -->
-                <div class="relative w-full aspect-[2/3] overflow-hidden bg-black flex-shrink-0">
-                    <img src="${movieAPI.getImageURL(movie.thumb_url, 300, 85, true)}" 
-                         alt="Xem Phim ${movie.name} (${movie.year}) Vietsub Full HD"
-                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                         onerror="this.src='https://via.placeholder.com/150x225?text=No+Image'" />
-                    <!-- Badge HD top-left -->
-                    <span class="absolute top-2 left-2 bg-[#fcd576] text-black font-extrabold text-[9px] px-1.5 py-0.5 rounded uppercase shadow">
-                        ${movie.quality || 'HD'}
-                    </span>
-                </div>
-                <!-- Details below poster -->
-                <div class="p-3 flex flex-col flex-grow">
-                    <h4 class="font-bold text-[11px] sm:text-xs text-gray-200 group-hover:text-primary transition-colors line-clamp-1 leading-snug mb-1">
-                        ${movie.name}
-                    </h4>
-                    <div class="mt-auto flex items-center justify-between text-[10px] text-gray-400">
-                        <span>${movie.year}</span>
-                        <div class="flex items-center text-yellow-500 gap-0.5">
-                            <span class="material-icons-round text-[11px]">star</span>
-                            <span class="text-gray-300 font-medium">${rating}</span>
-                        </div>
+            <a href="movie-detail.html?slug=${movie.slug}" class="watch-rec-item group">
+                <img src="${movieAPI.getImageURL(movie.thumb_url, 300, 85, true)}" alt="${movie.name}" class="watch-rec-thumb" loading="lazy" onerror="this.src='https://via.placeholder.com/60x80?text=No+Image'" />
+                <div class="watch-rec-info">
+                    <h4 class="watch-rec-name group-hover:text-red-500 transition-colors">${movie.name}</h4>
+                    <div class="watch-rec-meta">
+                        <span class="watch-rec-badge">${badge}</span>
+                        <span class="watch-rec-dot">•</span>
+                        <span>${episode}</span>
+                        <span class="watch-rec-dot">•</span>
+                        <span class="flex items-center gap-[2px] text-yellow-400 font-bold"><span class="material-icons-round" style="font-size: 12px;">star</span>${rating}</span>
                     </div>
                 </div>
             </a>
         `;
     }).join('');
+
+    containers.forEach(container => {
+        container.className = 'watch-rec-container watch-rec-list';
+        container.innerHTML = html;
+    });
 }
 
 // Show error

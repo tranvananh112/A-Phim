@@ -3,7 +3,26 @@
 
 const TMDB_API_KEY = '5fb3c8d9ad2ca4cd2029836befcc3ab5'; // TMDB API Key (v3)
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
-const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w185'; // w185 for actor profile images
+const TMDB_IMAGE_BASE = 'https://wsrv.nl/?url=image.tmdb.org/t/p/w185';
+
+// Wrapper to bypass VN ISP blocking via multiple fallback proxies
+async function fetchWithProxy(targetUrl) {
+    const proxies = [
+        `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`,
+        `https://api.codetabs.com/v1/proxy?quest=${targetUrl}`,
+        `https://thingproxy.freeboard.io/fetch/${targetUrl}`
+    ];
+    
+    for (const proxy of proxies) {
+        try {
+            const response = await fetch(proxy);
+            if (response.ok) return response;
+        } catch (err) {
+            // fail silently, try next proxy
+        }
+    }
+    throw new Error('All CORS proxies failed');
+}
 
 // Load actor images from TMDB based on movie data
 async function loadActorImagesFromTMDB(movie) {
@@ -40,11 +59,11 @@ async function loadActorImagesFromTMDB(movie) {
             const yearParam = strategy.year ? `&year=${strategy.year}` : '';
             const searchUrl = `${TMDB_BASE_URL}/search/movie?api_key=${TMDB_API_KEY}&query=${searchQuery}${yearParam}`;
 
-            console.log(`🔍 Trying: ${strategy.label}`);
+            // console.log(`🔍 Trying: ${strategy.label}`); // suppress logging
 
             try {
-                const searchResponse = await fetch(searchUrl);
-                if (!searchResponse.ok) continue;
+                const searchResponse = await fetchWithProxy(searchUrl);
+                if (!searchResponse || !searchResponse.ok) continue;
 
                 const searchData = await searchResponse.json();
 
@@ -54,7 +73,7 @@ async function loadActorImagesFromTMDB(movie) {
 
                     // Get movie credits
                     const creditsUrl = `${TMDB_BASE_URL}/movie/${tmdbMovie.id}/credits?api_key=${TMDB_API_KEY}`;
-                    const creditsResponse = await fetch(creditsUrl);
+                    const creditsResponse = await fetchWithProxy(creditsUrl);
                     const creditsData = await creditsResponse.json();
 
                     if (creditsData.cast && creditsData.cast.length > 0) {
@@ -66,17 +85,17 @@ async function loadActorImagesFromTMDB(movie) {
                     }
                 }
             } catch (err) {
-                console.log(`⚠️ Strategy "${strategy.label}" failed`);
+                // suppress strategy fail log to keep console clean
                 continue;
             }
         }
 
         // If all movie search strategies fail, skip direct actor search (too slow)
-        console.log('❌ Movie not found in TMDB');
+        // console.log('❌ Movie not found in TMDB');
         return false;
 
     } catch (error) {
-        console.error('❌ Error:', error);
+        // console.error('❌ Error:', error); // suppress error
         return false;
     }
 }
@@ -103,9 +122,9 @@ async function trySearchActorsDirectly(movie) {
             const searchQuery = encodeURIComponent(actorName);
             const searchUrl = `${TMDB_BASE_URL}/search/person?api_key=${TMDB_API_KEY}&query=${searchQuery}`;
 
-            console.log(`🔍 Searching for actor: ${actorName}`);
+            // console.log(`🔍 Searching for actor: ${actorName}`); // Suppress log
 
-            const response = await fetch(searchUrl);
+            const response = await fetchWithProxy(searchUrl);
             const data = await response.json();
 
             if (data.results && data.results.length > 0) {
@@ -198,11 +217,9 @@ function updateActorAvatars(localActors, tmdbCast) {
                 normalizedLocal.includes(normalizedTmdb);
         });
 
-        // Method 2: If no match found, use actor by index (order)
-        if (!tmdbActor && tmdbCast[index]) {
-            tmdbActor = tmdbCast[index];
-            console.log('📍 Using actor by index:', index, '-', tmdbActor.name);
-        }
+        // Only use the actor if we found a match by name.
+        // DO NOT fallback to index, as TMDB cast order rarely matches Ophim API, 
+        // and if it's the wrong movie, it assigns completely wrong faces!
 
         // Update avatar if actor found and has profile image
         if (tmdbActor && tmdbActor.profile_path) {

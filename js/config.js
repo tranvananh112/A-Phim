@@ -21,13 +21,13 @@ const BACKEND_OPTIONS = {
 let chosenBackend = BACKEND_OPTIONS.NEW;
 
 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    chosenBackend = 'http://localhost:3000';
+    chosenBackend = 'http://localhost:5000';
 }
 
 // Clear cache cũ để không bị stuck ở backend đã hết hạn
 try {
     const cached = localStorage.getItem('cinestream_active_backend');
-    if (cached && cached !== BACKEND_OPTIONS.NEW && cached !== 'http://localhost:3000') {
+    if (cached && cached !== BACKEND_OPTIONS.NEW && cached !== 'http://localhost:5000') {
         localStorage.removeItem('cinestream_active_backend');
         localStorage.removeItem('cinestream_new_backend_active');
     }
