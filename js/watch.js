@@ -85,8 +85,8 @@ function injectVideoSchema(movie, episode) {
                             .replace(/<[^>]+>/g, '') // strip HTML tags
                             .substring(0, 300);
 
-        // uploadDate: dùng năm phát hành, format ISO
-        const uploadDate = (movie.year ? movie.year + '-01-01' : new Date().getFullYear() + '-01-01');
+        // uploadDate: dùng năm phát hành, format ISO (có timezone)
+        const uploadDate = (movie.year ? movie.year + '-01-01T00:00:00+07:00' : new Date().getFullYear() + '-01-01T00:00:00+07:00');
 
         const schema = {
             '@context': 'https://schema.org',
