@@ -1,4 +1,4 @@
-﻿// API Service for ophim17.cc and Backend
+// API Service for ophim17.cc and Backend
 class MovieAPI {
     constructor() {
         this.useBackend = API_CONFIG.USE_BACKEND_FOR_MOVIES || false;
@@ -427,6 +427,7 @@ class MovieAPI {
     }
     // --- SEO Utilities ---
     // Inject Canonical Tag to fix Google Search Console Duplicate Errors
+    // Inject Canonical Tag to fix Google Search Console Duplicate Errors
     injectCanonical() {
         try {
             const url = new URL(window.location.href);
@@ -437,6 +438,15 @@ class MovieAPI {
             // Treat page=1 as identical to base URL
             if (url.searchParams.get('page') === '1') {
                 url.searchParams.delete('page');
+            }
+            
+            // SEO FIX: If on watch.html, point canonical back to movie-detail.html
+            if (url.pathname.includes('watch.html')) {
+                const slug = url.searchParams.get('slug');
+                if (slug) {
+                    url.pathname = url.pathname.replace('watch.html', 'movie-detail.html');
+                    url.search = `?slug=${slug}`; // Strip episode parameter to point to parent movie
+                }
             }
             
             const canonicalUrl = url.toString().split('#')[0]; // Remove hash fragment
