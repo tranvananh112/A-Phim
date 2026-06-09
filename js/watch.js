@@ -878,7 +878,7 @@ function renderRecommendations(movies) {
                 align-items: center !important;
                 justify-content: flex-start !important;
                 gap: 16px !important;
-                padding: 8px !important;
+                padding: 10px 8px !important;
                 border-radius: 12px;
                 background: transparent;
                 transition: background 0.2s ease;
@@ -890,10 +890,10 @@ function renderRecommendations(movies) {
                 background: rgba(255, 255, 255, 0.05);
             }
             .watch-rec-thumb {
-                width: 60px !important;
-                height: 80px !important;
-                min-width: 60px !important;
-                max-width: 60px !important;
+                width: 76px !important;
+                height: 102px !important;
+                min-width: 76px !important;
+                max-width: 76px !important;
                 object-fit: cover !important;
                 border-radius: 8px !important;
                 flex-shrink: 0 !important;
@@ -907,11 +907,11 @@ function renderRecommendations(movies) {
                 flex-direction: column !important;
                 align-items: flex-start !important;
                 justify-content: center !important;
-                gap: 4px !important;
+                gap: 6px !important;
             }
             .watch-rec-name {
                 color: #e5e7eb;
-                font-size: 14px;
+                font-size: 15.5px;
                 font-weight: 600;
                 margin: 0;
                 white-space: nowrap;
@@ -923,7 +923,7 @@ function renderRecommendations(movies) {
                 display: flex;
                 align-items: center;
                 gap: 6px;
-                font-size: 11px;
+                font-size: 12.5px;
                 color: #9ca3af;
             }
             .watch-rec-badge {
@@ -951,9 +951,9 @@ function renderRecommendations(movies) {
                     display: none;
                 }
                 .watch-rec-item {
-                    min-width: 260px !important;
-                    width: 260px !important;
-                    max-width: 260px !important;
+                    min-width: 290px !important;
+                    width: 290px !important;
+                    max-width: 290px !important;
                     scroll-snap-align: start;
                     background: rgba(255, 255, 255, 0.02);
                     border: 1px solid rgba(255, 255, 255, 0.05);
