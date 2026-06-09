@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html class="dark" lang="vi">
 
 <head>
@@ -1918,16 +1918,14 @@
     <script src="/js/inline-ad-slideshow.js?v=3" defer></script>
                     <footer class="bg-[#07080a] border-t border-white/5 py-12 relative overflow-hidden">
         <!-- Background pattern/logo graphic -->
-        <div class="absolute right-0 top-1/2 -translate-y-1/2 opacity-5 pointer-events-none scale-150">
-            <span class="material-icons-round text-[400px]">play_circle_outline</span>
-        </div>
+        <img src="/apple-touch-icon.png" alt="A Phim Logo" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 380px; height: 380px; opacity: 0.04; filter: grayscale(100%); pointer-events: none; z-index: 0; object-fit: contain;">
 
         <div class="container mx-auto px-6 relative z-10">
             <div class="footer-grid" style="align-items:start;">
             <div class="footer-col-left">
             <!-- Top row: Logo & Social -->
             <div
-                class="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 border-b border-white/5 pb-8">
+                class="flex flex-col md:flex-row items-center md:items-center justify-start gap-5 md:gap-8 border-b border-white/5 pb-8">
                 <!-- Logo -->
                 <a href="index.html" class="flex items-center group" style="display: flex !important; align-items: center !important; gap: 0px !important;">
                     <div
@@ -1943,8 +1941,21 @@
                     </div>
                 </a>
 
+                <!-- Divider -->
+                <div class="hidden md:block w-px h-8 bg-white/10 footer-divider"></div>
+                
                 <!-- Social Icons -->
-                <div class="grid grid-cols-4 gap-3 place-items-center md:flex md:flex-wrap md:justify-center md:max-w-none">
+                <style>
+                    .footer-social-icons a {
+                        width: 32px !important;
+                        height: 32px !important;
+                    }
+                    .footer-social-icons a svg {
+                        width: 14px !important;
+                        height: 14px !important;
+                    }
+                </style>
+                <div class="grid grid-cols-4 gap-3 place-items-center md:flex md:flex-wrap md:justify-start md:max-w-none footer-social-icons">
                     <a href="https://web.telegram.org/k/#@aphimiovn" target="_blank"
                         class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
                         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
@@ -2014,12 +2025,9 @@
                 </div>
 
                 <!-- Text block -->
-                <p class="text-sm text-gray-400 leading-relaxed max-w-5xl mb-6" style="text-align: justify !important;">
-                    A Phim - Phim hay cả rổ - trang xem phim online miễn phí Full HD Vietsub, thuyết minh + lồng tiếng.
-                    Kho phim mới khổng lồ, phim chiếu rạp, phim bộ, phim lẻ từ nhiều quốc gia như Việt Nam, Hàn Quốc,
-                    Trung Quốc, Thái Lan, Nhật Bản, Âu Mỹ... đa dạng thể loại. Khám phá nền tảng phim trực tuyến hay
-                    nhất năm 2026 chất lượng 4K!
-                </p>
+                <p class="text-sm text-gray-400 leading-relaxed max-w-5xl mb-6" style="text-align: justify !important; font-size:13px; line-height:1.7; color:#aaaaaa">
+        <a href="https://aphim.io.vn" style="color:inherit;text-decoration:underline">A Phim</a> x APhim - Trang <a href="https://aphim.io.vn" style="color:inherit;text-decoration:underline">xem phim online</a> chất lượng cao miễn phí Vietsub, thuyết minh, lồng tiếng full HD. <a href="https://aphim.io.vn/danh-sach.html?list=phim-moi" style="color:inherit;text-decoration:underline">Phim hay mới cập nhật</a> liên tục, phim chiếu rạp, phim bộ, phim lẻ từ nhiều quốc gia như Việt Nam, Hàn Quốc, Trung Quốc, Thái Lan, Nhật Bản, Âu Mỹ... đa dạng thể loại. Khám phá <a href="https://aphim.io.vn" style="color:inherit;text-decoration:underline">kho phim trực tuyến</a> hay nhất chất lượng 4K!
+    </p>
 
                 <!-- Copyright -->
                 <div class="text-xs text-gray-500 font-medium text-center md:text-left">
@@ -2236,7 +2244,7 @@
                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${hiddenUI.imgClass}"
                                 src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url, 350, 70) : `https://img.ophim.live/uploads/movies/${movie.thumb_url}`}"
                                 onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'"
-                                loading="lazy"
+                                fetchpriority="high"
                                 decoding="async" />
                             
                             ${hiddenUI.badge}
@@ -2380,11 +2388,20 @@
         }
 
         // Load on page load - try home API first
-        loadHomeMovies();
-        loadLatestMovies();
-        loadActionMovies();
-        if (typeof loadTopMovies === 'function') loadTopMovies();
-        if (typeof loadComingSoonMovies === 'function') loadComingSoonMovies();
+        // Sequential Loading to prioritize Above-The-Fold content
+        async function loadAllSequentially() {
+            try {
+                await loadLatestMovies();
+                await loadActionMovies();
+                if (typeof loadHomeMovies === 'function') await loadHomeMovies();
+                if (typeof loadTopMovies === 'function') loadTopMovies();
+                if (typeof loadComingSoonMovies === 'function') loadComingSoonMovies();
+            } catch (e) {
+                console.error("Lỗi trong quá trình load tuần tự:", e);
+            }
+        }
+        
+        loadAllSequentially();
 
         // Setup scroll for Latest section
         const lContainer = document.getElementById('latestMoviesGrid');

@@ -300,6 +300,7 @@
         const fillBar = document.querySelector('#splashLoader .splash-loading-fill');
         if (fillBar) {
             fillBar.style.width = '100%';
+            fillBar.classList.add('filled');
         }
         
         // Hide splash screen after a short delay so user sees full load
