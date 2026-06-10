@@ -183,27 +183,26 @@ function renderMovieDetail(movie) {
     const infoContainer = document.querySelector('.movie-info-container') || document.querySelector('.flex.flex-wrap.items-center.gap-4.mb-8');
     if (infoContainer) {
         // Nowrap on mobile - text auto shrinks to fit one line
-        infoContainer.className = 'movie-info-container flex flex-nowrap justify-center lg:justify-start items-center gap-x-1.5 sm:gap-x-3 md:gap-4 mb-6 md:mb-8 text-[11px] sm:text-sm md:text-base overflow-hidden';
+        infoContainer.className = 'movie-info-container flex flex-nowrap justify-center lg:justify-start items-center gap-x-2 sm:gap-x-3 md:gap-4 mb-6 md:mb-8 text-[11px] sm:text-sm md:text-base overflow-hidden';
 
         const avgRating = ratingService.getAverageRating(movie.slug);
         const ratings = ratingService.getRatings(movie.slug);
 
         infoContainer.innerHTML = `
-            <span class="flex items-center gap-1 text-yellow-400 font-bold bg-yellow-400/10 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full border border-yellow-400/20 backdrop-blur-sm flex-shrink-0 whitespace-nowrap">
-                <span class="material-icons-round text-sm sm:text-lg">star</span>
-                ${avgRating}/10
-            </span>
-            <span class="text-gray-500 flex-shrink-0">•</span>
-            <span class="text-gray-300 font-medium flex-shrink-0 whitespace-nowrap">${movie.year}</span>
-            <span class="text-gray-500 flex-shrink-0">•</span>
-            <span class="text-gray-300 font-medium flex-shrink-0 whitespace-nowrap">${movie.time || 'N/A'}</span>
-            <span class="text-gray-500 flex-shrink-0">•</span>
-            <span class="text-gray-300 font-medium flex-shrink-0 whitespace-nowrap">${movie.quality} - ${movie.lang}</span>
+            ${movie.type === 'series' || movie.type === 'hoathinh' || movie.type === 'tvshows' ? 
+                `<span style="background-color: #1e3a5f; color: #93c5fd; border: 1px solid rgba(147, 197, 253, 0.2); box-shadow: 0 2px 8px rgba(30, 58, 95, 0.4);" class="px-3 py-1.5 rounded-md text-[13px] font-bold leading-none tracking-wide">${movie.type === 'series' ? 'Series' : movie.type === 'hoathinh' ? 'Hoạt hình' : 'TV Shows'}</span>` 
+                : `<span style="background-color: #1e3a5f; color: #93c5fd; border: 1px solid rgba(147, 197, 253, 0.2); box-shadow: 0 2px 8px rgba(30, 58, 95, 0.4);" class="px-3 py-1.5 rounded-md text-[13px] font-bold leading-none tracking-wide">Phim Lẻ</span>`}
+            
+            ${movie.year ? `<span style="background-color: #3b2854; color: #d8b4fe; border: 1px solid rgba(216, 180, 254, 0.2); box-shadow: 0 2px 8px rgba(59, 40, 84, 0.4);" class="px-3 py-1.5 rounded-md text-[13px] font-bold leading-none tracking-wide">${movie.year}</span>` : ''}
+            
+            ${movie.lang ? `<span style="background-color: #164e32; color: #86efac; border: 1px solid rgba(134, 239, 172, 0.2); box-shadow: 0 2px 8px rgba(22, 78, 50, 0.4);" class="px-3 py-1.5 rounded-md text-[13px] font-bold leading-none tracking-wide">${movie.lang}</span>` : ''}
+            
+            ${movie.quality ? `<span style="background-color: #5b3e15; color: #fde047; border: 1px solid rgba(253, 224, 71, 0.2); box-shadow: 0 2px 8px rgba(91, 62, 21, 0.4);" class="px-3 py-1.5 rounded-md text-[13px] font-bold leading-none tracking-wide">${movie.quality}</span>` : ''}
         `;
     }
 
     // Update description
-    const descElement = document.querySelector('.mb-10.max-w-4xl p');
+    const descElement = document.querySelector('.mb-10 p') || document.querySelector('.mb-10.max-w-4xl p');
     if (descElement) {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = movie.content;
@@ -212,6 +211,9 @@ function renderMovieDetail(movie) {
 
     // Update categories and actors
     addMovieMetadata(movie);
+    
+    // Load movie gallery
+    loadMovieGallery(movie);
 
     // Update watch button
     const watchBtn = document.querySelector('a[href="watch.html"]');
@@ -257,24 +259,261 @@ function renderMovieDetail(movie) {
     }
 }
 
+// Load movie gallery from API
+async function loadMovieGallery(movie) {
+    const galleryContainer = document.getElementById('movie-gallery-container');
+    const scrollContainer = document.getElementById('movie-gallery-scroll');
+    const galleryCount = document.getElementById('movie-gallery-count');
+    if (!galleryContainer || !scrollContainer) return;
+
+    try {
+        const url = `https://ophim1.com/v1/api/phim/${movie.slug}/images`;
+        const options = {method: 'GET', headers: {accept: 'application/json'}};
+        
+        const res = await fetch(url, options);
+        if (!res.ok) return;
+        
+        const json = await res.json();
+        
+        if (json.success && json.data && json.data.images && json.data.images.length > 0) {
+            const backdrops = json.data.images.filter(img => img.type === 'backdrop' || img.aspect_ratio > 1);
+            
+            if (backdrops.length > 0) {
+                window.movieGalleryImageUrls = backdrops.map(img => `https://image.tmdb.org/t/p/original${img.file_path}`);
+                galleryContainer.classList.remove('hidden');
+                galleryCount.textContent = `(${backdrops.length} ảnh)`;
+                
+                scrollContainer.innerHTML = backdrops.map((img, index) => `
+                    <div class="flex-shrink-0 w-[280px] md:w-[400px] aspect-video rounded-xl overflow-hidden shadow-lg border border-white/10 group-hover:border-white/30 transition-colors relative cursor-pointer" onclick="openLightbox(window.movieGalleryImageUrls, ${index})">
+                        <img src="https://wsrv.nl/?url=image.tmdb.org/t/p/w780${img.file_path}" alt="Cảnh phim ${movie.name}" loading="lazy" class="w-full h-full object-cover transform transition-transform duration-500 hover:scale-110">
+                        <div class="absolute inset-0 bg-black/20 hover:bg-transparent transition-colors duration-300"></div>
+                    </div>
+                `).join('');
+                
+                setupGalleryScroll();
+            }
+        }
+    } catch (err) {
+        console.warn('Lỗi tải hình ảnh phim:', err);
+    }
+}
+
+function setupGalleryScroll() {
+    const scrollContainer = document.getElementById('movie-gallery-scroll');
+    const btnLeft = document.getElementById('btn-scroll-left');
+    const btnRight = document.getElementById('btn-scroll-right');
+    
+    if (!scrollContainer || !btnLeft || !btnRight) return;
+    
+    btnLeft.addEventListener('click', () => {
+        scrollContainer.scrollBy({ left: -400, behavior: 'smooth' });
+    });
+    
+    btnRight.addEventListener('click', () => {
+        scrollContainer.scrollBy({ left: 400, behavior: 'smooth' });
+    });
+    
+    const checkScroll = () => {
+        btnLeft.style.opacity = scrollContainer.scrollLeft > 10 ? '1' : '0';
+        btnRight.style.opacity = scrollContainer.scrollLeft < (scrollContainer.scrollWidth - scrollContainer.clientWidth - 10) ? '1' : '0';
+    };
+    
+    scrollContainer.addEventListener('scroll', checkScroll);
+    setTimeout(checkScroll, 500);
+}
+
+window.openLightbox = function(images, index) {
+  let current = index;
+  const isMobile = window.innerWidth <= 768;
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.97);z-index:99999;display:flex;align-items:center;justify-content:center';
+  
+  const img = document.createElement('img');
+  img.style.cssText = isMobile ? 'max-width:92vw;max-height:70vh;object-fit:contain;border-radius:8px' : 'max-width:70vw;max-height:75vh;object-fit:contain;border-radius:8px';
+  img.src = images[current];
+  
+  const counter = document.createElement('div');
+  counter.style.cssText = 'position:absolute;bottom:20px;left:50%;transform:translateX(-50%);color:white;font-size:14px';
+  counter.textContent = (current+1)+' / '+images.length;
+  
+  const btnClose = document.createElement('button');
+  btnClose.innerHTML = '✕';
+  btnClose.style.cssText = 'position:absolute;top:16px;right:20px;background:none;border:none;color:white;font-size:28px;cursor:pointer;z-index:1';
+  
+  const btnPrev = document.createElement('button');
+  btnPrev.innerHTML = '‹';
+  btnPrev.style.cssText = isMobile ? 'position:absolute;left:10px;background:rgba(255,255,255,0.2);border:none;color:white;font-size:28px;cursor:pointer;padding:6px 12px;border-radius:8px;z-index:1' : 'position:absolute;left:16px;background:rgba(255,255,255,0.2);border:none;color:white;font-size:40px;cursor:pointer;padding:8px 16px;border-radius:8px;z-index:1';
+  
+  const btnNext = document.createElement('button');
+  btnNext.innerHTML = '›';
+  btnNext.style.cssText = isMobile ? 'position:absolute;right:10px;background:rgba(255,255,255,0.2);border:none;color:white;font-size:28px;cursor:pointer;padding:6px 12px;border-radius:8px;z-index:1' : 'position:absolute;right:16px;background:rgba(255,255,255,0.2);border:none;color:white;font-size:40px;cursor:pointer;padding:8px 16px;border-radius:8px;z-index:1';
+  
+  function update() { img.src = images[current]; counter.textContent = (current+1)+' / '+images.length; }
+  btnPrev.onclick = () => { current = (current-1+images.length)%images.length; update(); };
+  btnNext.onclick = () => { current = (current+1)%images.length; update(); };
+  btnClose.onclick = () => document.body.removeChild(overlay);
+  overlay.onclick = (e) => { if(e.target===overlay) document.body.removeChild(overlay); };
+  document.addEventListener('keydown', function escHandler(e) {
+    if(e.key==='Escape') { if(document.body.contains(overlay)) { document.body.removeChild(overlay); document.removeEventListener('keydown', escHandler); } }
+    if(e.key==='ArrowLeft') { current=(current-1+images.length)%images.length; update(); }
+    if(e.key==='ArrowRight') { current=(current+1)%images.length; update(); }
+  });
+  
+  overlay.appendChild(img);
+  overlay.appendChild(counter);
+  overlay.appendChild(btnClose);
+  overlay.appendChild(btnPrev);
+  overlay.appendChild(btnNext);
+  document.body.appendChild(overlay);
+}
+
 // Add movie metadata (categories, actors, etc.)
 function addMovieMetadata(movie) {
     const metadataContainer = document.querySelector('.lg\\:col-span-8');
     if (!metadataContainer) return;
 
-    const descSection = metadataContainer.querySelector('.mb-10.max-w-4xl');
+    const descSection = metadataContainer.querySelector('.mb-10.max-w-4xl') || metadataContainer.querySelector('#movie-content-section') || metadataContainer.querySelector('.mb-10.w-full.text-left');
     if (!descSection) return;
 
-    // Add cast section FIRST (before description)
+    // Build metadata cards FIRST
+    const metadataHTML = `
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 mb-4 w-full">
+            <!-- Thể Loại -->
+            ${movie.category && movie.category.length > 0 ? `
+            <div style="background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1);" class="rounded-xl p-3 shadow-lg hover:bg-white/20 transition-all duration-300">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                        <span style="width:10px;height:10px;border-radius:50%;background:#4A9EFF;display:inline-block;margin-right:8px;box-shadow:0 0 8px rgba(74,158,255,0.6)"></span>
+                        <h4 style="color: #60a5fa; text-shadow: 0 1px 2px rgba(0,0,0,0.5);" class="text-[13px] font-bold tracking-wide">Thể loại</h4>
+                    </div>
+                    <span style="background-color: rgba(59,130,246,0.25); color: #eff6ff;" class="text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">${movie.category.length}</span>
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                    ${movie.category.map(cat => `
+                        <a href="search.html?category=${cat.slug}" style="border-color: rgba(59,130,246,0.3); color: #93c5fd; text-shadow: 0 1px 2px rgba(0,0,0,0.5);" class="px-2.5 py-0.5 border rounded-lg text-[11px] font-medium hover:bg-blue-500/30 transition-colors">
+                            ${cat.name}
+                        </a>
+                    `).join('')}
+                </div>
+            </div>
+            ` : ''}
+            
+            <!-- Quốc Gia -->
+            ${movie.country && movie.country.length > 0 ? `
+            <div style="background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1);" class="rounded-xl p-3 shadow-lg hover:bg-white/20 transition-all duration-300">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                        <span style="width:10px;height:10px;border-radius:50%;background:#A855F7;display:inline-block;margin-right:8px;box-shadow:0 0 8px rgba(168,85,247,0.6)"></span>
+                        <h4 style="color: #c084fc; text-shadow: 0 1px 2px rgba(0,0,0,0.5);" class="text-[13px] font-bold tracking-wide">Quốc gia</h4>
+                    </div>
+                    <span style="background-color: rgba(168,85,247,0.25); color: #faf5ff;" class="text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">${movie.country.length}</span>
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                    ${movie.country.map(c => `
+                        <a href="search.html?country=${c.slug}" style="border-color: rgba(168,85,247,0.3); color: #d8b4fe; text-shadow: 0 1px 2px rgba(0,0,0,0.5);" class="px-2.5 py-0.5 border rounded-lg text-[11px] font-medium hover:bg-purple-500/30 transition-colors">
+                            ${c.name}
+                        </a>
+                    `).join('')}
+                </div>
+            </div>
+            ` : ''}
+
+            <!-- Thông Tin -->
+            <div style="background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1);" class="rounded-xl p-3 shadow-lg hover:bg-white/20 transition-all duration-300">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                        <span style="width:10px;height:10px;border-radius:50%;background:#22C55E;display:inline-block;margin-right:8px;box-shadow:0 0 8px rgba(34,197,94,0.6)"></span>
+                        <h4 style="color: #4ade80; text-shadow: 0 1px 2px rgba(0,0,0,0.5);" class="text-[13px] font-bold tracking-wide">Thông tin</h4>
+                    </div>
+                    <span style="background-color: rgba(34,197,94,0.25); color: #f0fdf4;" class="text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm uppercase">${movie.status === 'completed' ? 'Full' : movie.status === 'ongoing' ? 'ongoing' : 'Trailer'}</span>
+                </div>
+                <div class="space-y-2 text-[11px]">
+                    <div class="flex justify-between items-center text-gray-200" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">
+                        <span>Thời lượng:</span>
+                        <span class="text-white font-semibold">${movie.time || 'Đang cập nhật'}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-gray-200" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">
+                        <span>Tập hiện tại:</span>
+                        <span style="color: #4ade80;" class="font-bold text-[12px]">${movie.episode_current || 'N/A'}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TMDB -->
+            ${movie.tmdb && movie.tmdb.id ? `
+            <div style="background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1);" class="rounded-xl p-3 shadow-lg hover:bg-white/20 transition-all duration-300">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                        <span style="background:#01B4E4;color:white;font-size:10px;font-weight:900;padding:2px 5px;border-radius:3px;margin-right:6px;letter-spacing:0.5px">TMDB</span>
+                    </div>
+                    <span style="background-color: rgba(14,165,233,0.25); color: #f0f9ff;" class="text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm uppercase">${movie.tmdb.type || 'tv'}</span>
+                </div>
+                <div class="space-y-2 text-[11px]">
+                    <div class="flex justify-between items-center text-gray-200" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">
+                        <span>ID:</span>
+                        <span class="text-white font-semibold">${movie.tmdb.id}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-gray-200" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">
+                        <span>Điểm số:</span>
+                        <span class="text-white font-semibold"><span style="color: #38bdf8;" class="font-bold text-[12px]">${movie.tmdb.vote_average || 'N/A'}</span> /10 <span class="text-gray-400 font-normal">(${movie.tmdb.vote_count || 0})</span></span>
+                    </div>
+                </div>
+            </div>
+            ` : ''}
+
+            <!-- IMDB -->
+            ${movie.imdb && movie.imdb.id ? `
+            <div style="background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1);" class="rounded-xl p-3 shadow-lg hover:bg-white/20 transition-all duration-300">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                        <span style="background:#F5C518;color:#000000;font-size:10px;font-weight:900;padding:2px 5px;border-radius:3px;margin-right:6px;letter-spacing:0.5px">IMDb</span>
+                    </div>
+                    <span style="background-color: rgba(234,179,8,0.25); color: #fefce8;" class="text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm uppercase">Rating</span>
+                </div>
+                <div class="space-y-2 text-[11px]">
+                    <div class="flex justify-between items-center text-gray-200" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">
+                        <span>ID:</span>
+                        <span class="text-white font-semibold">${movie.imdb.id}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-gray-200" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">
+                        <span>Điểm số:</span>
+                        <span class="text-white font-semibold"><span style="color: #fde047;" class="font-bold text-[12px]">N/A</span> /10</span>
+                    </div>
+                </div>
+            </div>
+            ` : ''}
+
+            <!-- Đạo diễn -->
+            ${movie.director && movie.director.length > 0 && movie.director[0] !== '' ? `
+            <div style="background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1);" class="rounded-xl p-3 shadow-lg hover:bg-white/20 transition-all duration-300">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                        <span style="width:10px;height:10px;border-radius:50%;background:#F97316;display:inline-block;margin-right:8px;box-shadow:0 0 8px rgba(249,115,22,0.6)"></span>
+                        <h4 style="color: #fb923c; text-shadow: 0 1px 2px rgba(0,0,0,0.5);" class="text-[13px] font-bold tracking-wide">Đạo diễn</h4>
+                    </div>
+                    <span style="background-color: rgba(249,115,22,0.25); color: #fff7ed;" class="text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">${movie.director.length}</span>
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                    ${movie.director.map(d => `
+                        <span style="background-color: rgba(249,115,22,0.1); border-color: rgba(249,115,22,0.3); color: #fed7aa; text-shadow: 0 1px 2px rgba(0,0,0,0.5);" class="px-2.5 py-0.5 border rounded-lg text-[11px] font-medium">
+                            ${d}
+                        </span>
+                    `).join('')}
+                </div>
+            </div>
+            ` : ''}
+        </div>
+    `;
+
+    // Insert metadata right before the description
+    descSection.insertAdjacentHTML('beforebegin', metadataHTML);
+
+    // Add cast section AFTER metadata
     if (movie.actor && movie.actor.length > 0) {
         console.log('🎭 Rendering cast section for', movie.actor.length, 'actors:', movie.actor);
 
         const castHTML = `
             <div class="mt-0 mb-10" id="cast-section">
-                <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                    <span class="w-1.5 h-8 bg-primary rounded-full block shadow-[0_0_10px_rgba(236,19,19,0.5)]"></span>
-                    Diễn viên
-                </h3>
                 <div class="relative">
                     <div id="cast-container" class="flex gap-4 overflow-x-auto scrollbar-hide" style="scroll-behavior: smooth; scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 8px;">
                         ${movie.actor.slice(0, 10).map((actor, index) => {
@@ -283,15 +522,15 @@ function addMovieMetadata(movie) {
             const initial = actor.charAt(0).toUpperCase();
 
             return `
-                                <div class="flex-shrink-0 w-20 md:w-24 group cursor-pointer" data-actor-name="${actor}">
+                                <div class="flex-shrink-0 w-20 md:w-[90px] group cursor-pointer" data-actor-name="${actor}">
                                     <div class="relative mb-2">
-                                        <div class="actor-avatar-container w-20 h-20 md:w-24 md:h-24 mx-auto rounded-full bg-gradient-to-br ${colorClass} flex items-center justify-center text-white text-2xl font-bold border-2 border-white/10 group-hover:border-primary transition-all duration-300 group-hover:scale-105 overflow-hidden">
+                                        <div class="actor-avatar-container w-14 h-14 md:w-16 md:h-16 mx-auto rounded-full bg-gradient-to-br ${colorClass} flex items-center justify-center text-white text-xl font-bold border-2 border-transparent group-hover:border-primary transition-all duration-300 overflow-hidden shadow-lg shadow-black/40">
                                             ${initial}
                                         </div>
                                     </div>
                                     <div class="text-center">
-                                        <p class="text-white font-medium text-sm line-clamp-2 group-hover:text-primary transition-colors">${actor}</p>
-                                        <p class="text-gray-500 text-xs mt-1">Diễn viên</p>
+                                        <p class="text-white font-medium text-xs line-clamp-2 group-hover:text-primary transition-colors leading-tight mb-1" style="text-shadow: 0 1px 2px rgba(0,0,0,0.8);">${actor}</p>
+                                        <p class="text-gray-400 text-[10px]">Acting</p>
                                     </div>
                                 </div>
                             `;
@@ -302,7 +541,7 @@ function addMovieMetadata(movie) {
         `;
 
         console.log('📝 Cast HTML length:', castHTML.length);
-        // Insert BEFORE description section
+        // Insert AFTER metadata (which is before description)
         descSection.insertAdjacentHTML('beforebegin', castHTML);
         console.log('✅ Cast HTML inserted into DOM');
 
@@ -325,46 +564,6 @@ function addMovieMetadata(movie) {
             console.warn('⚠️ loadActorImagesFromTMDB function not found');
         }
     }
-
-    // Add metadata AFTER description
-    const metadataHTML = `
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 max-w-4xl">
-            ${movie.category && movie.category.length > 0 ? `
-            <div>
-                <h4 class="text-sm font-bold text-gray-400 mb-2">Thể loại</h4>
-                <div class="flex flex-wrap gap-2">
-                    ${movie.category.map(cat => `
-                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-sm text-gray-300 hover:border-primary hover:text-primary transition-colors cursor-pointer">
-                            ${cat.name}
-                        </span>
-                    `).join('')}
-                </div>
-            </div>
-            ` : ''}
-            
-            ${movie.country && movie.country.length > 0 ? `
-            <div>
-                <h4 class="text-sm font-bold text-gray-400 mb-2">Quốc gia</h4>
-                <div class="flex flex-wrap gap-2">
-                    ${movie.country.map(c => `
-                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-sm text-gray-300">
-                            ${c.name}
-                        </span>
-                    `).join('')}
-                </div>
-            </div>
-            ` : ''}
-            
-            ${movie.director && movie.director.length > 0 ? `
-            <div>
-                <h4 class="text-sm font-bold text-gray-400 mb-2">Đạo diễn</h4>
-                <p class="text-gray-300">${movie.director.join(', ')}</p>
-            </div>
-            ` : ''}
-        </div>
-    `;
-
-    descSection.insertAdjacentHTML('afterend', metadataHTML);
 }
 
 // Render episodes

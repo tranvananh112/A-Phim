@@ -276,22 +276,120 @@ function renderMovieInfo(movie, episode) {
     const sidebarLang = document.getElementById('sidebar-lang');
     if (sidebarLang) sidebarLang.textContent = movie.lang || 'Vietsub';
 
-    const sidebarRatingVal = document.getElementById('sidebar-rating-val');
-    if (sidebarRatingVal) {
-        const avgRating = ratingService.getAverageRating(movie.slug);
-        sidebarRatingVal.textContent = avgRating;
-    }
+    const sidebarMetadataCards = document.getElementById('sidebar-metadata-cards');
+    if (sidebarMetadataCards) {
+        const metadataHTML = `
+            <!-- Thể Loại -->
+            ${movie.category && movie.category.length > 0 ? `
+            <div style="background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1);" class="rounded-xl p-3 shadow-lg hover:bg-white/20 transition-all duration-300">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                        <span style="width:10px;height:10px;border-radius:50%;background:#4A9EFF;display:inline-block;margin-right:8px;box-shadow:0 0 8px rgba(74,158,255,0.6)"></span>
+                        <h4 style="color: #60a5fa; text-shadow: 0 1px 2px rgba(0,0,0,0.5);" class="text-[13px] font-bold tracking-wide">Thể loại</h4>
+                    </div>
+                    <span style="background-color: rgba(59,130,246,0.25); color: #eff6ff;" class="text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">${movie.category.length}</span>
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                    ${movie.category.map(cat => `
+                        <a href="search.html?category=${cat.slug}" style="border-color: rgba(59,130,246,0.3); color: #93c5fd; text-shadow: 0 1px 2px rgba(0,0,0,0.5);" class="px-2.5 py-0.5 border rounded-lg text-[11px] font-medium hover:bg-blue-500/30 transition-colors">
+                            ${cat.name}
+                        </a>
+                    `).join('')}
+                </div>
+            </div>
+            ` : ''}
+            
+            <!-- Quốc Gia -->
+            ${movie.country && movie.country.length > 0 ? `
+            <div style="background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1);" class="rounded-xl p-3 shadow-lg hover:bg-white/20 transition-all duration-300">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                        <span style="width:10px;height:10px;border-radius:50%;background:#A855F7;display:inline-block;margin-right:8px;box-shadow:0 0 8px rgba(168,85,247,0.6)"></span>
+                        <h4 style="color: #c084fc; text-shadow: 0 1px 2px rgba(0,0,0,0.5);" class="text-[13px] font-bold tracking-wide">Quốc gia</h4>
+                    </div>
+                    <span style="background-color: rgba(168,85,247,0.25); color: #faf5ff;" class="text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">${movie.country.length}</span>
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                    ${movie.country.map(c => `
+                        <a href="search.html?country=${c.slug}" style="border-color: rgba(168,85,247,0.3); color: #d8b4fe; text-shadow: 0 1px 2px rgba(0,0,0,0.5);" class="px-2.5 py-0.5 border rounded-lg text-[11px] font-medium hover:bg-purple-500/30 transition-colors">
+                            ${c.name}
+                        </a>
+                    `).join('')}
+                </div>
+            </div>
+            ` : ''}
 
-    const sidebarDuration = document.getElementById('sidebar-duration');
-    if (sidebarDuration) sidebarDuration.textContent = movie.time || '-- phút';
+            <!-- Thông Tin -->
+            <div style="background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); grid-column: span 2;" class="rounded-xl p-3 shadow-lg hover:bg-white/20 transition-all duration-300">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                        <span style="width:10px;height:10px;border-radius:50%;background:#22C55E;display:inline-block;margin-right:8px;box-shadow:0 0 8px rgba(34,197,94,0.6)"></span>
+                        <h4 style="color: #4ade80; text-shadow: 0 1px 2px rgba(0,0,0,0.5);" class="text-[13px] font-bold tracking-wide">Thông tin</h4>
+                    </div>
+                    <span style="background-color: rgba(34,197,94,0.25); color: #f0fdf4;" class="text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm uppercase">${movie.status === 'completed' ? 'Full' : movie.status === 'ongoing' ? 'ongoing' : 'Trailer'}</span>
+                </div>
+                <div class="space-y-2 text-[11px]">
+                    <div class="flex justify-between items-center text-gray-200" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">
+                        <span>Thời lượng:</span>
+                        <span class="text-white font-semibold">${movie.time || 'Đang cập nhật'}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-gray-200" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">
+                        <span>Tập hiện tại:</span>
+                        <span style="color: #4ade80;" class="font-bold text-[12px]">${movie.episode_current || 'N/A'}</span>
+                    </div>
+                </div>
+            </div>
 
-    const sidebarGenres = document.getElementById('sidebar-genres');
-    if (sidebarGenres && movie.category) {
-        sidebarGenres.innerHTML = movie.category.map(cat => `
-            <span class="px-3.5 py-1.5 bg-white/5 border border-white/10 rounded-xl text-xs text-gray-200 hover:border-primary hover:text-primary transition-colors cursor-pointer font-semibold">
-                ${cat.name}
-            </span>
-        `).join('');
+            <!-- TMDB & IMDB Group -->
+            ${(movie.tmdb && movie.tmdb.id) || (movie.imdb && movie.imdb.id) ? `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; grid-column: span 2;">
+                <!-- TMDB -->
+                ${movie.tmdb && movie.tmdb.id ? `
+                <div style="background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1);" class="rounded-xl p-3 shadow-lg hover:bg-white/20 transition-all duration-300">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center">
+                            <span style="background:#01B4E4;color:white;font-size:10px;font-weight:900;padding:2px 5px;border-radius:3px;margin-right:6px;letter-spacing:0.5px">TMDB</span>
+                        </div>
+                        <span style="background-color: rgba(14,165,233,0.25); color: #f0f9ff;" class="text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm uppercase">${movie.tmdb.type || 'tv'}</span>
+                    </div>
+                    <div class="space-y-2 text-[11px]">
+                        <div class="flex justify-between items-center text-gray-200" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">
+                            <span>ID:</span>
+                            <span class="text-white font-semibold">${movie.tmdb.id}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-gray-200" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">
+                            <span>Điểm số:</span>
+                            <span class="text-white font-semibold"><span style="color: #38bdf8;" class="font-bold text-[12px]">${movie.tmdb.vote_average || 'N/A'}</span> /10</span>
+                        </div>
+                    </div>
+                </div>
+                ` : '<div></div>'}
+
+                <!-- IMDB -->
+                ${movie.imdb && movie.imdb.id ? `
+                <div style="background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1);" class="rounded-xl p-3 shadow-lg hover:bg-white/20 transition-all duration-300">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center">
+                            <span style="background:#F5C518;color:#000000;font-size:10px;font-weight:900;padding:2px 5px;border-radius:3px;margin-right:6px;letter-spacing:0.5px">IMDb</span>
+                        </div>
+                        <span style="background-color: rgba(234,179,8,0.25); color: #fefce8;" class="text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm uppercase">Rating</span>
+                    </div>
+                    <div class="space-y-2 text-[11px]">
+                        <div class="flex justify-between items-center text-gray-200" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">
+                            <span>ID:</span>
+                            <span class="text-white font-semibold">${movie.imdb.id}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-gray-200" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">
+                            <span>Điểm số:</span>
+                            <span class="text-white font-semibold"><span style="color: #fde047;" class="font-bold text-[12px]">N/A</span> /10</span>
+                        </div>
+                    </div>
+                </div>
+                ` : '<div></div>'}
+            </div>
+            ` : ''}
+        `;
+        sidebarMetadataCards.innerHTML = metadataHTML;
     }
 
     // 🎭 Render Cast (Diễn viên) circular avatars in sidebar (limit to max 5-6)
@@ -330,6 +428,123 @@ function renderMovieInfo(movie, episode) {
         }
     } else if (sidebarCastSection) {
         sidebarCastSection.classList.add('hidden');
+    }
+
+    // Load movie gallery
+    loadMovieGallery(movie);
+}
+
+// Load movie gallery from API
+async function loadMovieGallery(movie) {
+    const galleryContainer = document.getElementById('movie-gallery-container');
+    const scrollContainer = document.getElementById('movie-gallery-scroll');
+    const galleryCount = document.getElementById('movie-gallery-count');
+    if (!galleryContainer || !scrollContainer) return;
+
+    try {
+        const url = `https://ophim1.com/v1/api/phim/${movie.slug}/images`;
+        const options = {method: 'GET', headers: {accept: 'application/json'}};
+        
+        const res = await fetch(url, options);
+        if (!res.ok) return;
+        
+        const json = await res.json();
+        
+        if (json.success && json.data && json.data.images && json.data.images.length > 0) {
+            const backdrops = json.data.images.filter(img => img.type === 'backdrop' || img.aspect_ratio > 1);
+            
+            if (backdrops.length > 0) {
+                window.movieGalleryImageUrls = backdrops.map(img => `https://image.tmdb.org/t/p/original${img.file_path}`);
+                galleryContainer.classList.remove('hidden');
+                galleryCount.textContent = `(${backdrops.length} ảnh)`;
+                
+                scrollContainer.innerHTML = backdrops.map((img, index) => `
+                    <div class="flex-shrink-0 w-[280px] md:w-[400px] aspect-video rounded-xl overflow-hidden shadow-lg border border-white/10 group-hover:border-white/30 transition-colors relative cursor-pointer" onclick="openLightbox(window.movieGalleryImageUrls, ${index})">
+                        <img src="https://wsrv.nl/?url=image.tmdb.org/t/p/w780${img.file_path}" alt="Cảnh phim ${movie.name}" loading="lazy" class="w-full h-full object-cover transform transition-transform duration-500 hover:scale-110">
+                        <div class="absolute inset-0 bg-black/20 hover:bg-transparent transition-colors duration-300"></div>
+                    </div>
+                `).join('');
+                
+                setupGalleryScroll();
+            }
+        }
+    } catch (err) {
+        console.warn('Lỗi tải hình ảnh phim:', err);
+    }
+}
+
+function setupGalleryScroll() {
+    const scrollContainer = document.getElementById('movie-gallery-scroll');
+    const btnLeft = document.getElementById('btn-scroll-left');
+    const btnRight = document.getElementById('btn-scroll-right');
+    
+    if (!scrollContainer || !btnLeft || !btnRight) return;
+    
+    btnLeft.addEventListener('click', () => {
+        scrollContainer.scrollBy({ left: -400, behavior: 'smooth' });
+    });
+    
+    btnRight.addEventListener('click', () => {
+        scrollContainer.scrollBy({ left: 400, behavior: 'smooth' });
+    });
+    
+    const checkScroll = () => {
+        btnLeft.style.opacity = scrollContainer.scrollLeft > 10 ? '1' : '0';
+        btnRight.style.opacity = scrollContainer.scrollLeft < (scrollContainer.scrollWidth - scrollContainer.clientWidth - 10) ? '1' : '0';
+        
+        btnLeft.style.pointerEvents = scrollContainer.scrollLeft > 10 ? 'auto' : 'none';
+        btnRight.style.pointerEvents = scrollContainer.scrollLeft < (scrollContainer.scrollWidth - scrollContainer.clientWidth - 10) ? 'auto' : 'none';
+    };
+    
+    scrollContainer.addEventListener('scroll', checkScroll);
+    window.addEventListener('resize', checkScroll);
+    setTimeout(checkScroll, 500);
+}
+
+if (typeof window.openLightbox === 'undefined') {
+    window.openLightbox = function(images, index) {
+      let current = index;
+      const isMobile = window.innerWidth <= 768;
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.97);z-index:99999;display:flex;align-items:center;justify-content:center';
+      
+      const img = document.createElement('img');
+      img.style.cssText = isMobile ? 'max-width:92vw;max-height:70vh;object-fit:contain;border-radius:8px' : 'max-width:70vw;max-height:75vh;object-fit:contain;border-radius:8px';
+      img.src = images[current];
+      
+      const counter = document.createElement('div');
+      counter.style.cssText = 'position:absolute;bottom:20px;left:50%;transform:translateX(-50%);color:white;font-size:14px';
+      counter.textContent = (current+1)+' / '+images.length;
+      
+      const btnClose = document.createElement('button');
+      btnClose.innerHTML = '✕';
+      btnClose.style.cssText = 'position:absolute;top:16px;right:20px;background:none;border:none;color:white;font-size:28px;cursor:pointer;z-index:1';
+      
+      const btnPrev = document.createElement('button');
+      btnPrev.innerHTML = '‹';
+      btnPrev.style.cssText = isMobile ? 'position:absolute;left:10px;background:rgba(255,255,255,0.2);border:none;color:white;font-size:28px;cursor:pointer;padding:6px 12px;border-radius:8px;z-index:1' : 'position:absolute;left:16px;background:rgba(255,255,255,0.2);border:none;color:white;font-size:40px;cursor:pointer;padding:8px 16px;border-radius:8px;z-index:1';
+      
+      const btnNext = document.createElement('button');
+      btnNext.innerHTML = '›';
+      btnNext.style.cssText = isMobile ? 'position:absolute;right:10px;background:rgba(255,255,255,0.2);border:none;color:white;font-size:28px;cursor:pointer;padding:6px 12px;border-radius:8px;z-index:1' : 'position:absolute;right:16px;background:rgba(255,255,255,0.2);border:none;color:white;font-size:40px;cursor:pointer;padding:8px 16px;border-radius:8px;z-index:1';
+      
+      function update() { img.src = images[current]; counter.textContent = (current+1)+' / '+images.length; }
+      btnPrev.onclick = () => { current = (current-1+images.length)%images.length; update(); };
+      btnNext.onclick = () => { current = (current+1)%images.length; update(); };
+      btnClose.onclick = () => document.body.removeChild(overlay);
+      overlay.onclick = (e) => { if(e.target===overlay) document.body.removeChild(overlay); };
+      document.addEventListener('keydown', function escHandler(e) {
+        if(e.key==='Escape') { if(document.body.contains(overlay)) { document.body.removeChild(overlay); document.removeEventListener('keydown', escHandler); } }
+        if(e.key==='ArrowLeft') { current=(current-1+images.length)%images.length; update(); }
+        if(e.key==='ArrowRight') { current=(current+1)%images.length; update(); }
+      });
+      
+      overlay.appendChild(img);
+      overlay.appendChild(counter);
+      overlay.appendChild(btnClose);
+      overlay.appendChild(btnPrev);
+      overlay.appendChild(btnNext);
+      document.body.appendChild(overlay);
     }
 }
 

@@ -44,7 +44,31 @@ async function loadActorImagesFromTMDB(movie) {
     try {
         console.log('🎬 Loading actor images for:', movie.name);
 
-        // Try multiple search strategies
+        // NEW: Try exact TMDB ID matching first if provided by Ophim API
+        if (movie.tmdb && movie.tmdb.id && String(movie.tmdb.id).trim() !== '') {
+            try {
+                const tmdbType = movie.tmdb.type === 'tv' ? 'tv' : 'movie';
+                const tmdbId = movie.tmdb.id;
+                
+                console.log(`🎯 Using exact TMDB ID provided by Ophim: ${tmdbId} (${tmdbType})`);
+                const creditsUrl = `${TMDB_BASE_URL}/${tmdbType}/${tmdbId}/credits?api_key=${TMDB_API_KEY}`;
+                const creditsResponse = await fetchWithProxy(creditsUrl);
+                
+                if (creditsResponse.ok) {
+                    const creditsData = await creditsResponse.json();
+                    if (creditsData.cast && creditsData.cast.length > 0) {
+                        console.log('✅ Found', creditsData.cast.length, 'cast members via exact TMDB ID');
+                        sessionStorage.setItem(cacheKey, JSON.stringify(creditsData.cast));
+                        updateActorAvatars(movie.actor, creditsData.cast);
+                        return true;
+                    }
+                }
+            } catch (err) {
+                console.warn('⚠️ Exact TMDB ID fetch failed, falling back to search strategy...');
+            }
+        }
+
+        // Try multiple search strategies (Fallback if TMDB ID is missing)
         const searchStrategies = [
             { query: movie.origin_name, year: movie.year, label: 'origin name + year' },
             { query: movie.name, year: movie.year, label: 'VN name + year' },
