@@ -279,14 +279,13 @@ async function loadMovieGallery(movie) {
             const backdrops = json.data.images.filter(img => img.type === 'backdrop' || img.aspect_ratio > 1);
             
             if (backdrops.length > 0) {
-                window.movieGalleryImageUrls = backdrops.map(img => `https://image.tmdb.org/t/p/original${img.file_path}`);
+                window.movieGalleryImageUrls = backdrops.map(img => `https://image.tmdb.org/t/p/w1280${img.file_path}`);
                 galleryContainer.classList.remove('hidden');
                 galleryCount.textContent = `(${backdrops.length} ảnh)`;
                 
                 scrollContainer.innerHTML = backdrops.map((img, index) => `
                     <div class="flex-shrink-0 w-[280px] md:w-[400px] aspect-video rounded-xl overflow-hidden shadow-lg border border-white/10 group-hover:border-white/30 transition-colors relative cursor-pointer" onclick="openLightbox(window.movieGalleryImageUrls, ${index})">
                         <img src="https://wsrv.nl/?url=image.tmdb.org/t/p/w780${img.file_path}" alt="Cảnh phim ${movie.name}" loading="lazy" class="w-full h-full object-cover transform transition-transform duration-500 hover:scale-110">
-                        <div class="absolute inset-0 bg-black/20 hover:bg-transparent transition-colors duration-300"></div>
                     </div>
                 `).join('');
                 
