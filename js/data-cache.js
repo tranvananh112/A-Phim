@@ -1,7 +1,7 @@
 // Data Caching & Performance Optimization
 class DataCache {
     constructor() {
-        this.cachePrefix = 'aphim_cache_v2_';
+        this.cachePrefix = 'aphim_cache_v3_';
         this.cacheDuration = 1000 * 60 * 30; // 30 minutes
         this.requestCache = new Map(); // In-memory cache for ongoing requests
     }

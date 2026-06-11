@@ -31,8 +31,13 @@ class MovieAPI {
         if (!data || !data.data || !Array.isArray(data.data.items)) return data;
         try {
             const hiddenMoviesList = JSON.parse(localStorage.getItem('cinestream_hidden_movies') || '[]');
-            if (hiddenMoviesList.length > 0) {
-                data.data.items = data.data.items.filter(movie => !hiddenMoviesList.includes(movie.slug));
+            
+            // HARDCODED BANNED MOVIES (DMCA, etc)
+            const hardcodedBanned = ['moi-thu-la-loi-co-ay', 'michael'];
+            const allBanned = [...hiddenMoviesList, ...hardcodedBanned];
+            
+            if (allBanned.length > 0) {
+                data.data.items = data.data.items.filter(movie => !allBanned.includes(movie.slug));
             }
         } catch (e) {
             console.warn('Error filtering hidden movies:', e);
