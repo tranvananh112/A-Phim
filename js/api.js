@@ -100,10 +100,19 @@ class MovieAPI {
     // Fetch movie detail by slug
     async getMovieDetail(slug) {
         // --- BLOCK DMCA REPORTED SLUGS ---
-        if (slug === 'moi-thu-la-loi-co-ay') {
+        if (slug === 'moi-thu-la-loi-co-ay' || slug === 'michael') {
             window.location.href = '/index.html'; // Chuyển hướng về trang chủ
             return null;
         }
+        
+        // --- AUTO BLOCK HIDDEN SLUGS ---
+        try {
+            const hiddenMoviesList = JSON.parse(localStorage.getItem('cinestream_hidden_movies') || '[]');
+            if (hiddenMoviesList.includes(slug)) {
+                window.location.href = '/index.html';
+                return null;
+            }
+        } catch (e) {}
         
         try {
             if (this.useBackend) {
