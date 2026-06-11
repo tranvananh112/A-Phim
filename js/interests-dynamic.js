@@ -4,6 +4,7 @@
 async function loadDynamicInterests() {
     const cards = document.querySelectorAll('.interest-card');
     let customBgs = {};
+    const usedImages = new Set(); // Track used thumbnails to prevent duplicates
 
     try {
         const apiUrl = typeof window.getBackendBaseURL === 'function' ? window.getBackendBaseURL() : '';
@@ -26,8 +27,8 @@ async function loadDynamicInterests() {
 
         const loadFromOphim = async () => {
             try {
-                // Fetch first page, limit 1 to get the latest movie
-                const response = await fetch(`https://ophim1.com/v1/api/${apiPath}?page=1&limit=1`, {
+                // Fetch first page to pick a unique movie
+                const response = await fetch(`https://ophim1.com/v1/api/${apiPath}?page=1`, {
                     method: 'GET',
                     headers: { 'accept': 'application/json' }
                 });
@@ -35,10 +36,19 @@ async function loadDynamicInterests() {
                 const data = await response.json();
                 
                 if (data.status === 'success' && data.data && data.data.items && data.data.items.length > 0) {
-                    const movie = data.data.items[0];
-                    const thumbUrl = movie.thumb_url;
+                    // Find the first movie whose thumbnail hasn't been used yet
+                    let selectedMovie = data.data.items[0];
+                    for (const movie of data.data.items) {
+                        if (movie.thumb_url && !usedImages.has(movie.thumb_url)) {
+                            selectedMovie = movie;
+                            break;
+                        }
+                    }
+
+                    const thumbUrl = selectedMovie.thumb_url;
                     
                     if (thumbUrl) {
+                        usedImages.add(thumbUrl); // Mark as used
                         const posterFullUrl = thumbUrl.startsWith('http') ? thumbUrl : `https://img.ophim.live/uploads/movies/${thumbUrl}`;
                         
                         // Optimize if possible

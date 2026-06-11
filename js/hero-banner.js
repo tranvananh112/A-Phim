@@ -438,6 +438,7 @@ function attachSwipeHandler() {
 // LOAD THUMBNAILS
 // ================================================================
 async function loadThumbnailMovies() {
+    let hasCache = false;
     // 1. Instant từ cache
     try {
         const cached = localStorage.getItem('cinestream_thumbnail_movies');
@@ -445,6 +446,7 @@ async function loadThumbnailMovies() {
             const movies = JSON.parse(cached);
             if (Array.isArray(movies) && movies.length > 0) {
                 applyThumbnails(convertThumbnailsFromAPI(movies));
+                hasCache = true;
             }
         }
     } catch (e) { }
@@ -466,8 +468,10 @@ async function loadThumbnailMovies() {
         console.warn('Thumbnail API error, fallback VN:', err);
     }
 
-    // 3. Fallback: phim Việt Nam
-    loadVietnameseThumbnailsFallback();
+    // 3. Fallback: phim Việt Nam (chỉ khi không có cache)
+    if (!hasCache) {
+        loadVietnameseThumbnailsFallback();
+    }
 }
 
 function convertThumbnailsFromAPI(banners) {
