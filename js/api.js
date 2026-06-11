@@ -26,6 +26,20 @@ class MovieAPI {
         }
     }
 
+    // Helper to filter out hidden movies from list responses
+    filterHiddenMovies(data) {
+        if (!data || !data.data || !Array.isArray(data.data.items)) return data;
+        try {
+            const hiddenMoviesList = JSON.parse(localStorage.getItem('cinestream_hidden_movies') || '[]');
+            if (hiddenMoviesList.length > 0) {
+                data.data.items = data.data.items.filter(movie => !hiddenMoviesList.includes(movie.slug));
+            }
+        } catch (e) {
+            console.warn('Error filtering hidden movies:', e);
+        }
+        return data;
+    }
+
     // Get auth token
     getAuthToken() {
         return localStorage.getItem(STORAGE_KEYS.TOKEN);
@@ -69,12 +83,13 @@ class MovieAPI {
                 console.log('Backend response:', data);
 
                 // Always return data if we got a response
-                return data;
+                return this.filterHiddenMovies(data);
             } else {
                 const response = await this.fetchWithTimeout(`${this.ophimURL}/danh-sach/phim-moi-cap-nhat?page=${page}`, {
                     headers: { 'accept': 'application/json' }
                 });
-                return await response.json();
+                const data = await response.json();
+                return this.filterHiddenMovies(data);
             }
         } catch (error) {
             console.error('Error fetching movie list:', error);
@@ -123,14 +138,15 @@ class MovieAPI {
 
                 // Check both success and status fields
                 if (data.success || data.status === 'success') {
-                    return data; // Return the whole response
+                    return this.filterHiddenMovies(data); // Return the whole response
                 }
                 return null;
             } else {
                 const response = await this.fetchWithTimeout(`${this.ophimURL}/tim-kiem?keyword=${encodeURIComponent(keyword)}&page=${page}`, {
                     headers: { 'accept': 'application/json' }
                 });
-                return await response.json();
+                const data = await response.json();
+                return this.filterHiddenMovies(data);
             }
         } catch (error) {
             console.error('Error searching movies:', error);
@@ -147,17 +163,18 @@ class MovieAPI {
 
                 // Backend now returns Ophim-compatible format
                 if (data.success) {
-                    return {
+                    return this.filterHiddenMovies({
                         status: 'success',
                         data: data.data
-                    };
+                    });
                 }
                 return null;
             } else {
                 const response = await this.fetchWithTimeout(`${this.ophimURL}/the-loai/${categorySlug}?page=${page}`, {
                     headers: { 'accept': 'application/json' }
                 });
-                return await response.json();
+                const data = await response.json();
+                return this.filterHiddenMovies(data);
             }
         } catch (error) {
             console.error('Error fetching category movies:', error);
@@ -174,17 +191,18 @@ class MovieAPI {
 
                 // Backend now returns Ophim-compatible format
                 if (data.success) {
-                    return {
+                    return this.filterHiddenMovies({
                         status: 'success',
                         data: data.data
-                    };
+                    });
                 }
                 return null;
             } else {
                 const response = await this.fetchWithTimeout(`${this.ophimURL}/quoc-gia/${countrySlug}?page=${page}`, {
                     headers: { 'accept': 'application/json' }
                 });
-                return await response.json();
+                const data = await response.json();
+                return this.filterHiddenMovies(data);
             }
         } catch (error) {
             console.error('Error fetching country movies:', error);
