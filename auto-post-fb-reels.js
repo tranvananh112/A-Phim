@@ -166,17 +166,54 @@ Requirements:
                 continue; // Skip to next movie if Groq fails
             }
 
-            // 6. Download YouTube Video using yt-dlp
-            console.log(`⏳ Downloading trailer from YouTube...`);
+            // 6. Download Video (YouTube or Fallback to m3u8)
             const videoFile = 'trailer.mp4';
+            let downloadSuccess = false;
             if (fs.existsSync(videoFile)) fs.unlinkSync(videoFile);
-            
-            // Download worst/lowest quality to keep file size small for fast upload, but good enough for mobile
-            // Or just format 18 (mp4 360p) which is universally supported
-            execSync(`yt-dlp -f "bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4][height<=720]" -o "${videoFile}" "${trailerUrl}"`);
-            
-            if (!fs.existsSync(videoFile)) {
-                console.error('❌ Failed to download video file.');
+
+            console.log(`⏳ Attempt 1: Downloading trailer from YouTube...`);
+            try {
+                // Download worst/lowest quality to keep file size small for fast upload
+                execSync(`yt-dlp -f "bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4][height<=720]" -o "${videoFile}" "${trailerUrl}"`, { stdio: 'ignore' });
+                if (fs.existsSync(videoFile)) downloadSuccess = true;
+            } catch (err) {
+                console.error('⚠️ yt-dlp failed (likely YouTube bot protection).');
+            }
+
+            if (!downloadSuccess) {
+                console.log(`⏳ Attempt 2: Fallback to Ophim API m3u8 stream...`);
+                let m3u8Link = null;
+                try {
+                    const epsRes = await axios.get(`https://ophim1.com/phim/${slug}`, { timeout: 10000 });
+                    const eps = epsRes.data.episodes;
+                    if (eps && eps.length > 0 && eps[0].server_data && eps[0].server_data.length > 0) {
+                        m3u8Link = eps[0].server_data[0].link_m3u8;
+                    }
+                } catch(e) {}
+
+                if (m3u8Link && m3u8Link.trim() !== "") {
+                    console.log(`✅ Found m3u8 link. Downloading a 60-second snippet via ffmpeg...`);
+                    try {
+                        // Trích xuất 60 giây phim, bắt đầu từ phút thứ 10 để làm Reel
+                        execSync(`ffmpeg -ss 00:10:00 -i "${m3u8Link}" -t 60 -c copy -bsf:a aac_adtstoasc "${videoFile}"`, { stdio: 'ignore' });
+                        if (fs.existsSync(videoFile)) downloadSuccess = true;
+                    } catch (e) {
+                        console.error('⚠️ ffmpeg fallback failed at minute 10, trying minute 1...');
+                        try {
+                            execSync(`ffmpeg -ss 00:01:00 -i "${m3u8Link}" -t 60 -c copy -bsf:a aac_adtstoasc "${videoFile}"`, { stdio: 'ignore' });
+                            if (fs.existsSync(videoFile)) downloadSuccess = true;
+                        } catch (e2) {
+                            console.error('❌ ffmpeg fallback totally failed.');
+                        }
+                    }
+                } else {
+                    console.log('⚠️ No m3u8 stream available for fallback.');
+                }
+            }
+
+            if (!downloadSuccess) {
+                console.error('❌ Failed to download video file. Skipping this movie.');
+                postedReels.push(slug); // Mark as skipped so we don't get stuck on it forever
                 continue;
             }
 
