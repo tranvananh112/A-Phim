@@ -4,13 +4,12 @@ const { execSync } = require('child_process');
 
 // Constants
 const POSTED_REELS_FILE = 'posted-reels.json';
-const API_URL = 'https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=1';
 const FB_PAGE_TOKEN = process.env.FB_PAGE_TOKEN;
 const COMPOSIO_API_KEY = process.env.COMPOSIO_API_KEY;
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
-// Delay function
-const delay = ms => new Promise(res => setTimeout(res, ms));
+// Helper: Strip HTML
+const stripHtml = (html) => html ? html.replace(/<[^>]*>?/gm, '').trim() : '';
 
 (async () => {
     if (!FB_PAGE_TOKEN && !COMPOSIO_API_KEY) {
@@ -32,204 +31,231 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
         }
     }
 
-    // 2. Fetch new movies from API
-    let newMovies = [];
+    // 2. Lấy danh sách phim mới (Quét sâu từ Trang 1 đến 5)
+    let newSlugs = [];
     try {
-        console.log('Fetching new movies...');
-        const r = await axios.get(API_URL, { timeout: 15000 });
-        if (r.data && r.data.data && r.data.data.items) {
-            newMovies = r.data.data.items;
+        console.log('🔍 Bước 1: Quét danh sách phim mới từ trang 1 đến 5...');
+        for (let page = 1; page <= 5; page++) {
+            const r = await axios.get(`https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=${page}`, { timeout: 15000 });
+            if (r.data && r.data.data && r.data.data.items) {
+                for (const item of r.data.data.items) {
+                    if (!newSlugs.includes(item.slug)) {
+                        newSlugs.push(item.slug);
+                    }
+                }
+            }
         }
+        console.log(`✅ Đã thu thập được ${newSlugs.length} phim cập nhật gần đây.`);
     } catch (e) {
-        console.error('❌ Error fetching movies:', e.message);
+        console.error('❌ Lỗi khi lấy danh sách phim:', e.message);
         process.exit(1);
     }
 
-    // Reverse to check oldest first
-    newMovies.reverse();
+    // Lọc phim CHƯA ĐĂNG
+    let unpostedSlugs = newSlugs.filter(slug => !postedReels.includes(slug));
+    console.log(`✅ Tìm thấy ${unpostedSlugs.length} phim CHƯA ĐĂNG trên Reels.`);
 
-    // 3. Verify Facebook Token
+    if (unpostedSlugs.length === 0) {
+        console.log('🤷 Tất cả 5 trang đều đã được đăng sạch sẽ. Không có phim mới để đăng!');
+        process.exit(0);
+    }
+
+    // 3. Phân tích IMDb & Views để xếp hạng (Lấy 25 phim đầu tiên để tối ưu tốc độ xử lý của Bot)
+    unpostedSlugs = unpostedSlugs.slice(0, 25);
+    let movieCandidates = [];
+    
+    console.log(`\n🔍 Bước 2: Phân tích chỉ số IMDb và Lượt Xem (Views) cho ${unpostedSlugs.length} phim để tìm TRENDING...`);
+    for (const slug of unpostedSlugs) {
+        try {
+            const detailRes = await axios.get(`https://ophim1.com/phim/${slug}`, { timeout: 10000 });
+            const m = detailRes.data.movie;
+            const eps = detailRes.data.episodes;
+            
+            let hasTrailer = m.trailer_url && (m.trailer_url.includes('youtube.com') || m.trailer_url.includes('youtu.be'));
+            let hasM3u8 = eps && eps.length > 0 && eps[0].server_data && eps[0].server_data.length > 0 && eps[0].server_data[0].link_m3u8;
+
+            if (hasTrailer || hasM3u8) {
+                let view = m.view || 0;
+                let imdb = (m.imdb && m.imdb.vote_average) ? parseFloat(m.imdb.vote_average) : 5.0; // Mặc định 5.0 nếu không có điểm
+                let score = view * imdb;
+                
+                movieCandidates.push({
+                    slug: slug,
+                    name: m.name || m.origin_name,
+                    year: m.year,
+                    content: stripHtml(m.content),
+                    categories: m.category ? m.category.map(c => c.name).join(', ') : '',
+                    trailerUrl: hasTrailer ? m.trailer_url : null,
+                    m3u8Link: hasM3u8 ? eps[0].server_data[0].link_m3u8 : null,
+                    view: view,
+                    imdb: imdb,
+                    score: score
+                });
+            } else {
+                // Đánh dấu bỏ qua vĩnh viễn nếu phim này không có cả Trailer Youtube lẫn m3u8
+                postedReels.push(slug);
+            }
+        } catch (e) {
+            console.error(`⚠️ Lỗi khi lấy chi tiết phim ${slug}`);
+        }
+    }
+
+    // Sắp xếp Ranking (Từ Điểm cao xuống thấp)
+    movieCandidates.sort((a, b) => b.score - a.score);
+
+    console.log(`\n🏆 BẢNG XẾP HẠNG TOP PHIM ĐÁNG ĐĂNG NHẤT HÔM NAY:`);
+    movieCandidates.forEach((m, idx) => {
+        console.log(`   #${idx+1}: ${m.name} | View: ${m.view} | IMDb: ${m.imdb} | Điểm: ${m.score.toFixed(2)}`);
+    });
+
+    if (movieCandidates.length === 0) {
+        console.log('🤷 Rất tiếc, các phim mới này đều không có Video (Trailer/m3u8) để đăng.');
+        fs.writeFileSync(POSTED_REELS_FILE, JSON.stringify(postedReels, null, 2), 'utf8');
+        process.exit(0);
+    }
+
+    // 4. Verify Facebook Token
     let pageId = 'me';
     let fallbackToken = FB_PAGE_TOKEN;
     let graphApiValid = false;
 
     if (FB_PAGE_TOKEN) {
         try {
-            console.log('✅ Verifying Facebook Page Token...');
+            console.log('\n✅ Đang xác thực Facebook Token...');
             const verifyRes = await axios.get('https://graph.facebook.com/v19.0/me?access_token=' + FB_PAGE_TOKEN);
-            console.log(`✅ Ready to post to Fanpage: ${verifyRes.data.name} (${verifyRes.data.id})`);
+            console.log(`✅ Sẵn sàng đăng lên Fanpage: ${verifyRes.data.name} (${verifyRes.data.id})`);
             pageId = verifyRes.data.id;
             graphApiValid = true;
         } catch (error) {
-            console.error('❌ Failed to verify Facebook Token:', error.response?.data || error.message);
+            console.error('❌ Lỗi xác thực Facebook Token (Có thể thiếu quyền publish_video):', error.response?.data || error.message);
         }
     }
 
     if (!graphApiValid && COMPOSIO_API_KEY) {
+        // Fallback to composio ...
         try {
-            console.log(`Fetching Composio Facebook accounts...`);
-            const accountsReq = await axios.get('https://backend.composio.dev/api/v3/connected_accounts', {
-                headers: { 'x-api-key': COMPOSIO_API_KEY }
-            });
+            const accountsReq = await axios.get('https://backend.composio.dev/api/v3/connected_accounts', { headers: { 'x-api-key': COMPOSIO_API_KEY } });
             const accountsList = accountsReq.data?.items || accountsReq.data?.data || accountsReq.data?.connectedAccounts || [];
             const fbAcc = accountsList.find(a => {
                 const name = (a.toolkit_name || a.appName || a.providerId || '').toLowerCase();
                 return name.includes('facebook') && a.status.toLowerCase() === 'active';
             });
-            
-            if (!fbAcc) throw new Error('No active Facebook connection in Composio');
-
-            const proxyRes = await axios.post('https://backend.composio.dev/api/v2/actions/proxy', {
-                connectedAccountId: fbAcc.id,
-                method: 'GET',
-                endpoint: 'https://graph.facebook.com/v19.0/me/accounts'
-            }, { headers: { 'x-api-key': COMPOSIO_API_KEY } });
-
-            const pages = proxyRes.data.data.data;
-            if (!pages || pages.length === 0) throw new Error('No Pages found');
-            
-            fallbackToken = pages[0].access_token;
-            pageId = pages[0].id;
-            graphApiValid = true;
-            console.log(`✅ Ready to post to Fanpage via Composio proxy: ${pages[0].name} (${pageId})`);
+            if (fbAcc) {
+                const proxyRes = await axios.post('https://backend.composio.dev/api/v2/actions/proxy', {
+                    connectedAccountId: fbAcc.id,
+                    method: 'GET',
+                    endpoint: 'https://graph.facebook.com/v19.0/me/accounts'
+                }, { headers: { 'x-api-key': COMPOSIO_API_KEY } });
+                const pages = proxyRes.data.data.data;
+                if (pages && pages.length > 0) {
+                    fallbackToken = pages[0].access_token;
+                    pageId = pages[0].id;
+                    graphApiValid = true;
+                    console.log(`✅ Sẵn sàng đăng qua Composio proxy: ${pages[0].name}`);
+                }
+            }
         } catch (e) {
-            console.error('❌ Failed to get Facebook token via Composio:', e.message);
-            process.exit(1);
+            console.log("Composio fallback failed.");
         }
     }
 
     if (!graphApiValid) {
-        console.error('❌ No valid posting method found. Exiting...');
+        console.error('❌ KHÔNG THỂ ĐĂNG ĐƯỢC: Vui lòng kiểm tra lại FB_PAGE_TOKEN.');
         process.exit(1);
     }
 
     let postedCount = 0;
 
-    // Helper functions
-    const stripHtml = (html) => html ? html.replace(/<[^>]*>?/gm, '').trim() : '';
-    
-    // 4. Find a movie with a trailer
-    for (const movie of newMovies) {
+    // 5. CƠ CHẾ CỐ ĐẤM ĂN XÔI: Bắt đầu đăng từ Top 1 xuống, nếu lỗi thì đăng phim tiếp theo.
+    for (const movie of movieCandidates) {
         const slug = movie.slug;
-        if (postedReels.includes(slug)) continue;
+        const name = movie.name;
+        const year = movie.year ? ` (${movie.year})` : '';
+        const webUrl = `https://aphim.io.vn/movie-detail.html?slug=${slug}`;
+        const desc = movie.content.substring(0, 300) + '...';
+        
+        console.log(`\n=============================================`);
+        console.log(`🎬 BẮT ĐẦU ĐĂNG PHIM: ${name} (Top Trending)`);
+        console.log(`=============================================`);
 
-        try {
-            console.log(`\n🔍 Checking detail for: ${slug}...`);
-            const detailRes = await axios.get(`https://ophim1.com/phim/${slug}`, { timeout: 10000 });
-            const mDetail = detailRes.data.movie;
-            
-            const trailerUrl = mDetail.trailer_url;
-            if (!trailerUrl || !trailerUrl.includes('youtube.com') && !trailerUrl.includes('youtu.be')) {
-                console.log(`⏭️ Skipped (No YouTube trailer): ${slug}`);
-                postedReels.push(slug); // Mark as skipped so we don't check again
-                continue;
-            }
-
-            const name = mDetail.name || mDetail.origin_name;
-            const year = mDetail.year ? ` (${mDetail.year})` : '';
-            const webUrl = `https://aphim.io.vn/movie-detail.html?slug=${slug}`;
-            const desc = stripHtml(mDetail.content).substring(0, 300) + '...';
-            const categories = mDetail.category ? mDetail.category.map(c => c.name).join(', ') : '';
-
-            console.log(`✅ Found suitable movie: ${name}. Generating content with Groq...`);
-
-            // 5. Generate Caption with Groq
-            const prompt = `You are an expert Social Media Manager for a movie streaming website named 'A Phim'.
+        // 5.1 Generate Caption with Groq
+        const prompt = `You are an expert Social Media Manager for a movie streaming website named 'A Phim'.
 Task: Write a short, viral, and highly engaging caption (under 150 words) for a Facebook Reel showing the trailer of the movie "${name}${year}".
 Details:
-- Genres: ${categories}
+- Genres: ${movie.categories}
 - Synopsis: ${desc}
 
 Requirements:
 - Make it sound natural, slightly dramatic or funny depending on the genre. DO NOT sound like an AI.
-- Start with a hook (e.g., "Trời ơi tin được không...", "Siêu phẩm đã đổ bộ...").
+- Start with a strong hook (e.g., "Trời ơi tin được không...", "Siêu phẩm đã đổ bộ...").
 - Include emojis.
 - End with a call to action directing them to watch the full movie here: ${webUrl}
 - Include 3-4 relevant hashtags, always including #APhim.
 - Write in Vietnamese.
 - Output ONLY the caption text. No explanations.`;
 
-            let caption = '';
-            try {
-                const groqRes = await axios.post('https://api.groq.com/openai/v1/chat/completions', {
-                    model: 'llama-3.3-70b-versatile',
-                    messages: [{ role: 'user', content: prompt }],
-                    temperature: 0.7,
-                    max_tokens: 300
-                }, {
-                    headers: { 'Authorization': `Bearer ${GROQ_API_KEY}`, 'Content-Type': 'application/json' }
-                });
-                caption = groqRes.data.choices[0].message.content.trim();
-                console.log(`✍️ Groq generated caption:\n------------------\n${caption}\n------------------`);
-            } catch (err) {
-                console.error('❌ Groq API Error:', err.response?.data || err.message);
-                continue; // Skip to next movie if Groq fails
-            }
+        let caption = '';
+        try {
+            const groqRes = await axios.post('https://api.groq.com/openai/v1/chat/completions', {
+                model: 'llama-3.3-70b-versatile',
+                messages: [{ role: 'user', content: prompt }],
+                temperature: 0.8,
+                max_tokens: 300
+            }, {
+                headers: { 'Authorization': `Bearer ${GROQ_API_KEY}`, 'Content-Type': 'application/json' }
+            });
+            caption = groqRes.data.choices[0].message.content.trim();
+            console.log(`✍️ Content AI đã viết xong:\n${caption}\n------------------`);
+        } catch (err) {
+            console.error('❌ Lỗi Groq API:', err.response?.data || err.message);
+            continue; // Fail, try next movie
+        }
 
-            // 6. Download Video (YouTube or Fallback to m3u8)
-            const videoFile = 'trailer.mp4';
-            let downloadSuccess = false;
-            if (fs.existsSync(videoFile)) fs.unlinkSync(videoFile);
+        // 5.2 Download Video (YouTube or Fallback to m3u8)
+        const videoFile = 'trailer.mp4';
+        let downloadSuccess = false;
+        if (fs.existsSync(videoFile)) fs.unlinkSync(videoFile);
 
-            console.log(`⏳ Attempt 1: Downloading trailer from YouTube...`);
+        console.log(`⏳ Bước 1: Thử tải Trailer từ YouTube...`);
+        if (movie.trailerUrl) {
             try {
-                // Download worst/lowest quality to keep file size small for fast upload
-                execSync(`yt-dlp -f "bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4][height<=720]" -o "${videoFile}" "${trailerUrl}"`, { stdio: 'ignore' });
+                execSync(`yt-dlp -f "bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4][height<=720]" -o "${videoFile}" "${movie.trailerUrl}"`, { stdio: 'ignore' });
                 if (fs.existsSync(videoFile)) downloadSuccess = true;
             } catch (err) {
-                console.error('⚠️ yt-dlp failed (likely YouTube bot protection).');
+                console.error('⚠️ Tải YouTube thất bại (Do bị quét Bot).');
             }
+        }
 
-            if (!downloadSuccess) {
-                console.log(`⏳ Attempt 2: Fallback to Ophim API m3u8 stream...`);
-                let m3u8Link = null;
+        if (!downloadSuccess && movie.m3u8Link) {
+            console.log(`⏳ Bước 2: Bật dự phòng, trích xuất 60s từ luồng m3u8 gốc bằng ffmpeg...`);
+            try {
+                // Trích xuất 60 giây phim, bắt đầu từ phút thứ 10
+                execSync(`ffmpeg -ss 00:10:00 -i "${movie.m3u8Link}" -t 60 -c copy -bsf:a aac_adtstoasc "${videoFile}"`, { stdio: 'ignore' });
+                if (fs.existsSync(videoFile)) downloadSuccess = true;
+            } catch (e) {
+                console.error('⚠️ Cắt m3u8 phút 10 lỗi, thử cắt ở phút thứ 1...');
                 try {
-                    const epsRes = await axios.get(`https://ophim1.com/phim/${slug}`, { timeout: 10000 });
-                    const eps = epsRes.data.episodes;
-                    if (eps && eps.length > 0 && eps[0].server_data && eps[0].server_data.length > 0) {
-                        m3u8Link = eps[0].server_data[0].link_m3u8;
-                    }
-                } catch(e) {}
-
-                if (m3u8Link && m3u8Link.trim() !== "") {
-                    console.log(`✅ Found m3u8 link. Downloading a 60-second snippet via ffmpeg...`);
-                    try {
-                        // Trích xuất 60 giây phim, bắt đầu từ phút thứ 10 để làm Reel
-                        execSync(`ffmpeg -ss 00:10:00 -i "${m3u8Link}" -t 60 -c copy -bsf:a aac_adtstoasc "${videoFile}"`, { stdio: 'ignore' });
-                        if (fs.existsSync(videoFile)) downloadSuccess = true;
-                    } catch (e) {
-                        console.error('⚠️ ffmpeg fallback failed at minute 10, trying minute 1...');
-                        try {
-                            execSync(`ffmpeg -ss 00:01:00 -i "${m3u8Link}" -t 60 -c copy -bsf:a aac_adtstoasc "${videoFile}"`, { stdio: 'ignore' });
-                            if (fs.existsSync(videoFile)) downloadSuccess = true;
-                        } catch (e2) {
-                            console.error('❌ ffmpeg fallback totally failed.');
-                        }
-                    }
-                } else {
-                    console.log('⚠️ No m3u8 stream available for fallback.');
+                    execSync(`ffmpeg -ss 00:01:00 -i "${movie.m3u8Link}" -t 60 -c copy -bsf:a aac_adtstoasc "${videoFile}"`, { stdio: 'ignore' });
+                    if (fs.existsSync(videoFile)) downloadSuccess = true;
+                } catch (e2) {
+                    console.error('❌ Trích xuất m3u8 thất bại hoàn toàn.');
                 }
             }
+        }
 
-            if (!downloadSuccess) {
-                console.error('❌ Failed to download video file. Skipping this movie.');
-                postedReels.push(slug); // Mark as skipped so we don't get stuck on it forever
-                continue;
-            }
+        if (!downloadSuccess) {
+            console.error(`❌ Không tải được Video cho phim này. Bỏ qua và đánh dấu lỗi để thử phim hạng tiếp theo!`);
+            postedReels.push(slug); // Mark as skipped
+            continue; // MOVE TO THE NEXT MOVIE IN RANKING!
+        }
 
-            console.log(`✅ Video downloaded. File size: ${fs.statSync(videoFile).size} bytes`);
-
-            // 7. Upload to Facebook Reels
-            console.log(`🚀 Uploading to Facebook Reels...`);
-            
-            // Phase 1: Start
-            console.log('   - Phase 1: Start');
+        // 5.3 Upload to Facebook Reels
+        console.log(`🚀 Bước cuối: Bắn Video lên Facebook Reels...`);
+        try {
             const initRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/video_reels?upload_phase=start&access_token=${fallbackToken}`);
             const videoId = initRes.data.video_id;
             const uploadUrl = initRes.data.upload_url;
 
-            // Phase 2: Upload
-            console.log('   - Phase 2: Uploading file data...');
             const fileData = fs.readFileSync(videoFile);
             await axios.post(uploadUrl, fileData, {
                 headers: {
@@ -242,42 +268,38 @@ Requirements:
                 maxContentLength: Infinity
             });
 
-            // Phase 3: Finish & Publish
-            console.log('   - Phase 3: Publish');
             await axios.post(`https://graph.facebook.com/v19.0/${pageId}/video_reels`, {
                 upload_phase: 'finish',
                 video_id: videoId,
-                video_state: 'PUBLISHED',
+                video_state: 'PUBLISHED', // MUST HAVE publish_video PERMISSION
                 description: caption,
                 access_token: fallbackToken
             });
 
-            console.log(`✅ Successfully published Reel for: ${name}`);
-
-            // Cleanup
-            if (fs.existsSync(videoFile)) fs.unlinkSync(videoFile);
-
-            // Mark as posted and break (only do 1 reel per run to avoid spamming)
+            console.log(`🎉 XUẤT BẢN THÀNH CÔNG THƯỚC PHIM: ${name} !`);
             postedReels.push(slug);
             postedCount++;
+            
+            if (fs.existsSync(videoFile)) fs.unlinkSync(videoFile);
+
+            // THÀNH CÔNG RỒI THÌ DỪNG LẠI, KHÔNG ĐĂNG NỮA! (Chỉ đăng 1 reel/ngày)
             break;
 
         } catch (e) {
-            console.error(`❌ Failed to process/post ${slug}:`, e.response?.data || e.message);
-            // Cleanup on error
-            if (fs.existsSync('trailer.mp4')) fs.unlinkSync('trailer.mp4');
+            console.error(`❌ Lỗi Facebook Graph API khi upload ${slug}:`, e.response?.data || e.message);
+            // Vẫn tiếp tục vòng lặp để đăng thử bộ phim tiếp theo trong bảng xếp hạng!
         }
     }
 
-    // 8. Save updated state
+    // 6. Lưu trạng thái
     if (postedReels.length > 5000) {
         postedReels = postedReels.slice(postedReels.length - 5000);
     }
     fs.writeFileSync(POSTED_REELS_FILE, JSON.stringify(postedReels, null, 2), 'utf8');
     
     if (postedCount > 0) {
-        console.log(`🎉 Finished! Posted ${postedCount} Reel.`);
+        console.log(`\n✅ HOÀN TẤT CHIẾN DỊCH: Đã đăng xuất sắc ${postedCount} Thước phim!`);
     } else {
-        console.log('🤷 No new movies with trailers found to post.');
+        console.log('\n❌ Rất tiếc, cả bảng xếp hạng đều đăng lỗi hoặc bị từ chối.');
     }
 })();
