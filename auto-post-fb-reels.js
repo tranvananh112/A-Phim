@@ -7,6 +7,7 @@ const POSTED_REELS_FILE = 'posted-reels.json';
 const FB_PAGE_TOKEN = process.env.FB_PAGE_TOKEN;
 const COMPOSIO_API_KEY = process.env.COMPOSIO_API_KEY;
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const MANUAL_MOVIE_SLUG = process.env.MANUAL_MOVIE_SLUG || '';
 
 // Helper: Strip HTML
 const stripHtml = (html) => html ? html.replace(/<[^>]*>?/gm, '').trim() : '';
@@ -31,82 +32,134 @@ const stripHtml = (html) => html ? html.replace(/<[^>]*>?/gm, '').trim() : '';
         }
     }
 
-    // 2. Lấy danh sách phim mới (Quét sâu từ Trang 1 đến 5)
-    let newSlugs = [];
-    try {
-        console.log('🔍 Bước 1: Quét danh sách phim mới từ trang 1 đến 5...');
-        for (let page = 1; page <= 5; page++) {
-            const r = await axios.get(`https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=${page}`, { timeout: 15000 });
-            if (r.data && r.data.data && r.data.data.items) {
-                for (const item of r.data.data.items) {
-                    if (!newSlugs.includes(item.slug)) {
-                        newSlugs.push(item.slug);
-                    }
-                }
-            }
-        }
-        console.log(`✅ Đã thu thập được ${newSlugs.length} phim cập nhật gần đây.`);
-    } catch (e) {
-        console.error('❌ Lỗi khi lấy danh sách phim:', e.message);
-        process.exit(1);
-    }
-
-    // Lọc phim CHƯA ĐĂNG
-    let unpostedSlugs = newSlugs.filter(slug => !postedReels.includes(slug));
-    console.log(`✅ Tìm thấy ${unpostedSlugs.length} phim CHƯA ĐĂNG trên Reels.`);
-
-    if (unpostedSlugs.length === 0) {
-        console.log('🤷 Tất cả 5 trang đều đã được đăng sạch sẽ. Không có phim mới để đăng!');
-        process.exit(0);
-    }
-
-    // 3. Phân tích IMDb & Views để xếp hạng (Lấy 25 phim đầu tiên để tối ưu tốc độ xử lý của Bot)
-    unpostedSlugs = unpostedSlugs.slice(0, 25);
+    // 2. Chế độ (Tự động quét hoặc Ép buộc thủ công)
     let movieCandidates = [];
-    
-    console.log(`\n🔍 Bước 2: Phân tích chỉ số IMDb và Lượt Xem (Views) cho ${unpostedSlugs.length} phim để tìm TRENDING...`);
-    for (const slug of unpostedSlugs) {
-        try {
-            const detailRes = await axios.get(`https://ophim1.com/phim/${slug}`, { timeout: 10000 });
-            const m = detailRes.data.movie;
-            const eps = detailRes.data.episodes;
-            
-            let hasTrailer = m.trailer_url && (m.trailer_url.includes('youtube.com') || m.trailer_url.includes('youtu.be'));
-            let hasM3u8 = eps && eps.length > 0 && eps[0].server_data && eps[0].server_data.length > 0 && eps[0].server_data[0].link_m3u8;
 
-            if (hasTrailer || hasM3u8) {
-                let view = m.view || 0;
-                let imdb = (m.imdb && m.imdb.vote_average) ? parseFloat(m.imdb.vote_average) : 5.0; // Mặc định 5.0 nếu không có điểm
-                let score = view * imdb;
+    if (MANUAL_MOVIE_SLUG && MANUAL_MOVIE_SLUG.trim() !== '') {
+        console.log(`\n=============================================`);
+        console.log(`🎯 CHẾ ĐỘ ÉP BUỘC (MANUAL MODE) ĐƯỢC KÍCH HOẠT`);
+        console.log(`=============================================`);
+        let targetSlug = MANUAL_MOVIE_SLUG.trim();
+        
+        // Trích xuất slug nếu user nhập nguyên cả link
+        if (targetSlug.includes('slug=')) {
+            targetSlug = targetSlug.split('slug=')[1].split('&')[0];
+        } else if (targetSlug.includes('/')) {
+            targetSlug = targetSlug.split('/').filter(Boolean).pop();
+        }
+        
+        console.log(`🔍 Bỏ qua quét tự động, đi tìm trực tiếp phim: ${targetSlug}`);
+        try {
+            const detailRes = await axios.get(`https://ophim1.com/phim/${targetSlug}`, { timeout: 10000 });
+            if (detailRes.data && detailRes.data.status) {
+                const m = detailRes.data.movie;
+                const eps = detailRes.data.episodes;
                 
+                let hasTrailer = m.trailer_url && (m.trailer_url.includes('youtube.com') || m.trailer_url.includes('youtu.be'));
+                let hasM3u8 = eps && eps.length > 0 && eps[0].server_data && eps[0].server_data.length > 0 && eps[0].server_data[0].link_m3u8;
+
+                if (!hasTrailer && !hasM3u8) {
+                    console.error(`❌ Phim "${m.name}" này không có Trailer YouTube lẫn m3u8 để tải. Bot từ chối đăng.`);
+                    process.exit(1);
+                }
+
                 movieCandidates.push({
-                    slug: slug,
+                    slug: targetSlug,
                     name: m.name || m.origin_name,
                     year: m.year,
                     content: stripHtml(m.content),
                     categories: m.category ? m.category.map(c => c.name).join(', ') : '',
                     trailerUrl: hasTrailer ? m.trailer_url : null,
                     m3u8Link: hasM3u8 ? eps[0].server_data[0].link_m3u8 : null,
-                    view: view,
-                    imdb: imdb,
-                    score: score
+                    view: m.view || 0,
+                    imdb: 10.0,
+                    score: 999999999
                 });
             } else {
-                // Đánh dấu bỏ qua vĩnh viễn nếu phim này không có cả Trailer Youtube lẫn m3u8
-                postedReels.push(slug);
+                console.error(`❌ Không tìm thấy bộ phim nào có slug là: ${targetSlug}`);
+                process.exit(1);
             }
         } catch (e) {
-            console.error(`⚠️ Lỗi khi lấy chi tiết phim ${slug}`);
+            console.error(`❌ Lỗi khi lấy chi tiết phim ${targetSlug}:`, e.message);
+            process.exit(1);
         }
+
+    } else {
+        // --- LOGIC TỰ ĐỘNG BÌNH THƯỜNG ---
+        let newSlugs = [];
+        try {
+            console.log('🔍 Bước 1: Quét danh sách phim mới từ trang 1 đến 5...');
+            for (let page = 1; page <= 5; page++) {
+                const r = await axios.get(`https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=${page}`, { timeout: 15000 });
+                if (r.data && r.data.data && r.data.data.items) {
+                    for (const item of r.data.data.items) {
+                        if (!newSlugs.includes(item.slug)) {
+                            newSlugs.push(item.slug);
+                        }
+                    }
+                }
+            }
+            console.log(`✅ Đã thu thập được ${newSlugs.length} phim cập nhật gần đây.`);
+        } catch (e) {
+            console.error('❌ Lỗi khi lấy danh sách phim:', e.message);
+            process.exit(1);
+        }
+
+        // Lọc phim CHƯA ĐĂNG
+        let unpostedSlugs = newSlugs.filter(slug => !postedReels.includes(slug));
+        console.log(`✅ Tìm thấy ${unpostedSlugs.length} phim CHƯA ĐĂNG trên Reels.`);
+
+        if (unpostedSlugs.length === 0) {
+            console.log('🤷 Tất cả 5 trang đều đã được đăng sạch sẽ. Không có phim mới để đăng!');
+            process.exit(0);
+        }
+
+        // Phân tích IMDb & Views để xếp hạng
+        unpostedSlugs = unpostedSlugs.slice(0, 25);
+        
+        console.log(`\n🔍 Bước 2: Phân tích chỉ số IMDb và Lượt Xem (Views) cho ${unpostedSlugs.length} phim để tìm TRENDING...`);
+        for (const slug of unpostedSlugs) {
+            try {
+                const detailRes = await axios.get(`https://ophim1.com/phim/${slug}`, { timeout: 10000 });
+                const m = detailRes.data.movie;
+                const eps = detailRes.data.episodes;
+                
+                let hasTrailer = m.trailer_url && (m.trailer_url.includes('youtube.com') || m.trailer_url.includes('youtu.be'));
+                let hasM3u8 = eps && eps.length > 0 && eps[0].server_data && eps[0].server_data.length > 0 && eps[0].server_data[0].link_m3u8;
+
+                if (hasTrailer || hasM3u8) {
+                    let view = m.view || 0;
+                    let imdb = (m.imdb && m.imdb.vote_average) ? parseFloat(m.imdb.vote_average) : 5.0;
+                    let score = view * imdb;
+                    
+                    movieCandidates.push({
+                        slug: slug,
+                        name: m.name || m.origin_name,
+                        year: m.year,
+                        content: stripHtml(m.content),
+                        categories: m.category ? m.category.map(c => c.name).join(', ') : '',
+                        trailerUrl: hasTrailer ? m.trailer_url : null,
+                        m3u8Link: hasM3u8 ? eps[0].server_data[0].link_m3u8 : null,
+                        view: view,
+                        imdb: imdb,
+                        score: score
+                    });
+                } else {
+                    postedReels.push(slug);
+                }
+            } catch (e) {
+                console.error(`⚠️ Lỗi khi lấy chi tiết phim ${slug}`);
+            }
+        }
+
+        // Sắp xếp Ranking (Từ Điểm cao xuống thấp)
+        movieCandidates.sort((a, b) => b.score - a.score);
+
+        console.log(`\n🏆 BẢNG XẾP HẠNG TOP PHIM ĐÁNG ĐĂNG NHẤT HÔM NAY:`);
+        movieCandidates.forEach((m, idx) => {
+            console.log(`   #${idx+1}: ${m.name} | View: ${m.view} | IMDb: ${m.imdb} | Điểm: ${m.score.toFixed(2)}`);
+        });
     }
-
-    // Sắp xếp Ranking (Từ Điểm cao xuống thấp)
-    movieCandidates.sort((a, b) => b.score - a.score);
-
-    console.log(`\n🏆 BẢNG XẾP HẠNG TOP PHIM ĐÁNG ĐĂNG NHẤT HÔM NAY:`);
-    movieCandidates.forEach((m, idx) => {
-        console.log(`   #${idx+1}: ${m.name} | View: ${m.view} | IMDb: ${m.imdb} | Điểm: ${m.score.toFixed(2)}`);
-    });
 
     if (movieCandidates.length === 0) {
         console.log('🤷 Rất tiếc, các phim mới này đều không có Video (Trailer/m3u8) để đăng.');

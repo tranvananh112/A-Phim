@@ -6,6 +6,11 @@ on:
     # Tần suất: 1 lần/ngày để test, có thể tăng sau
     - cron: '0 5 * * *'
   workflow_dispatch: # Cho phép chạy thủ công từ tab Actions
+    inputs:
+      movie_slug:
+        description: 'Nhập Link hoặc Slug phim muốn ép Bot đăng (Bỏ trống nếu muốn Bot tự tìm)'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -38,6 +43,7 @@ jobs:
           FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
           COMPOSIO_API_KEY: ${{ secrets.COMPOSIO_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          MANUAL_MOVIE_SLUG: ${{ github.event.inputs.movie_slug }}
         run: node auto-post-fb-reels.js
 
       - name: Commit & push posted-reels.json if changed
