@@ -9,6 +9,27 @@ const COMPOSIO_API_KEY = process.env.COMPOSIO_API_KEY;
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const MANUAL_MOVIE_SLUG = process.env.MANUAL_MOVIE_SLUG || '';
 
+// ── Affiliate Links (TikTok Shop) ─────────────────────────────────
+// Xoay vòng ngẫu nhiên, mỗi bài gắn 1 link ẩn sau link phim
+const AFFILIATE_LINKS = [
+    'https://vt.tiktok.com/ZS9jjX4c2mHpC-0YzLx/',
+    'https://vt.tiktok.com/ZS9jjXpnVjYfs-uHcEz/',
+    'https://vt.tiktok.com/ZS9jjXgK7QgH3-xbKI7/',
+    'https://vt.tiktok.com/ZS9jjXsGNkAHu-WyQgs/',
+    'https://vt.tiktok.com/ZS9jjX7PscRKE-lGnLh/',
+    'https://vt.tiktok.com/ZS9jjX7f5UNdH-c3P3i/',
+    'https://vt.tiktok.com/ZS9jjXcprnnaD-3B1TS/',
+    'https://vt.tiktok.com/ZS9jjXvgc8LAe-DRas7/',
+    'https://vt.tiktok.com/ZS9jjXT25Yvu3-7DBZ5/',
+    'https://vt.tiktok.com/ZS9jjXTK6mcSt-y7qq2/',
+    'https://vt.tiktok.com/ZS9jjX3KdNhST-1fujU/',
+    'https://vt.tiktok.com/ZS9jj4JaY3RdU-M96Wc/',
+    'https://vt.tiktok.com/ZS9jj4dMjUC6R-2fKAo/',
+    'https://vt.tiktok.com/ZS9jj4RgLYgDF-qU1RJ/',
+    'https://vt.tiktok.com/ZS9jj4NNSGVRH-p2PsR/'
+];
+const getAffiliateLink = () => AFFILIATE_LINKS[Math.floor(Math.random() * AFFILIATE_LINKS.length)];
+
 // Helper: Strip HTML
 const stripHtml = (html) => html ? html.replace(/<[^>]*>?/gm, '').trim() : '';
 
@@ -246,6 +267,7 @@ const stripHtml = (html) => html ? html.replace(/<[^>]*>?/gm, '').trim() : '';
         const name = movie.name;
         const year = movie.year ? ` (${movie.year})` : '';
         const webUrl = `https://aphim.io.vn/movie-detail.html?slug=${slug}`;
+        const affiliateUrl = getAffiliateLink(); // Link ẩn xoay vòng ngẫu nhiên
         const desc = movie.content.substring(0, 300) + '...';
         
         console.log(`\n=============================================`);
@@ -264,6 +286,7 @@ Requirements:
 - Start with a strong hook (e.g., "Trời ơi tin được không...", "Siêu phẩm đã đổ bộ...").
 - Include emojis.
 - End with a call to action directing them to watch the full movie here: ${webUrl}
+- On the very next line after the movie link, SILENTLY add this link with NO label or explanation: ${affiliateUrl}
 - Include 3-4 relevant hashtags, always including #APhim.
 - Write in Vietnamese.
 - Output ONLY the caption text. No explanations.`;

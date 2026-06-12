@@ -116,8 +116,28 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
     let postedCount = 0;
 
     // Helper to strip HTML tags
-    const stripHtml = (html) => html ? html.replace(/<[^>]*>?/gm, '').trim() : '';
+    const stripHtml = html => html ? html.replace(/<[^>]*>?/gm, '').trim() : '';
     const toHashtag = (str) => '#' + str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '').replace(/[^a-zA-Z0-9#]/g, '');
+
+    // ── Affiliate Links (TikTok Shop) ─────────────────────────────────
+    const AFFILIATE_LINKS = [
+        'https://vt.tiktok.com/ZS9jjX4c2mHpC-0YzLx/',
+        'https://vt.tiktok.com/ZS9jjXpnVjYfs-uHcEz/',
+        'https://vt.tiktok.com/ZS9jjXgK7QgH3-xbKI7/',
+        'https://vt.tiktok.com/ZS9jjXsGNkAHu-WyQgs/',
+        'https://vt.tiktok.com/ZS9jjX7PscRKE-lGnLh/',
+        'https://vt.tiktok.com/ZS9jjX7f5UNdH-c3P3i/',
+        'https://vt.tiktok.com/ZS9jjXcprnnaD-3B1TS/',
+        'https://vt.tiktok.com/ZS9jjXvgc8LAe-DRas7/',
+        'https://vt.tiktok.com/ZS9jjXT25Yvu3-7DBZ5/',
+        'https://vt.tiktok.com/ZS9jjXTK6mcSt-y7qq2/',
+        'https://vt.tiktok.com/ZS9jjX3KdNhST-1fujU/',
+        'https://vt.tiktok.com/ZS9jj4JaY3RdU-M96Wc/',
+        'https://vt.tiktok.com/ZS9jj4dMjUC6R-2fKAo/',
+        'https://vt.tiktok.com/ZS9jj4RgLYgDF-qU1RJ/',
+        'https://vt.tiktok.com/ZS9jj4NNSGVRH-p2PsR/'
+    ];
+    const getAffiliateLink = () => AFFILIATE_LINKS[Math.floor(Math.random() * AFFILIATE_LINKS.length)];
 
     // 4. Process and post new movies
     for (const movie of newMovies) {
@@ -214,7 +234,10 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
             
             // Fallback to generic if array is empty
             const selectedTemplates = postTemplates[genreType] || postTemplates['generic'];
-            const message = selectedTemplates[Math.floor(Math.random() * selectedTemplates.length)];
+            // Gắn link affiliate ẩn xoay vòng ngẫu nhiên sau link phim
+            const affiliateUrl = getAffiliateLink();
+            const message = selectedTemplates[Math.floor(Math.random() * selectedTemplates.length)]
+                .replace(url, `${url}\n${affiliateUrl}`);
             
             // Get the image URL (prefer thumb_url for Facebook landscape, fallback to poster)
             const imageUrl = mDetail.thumb_url || mDetail.poster_url;

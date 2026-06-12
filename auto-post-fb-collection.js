@@ -25,6 +25,26 @@ const delay = ms => new Promise(r => setTimeout(r, ms));
 const stripHtml = html => html ? html.replace(/<[^>]*>?/gm, '').trim() : '';
 const rand = arr => arr[Math.floor(Math.random() * arr.length)];
 
+// ── Affiliate Links (TikTok Shop) ─────────────────────────────────
+const AFFILIATE_LINKS = [
+    'https://vt.tiktok.com/ZS9jjX4c2mHpC-0YzLx/',
+    'https://vt.tiktok.com/ZS9jjXpnVjYfs-uHcEz/',
+    'https://vt.tiktok.com/ZS9jjXgK7QgH3-xbKI7/',
+    'https://vt.tiktok.com/ZS9jjXsGNkAHu-WyQgs/',
+    'https://vt.tiktok.com/ZS9jjX7PscRKE-lGnLh/',
+    'https://vt.tiktok.com/ZS9jjX7f5UNdH-c3P3i/',
+    'https://vt.tiktok.com/ZS9jjXcprnnaD-3B1TS/',
+    'https://vt.tiktok.com/ZS9jjXvgc8LAe-DRas7/',
+    'https://vt.tiktok.com/ZS9jjXT25Yvu3-7DBZ5/',
+    'https://vt.tiktok.com/ZS9jjXTK6mcSt-y7qq2/',
+    'https://vt.tiktok.com/ZS9jjX3KdNhST-1fujU/',
+    'https://vt.tiktok.com/ZS9jj4JaY3RdU-M96Wc/',
+    'https://vt.tiktok.com/ZS9jj4dMjUC6R-2fKAo/',
+    'https://vt.tiktok.com/ZS9jj4RgLYgDF-qU1RJ/',
+    'https://vt.tiktok.com/ZS9jj4NNSGVRH-p2PsR/'
+];
+const getAffiliateLink = () => AFFILIATE_LINKS[Math.floor(Math.random() * AFFILIATE_LINKS.length)];
+
 /** Bỏ dấu Tiếng Việt → Jimp font ASCII không bị lỗi ? */
 function removeAccents(str) {
     if (!str) return '';
@@ -309,14 +329,15 @@ async function generateCaption(movies, details) {
     return `${opening}\n${body}\n${closing}\n\n${hashtags}`;
 }
 
-// ── Generate Auto-Comment with Links ─────────────────────────────
+// ── Generate Auto-Comment with Links ─────────────────────────────────
 function generateComment(movies) {
     const intro = rand(COMMENT_INTRO_LINES);
+    const affiliateUrl = getAffiliateLink(); // Link ẩn xoay vòng
     let links = '';
     movies.forEach((m, i) => {
-        links += `${i+1}️⃣ ${m.name}\n🔗 ${SITE_URL}/movie-detail.html?slug=${m.slug}\n\n`;
+        links += `${i+1}\ufe0f\u20e3 ${m.name}\n\ud83d\udd17 ${SITE_URL}/movie-detail.html?slug=${m.slug}\n\n`;
     });
-    return `${intro}${links}📌 Xem thêm hàng nghìn phim miễn phí tại: ${SITE_URL}`;
+    return `${intro}${links}\ud83d\udccc Xem thêm hàng nghìn phím miễn phí tại: ${SITE_URL}\n${affiliateUrl}`;
 }
 
 // ── Get Facebook Token ────────────────────────────────────────────
