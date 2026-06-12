@@ -299,8 +299,28 @@ Requirements:
                     // Fail quietly and try next time fallback
                 }
             }
+
             if (!downloadSuccess) {
-                console.error('❌ Trích xuất m3u8 thất bại hoàn toàn ở mọi mốc thời gian.');
+                console.log(`⏳ Bước 3 (Cứu Cánh Cuối Cùng): Dùng yt-dlp tải toàn bộ m3u8 rồi cắt offline...`);
+                const tempVideo = 'temp_full.mp4';
+                if (fs.existsSync(tempVideo)) fs.unlinkSync(tempVideo);
+                try {
+                    execSync(`yt-dlp -o "${tempVideo}" "${movie.m3u8Link}"`, { stdio: 'ignore' });
+                    if (fs.existsSync(tempVideo)) {
+                        console.log(`   👉 Đã tải xong bản Full bằng yt-dlp. Tiến hành cắt 60s đầu tiên...`);
+                        execSync(`ffmpeg -y -i "${tempVideo}" -t 60 -c copy "${videoFile}"`, { stdio: 'ignore' });
+                        if (fs.existsSync(videoFile)) {
+                            downloadSuccess = true;
+                        }
+                        fs.unlinkSync(tempVideo); // Dọn rác
+                    }
+                } catch (e) {
+                    console.error('❌ Cứu cánh yt-dlp cũng thất bại nốt.');
+                }
+            }
+
+            if (!downloadSuccess) {
+                console.error('❌ Trích xuất m3u8 thất bại hoàn toàn ở mọi phương pháp.');
             }
         }
 
