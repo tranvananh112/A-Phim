@@ -40,15 +40,28 @@ const stripHtml = (html) => html ? html.replace(/<[^>]*>?/gm, '').trim() : '';
         console.log(`🎯 CHẾ ĐỘ ÉP BUỘC (MANUAL MODE) ĐƯỢC KÍCH HOẠT`);
         console.log(`=============================================`);
         let targetSlug = MANUAL_MOVIE_SLUG.trim();
+        let targetEpisode = null;
         
-        // Trích xuất slug nếu user nhập nguyên cả link
+        // Trích xuất slug và episode nếu user nhập nguyên cả link
         if (targetSlug.includes('slug=')) {
-            targetSlug = targetSlug.split('slug=')[1].split('&')[0];
+            try {
+                // Tách phần query parameter
+                const queryStr = targetSlug.split('?')[1];
+                if (queryStr) {
+                    const params = new URLSearchParams(queryStr);
+                    if (params.has('slug')) targetSlug = params.get('slug');
+                    if (params.has('episode')) targetEpisode = params.get('episode');
+                }
+            } catch(e) {}
         } else if (targetSlug.includes('/')) {
             targetSlug = targetSlug.split('/').filter(Boolean).pop();
         }
         
-        console.log(`🔍 Bỏ qua quét tự động, đi tìm trực tiếp phim: ${targetSlug}`);
+        if (targetEpisode) {
+            console.log(`🔍 Bỏ qua quét tự động, đi tìm trực tiếp phim: ${targetSlug} (Chỉ định đúng Tập: ${targetEpisode})`);
+        } else {
+            console.log(`🔍 Bỏ qua quét tự động, đi tìm trực tiếp phim: ${targetSlug}`);
+        }
         try {
             const detailRes = await axios.get(`https://ophim1.com/phim/${targetSlug}`, { timeout: 10000 });
             if (detailRes.data && detailRes.data.status) {
@@ -56,21 +69,29 @@ const stripHtml = (html) => html ? html.replace(/<[^>]*>?/gm, '').trim() : '';
                 const eps = detailRes.data.episodes;
                 
                 let hasTrailer = m.trailer_url && (m.trailer_url.includes('youtube.com') || m.trailer_url.includes('youtu.be'));
-                let hasM3u8 = eps && eps.length > 0 && eps[0].server_data && eps[0].server_data.length > 0 && eps[0].server_data[0].link_m3u8;
+                
+                let targetM3u8 = null;
+                if (eps && eps.length > 0 && eps[0].server_data && eps[0].server_data.length > 0) {
+                    if (targetEpisode) {
+                        const epMatch = eps[0].server_data.find(e => e.name === targetEpisode || e.slug === targetEpisode);
+                        if (epMatch) targetM3u8 = epMatch.link_m3u8;
+                    }
+                    if (!targetM3u8) targetM3u8 = eps[0].server_data[0].link_m3u8;
+                }
 
-                if (!hasTrailer && !hasM3u8) {
+                if (!hasTrailer && !targetM3u8) {
                     console.error(`❌ Phim "${m.name}" này không có Trailer YouTube lẫn m3u8 để tải. Bot từ chối đăng.`);
                     process.exit(1);
                 }
 
                 movieCandidates.push({
                     slug: targetSlug,
-                    name: m.name || m.origin_name,
+                    name: targetEpisode ? `${m.name || m.origin_name} (Tập ${targetEpisode})` : (m.name || m.origin_name),
                     year: m.year,
                     content: stripHtml(m.content),
                     categories: m.category ? m.category.map(c => c.name).join(', ') : '',
                     trailerUrl: hasTrailer ? m.trailer_url : null,
-                    m3u8Link: hasM3u8 ? eps[0].server_data[0].link_m3u8 : null,
+                    m3u8Link: targetM3u8,
                     view: m.view || 0,
                     imdb: 10.0,
                     score: 999999999
@@ -305,7 +326,8 @@ Requirements:
                 const tempVideo = 'temp_full.mp4';
                 if (fs.existsSync(tempVideo)) fs.unlinkSync(tempVideo);
                 try {
-                    execSync(`yt-dlp -o "${tempVideo}" "${movie.m3u8Link}"`, { stdio: 'ignore' });
+                    // Thêm Referer mạnh để ép máy chủ nhả file
+                    execSync(`yt-dlp --referer "https://ophim1.com/" -o "${tempVideo}" "${movie.m3u8Link}"`, { stdio: 'ignore' });
                     if (fs.existsSync(tempVideo)) {
                         console.log(`   👉 Đã tải xong bản Full bằng yt-dlp. Tiến hành cắt 60s đầu tiên...`);
                         execSync(`ffmpeg -y -i "${tempVideo}" -t 60 -c copy "${videoFile}"`, { stdio: 'ignore' });
