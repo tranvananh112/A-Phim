@@ -280,19 +280,27 @@ Requirements:
         }
 
         if (!downloadSuccess && movie.m3u8Link) {
-            console.log(`⏳ Bước 2: Bật dự phòng, trích xuất 60s từ luồng m3u8 gốc bằng ffmpeg...`);
-            try {
-                // Trích xuất 60 giây phim, bắt đầu từ phút thứ 10
-                execSync(`ffmpeg -ss 00:10:00 -i "${movie.m3u8Link}" -t 60 -c copy -bsf:a aac_adtstoasc "${videoFile}"`, { stdio: 'ignore' });
-                if (fs.existsSync(videoFile)) downloadSuccess = true;
-            } catch (e) {
-                console.error('⚠️ Cắt m3u8 phút 10 lỗi, thử cắt ở phút thứ 1...');
+            console.log(`⏳ Bước 2: Bật dự phòng, trích xuất từ luồng m3u8 gốc bằng ffmpeg...`);
+            const ua = `-user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" -headers "Referer: https://ophim1.com/"`;
+            
+            const timeFallbacks = ['00:10:00', '00:01:00', '00:00:10', '00:00:00'];
+            for (const time of timeFallbacks) {
+                console.log(`   👉 Thử cắt 60 giây bắt đầu từ mốc ${time}...`);
                 try {
-                    execSync(`ffmpeg -ss 00:01:00 -i "${movie.m3u8Link}" -t 60 -c copy -bsf:a aac_adtstoasc "${videoFile}"`, { stdio: 'ignore' });
-                    if (fs.existsSync(videoFile)) downloadSuccess = true;
-                } catch (e2) {
-                    console.error('❌ Trích xuất m3u8 thất bại hoàn toàn.');
+                    execSync(`ffmpeg -y ${ua} -ss ${time} -i "${movie.m3u8Link}" -t 60 -c copy -bsf:a aac_adtstoasc "${videoFile}"`, { stdio: 'ignore' });
+                    if (fs.existsSync(videoFile)) {
+                        const size = fs.statSync(videoFile).size;
+                        if (size > 10000) { // Đảm bảo file không bị rỗng (lớn hơn 10KB)
+                            downloadSuccess = true;
+                            break;
+                        }
+                    }
+                } catch (e) {
+                    // Fail quietly and try next time fallback
                 }
+            }
+            if (!downloadSuccess) {
+                console.error('❌ Trích xuất m3u8 thất bại hoàn toàn ở mọi mốc thời gian.');
             }
         }
 
