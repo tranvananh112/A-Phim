@@ -33,7 +33,7 @@ class MovieAPI {
             const hiddenMoviesList = JSON.parse(localStorage.getItem('cinestream_hidden_movies') || '[]');
             
             // HARDCODED BANNED MOVIES (DMCA, etc)
-            const hardcodedBanned = ['moi-thu-la-loi-co-ay', 'michael'];
+            const hardcodedBanned = ['moi-thu-la-loi-co-ay', 'michael', 'dac-vu-xuyen-quoc-gia'];
             const allBanned = [...hiddenMoviesList, ...hardcodedBanned];
             
             if (allBanned.length > 0) {
@@ -105,7 +105,7 @@ class MovieAPI {
     // Fetch movie detail by slug
     async getMovieDetail(slug) {
         // --- BLOCK DMCA REPORTED SLUGS ---
-        if (slug === 'moi-thu-la-loi-co-ay' || slug === 'michael') {
+        if (slug === 'moi-thu-la-loi-co-ay' || slug === 'michael' || slug === 'dac-vu-xuyen-quoc-gia') {
             window.location.href = '/index.html'; // Chuyển hướng về trang chủ
             return null;
         }
