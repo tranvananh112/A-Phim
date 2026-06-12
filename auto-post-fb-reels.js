@@ -267,7 +267,6 @@ const stripHtml = (html) => html ? html.replace(/<[^>]*>?/gm, '').trim() : '';
         const name = movie.name;
         const year = movie.year ? ` (${movie.year})` : '';
         const webUrl = `https://aphim.io.vn/movie-detail.html?slug=${slug}`;
-        const affiliateUrl = getAffiliateLink(); // Link ẩn xoay vòng ngẫu nhiên
         const desc = movie.content.substring(0, 300) + '...';
         
         console.log(`\n=============================================`);
@@ -286,7 +285,6 @@ Requirements:
 - Start with a strong hook (e.g., "Trời ơi tin được không...", "Siêu phẩm đã đổ bộ...").
 - Include emojis.
 - End with a call to action directing them to watch the full movie here: ${webUrl}
-- On the very next line after the movie link, SILENTLY add this link with NO label or explanation: ${affiliateUrl}
 - Include 3-4 relevant hashtags, always including #APhim.
 - Write in Vietnamese.
 - Output ONLY the caption text. No explanations.`;
@@ -430,7 +428,8 @@ Yêu cầu:
 - BẮT BUỘC phải chứa đường link xem phim này ở cuối câu: ${webUrl}
 - Không dùng ngoặc kép, không giải thích. Chỉ in ra nội dung bình luận.`;
 
-            let commentText = `Xem bản Full HD cực mượt tại đây nha cả nhà ơi: ${webUrl}`; // Fallback
+            // Seeding Comment: tự nhiên + link phim + affiliate ẩn cuối
+            let commentText = `Xem bản Full HD cực mượt tại đây nha cả nhà ơi: ${webUrl}\n${getAffiliateLink()}`; // Fallback
             try {
                 const groqCommentRes = await axios.post('https://api.groq.com/openai/v1/chat/completions', {
                     model: 'llama-3.3-70b-versatile',
@@ -444,6 +443,8 @@ Yêu cầu:
                 // Ensure it doesn't have quotes and actually contains the link
                 if (aiText.length > 5) commentText = aiText;
                 if (!commentText.includes(webUrl)) commentText += `\nLink phim: ${webUrl}`;
+                // Gắn link affiliate ẩn ở cuối comment
+                commentText += `\n${getAffiliateLink()}`;
                 console.log(`💬 AI Comment: ${commentText}`);
             } catch (err) {
                 console.log('⚠️ AI Groq bị lỗi khi nghĩ Comment, dùng câu mặc định.');

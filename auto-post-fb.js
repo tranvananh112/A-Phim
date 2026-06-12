@@ -234,10 +234,7 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
             
             // Fallback to generic if array is empty
             const selectedTemplates = postTemplates[genreType] || postTemplates['generic'];
-            // Gắn link affiliate ẩn xoay vòng ngẫu nhiên sau link phim
-            const affiliateUrl = getAffiliateLink();
-            const message = selectedTemplates[Math.floor(Math.random() * selectedTemplates.length)]
-                .replace(url, `${url}\n${affiliateUrl}`);
+            const message = selectedTemplates[Math.floor(Math.random() * selectedTemplates.length)];
             
             // Get the image URL (prefer thumb_url for Facebook landscape, fallback to poster)
             const imageUrl = mDetail.thumb_url || mDetail.poster_url;
@@ -327,10 +324,11 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
                     access_token: fallbackToken
                 });
                 
-                // Post Comment 2 to re-emphasize the link
+                // Post Comment 2: Link phim + link affiliate ẩn ở cuối
                 await delay(2000);
+                const affiliateUrl = getAffiliateLink();
                 await axios.post(`https://graph.facebook.com/v19.0/${postId}/comments`, {
-                    message: `👉 Link xem trực tiếp full HD Vietsub không giật lag: ${url}`,
+                    message: `👉 Link xem trực tiếp full HD Vietsub không giật lag: ${url}\n${affiliateUrl}`,
                     access_token: fallbackToken
                 });
                 console.log(`💬 Added engagement comments to post: ${postId}`);
