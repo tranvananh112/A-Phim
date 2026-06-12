@@ -277,6 +277,46 @@ Requirements:
             });
 
             console.log(`🎉 XUẤT BẢN THÀNH CÔNG THƯỚC PHIM: ${name} !`);
+
+            // 5.4 AI Seeding Comment
+            console.log(`⏳ Đang nhờ AI nghĩ Comment mồi...`);
+            const commentPrompt = `Đóng vai một chuyên gia Social Media người Việt Nam, hãy viết một câu bình luận (comment) thật tự nhiên, thả thính cuốn hút (dưới 40 chữ) để ghim dưới video Facebook Reel của bộ phim "${name}". 
+Yêu cầu:
+- Ngôn ngữ: Tiếng Việt, văn phong trẻ trung, giống một bạn admin đang trò chuyện với fan.
+- BẮT BUỘC phải chứa đường link xem phim này ở cuối câu: ${webUrl}
+- Không dùng ngoặc kép, không giải thích. Chỉ in ra nội dung bình luận.`;
+
+            let commentText = `Xem bản Full HD cực mượt tại đây nha cả nhà ơi: ${webUrl}`; // Fallback
+            try {
+                const groqCommentRes = await axios.post('https://api.groq.com/openai/v1/chat/completions', {
+                    model: 'llama-3.3-70b-versatile',
+                    messages: [{ role: 'user', content: commentPrompt }],
+                    temperature: 0.9,
+                    max_tokens: 150
+                }, {
+                    headers: { 'Authorization': `Bearer ${GROQ_API_KEY}`, 'Content-Type': 'application/json' }
+                });
+                let aiText = groqCommentRes.data.choices[0].message.content.trim();
+                // Ensure it doesn't have quotes and actually contains the link
+                if (aiText.length > 5) commentText = aiText;
+                if (!commentText.includes(webUrl)) commentText += `\nLink phim: ${webUrl}`;
+                console.log(`💬 AI Comment: ${commentText}`);
+            } catch (err) {
+                console.log('⚠️ AI Groq bị lỗi khi nghĩ Comment, dùng câu mặc định.');
+            }
+
+            try {
+                // Đợi 5 giây để Facebook xử lý xong Video rồi mới cmt
+                await new Promise(r => setTimeout(r, 5000));
+                await axios.post(`https://graph.facebook.com/v19.0/${videoId}/comments`, {
+                    message: commentText,
+                    access_token: fallbackToken
+                });
+                console.log(`✅ Đã rải Comment Seeding kéo traffic thành công!`);
+            } catch (e) {
+                console.error(`⚠️ Rải comment lỗi (có thể do video chưa process xong):`, e.response?.data || e.message);
+            }
+
             postedReels.push(slug);
             postedCount++;
             
