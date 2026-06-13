@@ -268,7 +268,20 @@ class RealtimeSync {
 
         // --- 3. SUBSCRIPTION (New) ---
         if (data.subscription) {
-            const plan = data.subscription.plan || 'FREE';
+            const sub = data.subscription;
+            let plan = 'FREE';
+            if (sub && sub.plan) {
+                const endDate = sub.endDate || sub.expiresAt;
+                let isExpired = false;
+                if (endDate) {
+                    const expiry = new Date(endDate);
+                    expiry.setDate(expiry.getDate() + 1);
+                    if (new Date() > expiry) isExpired = true;
+                }
+                if (!isExpired && sub.status !== 'blocked' && sub.status !== 'inactive') {
+                    plan = sub.plan;
+                }
+            }
             const subIds = ['heroPlanBadge', 'sidebarPlanLabel', 'epPlanBadge'];
 
             subIds.forEach(id => {

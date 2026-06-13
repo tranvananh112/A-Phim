@@ -98,6 +98,33 @@ class AuthService {
     // Fetch latest user data from backend
     async syncProfile() {
         if (!this.useBackend || !this.isLoggedIn()) return;
+        
+        // --- TỐI ƯU API RAILWAY: CHỈ ĐỒNG BỘ 1 LẦN MỖI PHIÊN CHO USER FREE ---
+        const user = this.loadUser();
+        const sub = user?.subscription;
+        let isFree = true;
+        
+        if (sub && sub.plan && sub.plan !== 'FREE') {
+            const endDate = sub.endDate || sub.expiresAt;
+            let isExpired = false;
+            if (endDate) {
+                const expiry = new Date(endDate);
+                expiry.setDate(expiry.getDate() + 1);
+                if (new Date() > expiry) isExpired = true;
+            }
+            if (!isExpired && sub.status !== 'blocked' && sub.status !== 'inactive') {
+                isFree = false; // Đang là Premium
+            }
+        }
+        
+        // Nếu user là FREE, chỉ gọi /auth/me đúng 1 lần khi mới mở web
+        if (isFree) {
+            if (sessionStorage.getItem('aphim_free_synced') === '1') {
+                // Đã check rồi -> Bỏ qua luôn, không tốn token!
+                return;
+            }
+        }
+
         try {
             const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
             const response = await fetch(`${this.backendURL}/auth/me`, {
@@ -125,6 +152,28 @@ class AuthService {
 
                 // Dispatch event in case UI wants to refresh
                 window.dispatchEvent(new CustomEvent('auth:profileSynced', { detail: serverUser }));
+                
+                // --- ĐÁNH DẤU CHO PHIÊN LÀM VIỆC NẾU USER FREE ---
+                const serverSub = serverUser.subscription;
+                let serverIsFree = true;
+                if (serverSub && serverSub.plan && serverSub.plan !== 'FREE') {
+                    const sEndDate = serverSub.endDate || serverSub.expiresAt;
+                    let sIsExpired = false;
+                    if (sEndDate) {
+                        const sExpiry = new Date(sEndDate);
+                        sExpiry.setDate(sExpiry.getDate() + 1);
+                        if (new Date() > sExpiry) sIsExpired = true;
+                    }
+                    if (!sIsExpired && serverSub.status !== 'blocked' && serverSub.status !== 'inactive') {
+                        serverIsFree = false;
+                    }
+                }
+                
+                if (serverIsFree) {
+                    sessionStorage.setItem('aphim_free_synced', '1');
+                } else {
+                    sessionStorage.removeItem('aphim_free_synced');
+                }
             }
         } catch (e) {
             console.warn('[AuthService] Auto-sync profile failed', e);
@@ -250,6 +299,10 @@ class AuthService {
         this.eraseCookie(STORAGE_KEYS.USER);
 
         this.currentUser = null;
+
+        // Thông báo cho các module khác (premium-ad-blocker, v.v.)
+        window.dispatchEvent(new CustomEvent('auth:logout'));
+
         window.location.href = 'index.html';
     }
 

@@ -312,10 +312,20 @@ window.loadSubscriptionInfo = function() {
         let expiresDate = '';
         
         if (u && u.subscription && u.subscription.plan) {
-            planKey = u.subscription.plan;
             const endDate = u.subscription.endDate || u.subscription.expiresAt;
+            let isExpired = false;
             if (endDate) {
-                expiresDate = new Date(endDate).toLocaleDateString('vi-VN');
+                const expiry = new Date(endDate);
+                expiry.setDate(expiry.getDate() + 1);
+                if (new Date() > expiry) isExpired = true;
+            }
+            
+            if (isExpired || u.subscription.status === 'blocked' || u.subscription.status === 'inactive') {
+                planKey = 'FREE';
+                expiresDate = '';
+            } else {
+                planKey = u.subscription.plan;
+                if (endDate) expiresDate = new Date(endDate).toLocaleDateString('vi-VN');
             }
         }
 

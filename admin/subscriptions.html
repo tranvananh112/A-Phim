@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 
 <head>
@@ -508,7 +508,17 @@
                         return d ? new Date(d).toLocaleDateString('vi-VN') : '—';
                     })(),
                     coins: usr.coins || 0,
-                    status: usr.subscription?.status || (usr.subscription?.plan && usr.subscription.plan !== 'FREE' ? 'active' : 'inactive'),
+                    status: (() => {
+                        const sub = usr.subscription;
+                        if (!sub || !sub.plan || sub.plan === 'FREE') return 'inactive';
+                        const d = sub.endDate || sub.expiresAt;
+                        if (d) {
+                            const expiry = new Date(d);
+                            expiry.setDate(expiry.getDate() + 1);
+                            if (new Date() > expiry) return 'expired';
+                        }
+                        return sub.status === 'active' ? 'active' : 'active';
+                    })(),
                     fullRecord: usr
                 }));
 

@@ -63,7 +63,20 @@ function updateJourneyUI() {
     if (heroXu) heroXu.textContent = xu.toLocaleString();
 
     // 1.1 Update Plan Badges (Subscription)
-    const plan = (user && user.subscription && user.subscription.plan) || 'FREE';
+    let plan = 'FREE';
+    const sub = user && user.subscription;
+    if (sub && sub.plan) {
+        const endDate = sub.endDate || sub.expiresAt;
+        let isExpired = false;
+        if (endDate) {
+            const expiry = new Date(endDate);
+            expiry.setDate(expiry.getDate() + 1);
+            if (new Date() > expiry) isExpired = true;
+        }
+        if (!isExpired && sub.status !== 'blocked' && sub.status !== 'inactive') {
+            plan = sub.plan;
+        }
+    }
     const heroPlan = document.getElementById('heroPlanBadge');
     const epPlan = document.getElementById('epPlanBadge');
 
