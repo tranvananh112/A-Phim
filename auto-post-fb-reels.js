@@ -309,67 +309,145 @@ Yêu cầu bắt buộc:
         }
 
         // 5.2 Download Video
-        // ⚡ CHIẾN LƯỢC: m3u8 TRƯỚC (ổn định 100%), YouTube SAU (thường bị block GitHub)
+        // ⚡ CHIẾN LƯỢC 4 LUỒNG: 480p nhanh trước → FullHD dự phòng → YouTube cuối cùng
         const videoFile = 'trailer.mp4';
+        const tempVideo = 'temp_full.mp4';
         let downloadSuccess = false;
         if (fs.existsSync(videoFile)) fs.unlinkSync(videoFile);
+        if (fs.existsSync(tempVideo)) fs.unlinkSync(tempVideo);
 
-        // --- PHƯƠNG PHÁP 1: ffmpeg trực tiếp từ m3u8 (Nhanh, ổn định nhất) ---
+        // Shared browser headers cho mọi CDN request
+        const m3u8Headers = [
+            `Referer: https://ophim1.com/`,
+            `Origin: https://ophim1.com`,
+            `Accept: */*`,
+            `Accept-Language: vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7`,
+            `Connection: keep-alive`
+        ].join('\r\n');
+        const UA = `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36`;
+
+        // ═══════════════════════════════════════════════════════════
+        // LUỒNG 1A: ffmpeg trực tiếp m3u8 → 480p (Nhẹ, Nhanh nhất)
+        // ═══════════════════════════════════════════════════════════
         if (!downloadSuccess && movie.m3u8Link) {
-            console.log(`⏳ [Phương pháp 1] ffmpeg trích xuất trực tiếp từ m3u8...`);
-            const timeFallbacks = ['00:10:00', '00:01:00', '00:00:10', '00:00:00'];
-            for (const time of timeFallbacks) {
-                console.log(`   👉 Thử cắt 60s từ mốc ${time}...`);
+            console.log(`\n🔵 [LUỒNG 1A] ffmpeg m3u8 → 480p (nhẹ, nhanh)...`);
+            for (const time of ['00:00:00', '00:01:00']) {
                 try {
-                    // Cú pháp ĐÚNG: -user_agent và -headers phải đặt TRƯỚC -i
                     execSync(
                         `ffmpeg -y ` +
-                        `-user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36" ` +
-                        `-headers "Referer: https://ophim1.com/\r\n" ` +
+                        `-user_agent "${UA}" ` +
+                        `-headers "${m3u8Headers}\r\n" ` +
                         `-ss ${time} -i "${movie.m3u8Link}" ` +
-                        `-t 60 -c:v libx264 -c:a aac -preset ultrafast "${videoFile}"`,
-                        { stdio: 'pipe', timeout: 120000 }
+                        `-t 60 -vf "scale=854:480" -c:v libx264 -c:a aac -preset ultrafast -crf 28 "${videoFile}"`,
+                        { stdio: 'pipe', timeout: 180000 }
                     );
                     if (fs.existsSync(videoFile) && fs.statSync(videoFile).size > 50000) {
-                        console.log(`   ✅ ffmpeg cắt thành công từ mốc ${time}!`);
-                        downloadSuccess = true;
-                        break;
+                        console.log(`   ✅ [1A] Thành công 480p từ mốc ${time}!`);
+                        downloadSuccess = true; break;
                     }
-                } catch (e) { /* thử mốc tiếp theo */ }
+                } catch (e) { console.log(`   ⚠️ [1A] Mốc ${time}: ${e.message?.substring(0, 60)}`); }
             }
         }
 
-        // --- PHƯƠNG PHÁP 2: yt-dlp tải m3u8 về rồi cắt offline ---
+        // ═══════════════════════════════════════════════════════════
+        // LUỒNG 1B: ffmpeg trực tiếp m3u8 → Full HD (dự phòng 480p fail)
+        // ═══════════════════════════════════════════════════════════
         if (!downloadSuccess && movie.m3u8Link) {
-            console.log(`⏳ [Phương pháp 2] yt-dlp tải toàn bộ m3u8 về offline rồi cắt...`);
-            const tempVideo = 'temp_full.mp4';
-            if (fs.existsSync(tempVideo)) fs.unlinkSync(tempVideo);
+            console.log(`\n🟡 [LUỒNG 1B] ffmpeg m3u8 → Full HD (phim hỗ trợ chất lượng cao)...`);
+            for (const time of ['00:00:00', '00:01:00']) {
+                try {
+                    execSync(
+                        `ffmpeg -y ` +
+                        `-user_agent "${UA}" ` +
+                        `-headers "${m3u8Headers}\r\n" ` +
+                        `-ss ${time} -i "${movie.m3u8Link}" ` +
+                        `-t 60 -c:v libx264 -c:a aac -preset ultrafast -crf 23 "${videoFile}"`,
+                        { stdio: 'pipe', timeout: 240000 }
+                    );
+                    if (fs.existsSync(videoFile) && fs.statSync(videoFile).size > 50000) {
+                        console.log(`   ✅ [1B] Thành công Full HD từ mốc ${time}!`);
+                        downloadSuccess = true; break;
+                    }
+                } catch (e) { console.log(`   ⚠️ [1B] Mốc ${time}: ${e.message?.substring(0, 60)}`); }
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // LUỒNG 2A: yt-dlp m3u8 → tải về rồi cắt → 480p
+        // ═══════════════════════════════════════════════════════════
+        if (!downloadSuccess && movie.m3u8Link) {
+            console.log(`\n🔵 [LUỒNG 2A] yt-dlp m3u8 → offline → cắt 480p...`);
             try {
                 execSync(
                     `yt-dlp --no-check-certificates ` +
                     `--add-header "Referer:https://ophim1.com/" ` +
-                    `--add-header "User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36" ` +
+                    `--add-header "Origin:https://ophim1.com" ` +
+                    `--add-header "User-Agent:${UA}" ` +
+                    `--add-header "Accept:*/*" ` +
+                    `--add-header "Accept-Language:vi-VN,vi;q=0.9" ` +
+                    `--socket-timeout 30 --retries 3 ` +
+                    `-f "best[height<=480]/best" ` +
                     `-o "${tempVideo}" "${movie.m3u8Link}"`,
-                    { stdio: 'pipe', timeout: 180000 }
+                    { stdio: 'pipe', timeout: 240000 }
                 );
                 if (fs.existsSync(tempVideo) && fs.statSync(tempVideo).size > 50000) {
-                    console.log(`   ✅ yt-dlp tải xong! Đang cắt 60s...`);
-                    execSync(`ffmpeg -y -i "${tempVideo}" -t 60 -c:v libx264 -c:a aac -preset ultrafast "${videoFile}"`, { stdio: 'pipe', timeout: 60000 });
+                    execSync(
+                        `ffmpeg -y -i "${tempVideo}" -t 60 -vf "scale=854:480" -c:v libx264 -c:a aac -preset ultrafast -crf 28 "${videoFile}"`,
+                        { stdio: 'pipe', timeout: 90000 }
+                    );
                     if (fs.existsSync(videoFile) && fs.statSync(videoFile).size > 50000) {
+                        console.log(`   ✅ [2A] yt-dlp 480p thành công!`);
                         downloadSuccess = true;
-                        console.log(`   ✅ Cắt offline thành công!`);
                     }
-                    if (fs.existsSync(tempVideo)) fs.unlinkSync(tempVideo);
                 }
             } catch (e) {
-                console.error('⚠️ [Phương pháp 2] yt-dlp m3u8 thất bại:', e.message?.substring(0, 100));
+                console.error(`⚠️ [2A] yt-dlp 480p thất bại: ${e.message?.substring(0, 100)}`);
+            } finally {
                 if (fs.existsSync(tempVideo)) try { fs.unlinkSync(tempVideo); } catch(_) {}
             }
         }
 
-        // --- PHƯƠNG PHÁP 3: YouTube Trailer (cuối cùng, dễ bị block GitHub IP) ---
+        // ═══════════════════════════════════════════════════════════
+        // LUỒNG 2B: yt-dlp m3u8 → tải về rồi cắt → Full HD best quality
+        // ═══════════════════════════════════════════════════════════
+        if (!downloadSuccess && movie.m3u8Link) {
+            console.log(`\n🟡 [LUỒNG 2B] yt-dlp m3u8 → offline → cắt Full HD...`);
+            try {
+                execSync(
+                    `yt-dlp --no-check-certificates ` +
+                    `--add-header "Referer:https://ophim1.com/" ` +
+                    `--add-header "Origin:https://ophim1.com" ` +
+                    `--add-header "User-Agent:${UA}" ` +
+                    `--add-header "Accept:*/*" ` +
+                    `--add-header "Accept-Language:vi-VN,vi;q=0.9" ` +
+                    `--socket-timeout 30 --retries 3 ` +
+                    `-f "bestvideo[height<=1080]+bestaudio/best" ` +
+                    `--merge-output-format mp4 ` +
+                    `-o "${tempVideo}" "${movie.m3u8Link}"`,
+                    { stdio: 'pipe', timeout: 300000 }
+                );
+                if (fs.existsSync(tempVideo) && fs.statSync(tempVideo).size > 50000) {
+                    execSync(
+                        `ffmpeg -y -i "${tempVideo}" -t 60 -c:v libx264 -c:a aac -preset ultrafast -crf 23 "${videoFile}"`,
+                        { stdio: 'pipe', timeout: 120000 }
+                    );
+                    if (fs.existsSync(videoFile) && fs.statSync(videoFile).size > 50000) {
+                        console.log(`   ✅ [2B] yt-dlp Full HD thành công!`);
+                        downloadSuccess = true;
+                    }
+                }
+            } catch (e) {
+                console.error(`⚠️ [2B] yt-dlp Full HD thất bại: ${e.message?.substring(0, 100)}`);
+            } finally {
+                if (fs.existsSync(tempVideo)) try { fs.unlinkSync(tempVideo); } catch(_) {}
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // LUỒNG 3: YouTube Trailer (cuối cùng, dễ bị block GitHub IP)
+        // ═══════════════════════════════════════════════════════════
         if (!downloadSuccess && movie.trailerUrl) {
-            console.log(`⏳ [Phương pháp 3] Thử tải Trailer từ YouTube (có thể bị block)...`);
+            console.log(`\n🔴 [LUỒNG 3] YouTube Trailer (có thể bị block)...`);
             try {
                 execSync(
                     `yt-dlp --no-check-certificates ` +
@@ -380,7 +458,7 @@ Yêu cầu bắt buộc:
                 );
                 if (fs.existsSync(videoFile) && fs.statSync(videoFile).size > 50000) {
                     downloadSuccess = true;
-                    console.log(`   ✅ Tải YouTube thành công!`);
+                    console.log(`   ✅ [3] Tải YouTube thành công!`);
                 }
             } catch (err) {
                 console.error('⚠️ [Phương pháp 3] YouTube cũng thất bại (IP bị block).');
