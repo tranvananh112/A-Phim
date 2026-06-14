@@ -327,9 +327,52 @@ Yêu cầu bắt buộc:
         const UA = `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36`;
 
         // ═══════════════════════════════════════════════════════════
+        // PRE-STEP: Resolve m3u8 relative path → absolute URL
+        // Vấn đề: m3u8 gốc chứa relative path (vd: "3000k/hls/mixed.m3u8")
+        // cần resolve thành URL đầy đủ trước khi ffmpeg/yt-dlp dùng được
+        // ═══════════════════════════════════════════════════════════
+        let resolvedM3u8 = movie.m3u8Link;
+        try {
+            const https = require('https');
+            const http = require('http');
+            const rawM3u8 = await new Promise((resolve, reject) => {
+                const lib = movie.m3u8Link.startsWith('https') ? https : http;
+                lib.get(movie.m3u8Link, {
+                    headers: {
+                        'User-Agent': UA,
+                        'Referer': 'https://ophim1.com/',
+                        'Origin': 'https://ophim1.com'
+                    },
+                    timeout: 8000
+                }, (res) => {
+                    let data = '';
+                    res.on('data', c => data += c);
+                    res.on('end', () => resolve(data));
+                }).on('error', reject);
+            });
+
+            // Tìm dòng chứa link thật (không phải comment #)
+            const lines = rawM3u8.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+            if (lines.length > 0) {
+                const firstLink = lines[0];
+                if (firstLink.startsWith('http')) {
+                    resolvedM3u8 = firstLink;
+                } else {
+                    // Relative path → ghép với base URL
+                    const baseUrl = movie.m3u8Link.substring(0, movie.m3u8Link.lastIndexOf('/') + 1);
+                    resolvedM3u8 = baseUrl + firstLink;
+                }
+                console.log(`✅ [PRE] Resolved m3u8: ${resolvedM3u8}`);
+            }
+        } catch(e) {
+            console.log(`⚠️ [PRE] Không resolve được, dùng link gốc: ${e.message?.substring(0, 60)}`);
+        }
+
+
+        // ═══════════════════════════════════════════════════════════
         // LUỒNG 1A: ffmpeg trực tiếp m3u8 → 480p (Nhẹ, Nhanh nhất)
         // ═══════════════════════════════════════════════════════════
-        if (!downloadSuccess && movie.m3u8Link) {
+        if (!downloadSuccess && resolvedM3u8) {
             console.log(`\n🔵 [LUỒNG 1A] ffmpeg m3u8 → 480p (nhẹ, nhanh)...`);
             for (const time of ['00:00:00', '00:01:00']) {
                 try {
@@ -337,7 +380,7 @@ Yêu cầu bắt buộc:
                         `ffmpeg -y ` +
                         `-user_agent "${UA}" ` +
                         `-headers "${m3u8Headers}\r\n" ` +
-                        `-ss ${time} -i "${movie.m3u8Link}" ` +
+                        `-ss ${time} -i "${resolvedM3u8}" ` +
                         `-t 60 -vf "scale=854:480" -c:v libx264 -c:a aac -preset ultrafast -crf 28 "${videoFile}"`,
                         { stdio: 'pipe', timeout: 180000 }
                     );
@@ -352,7 +395,7 @@ Yêu cầu bắt buộc:
         // ═══════════════════════════════════════════════════════════
         // LUỒNG 1B: ffmpeg trực tiếp m3u8 → Full HD (dự phòng 480p fail)
         // ═══════════════════════════════════════════════════════════
-        if (!downloadSuccess && movie.m3u8Link) {
+        if (!downloadSuccess && resolvedM3u8) {
             console.log(`\n🟡 [LUỒNG 1B] ffmpeg m3u8 → Full HD (phim hỗ trợ chất lượng cao)...`);
             for (const time of ['00:00:00', '00:01:00']) {
                 try {
@@ -360,7 +403,7 @@ Yêu cầu bắt buộc:
                         `ffmpeg -y ` +
                         `-user_agent "${UA}" ` +
                         `-headers "${m3u8Headers}\r\n" ` +
-                        `-ss ${time} -i "${movie.m3u8Link}" ` +
+                        `-ss ${time} -i "${resolvedM3u8}" ` +
                         `-t 60 -c:v libx264 -c:a aac -preset ultrafast -crf 23 "${videoFile}"`,
                         { stdio: 'pipe', timeout: 240000 }
                     );
@@ -375,7 +418,7 @@ Yêu cầu bắt buộc:
         // ═══════════════════════════════════════════════════════════
         // LUỒNG 2A: yt-dlp m3u8 → tải về rồi cắt → 480p
         // ═══════════════════════════════════════════════════════════
-        if (!downloadSuccess && movie.m3u8Link) {
+        if (!downloadSuccess && resolvedM3u8) {
             console.log(`\n🔵 [LUỒNG 2A] yt-dlp m3u8 → offline → cắt 480p...`);
             try {
                 execSync(
@@ -387,7 +430,7 @@ Yêu cầu bắt buộc:
                     `--add-header "Accept-Language:vi-VN,vi;q=0.9" ` +
                     `--socket-timeout 30 --retries 3 ` +
                     `-f "best[height<=480]/best" ` +
-                    `-o "${tempVideo}" "${movie.m3u8Link}"`,
+                    `-o "${tempVideo}" "${resolvedM3u8}"`,
                     { stdio: 'pipe', timeout: 240000 }
                 );
                 if (fs.existsSync(tempVideo) && fs.statSync(tempVideo).size > 50000) {
@@ -410,7 +453,7 @@ Yêu cầu bắt buộc:
         // ═══════════════════════════════════════════════════════════
         // LUỒNG 2B: yt-dlp m3u8 → tải về rồi cắt → Full HD best quality
         // ═══════════════════════════════════════════════════════════
-        if (!downloadSuccess && movie.m3u8Link) {
+        if (!downloadSuccess && resolvedM3u8) {
             console.log(`\n🟡 [LUỒNG 2B] yt-dlp m3u8 → offline → cắt Full HD...`);
             try {
                 execSync(
@@ -423,7 +466,7 @@ Yêu cầu bắt buộc:
                     `--socket-timeout 30 --retries 3 ` +
                     `-f "bestvideo[height<=1080]+bestaudio/best" ` +
                     `--merge-output-format mp4 ` +
-                    `-o "${tempVideo}" "${movie.m3u8Link}"`,
+                    `-o "${tempVideo}" "${resolvedM3u8}"`,
                     { stdio: 'pipe', timeout: 300000 }
                 );
                 if (fs.existsSync(tempVideo) && fs.statSync(tempVideo).size > 50000) {
