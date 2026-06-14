@@ -370,33 +370,10 @@ Yêu cầu bắt buộc:
 
 
         // ═══════════════════════════════════════════════════════════
-        // LUỒNG 1A: ffmpeg trực tiếp m3u8 → 480p (Nhẹ, Nhanh nhất)
+        // LUỒNG 1A: ffmpeg trực tiếp m3u8 → Full HD (Chất lượng cao nhất)
         // ═══════════════════════════════════════════════════════════
         if (!downloadSuccess && resolvedM3u8) {
-            console.log(`\n🔵 [LUỒNG 1A] ffmpeg m3u8 → 480p (nhẹ, nhanh)...`);
-            for (const time of ['00:00:00', '00:01:00']) {
-                try {
-                    execSync(
-                        `ffmpeg -y ` +
-                        `-user_agent "${UA}" ` +
-                        `-headers "${m3u8Headers}\r\n" ` +
-                        `-ss ${time} -i "${resolvedM3u8}" ` +
-                        `-t 60 -vf "scale=854:480" -c:v libx264 -c:a aac -preset ultrafast -crf 28 "${videoFile}"`,
-                        { stdio: 'pipe', timeout: 180000 }
-                    );
-                    if (fs.existsSync(videoFile) && fs.statSync(videoFile).size > 50000) {
-                        console.log(`   ✅ [1A] Thành công 480p từ mốc ${time}!`);
-                        downloadSuccess = true; break;
-                    }
-                } catch (e) { console.log(`   ⚠️ [1A] Mốc ${time}: ${e.message?.substring(0, 60)}`); }
-            }
-        }
-
-        // ═══════════════════════════════════════════════════════════
-        // LUỒNG 1B: ffmpeg trực tiếp m3u8 → Full HD (dự phòng 480p fail)
-        // ═══════════════════════════════════════════════════════════
-        if (!downloadSuccess && resolvedM3u8) {
-            console.log(`\n🟡 [LUỒNG 1B] ffmpeg m3u8 → Full HD (phim hỗ trợ chất lượng cao)...`);
+            console.log(`\n🟡 [LUỒNG 1A] ffmpeg m3u8 → Full HD (Ưu tiên chất lượng cao)...`);
             for (const time of ['00:00:00', '00:01:00']) {
                 try {
                     execSync(
@@ -408,7 +385,30 @@ Yêu cầu bắt buộc:
                         { stdio: 'pipe', timeout: 240000 }
                     );
                     if (fs.existsSync(videoFile) && fs.statSync(videoFile).size > 50000) {
-                        console.log(`   ✅ [1B] Thành công Full HD từ mốc ${time}!`);
+                        console.log(`   ✅ [1A] Thành công Full HD từ mốc ${time}!`);
+                        downloadSuccess = true; break;
+                    }
+                } catch (e) { console.log(`   ⚠️ [1A] Mốc ${time}: ${e.message?.substring(0, 60)}`); }
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // LUỒNG 1B: ffmpeg trực tiếp m3u8 → 480p (Dự phòng tải nhẹ)
+        // ═══════════════════════════════════════════════════════════
+        if (!downloadSuccess && resolvedM3u8) {
+            console.log(`\n🔵 [LUỒNG 1B] ffmpeg m3u8 → 480p (Dự phòng nếu Full HD lỗi)...`);
+            for (const time of ['00:00:00', '00:01:00']) {
+                try {
+                    execSync(
+                        `ffmpeg -y ` +
+                        `-user_agent "${UA}" ` +
+                        `-headers "${m3u8Headers}\r\n" ` +
+                        `-ss ${time} -i "${resolvedM3u8}" ` +
+                        `-t 60 -vf "scale=854:480" -c:v libx264 -c:a aac -preset ultrafast -crf 28 "${videoFile}"`,
+                        { stdio: 'pipe', timeout: 180000 }
+                    );
+                    if (fs.existsSync(videoFile) && fs.statSync(videoFile).size > 50000) {
+                        console.log(`   ✅ [1B] Thành công 480p từ mốc ${time}!`);
                         downloadSuccess = true; break;
                     }
                 } catch (e) { console.log(`   ⚠️ [1B] Mốc ${time}: ${e.message?.substring(0, 60)}`); }
@@ -416,45 +416,10 @@ Yêu cầu bắt buộc:
         }
 
         // ═══════════════════════════════════════════════════════════
-        // LUỒNG 2A: yt-dlp m3u8 → tải về rồi cắt → 480p
+        // LUỒNG 2A: yt-dlp m3u8 → tải về rồi cắt → Full HD best quality
         // ═══════════════════════════════════════════════════════════
         if (!downloadSuccess && resolvedM3u8) {
-            console.log(`\n🔵 [LUỒNG 2A] yt-dlp m3u8 → offline → cắt 480p...`);
-            try {
-                execSync(
-                    `yt-dlp --no-check-certificates ` +
-                    `--add-header "Referer:https://ophim1.com/" ` +
-                    `--add-header "Origin:https://ophim1.com" ` +
-                    `--add-header "User-Agent:${UA}" ` +
-                    `--add-header "Accept:*/*" ` +
-                    `--add-header "Accept-Language:vi-VN,vi;q=0.9" ` +
-                    `--socket-timeout 30 --retries 3 ` +
-                    `-f "best[height<=480]/best" ` +
-                    `-o "${tempVideo}" "${resolvedM3u8}"`,
-                    { stdio: 'pipe', timeout: 240000 }
-                );
-                if (fs.existsSync(tempVideo) && fs.statSync(tempVideo).size > 50000) {
-                    execSync(
-                        `ffmpeg -y -i "${tempVideo}" -t 60 -vf "scale=854:480" -c:v libx264 -c:a aac -preset ultrafast -crf 28 "${videoFile}"`,
-                        { stdio: 'pipe', timeout: 90000 }
-                    );
-                    if (fs.existsSync(videoFile) && fs.statSync(videoFile).size > 50000) {
-                        console.log(`   ✅ [2A] yt-dlp 480p thành công!`);
-                        downloadSuccess = true;
-                    }
-                }
-            } catch (e) {
-                console.error(`⚠️ [2A] yt-dlp 480p thất bại: ${e.message?.substring(0, 100)}`);
-            } finally {
-                if (fs.existsSync(tempVideo)) try { fs.unlinkSync(tempVideo); } catch(_) {}
-            }
-        }
-
-        // ═══════════════════════════════════════════════════════════
-        // LUỒNG 2B: yt-dlp m3u8 → tải về rồi cắt → Full HD best quality
-        // ═══════════════════════════════════════════════════════════
-        if (!downloadSuccess && resolvedM3u8) {
-            console.log(`\n🟡 [LUỒNG 2B] yt-dlp m3u8 → offline → cắt Full HD...`);
+            console.log(`\n🟡 [LUỒNG 2A] yt-dlp m3u8 → offline → cắt Full HD...`);
             try {
                 execSync(
                     `yt-dlp --no-check-certificates ` +
@@ -475,12 +440,47 @@ Yêu cầu bắt buộc:
                         { stdio: 'pipe', timeout: 120000 }
                     );
                     if (fs.existsSync(videoFile) && fs.statSync(videoFile).size > 50000) {
-                        console.log(`   ✅ [2B] yt-dlp Full HD thành công!`);
+                        console.log(`   ✅ [2A] yt-dlp Full HD thành công!`);
                         downloadSuccess = true;
                     }
                 }
             } catch (e) {
-                console.error(`⚠️ [2B] yt-dlp Full HD thất bại: ${e.message?.substring(0, 100)}`);
+                console.error(`⚠️ [2A] yt-dlp Full HD thất bại: ${e.message?.substring(0, 100)}`);
+            } finally {
+                if (fs.existsSync(tempVideo)) try { fs.unlinkSync(tempVideo); } catch(_) {}
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // LUỒNG 2B: yt-dlp m3u8 → tải về rồi cắt → 480p (Dự phòng)
+        // ═══════════════════════════════════════════════════════════
+        if (!downloadSuccess && resolvedM3u8) {
+            console.log(`\n🔵 [LUỒNG 2B] yt-dlp m3u8 → offline → cắt 480p...`);
+            try {
+                execSync(
+                    `yt-dlp --no-check-certificates ` +
+                    `--add-header "Referer:https://ophim1.com/" ` +
+                    `--add-header "Origin:https://ophim1.com" ` +
+                    `--add-header "User-Agent:${UA}" ` +
+                    `--add-header "Accept:*/*" ` +
+                    `--add-header "Accept-Language:vi-VN,vi;q=0.9" ` +
+                    `--socket-timeout 30 --retries 3 ` +
+                    `-f "best[height<=480]/best" ` +
+                    `-o "${tempVideo}" "${resolvedM3u8}"`,
+                    { stdio: 'pipe', timeout: 240000 }
+                );
+                if (fs.existsSync(tempVideo) && fs.statSync(tempVideo).size > 50000) {
+                    execSync(
+                        `ffmpeg -y -i "${tempVideo}" -t 60 -vf "scale=854:480" -c:v libx264 -c:a aac -preset ultrafast -crf 28 "${videoFile}"`,
+                        { stdio: 'pipe', timeout: 90000 }
+                    );
+                    if (fs.existsSync(videoFile) && fs.statSync(videoFile).size > 50000) {
+                        console.log(`   ✅ [2B] yt-dlp 480p thành công!`);
+                        downloadSuccess = true;
+                    }
+                }
+            } catch (e) {
+                console.error(`⚠️ [2B] yt-dlp 480p thất bại: ${e.message?.substring(0, 100)}`);
             } finally {
                 if (fs.existsSync(tempVideo)) try { fs.unlinkSync(tempVideo); } catch(_) {}
             }
