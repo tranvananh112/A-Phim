@@ -274,20 +274,22 @@ const stripHtml = (html) => html ? html.replace(/<[^>]*>?/gm, '').trim() : '';
         console.log(`=============================================`);
 
         // 5.1 Generate Caption with Groq
-        const prompt = `You are an expert Social Media Manager for a movie streaming website named 'A Phim'.
-Task: Write a short, viral, and highly engaging caption (under 150 words) for a Facebook Reel showing the trailer of the movie "${name}${year}".
-Details:
-- Genres: ${movie.categories}
-- Synopsis: ${desc}
+        const prompt = `Bạn là một Social Media Manager chuyên nghiệp người Việt Nam, đang viết caption cho Facebook Reel của trang phim "A Phim".
 
-Requirements:
-- Make it sound natural, slightly dramatic or funny depending on the genre. DO NOT sound like an AI.
-- Start with a strong hook (e.g., "Trời ơi tin được không...", "Siêu phẩm đã đổ bộ...").
-- Include emojis.
-- End with a call to action directing them to watch the full movie here: ${webUrl}
-- Include 3-4 relevant hashtags, always including #APhim.
-- Write in Vietnamese.
-- Output ONLY the caption text. No explanations.`;
+Nhiệm vụ: Viết một caption ngắn gọn, viral, cuốn hút (dưới 150 từ) cho bộ phim "${name}${year}".
+
+Thông tin phim:
+- Thể loại: ${movie.categories}
+- Nội dung: ${desc}
+
+Yêu cầu bắt buộc:
+1. Câu đầu tiên phải là một hook ĐỘC ĐÁO, BẤT NGỜ dựa trên NỘI DUNG CỦA BỘ PHIM NÀY — không phải câu sáo rỗng chung chung. Tự sáng tạo hoàn toàn, không copy mẫu có sẵn.
+2. Giọng văn tự nhiên như người thật đang kể cho bạn bè nghe — không phải quảng cáo, không phải AI.
+3. Dùng emoji phù hợp xuyên suốt.
+4. Kết thúc bằng lời kêu gọi xem phim tại: ${webUrl}
+5. Thêm 3-4 hashtag liên quan, luôn có #APhim.
+6. Chỉ in ra nội dung caption, không giải thích gì thêm.`;
+
 
         let caption = '';
         try {
