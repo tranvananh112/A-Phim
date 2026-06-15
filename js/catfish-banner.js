@@ -140,7 +140,7 @@
             '<div class="catfish-inner">' +
                 '<div class="catfish-row">' +
                     '<a class="catfish-item" href="https://tongkb.net" target="_blank" rel="noopener nofollow" aria-label="Kubet">' +
-                        '<img src="/quangcao/kubet/banner_kubet.jpg" alt="Kubet" loading="eager">' +
+                        '<img src="/quangcao/kubet/kubet.jpg" alt="Kubet" loading="eager">' +
                     '</a>' +
                 '</div>' +
             '</div>' +
