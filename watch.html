@@ -4,7 +4,19 @@
 <head>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('slug') === 'moi-thu-la-loi-co-ay') {
+        const blockedSlugs = [
+            'moi-thu-la-loi-co-ay',
+            'thanh-nu-hoan-hao-bi-hon-phu-da-va-ban-qua-nuoc-khac',
+            'toi-tro-thanh-manh-nhat-voi-ky-nang-trang-thai-va-huy-diet-tat-ca',
+            'sakuna-nu-than-thu-hoach-hu-hong',
+            'toi-roi-to-doi-hang-a-de-giup-hoc-tro-cu-tien-sau-vao-ham-nguc',
+            'thang-cap-mot-minh-phan-2',
+            'nhat-ky-du-hanh-di-gioi-cua-nha-thu-thap-nguyen-lieu',
+            'anh-hung-bat-tinh-va-cong-chua-am-sat',
+            'tro-thanh-giao-vien-tai-truong-hoc-quai-vat',
+            'vo-toi-la-hoc-sinh-tieu-hoc'
+        ];
+        if (blockedSlugs.includes(urlParams.get('slug'))) {
             window.location.replace('/');
         }
     </script>
