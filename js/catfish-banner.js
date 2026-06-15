@@ -20,7 +20,7 @@
         },
 
         popup: {
-            enabled: true,
+            enabled: false, // Đã tắt theo yêu cầu để tránh gây khó chịu
             showAfterMs: 800,         // Delay trước khi popup hiện (ms)
             slideIntervalMs: 2500,    // Tự chuyển slide sau N ms
             sessionKey: 'aphim_popup_closed_v4',  // sessionStorage key
@@ -87,7 +87,14 @@
 
     function shouldShowCatfish() {
         if (!CONFIG.catfish.enabled) return false;
-        // Per-page sessionStorage — giống popup, hiện lại mỗi khi sang trang mới
+        
+        // Trên màn hình lớn (Desktop >= 768px), luôn luôn hiển thị lại khi tải trang
+        // dù trước đó đã bấm đóng.
+        if (window.innerWidth >= 768) {
+            return true;
+        }
+
+        // Trên điện thoại (Mobile < 768px), giữ luồng cũ (đã bấm đóng thì sang trang không hiện lại nữa trong phiên)
         var pageKey = CONFIG.catfish.sessionKey;
         return !getSession(pageKey);
     }
@@ -124,8 +131,27 @@
         document.body.appendChild(bar);
         document.body.classList.add('aphim-has-catfish');
 
+        // --- TOP CATFISH (Kubet) ---
+        var topBar = document.createElement('div');
+        topBar.id = 'aphim-catfish-top';
+        topBar.setAttribute('role', 'complementary');
+        topBar.setAttribute('aria-label', 'Quảng cáo Kubet');
+        topBar.innerHTML =
+            '<div class="catfish-inner">' +
+                '<div class="catfish-row">' +
+                    '<a class="catfish-item" href="https://tongkb.net" target="_blank" rel="noopener nofollow" aria-label="Kubet">' +
+                        '<img src="/quangcao/kubet/banner_kubet.jpg" alt="Kubet" loading="eager">' +
+                    '</a>' +
+                '</div>' +
+            '</div>' +
+            '<button id="aphim-catfish-top-close" title="Đóng quảng cáo" aria-label="Đóng">&#10005;</button>';
+        document.body.appendChild(topBar);
+
         requestAnimationFrame(function () {
-            requestAnimationFrame(function () { bar.classList.add('visible'); });
+            requestAnimationFrame(function () { 
+                bar.classList.add('visible'); 
+                topBar.classList.add('visible');
+            });
         });
 
         var closeBtn = document.getElementById('aphim-catfish-close');
@@ -137,6 +163,19 @@
                 // Đánh dấu đã đóng theo từng trang (sessionStorage)
                 var pageKey = CONFIG.catfish.sessionKey;
                 setSession(pageKey);
+                
+                // Cùng lúc đóng topBar nếu muốn đồng bộ
+                topBar.classList.remove('visible');
+                setTimeout(function () { if (topBar.parentNode) topBar.parentNode.removeChild(topBar); }, 450);
+            });
+        }
+
+        var topCloseBtn = document.getElementById('aphim-catfish-top-close');
+        if (topCloseBtn) {
+            topCloseBtn.addEventListener('click', function () {
+                topBar.classList.remove('visible');
+                setTimeout(function () { if (topBar.parentNode) topBar.parentNode.removeChild(topBar); }, 450);
+                // Có thể lưu riêng state hoặc dùng chung
             });
         }
     }

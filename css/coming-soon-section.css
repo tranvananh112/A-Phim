@@ -16,7 +16,8 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.05) 0%, transparent 70%);
+    /* Removed the red/amber radial gradient to sync with the main homepage background */
+    background: transparent;
     pointer-events: none;
 }
 

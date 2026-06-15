@@ -16,9 +16,8 @@
     z-index: 9997;
     background: rgba(6, 6, 10, 0.97);
     border-top: 1px solid rgba(252, 211, 77, 0.25);
-    border-left: 1px solid rgba(252, 211, 77, 0.15);
     border-right: 1px solid rgba(252, 211, 77, 0.15);
-    border-radius: 14px 14px 0 0;
+    border-radius: 0; /* Bỏ bo tròn theo yêu cầu */
     box-shadow: 0 -6px 36px rgba(0, 0, 0, 0.65), 0 0 50px rgba(252, 211, 77, 0.06);
     transform: translateY(110%);
     transition: transform 0.44s cubic-bezier(0.34, 1.4, 0.64, 1);
@@ -36,6 +35,64 @@
     height: 1px;
     background: linear-gradient(90deg, rgba(252, 211, 77, 0.5), rgba(252, 211, 77, 0.15), transparent);
     pointer-events: none;
+}
+
+/* ─── CATFISH TOP STICKY BAR ────────────────────────────── */
+#aphim-catfish-top {
+    position: fixed;
+    top: 0; /* Đưa lên sát mép trên cùng (trên cả thanh menu) */
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    width: 600px; /* Thu hẹp lại để thon gọn hơn */
+    max-width: 96vw;
+    z-index: 10005; /* Dành ưu tiên cao nhất, nằm đè lên thanh menu (nav có z-index 9999) */
+    background: transparent;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    transform: translateY(-150%);
+    transition: transform 0.44s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+/* Ép chiều cao mảnh lại cho banner top (tránh bị bự chảng) */
+#aphim-catfish-top .catfish-item img {
+    height: 55px !important;
+    object-fit: fill;
+    border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+    #aphim-catfish-top {
+        top: 0; /* Mobile cũng đưa lên sát mép trên cùng */
+    }
+}
+
+#aphim-catfish-top.visible {
+    transform: translateY(0);
+}
+
+#aphim-catfish-top-close {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    transform: translate(30%, 30%); /* Ép sát vào góc hơn */
+    width: 24px;
+    height: 24px;
+    background: #ffffff;
+    color: #ff0000;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    z-index: 10;
+    padding: 0;
+    line-height: 1;
 }
 
 .catfish-inner { 
@@ -119,22 +176,34 @@
 }
 
 #aphim-catfish-close {
-    position: absolute; top: -32px; right: 10px; /* Đưa nút ra ngoài banner */
-    background: rgba(0,0,0,0.65);
-    border: 1px solid rgba(255,255,255,0.22);
-    color: rgba(255,255,255,0.85);
-    width: 26px; height: 26px;
-    border-radius: 50%; cursor: pointer;
-    font-size: 12px; line-height: 1;
-    display: flex; align-items: center; justify-content: center;
+    position: absolute; 
+    top: -10px; 
+    bottom: auto; 
+    right: -10px; 
+    transform: none;
+    background: #ffffff;
+    color: #ff0000;
+    border: 1px solid rgba(0,0,0,0.1);
+    width: 24px; 
+    height: 24px;
+    border-radius: 50%; 
+    cursor: pointer;
+    font-size: 14px; 
+    font-weight: bold;
+    line-height: 1;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
     transition: background 0.2s, transform 0.25s;
-    z-index: 10; padding: 0; font-family: sans-serif;
-    backdrop-filter: blur(4px);
+    z-index: 10; 
+    padding: 0; 
+    font-family: sans-serif;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
 #aphim-catfish-close:hover {
-    background: rgba(239,68,68,0.85);
-    border-color: rgba(239,68,68,0.6);
-    color: #fff;
+    background: #ff0000;
+    color: #ffffff;
+    border-color: #ff0000;
     transform: scale(1.15) rotate(90deg);
 }
 
@@ -154,11 +223,11 @@ body.aphim-has-catfish { /* card dưới không cần push body */ }
         border-top: 1px solid rgba(0,0,0,0.4) !important;
     }
     .catfish-item img { 
-        height: 50px !important; /* Mỗi banner cao 50px cực kì cân đối và chuyên nghiệp */
+        height: 42px !important; /* Chiều cao siêu mỏng, thanh lịch */
         max-height: none !important; 
-        object-fit: fill !important; /* Tránh bị cắt chữ */
+        object-fit: fill !important; 
     }
-    #aphim-catfish-close { top: -30px; right: 6px; width: 24px; height: 24px; font-size: 12px; }
+    #aphim-catfish-close { top: -10px; bottom: auto; right: -6px; width: 24px; height: 24px; font-size: 14px; transform: none; }
 }
 
 

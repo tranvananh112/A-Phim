@@ -79,6 +79,7 @@
         for (var i = 0; i < inners.length; i++) {
             var el = inners[i];
             if (el.classList.contains('is-slideshow')) continue;
+            if (el.hasAttribute('data-no-slideshow')) continue;
 
             // Kích hoạt khi: mobile HOẶC có thuộc tính data-always-slideshow
             var forceSlideshow = el.hasAttribute('data-always-slideshow');
