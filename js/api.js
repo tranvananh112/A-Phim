@@ -26,6 +26,37 @@ class MovieAPI {
         }
     }
 
+    // Wrapper to fetch from primary URL or fallback mirrors on failure (bypasses ISP blocks on 4G)
+    async fetchWithFallback(endpoint, options = {}) {
+        const bases = [
+            this.ophimURL,
+            'https://ophim17.cc/v1/api',
+            'https://ophim10.cc/v1/api',
+            'https://ophim1.com/v1/api'
+        ];
+        
+        const uniqueBases = Array.from(new Set(bases.filter(Boolean)));
+        let lastError = null;
+
+        for (const base of uniqueBases) {
+            const url = endpoint.startsWith('http') ? endpoint : `${base}${endpoint}`;
+            try {
+                const response = await this.fetchWithTimeout(url, options);
+                if (response.ok) {
+                    return response;
+                }
+                console.warn(`⚠️ API response not OK from ${base}: ${response.status}`);
+            } catch (err) {
+                console.warn(`❌ API fetch failed from ${base}:`, err.message);
+                lastError = err;
+            }
+            if (endpoint.startsWith('http')) {
+                break;
+            }
+        }
+        throw lastError || new Error('All API mirrors failed');
+    }
+
     // Helper to filter out hidden movies from list responses
     filterHiddenMovies(data) {
         if (!data || !data.data || !Array.isArray(data.data.items)) return data;
@@ -90,7 +121,7 @@ class MovieAPI {
                 // Always return data if we got a response
                 return this.filterHiddenMovies(data);
             } else {
-                const response = await this.fetchWithTimeout(`${this.ophimURL}/danh-sach/phim-moi-cap-nhat?page=${page}`, {
+                const response = await this.fetchWithFallback(`/danh-sach/phim-moi-cap-nhat?page=${page}`, {
                     headers: { 'accept': 'application/json' }
                 });
                 const data = await response.json();
@@ -130,7 +161,7 @@ class MovieAPI {
                 // The backend should handle the format
                 return data;
             } else {
-                const response = await this.fetchWithTimeout(`${this.ophimURL}/phim/${slug}`, {
+                const response = await this.fetchWithFallback(`/phim/${slug}`, {
                     headers: { 'accept': 'application/json' }
                 });
                 return await response.json();
@@ -156,7 +187,7 @@ class MovieAPI {
                 }
                 return null;
             } else {
-                const response = await this.fetchWithTimeout(`${this.ophimURL}/tim-kiem?keyword=${encodeURIComponent(keyword)}&page=${page}`, {
+                const response = await this.fetchWithFallback(`/tim-kiem?keyword=${encodeURIComponent(keyword)}&page=${page}`, {
                     headers: { 'accept': 'application/json' }
                 });
                 const data = await response.json();
@@ -184,7 +215,7 @@ class MovieAPI {
                 }
                 return null;
             } else {
-                const response = await this.fetchWithTimeout(`${this.ophimURL}/the-loai/${categorySlug}?page=${page}`, {
+                const response = await this.fetchWithFallback(`/the-loai/${categorySlug}?page=${page}`, {
                     headers: { 'accept': 'application/json' }
                 });
                 const data = await response.json();
@@ -212,7 +243,7 @@ class MovieAPI {
                 }
                 return null;
             } else {
-                const response = await this.fetchWithTimeout(`${this.ophimURL}/quoc-gia/${countrySlug}?page=${page}`, {
+                const response = await this.fetchWithFallback(`/quoc-gia/${countrySlug}?page=${page}`, {
                     headers: { 'accept': 'application/json' }
                 });
                 const data = await response.json();
@@ -275,7 +306,7 @@ class MovieAPI {
     // Get list of categories
     async getCategories() {
         try {
-            const response = await this.fetchWithTimeout(`${this.ophimURL}/the-loai`, {
+            const response = await this.fetchWithFallback(`/the-loai`, {
                 headers: { 'accept': 'application/json' }
             });
             const data = await response.json();

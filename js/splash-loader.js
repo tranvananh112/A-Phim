@@ -94,7 +94,7 @@
             fetchesStarted++;
             updateProgress();
         }
-        return originalFetch.apply(this, args)
+        return originalFetch.apply(window, args)
             .then(response => {
                 if (loaderActive) {
                     fetchesCompleted++;
@@ -237,11 +237,11 @@
         window.addEventListener('load', triggerLoadComplete);
     }
 
-    // Fallback safety timeout (3.5 seconds)
+    // Fallback safety timeout (1.5 seconds)
     const safetyTimeout = setTimeout(() => {
         console.warn('Splash Loader: Safety timeout reached, forcing page display.');
         triggerLoadComplete();
-    }, 3500);
+    }, 1500);
 
     // Hide splash screen with smooth fade out
     function hideSplashScreen() {
@@ -261,7 +261,11 @@
         const splash = document.getElementById('splashLoader');
         if (splash) {
             // Restore original fetch to cleanup
-            window.fetch = originalFetch;
+            try {
+                window.fetch = originalFetch;
+            } catch (e) {
+                console.warn('Failed to restore original fetch:', e);
+            }
 
             // Trigger premium blur and scale fade out
             splash.classList.add('splash-fade-out');
@@ -278,6 +282,19 @@
     // Initialize particles & base progress
     function initSplashEffects() {
         buildParticles();
+
+        // Dismiss splash screen instantly when user clicks/taps on it
+        const splash = document.getElementById('splashLoader');
+        if (splash) {
+            const dismissSplash = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('⚡ User clicked splash screen - dismissing instantly');
+                triggerLoadComplete();
+            };
+            splash.addEventListener('click', dismissSplash);
+            splash.addEventListener('touchstart', dismissSplash, { passive: false });
+        }
     }
 
     if (document.readyState === 'loading') {

@@ -2,6 +2,7 @@
 let currentMovie = null;
 let currentEpisode = null;
 let player = null;
+let currentServerIndex = 0; // Track the current server index for failover
 
 document.addEventListener('DOMContentLoaded', async function () {
     const urlParams = new URLSearchParams(window.location.search);
@@ -32,7 +33,9 @@ async function loadMovieAndPlay(slug, episodeSlug) {
 
             // Find episode
             if (currentMovie.episodes && currentMovie.episodes.length > 0) {
-                const serverData = currentMovie.episodes[0].server_data;
+                // Initialize default server index to 0
+                currentServerIndex = 0;
+                const serverData = currentMovie.episodes[currentServerIndex]?.server_data || currentMovie.episodes[0].server_data;
                 console.log('📋 Server data:', serverData);
 
                 currentEpisode = episodeSlug
@@ -658,7 +661,7 @@ function renderEpisodeList(episodes) {
     const container = document.getElementById('episode-list') || document.querySelector('.grid.grid-cols-2');
     if (!container) return;
 
-    const serverData = episodes[0].server_data;
+    const serverData = episodes[currentServerIndex]?.server_data || episodes[0].server_data;
 
     // Update dynamic episode count indicator
     const episodeCountEl = document.getElementById('episode-count');
@@ -744,6 +747,12 @@ function initializePlayer(episode) {
         console.error('❌ No video link found in episode:', episode);
         showError('Không tìm thấy link phim. Vui lòng liên hệ admin để cập nhật link.');
         return;
+    }
+
+    // Auto upgrade http to https to prevent Mixed Content security blocking on mobile browsers
+    if (videoUrl.startsWith('http://')) {
+        videoUrl = videoUrl.replace('http://', 'https://');
+        console.log('🔒 Upgraded video URL to HTTPS:', videoUrl);
     }
 
     console.log('🔗 Video URL:', videoUrl);
@@ -908,6 +917,11 @@ function initializePlayer(episode) {
                     case Hls.ErrorTypes.NETWORK_ERROR:
                         console.log('🔄 Network error, trying to recover...');
                         hls.startLoad();
+                        if (data.details === Hls.ErrorDetails.MANIFEST_LOAD_ERROR || 
+                            data.details === Hls.ErrorDetails.MANIFEST_LOAD_TIMEOUT) {
+                            hls.destroy();
+                            handleStreamError();
+                        }
                         break;
                     case Hls.ErrorTypes.MEDIA_ERROR:
                         console.log('🔄 Media error, trying to recover...');
@@ -915,8 +929,8 @@ function initializePlayer(episode) {
                         break;
                     default:
                         console.error('💥 Fatal error, cannot recover');
-                        showError('Không thể phát video. Vui lòng thử lại sau.');
                         hls.destroy();
+                        handleStreamError();
                         break;
                 }
             }
@@ -985,7 +999,44 @@ function initializePlayer(episode) {
 
     player.addEventListener('error', (e) => {
         console.error('❌ Video element error:', e);
+        handleStreamError();
     });
+}
+
+// Automatic Server Fallback helper on playback error
+function handleStreamError() {
+    if (!currentMovie || !currentMovie.episodes || currentMovie.episodes.length <= 1) {
+        showError('Không thể phát video từ máy chủ này. Vui lòng thử lại sau.');
+        return;
+    }
+
+    const nextServerIndex = currentServerIndex + 1;
+    if (nextServerIndex < currentMovie.episodes.length) {
+        currentServerIndex = nextServerIndex;
+        const nextServer = currentMovie.episodes[nextServerIndex];
+        console.warn(`🔄 Stream error detected. Switching to backup server: ${nextServer.server_name}`);
+        
+        // Find corresponding episode in the new server
+        const matchingEpisode = nextServer.server_data.find(ep => ep.name === currentEpisode.name) || nextServer.server_data[0];
+        
+        if (matchingEpisode) {
+            currentEpisode = matchingEpisode;
+            
+            // Re-render episode list to match new server data context
+            renderEpisodeList(currentMovie.episodes);
+            
+            // Show custom alert message in seeking container
+            showSeekOverlay(`Đang chuyển: ${nextServer.server_name}...`, true);
+            
+            setTimeout(() => {
+                initializePlayer(currentEpisode);
+            }, 1200);
+        } else {
+            showError('Không tìm thấy tập phim trên server dự phòng.');
+        }
+    } else {
+        showError('Không thể phát video từ tất cả các máy chủ. Vui lòng thử lại sau.');
+    }
 }
 
 // Setup video player controls
@@ -1031,7 +1082,7 @@ function addFullscreenButton() {
 function autoPlayNext() {
     if (!currentMovie.episodes || currentMovie.episodes.length === 0) return;
 
-    const serverData = currentMovie.episodes[0].server_data;
+    const serverData = currentMovie.episodes[currentServerIndex]?.server_data || currentMovie.episodes[0].server_data;
     const currentIndex = serverData.findIndex(ep => ep.slug === currentEpisode.slug);
 
     if (currentIndex < serverData.length - 1) {
@@ -1535,7 +1586,11 @@ function showSeekOverlay(text, isRight) {
 // Global changeEpisode helper to update query string parameters and transition instantly
 window.changeEpisode = function(episodeSlug) {
     if (!currentMovie || !currentMovie.episodes || currentMovie.episodes.length === 0) return;
-    const serverData = currentMovie.episodes[0].server_data;
+    
+    // Reset server index to 0 when changing episode manually
+    currentServerIndex = 0;
+    
+    const serverData = currentMovie.episodes[currentServerIndex]?.server_data || currentMovie.episodes[0].server_data;
     const foundEp = serverData.find(ep => ep.slug === episodeSlug);
     if (!foundEp) return;
 
@@ -1573,7 +1628,7 @@ window.changeEpisode = function(episodeSlug) {
 // Update under-player navigation skip buttons (opacity, clickability)
 function updateEpisodeNavButtons() {
     if (!currentMovie || !currentMovie.episodes || currentMovie.episodes.length === 0 || !currentEpisode) return;
-    const serverData = currentMovie.episodes[0].server_data;
+    const serverData = currentMovie.episodes[currentServerIndex]?.server_data || currentMovie.episodes[0].server_data;
     const currentIndex = serverData.findIndex(ep => ep.slug === currentEpisode.slug);
     
     const prevBtn = document.getElementById('btn-prev-episode');
@@ -1603,7 +1658,7 @@ function updateEpisodeNavButtons() {
 // Navigation skip buttons action
 function playPreviousEpisode() {
     if (!currentMovie || !currentMovie.episodes || currentMovie.episodes.length === 0 || !currentEpisode) return;
-    const serverData = currentMovie.episodes[0].server_data;
+    const serverData = currentMovie.episodes[currentServerIndex]?.server_data || currentMovie.episodes[0].server_data;
     const currentIndex = serverData.findIndex(ep => ep.slug === currentEpisode.slug);
     if (currentIndex > 0) {
         window.changeEpisode(serverData[currentIndex - 1].slug);
@@ -1612,7 +1667,7 @@ function playPreviousEpisode() {
 
 function playNextEpisode() {
     if (!currentMovie || !currentMovie.episodes || currentMovie.episodes.length === 0 || !currentEpisode) return;
-    const serverData = currentMovie.episodes[0].server_data;
+    const serverData = currentMovie.episodes[currentServerIndex]?.server_data || currentMovie.episodes[0].server_data;
     const currentIndex = serverData.findIndex(ep => ep.slug === currentEpisode.slug);
     if (currentIndex < serverData.length - 1) {
         window.changeEpisode(serverData[currentIndex + 1].slug);
@@ -1622,7 +1677,7 @@ function playNextEpisode() {
 // Autoplay next episode with a gorgeous Netflix-style countdown overlay
 function autoPlayNext() {
     if (!currentMovie || !currentMovie.episodes || currentMovie.episodes.length === 0 || !currentEpisode) return;
-    const serverData = currentMovie.episodes[0].server_data;
+    const serverData = currentMovie.episodes[currentServerIndex]?.server_data || currentMovie.episodes[0].server_data;
     const currentIndex = serverData.findIndex(ep => ep.slug === currentEpisode.slug);
     
     // If it's the last episode, do nothing

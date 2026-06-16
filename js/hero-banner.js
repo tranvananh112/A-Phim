@@ -169,6 +169,17 @@ function switchHeroSlide(newIndex, skipThumbnailHighlight, isAutoReturn) {
 
         if (!skipThumbnailHighlight) updateThumbnailActive(newIndex);
 
+        // Update placeholder background immediately
+        const placeholder = document.getElementById('heroPlaceholder') || document.querySelector('.hero-placeholder-mask');
+        if (placeholder && movie) {
+            const rawPlaceholderUrl = movie.poster_url || movie.thumb_url;
+            const optPlaceholderUrl = buildImageUrl(rawPlaceholderUrl, 600);
+            if (optPlaceholderUrl) {
+                placeholder.style.backgroundImage = `url('${optPlaceholderUrl}')`;
+                placeholder.style.opacity = '0.35';
+            }
+        }
+
         // ── Swap ảnh: không chờ load xong, swap và fade in luôn ──
         if (heroImage && optUrl) {
             heroImage.setAttribute('data-current-src', optUrl);
@@ -654,7 +665,17 @@ function renderHeroBannerContent(movie, isInstant) {
     fetchLatestEpisodeCount(movie);
 
     const heroImage = document.getElementById('heroImage');
+    const placeholder = document.getElementById('heroPlaceholder') || document.querySelector('.hero-placeholder-mask');
     if (!heroImage) return;
+
+    if (placeholder && movie) {
+        const rawPlaceholderUrl = movie.poster_url || movie.thumb_url;
+        const optPlaceholderUrl = buildImageUrl(rawPlaceholderUrl, 600);
+        if (optPlaceholderUrl) {
+            placeholder.style.backgroundImage = `url('${optPlaceholderUrl}')`;
+            placeholder.style.opacity = '0.35';
+        }
+    }
 
     const isMobile = window.innerWidth < 768;
     const rawUrl = movie.poster_url || movie.thumb_url;
@@ -666,13 +687,17 @@ function renderHeroBannerContent(movie, isInstant) {
     if (isInstant) {
         // Cache hit → gán src ngay, fade in khi load
         heroImage.src = optUrl;
-        heroImage.onload = () => showHeroImage();
-        // Nếu ảnh đã cache hoàn toàn → onload không fire, check complete
-        if (heroImage.complete && heroImage.naturalWidth > 0) showHeroImage();
+        showHeroImage();
     } else {
-        // Bắt đầu load ảnh ngay, opacity thấp cho đến khi load xong
-        heroImage.style.opacity = '0.12';
-        heroImage.src = optUrl; // gán src ngay, không chờ tmp
+        // Bắt đầu load ảnh ngay, hiện với độ mờ nhẹ lập tức để browser render dần
+        heroImage.style.opacity = '0.85';
+        heroImage.src = optUrl; 
+        
+        // Ẩn placeholder mờ ngay sau 150ms để tối ưu tốc độ nhận diện
+        setTimeout(() => {
+            showHeroImage();
+        }, 150);
+        
         heroImage.onload = () => showHeroImage();
         if (heroImage.complete && heroImage.naturalWidth > 0) showHeroImage();
     }
@@ -688,9 +713,14 @@ function showHeroText() {
 
 function showHeroImage() {
     const heroImage = document.getElementById('heroImage');
-    const skeleton = document.getElementById('heroImageSkeleton');
-    if (heroImage) heroImage.style.opacity = '1';
-    if (skeleton) setTimeout(() => { skeleton.style.display = 'none'; }, 300);
+    const placeholder = document.getElementById('heroPlaceholder') || document.querySelector('.hero-placeholder-mask');
+    if (heroImage) {
+        heroImage.style.opacity = '1';
+    }
+    if (placeholder) {
+        placeholder.style.opacity = '0';
+        placeholder.style.transition = 'opacity 0.25s ease-out';
+    }
 }
 
 // ================================================================
