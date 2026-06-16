@@ -1,39 +1,31 @@
-﻿// Splash Screen Loader - Show beautiful loading screen while page loads
+// Splash Screen Loader - Show beautiful loading screen while page loads
 (function () {
     'use strict';
 
-    // Skip loader entirely on subsequent page loads in the same session to optimize navigation speed
-    const hasLoadedThisSession = sessionStorage.getItem('splashLoaded');
-    if (hasLoadedThisSession) {
-        if (document.body) {
-            document.body.classList.add('splash-ready');
-        } else {
-            const observer = new MutationObserver((mutations, obs) => {
-                if (document.body) {
-                    document.body.classList.add('splash-ready');
-                    obs.disconnect();
-                }
-            });
-            observer.observe(document.documentElement, {
-                childList: true,
-                subtree: true
-            });
-            document.addEventListener('DOMContentLoaded', function () {
-                document.body.classList.add('splash-ready');
-                observer.disconnect();
-            });
-        }
-        return;
-    }
+    // Skip loader optimization removed per user request: preloader should show on every F5
+    // const hasLoadedThisSession = sessionStorage.getItem('splashLoaded');
 
     // Create splash screen HTML
     const splashHTML = `
+        <style>
+            @media (max-width: 768px) {
+                .splash-background-image {
+                    height: 50vh !important;
+                    background-size: cover !important;
+                    background-position: top !important;
+                    background-repeat: no-repeat !important;
+                    background-color: #000;
+                    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.75) 50%, rgba(0, 0, 0, 0) 100%) !important;
+                    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.75) 50%, rgba(0, 0, 0, 0) 100%) !important;
+                }
+            }
+        </style>
         <div id="splashLoader">
-            <!-- Background collage of posters -->
-            <div class="splash-background-collage"></div>
+            <!-- Background Warner Media Image -->
+            <div class="splash-background-image" style="position: absolute; inset: 0; width: 100%; height: 100%; background-image: url('https://beam-images.warnermediacdn.com/2026-05/image_3.png?host=wbd-dotcom-drupal-prd-us-east-1.s3.amazonaws.com&w=2000'); background-size: cover; background-position: center; opacity: 1;"></div>
             
-            <!-- Dark premium overlay -->
-            <div class="splash-background-overlay"></div>
+            <!-- Dark gradient covering more area and making the whole screen darker -->
+            <div class="splash-bottom-gradient" style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.85) 45%, #000000 75%, #000000 100%); z-index: 2;"></div>
 
             <!-- Particles background -->
             <div class="splash-particles" style="z-index: 3;"></div>
@@ -181,79 +173,7 @@
     // Set up a low-overhead interval to poll resource progress during load
     const progressInterval = setInterval(updateProgress, 150);
 
-    // Default verified movie posters from Ophim CDN
-    const defaultPosters = [
-        'https://img.ophim.live/uploads/movies/trang-trai-dutton-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/biet-doi-tu-bao-short-drama-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/ngoc-trai-trong-suong-mu-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/k-everything-a-cnn-original-series-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/pinecone-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/cuoc-chien-sinh-tu-ii-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/troi-xanh-tren-may-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/luong-tran-my-cam-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/tuong-tu-ky-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/ga-vao-nha-quyen-quy-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/nguoi-giu-den-o-chua-ky-cot-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/tien-kiem-ky-hiep-truyen-3-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/bon-huyen-nha-la-phuc-tinh-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/luyen-khi-muoi-van-nam-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/van-gioi-doc-ton-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/vo-than-chua-te-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/tuyet-the-chien-hon-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/tinh-yeu-phan-boi-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/xuong-phep-thuat-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/che-nhao-kevin-hart-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/cay-co-thu-dieu-ky-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/dacoit-thumb.jpg',
-        'https://img.ophim.live/uploads/movies/mot-minh-giua-bien-dem-thumb.jpg'
-    ];
-
-    // Build the collage
-    function buildCollage() {
-        const collageContainer = document.querySelector('.splash-background-collage');
-        if (!collageContainer) return;
-
-        // Populate with default high-quality posters immediately
-        const totalPostersCount = 54; // 9 columns x 6 rows to fill the grid beautifully
-        for (let i = 0; i < totalPostersCount; i++) {
-            const posterDiv = document.createElement('div');
-            posterDiv.className = 'splash-poster-item';
-            
-            const defaultUrl = defaultPosters[i % defaultPosters.length];
-            const optimizedUrl = `https://wsrv.nl/?url=${encodeURIComponent(defaultUrl)}&w=150&h=225&fit=cover&q=50`;
-            
-            posterDiv.style.backgroundImage = `url('${optimizedUrl}')`;
-            collageContainer.appendChild(posterDiv);
-            
-            // Staggered fade in animation (speed up stagger to 15ms for more elements)
-            setTimeout(() => {
-                posterDiv.style.opacity = '1';
-            }, i * 15);
-        }
-
-        // Fetch dynamic posters from API and update in background
-        originalFetch('https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=1')
-            .then(res => res.json())
-            .then(data => {
-                if (data && data.data && data.data.items && data.data.items.length > 0) {
-                    const posterDivs = collageContainer.querySelectorAll('.splash-poster-item');
-                    data.data.items.slice(0, posterDivs.length).forEach((item, idx) => {
-                        if (posterDivs[idx]) {
-                            const posterUrl = `https://img.ophim.live/uploads/movies/${item.thumb_url}`;
-                            // Optimize image loading using wsrv.nl
-                            const optimizedUrl = `https://wsrv.nl/?url=${encodeURIComponent(posterUrl)}&w=150&h=225&fit=cover&q=50`;
-                            
-                            const img = new Image();
-                            img.onload = function() {
-                                posterDivs[idx].style.backgroundImage = `url('${optimizedUrl}')`;
-                            };
-                            img.src = optimizedUrl;
-                        }
-                    });
-                }
-            })
-            .catch(err => console.log('Collage dynamic update skipped:', err));
-    }
+    // Removed buildCollage() per user request
 
     // Build floating star particles dynamically
     function buildParticles() {
@@ -355,9 +275,8 @@
         }
     }
 
-    // Initialize collage, particles & base progress
+    // Initialize particles & base progress
     function initSplashEffects() {
-        buildCollage();
         buildParticles();
     }
 

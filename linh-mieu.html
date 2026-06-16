@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html class="dark" lang="vi">
 
 <head>
@@ -996,13 +996,25 @@
     <main class="relative h-screen w-full overflow-hidden">
         <!-- Background Image with Loading State -->
         <div class="absolute inset-0 z-0 bg-background-dark">
+            <!-- Dedicated Placeholder (Always Dimmed and Blurred) -->
+            <link rel="preload" as="image" href="https://beam-images.warnermediacdn.com/2026-05/image_3.png?host=wbd-dotcom-drupal-prd-us-east-1.s3.amazonaws.com&w=2000">
+            <style>
+                @media (max-width: 768px) {
+                    .hero-placeholder-mask {
+                        height: 56.25vw !important;
+                        -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0) 100%) !important;
+                        mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0) 100%) !important;
+                        background-size: cover !important;
+                    }
+                }
+            </style>
+            <div class="absolute inset-0 w-full h-full bg-contain bg-top bg-no-repeat md:bg-cover md:bg-center scale-105 opacity-30 blur-sm z-0 hero-placeholder-mask" style="background-image: url('https://beam-images.warnermediacdn.com/2026-05/image_3.png?host=wbd-dotcom-drupal-prd-us-east-1.s3.amazonaws.com&w=2000');"></div>
+            
+            <!-- The Real Hero Image (Starts Hidden, becomes 100% bright when loaded) -->
             <img id="heroImage" alt="Hero Movie Background"
-                class="w-full h-full object-cover object-center scale-105 opacity-0 transition-opacity duration-700"
-                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" loading="eager"
+                class="absolute inset-0 w-full h-full object-cover object-center scale-105 opacity-0 transition-opacity duration-700 z-10"
+                src="https://beam-images.warnermediacdn.com/2026-05/image_3.png?host=wbd-dotcom-drupal-prd-us-east-1.s3.amazonaws.com&w=2000" loading="eager"
                 fetchpriority="high" />
-            <!-- Loading Skeleton -->
-            <div id="heroImageSkeleton"
-                class="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-900 to-black animate-pulse"></div>
 
             <!-- VIGNETTE VÀ GRADIENT ĐỂ TẠO CHIỀU SÂU (Đã gỡ bỏ toàn bộ để sáng nhất) -->
             <!-- Giữ lại duy nhất bóng đen rất nhỏ ở sát đáy để chữ dễ đọc -->

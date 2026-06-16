@@ -21,31 +21,28 @@ class ImageOptimizer {
 
         // Use wsrv.nl proxy for advanced compression and resizing
         // This dramatically reduces image size from MBs to KBs
-        if (url.includes('ophim.live')) {
-            // Cho phép Desktop dùng wsrv.nl luôn để test tốc độ load siêu tốc
-            // if (!this.isMobile) {
-            //     return url;
-            // }
-            
+        if (url.includes('ophim') || url.includes('opstream')) {
             let targetWidth = width;
             let targetQuality = quality;
 
             if (!this.isMobile) {
-                // Trên Desktop: GIỮ NGUYÊN ĐỘ NÉT 100% VÀ KÍCH THƯỚC GỐC, CHỈ ĐỔI ĐUÔI WEBP VÀ CACHE CLOUDFLARE
-                targetQuality = 100;
+                // Trên Desktop: Dùng quality 85-90 là cực nét rồi, tránh 100% tốn dung lượng
+                targetQuality = Math.min(quality || 85, 90);
+                if (targetQuality < 80) targetQuality = 85;
                 // Nếu width gốc nhỏ hơn 800 thì ép lên 800 để khỏi vỡ hạt trên màn hình to
                 targetWidth = Math.max(width, 800);
                 if (isPriority) {
                     targetWidth = Math.max(width, 1920); // Banner chính thì chơi nguyên con HD
+                    targetQuality = 90;
                 }
             } else {
                 // Trên Mobile: Nén mạnh hơn để load nhanh
                 if (isPriority) {
                     targetWidth = Math.max(width, 1200); 
-                    targetQuality = Math.max(quality, 90); 
+                    targetQuality = Math.max(quality || 90, 90); 
                 } else {
                     targetWidth = Math.min(width, 600);
-                    targetQuality = Math.min(quality, 75);
+                    targetQuality = Math.min(quality || 75, 75);
                 }
             }
             
@@ -69,7 +66,7 @@ class ImageOptimizer {
         }
 
         // Desktop: không cần progressive, load thẳng full
-        if (!this.isMobile || !url.includes('ophim.live')) {
+        if (!this.isMobile || (!url.includes('ophim') && !url.includes('opstream'))) {
             return { placeholder: null, full: url };
         }
 
