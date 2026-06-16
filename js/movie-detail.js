@@ -1,41 +1,16 @@
 // Movie Detail Page Script
 let currentMovie = null;
 
-const urlParams = new URLSearchParams(window.location.search);
-const slug = urlParams.get('slug');
-let movieDetailPromise = null;
-
-if (slug) {
-    // Reuse parallel fetch initiated in `<head>` if available, fallback to default API helper
-    if (window.movieDetailFetchPromise) {
-        movieDetailPromise = window.movieDetailFetchPromise;
-    } else {
-        movieDetailPromise = movieAPI.getMovieDetail(slug);
-    }
-} else {
-    window.location.href = 'index.html';
-}
-
 document.addEventListener('DOMContentLoaded', async function () {
-    if (!slug) return;
+    const urlParams = new URLSearchParams(window.location.search);
+    const slug = urlParams.get('slug');
 
-    try {
-        const response = await movieDetailPromise;
-
-        if (response && response.status === 'success' && response.data) {
-            currentMovie = response.data.item;
-            renderMovieDetail(currentMovie);
-            renderEpisodes(currentMovie.episodes);
-            setupFavoriteButton();
-            setupRatingSystem();
-            loadRatingsAndComments(slug);
-        } else {
-            showError('Không thể tải thông tin phim');
-        }
-    } catch (error) {
-        console.error('Error loading movie detail:', error);
-        showError('Đã xảy ra lỗi khi tải thông tin phim');
+    if (!slug) {
+        window.location.href = 'index.html';
+        return;
     }
+
+    await loadMovieDetail(slug);
 
     // 🎬 Initialize Lottie for Watch Now button
     if (typeof lottie !== 'undefined' && document.getElementById('play-btn-lottie')) {
@@ -55,6 +30,27 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 });
 
+// Load movie detail from API
+async function loadMovieDetail(slug) {
+    try {
+        const response = await movieAPI.getMovieDetail(slug);
+
+        if (response && response.status === 'success' && response.data) {
+            currentMovie = response.data.item;
+            renderMovieDetail(currentMovie);
+            renderEpisodes(currentMovie.episodes);
+            setupFavoriteButton();
+            setupRatingSystem();
+            loadRatingsAndComments(slug);
+        } else {
+            showError('Không thể tải thông tin phim');
+        }
+    } catch (error) {
+        console.error('Error loading movie detail:', error);
+        showError('Đã xảy ra lỗi khi tải thông tin phim');
+    }
+}
+
 // Render movie detail
 function renderMovieDetail(movie) {
     // 🚀 INJECT DYNAMIC SEO - Overrides meta, title & schema
@@ -67,16 +63,14 @@ function renderMovieDetail(movie) {
     // Update poster
     const posterImg = document.querySelector('.aspect-\\[2\\/3\\] img');
     if (posterImg) {
-        // Reduced width (400) and priority (false) to speed up loading significantly
-        posterImg.src = movieAPI.getImageURL(movie.thumb_url || movie.poster_url, 400, 80, false);
+        posterImg.src = movieAPI.getImageURL(movie.thumb_url || movie.poster_url, 600, 85, true);
         posterImg.alt = `Xem Phim ${movie.name} (${movie.year}) Full HD Vietsub tại APhim`;
     }
 
     // Update background
     const bgImg = document.querySelector('.absolute.top-0 img');
     if (bgImg) {
-        // Reduced width (400) and quality (60) since the background has blur-md, loading instantly
-        bgImg.src = movieAPI.getImageURL(movie.poster_url || movie.thumb_url, 400, 60, false);
+        bgImg.src = movieAPI.getImageURL(movie.poster_url || movie.thumb_url, 1200, 90, true);
     }
 
     // Update title

@@ -3,114 +3,37 @@
 
 <head>
     <script>
-        (function() {
-            var urlParams = new URLSearchParams(window.location.search);
-            var slug = urlParams.get('slug');
-            if (!slug) {
-                window.location.replace('/');
-                return;
-            }
-            
-            // Blocked Slugs check
-            var blockedSlugs = [
-                'moi-thu-la-loi-co-ay',
-                'thanh-nu-hoan-hao-bi-hon-phu-da-va-ban-qua-nuoc-khac',
-                'toi-tro-thanh-manh-nhat-voi-ky-nang-trang-thai-va-huy-diet-tat-ca',
-                'sakuna-nu-than-thu-hoach-hu-hong',
-                'toi-roi-to-doi-hang-a-de-giup-hoc-tro-cu-tien-sau-vao-ham-nguc',
-                'thang-cap-mot-minh-phan-2',
-                'nhat-ky-du-hanh-di-gioi-cua-nha-thu-thap-nguyen-lieu',
-                'anh-hung-bat-tinh-va-cong-chua-am-sat',
-                'tro-thanh-giao-vien-tai-truong-hoc-quai-vat',
-                'vo-toi-la-hoc-sinh-tieu-hoc'
-            ];
-            
-            // Check dynamic blocked list from localStorage too
-            try {
-                var hiddenMoviesList = JSON.parse(localStorage.getItem('cinestream_hidden_movies') || '[]');
-                if (hiddenMoviesList && hiddenMoviesList.indexOf(slug) !== -1) {
-                    window.location.replace('/');
-                    return;
-                }
-            } catch(e) {}
-
-            if (blockedSlugs.indexOf(slug) !== -1) {
-                window.location.replace('/');
-                return;
-            }
-
-            // SEO: Inject Canonical immediately
-            var link = document.createElement('link');
-            link.rel = 'canonical';
-            link.href = 'https://aphim.io.vn/movie-detail.html?slug=' + encodeURIComponent(slug);
-            document.head.appendChild(link);
-
-            // Fetch dynamic API url
-            var ophimUrl = 'https://ophim1.com/v1/api';
-            try {
-                var cachedConfig = localStorage.getItem('cinestream_public_settings');
-                if (cachedConfig) {
-                    var parsed = JSON.parse(cachedConfig);
-                    if (parsed && parsed.apiBase) ophimUrl = parsed.apiBase;
-                }
-            } catch(e) {}
-
-            // Immediate Parallel Fetch
-            window.movieDetailFetchPromise = fetch(ophimUrl + '/phim/' + slug)
-                .then(function(res) {
-                    if (!res.ok) throw new Error('Failed to fetch');
-                    return res.json();
-                })
-                .catch(function(err) {
-                    console.error('Immediate API fetch failed:', err);
-                    return null;
-                });
-
-            // Immediate Image Prefetching (runs as soon as API returns)
-            window.movieDetailFetchPromise.then(function(response) {
-                if (response && response.status === 'success' && response.data && response.data.item) {
-                    var movie = response.data.item;
-                    var imagePath = movie.thumb_url || movie.poster_url;
-                    if (imagePath) {
-                        var fullUrl = imagePath;
-                        if (!imagePath.startsWith('http')) {
-                            fullUrl = 'https://img.ophim.live/uploads/movies/' + imagePath;
-                        }
-                        
-                        var isMobile = window.innerWidth <= 768;
-                        var targetWidth = 400;
-                        var targetQuality = 80;
-                        if (!isMobile) {
-                            targetQuality = 85;
-                            targetWidth = 800;
-                        } else {
-                            targetWidth = 400;
-                            targetQuality = 75;
-                        }
-                        
-                        var optimizedUrl = 'https://wsrv.nl/?url=' + encodeURIComponent(fullUrl) + '&w=' + targetWidth + '&q=' + targetQuality + '&output=webp&il';
-                        
-                        // Prefetch poster
-                        var img = new Image();
-                        img.src = optimizedUrl;
-                        
-                        // Prefetch backdrop ambient glow image (scaled-down 400px width is perfect)
-                        var bgPath = movie.poster_url || movie.thumb_url;
-                        if (bgPath) {
-                            var bgFullUrl = bgPath;
-                            if (!bgPath.startsWith('http')) {
-                                bgFullUrl = 'https://img.ophim.live/uploads/movies/' + bgPath;
-                            }
-                            var bgOptimizedUrl = 'https://wsrv.nl/?url=' + encodeURIComponent(bgFullUrl) + '&w=400&q=60&output=webp&il';
-                            var bgImg = new Image();
-                            bgImg.src = bgOptimizedUrl;
-                        }
-                    }
-                }
-            }).catch(function() {});
-        })();
+        const urlParams = new URLSearchParams(window.location.search);
+        const blockedSlugs = [
+            'moi-thu-la-loi-co-ay',
+            'thanh-nu-hoan-hao-bi-hon-phu-da-va-ban-qua-nuoc-khac',
+            'toi-tro-thanh-manh-nhat-voi-ky-nang-trang-thai-va-huy-diet-tat-ca',
+            'sakuna-nu-than-thu-hoach-hu-hong',
+            'toi-roi-to-doi-hang-a-de-giup-hoc-tro-cu-tien-sau-vao-ham-nguc',
+            'thang-cap-mot-minh-phan-2',
+            'nhat-ky-du-hanh-di-gioi-cua-nha-thu-thap-nguyen-lieu',
+            'anh-hung-bat-tinh-va-cong-chua-am-sat',
+            'tro-thanh-giao-vien-tai-truong-hoc-quai-vat',
+            'vo-toi-la-hoc-sinh-tieu-hoc'
+        ];
+        if (blockedSlugs.includes(urlParams.get('slug'))) {
+            window.location.replace('/');
+        }
     </script>
     <meta charset="UTF-8">
+    <!-- ✅ SEO: Canonical động theo slug phim -->
+    <script>
+        (function() {
+            var p = new URLSearchParams(window.location.search);
+            var slug = p.get('slug');
+            var link = document.createElement('link');
+            link.rel = 'canonical';
+            link.href = slug
+                ? 'https://aphim.io.vn/movie-detail.html?slug=' + encodeURIComponent(slug)
+                : 'https://aphim.io.vn/movie-detail.html';
+            document.head.appendChild(link);
+        })();
+    </script>
     <meta name="description" content="APhim - Website xem phim online Full HD miễn phí, cập nhật phim mới nhất 2026, Phim Vietsub, Thuyết Minh, Phim Lồng Tiếng chất lượng cao." />
     <meta property="og:description" content="APhim - Website xem phim online Full HD miễn phí, cập nhật phim mới nhất 2026, Phim Vietsub, Thuyết Minh, Phim Lồng Tiếng chất lượng cao." />
     <meta property="twitter:description" content="APhim - Website xem phim online Full HD miễn phí, cập nhật phim mới nhất 2026, Phim Vietsub, Thuyết Minh, Phim Lồng Tiếng chất lượng cao." />
@@ -485,8 +408,8 @@
     <main class="relative pt-0 min-h-screen pb-20 movie-content-zone">
         <div class="absolute top-0 left-0 w-full h-[100vh] z-0 overflow-hidden">
             <div class="relative w-full h-full bg-[#0d0f1a]">
-                <img alt="Background" class="w-full h-full object-cover opacity-30 blur-md scale-105"
-                    src="https://beam-images.warnermediacdn.com/2026-05/image_3.png?host=wbd-dotcom-drupal-prd-us-east-1.s3.amazonaws.com&w=2000" fetchpriority="high" />
+                <img alt="Background" class="w-full h-full object-cover opacity-100"
+                    src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" fetchpriority="high" />
                 <div class="absolute inset-0 backdrop-gradient"></div>
             </div>
         </div>
@@ -505,8 +428,8 @@
                     <div
                         class="relative aspect-[2/3] rounded-xl overflow-hidden shadow-2xl shadow-black/50 group border border-white/5 bg-[#1a1c29]">
                         <img alt="Poster"
-                            class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 opacity-0 transition-opacity duration-300"
-                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" fetchpriority="high" onload="this.classList.remove('opacity-0')" />
+                            class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" fetchpriority="high" />
                         <div
                             class="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded shadow-lg uppercase tracking-wider">
                             Full HD</div>
