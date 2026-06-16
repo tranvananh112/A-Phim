@@ -22,22 +22,31 @@ class ImageOptimizer {
         // Use wsrv.nl proxy for advanced compression and resizing
         // This dramatically reduces image size from MBs to KBs
         if (url.includes('ophim.live')) {
-            // Trên desktop (viewport lớn), bỏ qua Proxy, load ảnh gốc để đảm bảo độ sắc nét tốt nhất
-            if (!this.isMobile) {
-                return url;
-            }
+            // Cho phép Desktop dùng wsrv.nl luôn để test tốc độ load siêu tốc
+            // if (!this.isMobile) {
+            //     return url;
+            // }
             
             let targetWidth = width;
             let targetQuality = quality;
 
-            if (isPriority) {
-                // Cấu hình riêng cho banner chính / hình ảnh lớn trên Mobile để đảm bảo độ nét
-                targetWidth = Math.max(width, 1200); // Ưu tiên banner to, sắc nét trên mobile
-                targetQuality = Math.max(quality, 90); // Quality ít nhất là 90
+            if (!this.isMobile) {
+                // Trên Desktop: GIỮ NGUYÊN ĐỘ NÉT 100% VÀ KÍCH THƯỚC GỐC, CHỈ ĐỔI ĐUÔI WEBP VÀ CACHE CLOUDFLARE
+                targetQuality = 100;
+                // Nếu width gốc nhỏ hơn 800 thì ép lên 800 để khỏi vỡ hạt trên màn hình to
+                targetWidth = Math.max(width, 800);
+                if (isPriority) {
+                    targetWidth = Math.max(width, 1920); // Banner chính thì chơi nguyên con HD
+                }
             } else {
-                // Cấu hình mặc định cho thumbnail để tiết kiệm data dung lượng
-                targetWidth = Math.min(width, 600);
-                targetQuality = Math.min(quality, 75);
+                // Trên Mobile: Nén mạnh hơn để load nhanh
+                if (isPriority) {
+                    targetWidth = Math.max(width, 1200); 
+                    targetQuality = Math.max(quality, 90); 
+                } else {
+                    targetWidth = Math.min(width, 600);
+                    targetQuality = Math.min(quality, 75);
+                }
             }
             
             // Format: https://wsrv.nl/?url=URL&w=WIDTH&q=QUALITY&output=webp
