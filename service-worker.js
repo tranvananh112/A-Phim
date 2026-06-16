@@ -8,7 +8,7 @@
 //   API OPhim           → Stale-While-Revalidate
 // =====================================================
 
-const CACHE_VERSION  = 'aphim-v16';
+const CACHE_VERSION  = 'aphim-v17';
 const FONT_CACHE     = 'aphim-fonts-v1';
 const IMAGE_CACHE    = 'aphim-images-v13';
 const API_CACHE      = 'aphim-api-v5';
@@ -102,6 +102,49 @@ self.addEventListener('fetch', event => {
 // ─────────────────────────────────────────────────────
 
 /** Network First: thử mạng → cache nếu offline */
+/** Offline/Network Failure helper response */
+function getOfflineResponse(request) {
+    const isHtml = request.mode === 'navigate' || 
+                   (request.headers.get('accept') && request.headers.get('accept').includes('text/html'));
+
+    if (isHtml) {
+        return new Response(
+            `<!DOCTYPE html>
+            <html lang="vi">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Mất kết nối mạng - APhim</title>
+                <style>
+                    body { background: #0d0f1a; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
+                    .container { padding: 30px; max-width: 400px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+                    .icon { font-size: 48px; margin-bottom: 16px; }
+                    h1 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #fcd576; }
+                    p { color: #9ca3af; font-size: 14px; line-height: 1.5; margin-bottom: 24px; }
+                    button { background: #ef4444; color: #fff; border: none; padding: 12px 24px; border-radius: 9999px; font-size: 14px; cursor: pointer; font-weight: bold; transition: all 0.2s; box-shadow: 0 4px 12px rgba(239,68,68,0.3); }
+                    button:hover { background: #dc2626; transform: translateY(-1px); }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="icon">📡</div>
+                    <h1>Mất kết nối mạng</h1>
+                    <p>Không thể tải trang lúc này do sự cố kết nối. Vui lòng kiểm tra lại mạng internet của bạn và thử lại.</p>
+                    <button onclick="window.location.reload()">Thử lại</button>
+                </div>
+            </body>
+            </html>`,
+            { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+        );
+    }
+
+    return new Response(
+        JSON.stringify({ error: 'Network failure' }),
+        { status: 503, headers: { 'Content-Type': 'application/json' } }
+    );
+}
+
+/** Network First: thử mạng → cache nếu offline */
 async function networkFirst(request, cacheName) {
     const cache = await caches.open(cacheName);
     try {
@@ -112,7 +155,7 @@ async function networkFirst(request, cacheName) {
         return response;
     } catch {
         const cached = await cache.match(request);
-        return cached || new Response('Offline', { status: 503 });
+        return cached || getOfflineResponse(request);
     }
 }
 
@@ -126,7 +169,7 @@ async function cacheFirst(request, cacheName) {
         if (response.ok) cache.put(request, response.clone());
         return response;
     } catch {
-        return new Response('Offline', { status: 503 });
+        return getOfflineResponse(request);
     }
 }
 
@@ -140,10 +183,7 @@ async function staleWhileRevalidate(request, cacheName) {
         return response;
     }).catch(() => null);
 
-    return cached || await networkFetch || new Response(
-        JSON.stringify({ error: 'Network failure' }),
-        { status: 503, headers: { 'Content-Type': 'application/json' } }
-    );
+    return cached || await networkFetch || getOfflineResponse(request);
 }
 
 // ── Nhận lệnh từ client ───────────────────────────────
