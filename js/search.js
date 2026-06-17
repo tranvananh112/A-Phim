@@ -264,10 +264,10 @@ async function fetchWithCombinedFilters(page) {
     if (country)  params.append('country',  country);
     if (year)     params.append('year',     year);
 
-    const url = `https://ophim1.com/v1/api/danh-sach/${listType}?${params.toString()}`;
-    console.log('Combined filter URL:', url);
+    const endpoint = `/danh-sach/${listType}?${params.toString()}`;
+    console.log('Combined filter endpoint:', endpoint);
 
-    const response = await fetch(url, { headers: { 'accept': 'application/json' } });
+    const response = await movieAPI.fetchWithFallback(endpoint, { headers: { 'accept': 'application/json' } });
     return response.json();
 }
 

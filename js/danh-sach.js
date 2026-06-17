@@ -73,12 +73,11 @@ async function loadMoviesList(listSlug, page = 1) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     try {
-        // Use correct API endpoint: /v1/api/danh-sach/[slug]
-        // Load 40 movies per page (8 columns x 5 rows)
-        const apiUrl = `https://ophim1.com/v1/api/danh-sach/${listSlug}?page=${page}&limit=40`;
-        console.log(`Fetching: ${apiUrl}`);
+        // Use movieAPI.fetchWithFallback wrapper to bypass ISP blocks and handle mirrors automatically
+        const endpoint = `/danh-sach/${listSlug}?page=${page}&limit=40`;
+        console.log('Fetching via proxy/mirrors:', endpoint);
 
-        const response = await fetch(apiUrl, {
+        const response = await movieAPI.fetchWithFallback(endpoint, {
             method: 'GET',
             headers: {
                 'accept': 'application/json'

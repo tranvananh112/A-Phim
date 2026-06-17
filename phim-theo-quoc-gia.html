@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 
 <head>
@@ -599,11 +599,11 @@
 
                 console.log(`Loading ${countryName} movies - Page ${page}...`);
 
-                // Load 40 movies per page (8 columns x 5 rows)
-                const url = `https://ophim1.com/v1/api/quoc-gia/${countrySlug}?page=${page}&limit=40`;
-                console.log('Fetching from:', url);
+                // Use movieAPI.fetchWithFallback wrapper to bypass ISP blocks and handle mirrors automatically
+                const endpoint = `/quoc-gia/${countrySlug}?page=${page}&limit=40`;
+                console.log('Fetching via proxy/mirrors:', endpoint);
 
-                const response = await fetch(url, {
+                const response = await movieAPI.fetchWithFallback(endpoint, {
                     method: 'GET',
                     headers: { 'accept': 'application/json' }
                 });
