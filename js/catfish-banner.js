@@ -30,7 +30,7 @@
         banners: [
             {
                 img: '/ads/catfish/vsbet.gif',
-                url: 'http://vsbet191.com/p/BSYk',
+                url: 'https://vsbet294.com/p/BSYk',
                 label: 'VSBet — Nạp Đầu Nhận 68,888,000đ'
             },
             {
@@ -40,7 +40,7 @@
             },
             {
                 img: '/ads/catfish/colascore.gif',
-                url: 'https://colascore.com/',
+                url: 'https://colascores.com/',
                 label: 'ColaScore — Tỷ Số Bóng Đá Trực Tiếp'
             }
         ]

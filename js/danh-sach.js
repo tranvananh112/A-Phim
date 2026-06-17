@@ -356,8 +356,7 @@ function goToPage(page) {
     window.location.href = `?list=${currentList}&page=${page}`;
 }
 
-// Initialize page
-document.addEventListener('DOMContentLoaded', () => {
+function initMoviesList() {
     const params = getUrlParams();
     const categoriesGrid = document.getElementById('categoriesGrid');
 
@@ -373,7 +372,13 @@ document.addEventListener('DOMContentLoaded', () => {
         pageTitle.textContent = 'Danh Sách Phim';
         pageSubtitle.textContent = 'Khám phá phim ảnh từ 13 loại phim';
     }
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMoviesList);
+} else {
+    initMoviesList();
+}
 
 // Re-render when hidden movies are synced from backend to ensure badges appear correctly
 window.addEventListener('hiddenMoviesSynced', () => {

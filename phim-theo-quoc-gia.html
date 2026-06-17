@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 
 <head>
@@ -387,13 +387,13 @@
     <div class="aphim-inline-ad">
         <span class="aphim-inline-ad-label">Quảng cáo</span>
         <div class="aphim-inline-ad-inner">
-            <a class="aphim-inline-ad-item" href="http://vsbet191.com/p/BSYk" target="_blank" rel="noopener nofollow" aria-label="VSBet">
+            <a class="aphim-inline-ad-item" href="https://vsbet294.com/p/BSYk" target="_blank" rel="noopener nofollow" aria-label="VSBet">
                 <img src="/ads/catfish/vsbet.gif" alt="VSBet" loading="lazy">
             </a>
             <a class="aphim-inline-ad-item" href="https://colatv99.live/" target="_blank" rel="noopener nofollow" aria-label="ColaTV">
                 <img src="/ads/catfish/colatv.gif" alt="ColaTV" loading="lazy">
             </a>
-            <a class="aphim-inline-ad-item" href="https://colascore.com/" target="_blank" rel="noopener nofollow" aria-label="ColaScore">
+            <a class="aphim-inline-ad-item" href="https://colascores.com/" target="_blank" rel="noopener nofollow" aria-label="ColaScore">
                 <img src="/ads/catfish/colascore.gif" alt="ColaScore" loading="lazy">
             </a>
         </div>
@@ -852,8 +852,7 @@
             }
         });
 
-        // Auto load on page load
-        window.addEventListener('DOMContentLoaded', () => {
+        function initCountryMovies() {
             const urlParams = new URLSearchParams(window.location.search);
             const countryParam = urlParams.get('country');
             const pageParam = parseInt(urlParams.get('page')) || 1;
@@ -880,13 +879,19 @@
                 countryTitle.textContent = 'Chọn quốc gia để xem phim';
                 movieCount.textContent = 'Vui lòng chọn quốc gia từ menu "Phim" ở trên';
             }
-        });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initCountryMovies);
+        } else {
+            initCountryMovies();
+        }
     </script>
 
     <!-- Load additional scripts -->
     <script src="js/image-optimization.js?v=13"></script>
-    <script src="js/config.js?v=13"></script>
-    <script src="js/api.js?v=13"></script>
+    <script src="js/config.js?v=15"></script>
+    <script src="js/api.js?v=15"></script>
     <script src="js/auth.js?v=38"></script>
     <script src="js/premium-ad-blocker.js?v=1"></script>
     <script src="js/auth-modal.js?v=13"></script>
