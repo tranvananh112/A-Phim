@@ -17,6 +17,7 @@ const FormData = require('form-data');
 const FB_PAGE_TOKEN   = process.env.FB_PAGE_TOKEN;
 const COMPOSIO_API_KEY = process.env.COMPOSIO_API_KEY;
 const SITE_URL        = 'https://aphim.io.vn';
+const SITE_URL_BACKUP = 'https://aphim1.io.vn';
 const HISTORY_FILE    = 'posted-collections.json';
 const TEMP_IMAGE      = '/tmp/aphim-collage.jpg';
 
@@ -44,6 +45,23 @@ const AFFILIATE_LINKS = [
     'https://vt.tiktok.com/ZS9jj4NNSGVRH-p2PsR/'
 ];
 const getAffiliateLink = () => AFFILIATE_LINKS[Math.floor(Math.random() * AFFILIATE_LINKS.length)];
+
+// ── TikTok Products (Affiliate Product Comments) ──────────────────
+const PRODUCT_TEMPLATES = [
+    "Sản phẩm hot đang có deal hời cực shock 🔥",
+    "Góc săn deal hời giá siêu rẻ cho cả nhà 👇",
+    "Cái này đang hot rần rần trên TikTok luôn ae 😍",
+    "Deal xịn sò giá sinh viên không thể bỏ qua 💎",
+    "Món này tiện lợi lắm ae, đang sale đậm 🚀",
+    "Hàng hot trend chất lượng cao đang giảm giá ✨",
+    "Đồ dùng thông minh siêu hot trên TikTok Shop 🏆",
+    "Deal thơm giá hạt dẻ nhanh tay kẻo hết mng ơi 🍿"
+];
+const getRandomProductComment = () => {
+    const prodUrl = getAffiliateLink();
+    const title = PRODUCT_TEMPLATES[Math.floor(Math.random() * PRODUCT_TEMPLATES.length)];
+    return `${title}\n${prodUrl}`;
+};
 
 /** Bỏ dấu Tiếng Việt → Jimp font ASCII không bị lỗi ? */
 function removeAccents(str) {
@@ -332,12 +350,11 @@ async function generateCaption(movies, details) {
 // ── Generate Auto-Comment with Links ─────────────────────────────────
 function generateComment(movies) {
     const intro = rand(COMMENT_INTRO_LINES);
-    const affiliateUrl = getAffiliateLink(); // Link ẩn xoay vòng
     let links = '';
     movies.forEach((m, i) => {
-        links += `${i+1}\ufe0f\u20e3 ${m.name}\n\ud83d\udd17 ${SITE_URL}/movie-detail.html?slug=${m.slug}\n\n`;
+        links += `${i+1}\ufe0f\u20e3 ${m.name}\n\ud83d\udd17 Link 1: ${SITE_URL}/movie-detail.html?slug=${m.slug}\n\ud83d\udd17 Link 2 (Dự phòng): ${SITE_URL_BACKUP}/movie-detail.html?slug=${m.slug}\n\n`;
     });
-    return `${intro}${links}\ud83d\udccc Xem thêm hàng nghìn phím miễn phí tại: ${SITE_URL}\n${affiliateUrl}`;
+    return `${intro}${links}\ud83d\udccc Xem thêm hàng nghìn phim miễn phí tại: ${SITE_URL}\n👉 Dự phòng: ${SITE_URL_BACKUP}`;
 }
 
 // ── Get Facebook Token ────────────────────────────────────────────
@@ -405,14 +422,21 @@ async function postToFacebook(imagePath, caption, movies) {
 
     // Auto-comment with links
     if (postId) {
-        console.log('💬 Adding link comment...');
+        console.log('💬 Adding link comments...');
         await delay(4000);
+        
         const commentText = generateComment(movies);
-        await axios.post(`https://graph.facebook.com/v19.0/${postId}/comments`, {
-            message: commentText,
-            access_token: token
-        });
-        console.log('✅ Comment added!');
+        const productComment = getRandomProductComment();
+        const extraComments = Math.random() < 0.5 ? [commentText, productComment] : [productComment, commentText];
+
+        for (const msg of extraComments) {
+            await axios.post(`https://graph.facebook.com/v19.0/${postId}/comments`, {
+                message: msg,
+                access_token: token
+            });
+            await delay(2000);
+        }
+        console.log('✅ Comments added!');
     }
 
     return postId;

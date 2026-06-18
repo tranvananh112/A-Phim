@@ -139,6 +139,23 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
     ];
     const getAffiliateLink = () => AFFILIATE_LINKS[Math.floor(Math.random() * AFFILIATE_LINKS.length)];
 
+    // ── TikTok Products (Affiliate Product Comments) ──────────────────
+    const PRODUCT_TEMPLATES = [
+        "Sản phẩm hot đang có deal hời cực shock 🔥",
+        "Góc săn deal hời giá siêu rẻ cho cả nhà 👇",
+        "Cái này đang hot rần rần trên TikTok luôn ae 😍",
+        "Deal xịn sò giá sinh viên không thể bỏ qua 💎",
+        "Món này tiện lợi lắm ae, đang sale đậm 🚀",
+        "Hàng hot trend chất lượng cao đang giảm giá ✨",
+        "Đồ dùng thông minh siêu hot trên TikTok Shop 🏆",
+        "Deal thơm giá hạt dẻ nhanh tay kẻo hết mng ơi 🍿"
+    ];
+    const getRandomProductComment = () => {
+        const prodUrl = getAffiliateLink();
+        const title = PRODUCT_TEMPLATES[Math.floor(Math.random() * PRODUCT_TEMPLATES.length)];
+        return `${title}\n${prodUrl}`;
+    };
+
     // 4. Process and post new movies
     for (const movie of newMovies) {
         const slug = movie.slug;
@@ -155,6 +172,7 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
             const name = mDetail.name || mDetail.origin_name;
             const year = mDetail.year ? ` (${mDetail.year})` : '';
             const url = `https://aphim.io.vn/movie-detail.html?slug=${slug}`;
+            const urlBackup = `https://aphim1.io.vn/movie-detail.html?slug=${slug}`;
             
             // Generate clean description snippet (max 300 chars)
             let desc = stripHtml(mDetail.content);
@@ -234,7 +252,8 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
             
             // Fallback to generic if array is empty
             const selectedTemplates = postTemplates[genreType] || postTemplates['generic'];
-            const message = selectedTemplates[Math.floor(Math.random() * selectedTemplates.length)];
+            let message = selectedTemplates[Math.floor(Math.random() * selectedTemplates.length)];
+            message = message.replace(url, `${url}\n👉 Link dự phòng: ${urlBackup}`);
             
             // Get the image URL (prefer thumb_url for Facebook landscape, fallback to poster)
             const imageUrl = mDetail.thumb_url || mDetail.poster_url;
@@ -317,20 +336,25 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
                 const hypeComments = commentTemplates[genreType] || commentTemplates['generic'];
                 const randomComment = hypeComments[Math.floor(Math.random() * hypeComments.length)];
 
-                // Post Comment 1 to boost engagement
+                // Post Comment 1 to boost engagement (Hype comment)
                 await delay(2000);
                 await axios.post(`https://graph.facebook.com/v19.0/${postId}/comments`, {
                     message: randomComment,
                     access_token: fallbackToken
                 });
                 
-                // Post Comment 2: Link phim + link affiliate ẩn ở cuối
-                await delay(2000);
-                const affiliateUrl = getAffiliateLink();
-                await axios.post(`https://graph.facebook.com/v19.0/${postId}/comments`, {
-                    message: `👉 Link xem trực tiếp full HD Vietsub không giật lag: ${url}\n${affiliateUrl}`,
-                    access_token: fallbackToken
-                });
+                // Post Comment 2 & 3: Link phim & Link sản phẩm TikTok ngẫu nhiên thứ tự
+                const movieComment = `👉 Link xem trực tiếp full HD Vietsub không giật lag:\nLink 1: ${url}\nLink 2 (Dự phòng): ${urlBackup}`;
+                const productComment = getRandomProductComment();
+                const extraComments = Math.random() < 0.5 ? [movieComment, productComment] : [productComment, movieComment];
+
+                for (const msg of extraComments) {
+                    await delay(2000);
+                    await axios.post(`https://graph.facebook.com/v19.0/${postId}/comments`, {
+                        message: msg,
+                        access_token: fallbackToken
+                    });
+                }
                 console.log(`💬 Added engagement comments to post: ${postId}`);
             }
             postedMovies.push(slug);

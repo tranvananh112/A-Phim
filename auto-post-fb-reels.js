@@ -30,6 +30,23 @@ const AFFILIATE_LINKS = [
 ];
 const getAffiliateLink = () => AFFILIATE_LINKS[Math.floor(Math.random() * AFFILIATE_LINKS.length)];
 
+// ── TikTok Products (Affiliate Product Comments) ──────────────────
+const PRODUCT_TEMPLATES = [
+    "Sản phẩm hot đang có deal hời cực shock 🔥",
+    "Góc săn deal hời giá siêu rẻ cho cả nhà 👇",
+    "Cái này đang hot rần rần trên TikTok luôn ae 😍",
+    "Deal xịn sò giá sinh viên không thể bỏ qua 💎",
+    "Món này tiện lợi lắm ae, đang sale đậm 🚀",
+    "Hàng hot trend chất lượng cao đang giảm giá ✨",
+    "Đồ dùng thông minh siêu hot trên TikTok Shop 🏆",
+    "Deal thơm giá hạt dẻ nhanh tay kẻo hết mng ơi 🍿"
+];
+const getRandomProductComment = () => {
+    const prodUrl = getAffiliateLink();
+    const title = PRODUCT_TEMPLATES[Math.floor(Math.random() * PRODUCT_TEMPLATES.length)];
+    return `${title}\n${prodUrl}`;
+};
+
 // Helper: Strip HTML
 const stripHtml = (html) => html ? html.replace(/<[^>]*>?/gm, '').trim() : '';
 
@@ -267,6 +284,7 @@ const stripHtml = (html) => html ? html.replace(/<[^>]*>?/gm, '').trim() : '';
         const name = movie.name;
         const year = movie.year ? ` (${movie.year})` : '';
         const webUrl = `https://aphim.io.vn/movie-detail.html?slug=${slug}`;
+        const webUrlBackup = `https://aphim1.io.vn/movie-detail.html?slug=${slug}`;
         const desc = movie.content.substring(0, 300) + '...';
         
         console.log(`\n=============================================`);
@@ -286,7 +304,7 @@ Yêu cầu bắt buộc:
 1. Câu đầu tiên phải là một hook ĐỘC ĐÁO, BẤT NGỜ dựa trên NỘI DUNG CỦA BỘ PHIM NÀY — không phải câu sáo rỗng chung chung. Tự sáng tạo hoàn toàn, không copy mẫu có sẵn.
 2. Giọng văn tự nhiên như người thật đang kể cho bạn bè nghe — không phải quảng cáo, không phải AI.
 3. Dùng emoji phù hợp xuyên suốt.
-4. Kết thúc bằng lời kêu gọi xem phim tại: ${webUrl}
+4. Kết thúc bằng lời kêu gọi xem phim tại: ${webUrl} (Link dự phòng: ${webUrlBackup})
 5. Thêm 3-4 hashtag liên quan, luôn có #APhim.
 6. Chỉ in ra nội dung caption, không giải thích gì thêm.`;
 
@@ -302,6 +320,9 @@ Yêu cầu bắt buộc:
                 headers: { 'Authorization': `Bearer ${GROQ_API_KEY}`, 'Content-Type': 'application/json' }
             });
             caption = groqRes.data.choices[0].message.content.trim();
+            if (caption.includes(webUrl) && !caption.includes(webUrlBackup)) {
+                caption = caption.replace(webUrl, `${webUrl}\n👉 Link dự phòng: ${webUrlBackup}`);
+            }
             console.log(`✍️ Content AI đã viết xong:\n${caption}\n------------------`);
         } catch (err) {
             console.error('❌ Lỗi Groq API:', err.response?.data || err.message);
@@ -548,11 +569,11 @@ Yêu cầu bắt buộc:
             const commentPrompt = `Đóng vai một chuyên gia Social Media người Việt Nam, hãy viết một câu bình luận (comment) thật tự nhiên, thả thính cuốn hút (dưới 40 chữ) để ghim dưới video Facebook Reel của bộ phim "${name}". 
 Yêu cầu:
 - Ngôn ngữ: Tiếng Việt, văn phong trẻ trung, giống một bạn admin đang trò chuyện với fan.
-- BẮT BUỘC phải chứa đường link xem phim này ở cuối câu: ${webUrl}
+- BẮT BUỘC phải chứa đường link xem phim này ở cuối câu: ${webUrl} (Link dự phòng: ${webUrlBackup})
 - Không dùng ngoặc kép, không giải thích. Chỉ in ra nội dung bình luận.`;
 
-            // Seeding Comment: tự nhiên + link phim + affiliate ẩn cuối
-            let commentText = `Xem bản Full HD cực mượt tại đây nha cả nhà ơi: ${webUrl}\n${getAffiliateLink()}`; // Fallback
+            // Seeding Comment: tự nhiên + link phim
+            let commentText = `Xem bản Full HD cực mượt tại đây nha cả nhà ơi:\nLink 1: ${webUrl}\nLink 2 (Dự phòng): ${webUrlBackup}`; // Fallback
             try {
                 const groqCommentRes = await axios.post('https://api.groq.com/openai/v1/chat/completions', {
                     model: 'llama-3.3-70b-versatile',
@@ -565,9 +586,11 @@ Yêu cầu:
                 let aiText = groqCommentRes.data.choices[0].message.content.trim();
                 // Ensure it doesn't have quotes and actually contains the link
                 if (aiText.length > 5) commentText = aiText;
-                if (!commentText.includes(webUrl)) commentText += `\nLink phim: ${webUrl}`;
-                // Gắn link affiliate ẩn ở cuối comment
-                commentText += `\n${getAffiliateLink()}`;
+                if (!commentText.includes(webUrl)) {
+                    commentText += `\nLink phim: ${webUrl}\n👉 Link dự phòng: ${webUrlBackup}`;
+                } else if (!commentText.includes(webUrlBackup)) {
+                    commentText = commentText.replace(webUrl, `${webUrl}\n👉 Link dự phòng: ${webUrlBackup}`);
+                }
                 console.log(`💬 AI Comment: ${commentText}`);
             } catch (err) {
                 console.log('⚠️ AI Groq bị lỗi khi nghĩ Comment, dùng câu mặc định.');
@@ -576,10 +599,18 @@ Yêu cầu:
             try {
                 // Đợi 5 giây để Facebook xử lý xong Video rồi mới cmt
                 await new Promise(r => setTimeout(r, 5000));
-                await axios.post(`https://graph.facebook.com/v19.0/${videoId}/comments`, {
-                    message: commentText,
-                    access_token: fallbackToken
-                });
+                
+                // Trộn ngẫu nhiên thứ tự bình luận phim và bình luận sản phẩm TikTok
+                const productComment = getRandomProductComment();
+                const extraComments = Math.random() < 0.5 ? [commentText, productComment] : [productComment, commentText];
+
+                for (const msg of extraComments) {
+                    await axios.post(`https://graph.facebook.com/v19.0/${videoId}/comments`, {
+                        message: msg,
+                        access_token: fallbackToken
+                    });
+                    await new Promise(r => setTimeout(r, 2000));
+                }
                 console.log(`✅ Đã rải Comment Seeding kéo traffic thành công!`);
             } catch (e) {
                 console.error(`⚠️ Rải comment lỗi (có thể do video chưa process xong):`, e.response?.data || e.message);
