@@ -285,6 +285,7 @@ function updateHeroBannerText(movie) {
 function updateHeroButtons(movie) {
     const heroPlayBtn = document.getElementById('heroPlayBtn');
     const heroInfoBtn = document.getElementById('heroInfoBtn');
+    
     if (heroPlayBtn) heroPlayBtn.href = `movie-detail.html?slug=${movie.slug}`;
     if (heroInfoBtn) heroInfoBtn.href = `movie-detail.html?slug=${movie.slug}`;
 }
@@ -789,7 +790,7 @@ function setupHeroActions(movie) {
     const infoBtn = document.getElementById('heroInfoBtn');
 
     if (!movie) return;
-    if (infoBtn) infoBtn.href = `movie-detail.html?slug=${movie.slug}`;
+    if (infoBtn) infoBtn.href = `/phim/${movie.slug}`;
 
     if (favBtn && typeof userService !== 'undefined') {
         const icon = favBtn.querySelector('span');
