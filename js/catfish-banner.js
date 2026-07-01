@@ -181,14 +181,6 @@
                         '<img src="/quangcao/8pbet/banner_8Qbet.gif" alt="8QBet Thưởng Khủng" loading="eager">' +
                     '</a>' +
                 '</div>' +
-                '<div class="catfish-row">' +
-                    '<a class="catfish-item" href="https://www.bb8qbet.com/?ch=093e2c62af" target="_blank" rel="noopener nofollow" aria-label="8QBet — Hoàn Trả Mỗi Ngày">' +
-                        '<img src="/quangcao/8pbet/banner_8Qbet.gif" alt="8QBet Hoàn Trả" loading="eager">' +
-                    '</a>' +
-                    '<a class="catfish-item" href="https://www.cc8qbet.com/?ch=c0f9c0220d" target="_blank" rel="noopener nofollow" aria-label="8QBet — Nạp Rút Siêu Tốc">' +
-                        '<img src="/quangcao/8pbet/banner_8Qbet.gif" alt="8QBet Nạp Rút" loading="eager">' +
-                    '</a>' +
-                '</div>' +
             '</div>' +
             '<button id="aphim-catfish-top-close" title="Đóng quảng cáo" aria-label="Đóng">&#10005;</button>';
 
