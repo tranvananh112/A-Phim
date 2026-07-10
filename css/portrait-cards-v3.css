@@ -5,7 +5,6 @@
 .portrait-card {
     flex: none;
     width: 140px; /* Mobile */
-    scroll-snap-align: start;
     transition: all 0.3s ease;
 }
 
