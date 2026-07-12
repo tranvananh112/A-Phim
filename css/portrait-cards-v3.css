@@ -3,27 +3,31 @@
    ============================================================ */
 
 .portrait-card {
-    flex: none;
-    width: 140px; /* Mobile */
+    flex: 1 0 auto;
+    min-width: 140px; /* Mobile */
+    max-width: 250px;
     transition: all 0.3s ease;
 }
 
 @media (min-width: 768px) {
     .portrait-card {
-        /* Hiển thị 5 thẻ trên màn hình vừa */
-        flex: 0 0 calc((100% - 4rem) / 5);
+        flex: 1 0 auto;
+        min-width: calc((100% - 4rem) / 5);
+        max-width: calc((100% - 2rem) / 3);
     }
 }
 @media (min-width: 1024px) {
     .portrait-card {
-        /* Hiển thị 6 thẻ trên màn hình lớn */
-        flex: 0 0 calc((100% - 5rem) / 6);
+        flex: 1 0 auto;
+        min-width: calc((100% - 5rem) / 6);
+        max-width: calc((100% - 3rem) / 4);
     }
 }
 @media (min-width: 1280px) {
     .portrait-card {
-        /* Hiển thị chính xác 8 thẻ trên màn hình Desktop rộng (100% khít không dư) */
-        flex: 0 0 calc((100% - 7rem) / 8);
+        flex: 1 0 auto;
+        min-width: calc((100% - 7rem) / 8);
+        max-width: calc((100% - 5rem) / 6);
     }
 }
 
