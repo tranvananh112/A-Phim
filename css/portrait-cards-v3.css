@@ -3,31 +3,27 @@
    ============================================================ */
 
 .portrait-card {
-    flex: 1 0 auto;
-    min-width: 140px; /* Mobile */
-    max-width: 250px;
+    flex: none;
+    width: 140px; /* Mobile */
     transition: all 0.3s ease;
 }
 
 @media (min-width: 768px) {
     .portrait-card {
-        flex: 1 0 auto;
-        min-width: calc((100% - 4rem) / 5);
-        max-width: calc((100% - 2rem) / 3);
+        flex: 0 0 calc((100% - 4rem) / 5);
+        width: calc((100% - 4rem) / 5);
     }
 }
 @media (min-width: 1024px) {
     .portrait-card {
-        flex: 1 0 auto;
-        min-width: calc((100% - 5rem) / 6);
-        max-width: calc((100% - 3rem) / 4);
+        flex: 0 0 calc((100% - 5rem) / 6);
+        width: calc((100% - 5rem) / 6);
     }
 }
 @media (min-width: 1280px) {
     .portrait-card {
-        flex: 1 0 auto;
-        min-width: calc((100% - 7rem) / 8);
-        max-width: calc((100% - 5rem) / 6);
+        flex: 0 0 calc((100% - 7rem) / 8);
+        width: calc((100% - 7rem) / 8);
     }
 }
 

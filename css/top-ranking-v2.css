@@ -11,20 +11,26 @@
 
 /* ── Ranking Item: cố định chiều cao ── */
 .ranking-item {
-    flex: 1 0 auto;
-    min-width: 140px;               /* Mobile */
-    max-width: 250px;               /* Ngăn thẻ giãn quá to nếu có quá ít item */
+    flex: none;
+    width: 140px;               /* Mobile */
     /* Cố định chiều cao = poster + info cứng */
     display: flex;
     flex-direction: column;
     padding: 0;                 /* Bỏ padding để không làm lệch */
-    margin: 0 4px;
-    /* Tắt hiệu ứng so le trên mobile */
+    gap: 12px;
 }
 
 @media (min-width: 768px) {
     .ranking-item {
-        min-width: 190px;
+        width: 190px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .ranking-item {
+        /* Hiển thị chính xác 7 thẻ trên màn hình Desktop để vừa khít 100% container (gap-7 = 1.75rem * 6 = 10.5rem) */
+        flex: 0 0 calc((100% - 10.5rem) / 7);
+        width: calc((100% - 10.5rem) / 7);
     }
 }
 
