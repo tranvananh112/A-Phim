@@ -222,7 +222,7 @@ body { /* removed overscroll-behavior-y to fix desktop wheel */
 .snap-mandatory,
 [style*="scroll-snap-type:x mandatory"],
 [style*="scroll-snap-type: x mandatory"] {
-    scroll-snap-type: x proximity !important;
+    
 }
 
 /* 3. Khóa chết chiều ngang của toàn bộ trang web trên mobile - không bao giờ bị xô lệch layout ngang */
