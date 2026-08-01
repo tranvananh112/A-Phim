@@ -28,7 +28,7 @@
 
         banners: [
             {
-                img: '/quangcao/8svui/8svui.mp4',
+                img: '/quangcao/8svui/BANNER.mp4',
                 url: 'https://8svui.com',
                 label: '8SVui — Khuyến Mãi 150%',
                 isVideo: true
