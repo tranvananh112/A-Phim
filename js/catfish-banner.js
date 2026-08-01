@@ -153,13 +153,22 @@
         document.body.appendChild(bar);
         document.body.classList.add('aphim-has-catfish');
 
-        // Tự động xoay mượt giữa VSBet và 8SVui ở slot Row 1 (mỗi 3.5s)
+        // Tự động xoay mượt giữa VSBet và 8SVui ở slot Row 1 (mỗi 3.5s - CHỈ TRÊN MOBILE)
         var rotateSlot = bar.querySelector('.catfish-rotate-slot');
         if (rotateSlot) {
             var slides = rotateSlot.querySelectorAll('.catfish-slide');
             if (slides.length >= 2) {
                 var currentIdx = 0;
                 setInterval(function () {
+                    // Trên Desktop (> 768px) giữ cố định duy nhất banner VSBet (slide 0), không xoay sang 8SVui
+                    if (window.innerWidth > 768) {
+                        if (currentIdx !== 0) {
+                            slides[currentIdx].classList.remove('slide-active');
+                            currentIdx = 0;
+                            slides[0].classList.add('slide-active');
+                        }
+                        return;
+                    }
                     slides[currentIdx].classList.remove('slide-active');
                     currentIdx = (currentIdx + 1) % slides.length;
                     slides[currentIdx].classList.add('slide-active');

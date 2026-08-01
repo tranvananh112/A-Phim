@@ -314,12 +314,13 @@ body.aphim-has-catfish { /* card dưới không cần push body */ }
         display: none !important;
     }
 
-    .catfish-rotate-slot .catfish-slide.slide-active {
+    .catfish-rotate-slot .catfish-slide:first-child {
         display: block !important;
         width: 100% !important;
         height: 100% !important;
         opacity: 1 !important;
         visibility: visible !important;
+        pointer-events: auto !important;
     }
 
     .catfish-row-2 .catfish-item {
