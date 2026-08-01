@@ -420,13 +420,16 @@ function renderVersions(movie) {
     wrapper.innerHTML = versionsHTML;
 
     
-    const mobileEpisodesWrapper = document.getElementById('episodes-mobile')?.parentElement;
+    const mobileEpisodesWrapper = document.getElementById('episodes-mobile')?.closest('.block.lg\\:hidden') || document.getElementById('episodes-mobile')?.parentElement;
+    const heroAd = document.getElementById('movie-detail-hero-ad');
+    
     if (window.innerWidth < 1024 && mobileEpisodesWrapper) {
-        // TrÃªn mobile, SVAP nÄƒm dÆ°á»›i danh sÃ¡ch táºp phim
+        // Trên mobile, Danh sách tập phim nằm trên, Các bản chiếu nằm ngay bên dưới danh sách tập phim
         mobileEpisodesWrapper.after(wrapper);
     } else {
-        // TrÃªn desktop, SVAP náº±m ngay dÆ°á»›i nÃºt Xem Ngay
-        actionsContainer.after(wrapper);
+        // Trên desktop, Các bản chiếu nằm ngay dưới Banner 8SVui (dưới nút Xem Ngay)
+        const targetAnchor = heroAd || actionsContainer;
+        targetAnchor.after(wrapper);
     }
 }
 
