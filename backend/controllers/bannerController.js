@@ -158,15 +158,17 @@ exports.loadMoviesFromAPI = async (req, res) => {
         for (let page = startPage; page <= endPage; page++) {
             try {
                 const response = await axios.get(
-                    `https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=${page}`,
+                    `https://ophim1.com/danh-sach/phim-moi-cap-nhat?page=${page}`,
                     {
                         headers: { 'accept': 'application/json' },
                         timeout: 10000
                     }
                 );
 
-                if (response.data.status === 'success' && response.data.data?.items) {
-                    const movies = response.data.data.items.map(movie => ({
+                const data = response.data;
+                const items = data?.items || data?.data?.items || [];
+                if (items && items.length > 0) {
+                    const movies = items.map(movie => ({
                         ...movie,
                         sourcePage: page
                     }));

@@ -673,7 +673,7 @@
                 const data = await response.json();
                 console.log('API Response:', data);
 
-                if (data && data.status === 'success' && data.data && data.data.items) {
+                if (data && (data && (data.status === 'success' || data.status === true || data.status)) && data.data && data.data.items) {
                     allMovies = data.data.items;
 
                     // ─ ─Fix: H trợ cả 2 format API và tự động tính số trang ─ 
