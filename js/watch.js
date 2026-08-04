@@ -63,9 +63,8 @@ async function loadMovieAndPlay(slug, episodeSlug) {
                 if (requestedServer !== null && !isNaN(requestedServer) && parseInt(requestedServer) < currentMovie.episodes.length) {
                     currentServerIndex = parseInt(requestedServer);
                 } else {
-                    // Tự động chọn nguồn có link video sống đầu tiên nếu Nguồn 1 rỗng link
-                    const validIdx = currentMovie.episodes.findIndex(s => s.server_data && s.server_data.some(ep => ep.link_m3u8 || ep.link_embed));
-                    currentServerIndex = validIdx !== -1 ? validIdx : 0;
+                    // Luôn ưu tiên Nguồn 1 (OPhim, index 0) - chỉ dùng nguồn khác khi người dùng tự chọn
+                    currentServerIndex = 0;
                 }
 
                 const serverData = currentMovie.episodes[currentServerIndex]?.server_data || currentMovie.episodes[0].server_data;
