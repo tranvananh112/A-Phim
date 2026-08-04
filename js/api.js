@@ -46,28 +46,35 @@ class MovieAPI {
 
     // Wrapper to fetch from primary OPhim URL or fallback OPhim mirrors (ophim1.com -> ophim17.cc -> ophim10.cc)
     async fetchWithFallback(endpoint, options = {}) {
-        let urlsToTry = [];
-
-        if (endpoint.startsWith('http')) {
-            urlsToTry = [endpoint];
-        } else if (endpoint.includes('phim-moi-cap-nhat')) {
-            // OPhim recent updates endpoint lives at /danh-sach/phim-moi-cap-nhat (no /v1/api prefix)
-            const paramStr = endpoint.includes('?') ? endpoint.substring(endpoint.indexOf('?')) : '';
-            urlsToTry = [
-                `https://ophim1.com/danh-sach/phim-moi-cap-nhat${paramStr}`,
-                `https://ophim17.cc/danh-sach/phim-moi-cap-nhat${paramStr}`,
-                `https://ophim1.com/v1/api/home`,
-                `https://ophim1.com/v1/api/danh-sach/phim-bo${paramStr}`
-            ];
-        } else {
-            const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-            urlsToTry = [
-                `https://ophim1.com/v1/api${cleanEndpoint}`,
-                `https://ophim17.cc/v1/api${cleanEndpoint}`,
-                `https://ophim10.cc/v1/api${cleanEndpoint}`
-            ];
+        let cleanEndpoint = endpoint || '';
+        if (cleanEndpoint.startsWith('http')) {
+            return this.fetchWithTimeout(cleanEndpoint, options);
         }
-        
+
+        if (cleanEndpoint.startsWith('/v1/api')) {
+            cleanEndpoint = cleanEndpoint.substring('/v1/api'.length);
+        }
+        if (!cleanEndpoint.startsWith('/')) {
+            cleanEndpoint = '/' + cleanEndpoint;
+        }
+
+        const paramStr = cleanEndpoint.includes('?') ? cleanEndpoint.substring(cleanEndpoint.indexOf('?')) : '';
+        const basePath = cleanEndpoint.includes('?') ? cleanEndpoint.substring(0, cleanEndpoint.indexOf('?')) : cleanEndpoint;
+
+        let urlsToTry = [
+            `/v1/api${basePath}${paramStr}`,
+            `https://phimapi.com${basePath}${paramStr}`,
+            `https://ophim1.com/v1/api${basePath}${paramStr}`,
+            `https://ophim17.cc/v1/api${basePath}${paramStr}`,
+            `https://ophim10.cc/v1/api${basePath}${paramStr}`
+        ];
+
+        if (basePath.includes('phim-moi-cap-nhat') || basePath === '/home') {
+            urlsToTry.unshift(`/v1/api/danh-sach/phim-moi-cap-nhat${paramStr}`);
+            urlsToTry.unshift(`https://phimapi.com/danh-sach/phim-moi-cap-nhat${paramStr}`);
+            urlsToTry.unshift(`https://ophim1.com/danh-sach/phim-moi-cap-nhat${paramStr}`);
+        }
+
         const uniqueUrls = Array.from(new Set(urlsToTry.filter(Boolean)));
         let lastError = null;
 
@@ -77,9 +84,7 @@ class MovieAPI {
                 if (response.ok) {
                     return response;
                 }
-                console.warn(`⚠️ OPhim API response not OK from ${url}: ${response.status}`);
             } catch (err) {
-                console.warn(`❌ OPhim API fetch failed from ${url}:`, err.message);
                 lastError = err;
             }
         }
