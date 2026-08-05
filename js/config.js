@@ -45,7 +45,11 @@ const API_CONFIG = {
     OPHIM17_URL: 'https://ophim17.cc',
 
     // Backup PhimAPI (unblocked mirror)
+    PHIMAPI_URL: 'https://phimapi.com',
     
+    // NguonC (alternative source)
+    NGUONC_URL: 'https://phim.nguonc.com/api/films',
+    NGUONC_DETAIL_URL: 'https://phim.nguonc.com/api/film',
 
     ENDPOINTS: {
         HOME: '/home',

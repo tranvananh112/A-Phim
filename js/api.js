@@ -44,6 +44,44 @@ class MovieAPI {
         };
     }
 
+    // NguonC Adapter - Convert NguonC structure to Ophim structure
+    normalizeNguonCResponse(data) {
+        if (!data || data.status !== 'success') return null;
+        let normalized = { status: true, data: { item: null, items: [] } };
+        if (data.movie) {
+            const m = data.movie;
+            let episodes = [];
+            if (m.episodes && Array.isArray(m.episodes)) {
+                episodes = m.episodes.map(server => ({
+                    server_name: server.server_name,
+                    server_data: (server.items || []).map(ep => ({
+                        name: ep.name, slug: ep.slug, filename: ep.name,
+                        link_embed: ep.embed, link_m3u8: ep.m3u8
+                    }))
+                }));
+            }
+            normalized.data.item = {
+                ...m, content: m.description || '', thumb_url: m.thumb_url, poster_url: m.poster_url,
+                year: m.category && m.category["3"] && m.category["3"].list ? m.category["3"].list.map(y => y.name).join(', ') : '',
+                episodes: episodes
+            };
+        }
+        if (data.items && Array.isArray(data.items)) {
+            normalized.data.items = data.items.map(m => ({
+                ...m, thumb_url: m.thumb_url, poster_url: m.poster_url,
+            }));
+            if (data.paginate) {
+                normalized.data.params = {
+                    pagination: {
+                        totalItems: data.paginate.totalItems, totalItemsPerPage: data.paginate.itemsPerPage,
+                        currentPage: data.paginate.currentPage, totalPages: data.paginate.totalPages
+                    }
+                };
+            }
+        }
+        return normalized;
+    }
+
     // Wrapper to fetch from primary OPhim URL or fallback OPhim mirrors (ophim1.com -> ophim17.cc -> ophim10.cc)
     async fetchWithFallback(endpoint, options = {}) {
         let cleanEndpoint = endpoint || '';
@@ -150,17 +188,25 @@ class MovieAPI {
             if (this.useBackend) {
                 const response = await this.fetchWithAuth(`${this.backendURL}/movies?page=${page}&limit=20`);
                 const data = await response.json();
-
-                console.log('Backend response:', data);
-
-                // Always return data if we got a response
                 return this.filterHiddenMovies(data);
             } else {
-                const response = await this.fetchWithFallback(`/danh-sach/phim-moi-cap-nhat?page=${page}`, {
-                    headers: { 'accept': 'application/json' }
-                });
-                const data = await response.json();
-                return this.filterHiddenMovies(data);
+                try {
+                    const response = await this.fetchWithFallback(`/danh-sach/phim-moi-cap-nhat?page=${page}`, {
+                        headers: { 'accept': 'application/json' },
+                        timeout: 5000
+                    });
+                    const data = await response.json();
+                    return this.filterHiddenMovies(data);
+                } catch (error) {
+                    console.warn('Ophim/PhimAPI failed in getMovieList, falling back to NguonC...', error);
+                    const response = await this.fetchWithTimeout(`${API_CONFIG.NGUONC_URL}/phim-moi-cap-nhat?page=${page}`, {
+                        headers: { 'accept': 'application/json' },
+                        timeout: 5000
+                    });
+                    const nguonCData = await response.json();
+                    const normalized = this.normalizeNguonCResponse(nguonCData);
+                    return this.filterHiddenMovies(normalized);
+                }
             }
         } catch (error) {
             console.error('Error fetching movie list:', error);
@@ -189,21 +235,24 @@ class MovieAPI {
             if (this.useBackend) {
                 const response = await this.fetchWithAuth(`${this.backendURL}/movies/${slug}`);
                 const data = await response.json();
-
-                console.log('Backend movie detail response:', data);
-
-                // Always return data if we got a response
-                // The backend should handle the format
                 return data;
-                        } else {
-                const response = await this.fetchWithFallback(`/phim/${slug}`, {
-                    headers: { 'accept': 'application/json' }
-                });
-                const ophimData = await response.json();
-                
-                
-                
-                return ophimData;
+            } else {
+                try {
+                    const response = await this.fetchWithFallback(`/phim/${slug}`, {
+                        headers: { 'accept': 'application/json' },
+                        timeout: 5000
+                    });
+                    const ophimData = await response.json();
+                    return ophimData;
+                } catch (error) {
+                    console.warn(`Ophim/PhimAPI failed for ${slug}, falling back to NguonC...`, error);
+                    const response = await this.fetchWithTimeout(`${API_CONFIG.NGUONC_DETAIL_URL}/${slug}`, {
+                        headers: { 'accept': 'application/json' },
+                        timeout: 5000
+                    });
+                    const nguonCData = await response.json();
+                    return this.normalizeNguonCResponse(nguonCData);
+                }
             }
         } catch (error) {
             console.error('Error fetching movie detail:', error);
