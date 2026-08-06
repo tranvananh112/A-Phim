@@ -8,6 +8,14 @@ let localFilters = {
     status: ''
 };
 let allBanners = []; // Cache from API
+function normalizeImagePath(url) {
+    if (!url) return '';
+    if (url.startsWith('http')) return url;
+    if (!url.startsWith('uploads/movies/')) {
+        return 'uploads/movies/' + url.replace(new RegExp('^/'), '');
+    }
+    return url;
+}
 
 // Check authentication
 document.addEventListener('DOMContentLoaded', () => {
@@ -147,7 +155,7 @@ function renderBanners() {
     tbody.innerHTML = pageItems.map(banner => `
         <tr class="hover:bg-white/5 transition-colors">
             <td>
-                <img src="https://phimimg.com/${banner.thumbUrl}"
+                <img src=""
                      alt="${banner.name}"
                      class="banner-thumb"
                      onerror="this.src='https://via.placeholder.com/80x120?text=No+Image'">
@@ -251,7 +259,7 @@ function renderActiveBanner() {
         const cleanContent = activeBanner.content ? activeBanner.content.replace(/<[^>]*>/g, '') : 'Không có mô tả';
         content.innerHTML = `
             <div style="display:flex;gap:24px;align-items:flex-start">
-                <img src="https://phimimg.com/${activeBanner.thumbUrl}"
+                <img src=""
                      alt="${activeBanner.name}"
                      class="banner-active-poster"
                      onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
@@ -513,7 +521,7 @@ function displayMovies(movies) {
         
         return `
         <div class="movie-pick-card">
-            <img src="https://phimimg.com/${movie.thumb_url}"
+            <img src=""
                  alt="${movie.name}"
                  class="movie-pick-thumb"
                  onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
@@ -551,8 +559,8 @@ async function addMovieToBanner(movie) {
             movieSlug: movie.slug,
             name: movie.name,
             originName: movie.origin_name,
-            thumbUrl: movie.thumb_url,
-            posterUrl: movie.poster_url,
+            thumbUrl: normalizeImagePath(movie.thumb_url),
+            posterUrl: normalizeImagePath(movie.poster_url),
             content: movie.content,
             year: movie.year,
             quality: movie.quality,
@@ -791,7 +799,7 @@ function renderThumbnailGrid() {
              ondragend="onThumbDragEnd(event)">
             <span class="thumb-card-order">${idx + 1}</span>
             <button class="thumb-card-remove" onclick="removeFromThumbnail('${item.movieSlug}')" title="Xóa">✕</button>
-            <img src="https://phimimg.com/${item.thumbUrl}"
+            <img src=""
                  alt="${item.name}"
                  onerror="this.src='https://via.placeholder.com/100x140?text=No+Img'">
             <div class="thumb-card-body">
@@ -890,8 +898,8 @@ function addMovieToThumbnail(movie) {
         movieSlug: movie.slug,
         name: movie.name,
         originName: movie.origin_name,
-        thumbUrl: movie.thumb_url,
-        posterUrl: movie.poster_url,
+        thumbUrl: normalizeImagePath(movie.thumb_url),
+        posterUrl: normalizeImagePath(movie.poster_url),
         year: movie.year,
         tmdb: movie.tmdb || {}
     });
