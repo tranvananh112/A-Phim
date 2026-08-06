@@ -158,7 +158,7 @@ function renderBanners() {
                 <img src=""
                      alt="${banner.name}"
                      class="banner-thumb"
-                     onerror="this.src='https://via.placeholder.com/80x120?text=No+Image'">
+                     onerror="this.src='https://placehold.co/80x120?text=No+Image'">
             </td>
             <td>
                 <div class="movie-title" style="font-size:13.5px;font-weight:600; color:var(--text-primary);">${banner.name}</div>
@@ -262,7 +262,7 @@ function renderActiveBanner() {
                 <img src=""
                      alt="${activeBanner.name}"
                      class="banner-active-poster"
-                     onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
+                     onerror="this.src='https://placehold.co/200x300?text=No+Image'">
                 <div style="flex:1; min-width: 0;">
                     <h3 style="font-size:20px;font-weight:800;color:var(--text-primary);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${activeBanner.name}</h3>
                     <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${activeBanner.originName || activeBanner.origin_name || ''}</p>
@@ -392,7 +392,11 @@ async function loadMoviesFromOphim(keyword = '', page = 1) {
         if (gridTitle) gridTitle.textContent = 'Kết quả tìm kiếm';
     } else {
         const filterVal = filterCategory ? filterCategory.value : 'danh-sach/phim-moi-cap-nhat';
-        apiUrl = `https://phimapi.com/v1/api/${filterVal}?page=${currentOphimSearchPage}`;
+        if (filterVal === 'danh-sach/phim-moi-cap-nhat') {
+            apiUrl = `https://phimapi.com/${filterVal}?page=${currentOphimSearchPage}`;
+        } else {
+            apiUrl = `https://phimapi.com/v1/api/${filterVal}?page=${currentOphimSearchPage}`;
+        }
         
         let filterName = filterCategory ? filterCategory.options[filterCategory.selectedIndex].text : 'Phim mới';
         if (loadingText) loadingText.textContent = `Đang tải ${filterName}...`;
@@ -524,7 +528,7 @@ function displayMovies(movies) {
             <img src=""
                  alt="${movie.name}"
                  class="movie-pick-thumb"
-                 onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
+                 onerror="this.src='https://placehold.co/200x300?text=No+Image'">
             <div class="movie-pick-body">
                 <div class="movie-pick-title">${movie.name}</div>
                 <div class="movie-pick-meta">
@@ -801,7 +805,7 @@ function renderThumbnailGrid() {
             <button class="thumb-card-remove" onclick="removeFromThumbnail('${item.movieSlug}')" title="Xóa">✕</button>
             <img src=""
                  alt="${item.name}"
-                 onerror="this.src='https://via.placeholder.com/100x140?text=No+Img'">
+                 onerror="this.src='https://placehold.co/100x140?text=No+Img'">
             <div class="thumb-card-body">
                 <div class="thumb-card-name" title="${item.name}">${item.name}</div>
                 <div style="font-size:10px;color:var(--text-muted)">${item.year || ''}</div>
@@ -1026,7 +1030,7 @@ async function previewCatBg(input, previewId, apiPath = null) {
         img.src = val;
     } else {
         // Fetch from OPhim to show what is currently active
-        img.src = 'https://via.placeholder.com/80x45?text=Loading';
+        img.src = 'https://placehold.co/80x45?text=Loading';
         if (apiPath) {
             try {
                 const response = await movieAPI.fetchWithFallback(`/${apiPath}?page=1&limit=1`, {
@@ -1038,14 +1042,14 @@ async function previewCatBg(input, previewId, apiPath = null) {
                     const thumbUrl = data.data.items[0].thumb_url;
                     img.src = thumbUrl.startsWith('http') ? thumbUrl : `https://phimimg.com/${thumbUrl}`;
                 } else {
-                    img.src = 'https://via.placeholder.com/80x45?text=Auto';
+                    img.src = 'https://placehold.co/80x45?text=Auto';
                 }
             } catch (e) {
                 console.error('Failed to preview auto bg:', e);
-                img.src = 'https://via.placeholder.com/80x45?text=Auto';
+                img.src = 'https://placehold.co/80x45?text=Auto';
             }
         } else {
-            img.src = 'https://via.placeholder.com/80x45?text=Auto';
+            img.src = 'https://placehold.co/80x45?text=Auto';
         }
     }
 }
