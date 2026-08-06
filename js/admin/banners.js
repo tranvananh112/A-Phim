@@ -164,7 +164,7 @@ function renderBanners() {
     tbody.innerHTML = pageItems.map(banner => `
         <tr class="hover:bg-white/5 transition-colors">
             <td>
-                <img src=""
+                <img src="${getValidImageUrl(banner.thumbUrl)}"
                      alt="${banner.name}"
                      class="banner-thumb"
                      onerror="this.src='https://placehold.co/80x120?text=No+Image'">
@@ -268,7 +268,7 @@ function renderActiveBanner() {
         const cleanContent = activeBanner.content ? activeBanner.content.replace(/<[^>]*>/g, '') : 'Không có mô tả';
         content.innerHTML = `
             <div style="display:flex;gap:24px;align-items:flex-start">
-                <img src=""
+                <img src="${getValidImageUrl(activeBanner.posterUrl)}"
                      alt="${activeBanner.name}"
                      class="banner-active-poster"
                      onerror="this.src='https://placehold.co/200x300?text=No+Image'">
@@ -536,7 +536,7 @@ function displayMovies(movies) {
         
         return `
         <div class="movie-pick-card">
-            <img src=""
+            <img src="${getValidImageUrl(movie.thumb_url)}"
                  alt="${movie.name}"
                  class="movie-pick-thumb"
                  onerror="this.src='https://placehold.co/200x300?text=No+Image'">
@@ -814,7 +814,7 @@ function renderThumbnailGrid() {
              ondragend="onThumbDragEnd(event)">
             <span class="thumb-card-order">${idx + 1}</span>
             <button class="thumb-card-remove" onclick="removeFromThumbnail('${item.movieSlug}')" title="Xóa">✕</button>
-            <img src=""
+            <img src="${getValidImageUrl(item.thumbUrl)}"
                  alt="${item.name}"
                  onerror="this.src='https://placehold.co/100x140?text=No+Img'">
             <div class="thumb-card-body">
