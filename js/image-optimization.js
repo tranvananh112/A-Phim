@@ -18,7 +18,7 @@ class ImageOptimizer {
         if (!resolvedUrl.startsWith('http')) {
             resolvedUrl = "https://phimimg.com/" + resolvedUrl.replace(/^\//, '');
         }
-        if (resolvedUrl.includes('phimimg.com')) {
+        if (resolvedUrl.includes('phimimg.com') || resolvedUrl.includes('tmdb.org')) {
             return resolvedUrl;
         }
 
