@@ -79,7 +79,7 @@ try {
     const cachedConfigStr = localStorage.getItem('cinestream_public_settings');
     if (cachedConfigStr) {
         const cachedContent = JSON.parse(cachedConfigStr);
-        if (cachedContent.apiBase && !cachedContent.apiBase.includes('apii.online')) {
+        if (cachedContent.apiBase) {
             API_CONFIG.OPHIM_URL = cachedContent.apiBase;
         } else {
             API_CONFIG.OPHIM_URL = 'https://phimapi.com/v1/api';
@@ -87,7 +87,7 @@ try {
             delete cachedContent.apiBase;
             localStorage.setItem('cinestream_public_settings', JSON.stringify(cachedContent));
         }
-        if (cachedContent.apiSecondary && !cachedContent.apiSecondary.includes('apii.online')) {
+        if (cachedContent.apiSecondary) {
             API_CONFIG.OPHIM17_URL = cachedContent.apiSecondary;
         }
         if (typeof cachedContent.enableMultipleSources === 'boolean') API_CONFIG.USE_MULTIPLE_SOURCES = cachedContent.enableMultipleSources;
@@ -110,8 +110,8 @@ try {
         if (data && data.success && data.data) {
             const { content, general } = data.data;
             let configMap = {
-                apiBase: (content?.apiBase && !content.apiBase.includes('apii.online')) ? content.apiBase : 'https://phimapi.com/v1/api',
-                apiSecondary: (content?.apiSecondary && !content.apiSecondary.includes('apii.online')) ? content.apiSecondary : 'https://phimapi.com',
+                apiBase: content?.apiBase || 'https://phimapi.com/v1/api',
+                apiSecondary: content?.apiSecondary || 'https://phimapi.com',
                 enableMultipleSources: content?.enableMultipleSources,
                 enableWatermark: content?.enableWatermark,
                 watermarkUrl: content?.watermarkUrl,
