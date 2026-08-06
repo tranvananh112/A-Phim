@@ -1,4 +1,4 @@
-﻿// Login Page Script
+// Login Page Script
 document.addEventListener('DOMContentLoaded', function () {
     // Allow users to access login page even if logged in
     // They can logout manually if needed
@@ -25,7 +25,7 @@ function setupAuthLeftPanel() {
             const data = await res.json();
             if (data?.data?.items?.length > 0) {
                 const latestMovie = data.data.items[0];
-                const url = `https://img.ophim.live/uploads/movies/${latestMovie.thumb_url || latestMovie.poster_url}`;
+                const url = `https://phimimg.com/${latestMovie.thumb_url || latestMovie.poster_url}`;
                 panel.style.background = `linear-gradient(to bottom, rgba(15,15,30,0.15) 0%, rgba(15,15,30,0.95) 100%), url('${url}') center / cover no-repeat`;
             }
         } catch (e) {
@@ -47,7 +47,7 @@ function setupLoginForm() {
         const rememberMe = document.getElementById('rememberMe')?.checked || false;
 
         if (!email || !password) {
-            showMessage('Vui lòng nhập đầy đủ thông tin', 'error');
+            showMessage('Vui l�ng nh?p d?y d? th�ng tin', 'error');
             return;
         }
 
@@ -55,14 +55,14 @@ function setupLoginForm() {
         const submitBtn = form.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Đang đăng nhập...';
+        submitBtn.textContent = '�ang dang nh?p...';
 
         try {
             const result = await authService.login(email, password, rememberMe);
 
             if (result.success) {
-                showMessage('Đăng nhập thành công!', 'success');
-                // Hiện popup mời vào nhóm Telegram sau mỗi lần đăng nhập
+                showMessage('�ang nh?p th�nh c�ng!', 'success');
+                // Hi?n popup m?i v�o nh�m Telegram sau m?i l?n dang nh?p
                 const redirectUrl = new URLSearchParams(window.location.search).get('redirect');
                 const finalUrl = redirectUrl ? decodeURIComponent(redirectUrl) : 'index.html';
                 setTimeout(() => { showTelegramPopup(finalUrl); }, 800);
@@ -72,7 +72,7 @@ function setupLoginForm() {
                 submitBtn.textContent = originalText;
             }
         } catch (error) {
-            showMessage('Lỗi đăng nhập: ' + error.message, 'error');
+            showMessage('L?i dang nh?p: ' + error.message, 'error');
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
         }
@@ -83,7 +83,7 @@ function setupLoginForm() {
 function setupRegisterForm() {
     // Add register link handler
     const registerLink = document.querySelector('a[href="#"]');
-    if (registerLink && registerLink.textContent.includes('Đăng ký')) {
+    if (registerLink && registerLink.textContent.includes('�ang k�')) {
         registerLink.addEventListener('click', (e) => {
             e.preventDefault();
             showRegisterModal();
@@ -102,14 +102,14 @@ function showRegisterModal() {
                 <span class="material-icons-outlined">close</span>
             </button>
             
-            <h2 class="text-2xl font-bold text-white mb-6">Đăng ký tài khoản</h2>
+            <h2 class="text-2xl font-bold text-white mb-6">�ang k� t�i kho?n</h2>
             
             <form id="registerForm" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Họ và tên</label>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">H? v� t�n</label>
                     <input type="text" id="regName" required
                         class="w-full px-4 py-3 bg-background-dark/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-white placeholder-gray-500"
-                        placeholder="Nguyễn Văn A" />
+                        placeholder="Nguy?n Van A" />
                 </div>
                 
                 <div>
@@ -120,36 +120,36 @@ function showRegisterModal() {
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Số điện thoại (tùy chọn)</label>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">S? di?n tho?i (t�y ch?n)</label>
                     <input type="tel" id="regPhone"
                         class="w-full px-4 py-3 bg-background-dark/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-white placeholder-gray-500"
                         placeholder="0123456789" />
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Mật khẩu</label>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">M?t kh?u</label>
                     <input type="password" id="regPassword" required minlength="6"
                         class="w-full px-4 py-3 bg-background-dark/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-white placeholder-gray-500"
-                        placeholder="••••••••" />
+                        placeholder="��������" />
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Xác nhận mật khẩu</label>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">X�c nh?n m?t kh?u</label>
                     <input type="password" id="regPasswordConfirm" required minlength="6"
                         class="w-full px-4 py-3 bg-background-dark/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-white placeholder-gray-500"
-                        placeholder="••••••••" />
+                        placeholder="��������" />
                 </div>
                 
                 <button type="submit"
                     class="w-full py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors">
-                    ĐĂNG KÝ
+                    �ANG K�
                 </button>
             </form>
             
             <div class="mt-6 text-center">
                 <p class="text-sm text-gray-400">
-                    Đã có tài khoản? 
-                    <button onclick="this.closest('.fixed').remove()" class="text-primary hover:underline">Đăng nhập</button>
+                    �� c� t�i kho?n? 
+                    <button onclick="this.closest('.fixed').remove()" class="text-primary hover:underline">�ang nh?p</button>
                 </p>
             </div>
         </div>
@@ -168,7 +168,7 @@ function showRegisterModal() {
         const passwordConfirm = document.getElementById('regPasswordConfirm').value;
 
         if (password !== passwordConfirm) {
-            showMessage('Mật khẩu xác nhận không khớp', 'error');
+            showMessage('M?t kh?u x�c nh?n kh�ng kh?p', 'error');
             return;
         }
 
@@ -176,16 +176,16 @@ function showRegisterModal() {
         const submitBtn = this.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Đang đăng ký...';
+        submitBtn.textContent = '�ang dang k�...';
 
         try {
             const result = await authService.register(email, password, name, phone);
 
             if (result.success) {
-                showMessage('Đăng ký thành công!', 'success');
+                showMessage('�ang k� th�nh c�ng!', 'success');
                 modal.remove();
                 setTimeout(() => {
-                    // Quay về trang phim nếu có ?redirect=
+                    // Quay v? trang phim n?u c� ?redirect=
                     const redirectUrl = new URLSearchParams(window.location.search).get('redirect');
                     window.location.href = redirectUrl ? decodeURIComponent(redirectUrl) : 'index.html';
                 }, 1000);
@@ -195,7 +195,7 @@ function showRegisterModal() {
                 submitBtn.textContent = originalText;
             }
         } catch (error) {
-            showMessage('Lỗi đăng ký: ' + error.message, 'error');
+            showMessage('L?i dang k�: ' + error.message, 'error');
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
         }
@@ -205,7 +205,7 @@ function showRegisterModal() {
 // Setup forgot password
 function setupForgotPassword() {
     const forgotLink = document.querySelector('a[href="#"]');
-    if (forgotLink && forgotLink.textContent.includes('Quên mật khẩu')) {
+    if (forgotLink && forgotLink.textContent.includes('Qu�n m?t kh?u')) {
         forgotLink.addEventListener('click', (e) => {
             e.preventDefault();
             showForgotPasswordModal();
@@ -224,8 +224,8 @@ function showForgotPasswordModal() {
                 <span class="material-icons-outlined">close</span>
             </button>
             
-            <h2 class="text-2xl font-bold text-white mb-4">Quên mật khẩu</h2>
-            <p class="text-gray-400 mb-6">Nhập email của bạn để nhận mã OTP</p>
+            <h2 class="text-2xl font-bold text-white mb-4">Qu�n m?t kh?u</h2>
+            <p class="text-gray-400 mb-6">Nh?p email c?a b?n d? nh?n m� OTP</p>
             
             <form id="forgotForm" class="space-y-4">
                 <div>
@@ -237,7 +237,7 @@ function showForgotPasswordModal() {
                 
                 <button type="submit"
                     class="w-full py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors">
-                    GỬI MÃ OTP
+                    G?I M� OTP
                 </button>
             </form>
         </div>
@@ -252,7 +252,7 @@ function showForgotPasswordModal() {
         const result = authService.requestPasswordReset(email);
 
         if (result.success) {
-            showMessage('Mã OTP đã được gửi đến email của bạn', 'success');
+            showMessage('M� OTP d� du?c g?i d?n email c?a b?n', 'success');
             modal.remove();
             showResetPasswordModal(email, result.otp);
         } else {
@@ -272,28 +272,28 @@ function showResetPasswordModal(email, otp) {
                 <span class="material-icons-outlined">close</span>
             </button>
             
-            <h2 class="text-2xl font-bold text-white mb-4">Đặt lại mật khẩu</h2>
-            <p class="text-gray-400 mb-2">Mã OTP đã được gửi đến email của bạn</p>
+            <h2 class="text-2xl font-bold text-white mb-4">�?t l?i m?t kh?u</h2>
+            <p class="text-gray-400 mb-2">M� OTP d� du?c g?i d?n email c?a b?n</p>
             <p class="text-sm text-primary mb-6">Demo: ${otp}</p>
             
             <form id="resetForm" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Mã OTP</label>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">M� OTP</label>
                     <input type="text" id="otpCode" required
                         class="w-full px-4 py-3 bg-background-dark/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-white placeholder-gray-500"
                         placeholder="123456" />
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Mật khẩu mới</label>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">M?t kh?u m?i</label>
                     <input type="password" id="newPassword" required minlength="6"
                         class="w-full px-4 py-3 bg-background-dark/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-white placeholder-gray-500"
-                        placeholder="••••••••" />
+                        placeholder="��������" />
                 </div>
                 
                 <button type="submit"
                     class="w-full py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors">
-                    ĐẶT LẠI MẬT KHẨU
+                    �?T L?I M?T KH?U
                 </button>
             </form>
         </div>
@@ -310,7 +310,7 @@ function showResetPasswordModal(email, otp) {
         const result = authService.resetPassword(email, otpCode, newPassword);
 
         if (result.success) {
-            showMessage('Đặt lại mật khẩu thành công!', 'success');
+            showMessage('�?t l?i m?t kh?u th�nh c�ng!', 'success');
             modal.remove();
         } else {
             showMessage(result.message, 'error');
@@ -336,7 +336,7 @@ function showMessage(message, type = 'info') {
 
 // Social login handlers
 function loginWithGoogle() {
-    showMessage('Hiện tại chưa hỗ trợ đăng nhập bằng Google. Vui lòng đăng ký tài khoản thủ công.', 'error');
+    showMessage('Hi?n t?i chua h? tr? dang nh?p b?ng Google. Vui l�ng dang k� t�i kho?n th? c�ng.', 'error');
     // Redirect to register page after 1.5 seconds
     setTimeout(() => {
         window.location.href = 'register.html?highlight=true';
@@ -344,7 +344,7 @@ function loginWithGoogle() {
 }
 
 function loginWithFacebook() {
-    showMessage('Hiện tại chưa hỗ trợ đăng nhập bằng Facebook. Vui lòng đăng ký tài khoản thủ công.', 'error');
+    showMessage('Hi?n t?i chua h? tr? dang nh?p b?ng Facebook. Vui l�ng dang k� t�i kho?n th? c�ng.', 'error');
     // Redirect to register page after 1.5 seconds
     setTimeout(() => {
         window.location.href = 'register.html?highlight=true';
@@ -438,28 +438,28 @@ function showTelegramPopup(redirectUrl) {
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.18.18 0 0 0-.07-.19c-.08-.05-.19-.02-.27 0-.11.03-1.84 1.18-5.18 3.44-.49.34-.93.5-1.33.49-.44-.01-1.29-.25-1.92-.45-.73-.24-1.31-.36-1.26-.77.03-.21.32-.42.87-.64 3.41-1.48 5.68-2.46 6.83-2.94 3.25-1.36 3.93-1.59 4.37-1.59.1 0 .31.02.43.09.1.06.18.14.2.25.01.12.01.28.01.37z"/>
                         </svg>
                     </div>
-                    <div class="tg-badge" style="position:absolute;top:-4px;right:-4px;background:#f2f20d;color:#1a1200;border-radius:50px;padding:3px 8px;font-size:10px;font-weight:800;letter-spacing:0.5px;white-space:nowrap;">MỚI ✨</div>
+                    <div class="tg-badge" style="position:absolute;top:-4px;right:-4px;background:#f2f20d;color:#1a1200;border-radius:50px;padding:3px 8px;font-size:10px;font-weight:800;letter-spacing:0.5px;white-space:nowrap;">M?I ?</div>
                 </div>
 
                 <!-- Title -->
                 <div style="margin-bottom:6px;">
-                    <span class="tg-shimmer-text" style="font-size:20px;font-weight:800;letter-spacing:-0.3px;">Cộng Đồng A Phim</span>
+                    <span class="tg-shimmer-text" style="font-size:20px;font-weight:800;letter-spacing:-0.3px;">C?ng �?ng A Phim</span>
                 </div>
 
                 <!-- Subtitle -->
-                <p style="color:rgba(255,255,255,0.5);font-size:12px;margin:0 0 20px;font-weight:500;">Telegram Group · Bot tìm phim tự động</p>
+                <p style="color:rgba(255,255,255,0.5);font-size:12px;margin:0 0 20px;font-weight:500;">Telegram Group � Bot t�m phim t? d?ng</p>
 
-                <!-- Feature pills - grid 2 cột đồng đều -->
+                <!-- Feature pills - grid 2 c?t d?ng d?u -->
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:22px;">
-                    <span style="background:rgba(41,168,224,0.12);border:1px solid rgba(41,168,224,0.25);color:#29A8E0;border-radius:50px;padding:7px 10px;font-size:11px;font-weight:600;text-align:center;">🎬 Xem phim cùng nhau</span>
-                    <span style="background:rgba(41,168,224,0.12);border:1px solid rgba(41,168,224,0.25);color:#29A8E0;border-radius:50px;padding:7px 10px;font-size:11px;font-weight:600;text-align:center;">🤖 Bot tìm phim siêu nhanh</span>
-                    <span style="background:rgba(41,168,224,0.12);border:1px solid rgba(41,168,224,0.25);color:#29A8E0;border-radius:50px;padding:7px 10px;font-size:11px;font-weight:600;text-align:center;">🔥 Phim mới cập nhật liên tục</span>
-                    <span style="background:rgba(41,168,224,0.12);border:1px solid rgba(41,168,224,0.25);color:#29A8E0;border-radius:50px;padding:7px 10px;font-size:11px;font-weight:600;text-align:center;">💬 Chia sẻ & review phim hay</span>
+                    <span style="background:rgba(41,168,224,0.12);border:1px solid rgba(41,168,224,0.25);color:#29A8E0;border-radius:50px;padding:7px 10px;font-size:11px;font-weight:600;text-align:center;">?? Xem phim c�ng nhau</span>
+                    <span style="background:rgba(41,168,224,0.12);border:1px solid rgba(41,168,224,0.25);color:#29A8E0;border-radius:50px;padding:7px 10px;font-size:11px;font-weight:600;text-align:center;">?? Bot t�m phim si�u nhanh</span>
+                    <span style="background:rgba(41,168,224,0.12);border:1px solid rgba(41,168,224,0.25);color:#29A8E0;border-radius:50px;padding:7px 10px;font-size:11px;font-weight:600;text-align:center;">?? Phim m?i c?p nh?t li�n t?c</span>
+                    <span style="background:rgba(41,168,224,0.12);border:1px solid rgba(41,168,224,0.25);color:#29A8E0;border-radius:50px;padding:7px 10px;font-size:11px;font-weight:600;text-align:center;">?? Chia s? & review phim hay</span>
                 </div>
 
                 <!-- Description -->
                 <p style="color:rgba(255,255,255,0.65);font-size:13px;line-height:1.6;margin-bottom:24px;text-align:justify;text-align-last:center;">
-                    Tham gia ngay để <strong style="color:#f2f20d;">tìm kiếm phim siêu tốc</strong> với bot thông minh, cập nhật phim mới mỗi ngày và chia sẻ cùng cộng đồng phim ảnh sôi động!
+                    Tham gia ngay d? <strong style="color:#f2f20d;">t�m ki?m phim si�u t?c</strong> v?i bot th�ng minh, c?p nh?t phim m?i m?i ng�y v� chia s? c�ng c?ng d?ng phim ?nh s�i d?ng!
                 </p>
 
                 <!-- Join button -->
@@ -469,13 +469,13 @@ function showTelegramPopup(redirectUrl) {
                     onclick="setTimeout(function(){ document.getElementById('tg-popup-overlay').remove(); window.location.href='${redirectUrl}'; }, 1200);"
                 >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.18.18 0 0 0-.07-.19c-.08-.05-.19-.02-.27 0-.11.03-1.84 1.18-5.18 3.44-.49.34-.93.5-1.33.49-.44-.01-1.29-.25-1.92-.45-.73-.24-1.31-.36-1.26-.77.03-.21.32-.42.87-.64 3.41-1.48 5.68-2.46 6.83-2.94 3.25-1.36 3.93-1.59 4.37-1.59.1 0 .31.02.43.09.1.06.18.14.2.25.01.12.01.28.01.37z"/></svg>
-                    VÀO NHÓM TELEGRAM NGAY
+                    V�O NH�M TELEGRAM NGAY
                 </a>
 
                 <!-- Skip -->
                 <button class="tg-skip-btn" onclick="document.getElementById('tg-popup-overlay').remove();window.location.href='${redirectUrl}';"
                     style="background:none;border:none;cursor:pointer;font-size:12px;font-family:inherit;padding:4px 8px;display:block;margin:0 auto;">
-                    Bỏ qua, xem phim thôi →
+                    B? qua, xem phim th�i ?
                 </button>
             </div>
         </div>

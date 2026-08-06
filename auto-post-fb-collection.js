@@ -127,7 +127,7 @@ const DESC_ICONS = ['💬', '📝', '💡', '🔍', '📖', '✍️', '💭', '�
 // ── Fetch & Select Movies ────────────────────────────────────────
 async function fetchMovies() {
     console.log("📥 Fetching movies from API...");
-    const r = await axios.get('https://ophim1.com/v1/api/danh-sach/phim-moi-cap-nhat?page=1', { timeout: 15000 });
+    const r = await axios.get('https://phimapi.com/danh-sach/phim-moi-cap-nhat?page=1', { timeout: 15000 });
     let items = (r.data?.data?.items || []).filter(m => m.poster_url && m.slug);
 
     // Load lịch sử đã đăng để tránh trùng
@@ -155,7 +155,7 @@ async function fetchMovies() {
 // ── Fetch Movie Detail ────────────────────────────────────────────
 async function fetchDetail(slug) {
     try {
-        const r = await axios.get(`https://ophim1.com/phim/${slug}`, { timeout: 10000 });
+        const r = await axios.get(`https://phimapi.com/phim/${slug}`, { timeout: 10000 });
         return r.data?.movie || null;
     } catch { return null; }
 }
@@ -164,7 +164,7 @@ async function fetchDetail(slug) {
 function buildImageUrl(url) {
     if (!url) return null;
     if (url.startsWith('http')) return url;
-    return `https://img.ophim.live/uploads/movies/${url}`;
+    return `https://phimimg.com/${url}`;
 }
 
 // ── Create Collage ────────────────────────────────────────────────
