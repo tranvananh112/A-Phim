@@ -452,16 +452,21 @@ class MovieAPI {
     getImageURL(imagePath, width = 400, quality = 80, isPriority = false) {
         if (!imagePath) return '/apple-touch-icon.png';
 
-        // Use imageOptimizer.resolveUrl if available — it handles all prefix cases correctly
         let fullUrl = imagePath;
         if (!imagePath.startsWith('http')) {
             const filename = imagePath.replace(/^\//, "");
-            fullUrl = `${API_CONFIG.IMAGE_BASE || 'https://phimimg.com/'}${filename}`;
+            fullUrl = `${typeof API_CONFIG !== 'undefined' && API_CONFIG.IMAGE_BASE ? API_CONFIG.IMAGE_BASE : 'https://phimimg.com/'}${filename}`;
         }
 
         // Use imageOptimizer for advanced compression and caching
         if (typeof imageOptimizer !== 'undefined' && typeof imageOptimizer.optimizeImageUrl === 'function') {
             return imageOptimizer.optimizeImageUrl(fullUrl, width, quality, isPriority);
+        }
+
+        // Gọi thẳng qua Backend Proxy để ảnh luôn hiển thị đúng và không bị block
+        if (typeof API_CONFIG !== 'undefined' && API_CONFIG.BACKEND_URL) {
+            const backendBase = API_CONFIG.BACKEND_URL.replace('/api', '');
+            return `${backendBase}/api/images/compress?url=${encodeURIComponent(fullUrl)}&w=${width}&q=${quality}&priority=${isPriority}`;
         }
         
         return fullUrl;
