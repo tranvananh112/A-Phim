@@ -8,6 +8,15 @@ let localFilters = {
     status: ''
 };
 let allBanners = []; // Cache from API
+
+function getValidImageUrl(url) {
+    if (!url) return 'https://placehold.co/400x600?text=No+Image';
+    if (url.startsWith('http')) return url;
+    const imageBase = (window.API_CONFIG && window.API_CONFIG.IMAGE_BASE) ? window.API_CONFIG.IMAGE_BASE : 'https://phimimg.com/';
+    const base = imageBase.endsWith('/') ? imageBase.slice(0, -1) : imageBase;
+    return base + '/' + normalizeImagePath(url);
+}
+
 function normalizeImagePath(url) {
     if (!url) return '';
     if (url.startsWith('http')) return url;
@@ -384,18 +393,20 @@ async function loadMoviesFromOphim(keyword = '', page = 1) {
     loadingDiv.style.display = 'block';
     grid.style.display = 'none';
     
-    let apiUrl = `https://phimapi.com/danh-sach/phim-moi-cap-nhat?page=${currentOphimSearchPage}`;
+    const ophimBase = (window.API_CONFIG && window.API_CONFIG.OPHIM_URL) ? window.API_CONFIG.OPHIM_URL : 'https://phimapi.com/v1/api';
+    const ophim17Base = (window.API_CONFIG && window.API_CONFIG.OPHIM17_URL) ? window.API_CONFIG.OPHIM17_URL : 'https://phimapi.com';
+    let apiUrl = `${ophim17Base}/danh-sach/phim-moi-cap-nhat?page=${currentOphimSearchPage}`;
     
     if (currentOphimSearchKeyword !== '') {
-        apiUrl = `https://phimapi.com/v1/api/tim-kiem?keyword=${encodeURIComponent(currentOphimSearchKeyword)}&limit=24&page=${currentOphimSearchPage}`;
+        apiUrl = `${ophimBase}/tim-kiem?keyword=${encodeURIComponent(currentOphimSearchKeyword)}&limit=24&page=${currentOphimSearchPage}`;
         if (loadingText) loadingText.textContent = `Đang tìm "${currentOphimSearchKeyword}"...`;
         if (gridTitle) gridTitle.textContent = 'Kết quả tìm kiếm';
     } else {
         const filterVal = filterCategory ? filterCategory.value : 'danh-sach/phim-moi-cap-nhat';
         if (filterVal === 'danh-sach/phim-moi-cap-nhat') {
-            apiUrl = `https://phimapi.com/${filterVal}?page=${currentOphimSearchPage}`;
+            apiUrl = `${ophim17Base}/${filterVal}?page=${currentOphimSearchPage}`;
         } else {
-            apiUrl = `https://phimapi.com/v1/api/${filterVal}?page=${currentOphimSearchPage}`;
+            apiUrl = `${ophimBase}/${filterVal}?page=${currentOphimSearchPage}`;
         }
         
         let filterName = filterCategory ? filterCategory.options[filterCategory.selectedIndex].text : 'Phim mới';
@@ -411,8 +422,8 @@ async function loadMoviesFromOphim(keyword = '', page = 1) {
 
         const data = await response.json();
 
-        if ((data && (data.status === 'success' || data.status === true || data.status)) && data.data?.items) {
-            let newMovies = data.data.items;
+        if ((data && (data.status === 'success' || data.status === true || data.status)) && (data.data?.items || data.items)) {
+            let newMovies = data.data?.items || data.items;
             
             const pagination = data.data.params?.pagination || data.data.paginate || data.data.pagination || {};
             const totalItems = pagination?.totalItems || pagination?.total_items || newMovies.length;
