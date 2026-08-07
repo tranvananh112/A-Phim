@@ -39,13 +39,13 @@ const API_CONFIG = {
     BACKEND_URL: chosenBackend + '/api',
 
     // Default Ophim API (primary)
-    OPHIM_URL: 'https://ophim1.com/v1/api',
+    OPHIM_URL: 'https://phimapi.com/v1/api',
 
     // Default Ophim17 API (secondary - mirror)
-    OPHIM17_URL: 'https://ophim1.com',
+    OPHIM17_URL: 'https://phimapi.com',
 
     // Backup PhimAPI (unblocked mirror)
-    PHIMAPI_URL: 'https://ophim1.com',
+    PHIMAPI_URL: 'https://phimapi.com',
     
     // NguonC (alternative source)
     NGUONC_URL: 'https://phim.nguonc.com/api/films',
@@ -82,7 +82,7 @@ try {
         if (cachedContent.apiBase) {
             API_CONFIG.OPHIM_URL = cachedContent.apiBase;
         } else {
-            API_CONFIG.OPHIM_URL = 'https://ophim1.com/v1/api';
+            API_CONFIG.OPHIM_URL = 'https://phimapi.com/v1/api';
             // Clear broken cached apiBase
             delete cachedContent.apiBase;
             localStorage.setItem('cinestream_public_settings', JSON.stringify(cachedContent));
@@ -110,8 +110,8 @@ try {
         if (data && data.success && data.data) {
             const { content, general } = data.data;
             let configMap = {
-                apiBase: content?.apiBase || 'https://ophim1.com/v1/api',
-                apiSecondary: content?.apiSecondary || 'https://ophim1.com',
+                apiBase: content?.apiBase || 'https://phimapi.com/v1/api',
+                apiSecondary: content?.apiSecondary || 'https://phimapi.com',
                 enableMultipleSources: content?.enableMultipleSources,
                 enableWatermark: content?.enableWatermark,
                 watermarkUrl: content?.watermarkUrl,
