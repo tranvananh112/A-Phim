@@ -1,4 +1,4 @@
-// API Service for phimapi.com and Backend
+﻿// API Service for phimapi.com and Backend
 class MovieAPI {
     constructor() {
         this.useBackend = API_CONFIG.USE_BACKEND_FOR_MOVIES || false;
@@ -44,44 +44,6 @@ class MovieAPI {
         };
     }
 
-    // NguonC Adapter - Convert NguonC structure to Ophim structure
-    normalizeNguonCResponse(data) {
-        if (!data || data.status !== 'success') return null;
-        let normalized = { status: true, data: { item: null, items: [] } };
-        if (data.movie) {
-            const m = data.movie;
-            let episodes = [];
-            if (m.episodes && Array.isArray(m.episodes)) {
-                episodes = m.episodes.map(server => ({
-                    server_name: server.server_name,
-                    server_data: (server.items || []).map(ep => ({
-                        name: ep.name, slug: ep.slug, filename: ep.name,
-                        link_embed: ep.embed, link_m3u8: ep.m3u8
-                    }))
-                }));
-            }
-            normalized.data.item = {
-                ...m, content: m.description || '', thumb_url: m.thumb_url, poster_url: m.poster_url,
-                year: m.category && m.category["3"] && m.category["3"].list ? m.category["3"].list.map(y => y.name).join(', ') : '',
-                episodes: episodes
-            };
-        }
-        if (data.items && Array.isArray(data.items)) {
-            normalized.data.items = data.items.map(m => ({
-                ...m, thumb_url: m.thumb_url, poster_url: m.poster_url,
-            }));
-            if (data.paginate) {
-                normalized.data.params = {
-                    pagination: {
-                        totalItems: data.paginate.totalItems, totalItemsPerPage: data.paginate.itemsPerPage,
-                        currentPage: data.paginate.currentPage, totalPages: data.paginate.totalPages
-                    }
-                };
-            }
-        }
-        return normalized;
-    }
-
     // Wrapper to fetch from primary OPhim URL or fallback OPhim mirrors (phimapi.com -> phimapi.com -> phimapi.com)
     async fetchWithFallback(endpoint, options = {}) {
         let cleanEndpoint = endpoint || '';
@@ -101,16 +63,16 @@ class MovieAPI {
 
         let urlsToTry = [
             `/v1/api${basePath}${paramStr}`,
-            `https://phimapi.com${basePath}${paramStr}`,
-            `https://phimapi.com/v1/api${basePath}${paramStr}`,
-            `https://phimapi.com/v1/api${basePath}${paramStr}`,
-            `https://phimapi.com/v1/api${basePath}${paramStr}`
+            `https://ophim1.com${basePath}${paramStr}`,
+            `https://ophim1.com/v1/api${basePath}${paramStr}`,
+            `https://ophim1.com/v1/api${basePath}${paramStr}`,
+            `https://ophim1.com/v1/api${basePath}${paramStr}`
         ];
 
-        if (basePath.includes('phim-moi-cap-nhat')) {
+        if (basePath.includes('phim-moi-cap-nhat') || basePath === '/home') {
             urlsToTry.unshift(`/v1/api/danh-sach/phim-moi-cap-nhat${paramStr}`);
-            urlsToTry.unshift(`https://phimapi.com/danh-sach/phim-moi-cap-nhat${paramStr}`);
-            urlsToTry.unshift(`https://phimapi.com/danh-sach/phim-moi-cap-nhat${paramStr}`);
+            urlsToTry.unshift(`https://ophim1.com/danh-sach/phim-moi-cap-nhat${paramStr}`);
+            urlsToTry.unshift(`https://ophim1.com/danh-sach/phim-moi-cap-nhat${paramStr}`);
         }
 
         const uniqueUrls = Array.from(new Set(urlsToTry.filter(Boolean)));
@@ -191,25 +153,17 @@ class MovieAPI {
             if (this.useBackend) {
                 const response = await this.fetchWithAuth(`${this.backendURL}/movies?page=${page}&limit=20`);
                 const data = await response.json();
+
+                console.log('Backend response:', data);
+
+                // Always return data if we got a response
                 return this.filterHiddenMovies(data);
             } else {
-                try {
-                    const response = await this.fetchWithFallback(`/danh-sach/phim-moi-cap-nhat?page=${page}`, {
-                        headers: { 'accept': 'application/json' },
-                        timeout: 5000
-                    });
-                    const data = await response.json();
-                    return this.filterHiddenMovies(data);
-                } catch (error) {
-                    console.warn('Ophim/PhimAPI failed in getMovieList, falling back to NguonC...', error);
-                    const response = await this.fetchWithTimeout(`${API_CONFIG.NGUONC_URL}/phim-moi-cap-nhat?page=${page}`, {
-                        headers: { 'accept': 'application/json' },
-                        timeout: 5000
-                    });
-                    const nguonCData = await response.json();
-                    const normalized = this.normalizeNguonCResponse(nguonCData);
-                    return this.filterHiddenMovies(normalized);
-                }
+                const response = await this.fetchWithFallback(`/danh-sach/phim-moi-cap-nhat?page=${page}`, {
+                    headers: { 'accept': 'application/json' }
+                });
+                const data = await response.json();
+                return this.filterHiddenMovies(data);
             }
         } catch (error) {
             console.error('Error fetching movie list:', error);
@@ -238,24 +192,83 @@ class MovieAPI {
             if (this.useBackend) {
                 const response = await this.fetchWithAuth(`${this.backendURL}/movies/${slug}`);
                 const data = await response.json();
+
+                console.log('Backend movie detail response:', data);
+
+                // Always return data if we got a response
+                // The backend should handle the format
                 return data;
-            } else {
+                        } else {
+                const response = await this.fetchWithFallback(`/phim/${slug}`, {
+                    headers: { 'accept': 'application/json' }
+                });
+                const ophimData = await response.json();
+                
+                // --- LẤY DỮ LIỆU TỪ NGUỒN PHỤ (SONG SONG ĐỂ TĂNG TỐC) ---
                 try {
-                    const response = await this.fetchWithFallback(`/phim/${slug}`, {
-                        headers: { 'accept': 'application/json' },
-                        timeout: 5000
-                    });
-                    const ophimData = await response.json();
-                    return ophimData;
-                } catch (error) {
-                    console.warn(`Ophim/PhimAPI failed for ${slug}, falling back to NguonC...`, error);
-                    const response = await this.fetchWithTimeout(`${API_CONFIG.NGUONC_DETAIL_URL}/${slug}`, {
-                        headers: { 'accept': 'application/json' },
-                        timeout: 5000
-                    });
-                    const nguonCData = await response.json();
-                    return this.normalizeNguonCResponse(nguonCData);
+                    const fetchNguonC = this.fetchWithTimeout(`https://phim.nguonc.com/api/film/${slug}`, { timeout: 8000 })
+                        .then(res => res.ok ? res.json() : Promise.reject('NguonC error'));
+                        
+                    const fetchVSMov = this.fetchWithTimeout(`https://vsmov.com/api/phim/${slug}`, { timeout: 8000 })
+                        .then(res => res.ok ? res.json() : Promise.reject('VSMov error'));
+
+                    const [ncResult, vsResult] = await Promise.allSettled([fetchNguonC, fetchVSMov]);
+
+                    // Xử lý dữ liệu NguonC (Nguồn 2, Nguồn 3)
+                    if (ncResult.status === 'fulfilled' && ncResult.value && ncResult.value.status === 'success' && ncResult.value.movie && ncResult.value.movie.episodes) {
+                        const ncData = ncResult.value;
+                        const mappedEps = ncData.movie.episodes.map(s => ({
+                            server_name: s.server_name || 'Vietsub',
+                            server_data: (s.items || []).map(it => ({
+                                name: it.name && !it.name.toLowerCase().includes('tập') ? `Tập ${it.name}` : (it.name || 'Tập 1'),
+                                slug: it.slug || `tap-${it.name}`,
+                                link_embed: it.embed || '',
+                                link_m3u8: it.m3u8 || ''
+                            }))
+                        }));
+                        mappedEps.forEach(ncServer => {
+                            if (ophimData.data && ophimData.data.item) {
+                                if (!ophimData.data.item.episodes) ophimData.data.item.episodes = [];
+                                ophimData.data.item.episodes.push(ncServer);
+                            } else if (ophimData.movie) {
+                                if (!ophimData.episodes) ophimData.episodes = [];
+                                ophimData.episodes.push(ncServer);
+                            }
+                        });
+                    }
+
+                    // Xử lý dữ liệu VSMov (Nguồn 4, Nguồn 5...)
+                    if (vsResult.status === 'fulfilled' && vsResult.value && vsResult.value.status && vsResult.value.episodes && vsResult.value.episodes.length > 0) {
+                        const vsData = vsResult.value;
+                        if (ophimData.data && ophimData.data.item) {
+                            if (!ophimData.data.item.episodes) ophimData.data.item.episodes = [];
+                            ophimData.data.item.episodes.forEach(s => {
+                                if (s.server_name) s.server_name = s.server_name.replace(/ #\d+/g, '').trim();
+                            });
+                            vsData.episodes.forEach(vsServer => {
+                                if (vsServer.server_data && vsServer.server_data.length > 0) {
+                                    if (vsServer.server_name) vsServer.server_name = vsServer.server_name.replace(/ #\d+/g, '').trim();
+                                    ophimData.data.item.episodes.push(vsServer);
+                                }
+                            });
+                        } else if (ophimData.movie) {
+                            if (!ophimData.episodes) ophimData.episodes = [];
+                            ophimData.episodes.forEach(s => {
+                                if (s.server_name) s.server_name = s.server_name.replace(/ #\d+/g, '').trim();
+                            });
+                            vsData.episodes.forEach(vsServer => {
+                                if (vsServer.server_data && vsServer.server_data.length > 0) {
+                                    if (vsServer.server_name) vsServer.server_name = vsServer.server_name.replace(/ #\d+/g, '').trim();
+                                    ophimData.episodes.push(vsServer);
+                                }
+                            });
+                        }
+                    }
+                } catch (e) {
+                    console.warn('⚠️ Lỗi gọi nguồn phụ song song:', e.message);
                 }
+                
+                return ophimData;
             }
         } catch (error) {
             console.error('Error fetching movie detail:', error);
@@ -306,7 +319,20 @@ class MovieAPI {
                 }
                 return null;
             } else {
-                const response = await this.fetchWithFallback(`/the-loai/${categorySlug}?page=${page}`, {
+                let endpoint = '/danh-sach/' + categorySlug + '?page=' + page;
+                if (categorySlug.startsWith('the-loai/') || categorySlug.startsWith('quoc-gia/')) {
+                    const actualSlug = categorySlug.split('/')[1];
+                    endpoint = '/' + categorySlug + '?page=' + page;
+                } else if (!categorySlug.includes('/')) {
+                    const mainCategories = ['hanh-dong', 'tinh-cam', 'hai-huoc', 'vien-tuong', 'vo-thuat', 'kinh-di', 'tam-ly', 'than-thoai', 'hoat-hinh', 'phieu-luu', 'chieu-rap'];
+                    if (mainCategories.includes(categorySlug)) {
+                        endpoint = '/the-loai/' + categorySlug + '?page=' + page;
+                    } else {
+                        endpoint = '/danh-sach/' + categorySlug + '?page=' + page;
+                    }
+                }
+                
+                const response = await this.fetchWithFallback(endpoint, {
                     headers: { 'accept': 'application/json' }
                 });
                 const data = await response.json();
@@ -380,7 +406,17 @@ class MovieAPI {
     // Get home movies (alias to getMovieList)
     async getHome() {
         try {
-            return await this.getMovieList(1);
+            if (this.useBackend) {
+                const response = await this.fetchWithAuth(`${this.backendURL}/movies/home`);
+                const data = await response.json();
+                return this.filterHiddenMovies(this.normalizeResponse(data));
+            } else {
+                const response = await this.fetchWithFallback('/home', {
+                    headers: { 'accept': 'application/json' }
+                });
+                const data = await response.json();
+                return this.filterHiddenMovies(this.normalizeResponse(data));
+            }
         } catch (e) {
             console.warn('Error in getHome:', e);
             return null;
@@ -449,13 +485,16 @@ class MovieAPI {
     }
 
     // Get image URL
-    getImageURL(imagePath, width = 400, quality = 80, isPriority = false) {
+      getImageURL(imagePath, width = 400, quality = 80, isPriority = false) {
         if (!imagePath) return '/apple-touch-icon.png';
 
         let fullUrl = imagePath;
         if (!imagePath.startsWith('http')) {
-            const filename = imagePath.replace(/^\//, "");
-            fullUrl = `${typeof API_CONFIG !== 'undefined' && API_CONFIG.IMAGE_BASE ? API_CONFIG.IMAGE_BASE : 'https://phimimg.com/'}${filename}`;
+            let filename = imagePath.replace(/^\//, "");
+            if (!filename.startsWith('uploads/')) {
+                filename = 'uploads/movies/' + filename;
+            }
+            fullUrl = `${typeof API_CONFIG !== 'undefined' && API_CONFIG.IMAGE_BASE ? API_CONFIG.IMAGE_BASE : 'https://img.ophimimg.com/'}${filename}`;
         }
 
         // Use imageOptimizer for advanced compression and caching
@@ -568,7 +607,20 @@ class MovieAPI {
 
     async getMoviesByCategoryFromOphim17(categorySlug, page = 1) {
         try {
-            const response = await this.fetchWithTimeout(`${this.ophim17URL}/v1/api/the-loai/${categorySlug}?page=${page}`, {
+            let endpoint = '/the-loai/' + categorySlug + '.json?slug=' + categorySlug;
+            if (categorySlug.startsWith('the-loai/') || categorySlug.startsWith('quoc-gia/')) {
+                const actualSlug = categorySlug.split('/')[1];
+                endpoint = '/' + categorySlug + '.json?slug=' + actualSlug;
+            } else if (!categorySlug.includes('/')) {
+                const mainCategories = ['hanh-dong', 'tinh-cam', 'hai-huoc', 'vien-tuong', 'vo-thuat', 'kinh-di', 'tam-ly', 'than-thoai', 'hoat-hinh', 'phieu-luu', 'chieu-rap'];
+                if (mainCategories.includes(categorySlug)) {
+                    endpoint = '/the-loai/' + categorySlug + '.json?slug=' + categorySlug;
+                } else {
+                    endpoint = '/danh-sach/' + categorySlug + '.json?slug=' + categorySlug;
+                }
+            }
+            
+            const response = await this.fetchWithFallback('https://ophim17.cc/_next/data/9m2K2U6N0P-F6B_g0Y1M3' + endpoint, {
                 headers: { 'accept': 'application/json' }
             });
             return await response.json();
@@ -814,4 +866,7 @@ if (typeof window !== 'undefined') {
 document.addEventListener('DOMContentLoaded', () => {
     movieAPI.injectCanonical();
 });
+
+
+
 

@@ -158,14 +158,17 @@
     // ── API ──────────────────────────────────────────────────────────────────────
     function getOphimBase() {
         if (typeof API_CONFIG !== 'undefined' && API_CONFIG.OPHIM_URL) return API_CONFIG.OPHIM_URL;
-        return 'https://phimapi.com/v1/api';
+        return 'https://ophim1.com/v1/api';
     }
 
-    const IMG_CDN = 'https://phimimg.com/';
+    const IMG_CDN = 'https://img.ophimimg.com/';
 
     // Proxy qua wsrv.nl để resize ngay về 38x54 WebP → tải cực nhanh
     function buildImgSrc(thumb) {
         if (!thumb) return '';
+        if (typeof imageOptimizer !== 'undefined') {
+            return imageOptimizer.optimizeImageUrl(thumb, 100, 80);
+        }
         const full = thumb.startsWith('http') ? thumb : IMG_CDN + thumb;
         return full;
     }
@@ -204,8 +207,14 @@
         return `
             <a class="ap-suggest-row" href="movie-detail.html?slug=${slug}" tabindex="-1">
                 <img class="ap-suggest-thumb"
-                     src="${thumb}" alt="${title}"
+                     data-src="${thumb}" alt="${title}"
+                     data-tmdb-slug="${movie.slug}"
+                     data-tmdb-id="${movie.tmdb?.id || ''}"
+                     data-tmdb-name="${title.replace(/"/g, '&quot;')}"
+                     data-tmdb-year="${movie.year || ''}"
+                     data-tmdb-type="poster"
                      loading="eager" fetchpriority="high" decoding="async"
+                     src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2238%22 height=%2254%22%3E%3Crect fill=%22%23111%22 width=%2238%22 height=%2254%22/%3E%3C/svg%3E"
                      onerror="this.src='https://placehold.co/38x54/111/444?text=?'">
                 <div class="ap-suggest-info">
                     <div class="ap-suggest-title">${title}</div>

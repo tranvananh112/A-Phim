@@ -712,7 +712,7 @@
 
                     if ((data && (data.status === 'success' || data.status === true || data.status)) && data.data && data.data.items && data.data.items.length > 0) {
                         const movie = data.data.items[0];
-                        const posterUrl = movie.thumb_url ? `https://phimimg.com/${movie.thumb_url}` : null;
+                        const posterUrl = movie.thumb_url ? `https://img.ophimimg.com/${movie.thumb_url}` : null;
                         return { ...category, posterUrl };
                     }
                     return { ...category, posterUrl: null };
@@ -850,7 +850,7 @@
                     posterUrl = rawImg;
                 } else {
                     const filename = rawImg.replace(/^uploads\/movies\//, '');
-                    posterUrl = `https://phimimg.com/${filename}`;
+                    posterUrl = `https://img.ophimimg.com/${filename}`;
                 }
                 const year = movie.year || 'N/A';
                 const quality = movie.quality || movie.lang || '';
@@ -861,10 +861,10 @@
                        onclick="trackMovieClick('${movie.name}', '${movie.slug}', '${currentCategory}')"
                        class="group relative block rounded-xl overflow-hidden bg-surface-dark hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-primary/20">
                         <div class="relative aspect-[2/3] overflow-hidden">
-                            <img src="${posterUrl}" 
+                            <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22600%22%3E%3Crect fill=%22%23111%22 width=%22400%22 height=%22600%22/%3E%3Ctext fill=%22%23555%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 alignment-baseline=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22%3ENo Image%3C/text%3E%3C/svg%3E" data-src="${posterUrl}" 
                                  alt="${movie.name}"
                                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/300x450?text=No+Image'">
+                                 onerror="this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22600%22%3E%3Crect fill=%22%23111%22 width=%22400%22 height=%22600%22/%3E%3Ctext fill=%22%23555%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 alignment-baseline=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22%3ENo Image%3C/text%3E%3C/svg%3E'" data-tmdb-slug="${movie.slug}" data-tmdb-type="poster">
                             
                             <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60"></div>
                             

@@ -265,10 +265,16 @@ function renderMovies(movies) {
             <a href="movie-detail.html?slug=${movie.slug}" 
                class="group relative block rounded-xl overflow-hidden bg-surface-dark hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-primary/20 ${hiddenUI.containerClass}">
                 <div class="aspect-[2/3] relative overflow-hidden">
-                    <img src="${posterUrl}" 
+                    <img data-src="${posterUrl}" 
                          alt="${movie.name}"
                          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ${hiddenUI.imgClass}"
-                         onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'">
+                         data-tmdb-slug="${movie.slug}"
+                         data-tmdb-id="${movie.tmdb?.id || ''}"
+                         data-tmdb-name="${(movie.name || '').replace(/"/g, '&quot;')}"
+                         data-tmdb-year="${movie.year || ''}"
+                         data-tmdb-type="poster"
+                         src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22600%22%3E%3Crect fill=%22%23111%22 width=%22400%22 height=%22600%22/%3E%3Ctext fill=%22%23555%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 alignment-baseline=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22%3ENo Image%3C/text%3E%3C/svg%3E"
+                         onerror="this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22600%22%3E%3Crect fill=%22%23111%22 width=%22400%22 height=%22600%22/%3E%3Ctext fill=%22%23555%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 alignment-baseline=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22%3ENo Image%3C/text%3E%3C/svg%3E'">
                     
                     ${hiddenUI.badge}
                     <!-- Quality Badge -->

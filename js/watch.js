@@ -511,7 +511,13 @@ function renderMovieInfo(movie, episode) {
     // 🌟 Render Sidebar Premium Movie Card Details
     const sidebarPoster = document.getElementById('sidebar-poster');
     if (sidebarPoster) {
-        sidebarPoster.src = movieAPI.getImageURL(movie.poster_url || movie.thumb_url, 300, 85, true);
+        sidebarPoster.dataset.src = movieAPI.getImageURL(movie.poster_url || movie.thumb_url, 300, 85, true);
+        sidebarPoster.dataset.tmdbSlug = movie.slug;
+        sidebarPoster.dataset.tmdbId = movie.tmdb?.id || '';
+        sidebarPoster.dataset.tmdbName = (movie.name || '').replace(/"/g, '&quot;');
+        sidebarPoster.dataset.tmdbYear = movie.year || '';
+        sidebarPoster.dataset.tmdbType = 'poster';
+        sidebarPoster.src = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22600%22%3E%3Crect fill=%22%23111%22 width=%22400%22 height=%22600%22/%3E%3Ctext fill=%22%23555%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 alignment-baseline=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22%3ENo Image%3C/text%3E%3C/svg%3E";
         sidebarPoster.alt = movie.name;
     }
 
@@ -1064,6 +1070,25 @@ function renderPlayerPlaceholder(episode) {
             placeholder.addEventListener('mouseleave', () => anim.stop());
         }
     }
+
+    if (currentMovie && typeof imageOptimizer !== 'undefined') {
+        imageOptimizer.getTMDBImageUrl({
+            dataset: {
+                tmdbSlug: currentMovie.slug,
+                tmdbId: currentMovie.tmdb?.id || '',
+                tmdbName: currentMovie.name,
+                tmdbYear: currentMovie.year,
+                tmdbType: 'backdrop'
+            }
+        }).then(url => {
+            if (url) {
+                const bgs = document.querySelectorAll('#playerPlaceholder .bg-cover');
+                bgs.forEach(bg => {
+                    bg.style.backgroundImage = `url('${url}')`;
+                });
+            }
+        });
+    }
 }
 
 // Global callback to start playback on click
@@ -1382,12 +1407,28 @@ function initializePlayer(episode) {
             controls 
             preload="auto"
             controlsList="nodownload"
-            poster="${movieAPI.getImageURL(currentMovie.thumb_url, 1200, 90, true)}">
+            poster="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%221200%22 height=%22675%22%3E%3Crect fill=%22%23111%22 width=%221200%22 height=%22675%22/%3E%3Ctext fill=%22%23555%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 alignment-baseline=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22%3ENo Image%3C/text%3E%3C/svg%3E">
             Trình duyệt của bạn không hỗ trợ video.
         </video>
     `;
 
     player = document.getElementById('videoPlayer');
+
+    if (currentMovie && typeof imageOptimizer !== 'undefined') {
+        imageOptimizer.getTMDBImageUrl({
+            dataset: {
+                tmdbSlug: currentMovie.slug,
+                tmdbId: currentMovie.tmdb?.id || '',
+                tmdbName: currentMovie.name,
+                tmdbYear: currentMovie.year,
+                tmdbType: 'backdrop'
+            }
+        }).then(url => {
+            if (url && player) {
+                player.poster = url;
+            }
+        });
+    }
 
     // Register mobile touch double-tap handler directly on the video element
     let lastTap = 0;
@@ -1929,7 +1970,14 @@ function renderRecommendations(movies) {
         
         return `
             <a href="movie-detail.html?slug=${movie.slug}" class="watch-rec-item group">
-                <img src="${movieAPI.getImageURL(movie.thumb_url, 300, 85, true)}" alt="${movie.name}" class="watch-rec-thumb" loading="lazy" onerror="this.src='https://via.placeholder.com/60x80?text=No+Image'" />
+                <img data-src="${movieAPI.getImageURL(movie.thumb_url, 300, 85, true)}" 
+                     alt="${movie.name}" class="watch-rec-thumb" loading="lazy" 
+                     data-tmdb-slug="${movie.slug}"
+                     data-tmdb-id="${movie.tmdb?.id || ''}"
+                     data-tmdb-name="${(movie.name || '').replace(/"/g, '&quot;')}"
+                     data-tmdb-year="${movie.year || ''}"
+                     data-tmdb-type="poster"
+                     src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22600%22%3E%3Crect fill=%22%23111%22 width=%22400%22 height=%22600%22/%3E%3Ctext fill=%22%23555%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 alignment-baseline=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22%3ENo Image%3C/text%3E%3C/svg%3E" onerror="this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22600%22%3E%3Crect fill=%22%23111%22 width=%22400%22 height=%22600%22/%3E%3Ctext fill=%22%23555%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 alignment-baseline=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22%3ENo Image%3C/text%3E%3C/svg%3E'" />
                 <div class="watch-rec-info">
                     <h4 class="watch-rec-name group-hover:text-red-500 transition-colors">${movie.name}</h4>
                     <div class="watch-rec-meta">

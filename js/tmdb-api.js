@@ -2,7 +2,7 @@
 // API Documentation: https://developers.themoviedb.org/3
 
 const TMDB_API_KEY = '5fb3c8d9ad2ca4cd2029836befcc3ab5'; // TMDB API Key (v3)
-const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
+const TMDB_BASE_URL = 'https://api.tmdb.org/3';
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w185';
 
 // Wrapper to bypass VN ISP blocking via multiple fallback proxies
@@ -308,7 +308,7 @@ async function getHeroImagesFromTMDB(movie) {
 
         // Ưu tiên tải ảnh từ PhimAPI images endpoint vì rất nhanh và chính xác
         try {
-            const imagesUrl = `https://phimapi.com/v1/api/phim/${movie.slug}/images`;
+            const imagesUrl = `https://ophim1.com/v1/api/phim/${movie.slug}/images`;
             const response = await fetch(imagesUrl);
             if (response.ok) {
                 const json = await response.json();

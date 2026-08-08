@@ -113,7 +113,7 @@
             // Nếu API 1 lỗi hoặc không có phim, lập tức chuyển sang API dự phòng
             if (!items || items.length === 0) {
                 try {
-                    const base1 = (typeof API_CONFIG !== 'undefined' && API_CONFIG.OPHIM_URL) ? API_CONFIG.OPHIM_URL : 'https://phimapi.com/v1/api';
+                    const base1 = (typeof API_CONFIG !== 'undefined' && API_CONFIG.OPHIM_URL) ? API_CONFIG.OPHIM_URL : 'https://ophim1.com/v1/api';
                     const res1 = await fetch(`${base1}/tim-kiem?keyword=${encodeURIComponent(keyword)}&limit=10&page=1`);
                     const data1 = await res1.json();
                     if (data1 && data1.data && data1.data.items && data1.data.items.length > 0) {
@@ -125,7 +125,7 @@
                 } catch (err) {
                     console.warn('Primary API failed, immediately switching to backup API...');
                     try {
-                        const base2 = (typeof API_CONFIG !== 'undefined' && API_CONFIG.OPHIM17_URL) ? API_CONFIG.OPHIM17_URL : 'https://phimapi.com/v1/api';
+                        const base2 = (typeof API_CONFIG !== 'undefined' && API_CONFIG.OPHIM17_URL) ? API_CONFIG.OPHIM17_URL : 'https://ophim1.com/v1/api';
                         const res2 = await fetch(`${base2}/tim-kiem?keyword=${encodeURIComponent(keyword)}&limit=10&page=1`);
                         const data2 = await res2.json();
                         if (data2 && data2.data && data2.data.items) {
@@ -166,15 +166,23 @@
         const display = movies.slice(0, 5);
         let html = '';
         display.forEach(function (movie) {
-            const thumb = movie.thumb_url || movie.poster_url || '';
-            const poster = thumb ? `https://phimimg.com/${thumb}` : '';
+            const rawImg = movie.thumb_url || movie.poster_url || '';
+            const poster = (typeof imageOptimizer !== 'undefined' && rawImg)
+                ? imageOptimizer.optimizeImageUrl(rawImg, 100, 80)
+                : (rawImg ? `https://img.ophimimg.com/${rawImg.startsWith('uploads/') ? '' : 'uploads/movies/'}${rawImg}` : '');
             const badge = movie.year || movie.episode_current || 'HD';
             const title = (movie.name || '').replace(/</g, '&lt;');
             const enTitle = (movie.origin_name || '').replace(/</g, '&lt;');
 
             html += `
                 <a href="movie-detail.html?slug=${movie.slug}" class="mso-suggest-row">
-                    <img src="${poster}" class="mso-suggest-thumb" alt="${title}" loading="lazy"
+                    <img data-src="${poster}" class="mso-suggest-thumb" alt="${title}" loading="lazy"
+                         data-tmdb-slug="${movie.slug}"
+                         data-tmdb-id="${movie.tmdb?.id || ''}"
+                         data-tmdb-name="${title.replace(/"/g, '&quot;')}"
+                         data-tmdb-year="${movie.year || ''}"
+                         data-tmdb-type="poster"
+                         src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22150%22%3E%3Crect fill=%22%23111%22 width=%22100%22 height=%22150%22/%3E%3C/svg%3E"
                          onerror="this.style.display='none'">
                     <div class="mso-suggest-info">
                         <div class="mso-suggest-title">${title}</div>

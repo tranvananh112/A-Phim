@@ -90,48 +90,74 @@ async function loadMovieDetail(slug) {
     await fetchAndMergeSecondaryServersDetail(slug, !ophimOk);
 }
 
-// 🔄 Helper fetch nguồn phụ thông minh: Thử proxy server-side trước, nếu fail thì gọi thẳng phimapi.com (có CORS)
+// 🔄 Helper fetch nguồn phụ thông minh: Thử proxy server-side trước, nếu fail thì gọi thẳng API (có CORS)
 async function getSecondaryEpisodes(slug) {
+    // Proxy Node.js (chạy ở port 3001)
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     let proxyUrl = `/api/vsmov/${encodeURIComponent(slug)}`;
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        if (window.location.port !== '3000') {
-            proxyUrl = `http://localhost:3000/api/vsmov/${encodeURIComponent(slug)}`;
-        }
+    if (isLocalhost && window.location.port !== '3001') {
+        proxyUrl = `http://localhost:3001/api/vsmov/${encodeURIComponent(slug)}`;
     }
 
     try {
-        const res = await fetch(proxyUrl);
+        const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(6000) });
         if (res.ok) {
             const data = await res.json();
             if (data.status && data.episodes && data.episodes.length > 0) {
+                console.log('✅ Nguồn phụ từ proxy:', data.source);
                 return data;
             }
         }
     } catch (e) {
-        console.warn('⚠️ Proxy fetch failed, trying direct phimapi.com:', e.message);
+        console.warn('⚠️ Proxy fetch failed:', e.message);
     }
 
+    // Nguồn 2: phimapi.com (API mới nhất, không CORS)
     try {
-        const directUrl = `https://phimapi.com/phim/${encodeURIComponent(slug)}`;
-        const res = await fetch(directUrl);
+        const phimapiUrl = `https://phimapi.com/phim/${encodeURIComponent(slug)}`;
+        const res = await fetch(phimapiUrl, { signal: AbortSignal.timeout(6000) });
         if (res.ok) {
             const json = await res.json();
-            if (json && json.episodes && json.episodes.length > 0) {
+            const episodes = json.episodes || json.data?.item?.episodes || json.movie?.episodes;
+            if (episodes && episodes.length > 0) {
+                console.log('✅ Nguồn phụ từ phimapi.com');
                 return {
                     status: true,
                     source: 'phimapi.com',
-                    episodes: json.episodes,
-                    movie: json.movie || null
+                    episodes: episodes,
+                    movie: json.movie || json.data?.item || null
                 };
             }
         }
     } catch (e) {
-        console.warn('⚠️ Direct phimapi.com fetch failed:', e.message);
+        console.warn('⚠️ phimapi.com fetch failed:', e.message);
     }
 
+    // Nguồn 3: ophim1.com v1/api (endpoint đúng)
+    try {
+        const ophimUrl = `https://ophim1.com/v1/api/phim/${encodeURIComponent(slug)}`;
+        const res = await fetch(ophimUrl, { signal: AbortSignal.timeout(6000) });
+        if (res.ok) {
+            const json = await res.json();
+            const episodes = json?.data?.item?.episodes || json.episodes;
+            if (episodes && episodes.length > 0) {
+                console.log('✅ Nguồn phụ từ ophim1.com v1/api');
+                return {
+                    status: true,
+                    source: 'ophim1.com',
+                    episodes: episodes,
+                    movie: json?.data?.item || null
+                };
+            }
+        }
+    } catch (e) {
+        console.warn('⚠️ ophim1.com v1/api fetch failed:', e.message);
+    }
+
+    // Nguồn 4: nguonc.com
     try {
         const nguonCUrl = `https://phim.nguonc.com/api/film/${encodeURIComponent(slug)}`;
-        const res = await fetch(nguonCUrl);
+        const res = await fetch(nguonCUrl, { signal: AbortSignal.timeout(6000) });
         if (res.ok) {
             const json = await res.json();
             if (json && json.status === 'success' && json.movie && json.movie.episodes) {
@@ -144,6 +170,7 @@ async function getSecondaryEpisodes(slug) {
                         link_m3u8: it.m3u8 || ''
                     }))
                 }));
+                console.log('✅ Nguồn phụ từ nguonc.com');
                 return {
                     status: true,
                     source: 'nguonc.com',
@@ -161,9 +188,10 @@ async function getSecondaryEpisodes(slug) {
             }
         }
     } catch (e) {
-        console.warn('⚠️ Direct NguonC fetch failed:', e.message);
+        console.warn('⚠️ nguonc.com fetch failed:', e.message);
     }
 
+    console.warn('⚠️ Tất cả nguồn phụ đều thất bại cho slug:', slug);
     return null;
 }
 
@@ -275,7 +303,21 @@ function renderMovieDetail(movie) {
                 { opacity: 1, transform: 'scale(1)' }
             ], { duration: 600, easing: 'ease-out' });
         };
-        posterImg.src = movieAPI.getImageURL(movie.poster_url || movie.thumb_url, 600, 85, true);
+        if (typeof imageOptimizer !== 'undefined') {
+            imageOptimizer.getTMDBImageUrl({
+                dataset: {
+                    tmdbSlug: movie.slug,
+                    tmdbId: movie.tmdb?.id || '',
+                    tmdbName: movie.name,
+                    tmdbYear: movie.year,
+                    tmdbType: 'poster'
+                }
+            }).then(url => {
+                posterImg.src = url || movieAPI.getImageURL(movie.poster_url || movie.thumb_url, 600, 85, true);
+            });
+        } else {
+            posterImg.src = movieAPI.getImageURL(movie.poster_url || movie.thumb_url, 600, 85, true);
+        }
         posterImg.alt = `Xem Phim ${movie.name} (${movie.year}) Full HD Vietsub tại APhim`;
     }
 
@@ -291,7 +333,21 @@ function renderMovieDetail(movie) {
                 { opacity: targetOpacity }
             ], { duration: 800, easing: 'ease-out' });
         };
-        bgImg.src = movieAPI.getImageURL(movie.poster_url || movie.thumb_url, 1200, 90, true);
+        if (typeof imageOptimizer !== 'undefined') {
+            imageOptimizer.getTMDBImageUrl({
+                dataset: {
+                    tmdbSlug: movie.slug,
+                    tmdbId: movie.tmdb?.id || '',
+                    tmdbName: movie.name,
+                    tmdbYear: movie.year,
+                    tmdbType: 'backdrop'
+                }
+            }).then(url => {
+                bgImg.src = url || movieAPI.getImageURL(movie.poster_url || movie.thumb_url, 1200, 90, true);
+            });
+        } else {
+            bgImg.src = movieAPI.getImageURL(movie.poster_url || movie.thumb_url, 1200, 90, true);
+        }
     }
 
     // Update title
@@ -511,7 +567,7 @@ function renderVersions(movie) {
         displayLang = movie.lang;
     }
 
-    const imgUrl = typeof movieAPI !== 'undefined' ? movieAPI.getImageURL(movie.poster_url || movie.thumb_url, 400, 80, true) : 'https://phimimg.com/' +  (movie.thumb_url || movie.poster_url);
+    const imgUrl = typeof movieAPI !== 'undefined' ? movieAPI.getImageURL(movie.poster_url || movie.thumb_url, 400, 80, true) : 'https://img.ophimimg.com/' +  (movie.thumb_url || movie.poster_url);
 
     const currentDomain = window.location.hostname;
     const isSvap1 = currentDomain.includes('aphim.top') || currentDomain === 'localhost' || currentDomain === '127.0.0.1';
@@ -591,16 +647,12 @@ function renderVersions(movie) {
     wrapper.className = 'w-full block';
     wrapper.innerHTML = versionsHTML;
 
-    
     const mobileEpisodesWrapper = document.getElementById('episodes-mobile')?.closest('.block.lg\\:hidden') || document.getElementById('episodes-mobile')?.parentElement;
-    const heroAd = document.getElementById('movie-detail-hero-ad');
     
     if (window.innerWidth < 1024 && mobileEpisodesWrapper) {
-        // Trên mobile, Danh sách tập phim nằm trên, Các bản chiếu nằm ngay bên dưới danh sách tập phim
-        mobileEpisodesWrapper.after(wrapper);
     } else {
         // Trên desktop, Các bản chiếu nằm ngay dưới Banner 8SVui (dưới nút Xem Ngay)
-        const targetAnchor = heroAd || actionsContainer;
+        const desktopServerWrapper = document.getElementById("desktop-server-wrapper"); const actionsContainer = document.querySelector(".movie-actions-container"); const targetAnchor = desktopServerWrapper || actionsContainer;
         targetAnchor.after(wrapper);
     }
 }
@@ -1092,21 +1144,27 @@ function renderEpisodes(episodes) {
             let borderColor = 'border-blue-500';
             let activeBg = 'bg-blue-500/20';
             let sepColor = 'text-blue-400';
+            let glowShadow = 'shadow-[0_0_12px_rgba(59,130,246,0.5)]';
+            let inactiveBg = 'bg-blue-500/10';
 
-            if (index === 0) { // Nguồn 1: Vàng
+            if (index === 0) { // Ngu?n 1: V�ng
                 borderColor = 'border-yellow-500';
                 activeBg = 'bg-yellow-500/20';
                 sepColor = 'text-yellow-400';
-            } else if (index === 1) { // Nguồn 2: Xanh lá
+                glowShadow = 'shadow-[0_0_12px_rgba(234,179,8,0.5)]';
+                inactiveBg = 'bg-yellow-500/10';
+            } else if (index === 1) { // Ngu?n 2: Xanh l�
                 borderColor = 'border-green-500';
                 activeBg = 'bg-green-500/20';
                 sepColor = 'text-green-400';
+                glowShadow = 'shadow-[0_0_12px_rgba(34,197,94,0.5)]';
+                inactiveBg = 'bg-green-500/10';
             }
 
             if (isActive) {
                 return `
                     <button onclick="changeServerDetail(${index})"
-                        class="flex-shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all duration-200 border-2 ${borderColor} ${activeBg} text-white shadow-md cursor-pointer">
+                        class="flex-shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all duration-200 border-2 ${borderColor} ${activeBg} text-white ${glowShadow} cursor-pointer hover:brightness-110">
                         <span class="text-white font-bold">${serverName}</span>
                         <span class="${sepColor} font-bold">|</span>
                         <span class="text-gray-200 font-medium">${epText}</span>
@@ -1115,7 +1173,7 @@ function renderEpisodes(episodes) {
             } else {
                 return `
                     <button onclick="changeServerDetail(${index})"
-                        class="flex-shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 border ${borderColor}/60 bg-black/20 hover:bg-white/10 text-gray-300 hover:text-white cursor-pointer">
+                        class="flex-shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 border border-white/10 bg-[#323447] hover:bg-white/20 text-gray-300 hover:text-white cursor-pointer">
                         <span>${serverName}</span>
                         <span class="text-gray-500">|</span>
                         <span class="text-gray-400">${epText}</span>
@@ -1128,12 +1186,11 @@ function renderEpisodes(episodes) {
         
         if (desktopServerContainer) {
             desktopServerContainer.innerHTML = serverHtml;
-            desktopServerContainer.className = "flex flex-nowrap overflow-x-auto items-center gap-2 mb-4 w-full pb-2 hide-scrollbar";
-            desktopServerContainer.style.scrollbarWidth = ''; // Đã bỏ ẩn thanh cuộn
+            desktopServerContainer.className = "flex flex-wrap items-center gap-2 mb-4 w-full";
         }
         if (mobileServerContainer) {
             mobileServerContainer.innerHTML = serverHtml;
-            mobileServerContainer.className = "flex flex-nowrap overflow-x-auto items-center gap-2 mb-4 w-full pb-2 hide-scrollbar";
+            mobileServerContainer.className = "flex flex-wrap items-center gap-2 mb-4 w-full";
             mobileServerContainer.style.scrollbarWidth = ''; // Đã bỏ ẩn thanh cuộn
         }
     }
@@ -1576,4 +1633,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+
+
 

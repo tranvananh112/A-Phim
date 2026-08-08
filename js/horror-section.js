@@ -38,10 +38,10 @@
         }
 
         const posterUrl = mainMovie.poster_url
-            ? (mainMovie.poster_url.startsWith('http') ? mainMovie.poster_url : 'https://phimimg.com/' +  mainMovie.poster_url)
+            ? (mainMovie.poster_url.startsWith('http') ? mainMovie.poster_url : 'https://img.ophimimg.com/' +  mainMovie.poster_url)
             : (mainMovie.thumb_url
-                ? (mainMovie.thumb_url.startsWith('http') ? mainMovie.thumb_url : 'https://phimimg.com/' +  mainMovie.thumb_url)
-                : 'https://via.placeholder.com/1920x1080?text=No+Image');
+                ? (mainMovie.thumb_url.startsWith('http') ? mainMovie.thumb_url : 'https://img.ophimimg.com/' +  mainMovie.thumb_url)
+                : 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22600%22%3E%3Crect fill=%22%23111%22 width=%22400%22 height=%22600%22/%3E%3Ctext fill=%22%23555%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 alignment-baseline=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22%3ENo Image%3C/text%3E%3C/svg%3E');
         const title = mainMovie.name || 'Phim Kinh Dị';
         const originName = mainMovie.origin_name || '';
         const year = mainMovie.year || '2024';
@@ -66,8 +66,14 @@
                 <img 
                     alt="${title}" 
                     class="absolute inset-0 w-full h-full object-cover object-center scale-105" 
-                    src="${movieAPI.getImageURL(mainMovie.poster_url || mainMovie.thumb_url, 1200, 90, true)}"
-                    onerror="this.src='https://via.placeholder.com/1920x1080?text=No+Image'"
+                    data-src="${movieAPI.getImageURL(mainMovie.poster_url || mainMovie.thumb_url, 1200, 90, true)}"
+                    data-tmdb-slug="${mainMovie.slug}"
+                    data-tmdb-id="${mainMovie.tmdb?.id || ''}"
+                    data-tmdb-name="${(mainMovie.name || '').replace(/"/g, '&quot;')}"
+                    data-tmdb-year="${mainMovie.year || ''}"
+                    data-tmdb-type="backdrop"
+                    src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22600%22%3E%3Crect fill=%22%23111%22 width=%22400%22 height=%22600%22/%3E%3Ctext fill=%22%23555%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 alignment-baseline=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22%3ENo Image%3C/text%3E%3C/svg%3E"
+                    onerror="this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22600%22%3E%3Crect fill=%22%23111%22 width=%22400%22 height=%22600%22/%3E%3Ctext fill=%22%23555%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 alignment-baseline=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22%3ENo Image%3C/text%3E%3C/svg%3E'"
                     loading="eager"
                 />
                 
@@ -130,10 +136,10 @@
             let movieThumb = movie.poster_url || movie.thumb_url || '';
             // Thêm base URL nếu chưa có
             if (movieThumb && !movieThumb.startsWith('http')) {
-                movieThumb = 'https://phimimg.com/' +  movieThumb;
+                movieThumb = 'https://img.ophimimg.com/' +  movieThumb;
             }
             if (!movieThumb) {
-                movieThumb = 'https://via.placeholder.com/300x450?text=No+Image';
+                movieThumb = 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22600%22%3E%3Crect fill=%22%23111%22 width=%22400%22 height=%22600%22/%3E%3Ctext fill=%22%23555%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 alignment-baseline=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22%3ENo Image%3C/text%3E%3C/svg%3E';
             }
             const hiddenUI = window.getHiddenMovieOverlay ? window.getHiddenMovieOverlay(movie.slug) : { badge: '', imgClass: '', containerClass: '' };
             const isActive = index === activeIndex;
@@ -143,8 +149,14 @@
                                     <img 
                                         alt="${movie.name || 'Phim'}" 
                                         class="w-full h-full object-cover ${hiddenUI.imgClass}" 
-                                        src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.poster_url || movie.thumb_url, 300, 70) : movieThumb}"
-                                        onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'"
+                                        data-src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.poster_url || movie.thumb_url, 300, 70) : movieThumb}"
+                                        data-tmdb-slug="${movie.slug}"
+                                        data-tmdb-id="${movie.tmdb?.id || ''}"
+                                        data-tmdb-name="${(movie.name || '').replace(/"/g, '&quot;')}"
+                                        data-tmdb-year="${movie.year || ''}"
+                                        data-tmdb-type="poster"
+                                        src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22600%22%3E%3Crect fill=%22%23111%22 width=%22400%22 height=%22600%22/%3E%3Ctext fill=%22%23555%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 alignment-baseline=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22%3ENo Image%3C/text%3E%3C/svg%3E"
+                                        onerror="this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22600%22%3E%3Crect fill=%22%23111%22 width=%22400%22 height=%22600%22/%3E%3Ctext fill=%22%23555%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 alignment-baseline=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22%3ENo Image%3C/text%3E%3C/svg%3E'"
                                         loading="lazy"
                                     />
                                     ${hiddenUI.badge}
@@ -167,13 +179,21 @@
                         ${allMovies.map((movie, index) => {
             let mobileThumb = movie.poster_url || movie.thumb_url || '';
             if (mobileThumb && !mobileThumb.startsWith('http')) {
-                mobileThumb = 'https://phimimg.com/' +  mobileThumb;
+                mobileThumb = 'https://img.ophimimg.com/' +  mobileThumb;
             }
-            if (!mobileThumb) { mobileThumb = 'https://via.placeholder.com/60x90?text=Phim'; }
+            if (!mobileThumb) { mobileThumb = 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22600%22%3E%3Crect fill=%22%23111%22 width=%22400%22 height=%22600%22/%3E%3Ctext fill=%22%23555%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 alignment-baseline=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22%3ENo Image%3C/text%3E%3C/svg%3E'; }
             const isActiveMobile = index === activeIndex;
             return `
                             <div class="flex-shrink-0 ${isActiveMobile ? 'w-12 h-16 horror-thumbnail-active' : 'w-10 h-14 opacity-50'} rounded-lg overflow-hidden horror-thumbnail cursor-pointer transition-all duration-300" data-movie-index="${index}">
-                                <img alt="${movie.name || 'Phim'}" class="w-full h-full object-cover" src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.poster_url || movie.thumb_url, 150, 65) : mobileThumb}" onerror="this.src='https://via.placeholder.com/60x90?text=No'">
+                                <img alt="${movie.name || 'Phim'}" class="w-full h-full object-cover" 
+                                    data-src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.poster_url || movie.thumb_url, 150, 65) : mobileThumb}" 
+                                    data-tmdb-slug="${movie.slug}"
+                                    data-tmdb-id="${movie.tmdb?.id || ''}"
+                                    data-tmdb-name="${(movie.name || '').replace(/"/g, '&quot;')}"
+                                    data-tmdb-year="${movie.year || ''}"
+                                    data-tmdb-type="poster"
+                                    src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22600%22%3E%3Crect fill=%22%23111%22 width=%22400%22 height=%22600%22/%3E%3Ctext fill=%22%23555%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 alignment-baseline=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22%3ENo Image%3C/text%3E%3C/svg%3E"
+                                    onerror="this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22600%22%3E%3Crect fill=%22%23111%22 width=%22400%22 height=%22600%22/%3E%3Ctext fill=%22%23555%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 alignment-baseline=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22%3ENo Image%3C/text%3E%3C/svg%3E'">
                             </div>`;
         }).join('')}
                     </div>
