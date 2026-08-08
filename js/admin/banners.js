@@ -1,4 +1,4 @@
-﻿// Banner Management Script - MongoDB API Version
+// Banner Management Script - MongoDB API Version
 
 let loadedMovies = [];
 let localCurrentPage = 1;
@@ -11,7 +11,9 @@ let allBanners = []; // Cache from API
 
 function getValidImageUrl(url) {
     if (!url) return 'https://placehold.co/400x600?text=No+Image';
-    if (url.startsWith('http')) return url;
+    if (url.startsWith('http')) {
+        return url.replace('phimimg.com', 'img.ophimimg.com').replace('img.ophim.live', 'img.ophimimg.com');
+    }
     const imageBase = (window.API_CONFIG && window.API_CONFIG.IMAGE_BASE) ? window.API_CONFIG.IMAGE_BASE : 'https://img.ophimimg.com/';
     const base = imageBase.endsWith('/') ? imageBase.slice(0, -1) : imageBase;
     return base + '/' + normalizeImagePath(url);
@@ -425,7 +427,7 @@ async function loadMoviesFromOphim(keyword = '', page = 1) {
         if ((data && (data.status === 'success' || data.status === true || data.status)) && (data.data?.items || data.items)) {
             let newMovies = data.data?.items || data.items;
             
-            const pagination = data.data.params?.pagination || data.data.paginate || data.data.pagination || {};
+            const pagination = data.data?.params?.pagination || data.data?.paginate || data.data?.pagination || data.pagination || {};
             const totalItems = pagination?.totalItems || pagination?.total_items || newMovies.length;
             const perPage = pagination?.totalItemsPerPage || 24;
             

@@ -87,8 +87,10 @@ try {
             delete cachedContent.apiBase;
             localStorage.setItem('cinestream_public_settings', JSON.stringify(cachedContent));
         }
-        if (cachedContent.apiSecondary) {
+        if (cachedContent.apiSecondary && !cachedContent.apiSecondary.includes('_next/data') && !cachedContent.apiSecondary.includes('ophim17.cc')) {
             API_CONFIG.OPHIM17_URL = cachedContent.apiSecondary;
+        } else {
+            API_CONFIG.OPHIM17_URL = 'https://ophim1.com'; // fallback khi URL cũ hỏng
         }
         if (typeof cachedContent.enableMultipleSources === 'boolean') API_CONFIG.USE_MULTIPLE_SOURCES = cachedContent.enableMultipleSources;
         if (cachedContent.watermarkUrl) API_CONFIG.WATERMARK_URL = cachedContent.watermarkUrl;
@@ -110,8 +112,8 @@ try {
         if (data && data.success && data.data) {
             const { content, general } = data.data;
             let configMap = {
-                apiBase: content?.apiBase || 'https://ophim1.com/v1/api',
-                apiSecondary: content?.apiSecondary || 'https://ophim1.com',
+                apiBase: (content?.apiBase && !content.apiBase.includes('_next/data')) ? content.apiBase : 'https://ophim1.com/v1/api',
+                apiSecondary: (content?.apiSecondary && !content.apiSecondary.includes('_next/data') && !content.apiSecondary.includes('ophim17.cc')) ? content.apiSecondary : 'https://ophim1.com',
                 enableMultipleSources: content?.enableMultipleSources,
                 enableWatermark: content?.enableWatermark,
                 watermarkUrl: content?.watermarkUrl,
@@ -138,7 +140,7 @@ try {
                 
                 // Override runtime values
                 if (configMap.apiBase) API_CONFIG.OPHIM_URL = configMap.apiBase;
-                if (configMap.apiSecondary) API_CONFIG.OPHIM17_URL = configMap.apiSecondary;
+                if (configMap.apiSecondary && !configMap.apiSecondary.includes('_next/data')) API_CONFIG.OPHIM17_URL = configMap.apiSecondary;
                 if (typeof configMap.enableMultipleSources === 'boolean') API_CONFIG.USE_MULTIPLE_SOURCES = configMap.enableMultipleSources;
                 if (configMap.watermarkUrl) API_CONFIG.WATERMARK_URL = configMap.watermarkUrl;
                 if (typeof configMap.enableWatermark === 'boolean') API_CONFIG.ENABLE_WATERMARK = configMap.enableWatermark;
