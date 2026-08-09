@@ -1,4 +1,4 @@
-﻿// API Service for phimapi.com and Backend
+// API Service for phimapi.com and Backend
 class MovieAPI {
     constructor() {
         this.useBackend = API_CONFIG.USE_BACKEND_FOR_MOVIES || false;
@@ -102,7 +102,7 @@ class MovieAPI {
             const hiddenMoviesList = JSON.parse(localStorage.getItem('cinestream_hidden_movies') || '[]');
             
             // HARDCODED BANNED MOVIES (DMCA, etc)
-            const hardcodedBanned = ['moi-thu-la-loi-co-ay', 'michael', 'dac-vu-xuyen-quoc-gia'];
+            const hardcodedBanned = ['moi-thu-la-loi-co-ay', 'michael', 'dac-vu-xuyen-quoc-gia', 'xac-song-thanh-pho-chet-phan-2'];
             const allBanned = [...hiddenMoviesList, ...hardcodedBanned];
             
             if (allBanned.length > 0) {
@@ -182,7 +182,10 @@ class MovieAPI {
         // --- AUTO BLOCK HIDDEN SLUGS ---
         try {
             const hiddenMoviesList = JSON.parse(localStorage.getItem('cinestream_hidden_movies') || '[]');
-            if (hiddenMoviesList.includes(slug)) {
+            const hardcodedBanned = ['moi-thu-la-loi-co-ay', 'michael', 'dac-vu-xuyen-quoc-gia', 'xac-song-thanh-pho-chet-phan-2'];
+            const allBanned = [...hiddenMoviesList, ...hardcodedBanned];
+            
+            if (allBanned.includes(slug)) {
                 window.location.href = '/index.html';
                 return null;
             }
