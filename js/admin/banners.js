@@ -283,6 +283,11 @@ function renderActiveBanner() {
                         <span class="badge badge-info"><i data-lucide="captions" style="width:14px; height:14px;"></i> ${activeBanner.lang || 'Vietsub'}</span>
                     </div>
                     <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${cleanContent}</p>
+                    <div style="margin-top: 16px;">
+                        <button onclick="editBannerDesktopImage('${activeBanner._id}', '${activeBanner.thumbUrl || ''}')" class="btn btn-primary btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
+                            <i data-lucide="image" style="width: 16px; height: 16px;"></i> Sửa ảnh nền Desktop (Khi TMDB mờ)
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
@@ -675,6 +680,38 @@ async function editBannerLogo(id, currentLogo) {
     } catch (error) {
         console.error('Error updating banner logo:', error);
         alert('Không thể cập nhật Logo: ' + error.message);
+    }
+}
+
+// Edit Desktop Image URL (Custom ThumbUrl)
+async function editBannerDesktopImage(id, currentUrl) {
+    const newUrl = prompt('Nhập link ảnh nền Desktop chất lượng cao (ưu tiên tỷ lệ 16:9, link từ Imgur, TMDB...):', currentUrl || '');
+    if (newUrl === null) return; // cancelled
+    
+    try {
+        const token = localStorage.getItem('cinestream_admin_token');
+        const apiUrl = window.getBackendBaseURL();
+
+        const response = await fetch(`${apiUrl}/api/banners/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ thumbUrl: newUrl.trim() })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert('Đã cập nhật ảnh nền Desktop thành công! Vui lòng tải lại trang Xem Phim để xem thay đổi.');
+            fetchBannersFromAPI(); // Refresh
+        } else {
+            throw new Error(data.message || 'Lỗi cập nhật ảnh');
+        }
+    } catch (error) {
+        console.error('Error updating desktop image:', error);
+        alert('Không thể cập nhật ảnh: ' + error.message);
     }
 }
 
