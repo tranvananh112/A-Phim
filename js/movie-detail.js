@@ -506,7 +506,7 @@ function renderMovieDetail(movie) {
         const customLink = movieLinks[movie.slug];
 
         if (customLink) {
-            const isHtmlEnv = window.location.pathname.includes('.html');
+            const isHtmlEnv = window.location.pathname.includes('.html') || !window.location.pathname.startsWith('/phim/');
             if (isHtmlEnv) {
                 watchBtn.href = `/watch.html?slug=${movie.slug}`;
             } else {
@@ -519,7 +519,7 @@ function renderMovieDetail(movie) {
             const serverIndex = typeof currentServerIndexDetail !== 'undefined' ? currentServerIndexDetail : 0;
             const firstEpisode = movie.episodes[serverIndex]?.server_data[0] || movie.episodes[0].server_data[0];
             const cleanSlug = firstEpisode.slug.replace(/^tap-/, '');
-            const isHtmlEnv = window.location.pathname.includes('.html');
+            const isHtmlEnv = window.location.pathname.includes('.html') || !window.location.pathname.startsWith('/phim/');
             if (isHtmlEnv) {
                 watchBtn.href = `/watch.html?slug=${movie.slug}&episode=tap-${cleanSlug}&server=${serverIndex}`;
             } else {
@@ -1225,9 +1225,11 @@ function renderEpisodes(episodes) {
         const _epNum = _epParam ? _epParam.replace(/^tap-/, '') : null;
         const cleanSlug = ep.slug.replace(/^tap-/, '');
         const isActive = _epNum ? (cleanSlug === _epNum) : false;
+        const _isHtmlEnv = window.location.pathname.includes('.html') || !window.location.pathname.startsWith('/phim/');
+        const _watchUrl = _isHtmlEnv ? `/watch.html?slug=${currentMovie.slug}&episode=tap-${cleanSlug}&server=${currentServerIndexDetail}` : `/xem-phim/${currentMovie.slug}/tap-${cleanSlug}?server=${currentServerIndexDetail}`;
         
         return `
-            <a href="/watch.html?slug=${currentMovie.slug}&episode=tap-${cleanSlug}&server=${currentServerIndexDetail}"
+            <a href="${_watchUrl}"
                 class="${isActive ? 'bg-[#fcd576] text-black font-bold border-transparent' : 'bg-[#323447] hover:bg-white/10 text-gray-300 border-white/5'} px-4 py-1.5 sm:py-2 rounded-lg flex items-center justify-center gap-2 transition-all border whitespace-nowrap shadow-lg hover:-translate-y-1 w-full">
                 <span class="material-icons-round text-[18px]">play_arrow</span>
                 <span>${ep.name.trim()}</span>
@@ -1251,7 +1253,7 @@ window.changeServerDetail = function(index) {
     if (watchBtn && currentMovie.episodes[index]?.server_data && currentMovie.episodes[index].server_data.length > 0) {
         const firstEp = currentMovie.episodes[index].server_data[0];
         const cleanSlug = firstEp.slug.replace(/^tap-/, '');
-        const isHtmlEnv = window.location.pathname.includes('.html');
+        const isHtmlEnv = window.location.pathname.includes('.html') || !window.location.pathname.startsWith('/phim/');
         if (isHtmlEnv) {
             watchBtn.href = `/watch.html?slug=${currentMovie.slug}&episode=tap-${cleanSlug}&server=${index}`;
         } else {
