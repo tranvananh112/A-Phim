@@ -10,7 +10,7 @@ class MovieAPI {
 
     // Helper to fetch with timeout (default 6 seconds)
     async fetchWithTimeout(url, options = {}) {
-        const { timeout = 8000, ...rest } = options;
+        const { timeout = 3000, ...rest } = options;
         const controller = new AbortController();
         const id = setTimeout(() => controller.abort(), timeout);
         try {
