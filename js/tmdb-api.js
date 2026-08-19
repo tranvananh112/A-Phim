@@ -386,10 +386,29 @@ async function getHeroImagesFromTMDB(movie) {
     return null;
 }
 
+// --- NEW: FETCH TRENDING MOVIES FROM TMDB ---
+async function getTrendingFromTMDB() {
+    if (!TMDB_API_KEY || TMDB_API_KEY === 'YOUR_TMDB_API_KEY_HERE') return [];
+    
+    // We fetch trending movies for the week
+    const trendingUrl = `${TMDB_BASE_URL}/trending/movie/week?api_key=${TMDB_API_KEY}&language=vi-VN`;
+    try {
+        const response = await fetchWithProxy(trendingUrl);
+        if (response.ok) {
+            const data = await response.json();
+            return data.results || [];
+        }
+    } catch (e) {
+        console.error('Error fetching TMDB Trending:', e);
+    }
+    return [];
+}
+
 // Export for use in other files
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { loadActorImagesFromTMDB, getHeroImagesFromTMDB };
+    module.exports = { loadActorImagesFromTMDB, getHeroImagesFromTMDB, getTrendingFromTMDB };
 } else {
     window.getHeroImagesFromTMDB = getHeroImagesFromTMDB;
+    window.getTrendingFromTMDB = getTrendingFromTMDB;
 }
 
