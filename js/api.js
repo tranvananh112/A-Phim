@@ -10,7 +10,7 @@ class MovieAPI {
 
     // Helper to fetch with timeout (default 6 seconds)
     async fetchWithTimeout(url, options = {}) {
-        const { timeout = 15000, ...rest } = options;
+        const { timeout = 8000, ...rest } = options;
         const controller = new AbortController();
         const id = setTimeout(() => controller.abort(), timeout);
         try {
@@ -62,17 +62,13 @@ class MovieAPI {
         const basePath = cleanEndpoint.includes('?') ? cleanEndpoint.substring(0, cleanEndpoint.indexOf('?')) : cleanEndpoint;
 
         let urlsToTry = [
-            `/v1/api${basePath}${paramStr}`,
+            `https://ophim1.com/v1/api${basePath}${paramStr}`,
             `https://ophim1.com${basePath}${paramStr}`,
-            `https://ophim1.com/v1/api${basePath}${paramStr}`,
-            `https://ophim1.com/v1/api${basePath}${paramStr}`,
-            `https://ophim1.com/v1/api${basePath}${paramStr}`,
+            `https://phimapi.com/v1/api${basePath}${paramStr}`,
             `https://phimapi.com${basePath}${paramStr}`
         ];
 
         if (basePath.includes('phim-moi-cap-nhat') || basePath === '/home') {
-            urlsToTry.unshift(`/v1/api/danh-sach/phim-moi-cap-nhat${paramStr}`);
-            urlsToTry.unshift(`https://ophim1.com/danh-sach/phim-moi-cap-nhat${paramStr}`);
             urlsToTry.unshift(`https://ophim1.com/danh-sach/phim-moi-cap-nhat${paramStr}`);
         }
 
