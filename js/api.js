@@ -156,11 +156,43 @@ class MovieAPI {
                 // Always return data if we got a response
                 return this.filterHiddenMovies(data);
             } else {
-                const response = await this.fetchWithFallback(`/danh-sach/phim-moi-cap-nhat?page=${page}`, {
-                    headers: { 'accept': 'application/json' }
-                });
-                const data = await response.json();
-                return this.filterHiddenMovies(data);
+                // Fetch from both Ophim1 and PhimAPI directly to combine their new movies
+                const fetchPromises = [
+                    this.fetchWithTimeout(`https://ophim1.com/danh-sach/phim-moi-cap-nhat?page=${page}`, { headers: { 'accept': 'application/json' }, timeout: 3000 }).then(r => r.json()),
+                    this.fetchWithTimeout(`https://phimapi.com/danh-sach/phim-moi-cap-nhat?page=${page}`, { headers: { 'accept': 'application/json' }, timeout: 3000 }).then(r => r.json())
+                ];
+
+                const results = await Promise.allSettled(fetchPromises);
+                
+                let combinedItems = [];
+                let firstValidData = null;
+                const seenSlugs = new Set();
+
+                for (const res of results) {
+                    if (res.status === 'fulfilled' && res.value) {
+                        const data = res.value;
+                        const isSuccess = data.status === 'success' || data.status === true;
+                        if (!firstValidData && isSuccess) firstValidData = data;
+                        
+                        const items = data.items || data.data?.items || [];
+                        for (const item of items) {
+                            if (!seenSlugs.has(item.slug)) {
+                                seenSlugs.add(item.slug);
+                                combinedItems.push(item);
+                            }
+                        }
+                    }
+                }
+
+                if (combinedItems.length === 0) throw new Error('Both APIs failed');
+
+                const mergedData = {
+                    ...firstValidData,
+                    items: combinedItems,
+                    data: firstValidData?.data ? { ...firstValidData.data, items: combinedItems } : undefined
+                };
+
+                return this.filterHiddenMovies(mergedData);
             }
         } catch (error) {
             console.error('Error fetching movie list:', error);
