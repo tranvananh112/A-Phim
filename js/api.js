@@ -75,27 +75,12 @@ class MovieAPI {
         const uniqueUrls = Array.from(new Set(urlsToTry.filter(Boolean)));
         let lastError = null;
 
-        try {
-            const preferredHost = localStorage.getItem('preferred_ophim_host');
-            if (preferredHost) {
-                uniqueUrls.sort((a, b) => {
-                    if (a.includes(preferredHost) && !b.includes(preferredHost)) return -1;
-                    if (!a.includes(preferredHost) && b.includes(preferredHost)) return 1;
-                    return 0;
-                });
-            }
-        } catch (e) {}
-
         for (const url of uniqueUrls) {
             try {
                 const response = await this.fetchWithTimeout(url, options);
                 if (response.ok) {
                     const contentType = response.headers.get('content-type');
                     if (contentType && contentType.includes('application/json')) {
-                        try {
-                            const urlObj = new URL(url);
-                            localStorage.setItem('preferred_ophim_host', urlObj.hostname);
-                        } catch (e) {}
                         return response;
                     }
                 }
