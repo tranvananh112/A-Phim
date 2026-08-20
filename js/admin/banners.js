@@ -12,7 +12,7 @@ let allBanners = []; // Cache from API
 function getValidImageUrl(url) {
     if (!url) return 'https://placehold.co/400x600?text=No+Image';
     if (url.startsWith('http')) {
-        return url.replace('phimimg.com', 'img.ophimimg.com').replace('img.ophim.live', 'img.ophimimg.com');
+        return url; // DO NOT REPLACE phimimg.com anymore
     }
     const imageBase = (window.API_CONFIG && window.API_CONFIG.IMAGE_BASE) ? window.API_CONFIG.IMAGE_BASE : 'https://img.ophimimg.com/';
     const base = imageBase.endsWith('/') ? imageBase.slice(0, -1) : imageBase;
@@ -437,6 +437,14 @@ async function loadMoviesFromOphim(keyword = '', page = 1) {
 
         if ((data && (data.status === 'success' || data.status === true || data.status)) && (data.data?.items || data.items)) {
             let newMovies = data.data?.items || data.items;
+            
+            // Add Domain to images
+            const domainImage = data.pathImage || data.data?.APP_DOMAIN_CDN_IMAGE || (apiUrl.includes('phimapi') ? 'https://phimimg.com' : 'https://img.ophimimg.com');
+            newMovies = newMovies.map(item => {
+                if (item.thumb_url && !item.thumb_url.startsWith('http')) item.thumb_url = `${domainImage}/${item.thumb_url.replace(/^\//, '')}`;
+                if (item.poster_url && !item.poster_url.startsWith('http')) item.poster_url = `${domainImage}/${item.poster_url.replace(/^\//, '')}`;
+                return item;
+            });
             
             const pagination = data.data?.params?.pagination || data.data?.paginate || data.data?.pagination || data.pagination || {};
             const totalItems = pagination?.totalItems || pagination?.total_items || newMovies.length;
