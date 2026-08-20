@@ -188,13 +188,9 @@ exports.updateDetails = async (req, res) => {
         if (req.body.watchProgress !== undefined) fieldsToUpdate.watchProgress = req.body.watchProgress;
         if (req.body.playlists !== undefined) fieldsToUpdate.playlists = req.body.playlists;
 
-        // Bổ sung Whitelist cho Gamification / Shop
-        if (req.body.coins !== undefined) fieldsToUpdate.coins = req.body.coins;
-        if (req.body.xu !== undefined) fieldsToUpdate.xu = req.body.xu; // Fallback tương thích
-        if (req.body.xp !== undefined) fieldsToUpdate.xp = req.body.xp;
-        if (req.body.inventory !== undefined) fieldsToUpdate.inventory = req.body.inventory;
-        if (req.body.ownedFrames !== undefined) fieldsToUpdate.ownedFrames = req.body.ownedFrames;
-        if (req.body.ownedBanners !== undefined) fieldsToUpdate.ownedBanners = req.body.ownedBanners;
+        // 🚨 BẢO MẬT: Đã XÓA coins, xu, xp, inventory khỏi whitelist 
+        // Các chỉ số Gamification KHÔNG được phép cho user tự update qua API này (tránh hack xu).
+        // Chỉ server (như nạp thẻ, admin set) mới được sửa các trường này.
 
         const user = await User.findById(req.user.id);
         if (!user) {
