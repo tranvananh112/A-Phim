@@ -20,7 +20,7 @@ async function loadTopMovies() {
                     if (!query) return null;
                     
                     try {
-                        const searchRes = await movieAPI.searchMovies(query, 1);
+                        const searchRes = await movieAPI.searchMovies(query, 1, 'ophim1');
                         if (searchRes && searchRes.data && searchRes.data.items && searchRes.data.items.length > 0) {
                             // Lấy kết quả đầu tiên khớp
                             const ophimMatch = searchRes.data.items[0];

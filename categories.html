@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 
 <head>
@@ -777,12 +777,8 @@
             try {
                 console.log(`Fetching movies for category: ${slug}, page: ${page}`);
 
-                const response = await movieAPI.fetchWithFallback(`/the-loai/${slug}?page=${page}&limit=24`, {
-                    method: 'GET',
-                    headers: { 'accept': 'application/json' }
-                });
 
-                const data = await response.json();
+                const data = await movieAPI.getMoviesByCategory(slug, page);
                 console.log('Category movies data:', data);
 
                 if ((data && (data.status === 'success' || data.status === true || data.status)) && data.data) {
