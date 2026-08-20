@@ -13,10 +13,10 @@ const {
 } = require('../controllers/authController'); // Using MongoDB version
 
 const { protect } = require('../middleware/auth'); // Using real auth
-const { authLimiter } = require('../middleware/rateLimit');
+const { authLimiter, registerLimiter } = require('../middleware/rateLimit');
 
 // Public routes
-router.post('/register', authLimiter, register);
+router.post('/register', registerLimiter, register);
 router.post('/login', authLimiter, login);
 router.post('/forgotpassword', authLimiter, forgotPassword);
 router.put('/resetpassword/:resettoken', resetPassword);

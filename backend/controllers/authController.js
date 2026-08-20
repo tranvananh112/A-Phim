@@ -10,6 +10,47 @@ exports.register = async (req, res) => {
     try {
         const { name, email, password, phone } = req.body;
 
+        // ===== 🛡️ ANTI-BOT PROTECTION =====
+
+        // 1. Kiểm tra tên người dùng - chặn pattern bot "User_XXXXXXX"
+        if (!name || name.trim().length < 2) {
+            return res.status(400).json({ success: false, message: 'Tên phải có ít nhất 2 ký tự' });
+        }
+        const botNamePattern = /^User_[A-Z0-9]{5,}$/i;
+        if (botNamePattern.test(name.trim())) {
+            console.warn(`[BOT BLOCK] Bot name detected: ${name} | IP: ${req.ip}`);
+            return res.status(400).json({ success: false, message: 'Tên người dùng không hợp lệ' });
+        }
+
+        // 2. Kiểm tra email - chặn pattern bot "user_TIMESTAMP_RANDOM@gmail.com"
+        if (!email) {
+            return res.status(400).json({ success: false, message: 'Email không được để trống' });
+        }
+        const botEmailPattern = /^user_\d{10,}_.+@/i;
+        if (botEmailPattern.test(email.trim())) {
+            console.warn(`[BOT BLOCK] Bot email detected: ${email} | IP: ${req.ip}`);
+            return res.status(400).json({ success: false, message: 'Email không hợp lệ' });
+        }
+
+        // 3. Chặn email domain tạm thời (disposable)
+        const disposableDomains = ['mailinator.com', 'tempmail.com', 'guerrillamail.com', 'throwaway.email', 'sharklasers.com', 'guerrillamailblock.com', 'trashmail.com', 'yopmail.com', 'fakeinbox.com'];
+        const emailDomain = email.split('@')[1]?.toLowerCase();
+        if (disposableDomains.includes(emailDomain)) {
+            return res.status(400).json({ success: false, message: 'Vui lòng sử dụng email thật để đăng ký' });
+        }
+
+        // 4. Kiểm tra password tối thiểu
+        if (!password || password.length < 6) {
+            return res.status(400).json({ success: false, message: 'Mật khẩu phải có ít nhất 6 ký tự' });
+        }
+
+        // 5. Kiểm tra số điện thoại (nếu có) - chặn số ngẫu nhiên dạng bot
+        if (phone && !/^[0-9]{9,11}$/.test(phone.replace(/\s/g, ''))) {
+            return res.status(400).json({ success: false, message: 'Số điện thoại không hợp lệ' });
+        }
+
+        // ===== END ANTI-BOT =====
+
         // Check if user exists
         const userExists = await User.findOne({ email });
         if (userExists) {
@@ -45,6 +86,7 @@ exports.register = async (req, res) => {
         });
     }
 };
+
 
 // @desc    Login user
 // @route   POST /api/auth/login
