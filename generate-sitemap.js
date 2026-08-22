@@ -1,12 +1,12 @@
-﻿const axios = require('axios');
+const axios = require('axios');
 const fs = require('fs');
 
 (async () => {
     const allMovies = [];
-    const totalPages = 400; // Fetch 400 pages (~9600 movies) for much better SEO
-    const batchSize = 10; // Batch requests to prevent rate limiting
+    const totalPages = 400; // Original 400 pages for epic SEO indexing
+    const batchSize = 10;   // Original batching
     
-    console.log(`Starting to fetch ${totalPages} pages...`);
+    console.log(`Starting dual-engine fetch (Ophim1 + PhimAPI) for ${totalPages} pages...`);
     for (let i = 1; i <= totalPages; i += batchSize) {
         const batch = [];
         for (let j = 0; j < batchSize && (i + j) <= totalPages; j++) {
@@ -14,29 +14,48 @@ const fs = require('fs');
         }
         
         await Promise.all(batch.map(async (page) => {
+            // Engine 1: Ophim1
             try {
-                const r = await axios.get('https://ophim1.com/danh-sach/phim-moi-cap-nhat?page=' + page, { timeout: 15000 });
-                if (r.data && r.data.data && r.data.data.items) {
-                    allMovies.push(...r.data.data.items);
-                    console.log('Page ' + page + ' done: ' + r.data.data.items.length + ' movies');
+                const r1 = await axios.get('https://ophim1.com/danh-sach/phim-moi-cap-nhat?page=' + page, { timeout: 15000 });
+                if (r1.data && r1.data.data && r1.data.data.items) {
+                    allMovies.push(...r1.data.data.items);
                 }
-            } catch(e) { console.log('Page ' + page + ' failed:', e.message); }
+            } catch(e) {}
+
+            // Engine 2: PhimAPI
+            try {
+                const r2 = await axios.get('https://phimapi.com/danh-sach/phim-moi-cap-nhat?page=' + page, { timeout: 15000 });
+                const items2 = r2.data && r2.data.items ? r2.data.items : (r2.data && r2.data.data && r2.data.data.items ? r2.data.data.items : []);
+                if (items2 && items2.length > 0) {
+                    allMovies.push(...items2);
+                }
+            } catch(e) {}
         }));
         
-        // Anti-rate-limit delay
+        console.log(`Batch ${i}..${Math.min(i + batchSize - 1, totalPages)} completed. Total fetched so far: ${allMovies.length}`);
+        
+        // Original 500ms anti-rate-limit delay
         await new Promise(res => setTimeout(res, 500));
     }
 
-    // Deduplicate by slug
+    // Deduplicate by slug & merge details
     const uniqueMoviesMap = new Map();
     allMovies.forEach(m => {
-        if (m.slug) uniqueMoviesMap.set(m.slug, m);
+        if (m && m.slug) {
+            if (!uniqueMoviesMap.has(m.slug)) {
+                uniqueMoviesMap.set(m.slug, { ...m });
+            } else {
+                const existing = uniqueMoviesMap.get(m.slug);
+                if (!existing.poster_url && m.poster_url) existing.poster_url = m.poster_url;
+                if (!existing.thumb_url && m.thumb_url) existing.thumb_url = m.thumb_url;
+            }
+        }
     });
     const uniqueMovies = Array.from(uniqueMoviesMap.values());
 
-    console.log(`Found ${uniqueMovies.length} unique movies. Generating XML...`);
+    console.log(`Found ${uniqueMovies.length} unique movies from dual engines. Generating XML...`);
 
-    const urlEntries = uniqueMovies.map(function(movie) {
+    let urlEntries = uniqueMovies.map(function(movie) {
         const slug = movie.slug || '';
         const name = (movie.name || '')
             .replace(/&/g,'&amp;')
@@ -62,6 +81,11 @@ const fs = require('fs');
         return '\n    <url>\n        <loc>' + pageUrl + '</loc>' + imgs + '\n    </url>';
     }).filter(Boolean).join('');
 
+    // Fallback protection: Never produce empty urlset
+    if (!urlEntries || urlEntries.trim().length === 0) {
+        urlEntries = '\n    <url>\n        <loc>https://aphim.io.vn/</loc>\n        <image:image><image:loc>https://aphim.io.vn/android-chrome-512x512.png</image:loc><image:title>APhim Logo</image:title></image:image>\n    </url>';
+    }
+
     const xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
         + '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n'
         + '        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'
@@ -69,5 +93,5 @@ const fs = require('fs');
         + '\n</urlset>';
     
     fs.writeFileSync('sitemap-images.xml', xml, 'utf-8');
-    console.log('Done! Tong: ' + allMovies.length + ' phim, file size: ' + Math.round(xml.length/1024) + ' KB');
+    console.log('Done! Total: ' + uniqueMovies.length + ' unique movies, file size: ' + Math.round(xml.length/1024) + ' KB');
 })();
