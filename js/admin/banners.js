@@ -14,7 +14,7 @@ function getValidImageUrl(url) {
     if (url.startsWith('http')) {
         return url; // DO NOT REPLACE phimimg.com anymore
     }
-    const imageBase = (window.API_CONFIG && window.API_CONFIG.IMAGE_BASE) ? window.API_CONFIG.IMAGE_BASE : 'https://img.ophimimg.com/';
+    const imageBase = (window.API_CONFIG && window.API_CONFIG.IMAGE_BASE) ? window.API_CONFIG.IMAGE_BASE : 'https://phimimg.com/';
     const base = imageBase.endsWith('/') ? imageBase.slice(0, -1) : imageBase;
     return base + '/' + normalizeImagePath(url);
 }
@@ -439,7 +439,7 @@ async function loadMoviesFromOphim(keyword = '', page = 1) {
             let newMovies = data.data?.items || data.items;
             
             // Add Domain to images
-            const domainImage = data.pathImage || data.data?.APP_DOMAIN_CDN_IMAGE || (apiUrl.includes('phimapi') ? 'https://phimimg.com' : 'https://img.ophimimg.com');
+            const domainImage = data.pathImage || data.data?.APP_DOMAIN_CDN_IMAGE || (apiUrl.includes('phimapi') ? 'https://phimimg.com' : 'https://phimimg.com');
             newMovies = newMovies.map(item => {
                 if (item.thumb_url && !item.thumb_url.startsWith('http')) item.thumb_url = `${domainImage}/${item.thumb_url.replace(/^\//, '')}`;
                 if (item.poster_url && !item.poster_url.startsWith('http')) item.poster_url = `${domainImage}/${item.poster_url.replace(/^\//, '')}`;
@@ -1136,7 +1136,7 @@ function selectCategoryBgMovie(movie) {
     const inputId = pathMap[categoryBgSelectionMode];
     if (inputId) {
         const inputEl = document.getElementById(inputId);
-        const imageUrl = movie.thumb_url.startsWith('http') ? movie.thumb_url : `https://img.ophimimg.com/${movie.thumb_url.startsWith('uploads/') ? '' : 'uploads/movies/'}${movie.thumb_url}`;
+        const imageUrl = movie.thumb_url.startsWith('http') ? movie.thumb_url : `https://phimimg.com/${movie.thumb_url.startsWith('uploads/') ? '' : 'uploads/movies/'}${movie.thumb_url}`;
         
         if (inputEl) {
             inputEl.value = imageUrl;
@@ -1184,7 +1184,7 @@ async function previewCatBg(input, previewId, apiPath = null) {
                 const data = await response.json();
                 if ((data && (data.status === 'success' || data.status === true || data.status)) && data.data && data.data.items && data.data.items.length > 0) {
                     const thumbUrl = data.data.items[0].thumb_url;
-                    img.src = thumbUrl.startsWith('http') ? thumbUrl : `https://img.ophimimg.com/${thumbUrl.startsWith('uploads/') ? '' : 'uploads/movies/'}${thumbUrl}`;
+                    img.src = thumbUrl.startsWith('http') ? thumbUrl : `https://phimimg.com/${thumbUrl.startsWith('uploads/') ? '' : 'uploads/movies/'}${thumbUrl}`;
                 } else {
                     img.src = 'https://placehold.co/80x45?text=Auto';
                 }

@@ -60,8 +60,8 @@ const API_CONFIG = {
         COUNTRY: '/quoc-gia',
         YEAR: '/nam-phat-hanh'
     },
-    IMAGE_BASE: 'https://img.ophimimg.com/',
-    IMAGE_BASE_BACKUP: 'https://img.ophimimg.com/uploads/movies/',
+    IMAGE_BASE: 'https://phimimg.com/',
+    IMAGE_BASE_BACKUP: 'https://phimimg.com/uploads/movies/',
     STREAM_BASE: 'https://vip.opstream13.com',
 
     // Use backend or direct Ophim FOR MOVIES

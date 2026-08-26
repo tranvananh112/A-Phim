@@ -164,7 +164,7 @@ async function fetchDetail(slug) {
 function buildImageUrl(url) {
     if (!url) return null;
     if (url.startsWith('http')) return url;
-    return `https://img.ophimimg.com/${url.startsWith('uploads/') ? '' : 'uploads/movies/'}${url}`;
+    return `https://phimimg.com/${url.startsWith('uploads/') ? '' : 'uploads/movies/'}${url}`;
 }
 
 // ── Create Collage ────────────────────────────────────────────────
