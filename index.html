@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html class="dark" lang="vi">
 
 <head>
@@ -561,6 +561,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center center;
         }
 
         .action-small-poster {
@@ -581,6 +582,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center center;
         }
 
         .action-info-overlay {
@@ -1300,12 +1302,12 @@
         (function () {
             // Màu chính cho từng icon (định dạng Lottie normalized 0-1)
             var ICONS = [
-                { id: 'lottie-phim-bo',   path: '/icon-phim-bo.json',   color: [1.000, 1.000, 1.000] },  // #FFFFFF
-                { id: 'lottie-phim-moi',  path: '/icon-phim-moi.json',  color: [1.000, 1.000, 1.000] },  // #FFFFFF
-                { id: 'lottie-hanh-dong', path: '/icon-hanh-dong.json', color: [1.000, 1.000, 1.000] },  // #FFFFFF
-                { id: 'lottie-tinh-cam',  path: '/icon-tinh-cam.json',  color: [1.000, 1.000, 1.000] },  // #FFFFFF
-                { id: 'lottie-hai-huoc',  path: '/icon-hai-huoc.json',  color: [1.000, 1.000, 1.000] },  // #FFFFFF
-                { id: 'lottie-hoat-hinh', path: '/icon-hoat-hinh.json', color: [1.000, 1.000, 1.000] },  // #FFFFFF
+                { id: 'lottie-phim-bo',   path: '/icons/icon-phim-bo.json',   color: [1.000, 1.000, 1.000] },  // #FFFFFF
+                { id: 'lottie-phim-moi',  path: '/icons/icon-phim-moi.json',  color: [1.000, 1.000, 1.000] },  // #FFFFFF
+                { id: 'lottie-hanh-dong', path: '/icons/icon-hanh-dong.json', color: [1.000, 1.000, 1.000] },  // #FFFFFF
+                { id: 'lottie-tinh-cam',  path: '/icons/icon-tinh-cam.json',  color: [1.000, 1.000, 1.000] },  // #FFFFFF
+                { id: 'lottie-hai-huoc',  path: '/icons/icon-hai-huoc.json',  color: [1.000, 1.000, 1.000] },  // #FFFFFF
+                { id: 'lottie-hoat-hinh', path: '/icons/icon-hoat-hinh.json', color: [1.000, 1.000, 1.000] },  // #FFFFFF
             ];
 
             function initOne(icon) {
@@ -2122,7 +2124,7 @@
     <script src="js/api.js?v=15"></script>
     <script src="js/data-cache.js?v=13"></script>
     <script src="js/api-optimization.js?v=13"></script>
-    <script src="js/image-optimization.js?v=13"></script>
+    <script src="js/image-optimization.js?v=14"></script>
     <script src="js/user.js?v=38"></script>
     <script src="js/rating.js?v=13"></script>
     <script src="js/home.js?v=13"></script>
@@ -2363,14 +2365,19 @@
                 const thumb = movie.thumb_url || '';
                 const poster = movie.poster_url || '';
 
-                // Backdrop prioritized for landscape (poster_url)
-                const backdropUrl = poster || thumb;
+                // Backdrop (16:9 ngang): Ưu tiên poster_url nếu là ảnh ngang, hoặc thumb_url
+                let backdropUrl = thumb || poster;
+                if (poster && (poster.includes('banner') || poster.includes('backdrop') || poster.includes('thumb'))) {
+                    backdropUrl = poster;
+                }
+
+                // Poster (2:3 dọc): Ưu tiên poster_url
+                let posterUrl = poster || thumb;
+
                 const finalBackdrop = (typeof imageOptimizer !== 'undefined') ?
                     imageOptimizer.optimizeImageUrl(backdropUrl, 600, 75) :
                     (backdropUrl.startsWith('http') ? backdropUrl : `https://phimimg.com/${backdropUrl}`);
 
-                // Poster prioritized for portrait (thumb_url)
-                const posterUrl = thumb || poster;
                 const finalPoster = (typeof imageOptimizer !== 'undefined') ?
                     imageOptimizer.optimizeImageUrl(posterUrl, 200, 70) :
                     (posterUrl.startsWith('http') ? posterUrl : `https://phimimg.com/${posterUrl}`);
@@ -2479,13 +2486,19 @@
                             const thumb = movie.thumb_url || '';
                             const poster = movie.poster_url || '';
 
-                            // Đảo lại logic: Backdrop ưu tiên poster_url (ngang), Poster ưu tiên thumb_url (dọc)
-                            const backdropUrl = poster || thumb;
+                            // Backdrop (16:9 ngang): Ưu tiên poster_url nếu là ảnh ngang, hoặc thumb_url
+                            let backdropUrl = thumb || poster;
+                            if (poster && (poster.includes('banner') || poster.includes('backdrop') || poster.includes('thumb'))) {
+                                backdropUrl = poster;
+                            }
+
+                            // Poster (2:3 dọc): Ưu tiên poster_url
+                            let posterUrl = poster || thumb;
+
                             const finalBackdrop = (typeof imageOptimizer !== 'undefined') ?
                                 imageOptimizer.optimizeImageUrl(backdropUrl, 600, 75) :
                                 (backdropUrl.startsWith('http') ? backdropUrl : `https://phimimg.com/${backdropUrl}`);
 
-                            const posterUrl = thumb || poster;
                             const finalPoster = (typeof imageOptimizer !== 'undefined') ?
                                 imageOptimizer.optimizeImageUrl(posterUrl, 200, 70) :
                                 (posterUrl.startsWith('http') ? posterUrl : `https://phimimg.com/${posterUrl}`);
