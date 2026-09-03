@@ -93,5 +93,66 @@ const fs = require('fs');
         + '\n</urlset>';
     
     fs.writeFileSync('sitemap-images.xml', xml, 'utf-8');
-    console.log('Done! Total: ' + uniqueMovies.length + ' unique movies, file size: ' + Math.round(xml.length/1024) + ' KB');
+
+    // Generate Full sitemap.xml with all static pages + 9,600+ movie URLs for Google Search Console
+    const todayStr = new Date().toISOString().split('T')[0];
+    const staticPagesXml = `
+    <url>
+        <loc>https://aphim.io.vn/</loc>
+        <lastmod>${todayStr}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/phim-x.html</loc>
+        <lastmod>${todayStr}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/danh-sach.html</loc>
+        <lastmod>${todayStr}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/search.html</loc>
+        <lastmod>${todayStr}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/pricing.html</loc>
+        <lastmod>${todayStr}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://aphim.io.vn/support.html</loc>
+        <lastmod>${todayStr}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>`;
+
+    let movieUrlEntries = uniqueMovies.map(function(movie) {
+        const slug = movie.slug || '';
+        if (!slug) return '';
+        const pageUrl = 'https://aphim.io.vn/movie-detail.html?slug=' + slug;
+        return `
+    <url>
+        <loc>${pageUrl}</loc>
+        <lastmod>${todayStr}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>`;
+    }).filter(Boolean).join('');
+
+    const fullSitemapXml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+        + '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+        + staticPagesXml
+        + movieUrlEntries
+        + '\n</urlset>';
+
+    fs.writeFileSync('sitemap.xml', fullSitemapXml, 'utf-8');
+    console.log('Done! Updated sitemap-images.xml AND sitemap.xml with ' + uniqueMovies.length + ' movies!');
 })();
