@@ -34,7 +34,7 @@
                 isVideo: true
             },
             {
-                img: '/ads/catfish/728x90-AFF-Cup.gif',
+                img: '/ads/catfish/animation.mp4', isVideo: true,
                 url: 'https://vsbet520x.com/p/BSYk',
                 label: 'VSBet — Nạp Đầu Nhận 68,888,000đ'
             },
@@ -114,6 +114,14 @@
     /* ─────────────────────────────────────────────────────────
        CATFISH STICKY BAR
     ───────────────────────────────────────────────────────── */
+        function renderBannerMedia(b) {
+        if (!b) return '';
+        if (b.isVideo || (b.img && b.img.toLowerCase().indexOf('.mp4') !== -1)) {
+            return '<video src="' + b.img + '" autoplay loop muted playsinline disablePictureInPicture style="width:100%; height:100%; object-fit:fill; display:block; pointer-events:none;"></video>';
+        }
+        return '<img src="' + b.img + '" alt="' + (b.label || '') + '" loading="eager">';
+    }
+
     function initCatfish() {
         if (!shouldShowCatfish()) return;
 
