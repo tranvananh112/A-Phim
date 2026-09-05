@@ -252,8 +252,8 @@ class MovieAPI {
         try {
             const hiddenMoviesList = JSON.parse(localStorage.getItem('cinestream_hidden_movies') || '[]');
             
-            // HARDCODED BANNED MOVIES (DMCA, etc)
-            const hardcodedBanned = ['moi-thu-la-loi-co-ay', 'michael', 'dac-vu-xuyen-quoc-gia', 'xac-song-thanh-pho-chet-phan-2'];
+            // HARDCODED BANNED MOVIES (DMCA, BÁO CÁO VI PHẠM: 489339a89ce51782)
+            const hardcodedBanned = ['trai-cam', 'moi-thu-la-loi-co-ay', 'michael', 'dac-vu-xuyen-quoc-gia', 'xac-song-thanh-pho-chet-phan-2'];
             const allBanned = [...hiddenMoviesList, ...hardcodedBanned];
             
             if (allBanned.length > 0) {
@@ -368,16 +368,17 @@ class MovieAPI {
 
     // Fetch movie detail by slug
     async getMovieDetail(slug) {
-        // --- BLOCK DMCA REPORTED SLUGS ---
-        if (slug === 'moi-thu-la-loi-co-ay' || slug === 'michael' || slug === 'dac-vu-xuyen-quoc-gia') {
-            window.location.href = '/index.html'; // Chuyển hướng về trang chủ
+        // --- BLOCK DMCA REPORTED SLUGS (Mã báo cáo: 489339a89ce51782 - trai-cam) ---
+        const hardcodedBanned = ['trai-cam', 'moi-thu-la-loi-co-ay', 'michael', 'dac-vu-xuyen-quoc-gia', 'xac-song-thanh-pho-chet-phan-2'];
+        if (slug && hardcodedBanned.includes(slug.toLowerCase())) {
+            console.warn(`[API BLOCK] Phim ${slug} bị chặn theo báo cáo 489339a89ce51782`);
+            window.location.href = '/index.html';
             return null;
         }
         
         // --- AUTO BLOCK HIDDEN SLUGS ---
         try {
             const hiddenMoviesList = JSON.parse(localStorage.getItem('cinestream_hidden_movies') || '[]');
-            const hardcodedBanned = ['moi-thu-la-loi-co-ay', 'michael', 'dac-vu-xuyen-quoc-gia', 'xac-song-thanh-pho-chet-phan-2'];
             const allBanned = [...hiddenMoviesList, ...hardcodedBanned];
             
             if (allBanned.includes(slug)) {
