@@ -1,11 +1,11 @@
 /**
- * High-Capacity Multi-Source Sitemap Generator for APhim (Static Web Version)
- * Scans all available endpoints across PhimAPI, NguonC, and categories to discover maximum unique movies.
+ * High-Capacity Multi-Source Dual-Domain Sitemap Generator for APhim (Static Web Version)
+ * Scans all available endpoints across PhimAPI, NguonC, and categories to discover maximum unique movies for TODAY.
  */
 
 const fs = require('fs');
 
-const DOMAIN = process.env.DOMAIN || 'https://aphim.io.vn';
+const DOMAINS = ['https://aphim.io.vn', 'https://aphim1.io.vn'];
 const TODAY = new Date().toISOString().split('T')[0];
 
 function escapeXml(unsafe) {
@@ -33,7 +33,7 @@ async function fetchJsonWithRetry(url, retries = 2) {
             return await res.json();
         } catch (err) {
             if (i === retries) return null;
-            await new Promise(r => setTimeout(r, 200 * (i + 1)));
+            await new Promise(r => setTimeout(r, 150 * (i + 1)));
         }
     }
     return null;
@@ -42,13 +42,13 @@ async function fetchJsonWithRetry(url, retries = 2) {
 async function processInBatches(items, batchSize, fn) {
     for (let i = 0; i < items.length; i += batchSize) {
         const batch = items.slice(i, i + batchSize);
-        await Promise.all(batch.map(fn));
+        await Promise.allSettled(batch.map(item => fn(item).catch(() => {})));
         await new Promise(r => setTimeout(r, 30));
     }
 }
 
 (async () => {
-    console.log(`🚀 Starting high-capacity multi-source sitemap generator for ${DOMAIN}...`);
+    console.log(`🚀 Starting high-capacity sitemap generator for TODAY (${TODAY}) across ${DOMAINS.join(' & ')}...`);
     const uniqueMoviesMap = new Map();
 
     const targets = [];
@@ -109,7 +109,7 @@ async function processInBatches(items, batchSize, fn) {
     let completed = 0;
     const startTime = Date.now();
 
-    await processInBatches(targets, 25, async (target) => {
+    await processInBatches(targets, 20, async (target) => {
         try {
             const data = await fetchJsonWithRetry(target.url);
             if (data) {
@@ -143,7 +143,7 @@ async function processInBatches(items, batchSize, fn) {
     });
 
     const movies = Array.from(uniqueMoviesMap.values());
-    console.log(`\n🎉 SCAN COMPLETE! Total unique movies discovered: ${movies.length}`);
+    console.log(`\n🎉 SCAN COMPLETE FOR TODAY (${TODAY})! Total unique movies discovered: ${movies.length}`);
 
     // --- STATIC PAGES ---
     const staticPages = [
@@ -163,70 +163,57 @@ async function processInBatches(items, batchSize, fn) {
     countries.forEach(c => staticPages.push(`/phim-theo-quoc-gia.html?country=${c}`));
     ['phim-moi', 'phim-bo', 'phim-le', 'tv-shows', 'hoat-hinh', 'phim-vietsub', 'phim-thuyet-minh', 'phim-chieu-rap'].forEach(l => staticPages.push(`/danh-sach.html?list=${l}`));
 
-    let xmlUrlEntries = staticPages.map(path => `
-    <url>
-        <loc>${DOMAIN}${path}</loc>
-        <lastmod>${TODAY}</lastmod>
-        <changefreq>${path === '/' ? 'daily' : 'weekly'}</changefreq>
-        <priority>${path === '/' ? '1.0' : '0.8'}</priority>
-    </url>`).join('');
+    // --- GENERATE SITEMAPS FOR EACH DOMAIN ---
+    DOMAINS.forEach(domain => {
+        const isAphim1 = domain.includes('aphim1.io.vn');
+        const sitemapFilename = isAphim1 ? 'sitemap_aphim1.xml' : 'sitemap.xml';
+        const imagesFilename = isAphim1 ? 'sitemap-images_aphim1.xml' : 'sitemap-images.xml';
 
-    let imageEntries = [];
+        const sitemapStream = fs.createWriteStream(sitemapFilename, { encoding: 'utf-8' });
+        sitemapStream.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n');
 
-    movies.forEach(movie => {
-        const slug = movie.slug;
-        const name = escapeXml(movie.name);
-        const detailUrl = `${DOMAIN}/movie-detail.html?slug=${slug}`;
-        const watchUrl = `${DOMAIN}/watch.html?slug=${slug}`;
+        staticPages.forEach(path => {
+            sitemapStream.write(`    <url>\n        <loc>${domain}${path}</loc>\n        <lastmod>${TODAY}</lastmod>\n        <changefreq>${path === '/' ? 'daily' : 'weekly'}</changefreq>\n        <priority>${path === '/' ? '1.0' : '0.8'}</priority>\n    </url>\n`);
+        });
 
-        xmlUrlEntries += `
-    <url>
-        <loc>${detailUrl}</loc>
-        <lastmod>${TODAY}</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.9</priority>
-    </url>
-    <url>
-        <loc>${watchUrl}</loc>
-        <lastmod>${TODAY}</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.8</priority>
-    </url>`;
+        const imagesStream = fs.createWriteStream(imagesFilename, { encoding: 'utf-8' });
+        imagesStream.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n');
 
-        const thumb = getCleanImageUrl(movie.thumb_url);
-        const poster = getCleanImageUrl(movie.poster_url);
+        let imageCount = 0;
 
-        let imgs = '';
-        if (thumb) {
-            imgs += `\n        <image:image><image:loc>${escapeXml(thumb)}</image:loc><image:title>${name}</image:title></image:image>`;
-        }
-        if (poster && poster !== thumb) {
-            imgs += `\n        <image:image><image:loc>${escapeXml(poster)}</image:loc><image:title>${name} - Poster</image:title></image:image>`;
-        }
+        movies.forEach(movie => {
+            const slug = movie.slug;
+            const name = escapeXml(movie.name);
+            const detailUrl = `${domain}/movie-detail.html?slug=${slug}`;
+            const watchUrl = `${domain}/watch.html?slug=${slug}`;
 
-        if (imgs) {
-            imageEntries.push(`
-    <url>
-        <loc>${detailUrl}</loc>${imgs}
-    </url>`);
-        }
+            sitemapStream.write(`    <url>\n        <loc>${detailUrl}</loc>\n        <lastmod>${TODAY}</lastmod>\n        <changefreq>daily</changefreq>\n        <priority>0.9</priority>\n    </url>\n    <url>\n        <loc>${watchUrl}</loc>\n        <lastmod>${TODAY}</lastmod>\n        <changefreq>daily</changefreq>\n        <priority>0.8</priority>\n    </url>\n`);
+
+            const thumb = getCleanImageUrl(movie.thumb_url);
+            const poster = getCleanImageUrl(movie.poster_url);
+
+            let imgs = '';
+            if (thumb) {
+                imgs += `\n        <image:image><image:loc>${escapeXml(thumb)}</image:loc><image:title>${name}</image:title></image:image>`;
+            }
+            if (poster && poster !== thumb) {
+                imgs += `\n        <image:image><image:loc>${escapeXml(poster)}</image:loc><image:title>${name} - Poster</image:title></image:image>`;
+            }
+
+            if (imgs) {
+                imageCount++;
+                imagesStream.write(`    <url>\n        <loc>${detailUrl}</loc>${imgs}\n    </url>\n`);
+            }
+        });
+
+        sitemapStream.write('</urlset>');
+        sitemapStream.end();
+
+        imagesStream.write('</urlset>');
+        imagesStream.end();
+
+        console.log(`📄 Generated ${sitemapFilename} & ${imagesFilename} for ${domain} (${movies.length * 2} URLs, ${imageCount} images)`);
     });
 
-    const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${xmlUrlEntries.trim()}
-</urlset>`;
-
-    const sitemapImagesXml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-${imageEntries.join('').trim()}
-</urlset>`;
-
-    fs.writeFileSync('sitemap.xml', sitemapXml, 'utf-8');
-    fs.writeFileSync('sitemap-images.xml', sitemapImagesXml, 'utf-8');
-
-    console.log(`\n✨ SUCCESS!`);
-    console.log(`📄 sitemap.xml: ${staticPages.length + movies.length * 2} URLs (Static: ${staticPages.length}, Detail/Watch: ${movies.length * 2}) | Size: ${Math.round(sitemapXml.length / 1024)} KB`);
-    console.log(`🖼️ sitemap-images.xml: ${imageEntries.length} movie image entries | Size: ${Math.round(sitemapImagesXml.length / 1024)} KB`);
-})().catch(err => console.error('Error generating sitemap:', err));
+    console.log(`\n✨ ALL SITEMAPS FOR TODAY (${TODAY}) GENERATED SUCCESSFULLY!`);
+})().catch(err => console.error('Fatal Error generating sitemap:', err));
