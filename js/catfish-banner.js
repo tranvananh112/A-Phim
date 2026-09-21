@@ -35,7 +35,7 @@
             },
             {
                 img: '/ads/catfish/animation.mp4', isVideo: true,
-                url: 'https://vsbet9k8.com/p/BSYk',
+                url: 'https://vsbetnova88.com/p/BSYk',
                 label: 'VSBet — Nạp Đầu Nhận 68,888,000đ'
             },
             {
