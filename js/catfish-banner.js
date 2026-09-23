@@ -1,4 +1,4 @@
-﻿/**
+/**
  * APhim — Catfish Banner + Welcome Popup Slideshow
  * Version: 4.0 | 2026-05-18
  *
@@ -27,6 +27,12 @@
         },
 
         banners: [
+            {
+                img: '/quangcao/stake/Dice VN.gif',
+                url: 'https://stake.com/?offer=stakethuongnap&c=aphim',
+                label: 'Stake — Dice VN Đăng Ký Nhận 364,000 VNĐ',
+                isVideo: false
+            },
             {
                 img: '/quangcao/8svui/BANNER.mp4',
                 url: 'https://8svui.com',
@@ -132,27 +138,33 @@
         bar.setAttribute('aria-label', 'Quảng cáo đối tác');
         bar.innerHTML =
             '<div class="catfish-inner">' +
-                '<!-- Row 1: Desktop (8SVui + VSBet) / Mobile (Slot xoay mượt VSBet <-> 8SVui) -->' +
-                '<div class="catfish-row catfish-row-1">' +
-                    '<a class="catfish-item catfish-item-desktop-only" href="' + b[0].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[0].label + '">' +
+                '<!-- Row 0: Dice VN (Stake) - Full width trên cùng -->' +
+                '<div class="catfish-row catfish-row-0">' +
+                    '<a class="catfish-item" href="' + b[0].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[0].label + '" style="width:100%;">' +
                         renderMedia(b[0]) +
                     '</a>' +
+                '</div>' +
+                '<!-- Row 1: Desktop (8SVui + VSBet) / Mobile (Slot xoay mượt VSBet <-> 8SVui) -->' +
+                '<div class="catfish-row catfish-row-1">' +
+                    '<a class="catfish-item catfish-item-desktop-only" href="' + b[1].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[1].label + '">' +
+                        renderMedia(b[1]) +
+                    '</a>' +
                     '<div class="catfish-rotate-slot">' +
-                        '<a class="catfish-item catfish-slide slide-active" href="' + b[1].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[1].label + '">' +
-                            renderMedia(b[1]) +
+                        '<a class="catfish-item catfish-slide slide-active" href="' + b[2].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[2].label + '">' +
+                            renderMedia(b[2]) +
                         '</a>' +
-                        '<a class="catfish-item catfish-slide" href="' + b[0].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[0].label + '">' +
-                            renderMedia(b[0]) +
+                        '<a class="catfish-item catfish-slide" href="' + b[1].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[1].label + '">' +
+                            renderMedia(b[1]) +
                         '</a>' +
                     '</div>' +
                 '</div>' +
                 '<!-- Row 2: ColaTV & ColaScore -->' +
                 '<div class="catfish-row catfish-row-2">' +
-                    '<a class="catfish-item" href="' + b[2].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[2].label + '">' +
-                        renderMedia(b[2]) +
-                    '</a>' +
                     '<a class="catfish-item" href="' + b[3].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[3].label + '">' +
                         renderMedia(b[3]) +
+                    '</a>' +
+                    '<a class="catfish-item" href="' + b[4].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[4].label + '">' +
+                        renderMedia(b[4]) +
                     '</a>' +
                 '</div>' +
             '</div>' +

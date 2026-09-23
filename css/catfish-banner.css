@@ -161,9 +161,25 @@
     object-fit: fill;
 }
 
+/* Hàng Dice VN (Stake) - Trên cùng, full width */
+.catfish-row-0 {
+    width: 100%;
+}
+.catfish-row-0 .catfish-item {
+    width: 100%;
+    flex: none;
+    border-left: none !important;
+}
+.catfish-row-0 .catfish-item img,
+.catfish-row-0 .catfish-item video {
+    height: 60px;
+    object-fit: fill;
+    width: 100%;
+}
+
 /* Hàng trên (8SVui Video + VSBet) */
-.catfish-row:first-child .catfish-item img,
-.catfish-row:first-child .catfish-item video {
+.catfish-row:nth-child(2) .catfish-item img,
+.catfish-row:nth-child(2) .catfish-item video {
     height: 60px;
     object-fit: fill;
 }
