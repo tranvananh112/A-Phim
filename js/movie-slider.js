@@ -1,15 +1,38 @@
-﻿/**
+/**
  * Movie Slider - Drag to Scroll + Wheel to Horizontal
- * Works on all horizontal movie sliders across the site
- * Unified: distinguishes drag/swipe vs click for both Mouse and Touch, handles mouseup outside
+ * Works on all horizontal sliders across the site (Desktop + Mobile)
+ * Supports:
+ * - Mouse drag-to-scroll with natural inertia
+ * - Wheel-to-horizontal scrolling (convert mouse wheel to horizontal scroll when hovering sliders)
+ * - Touch swipe guard
+ * - Intercepts clicks if user dragged to avoid unwanted page transitions
+ * - Dynamic mutation observer to automatically attach to newly rendered slider cards
  */
 (function() {
     'use strict';
 
     const DRAG_THRESHOLD = 8; // px - minimum distance to consider it a drag/swipe
 
-    // -- DRAG & SWIPE TO SCROLL --
+    const SLIDER_SELECTORS = [
+        '#slider-de-cu',
+        '.de-cu-slider',
+        '.interests-wrapper',
+        '#homeCommentsTrack',
+        '.home-comments-track',
+        '#heroThumbnails',
+        '.tc-featured-wrapper',
+        '.overflow-x-auto',
+        '.snap-x',
+        '.scrollbar-hide',
+        '.mobile-thumb-wrapper',
+        '.cat-tab-container'
+    ].join(', ');
+
+    // -- DRAG & SWIPE & WHEEL TO SCROLL --
     function initSliderDrag(slider) {
+        if (!slider || slider.dataset.sliderDragAttached) return;
+        slider.dataset.sliderDragAttached = 'true';
+
         let isDown = false;
         let startX = 0;
         let startY = 0;
@@ -17,7 +40,7 @@
         let hasDragged = false;
         let lockVertical = false;
 
-        // Qu�n t�nh (Inertia)
+        // Quán tính (Inertia)
         let lastX = 0;
         let lastTime = 0;
         let velocity = 0;
@@ -27,21 +50,18 @@
         slider.addEventListener('mousedown', function(e) {
             // Ignore if middle/right click
             if (e.button !== 0) return;
+            // Ignore if clicked on navigation buttons or interactive controls
+            if (e.target.closest('button, .home-comments-scroll-btn, .comment-switch')) return;
 
             isDown = true;
             hasDragged = false;
             lockVertical = false;
-            slider.classList.add('active');
-
-            // T?m th?i t?t cu?n mu?t v� snap-scroll d? k�o mu?t m� 1:1 theo chu?t
-            slider.classList.add('is-dragging');
-            
+            slider.classList.add('active', 'is-dragging');
 
             startX = e.pageX - slider.offsetLeft;
             startY = e.pageY - slider.offsetTop;
             scrollLeft = slider.scrollLeft;
 
-            // Kh?i t?o t�nh to�n qu�n t�nh
             lastX = e.pageX;
             lastTime = Date.now();
             velocity = 0;
@@ -55,12 +75,8 @@
         window.addEventListener('mouseup', function() {
             if (!isDown) return;
             isDown = false;
-            slider.classList.remove('active');
+            slider.classList.remove('active', 'is-dragging');
             lockVertical = false;
-
-            // Kh�i ph?c thu?c t�nh CSS ban d?u
-            slider.classList.remove('is-dragging');
-            
 
             if (hasDragged) {
                 slider.setAttribute('data-dragged', 'true');
@@ -68,16 +84,16 @@
                     slider.removeAttribute('data-dragged');
                 }, 300);
 
-                // Th?c hi?n lu?t qu�n t�nh t? t? mu?t m�
+                // Thực hiện lướt quán tính mượt mà
                 if (Math.abs(velocity) > 0.1) {
                     let tempVelocity = velocity;
                     const inertiaStep = function() {
-                        if (isDown) return; // D?ng l?i n?u ngu?i d�ng click/ch?m ti?p
+                        if (isDown) return;
 
-                        tempVelocity *= 0.93; // H? s? ma s�t (gi?m d?n t?c d?)
+                        tempVelocity *= 0.93; // Hệ số ma sát
                         if (Math.abs(tempVelocity) < 0.08) return;
 
-                        slider.scrollLeft -= tempVelocity * 12;
+                        slider.scrollLeft -= tempVelocity * 14;
                         rafId = requestAnimationFrame(inertiaStep);
                     };
                     rafId = requestAnimationFrame(inertiaStep);
@@ -93,31 +109,28 @@
             const dx = Math.abs(xVal - startX);
             const dy = Math.abs(yVal - startY);
 
-            // Ph�n bi?t cu?n d?c vs k�o ngang tru?c khi x�c nh?n k�o slider
+            // Phân biệt cuộn dọc vs kéo ngang trước khi xác nhận kéo slider
             if (!hasDragged) {
-                if (dy > dx && dy > 4) {
-                    // C? ch? cu?n d?c -> H?y k�o slider d? trang cu?n d?c t? nhi�n
+                if (dy > dx && dy > 5) {
                     isDown = false;
-                    slider.classList.remove('active');
-                    slider.classList.remove('is-dragging');
-                    
+                    slider.classList.remove('active', 'is-dragging');
                     return;
                 }
                 if (dx >= DRAG_THRESHOLD) {
                     hasDragged = true;
                     lockVertical = true;
                 } else {
-                    return; // �?i vu?t ngu?ng threshold
+                    return;
                 }
             }
 
-            e.preventDefault(); // Ch?n h�nh vi k�o th? ?nh/ch? m?c d?nh c?a tr�nh duy?t
+            e.preventDefault(); // Chặn chọn chữ / kéo ảnh
 
-            // Di chuy?n slider theo tay chu?t
-            const walk = (xVal - startX) * 1.5;
+            // Di chuyển slider theo tay chuột
+            const walk = (xVal - startX) * 1.3;
             slider.scrollLeft = scrollLeft - walk;
 
-            // T�nh v?n t?c k�o cho qu�n t�nh
+            // Tính vận tốc kéo cho quán tính
             const now = Date.now();
             const dt = now - lastTime;
             if (dt > 0) {
@@ -128,10 +141,12 @@
             }
         });
 
-        // Prevent native image/link dragging browser behavior
+        // Prevent native image/link dragging browser ghost image
         slider.addEventListener('dragstart', function(e) {
             e.preventDefault();
         });
+        // Cuộn chuột dọc (mouse wheel up/down) được giữ tự nhiên cho trang cuộn dọc bình thường,
+        // chỉ di chuyển các mục ngang khi người dùng nhấn giữ kéo chuột (drag) hoặc vuốt (swipe).
 
         // --- TOUCH EVENTS (Mobile Swipe Guard) ---
         let touchStartX = 0;
@@ -144,7 +159,6 @@
             touchStartY = e.touches[0].clientY;
             touchHasDragged = false;
 
-            // D?ng ho?t d?ng qu�n t�nh khi ngu?i d�ng ch?m v�o m�n h�nh
             if (rafId) {
                 cancelAnimationFrame(rafId);
                 rafId = null;
@@ -183,16 +197,9 @@
 
     // -- INIT ALL SLIDERS --
     function init() {
-        // Select all horizontal sliders/scrollers
-        const sliders = document.querySelectorAll('.overflow-x-auto, .snap-x, .scrollbar-hide, #heroThumbnails');
-
+        const sliders = document.querySelectorAll(SLIDER_SELECTORS);
         sliders.forEach(function(slider) {
-            // Skip elements that are not sliders (like small nav bars or pagination)
             if (slider.classList.contains('justify-center') || slider.tagName === 'NAV') return;
-            
-            if (slider.dataset.sliderInit) return;
-            slider.dataset.sliderInit = 'true';
-
             initSliderDrag(slider);
         });
     }
@@ -205,14 +212,19 @@
 
     // Re-init after dynamic content loads
     window.refreshMovieSliders = function() {
-        const sliders = document.querySelectorAll('.overflow-x-auto, .snap-x, .scrollbar-hide, #heroThumbnails');
-        sliders.forEach(function(slider) {
-            delete slider.dataset.sliderInit;
-        });
         init();
     };
+
+    // Lightweight observer to catch dynamically rendered scrollers automatically
+    if (typeof MutationObserver !== 'undefined') {
+        const observer = new MutationObserver(function() {
+            init();
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+        if (document.body) {
+            observer.observe(document.body, { childList: true, subtree: true });
+        }
+    }
 })();
-
-
-
-

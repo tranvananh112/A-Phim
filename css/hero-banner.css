@@ -1,3 +1,10 @@
+
+#desktopHeroShowcase #heroImage,
+#desktopHeroShowcase .hero-placeholder-mask {
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 62%, rgba(0,0,0,0.45) 82%, transparent 96%) !important;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 62%, rgba(0,0,0,0.45) 82%, transparent 96%) !important;
+    filter: brightness(1.06) contrast(1.02) saturate(1.02) !important;
+}
 /* ================================================================
    A PHIM — Hero Banner — Midnight Cinema v2
    ================================================================ */
@@ -343,18 +350,16 @@
 
 /* ── Thumbnail Item — Base ── */
 .hero-thumb-item {
+    width: 82px !important;
+    height: 47px !important;
+    border-radius: 7px !important;
+    overflow: hidden;
     position: relative;
+    border: 1.5px solid rgba(255, 255, 255, 0.28) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
     cursor: pointer;
-    border: 2px solid transparent;
-    border-radius: 10px;
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
-                opacity 0.3s ease,
-                border-color 0.3s ease,
-                box-shadow 0.3s ease;
-    opacity: 0.58;
-    outline: none;
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
+    flex-shrink: 0;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
 }
 
 .hero-thumb-item:hover {
@@ -504,8 +509,10 @@ main.hero-grabbing * {
     }
 }
 @media (min-width: 1024px) {
-    #heroContent {
-        padding-top: 13rem !important;   /* desktop lg: 208px */
+    #desktopHeroShowcase #heroContent {
+        justify-content: center !important;
+        padding-top: 96px !important;
+        padding-bottom: 160px !important;
     }
 }
 @media (min-width: 1280px) {
@@ -536,4 +543,186 @@ main.hero-grabbing * {
 }
 @media (min-width: 1024px) {
   .lg\:text-\[84px\] { font-size: 84px !important; line-height: 1 !important; }
+}
+
+/* ─── LUXURY CINEMATIC HERO CTA BUTTONS (NETFLIX & APPLE TV+ STYLE) ─── */
+.hero-cta-btn-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 4px;
+}
+
+.hero-cta-watch-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 24px;
+    background: linear-gradient(135deg, #f59e0b 0%, #eab308 100%);
+    color: #0b0c13 !important;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none !important;
+    box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4), 0 0 35px rgba(234, 179, 8, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, box-shadow;
+}
+
+.hero-cta-watch-btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 28px rgba(245, 158, 11, 0.65), 0 0 45px rgba(234, 179, 8, 0.35);
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: #000000 !important;
+}
+
+.hero-play-icon-wrap {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.hero-cta-watch-btn:hover .hero-play-icon-wrap {
+    transform: scale(1.15);
+}
+
+.hero-cta-trailer-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: #ffffff !important;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 9999px;
+    cursor: pointer;
+    text-decoration: none !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-cta-trailer-btn:hover {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.45);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+    color: #ffffff !important;
+}
+
+.hero-circle-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-decoration: none !important;
+}
+
+.hero-circle-btn:hover {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: scale(1.08);
+}
+
+/* ─── SCENE THUMBNAILS AT CENTER-RIGHT ─── */
+.hero-thumbnails-center-right {
+    position: absolute;
+    right: 0;
+    top: 45%;
+    transform: translateY(-50%);
+    z-index: 30;
+    pointer-events: none;
+    width: 100%;
+}
+
+.hero-thumbnails-rail {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    pointer-events: auto;
+}
+
+.hero-thumbnails-badge {
+    display: none !important;
+}
+
+.hero-thumbnails-card-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.hero-thumb-item {
+    width: 102px !important;
+    height: 58px !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+    position: relative;
+    border: 2px solid rgba(255, 255, 255, 0.18) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.hero-thumb-item:hover {
+    border-color: #f59e0b !important;
+    transform: scale(1.08) translateY(-2px) !important;
+    box-shadow: 0 8px 20px rgba(245, 158, 11, 0.45) !important;
+}
+
+.hero-thumb-item.active {
+    border-color: #f59e0b !important;
+    box-shadow: 0 0 16px rgba(245, 158, 11, 0.6) !important;
+}
+
+/* ─── LIGHT MODE CRISP HERO TEXT & BADGES (ELIMINATE BLURRY SHADOW) ─── */
+html.light-mode #desktopHeroShowcase #heroDescription,
+html.light-mode .desktop-hero-showcase #heroDescription {
+    color: #18181b !important;
+    font-weight: 600 !important;
+    text-shadow: none !important;
+    opacity: 1 !important;
+    line-height: 1.65 !important;
+}
+
+html.light-mode #desktopHeroShowcase #heroTitle,
+html.light-mode .desktop-hero-showcase #heroTitle {
+    color: #0f172a !important;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.85) !important;
+    font-weight: 800 !important;
+}
+
+html.light-mode #desktopHeroShowcase #heroSubtitle,
+html.light-mode .desktop-hero-showcase #heroSubtitle {
+    color: #b45309 !important;
+    text-shadow: none !important;
+    font-weight: 700 !important;
 }

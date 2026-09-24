@@ -517,17 +517,10 @@ class MovieAPI {
                     });
                 }
                 return null;
-            } else {
-                let endpoint = '/danh-sach/' + categorySlug + '?page=' + page;
-                if (categorySlug.startsWith('the-loai/') || categorySlug.startsWith('quoc-gia/')) {
+                const listTypes = ['phim-moi-cap-nhat', 'phim-moi', 'phim-bo', 'phim-le', 'tv-shows', 'hoat-hinh', 'phim-vietsub', 'phim-thuyet-minh', 'phim-long-tien', 'phim-long-tieng', 'phim-bo-dang-chieu', 'phim-bo-hoan-thanh', 'phim-bo-da-xong', 'phim-sap-chieu', 'subteam', 'phim-chieu-rap'];
+                let endpoint = listTypes.includes(categorySlug) ? ('/danh-sach/' + categorySlug + '?page=' + page) : ('/the-loai/' + categorySlug + '?page=' + page);
+                if (categorySlug.startsWith('the-loai/') || categorySlug.startsWith('quoc-gia/') || categorySlug.startsWith('danh-sach/')) {
                     endpoint = '/' + categorySlug + '?page=' + page;
-                } else if (!categorySlug.includes('/')) {
-                    const mainCategories = ['hanh-dong', 'tinh-cam', 'hai-huoc', 'vien-tuong', 'vo-thuat', 'kinh-di', 'tam-ly', 'than-thoai', 'hoat-hinh', 'phieu-luu', 'chieu-rap'];
-                    if (mainCategories.includes(categorySlug)) {
-                        endpoint = '/the-loai/' + categorySlug + '?page=' + page;
-                    } else {
-                        endpoint = '/danh-sach/' + categorySlug + '?page=' + page;
-                    }
                 }
                 
                 let fetchPromises = [];
@@ -717,16 +710,10 @@ class MovieAPI {
     // Get movies from multiple sources / category
     async getMoviesFromMultipleSources(page = 1, categoryOrList = 'phim-bo', preferredSource = 'both') {
         try {
-            let endpoint = `/danh-sach/${categoryOrList}?page=${page}`;
-            if (categoryOrList.startsWith('the-loai/') || categoryOrList.startsWith('quoc-gia/')) {
+            const listTypes = ['phim-moi-cap-nhat', 'phim-moi', 'phim-bo', 'phim-le', 'tv-shows', 'hoat-hinh', 'phim-vietsub', 'phim-thuyet-minh', 'phim-long-tien', 'phim-long-tieng', 'phim-bo-dang-chieu', 'phim-bo-hoan-thanh', 'phim-bo-da-xong', 'phim-sap-chieu', 'subteam', 'phim-chieu-rap'];
+            let endpoint = listTypes.includes(categoryOrList) ? `/danh-sach/${categoryOrList}?page=${page}` : `/the-loai/${categoryOrList}?page=${page}`;
+            if (categoryOrList.startsWith('the-loai/') || categoryOrList.startsWith('quoc-gia/') || categoryOrList.startsWith('danh-sach/')) {
                 endpoint = `/${categoryOrList}?page=${page}`;
-            } else if (!categoryOrList.includes('/')) {
-                const mainCategories = ['hanh-dong', 'tinh-cam', 'hai-huoc', 'vien-tuong', 'vo-thuat', 'kinh-di', 'tam-ly', 'than-thoai', 'hoat-hinh', 'phieu-luu', 'chieu-rap'];
-                if (mainCategories.includes(categoryOrList)) {
-                    endpoint = `/the-loai/${categoryOrList}?page=${page}`;
-                } else {
-                    endpoint = `/danh-sach/${categoryOrList}?page=${page}`;
-                }
             }
             
             let fetchPromises = [];
@@ -970,78 +957,9 @@ class MovieAPI {
         }
     }
 
-    // Combine movies from multiple sources
-    async getMoviesFromMultipleSources(page = 1, categorySlug = null) {
-        if (!this.useMultipleSources) {
-            // Use single source
-            if (categorySlug) {
-                return await this.getMoviesByCategory(categorySlug, page);
-            }
-            return await this.getMovieList(page);
-        }
-
-        try {
-            // Fetch from both sources in parallel
-            const promises = [];
-
-            if (categorySlug) {
-                promises.push(this.getMoviesByCategory(categorySlug, page));
-                promises.push(this.getMoviesByCategoryFromOphim17(categorySlug, page));
-            } else {
-                promises.push(this.getMovieList(page));
-                promises.push(this.getMovieListFromOphim17(page));
-            }
-
-            const results = await Promise.allSettled(promises);
-
-            // Combine results
-            let allMovies = [];
-            let combinedData = {
-                status: 'success',
-                data: {
-                    items: [],
-                    params: null
-                }
-            };
-
-            results.forEach((result, index) => {
-                if (result.status === 'fulfilled' && result.value) {
-                    const data = result.value;
-                    if ((data && (data.status === 'success' || data.status === true || data.status)) && data.data && data.data.items) {
-                        allMovies = allMovies.concat(data.data.items);
-
-                        // Use params from first source
-                        if (!combinedData.data.params && data.data.params) {
-                            combinedData.data.params = data.data.params;
-                        }
-                    }
-                }
-            });
-
-            // Remove duplicates based on slug
-            const uniqueMovies = [];
-            const seenSlugs = new Set();
-
-            allMovies.forEach(movie => {
-                if (!seenSlugs.has(movie.slug)) {
-                    seenSlugs.add(movie.slug);
-                    uniqueMovies.push(movie);
-                }
-            });
-
-            combinedData.data.items = uniqueMovies;
-
-            console.log(`Combined ${uniqueMovies.length} unique movies from ${results.length} sources`);
-
-            return combinedData;
-        } catch (error) {
-            console.error('Error combining multiple sources:', error);
-            // Fallback to single source
-            if (categorySlug) {
-                return await this.getMoviesByCategory(categorySlug, page);
-            }
-            return await this.getMovieList(page);
-        }
+    // Helper for Ophim17
+    async getMovieListFromOphim17(page = 1) {
+        return null;
     }
 
     // Get Movie Images (TMDB Posters / Backdrops)

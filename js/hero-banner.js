@@ -14,6 +14,7 @@ const AUTO_RETURN_DELAY = 3500;   // 3.5 gi�y sau khi kh�ng tuong t�c
 
 // -- Entry Point -------------------------------------------------
 async function loadHeroBanner() {
+    if (window.innerWidth < 1024) return;
 
     // 1. INSTANT: d?c cache LocalStorage hi?n th? ngay
     try {
@@ -122,31 +123,32 @@ function getHeroImageUrl(movie) {
     if (!movie) return '';
     const isMobile = window.innerWidth < 768;
 
-    // TÍNH NĂNG MỚI: Nếu Admin cài link ảnh Custom trực tiếp (bắt đầu bằng http và không phải từ ophimimg), ưu tiên tuyệt đối lấy làm ảnh nền Desktop
-    if (!isMobile && movie.thumb_url && movie.thumb_url.startsWith('http') && !movie.thumb_url.includes('ophimimg.com') && !movie.thumb_url.includes('phimimg.com')) {
-        return movie.thumb_url;
-    }
-
-    const cacheKey = `tmdb_hero_${movie.slug}`;
-    try {
-        const cached = sessionStorage.getItem(cacheKey);
-        if (cached) {
-            const tmdbData = JSON.parse(cached);
-            if (tmdbData) {
-                if (!isMobile && tmdbData.backdrop) return tmdbData.backdrop;
-                if (isMobile && tmdbData.poster) return tmdbData.poster;
-                if (tmdbData.backdrop) return tmdbData.backdrop;
-                if (tmdbData.poster) return tmdbData.poster;
-            }
-        }
-    } catch(e) {}
-    
     if (!isMobile) {
-        // Desktop: Ưu tiên ảnh ngang (thumb_url là ảnh ngang)
-        return movie.thumb_url || movie.poster_url || '';
+        // Desktop: Ưu tiên ảnh ngang (thumb_url) do admin thiết lập hoặc API
+        if (movie.thumb_url) {
+            return movie.thumb_url.startsWith('http') 
+                ? movie.thumb_url 
+                : `https://phimimg.com/${movie.thumb_url.startsWith('uploads/') ? '' : 'uploads/movies/'}${movie.thumb_url}`;
+        }
+        if (movie.poster_url) {
+            return movie.poster_url.startsWith('http')
+                ? movie.poster_url
+                : `https://phimimg.com/${movie.poster_url.startsWith('uploads/') ? '' : 'uploads/movies/'}${movie.poster_url}`;
+        }
+        return '';
     } else {
-        // Mobile: Ưu tiên ảnh dọc (poster_url là ảnh dọc)
-        return movie.poster_url || movie.thumb_url || '';
+        // Mobile: Ưu tiên ảnh dọc (poster_url)
+        if (movie.poster_url) {
+            return movie.poster_url.startsWith('http')
+                ? movie.poster_url
+                : `https://phimimg.com/${movie.poster_url.startsWith('uploads/') ? '' : 'uploads/movies/'}${movie.poster_url}`;
+        }
+        if (movie.thumb_url) {
+            return movie.thumb_url.startsWith('http')
+                ? movie.thumb_url
+                : `https://phimimg.com/${movie.thumb_url.startsWith('uploads/') ? '' : 'uploads/movies/'}${movie.thumb_url}`;
+        }
+        return '';
     }
 }
 
@@ -334,18 +336,10 @@ async function loadHeroLogo(movie) {
 }
 
 // ================================================================
-// AUTO-RETURN TIMER  t? v? Admin Banner sau N giy b? tuong tc
+// AUTO-RETURN TIMER
 // ================================================================
 function startAutoReturnTimer() {
-    clearAutoReturnTimer();
-    // Ch? d?t timer n?u dang ? slide khc 0
-    if (currentSlideIndex !== 0) {
-        autoReturnTimer = setTimeout(() => {
-            if (currentSlideIndex !== 0) {
-                switchHeroSlide(0, false, true); // isAutoReturn = true (smooth)
-            }
-        }, AUTO_RETURN_DELAY);
-    }
+    /* Disabled: keep user selected movie on banner */
 }
 
 function clearAutoReturnTimer() {
@@ -490,66 +484,39 @@ function updateHeroBannerText(movie) {
     // Async load TMDB logo replacing title
     loadHeroLogo(movie);
 
-    if (heroBadges) {
-        const rating = movie.tmdb?.vote_average ? movie.tmdb.vote_average.toFixed(1) : 'N/A';
-        
+        if (heroBadges) {
         let epText = movie.episode_current || '';
         if (epText) {
             const lcText = epText.toLowerCase().trim();
-            if (lcText === 't?p' || lcText === 't?p ' || lcText.includes('hon t?t') || lcText.includes('full')) {
-                epText = 'Full';
+            if (lcText === 'tập' || lcText === 'tập ' || lcText.includes('hoàn tất') || lcText.includes('full')) {
+                epText = 'Hoàn Tất (Full)';
+            } else if (!epText.toLowerCase().includes('tập')) {
+                epText = `Tập ${epText}`;
             }
         }
 
+        const quality = movie.quality || 'HD';
+        const year = movie.year || '2026';
+
         heroBadges.innerHTML = `
-            <span class="flex items-center gap-1.5 text-black px-3 py-1 rounded font-bold text-[13px] md:text-sm shadow-sm" style="background-color: #FFE28A;">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                IMDb ${rating}
-            </span>
-            <span class="flex items-center gap-1.5 text-black px-3 py-1 rounded font-bold text-[13px] md:text-sm shadow-sm" style="background-color: #A3E6D6;">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                ${movie.year || '2024'}
-            </span>
-            ${epText
-                ? `<span data-ep-badge class="flex items-center gap-1.5 text-black px-3 py-1 rounded font-bold text-[13px] md:text-sm shadow-sm" style="background-color: #FFD1E3;">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
-                    ${epText}
-                   </span>`
-                : `<span data-ep-badge class="hidden"></span>`}
-            <span class="flex items-center gap-1.5 text-black px-3 py-1 rounded font-bold text-[13px] md:text-sm shadow-sm" style="background-color: #A8C7FA;">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                ${movie.quality || 'HD'}
-            </span>
+            <span class="hero-badge-quality" style="background: #fcd576; color: #0b0c13; font-weight: 800; font-size: 12px; padding: 2.5px 8px; border-radius: 4px; letter-spacing: 0.5px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.35);">${quality}</span>
+            <span class="hero-badge-year" style="background: rgba(255,255,255,0.12); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #ffffff; font-weight: 600; font-size: 12px; padding: 2.5px 10px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.12); display: inline-flex; align-items: center;">${year}</span>
+            ${epText ? `<span data-ep-badge class="hero-badge-ep" style="background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #ffffff; font-weight: 600; font-size: 12px; padding: 2.5px 12px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.32); display: inline-flex; align-items: center;">${epText}</span>` : ''}
         `;
     }
 
-    if (heroGenres && movie.category) {
-        heroGenres.innerHTML = movie.category.slice(0, 5).map(cat => `
-            <button style="
-                background: rgba(30,32,50,0.75);
-                border: 1px solid rgba(255,255,255,0.25);
-                padding: 6px 14px;
-                border-radius: 8px;
-                color: rgba(255,255,255,0.9);
-                font-size: 13px;
-                font-weight: 600;
-                backdrop-filter: blur(8px);
-                cursor: pointer;
-                transition: background 0.2s, border-color 0.2s;
-                white-space: nowrap;
-            "
-            onmouseover="this.style.background='rgba(50,55,80,0.85)';this.style.borderColor='rgba(255,255,255,0.4)';"
-            onmouseout="this.style.background='rgba(30,32,50,0.75)';this.style.borderColor='rgba(255,255,255,0.25)';">
-                ${cat.name}
-            </button>
-        `).join('');
+    if (heroGenres) {
+        heroGenres.innerHTML = '';
+        heroGenres.style.display = 'none';
     }
 
-
     if (heroDescription) {
-        heroDescription.textContent = movie.content
-            ? movie.content.replace(/<[^>]*>/g, '').substring(0, 180) + '...'
-            : 'ang t?i thng tin phim...';
+        if (movie.content && movie.content.trim() !== '') {
+            const clean = movie.content.replace(/<[^>]*>/g, '').trim();
+            heroDescription.textContent = clean.length > 220 ? clean.substring(0, 220) + '...' : clean;
+        } else {
+            heroDescription.textContent = 'Đang tải thông tin phim...';
+        }
     }
 }
 
@@ -721,57 +688,60 @@ function attachSwipeHandler() {
 // LOAD THUMBNAILS
 // ================================================================
 async function loadThumbnailMovies() {
-    let hasCache = false;
-    // 1. Instant t? cache
+    let hasAdminData = false;
+
+    // 1. Instant từ cache
     try {
         const cached = localStorage.getItem('cinestream_thumbnail_movies');
         if (cached) {
             const movies = JSON.parse(cached);
             if (Array.isArray(movies) && movies.length > 0) {
                 applyThumbnails(convertThumbnailsFromAPI(movies));
-                hasCache = true;
+                hasAdminData = true;
             }
         }
     } catch (e) { }
 
-    // 2. Fetch fresh t? backend
+    // 2. Fetch fresh từ backend
     try {
         const apiUrl = (typeof getBackendBaseURL === 'function') ? window.getBackendBaseURL() : '';
-        if (!apiUrl) throw new Error('API URL undefined');
+        if (apiUrl) {
+            const res = await fetch(`${apiUrl}/api/banners/thumbnails`);
+            const data = await res.json();
 
-        const res = await fetch(`${apiUrl}/api/banners/thumbnails`);
-        const data = await res.json();
-
-        if (data.success && data.data && data.data.length > 0) {
-            localStorage.setItem('cinestream_thumbnail_movies', JSON.stringify(data.data));
-            applyThumbnails(convertThumbnailsFromAPI(data.data));
-            return;
+            if (data.success && data.data && data.data.length > 0) {
+                localStorage.setItem('cinestream_thumbnail_movies', JSON.stringify(data.data));
+                applyThumbnails(convertThumbnailsFromAPI(data.data));
+                return;
+            }
         }
     } catch (err) {
-        console.warn('Thumbnail API error, fallback VN:', err);
+        console.warn('Thumbnail API error:', err);
     }
 
-    // 3. Fallback: phim Vi?t Nam (ch? khi khng c cache)
-    if (!hasCache) {
+    // 3. Fallback: Nếu không có dữ liệu admin và trên DOM chưa có sẵn thumbnail mẫu tĩnh
+    const existingThumbs = document.querySelectorAll('#heroThumbnails .hero-thumb-item');
+    if (!hasAdminData && (!existingThumbs || existingThumbs.length === 0)) {
         loadVietnameseThumbnailsFallback();
     }
 }
 
 function convertThumbnailsFromAPI(banners) {
     return banners.map(b => ({
-        slug: b.movieSlug,
-        name: b.name,
-        origin_name: b.originName,
-        thumb_url: b.thumbUrl,
-        poster_url: b.posterUrl,
-        year: b.year,
-        content: b.content,
-        quality: b.quality,
-        lang: b.lang,
-        episode_current: b.episodeCurrent,
+        slug: b.movieSlug || b.slug || '',
+        name: b.name || '',
+        origin_name: b.originName || b.origin_name || '',
+        thumb_url: b.thumbUrl || b.thumb_url || b.imageUrl || b.posterUrl || '',
+        poster_url: b.posterUrl || b.poster_url || b.thumbUrl || '',
+        year: b.year || '2026',
+        content: b.content || '',
+        quality: b.quality || 'FHD',
+        lang: b.lang || 'Vietsub',
+        episode_current: b.episodeCurrent || b.episode_current || '',
         category: b.category || [],
         tmdb: b.tmdb || {},
-        imdb: b.imdb || {}
+        imdb: b.imdb || {},
+        logoUrl: b.logoUrl || ''
     }));
 }
 
@@ -786,7 +756,7 @@ async function loadVietnameseThumbnailsFallback() {
     } catch (e) { console.error('VN fallback error:', e); }
 }
 
-// -- p d?ng danh sch thumbnail vo slide system + DOM ----------
+// -- Áp dụng danh sách thumbnail vào slide system + DOM ----------
 function applyThumbnails(movies) {
     if (!Array.isArray(movies) || movies.length === 0) return;
 
@@ -796,14 +766,12 @@ function applyThumbnails(movies) {
     renderThumbnails(movies);
     updateThumbnailActive(currentSlideIndex);
 
-    // Preload t?t c? ?nh thumbnail ngay sau khi render
-    // ? khi user click, ?nh d s?n sng trong browser cache
+    // Preload tất cả ảnh thumbnail ngay sau khi render
     preloadSlideImages(movies);
 }
 
-// -- Preload ?nh ng?m cho t?t c? slides --------------------------
+// -- Preload ảnh ngầm cho tất cả slides --------------------------
 function preloadSlideImages(movies) {
-    // Delay nh? d? khng tranh bang thng v?i initial hero image
     setTimeout(() => {
         const handleTMDBSync = (movie, slideIdx) => {
             if (typeof getHeroImagesFromTMDB === 'function') {
@@ -840,7 +808,7 @@ function preloadSlideImages(movies) {
                 img.src = url;
             }
         });
-    }, 300); // Giảm từ 800ms → 300ms để bắt đầu preload TMDB sớm hơn
+    }, 300);
 }
 
 // -- Render thumbnail DOM với click handler -----------------------
@@ -849,9 +817,10 @@ function renderThumbnails(movies) {
     if (!container || !Array.isArray(movies) || movies.length === 0) return;
 
     container.innerHTML = movies.map((movie, i) => {
+        const rawUrl = movie.thumb_url || movie.poster_url || '';
         const imgSrc = (typeof imageOptimizer !== 'undefined')
-            ? imageOptimizer.optimizeImageUrl(movie.thumb_url || movie.poster_url, 300, 75)
-            : buildImageUrl(movie.thumb_url || movie.poster_url, 300);
+            ? imageOptimizer.optimizeImageUrl(rawUrl, 300, 75)
+            : (typeof buildImageUrl === 'function' ? buildImageUrl(rawUrl, 300) : rawUrl);
 
         const slideIndex = i + 1;
 
@@ -861,20 +830,20 @@ function renderThumbnails(movies) {
              data-movie-index="${i}"
              role="button"
              tabindex="0"
-             title="${movie.name || ''}"
+             title="${(movie.name || '').replace(/"/g, '&quot;')}"
              onclick="switchHeroSlide(${slideIndex})">
             <div class="hero-thumb-poster responsive-thumb-width aspect-video rounded-md overflow-hidden bg-gray-900">
                 <img
-                    alt="${movie.name || ''}"
+                    alt="${(movie.name || '').replace(/"/g, '&quot;')}"
                     class="w-full h-full object-cover object-center"
+                    src="${imgSrc || 'https://placehold.co/300x170?text=No+Image'}"
                     data-src="${imgSrc}"
                     data-tmdb-slug="${movie.slug}"
                     data-tmdb-id="${movie.tmdb?.id || ''}"
                     data-tmdb-name="${(movie.name || '').replace(/"/g, '&quot;')}"
                     data-tmdb-year="${movie.year || ''}"
                     data-tmdb-type="backdrop"
-                    src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22600%22%3E%3Crect fill=%22%23111%22 width=%22400%22 height=%22600%22/%3E%3Ctext fill=%22%23555%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 alignment-baseline=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22%3ENo Image%3C/text%3E%3C/svg%3E"
-                    onerror="window.autoHealMovieImage ? window.autoHealMovieImage(this, typeof movie !== 'undefined' ? movie.slug : '', typeof movie !== 'undefined' ? (movie.name || movie.title) : '') : null"
+                    onerror="this.onerror=null; if(window.autoHealMovieImage) { window.autoHealMovieImage(this, '${movie.slug}', '${(movie.name || '').replace(/'/g, "\\'")}'); } else { this.src='https://placehold.co/300x170?text=No+Image'; }"
                      />
             </div>
             <div class="hero-thumb-glow"></div>
@@ -1017,46 +986,61 @@ function showHeroImage() {
     }
 }
 
-
 async function fetchLatestEpisodeCount(movie) {
     if (!movie?.slug) return;
     try {
-        const data = await movieAPI.getMovieDetail(movie.slug);
-        if (!data) return;
+        let item = null;
+        let eps = null;
 
-        const item = data.movie || data.data?.item;
+        // 1. Direct fetch from Ophim
+        try {
+            const ophimRes = await fetch(`https://phimapi.com/phim/${movie.slug}`);
+            if (ophimRes.ok) {
+                const ophimData = await ophimRes.json();
+                item = ophimData?.movie || ophimData?.data?.item;
+                eps = ophimData?.episodes || item?.episodes;
+            }
+        } catch(e) {}
+
+        // 2. Fallback to movieAPI if needed
+        if (!item && typeof movieAPI !== 'undefined' && movieAPI.getMovieDetail) {
+            try {
+                const data = await movieAPI.getMovieDetail(movie.slug);
+                item = data?.movie || data?.data?.item || data?.data;
+                eps = data?.episodes || item?.episodes;
+            } catch(e) {}
+        }
+
         if (!item) return;
 
         // Sync and update real description from database/API
-        if (item.content) {
-            const cleanContent = item.content.replace(/<[^>]*>/g, '').trim();
+        const rawContent = item.content || item.description || '';
+        if (rawContent) {
+            const cleanContent = rawContent.replace(/<[^>]*>/g, '').trim();
             const heroDescription = document.getElementById('heroDescription');
-            if (heroDescription) {
-                heroDescription.textContent = cleanContent.length > 180 
-                    ? cleanContent.substring(0, 180) + '...'
+            if (heroDescription && cleanContent) {
+                heroDescription.textContent = cleanContent.length > 220 
+                    ? cleanContent.substring(0, 220) + '...'
                     : cleanContent;
             }
-            movie.content = item.content; // Save so we don't refetch
+            movie.content = cleanContent;
         }
 
         let latestEpLabel = item.episode_current || '';
-        const eps = data.episodes || item.episodes;
         if (Array.isArray(eps) && eps.length > 0) {
             const serverData = eps[0]?.server_data;
             if (Array.isArray(serverData) && serverData.length > 0) {
                 const count = serverData.length;
-                
-                const lcLabel = latestEpLabel.toLowerCase().trim();
-                // Preserve 'Full' if it's a single movie or already labeled as Full
-                if (item.type === 'single' || lcLabel.includes('full') || lcLabel.includes('ho�n t?t')) {
+                const lcLabel = (latestEpLabel || '').toLowerCase().trim();
+                if (item.type === 'single' || lcLabel.includes('full') || lcLabel.includes('hoàn tất')) {
                     latestEpLabel = 'Full';
                 } else {
                     const match = latestEpLabel.match(/\d+/);
                     const storedNum = match ? parseInt(match[0]) : 0;
                     if (count > storedNum) {
-                        latestEpLabel = `T?p ${count}`;
-                    } else if (lcLabel === 't?p' || lcLabel === 't?p ') {
-                        latestEpLabel = count > 0 ? `T?p ${count}` : 'Full';
+                        latestEpLabel = `Tập ${count}`;
+                    } else if (lcLabel === 'tập' || lcLabel === 'tập ') {
+                        latestEpLabel = count > 0 ? `Tập ${count}` : 'Full';
                     }
                 }
             }
@@ -1065,7 +1049,9 @@ async function fetchLatestEpisodeCount(movie) {
 
         const badge = document.querySelector('#heroBadges [data-ep-badge]');
         if (badge && badge.textContent !== latestEpLabel) {
-            badge.textContent = latestEpLabel;
+            badge.textContent = latestEpLabel.toLowerCase().includes('tập') || latestEpLabel.toLowerCase().includes('full') 
+                ? latestEpLabel 
+                : `Tập ${latestEpLabel}`;
             badge.classList.remove('hidden');
         }
     } catch (e) { /* silent */ }
@@ -1085,12 +1071,20 @@ function setupHeroActions(movie) {
     if (favBtn && typeof userService !== 'undefined') {
         const icon = favBtn.querySelector('span');
 
-        const updateFavUI = () => {
+                const updateFavUI = () => {
             const isFav = userService.isFavorite(movie.slug);
-            if (icon) {
-                icon.textContent = isFav ? 'favorite' : 'favorite_border';
-                icon.classList.toggle('text-red-500', isFav);
-                icon.classList.toggle('text-white/90', !isFav);
+            const svg = favBtn.querySelector('svg');
+            const path = favBtn.querySelector('path');
+            if (svg && path) {
+                if (isFav) {
+                    svg.setAttribute('fill', '#ef4444');
+                    svg.style.color = '#ef4444';
+                    path.setAttribute('d', 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z');
+                } else {
+                    svg.setAttribute('fill', 'none');
+                    svg.style.color = '#ffffff';
+                    path.setAttribute('d', 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z');
+                }
             }
         };
 
@@ -1119,8 +1113,20 @@ function setupHeroActions(movie) {
 window.switchHeroSlide = switchHeroSlide;
 
 // -- Boot ---------------------------------------------------------
-document.addEventListener('DOMContentLoaded', () => {
+function bootHeroBanner() {
     loadHeroBanner();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootHeroBanner);
+} else {
+    bootHeroBanner();
+}
+
+window.addEventListener('storage', (e) => {
+    if (e.key === 'cinestream_active_banner' || e.key === 'cinestream_thumbnail_movies') {
+        loadHeroBanner();
+    }
 });
 
 

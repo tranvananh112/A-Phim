@@ -1,36 +1,47 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 
 <head>
-    <meta name="view-transition" content="same-origin" />
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+    <meta name="view-transition" content="same-origin" />
+    <link rel="canonical" href="https://aphim.io.vn/categories.html" />
+    <script>
+        // ✅ SEO: Canonical động cho ?list= URL
+        (function() {
+            var p = new URLSearchParams(window.location.search);
+            var list = p.get('list');
+            if (list) {
+                var link = document.querySelector('link[rel="canonical"]');
+                if (link) link.href = 'https://aphim.io.vn/danh-sach.html?list=' + encodeURIComponent(list);
+            }
+        })();
+    </script>
     <meta name="description" content="APhim - Website xem phim online Full HD miễn phí, cập nhật phim mới nhất 2026, Phim Vietsub, Thuyết Minh, Phim Lồng Tiếng chất lượng cao." />
     <meta property="og:description" content="APhim - Website xem phim online Full HD miễn phí, cập nhật phim mới nhất 2026, Phim Vietsub, Thuyết Minh, Phim Lồng Tiếng chất lượng cao." />
     <meta property="twitter:description" content="APhim - Website xem phim online Full HD miễn phí, cập nhật phim mới nhất 2026, Phim Vietsub, Thuyết Minh, Phim Lồng Tiếng chất lượng cao." />
-    <!-- TOUCH SPEED -->
-    <link rel="stylesheet" href="css/touch-speed.css?v=13">
-    <script src="js/touch-speed.js?v=13"></script>
-    <link rel="prefetch" href="index.html" as="document">
-    <link rel="prefetch" href="search.html" as="document">
 
-    
-    <script src="js/chat-init-guard.js?v=37"></script>
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1617450652619669"
-        crossorigin="anonymous"></script>
-
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QYK5R13WK2"></script>
+    <!-- Theme Auto-Detect (Warm Champagne Gold Light-Mode Default) -->
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'G-QYK5R13WK2');
+        (function() {
+            try {
+                var savedTheme = localStorage.getItem('aphim_theme') || localStorage.getItem('cinestream_theme');
+                if (!savedTheme) {
+                    var u = JSON.parse(localStorage.getItem('cinestream_user') || 'null');
+                    if (u && u.theme) savedTheme = u.theme;
+                }
+                // Mặc định: Nền Đen / Dark Mode (Chỉ kích hoạt light-mode khi người dùng chọn 'light')
+            if (savedTheme === 'light') {
+                document.documentElement.classList.add('light-mode');
+            } else {
+                document.documentElement.classList.remove('light-mode');
+            }
+            } catch(e) {}
+        })();
     </script>
 
-    
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
     <title>Thể Loại Phim - A Phim</title>
+
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
@@ -39,1329 +50,1661 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
     <link rel="shortcut icon" href="/favicon.ico">
+
+    <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Critical CSS inline to prevent FOUC -->
-    <style>
-        /* Prevent mobile menu flash on desktop */
-        @media (min-width: 1024px) {
-            .mobile-menu-btn {
-                display: none !important;
-            }
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons" rel="stylesheet">
 
-            #mobile-menu {
-                display: none !important;
-            }
-        }
-
-        /* Hide desktop menu on mobile initially */
-        @media (max-width: 1023px) {
-            .hidden.lg\:flex {
-                display: none !important;
-            }
-        }
-
-        /* Basic layout to prevent flash */
-        body {
-            background-color: #1e202c;
-            color: white;
-            margin: 0;
-        }
-
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 50;
-            background: rgba(0, 0, 0, 0.95);
-        }
-
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-    </style>
-
+    <!-- Core Stylesheets -->
     <link rel="stylesheet" href="css/tailwind.min.css?v=13">
+    <link rel="stylesheet" href="css/design-tokens.css?v=13">
+    <link rel="stylesheet" href="css/movie-cards-v2.css?v=10003">
+    <link rel="stylesheet" href="css/light-mode.css?v=2132">
+    <link rel="stylesheet" href="css/floating-dock.css?v=210">
+    <link rel="stylesheet" href="css/bottom-nav.css?v=138">
+    <link rel="stylesheet" href="css/avatar-frames.css?v=15">
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round|Material+Icons"
-        rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="css/sticky-nav.css?v=1783524185480">
-    <link rel="stylesheet" href="css/navigation-smooth.css?v=13">
-    <link rel="stylesheet" href="css/material-icons-fix.css?v=13">
-    <link rel="stylesheet" href="css/dropdown-z-index-fix.css?v=13">
+    <style>
+        /* Base page tone */
+        html, body {
+            background-color: #1f2331 !important;
+            color: #f3f4f6 !important;
+            font-family: 'Be Vietnam Pro', 'Inter', system-ui, sans-serif !important;
+        }
 
-    <!-- Material Icons Loader -->
-    <script src="js/material-icons-loader.js?v=13"></script>
-
-    <link rel="stylesheet" href="css/chat-room.css?v=65">
-    <link rel="stylesheet" href="css/chat-mobile-fixed.css?v=65">
-<link rel="stylesheet" href="css/mobile-viewport-fix.css?v=36">
-<link rel="stylesheet" href="css/mobile-menu-modern.css?v=38">
-<link rel="stylesheet" href="css/progressive-image.css?v=13">
-<link rel="stylesheet" href="css/ambient-bg.css?v=1782358934009">
-
-    <!-- A Phim: Hardcode Dropdown Blue Override inside HTML to bypass all cache/specificity -->
-            <style id="dropdown-blue-override">
-        @media (min-width: 1024px) {
-            nav .relative.group > .absolute.top-full {
-                background-color: #3d5a96 !important;
-                background-image: linear-gradient(145deg, #3d5a96 0%, #25385e 100%) !important;
-                backdrop-filter: blur(16px) !important;
-                -webkit-backdrop-filter: blur(16px) !important;
-                border: 1px solid rgba(255, 255, 255, 0.15) !important;
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+        /* Enforce layout padding */
+        body {
+            padding-top: 64px !important;
+        }
+        @media (max-width: 1280px) {
+            body {
+                padding-top: 60px !important;
             }
-            nav .relative.group > .absolute.top-full a {
-                color: #eff6ff !important;
-                font-weight: 500 !important;
-                text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+        }
+
+        /* Single Dark Bar - Uniform 64px Height & Color at Top and Scrolled */
+    #sofa-header,
+    header#sofa-header,
+    header {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 64px !important;
+        z-index: 9999 !important;
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+        background: #1f2331 !important;
+        background-color: #1f2331 !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6) !important;
+        will-change: background-color, box-shadow;
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+    }
+    body.is-scrolling iframe {
+        pointer-events: none !important;
+    }
+
+    .sofa-header-container {
+        max-width: 1540px !important;
+        margin: 0 auto !important;
+        height: 100% !important;
+        padding: 0 24px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 16px !important;
+        box-sizing: border-box !important;
+    }
+    @media (max-width: 1023px) {
+        .sofa-header-container {
+            padding: 0 16px !important;
+        }
+    }
+    @media (max-width: 480px) {
+        .sofa-header-container {
+            padding: 0 12px !important;
+        }
+    }
+
+    /* Left Group: Hamburger & Logo & Nav Links */
+    .sofa-header-left-group {
+        display: flex !important;
+        align-items: center !important;
+        gap: 32px !important;
+        flex-shrink: 0 !important;
+        overflow: visible !important;
+    }
+
+    .sofa-left-section {
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        flex-shrink: 0 !important;
+    }
+
+    .sofa-menu-btn {
+        background: transparent !important;
+        border: none !important;
+        color: #ffffff !important;
+        cursor: pointer !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 4px !important;
+        transition: opacity 0.2s ease, transform 0.2s ease !important;
+    }
+
+    .sofa-menu-btn svg {
+        width: 28px !important;
+        height: 28px !important;
+        stroke-width: 2.5 !important;
+    }
+
+    .sofa-menu-btn:hover {
+        opacity: 0.85 !important;
+        transform: scale(1.05) !important;
+    }
+
+    /* Logo Image (APhim Logo) */
+    .sofa-logo-link {
+        display: flex !important;
+        align-items: center !important;
+        text-decoration: none !important;
+    }
+
+    .sofa-logo-img {
+        height: 40px !important;
+        width: auto !important;
+        object-fit: contain !important;
+    }
+
+    /* Desktop Navigation Links */
+    .sofa-nav-links {
+        display: flex !important;
+        align-items: center !important;
+        gap: 20px !important;
+        margin-left: 10px !important;
+        flex-shrink: 0 !important;
+    }
+
+    .sofa-nav-item {
+        color: #ffffff !important;
+        font-family: 'Inter', system-ui, sans-serif !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        text-decoration: none !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        white-space: nowrap !important;
+        height: 64px !important;
+        line-height: 64px !important;
+        transition: color 0.18s ease !important;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    .sofa-nav-item:hover,
+    .sofa-dropdown:hover .sofa-nav-item {
+        color: #fcd576 !important;
+    }
+
+    .sofa-dropdown-arrow {
+        width: 22px !important;
+        height: 22px !important;
+        fill: #ffffff !important;
+        opacity: 0.9 !important;
+        filter: none !important;
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), fill 0.18s ease, opacity 0.18s ease !important;
+        transform-origin: center !important;
+    }
+
+    .sofa-nav-item:hover .sofa-dropdown-arrow,
+    .sofa-dropdown:hover .sofa-dropdown-arrow {
+        fill: #fcd576 !important;
+        opacity: 1 !important;
+        filter: none !important;
+        transform: rotate(180deg) !important;
+    }
+
+    .sofa-dropdown {
+        position: relative !important;
+        height: 64px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    .sofa-dropdown-menu {
+        position: absolute !important;
+        top: calc(100% - 4px) !important;
+        left: 0 !important;
+        transform: translateY(8px) !important;
+        display: none !important;
+        opacity: 0 !important;
+        background-color: #1a1d26 !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 12px !important;
+        padding: 16px 20px !important;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7) !important;
+        z-index: 1000 !important;
+        transition: opacity 0.2s ease, transform 0.2s ease !important;
+    }
+
+    .sofa-dropdown:hover .sofa-dropdown-menu {
+        display: grid !important;
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+    }
+
+    .sofa-dropdown-menu.grid-4 {
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 10px 20px !important;
+        width: 720px !important;
+    }
+
+    .sofa-dropdown-menu.grid-3 {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 10px 20px !important;
+        width: 560px !important;
+    }
+
+    .sofa-dropdown-link {
+        color: #cbd5e1 !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        text-decoration: none !important;
+        padding: 6px 10px !important;
+        border-radius: 6px !important;
+        white-space: nowrap !important;
+    }
+
+    .sofa-dropdown-link:hover {
+        background-color: #2a2f3d !important;
+        color: #ffb74d !important;
+    }
+
+    /* Right Section: 3 Elements (Search Icon Button + Bell Icon Button + Login Button) */
+    .sofa-right-section {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        flex-shrink: 1 !important;
+        min-width: 0 !important;
+        height: 100% !important;
+    }
+
+    /* Dark Circular Icon Buttons (Search & Bell - Matched 40px Height) */
+    .sofa-icon-circle-btn {
+        width: 40px !important;
+        height: 40px !important;
+        border-radius: 50% !important;
+        background-color: rgba(255, 255, 255, 0.08) !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        color: #ffffff !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        transition: background-color 0.2s ease, transform 0.15s ease !important;
+        text-decoration: none !important;
+        padding: 0 !important;
+        flex-shrink: 0 !important;
+    }
+
+    .sofa-icon-circle-btn:hover {
+        background-color: rgba(255, 255, 255, 0.18) !important;
+        transform: scale(1.05) !important;
+    }
+
+    /* Single Desktop Search Form with Embedded Inner Filter Button */
+    .sofa-desktop-search-form {
+        display: flex !important;
+        align-items: center !important;
+        align-self: center !important;
+        margin: 0 !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        border-radius: 20px !important;
+        padding: 0 4px 0 14px !important;
+        height: 40px !important;
+        width: 360px !important;
+        max-width: 360px !important;
+        min-width: 180px !important;
+        flex-shrink: 1 !important;
+        transition: all 0.25s ease !important;
+        box-sizing: border-box !important;
+        position: relative !important;
+        overflow: hidden !important;
+    }
+    .sofa-desktop-search-form:focus-within {
+        background: rgba(255, 255, 255, 0.12) !important;
+        border-color: #fcd576 !important;
+        box-shadow: 0 0 14px rgba(252, 213, 118, 0.25) !important;
+    }
+
+    .sofa-desktop-search-icon {
+        width: 18px !important;
+        height: 18px !important;
+        color: rgba(255, 255, 255, 0.55) !important;
+        flex-shrink: 0 !important;
+        margin-right: 8px !important;
+        transition: color 0.2s ease !important;
+    }
+
+    .sofa-desktop-search-form:focus-within .sofa-desktop-search-icon {
+        color: #fcd576 !important;
+    }
+
+    .sofa-desktop-search-input,
+    .sofa-desktop-search-input:focus,
+    .sofa-desktop-search-input:focus-visible,
+    .sofa-desktop-search-input:active {
+        flex: 1 !important;
+        height: 100% !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        border: none !important;
+        border-left: none !important;
+        border-right: none !important;
+        outline: none !important;
+        outline-offset: 0 !important;
+        color: #ffffff !important;
+        font-size: 13.5px !important;
+        font-family: inherit !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        min-width: 50px !important;
+    }
+
+    .sofa-desktop-search-input::placeholder {
+        color: rgba(255, 255, 255, 0.45) !important;
+    }
+
+    /* Inner Filter Button (Compact Pill Match INSIDE Search Bar) */
+    .sofa-inner-filter-btn {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 3px !important;
+        height: 26px !important;
+        padding: 0 9px !important;
+        background: rgba(255, 255, 255, 0.12) !important;
+        border: 1px solid rgba(255, 255, 255, 0.16) !important;
+        border-radius: 13px !important;
+        color: rgba(255, 255, 255, 0.92) !important;
+        font-size: 11px !important;
+        font-weight: 500 !important;
+        text-decoration: none !important;
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+        margin-left: 4px !important;
+        margin-right: 2px !important;
+        transition: all 0.2s ease !important;
+        box-sizing: border-box !important;
+    }
+
+    .sofa-inner-filter-btn:hover {
+        background: #fcd576 !important;
+        color: #0d0f1a !important;
+        border-color: #fcd576 !important;
+        transform: translateY(-0.5px) !important;
+    }
+
+    .sofa-inner-filter-btn svg {
+        transition: color 0.2s ease !important;
+    }
+
+    .sofa-inner-filter-btn:hover svg {
+        color: #0d0f1a !important;
+    }
+
+    .sofa-mobile-search-btn {
+        display: none !important;
+    }
+
+    /* Rounded Rectangle Login Button (Matching Image 2: border-radius 8px, height 40px) */
+    .sofa-login-rect-btn {
+        background: #fcd576 !important;
+        color: #0d0f1a !important;
+        -webkit-text-fill-color: #0d0f1a !important;
+        font-size: 14px !important;
+        font-weight: 700 !important;
+        height: 40px !important;
+        padding: 0 20px !important;
+        border-radius: 8px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-decoration: none !important;
+        white-space: nowrap !important;
+        border: none !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+        text-shadow: none !important;
+        transition: all 0.2s ease !important;
+        flex-shrink: 0 !important;
+    }
+
+    .sofa-login-rect-btn:hover {
+        background: #fce08b !important;
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    /* Mobile / Desktop Search Overlay Dropdown */
+    .sofa-mobile-search-overlay {
+        position: fixed !important;
+        top: 64px !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 99998 !important;
+        background: rgba(19, 21, 31, 0.96) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+        padding: 12px 16px !important;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8) !important;
+        display: none;
+        opacity: 0;
+        transform: translateY(-8px);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .sofa-mobile-search-overlay.open {
+        display: block !important;
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+    }
+
+    .sofa-mobile-search-inner-form {
+        display: flex !important;
+        align-items: center !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        border-radius: 12px !important;
+        padding: 0 8px 0 14px !important;
+        height: 44px !important;
+        max-width: 600px !important;
+        margin: 0 auto !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .sofa-mobile-search-inner-form:focus-within {
+        background: rgba(255, 255, 255, 0.12) !important;
+        border-color: #fcd576 !important;
+        box-shadow: 0 0 12px rgba(252, 213, 118, 0.3) !important;
+    }
+
+    .sofa-mobile-search-input-icon {
+        width: 18px !important;
+        height: 18px !important;
+        color: rgba(255, 255, 255, 0.5) !important;
+        flex-shrink: 0 !important;
+        margin-right: 8px !important;
+    }
+
+    .sofa-mobile-search-input-field {
+        flex: 1 !important;
+        height: 100% !important;
+        background: transparent !important;
+        border: none !important;
+        outline: none !important;
+        color: #ffffff !important;
+        font-size: 14px !important;
+        font-family: inherit !important;
+        box-shadow: none !important;
+    }
+
+    .sofa-mobile-search-input-field::placeholder {
+        color: rgba(255, 255, 255, 0.45) !important;
+    }
+
+    .sofa-mobile-search-close-btn {
+        width: 30px !important;
+        height: 30px !important;
+        border-radius: 50% !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        border: none !important;
+        color: #94a3b8 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        flex-shrink: 0 !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .sofa-mobile-search-close-btn:hover {
+        background: rgba(255, 255, 255, 0.2) !important;
+        color: #ffffff !important;
+    }
+
+    /* Mobile Drawer Sidebar Styling */
+    .mobile-drawer {
+        position: fixed !important;
+        inset: 0 !important;
+        background: rgba(0, 0, 0, 0.4) !important;
+        backdrop-filter: blur(8px) !important;
+        -webkit-backdrop-filter: blur(8px) !important;
+        z-index: 100000 !important;
+        display: none !important;
+        opacity: 0 !important;
+        transition: opacity 0.25s ease !important;
+    }
+
+    .mobile-drawer.open {
+        display: block !important;
+        opacity: 1 !important;
+    }
+
+    .mobile-drawer-content {
+        width: 320px !important;
+        max-width: 85vw !important;
+        height: 100% !important;
+        background: rgba(22, 24, 33, 0.95) !important;
+        backdrop-filter: blur(24px) !important;
+        -webkit-backdrop-filter: blur(24px) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+        padding: 24px 18px !important;
+        overflow-y: auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 16px !important;
+        box-shadow: 10px 0 40px rgba(0, 0, 0, 0.5) !important;
+        box-sizing: border-box !important;
+    }
+
+    .drawer-close-btn {
+        background: rgba(255, 255, 255, 0.12) !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 999px !important;
+        padding: 8px 18px !important;
+        font-size: 13px !important;
+        font-weight: 500 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        cursor: pointer !important;
+        align-self: flex-start !important;
+    }
+
+    .drawer-accordion-group {
+        display: flex !important;
+        flex-direction: column !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .drawer-accordion-item {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .drawer-accordion-header {
+        width: 100% !important;
+        padding: 15px 4px !important;
+        background: transparent !important;
+        border: none !important;
+        color: #ffffff !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        cursor: pointer !important;
+    }
+
+    .drawer-accordion-item.active .drawer-accordion-header {
+        color: #818cf8 !important;
+    }
+
+    .drawer-accordion-icon {
+        width: 16px !important;
+        height: 16px !important;
+        fill: currentColor !important;
+        transition: transform 0.3s ease !important;
+    }
+
+    .drawer-accordion-item.active .drawer-accordion-icon {
+        transform: rotate(180deg) !important;
+    }
+
+    .drawer-accordion-body {
+        display: none !important;
+        padding: 6px 4px 16px 16px !important;
+    }
+
+    .drawer-accordion-item.active .drawer-accordion-body {
+        display: block !important;
+    }
+
+    .drawer-grid-2 {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 14px 20px !important;
+        max-height: 320px !important;
+        overflow-y: auto !important;
+    }
+
+    .drawer-sub-link {
+        font-size: 13px !important;
+        font-weight: 400 !important;
+        text-decoration: none !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    .drawer-quick-pills {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 12px !important;
+        margin-top: 10px !important;
+    }
+
+    .drawer-pill-btn {
+        background: rgba(255, 255, 255, 0.08) !important;
+        color: #ffffff !important;
+        text-decoration: none !important;
+        font-size: 13px !important;
+        font-weight: 500 !important;
+        padding: 12px 16px !important;
+        border-radius: 10px !important;
+        text-align: center !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    /* ── RESPONSIVE COMPACT MEDIA QUERIES FOR 110% ZOOM & MEDIUM SCREENS (1380px - 1536px) ── */
+    @media (max-width: 1536px) {
+        .sofa-header-left-group {
+            gap: 14px !important;
+        }
+        .sofa-nav-links {
+            gap: 10px !important;
+            margin-left: 0 !important;
+        }
+        .sofa-nav-item {
+            font-size: 13px !important;
+        }
+        .sofa-desktop-search-form {
+            width: 250px !important;
+            max-width: 250px !important;
+            padding: 0 3px 0 10px !important;
+        }
+    }
+
+    @media (max-width: 1440px) {
+        .sofa-header-left-group {
+            gap: 10px !important;
+        }
+        .sofa-nav-links {
+            gap: 6px !important;
+        }
+        .sofa-nav-item {
+            font-size: 12.5px !important;
+        }
+        .sofa-desktop-search-form {
+            width: 210px !important;
+            max-width: 210px !important;
+            padding: 0 3px 0 10px !important;
+        }
+        .sofa-desktop-search-input {
+            font-size: 12px !important;
+        }
+        .sofa-inner-filter-btn {
+            padding: 0 5px !important;
+            font-size: 10.5px !important;
+            border-radius: 12px !important;
+            margin-right: 1px !important;
+        }
+    }
+
+    @media (max-width: 1380px) {
+        .sofa-header-container {
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+            height: 60px !important;
+            box-sizing: border-box !important;
+        }
+
+        .sofa-header-left-group {
+            flex: none !important;
+            gap: 8px !important;
+        }
+
+        .sofa-nav-links {
+            display: none !important;
+        }
+
+        .sofa-logo-img {
+            height: 32px !important;
+        }
+
+        .sofa-right-section {
+            margin-left: auto !important;
+            margin-right: 0 !important;
+            padding-right: 0 !important;
+            gap: 8px !important;
+        }
+
+        .sofa-icon-circle-btn {
+            width: 38px !important;
+            height: 38px !important;
+        }
+
+        .sofa-desktop-search-form,
+        .sofa-filter-btn {
+            display: none !important;
+        }
+
+        .sofa-mobile-search-btn {
+            display: flex !important;
+        }
+
+        /* Mobile Login Button: Restore original Pill shape (9999px) & Flush right alignment */
+        .sofa-login-rect-btn {
+            height: 36px !important;
+            padding: 0 16px !important;
+            font-size: 13px !important;
+            border-radius: 9999px !important;
+            margin-right: 0 !important;
+            box-sizing: border-box !important;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .sofa-header-container {
+            padding-left: 12px !important;
+            padding-right: 12px !important;
+        }
+    }
+
+        /* App Container & Max Width - Synchronized with Homepage (1540px) */
+        .app-container {
+            max-width: 1540px !important;
+            margin: 0 auto !important;
+            padding-left: 24px !important;
+            padding-right: 24px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        @media (max-width: 1023px) {
+            .app-container {
+                padding-left: 16px !important;
+                padding-right: 16px !important;
             }
-            nav .relative.group > .absolute.top-full a:hover {
-                color: #f2f20d !important;
-                background-color: rgba(255, 255, 255, 0.1) !important;
-                text-shadow: 0 0 10px rgba(242,242,13,0.5);
-            }
-            nav .relative.group > .absolute.top-full * {
-                /* Ensure no child elements are painting a black background covering the blue */
+        }
+        @media (max-width: 480px) {
+            .app-container {
+                padding-left: 12px !important;
+                padding-right: 12px !important;
             }
         }
     </style>
-
-    <link rel="stylesheet" href="css/nav-desktop-v2.css?v=7263">
-    <link rel="stylesheet" href="css/design-tokens.css?v=13">
-    <script src="js/anti-devtools.js?v=10"></script>
-    <link rel="stylesheet" href="css/avatar-frames.css?v=4">
-<style>
-.footer-grid { display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start; }
-.app-btn { display:inline-flex; align-items:center; gap:14px; padding:12px 26px; background:#1c1c1e; color:#fff; border:1.5px solid rgba(255,255,255,0.7); border-radius:12px; cursor:pointer; text-align:left; min-width:176px; transition:all 0.2s; }
-.app-btn:hover { background:#2c2c2e; border-color:#fff; }
-.app-btn svg { width: 28px; height: 28px; }
-.app-btn-text-small { font-size: 0.68rem; color: rgba(255,255,255,0.85); line-height: 1; margin-bottom: 2px; }
-.app-btn-text-large { font-size: 1.15rem; font-weight: 700; line-height: 1.2; color: #fff; }
-@media(max-width:1023px) {
-  .footer-grid { display:flex; flex-direction:column; gap:2rem; }
-  .footer-col-left { display:block; }
-  .footer-col-left > div:first-child { border-bottom:none; padding-bottom:1rem; }
-  .footer-grid > div:last-child { padding-left:0 !important; border-top:none; padding-top:1rem; width:100%; }
-  
-  .app-btn { padding: 10px 14px; min-width: 0; width: calc(50% - 5px); gap: 8px; border-radius: 10px; }
-  .app-btn svg { width: 22px; height: 22px; }
-  .app-btn-text-small { font-size: 0.6rem; }
-  .app-btn-text-large { font-size: 0.9rem; }
-}
-</style>
-    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js" type="module"></script>
-    <link rel="stylesheet" href="css/bottom-nav.css?v=138">
 </head>
 
-<body class="bg-background-dark text-white">
-    <!-- Ambient Background (7 Orbs for Full Coverage) -->
-    <div class="ambient-bg">
-        <div class="ambient-orb ambient-orb-1"></div>
-        <div class="ambient-orb ambient-orb-2"></div>
-        <div class="ambient-orb ambient-orb-3"></div>
-        <div class="ambient-orb ambient-orb-4"></div>
-        <div class="ambient-orb ambient-orb-5"></div>
-        <div class="ambient-orb ambient-orb-6"></div>
-        <div class="ambient-orb ambient-orb-7"></div>
-        <div class="ambient-noise"></div>
-        <div class="ambient-grain"></div>
-    </div>
-    <!-- ⚡ Anti-flash: Ẩn grid thể loại ngay nếu đang ở chế độ xem phim của thể loại -->
-    <script>
-        if (new URLSearchParams(window.location.search).get('category')) {
-            document.write('<style>#categoriesGrid { display: none !important; }</style>');
-        }
-    </script>
-        <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 pt-safe" id="mainNav">
-        <div class="container mx-auto px-6 flex items-center justify-between" style="height:56px;">
+<body class="bg-[#1f2331] text-white antialiased">
 
-            <!-- ZONE 1: Logo -->
-            <div class="flex-1 flex justify-start">
-                <a href="/" class="flex items-center group flex-shrink-0 -ml-6 sm:-ml-8 md:-ml-10 lg:-ml-[48px]" style="text-decoration:none;">
-                        <img src="/logo-aphim1.png" alt="A Phim Logo" class="h-12 sm:h-14 md:h-[55px] lg:h-[65px] w-auto object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-300" />
+    <!-- Navigation Header (High-End Sofaflix Style Header) -->
+    <header id="sofa-header">
+    <div class="sofa-header-container">
+        <!-- Left Section: Hamburger Icon + Logo Image + Desktop Nav Links -->
+        <div class="sofa-header-left-group">
+            <div class="sofa-left-section">
+                <button type="button" onclick="toggleMobileHeaderMenu()" class="sofa-menu-btn" title="Danh mục" aria-label="Menu">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+
+                <a href="index.html" class="sofa-logo-link">
+                    <picture>
+                        <source srcset="/logo-aphim1.webp" type="image/webp" />
+                        <img src="/logo-aphim1.png" alt="APhim Logo" class="sofa-logo-img" width="240" height="100" fetchpriority="high" decoding="async" />
+                    </picture>
+                </a>
+            </div>
+
+            <!-- Desktop Navigation Links -->
+            <nav class="sofa-nav-links hidden lg:flex">
+                <!-- 1. Loại Phim ▼ -->
+                <div class="sofa-dropdown">
+                    <a href="danh-sach.html?list=phim-bo" class="sofa-nav-item">
+                        Loại Phim
+                        <svg class="sofa-dropdown-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6z" /></svg>
                     </a>
-            </div>
-
-            <!-- ZONE 2: Desktop Search + Links (hidden on mobile) -->
-            <div class="hidden lg:flex items-center justify-center flex-none mx-4" style="white-space: nowrap;">
-                <!-- Dark pill wrapper (like SofaFlix) -->
-                <div id="desktopNavPill" class="desktop-nav-pill">
-
-                    <!-- Search Bar -->
-                    <form action="search.html" method="GET" class="nav-search-v2">
-                        <span class="material-icons-round search-icon">search</span>
-                        <input type="text" name="q" placeholder="Tìm kiếm phim, diễn viên..." autocomplete="off" required>
-                    </form>
-
-                    <!-- Divider -->
-                    <div style="width:1px; height:20px; background:rgba(255,255,255,0.12); margin:0 6px; flex-shrink:0;"></div>
-
-                    <!-- Nav Links — flat, no pill -->
-                    <nav-links class="flex items-center" style="gap:2px;">
-                        <a href="index.html" class="nav-flat-link active">Trang Chủ</a>
-
-                        <!-- Phim Dropdown -->
-                        <div class="nav-flat-dropdown">
-                            <button class="nav-flat-link" type="button">
-                                Phim
-                                <span class="material-icons-round nav-caret">expand_more</span>
-                            </button>
-                            <div class="nav-dropdown-panel" id="countryDropdown" style="min-width:680px;">
-                                <div class="p-4 text-center text-gray-400 text-sm">Đang tải...</div>
-                            </div>
-                        </div>
-
-                        <!-- Danh Sách Dropdown -->
-                        <div class="nav-flat-dropdown">
-                            <button class="nav-flat-link" type="button">
-                                Danh Sách
-                                <span class="material-icons-round nav-caret">expand_more</span>
-                            </button>
-                            <div class="nav-dropdown-panel" style="min-width:560px;">
-                                <div style="background:linear-gradient(160deg,#1e4d8c 0%,#2563b8 40%,#1a3d7a 100%);border-radius:12px;padding:6px;border:1px solid rgba(59,130,246,0.25);box-shadow:0 20px 50px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);">
-                                    <div class="grid grid-cols-3 gap-0">
-                                        <a href="danh-sach.html?list=phim-moi" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Mới</a>
-                                        <a href="danh-sach.html?list=phim-bo" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Bộ</a>
-                                        <a href="danh-sach.html?list=phim-le" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Lẻ</a>
-                                        <a href="danh-sach.html?list=tv-shows" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">TV Shows</a>
-                                        <a href="danh-sach.html?list=hoat-hinh" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Hoạt Hình</a>
-                                        <a href="danh-sach.html?list=phim-vietsub" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Vietsub</a>
-                                        <a href="danh-sach.html?list=phim-thuyet-minh" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Thuyết Minh</a>
-                                        <a href="danh-sach.html?list=phim-long-tien" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Lồng Tiếng</a>
-                                        <a href="danh-sach.html?list=phim-bo-dang-chieu" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Phim Bộ Đang Chiếu</a>
-                                        <a href="danh-sach.html?list=phim-bo-hoan-thanh" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Bộ Đã Xong</a>
-                                        <a href="danh-sach.html?list=phim-sap-chieu" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;border-right:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Sắp Chiếu</a>
-                                        <a href="danh-sach.html?list=subteam" style="display:flex;align-items:center;padding:11px 16px;color:rgba(255,255,255,0.88);font-size:0.82rem;text-decoration:none;transition:background 0.18s,color 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.88)';">Subteam</a>
-                                        <a href="danh-sach.html?list=phim-chieu-rap" style="display:flex;align-items:center;justify-content:center;padding:11px 16px;color:rgba(255,255,255,0.95);font-size:0.82rem;font-weight:700;border-top:1px solid rgba(255,255,255,0.08);text-decoration:none;transition:background 0.18s,color 0.18s;grid-column:span 3;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff';" onmouseout="this.style.background='';this.style.color='rgba(255,255,255,0.95)';">🎬 Phim Chiếu Rạp</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Thể Loại Dropdown -->
-                        <div class="nav-flat-dropdown">
-                            <button class="nav-flat-link" type="button">
-                                Thể Loại
-                                <span class="material-icons-round nav-caret">expand_more</span>
-                            </button>
-                            <div class="nav-dropdown-panel" id="categoryDropdown" style="min-width:680px;">
-                                <div class="p-4 text-center text-gray-400 text-sm">Đang tải...</div>
-                            </div>
-                        </div>
-
-                        <a href="search.html" class="nav-flat-link">Khám Phá</a>
-                        <a href="pricing.html" class="nav-flat-link">Gói Cước</a>
-                        <a href="lich-chieu.html" class="nav-flat-link">Lịch Chiếu</a>
-                        </nav-links>
-                </div>
-            </div>
-
-
-            <!-- ZONE 3: Right — Auth + Mobile Toggle -->
-            <div class="flex-1 flex justify-end">
-                <div class="flex items-center gap-3 flex-shrink-0 ml-4">
-                
-                <!-- Mobile: Search icon -->
-                <div class="flex items-center gap-2.5 lg:hidden">
-                    <button id="mtiSearchBtn"
-                        class="mti-btn"
-                        style="width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; background: transparent; border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(8px);"
-                        aria-label="Tìm kiếm">
-                        <span class="material-icons-outlined" style="font-size:20px; color:#eab308;">search</span>
-                    </button>
-                </div>
-
-                <!-- Auth Container -->
-                <div id="authContainer" class="flex items-center" style="overflow: visible !important;">
-
-                    <div class="flex items-center">
-                        <div class="relative flex items-center" style="cursor:pointer; z-index: 60; margin-right: 12px;" onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');}else{alert('Vui lòng đăng nhập để xem thông báo!');}">
-                            <div class="rounded-full hover:bg-white/10 transition-all active:scale-90 relative" style="width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; background: transparent; border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(8px);">
-                                <span class="material-icons-round text-white text-[20px]">notifications</span>
-                            </div>
-                        </div>
-                        <a href="login.html"
-                            onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');return false;}"
-                            class="nav-auth-btn hidden lg:inline-flex" style="display: inline-flex !important; align-items: center !important; justify-content: center !important; gap: 6px;">
-                            <dotlottie-player src="/icons/panda.lottie" background="transparent" speed="1" style="width: 40px; height: 40px; transform: scale(2.2); margin: 0; padding: 0;" loop autoplay></dotlottie-player>
-                            <span class="auth-btn-text">Đăng Nhập</span>
-                        </a>
+                    <div class="sofa-dropdown-menu grid-3">
+                        <a href="danh-sach.html?list=phim-moi-cap-nhat" class="sofa-dropdown-link">Phim Mới</a>
+                        <a href="danh-sach.html?list=phim-bo" class="sofa-dropdown-link">Phim Bộ</a>
+                        <a href="danh-sach.html?list=phim-le" class="sofa-dropdown-link">Phim Lẻ</a>
+                        <a href="danh-sach.html?list=tv-shows" class="sofa-dropdown-link">TV Shows</a>
+                        <a href="danh-sach.html?list=hoat-hinh" class="sofa-dropdown-link">Hoạt Hình</a>
+                        <a href="danh-sach.html?list=phim-vietsub" class="sofa-dropdown-link">Phim Vietsub</a>
+                        <a href="danh-sach.html?list=phim-thuyet-minh" class="sofa-dropdown-link">Thuyết Minh</a>
+                        <a href="danh-sach.html?list=phim-long-tieng" class="sofa-dropdown-link">Lồng Tiếng</a>
+                        <a href="danh-sach.html?list=phim-bo-dang-chieu" class="sofa-dropdown-link">Phim Bộ Đang Chiếu</a>
+                        <a href="danh-sach.html?list=phim-bo-da-xong" class="sofa-dropdown-link">Bộ Đã Xong</a>
+                        <a href="danh-sach.html?list=phim-sap-chieu" class="sofa-dropdown-link">Sắp Chiếu</a>
+                        <a href="danh-sach.html?list=subteam" class="sofa-dropdown-link">Subteam</a>
+                        <a href="danh-sach.html?list=phim-chieu-rap" class="sofa-dropdown-link col-span-full">Phim Chiếu Rạp</a>
                     </div>
                 </div>
-                <!-- Mobile Menu Button -->
-                <button id="mobileMenuBtn" class="lg:hidden text-white p-1" style="display:none !important;">
-                    <span class="material-icons-round">menu</span>
+
+                <!-- 2. Thể Loại ▼ -->
+                <div class="sofa-dropdown">
+                    <a href="categories.html" class="sofa-nav-item">
+                        Thể Loại
+                        <svg class="sofa-dropdown-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6z" /></svg>
+                    </a>
+                    <div class="sofa-dropdown-menu grid-4">
+                        <a href="categories.html?category=hanh-dong" class="sofa-dropdown-link">Hành Động</a>
+                        <a href="categories.html?category=tinh-cam" class="sofa-dropdown-link">Tình Cảm</a>
+                        <a href="categories.html?category=hai-huoc" class="sofa-dropdown-link">Hài Hước</a>
+                        <a href="categories.html?category=co-trang" class="sofa-dropdown-link">Cổ Trang</a>
+                        <a href="categories.html?category=tam-ly" class="sofa-dropdown-link">Tâm Lý</a>
+                        <a href="categories.html?category=hinh-su" class="sofa-dropdown-link">Hình Sự</a>
+                        <a href="categories.html?category=chien-tranh" class="sofa-dropdown-link">Chiến Tranh</a>
+                        <a href="categories.html?category=the-thao" class="sofa-dropdown-link">Thể Thao</a>
+                        <a href="categories.html?category=vo-thuat" class="sofa-dropdown-link">Võ Thuật</a>
+                        <a href="categories.html?category=vien-tuong" class="sofa-dropdown-link">Viễn Tưởng</a>
+                        <a href="categories.html?category=phieu-luu" class="sofa-dropdown-link">Phiêu Lưu</a>
+                        <a href="categories.html?category=khoa-hoc" class="sofa-dropdown-link">Khoa Học</a>
+                        <a href="categories.html?category=kinh-di" class="sofa-dropdown-link">Kinh Dị</a>
+                        <a href="categories.html?category=am-nhac" class="sofa-dropdown-link">Âm Nhạc</a>
+                        <a href="categories.html?category=than-thoai" class="sofa-dropdown-link">Thần Thoại</a>
+                        <a href="categories.html?category=tai-lieu" class="sofa-dropdown-link">Tài Liệu</a>
+                        <a href="categories.html?category=gia-dinh" class="sofa-dropdown-link">Gia Đình</a>
+                        <a href="categories.html?category=chinh-kich" class="sofa-dropdown-link">Chính Kịch</a>
+                        <a href="categories.html?category=bi-an" class="sofa-dropdown-link">Bí Ẩn</a>
+                        <a href="categories.html?category=hoc-duong" class="sofa-dropdown-link">Học Đường</a>
+                    </div>
+                </div>
+
+                <!-- 3. Quốc Gia ▼ -->
+                <div class="sofa-dropdown">
+                    <a href="countries.html" class="sofa-nav-item">
+                        Quốc Gia
+                        <svg class="sofa-dropdown-arrow" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6z" /></svg>
+                    </a>
+                    <div class="sofa-dropdown-menu grid-4">
+                        <a href="countries.html?country=viet-nam" class="sofa-dropdown-link">Việt Nam</a>
+                        <a href="countries.html?country=trung-quoc" class="sofa-dropdown-link">Trung Quốc</a>
+                        <a href="countries.html?country=han-quoc" class="sofa-dropdown-link">Hàn Quốc</a>
+                        <a href="countries.html?country=nhat-ban" class="sofa-dropdown-link">Nhật Bản</a>
+                        <a href="countries.html?country=thai-lan" class="sofa-dropdown-link">Thái Lan</a>
+                        <a href="countries.html?country=au-my" class="sofa-dropdown-link">Âu Mỹ</a>
+                        <a href="countries.html?country=dai-loan" class="sofa-dropdown-link">Đài Loan</a>
+                        <a href="countries.html?country=hong-kong" class="sofa-dropdown-link">Hồng Kông</a>
+                        <a href="countries.html?country=an-do" class="sofa-dropdown-link">Ấn Độ</a>
+                        <a href="countries.html?country=anh" class="sofa-dropdown-link">Anh</a>
+                        <a href="countries.html?country=phap" class="sofa-dropdown-link">Pháp</a>
+                        <a href="countries.html?country=canada" class="sofa-dropdown-link">Canada</a>
+                        <a href="countries.html?country=duc" class="sofa-dropdown-link">Đức</a>
+                        <a href="countries.html?country=tay-ban-nha" class="sofa-dropdown-link">Tây Ban Nha</a>
+                        <a href="countries.html?country=tho-nhi-ky" class="sofa-dropdown-link">Thổ Nhĩ Kỳ</a>
+                        <a href="countries.html?country=indonesia" class="sofa-dropdown-link">Indonesia</a>
+                    </div>
+                </div>
+
+                <!-- 4. Ngẫu Nhiên -->
+                <a href="danh-sach.html?list=phim-moi-cap-nhat" class="sofa-nav-item">Ngẫu Nhiên</a>
+
+                <!-- 5. Cộng đồng -->
+                <a href="#" class="sofa-nav-item">Cộng đồng</a>
+
+                <!-- 6. Lịch chiếu -->
+                <a href="danh-sach.html?list=phim-bo" class="sofa-nav-item">Lịch chiếu</a>
+
+                <!-- 7. Song Ngữ -->
+                <a href="danh-sach.html?list=phim-bo" class="sofa-nav-item">Song Ngữ</a>
+            </nav>
+        </div>
+
+        <!-- Right Section: Single Desktop Search Bar (With Inner Filter Button) + Bell Icon + Login Button -->
+        <div class="sofa-right-section">
+            <!-- 1. Desktop Search Form (Single Container with Embedded Inner Filter Button) -->
+            <form action="search.html" method="GET" class="sofa-desktop-search-form">
+                <svg class="sofa-desktop-search-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input type="text" name="keyword" placeholder="Tìm kiếm phim, diễn viên..." class="sofa-desktop-search-input" autocomplete="off" />
+                <a href="danh-sach.html" class="sofa-inner-filter-btn" title="Bộ lọc phim">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                    </svg>
+                    <span>Bộ lọc</span>
+                </a>
+            </form>
+
+            <!-- 2. Mobile Circular Search Button (Visible on Mobile) -->
+            <button type="button" id="sofa-mobile-search-btn" onclick="toggleMobileSearchOverlay()" class="sofa-icon-circle-btn sofa-mobile-search-btn" title="Tìm kiếm" aria-label="Tìm kiếm">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </button>
+
+            <!-- Auth / Profile Container (Dynamically updated by user-ui.js when logged in) -->
+            <div id="authContainer" style="display: inline-flex; align-items: center; gap: 10px;">
+                <a href="#" onclick="if(window.showAuthModal){ event.preventDefault(); showAuthModal('login'); }" class="sofa-icon-circle-btn" title="Thông báo" aria-label="Thông báo">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                    </svg>
+                </a>
+                <a href="profile.html" onclick="if(window.showAuthModal){ event.preventDefault(); showAuthModal('login'); }" class="sofa-login-rect-btn">Đăng nhập</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Mobile / Desktop Search Overlay Dropdown -->
+<div id="sofa-mobile-search-overlay" class="sofa-mobile-search-overlay">
+    <form action="search.html" method="GET" class="sofa-mobile-search-inner-form">
+        <svg class="sofa-mobile-search-input-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <input type="text" name="keyword" placeholder="Tìm kiếm phim, diễn viên..." class="sofa-mobile-search-input-field" autocomplete="off" />
+        <button type="button" onclick="closeMobileSearchOverlay()" class="sofa-mobile-search-close-btn" aria-label="Đóng tìm kiếm">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+    </form>
+</div>
+
+<!-- Mobile Sidebar Drawer Menu -->
+<div id="sofa-mobile-drawer" class="mobile-drawer" onclick="toggleMobileHeaderMenu()">
+    <div class="mobile-drawer-content" onclick="event.stopPropagation()">
+        <!-- Top Button: Đóng Menu -->
+        <button type="button" onclick="toggleMobileHeaderMenu()" class="drawer-close-btn">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Đóng Menu
+        </button>
+
+        <!-- Accordion Group -->
+        <div class="drawer-accordion-group">
+            <!-- 1. Loại Phim Accordion -->
+            <div class="drawer-accordion-item active" id="drawer-acc-loai">
+                <button type="button" class="drawer-accordion-header" onclick="toggleDrawerAccordion('drawer-acc-loai')">
+                    <span>Loại Phim</span>
+                    <svg class="drawer-accordion-icon" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6z"/></svg>
+                </button>
+                <div class="drawer-accordion-body">
+                    <div class="drawer-grid-2">
+                        <a href="danh-sach.html?list=phim-moi-cap-nhat" class="drawer-sub-link" style="color: #818cf8 !important;">Phim Mới Cập Nhật</a>
+                        <a href="danh-sach.html?list=phim-le" class="drawer-sub-link" style="color: #60a5fa !important;">Phim Lẻ</a>
+                        <a href="danh-sach.html?list=phim-bo" class="drawer-sub-link" style="color: #60a5fa !important;">Phim Bộ</a>
+                        <a href="danh-sach.html?list=hoat-hinh" class="drawer-sub-link" style="color: #34d399 !important;">Hoạt Hình</a>
+                        <a href="danh-sach.html?list=tv-shows" class="drawer-sub-link" style="color: #c084fc !important;">TV Shows</a>
+                        <a href="danh-sach.html?list=phim-chieu-rap" class="drawer-sub-link" style="color: #818cf8 !important;">Phim Chiếu Rạp</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Thể Loại Accordion -->
+            <div class="drawer-accordion-item" id="drawer-acc-theloai">
+                <button type="button" class="drawer-accordion-header" onclick="toggleDrawerAccordion('drawer-acc-theloai')">
+                    <span>Thể Loại</span>
+                    <svg class="drawer-accordion-icon" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6z"/></svg>
+                </button>
+                <div class="drawer-accordion-body">
+                    <div class="drawer-grid-2">
+                        <a href="categories.html?category=chinh-kich" class="drawer-sub-link" style="color: #818cf8 !important;">Chính Kịch</a>
+                        <a href="categories.html?category=bi-an" class="drawer-sub-link" style="color: #60a5fa !important;">Bí Ẩn</a>
+                        <a href="categories.html?category=tinh-cam" class="drawer-sub-link" style="color: #f472b6 !important;">Tình Cảm</a>
+                        <a href="categories.html?category=tam-ly" class="drawer-sub-link" style="color: #38bdf8 !important;">Tâm Lý</a>
+                        <a href="categories.html?category=hanh-dong" class="drawer-sub-link" style="color: #818cf8 !important;">Hành Động</a>
+                        <a href="categories.html?category=phieu-luu" class="drawer-sub-link" style="color: #38bdf8 !important;">Phiêu Lưu</a>
+                        <a href="categories.html?category=hai-huoc" class="drawer-sub-link" style="color: #f472b6 !important;">Hài Hước</a>
+                        <a href="categories.html?category=khoa-hoc" class="drawer-sub-link" style="color: #c084fc !important;">Khoa Học</a>
+                        <a href="categories.html?category=vien-tuong" class="drawer-sub-link" style="color: #c084fc !important;">Viễn Tưởng</a>
+                        <a href="categories.html?category=gia-dinh" class="drawer-sub-link" style="color: #fbbf24 !important;">Gia Đình</a>
+                        <a href="categories.html?category=co-trang" class="drawer-sub-link" style="color: #4ade80 !important;">Cổ Trang</a>
+                        <a href="categories.html?category=hinh-su" class="drawer-sub-link" style="color: #f87171 !important;">Hình Sự</a>
+                        <a href="categories.html?category=vo-thuat" class="drawer-sub-link" style="color: #fbbf24 !important;">Võ Thuật</a>
+                        <a href="categories.html?category=than-thoai" class="drawer-sub-link" style="color: #34d399 !important;">Thần Thoại</a>
+                        <a href="categories.html?category=tai-lieu" class="drawer-sub-link" style="color: #fbbf24 !important;">Tài Liệu</a>
+                        <a href="categories.html?category=the-thao" class="drawer-sub-link" style="color: #a3e635 !important;">Thể Thao</a>
+                        <a href="categories.html?category=chien-tranh" class="drawer-sub-link" style="color: #38bdf8 !important;">Chiến Tranh</a>
+                        <a href="categories.html?category=hoc-duong" class="drawer-sub-link" style="color: #38bdf8 !important;">Trẻ Em</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Quốc Gia Accordion -->
+            <div class="drawer-accordion-item" id="drawer-acc-quocgia">
+                <button type="button" class="drawer-accordion-header" onclick="toggleDrawerAccordion('drawer-acc-quocgia')">
+                    <span>Quốc Gia</span>
+                    <svg class="drawer-accordion-icon" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6z"/></svg>
+                </button>
+                <div class="drawer-accordion-body">
+                    <div class="drawer-grid-2">
+                        <a href="countries.html?country=thai-lan" class="drawer-sub-link" style="color: #38bdf8 !important;">Thái Lan</a>
+                        <a href="countries.html?country=nhat-ban" class="drawer-sub-link" style="color: #34d399 !important;">Nhật Bản</a>
+                        <a href="countries.html?country=viet-nam" class="drawer-sub-link" style="color: #f472b6 !important;">Việt Nam</a>
+                        <a href="countries.html?country=au-my" class="drawer-sub-link" style="color: #818cf8 !important;">Âu Mỹ</a>
+                        <a href="countries.html?country=trung-quoc" class="drawer-sub-link" style="color: #a5b4fc !important;">Trung Quốc</a>
+                        <a href="countries.html?country=ba-lan" class="drawer-sub-link" style="color: #60a5fa !important;">Ba Lan</a>
+                        <a href="countries.html?country=han-quoc" class="drawer-sub-link" style="color: #f472b6 !important;">Hàn Quốc</a>
+                        <a href="countries.html?country=anh" class="drawer-sub-link" style="color: #c084fc !important;">Anh</a>
+                        <a href="countries.html?country=dai-loan" class="drawer-sub-link" style="color: #a5b4fc !important;">Đài Loan</a>
+                        <a href="countries.html?country=tay-ban-nha" class="drawer-sub-link" style="color: #c084fc !important;">Tây Ban Nha</a>
+                        <a href="countries.html?country=thuy-si" class="drawer-sub-link" style="color: #4ade80 !important;">Thụy Sĩ</a>
+                        <a href="countries.html?country=hong-kong" class="drawer-sub-link" style="color: #f87171 !important;">Hồng Kông</a>
+                        <a href="countries.html?country=estonia" class="drawer-sub-link" style="color: #fbbf24 !important;">Estonia</a>
+                        <a href="countries.html?country=uc" class="drawer-sub-link" style="color: #38bdf8 !important;">Úc</a>
+                        <a href="countries.html?country=indonesia" class="drawer-sub-link" style="color: #fbbf24 !important;">Malaysia</a>
+                        <a href="countries.html?country=canada" class="drawer-sub-link" style="color: #a3e635 !important;">Canada</a>
+                        <a href="countries.html?country=an-do" class="drawer-sub-link" style="color: #38bdf8 !important;">Ấn Độ</a>
+                        <a href="countries.html?country=nga" class="drawer-sub-link" style="color: #818cf8 !important;">Nga</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Action Pills Grid at Bottom -->
+        <div class="drawer-quick-pills">
+            <a href="danh-sach.html?list=phim-moi-cap-nhat" class="drawer-pill-btn">Ngẫu Nhiên</a>
+            <a href="#" class="drawer-pill-btn">Cộng Đồng</a>
+            <a href="danh-sach.html?list=phim-bo" class="drawer-pill-btn">Song Ngữ</a>
+        </div>
+    </div>
+</div>
+
+    <!-- Main Container: Adjusted Top Padding to match homepage -->
+    <main class="app-container pt-4 sm:pt-5 pb-12 min-h-screen">
+        
+        <!-- Header Section: Title & Top Quick Pagination (Exact Image 2 & 4 Layout) -->
+        <div class="mb-4 sm:mb-6">
+            <div class="flex items-center justify-between gap-3 flex-nowrap">
+                <!-- Title Left (Gold Color as requested) -->
+                <h1 id="pageTitle" class="text-xl sm:text-2xl md:text-3xl font-extrabold text-[#fcd576] tracking-tight truncate max-w-[60%] sm:max-w-[75%]">Phim Hành Động</h1>
+
+                <!-- Quick Pagination Right (Image 4 exact design: Trang 1 / 50 < >) -->
+                <div id="topQuickPageWrap" class="flex items-center gap-2 text-xs sm:text-sm text-gray-300 font-medium ml-auto flex-shrink-0">
+                    <span class="text-gray-300 text-xs sm:text-sm font-medium mr-1 whitespace-nowrap">Trang <span id="topCurrentPage" class="text-white font-bold">1</span> / <span id="topTotalPages" class="text-gray-300 font-bold">50</span></span>
+                    <button type="button" id="topPrevPageBtn" onclick="changePage(-1)" class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#20222d] hover:bg-[#2a2d3d] border border-white/10 flex items-center justify-center text-gray-300 hover:text-white transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed" aria-label="Trang trước">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                        </svg>
+                    </button>
+                    <button type="button" id="topNextPageBtn" onclick="changePage(1)" class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#20222d] hover:bg-[#2a2d3d] border border-white/10 flex items-center justify-center text-gray-300 hover:text-white transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed" aria-label="Trang sau">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filter Toggle Button (Matching Image 2: Clean Funnel Icon + Bộ lọc + Compact Down Chevron) -->
+            <div class="mt-4 sm:mt-5 mb-4 sm:mb-5">
+                <button type="button" onclick="toggleFilterPanel()" class="inline-flex items-center gap-1.5 text-white font-bold text-sm sm:text-base transition-opacity cursor-pointer hover:opacity-80 select-none">
+                    <svg width="18" height="18" style="width: 18px !important; height: 18px !important; min-width: 18px !important; display: inline-block !important;" class="text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.5h16.5l-6.75 7.875v5.625l-3 1.5v-7.125L3.75 4.5z" />
+                    </svg>
+                    <span class="whitespace-nowrap">Bộ lọc</span>
+                    <svg width="12" height="12" style="width: 12px !important; height: 12px !important; min-width: 12px !important; display: inline-block !important;" class="text-gray-400 flex-shrink-0 ml-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                    </svg>
                 </button>
             </div>
-            </div>
-            </div>
-        </div>
 
-        <!-- Mobile Menu -->
-        <div id="mobileMenu" class="lg:hidden hidden bg-black/95 backdrop-blur-md border-t border-white/10">
-            <!-- Content will be injected by mobile-menu-simple.js -->
-        </div>
-    </nav>
-    <!-- Lottie Player -->
-    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
-
-    <!-- Main Content -->
-    <main class="container mx-auto px-6 pt-safe-main pb-20 min-h-[80vh]">
-        <!-- Header -->
-        <div class="mb-6">
-            <button onclick="window.history.back()" class="flex items-center gap-2 px-3 py-1.5 border border-white/10 rounded-full hover:bg-white/5 transition-colors text-gray-300 hover:text-white mb-4 w-fit group">
-                <div class="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-primary group-hover:text-black transition-colors">
-                    <span class="material-icons-round text-[14px]">chevron_left</span>
-                </div>
-                <span class="text-[13px] font-semibold pr-1">Quay Lại</span>
-            </button>
-            <h1 id="pageTitle" class="text-4xl md:text-5xl font-bold mb-2">
-                Thể Loại Phim
-            </h1>
-            <p id="pageSubtitle" class="text-gray-400 text-lg">Khám phá phim theo thể loại yêu thích của bạn</p>
-        </div>
-
-        <!-- Loading -->
-        <div id="loading" class="text-center py-20">
-            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4"></div>
-            <p class="text-gray-400">Đang tải...</p>
-        </div>
-
-        <!-- Categories Grid (Default View) -->
-        <div id="categoriesGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 hidden">
-            <!-- Categories will be loaded here -->
-        </div>
-
-        <!-- Movies Grid (Category View) -->
-        <div id="moviesSection" class="hidden">
-
-            <!-- Movies Grid - 8 columns -->
-            <div id="moviesGrid"
-                class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2">
-                <!-- Movies will be loaded here -->
-            </div>
-
-            <!-- Pagination -->
-            <div id="pagination" class="mt-8">
-                <!-- Pagination will be loaded here -->
-            </div>
-        </div>
-
-        <!-- Error -->
-        <div id="error" class="hidden text-center py-20">
-            <span class="material-icons-round text-6xl text-red-400 mb-4">error_outline</span>
-            <p class="text-red-400 text-lg">Không thể tải dữ liệu</p>
-        </div>
-</main>
-    <!-- Footer -->
-    <!-- [INLINE-AD] APhim Partner Banners -->
-    <div class="aphim-inline-ad">
-        <span class="aphim-inline-ad-label">Quảng cáo</span>
-        <div class="aphim-inline-ad-inner">
-            <a class="aphim-inline-ad-item" href="https://vsbetnova88.com/p/BSYk" target="_blank" rel="noopener nofollow" aria-label="VSBet">
-                <video src="/ads/catfish/animation.mp4" autoplay loop muted playsinline disablePictureInPicture style="width:100%; height:100%; object-fit:fill; display:block; pointer-events:none;"></video>
-            </a>
-            <a class="aphim-inline-ad-item" href="https://colatv77.live" target="_blank" rel="noopener nofollow" aria-label="ColaTV">
-                <img src="/ads/catfish/colatv.gif" alt="ColaTV" loading="lazy">
-            </a>
-            <a class="aphim-inline-ad-item" href="https://colascores.com" target="_blank" rel="noopener nofollow" aria-label="ColaScore">
-                <img src="/ads/catfish/colascore.gif" alt="ColaScore" loading="lazy">
-            </a>
-        </div>
-    </div>
-    <!-- [/INLINE-AD] -->
-    <script src="/js/inline-ad-slideshow.js?v=3" defer></script>
-                    <footer class="bg-[#07080a] border-t border-white/5 py-12 relative overflow-hidden">
-        <!-- Background pattern/logo graphic -->
-        <div class="absolute right-0 top-1/2 -translate-y-1/2 opacity-5 pointer-events-none scale-150">
-            <span class="material-icons-round text-[400px]">play_circle_outline</span>
-        </div>
-
-        <div class="container mx-auto px-6 relative z-10">
-            <div class="footer-grid" style="align-items:start;">
-            <div class="footer-col-left">
-            <!-- Top row: Logo & Social -->
-            <div
-                class="flex flex-col md:flex-row items-center md:items-center justify-start gap-5 md:gap-8 border-b border-white/5 pb-8">
-                <!-- Logo -->
-                <a href="index.html" class="flex items-center group" style="display: flex !important; align-items: center !important; gap: 0px !important;">
-                    <div
-                        class="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-primary flex items-center justify-center bg-black/50 shadow-[0_0_20px_rgba(252,213,118,0.4)] overflow-hidden transition-all duration-300 flex-shrink-0"
-                        style="margin-right: 16px !important; flex-shrink: 0 !important;">
-                        <img src="/apple-touch-icon.png" alt="A Phim Logo"
-                            class="w-8 h-8 md:w-10 md:h-10 object-contain group-hover:scale-110 transition-transform" />
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-none">A <span
-                                class="text-primary">Phim</span></span>
-                        <span class="text-gray-400 text-xs md:text-sm mt-1">Xem Phim Mới Nhất</span>
-                    </div>
-                </a>
-
-                <!-- Divider -->
-                <div class="hidden md:block w-px h-8 bg-white/10 footer-divider"></div>
+            <!-- Collapsible Filter Panel (Sofaflix Style with Floating Dropdowns & Responsive Criteria) -->
+            <div id="filterPanel" class="hidden mt-3 sm:mt-4 p-4 sm:p-6 rounded-2xl bg-[#181926] border border-white/10 sm:border-white/12 shadow-xl shadow-black/40 transition-all">
                 
-                <!-- Social Icons -->
-                <style>
-                    .footer-social-icons a {
-                        width: 32px !important;
-                        height: 32px !important;
-                        font-size: 14px !important;
-                    }
-                    .footer-social-icons a svg {
-                        width: 14px !important;
-                        height: 14px !important;
-                    }
-                </style>
-                <div class="grid grid-cols-4 gap-3 place-items-center md:flex md:flex-wrap md:justify-start md:max-w-none footer-social-icons">
-                    <a href="https://t.me/dautayonly" target="_blank"
-                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path
-                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.11.03-1.84 1.18-5.18 3.44-.49.34-.93.5-1.33.49-.44-.01-1.29-.25-1.92-.45-.73-.24-1.31-.36-1.26-.77.03-.21.32-.42.87-.64 3.41-1.48 5.68-2.46 6.83-2.94 3.25-1.36 3.93-1.59 4.37-1.59.1 0 .31.02.43.09.1.06.18.14.2.25.01.12.01.19.01.37z" />
-                        </svg>
-                    </a>
-                    <a href="https://t.me/dautayonly" target="_blank"
-                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path
-                                d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" />
-                        </svg>
-                    </a>
-                    <a href="https://t.me/dautayonly" target="_blank"
-                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 1200 1227" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" />
-                        </svg>
-                    </a>
-                    <a href="https://t.me/dautayonly" target="_blank"
-                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path
-                                d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z" />
-                        </svg>
-                    </a>
-                    <a href="https://t.me/dautayonly" target="_blank"
-                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 448 512">
-                            <path
-                                d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" />
-                        </svg>
-                    </a>
-                    <a href="https://t.me/dautayonly" target="_blank"
-                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path
-                                d="M21.582 6.186a2.6 2.6 0 0 0-1.83-1.844C18.14 4 12 4 12 4s-6.14 0-7.752.342a2.6 2.6 0 0 0-1.83 1.844C2 7.82 2 12 2 12s0 4.18.418 5.814a2.6 2.6 0 0 0 1.83 1.844C5.86 20 12 20 12 20s6.14 0 7.752-.342a2.6 2.6 0 0 0 1.83-1.844C22 16.18 22 12 22 12s0-4.18-.418-5.814zM9.8 15.116V8.884L15.352 12 9.8 15.116z" />
-                        </svg>
-                    </a>
-                    <a href="https://t.me/dautayonly" target="_blank"
-                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all font-bold text-lg leading-none">
-                        @
-                    </a>
-                    <a href="https://t.me/dautayonly" target="_blank"
-                        class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:text-black transition-all">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path
-                                d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                        </svg>
-                    </a>
+                <!-- Section 1: TIÊU CHÍ LỌC -->
+                <div>
+                    <h3 class="text-xs sm:text-sm font-extrabold text-gray-200 uppercase tracking-wider mb-4 sm:mb-5">TIÊU CHÍ LỌC</h3>
+                    <div class="filter-criteria-grid grid grid-cols-2 gap-2.5">
+                        
+                        <!-- 1. Chủ đề -->
+                        <div class="custom-dropdown-wrap relative" data-dropdown="filterTopic">
+                            <div onclick="toggleCustomDropdown(this)" class="custom-dropdown-trigger relative bg-[#141520] hover:bg-[#1b1c2b] border border-white/10 hover:border-white/20 rounded-xl px-3.5 py-2 sm:py-2.5 flex items-center justify-between transition-all cursor-pointer group min-h-[38px] select-none">
+                                <span class="text-xs sm:text-sm font-bold text-white whitespace-nowrap mr-2 select-none">Chủ đề</span>
+                                <div class="flex items-center gap-1.5 ml-auto flex-shrink-0 select-none">
+                                    <span id="label_filterTopic" class="filter-dropdown-val text-[11px] sm:text-xs font-semibold text-right whitespace-nowrap">Tất cả</span>
+                                    <svg width="9" height="9" class="dropdown-chevron filter-dropdown-chevron transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                    </svg>
+                                </div>
+                                <select id="filterTopic" onchange="updateFilterLabel(this)" class="hidden">
+                                    <option value="">Tất cả</option>
+                                    <option value="hot">Phim Hot</option>
+                                    <option value="dexuat">Đề Xuất</option>
+                                    <option value="am-nhac">Âm Nhạc</option>
+                                    <option value="bi-an">Bí Ẩn</option>
+                                    <option value="chien-tranh">Chiến Tranh</option>
+                                    <option value="chinh-kich">Chính Kịch</option>
+                                    <option value="co-trang">Cổ Trang</option>
+                                    <option value="gay-can">Gây Cấn</option>
+                                    <option value="gia-dinh">Gia Đình</option>
+                                    <option value="hai-huoc">Hài Hước</option>
+                                    <option value="hanh-dong">Hành Động</option>
+                                    <option value="hinh-su">Hình Sự</option>
+                                    <option value="hoat-hinh">Hoạt Hình</option>
+                                    <option value="hoc-duong">Học Đường</option>
+                                    <option value="khoa-hoc">Khoa Học</option>
+                                    <option value="vien-tuong">Viễn Tưởng</option>
+                                    <option value="kinh-di">Kinh Dị</option>
+                                    <option value="phieu-luu">Phiêu Lưu</option>
+                                    <option value="tai-lieu">Tài Liệu</option>
+                                    <option value="tam-ly">Tâm Lý</option>
+                                    <option value="the-thao">Thể Thao</option>
+                                    <option value="tinh-cam">Tình Cảm</option>
+                                    <option value="tv-shows">TV Shows</option>
+                                    <option value="vo-thuat">Võ Thuật</option>
+                                </select>
+                            </div>
+                            <div class="custom-dropdown-menu hidden absolute top-[calc(100%+6px)] left-0 w-full min-w-[180px] bg-[#1e2030] border border-white/15 rounded-xl shadow-2xl z-50 py-1.5 max-h-48 sm:max-h-56 overflow-y-auto">
+                                <div onclick="selectCustomOption(this, '', 'Tất cả')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#fcd576] bg-[#2c3048] font-bold hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>Tất cả</span></div>
+                                <div onclick="selectCustomOption(this, 'hot', 'Phim Hot')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-gray-200 hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>Phim Hot</span></div>
+                                <div onclick="selectCustomOption(this, 'dexuat', 'Đề Xuất')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-gray-200 hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>Đề Xuất</span></div>
+                                <div onclick="selectCustomOption(this, 'hanh-dong', 'Hành Động')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-gray-200 hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>Hành Động</span></div>
+                                <div onclick="selectCustomOption(this, 'tinh-cam', 'Tình Cảm')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-gray-200 hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>Tình Cảm</span></div>
+                                <div onclick="selectCustomOption(this, 'hai-huoc', 'Hài Hước')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-gray-200 hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>Hài Hước</span></div>
+                                <div onclick="selectCustomOption(this, 'co-trang', 'Cổ Trang')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-gray-200 hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>Cổ Trang</span></div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Quốc gia -->
+                        <div class="custom-dropdown-wrap relative" data-dropdown="filterCountry">
+                            <div onclick="toggleCustomDropdown(this)" class="custom-dropdown-trigger relative bg-[#141520] hover:bg-[#1b1c2b] border border-white/10 hover:border-white/20 rounded-xl px-3.5 py-2 sm:py-2.5 flex items-center justify-between transition-all cursor-pointer group min-h-[38px] select-none">
+                                <span class="text-xs sm:text-sm font-bold text-white whitespace-nowrap mr-2 select-none">Quốc gia</span>
+                                <div class="flex items-center gap-1.5 ml-auto flex-shrink-0 select-none">
+                                    <span id="label_filterCountry" class="filter-dropdown-val text-[11px] sm:text-xs font-semibold text-right whitespace-nowrap">Tất cả</span>
+                                    <svg width="9" height="9" class="dropdown-chevron filter-dropdown-chevron transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                    </svg>
+                                </div>
+                                <select id="filterCountry" onchange="updateFilterLabel(this)" class="hidden">
+                                    <option value="">Tất cả</option>
+                                    <option value="viet-nam">Việt Nam</option>
+                                    <option value="trung-quoc">Trung Quốc</option>
+                                    <option value="han-quoc">Hàn Quốc</option>
+                                    <option value="nhat-ban">Nhật Bản</option>
+                                    <option value="thai-lan">Thái Lan</option>
+                                    <option value="au-my">Âu Mỹ</option>
+                                    <option value="dai-loan">Đài Loan</option>
+                                    <option value="hong-kong">Hồng Kông</option>
+                                    <option value="an-do">Ấn Độ</option>
+                                    <option value="anh">Anh</option>
+                                    <option value="phap">Pháp</option>
+                                    <option value="canada">Canada</option>
+                                    <option value="duc">Đức</option>
+                                    <option value="tay-ban-nha">Tây Ban Nha</option>
+                                    <option value="tho-nhi-ky">Thổ Nhĩ Kỳ</option>
+                                    <option value="indonesia">Indonesia</option>
+                                </select>
+                            </div>
+                            <div class="custom-dropdown-menu hidden absolute top-[calc(100%+6px)] left-0 w-full min-w-[180px] bg-[#1e2030] border border-white/15 rounded-xl shadow-2xl z-50 py-1.5 max-h-48 sm:max-h-56 overflow-y-auto">
+                                <div onclick="selectCustomOption(this, '', 'Tất cả')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#fcd576] bg-[#2c3048] font-bold hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>Tất cả</span></div>
+                                <div onclick="selectCustomOption(this, 'viet-nam', 'Việt Nam')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-gray-200 hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>Việt Nam</span></div>
+                                <div onclick="selectCustomOption(this, 'trung-quoc', 'Trung Quốc')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-gray-200 hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>Trung Quốc</span></div>
+                                <div onclick="selectCustomOption(this, 'han-quoc', 'Hàn Quốc')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-gray-200 hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>Hàn Quốc</span></div>
+                                <div onclick="selectCustomOption(this, 'nhat-ban', 'Nhật Bản')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-gray-200 hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>Nhật Bản</span></div>
+                                <div onclick="selectCustomOption(this, 'thai-lan', 'Thái Lan')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-gray-200 hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>Thái Lan</span></div>
+                                <div onclick="selectCustomOption(this, 'au-my', 'Âu Mỹ')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-gray-200 hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>Âu Mỹ</span></div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Năm -->
+                        <div class="custom-dropdown-wrap relative" data-dropdown="filterYear">
+                            <div onclick="toggleCustomDropdown(this)" class="custom-dropdown-trigger relative bg-[#141520] hover:bg-[#1b1c2b] border border-white/10 hover:border-white/20 rounded-xl px-3.5 py-2 sm:py-2.5 flex items-center justify-between transition-all cursor-pointer group min-h-[38px] select-none">
+                                <span class="text-xs sm:text-sm font-bold text-white whitespace-nowrap mr-2 select-none">Năm</span>
+                                <div class="flex items-center gap-1.5 ml-auto flex-shrink-0 select-none">
+                                    <span id="label_filterYear" class="filter-dropdown-val text-[11px] sm:text-xs font-semibold text-right whitespace-nowrap">Tất cả</span>
+                                    <svg width="9" height="9" class="dropdown-chevron filter-dropdown-chevron transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                    </svg>
+                                </div>
+                                <select id="filterYear" onchange="updateFilterLabel(this)" class="hidden">
+                                    <option value="">Tất cả</option>
+                                    <option value="2026">2026</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2022">2022</option>
+                                    <option value="2021">2021</option>
+                                    <option value="2020">2020</option>
+                                </select>
+                            </div>
+                            <div class="custom-dropdown-menu hidden absolute top-[calc(100%+6px)] left-0 w-full min-w-[180px] bg-[#1e2030] border border-white/15 rounded-xl shadow-2xl z-50 py-1.5 max-h-48 sm:max-h-56 overflow-y-auto">
+                                <div onclick="selectCustomOption(this, '', 'Tất cả')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#fcd576] bg-[#2c3048] font-bold hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>Tất cả</span></div>
+                                <div onclick="selectCustomOption(this, '2026', '2026')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-gray-200 hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>2026</span></div>
+                                <div onclick="selectCustomOption(this, '2025', '2025')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-gray-200 hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>2025</span></div>
+                                <div onclick="selectCustomOption(this, '2024', '2024')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-gray-200 hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>2024</span></div>
+                                <div onclick="selectCustomOption(this, '2023', '2023')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-gray-200 hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>2023</span></div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Loại phim -->
+                        <div class="custom-dropdown-wrap relative" data-dropdown="filterList">
+                            <div onclick="toggleCustomDropdown(this)" class="custom-dropdown-trigger relative bg-[#141520] hover:bg-[#1b1c2b] border border-white/10 hover:border-white/20 rounded-xl px-3.5 py-2 sm:py-2.5 flex items-center justify-between transition-all cursor-pointer group min-h-[38px] select-none">
+                                <span class="text-xs sm:text-sm font-bold text-white whitespace-nowrap mr-2 select-none">Loại phim</span>
+                                <div class="flex items-center gap-1.5 ml-auto flex-shrink-0 select-none">
+                                    <span id="label_filterList" class="filter-dropdown-val text-[11px] sm:text-xs font-semibold text-right whitespace-nowrap">Tất cả</span>
+                                    <svg width="9" height="9" class="dropdown-chevron filter-dropdown-chevron transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                    </svg>
+                                </div>
+                                <select id="filterList" onchange="updateFilterLabel(this)" class="hidden">
+                                    <option value="">Tất cả</option>
+                                    <option value="phim-bo">Phim Bộ</option>
+                                    <option value="phim-le">Phim Lẻ</option>
+                                    <option value="hoat-hinh">Hoạt Hình</option>
+                                    <option value="tv-shows">TV Shows</option>
+                                    <option value="phim-chieu-rap">Phim Chiếu Rạp</option>
+                                </select>
+                            </div>
+                            <div class="custom-dropdown-menu hidden absolute top-[calc(100%+6px)] left-0 w-full min-w-[180px] bg-[#1e2030] border border-white/15 rounded-xl shadow-2xl z-50 py-1.5 max-h-48 sm:max-h-56 overflow-y-auto">
+                                <div onclick="selectCustomOption(this, '', 'Tất cả')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#fcd576] bg-[#2c3048] font-bold hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>Tất cả</span></div>
+                                <div onclick="selectCustomOption(this, 'phim-bo', 'Phim Bộ')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-gray-200 hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>Phim Bộ</span></div>
+                                <div onclick="selectCustomOption(this, 'phim-le', 'Phim Lẻ')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-gray-200 hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>Phim Lẻ</span></div>
+                                <div onclick="selectCustomOption(this, 'hoat-hinh', 'Hoạt Hình')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-gray-200 hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>Hoạt Hình</span></div>
+                                <div onclick="selectCustomOption(this, 'tv-shows', 'TV Shows')" class="dropdown-option px-3.5 py-2 text-xs sm:text-sm font-semibold text-gray-200 hover:bg-[#2c3048] hover:text-[#fcd576] cursor-pointer transition-colors flex items-center justify-between"><span>TV Shows</span></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Section 2: DANH SÁCH A-Z -->
+                <div class="mt-5 pt-1">
+                    <h3 class="text-xs sm:text-sm font-extrabold text-gray-300 uppercase tracking-wider block" style="margin-bottom: 14px !important;">DANH SÁCH A-Z</h3>
+                    <div id="azFilterWrap" class="az-filter-wrap flex flex-wrap gap-1.5">
+                        <button type="button" data-az="" onclick="selectAZFilter(this, '')" class="filter-az-btn active-filter-btn">All</button>
+                        <button type="button" data-az="#" onclick="selectAZFilter(this, '#')" class="filter-az-btn inactive-filter-btn">#</button>
+                        <button type="button" data-az="A" onclick="selectAZFilter(this, 'A')" class="filter-az-btn inactive-filter-btn">A</button>
+                        <button type="button" data-az="B" onclick="selectAZFilter(this, 'B')" class="filter-az-btn inactive-filter-btn">B</button>
+                        <button type="button" data-az="C" onclick="selectAZFilter(this, 'C')" class="filter-az-btn inactive-filter-btn">C</button>
+                        <button type="button" data-az="D" onclick="selectAZFilter(this, 'D')" class="filter-az-btn inactive-filter-btn">D</button>
+                        <button type="button" data-az="E" onclick="selectAZFilter(this, 'E')" class="filter-az-btn inactive-filter-btn">E</button>
+                        <button type="button" data-az="F" onclick="selectAZFilter(this, 'F')" class="filter-az-btn inactive-filter-btn">F</button>
+                        <button type="button" data-az="G" onclick="selectAZFilter(this, 'G')" class="filter-az-btn inactive-filter-btn">G</button>
+                        <button type="button" data-az="H" onclick="selectAZFilter(this, 'H')" class="filter-az-btn inactive-filter-btn">H</button>
+                        <button type="button" data-az="I" onclick="selectAZFilter(this, 'I')" class="filter-az-btn inactive-filter-btn">I</button>
+                        <button type="button" data-az="J" onclick="selectAZFilter(this, 'J')" class="filter-az-btn inactive-filter-btn">J</button>
+                        <button type="button" data-az="K" onclick="selectAZFilter(this, 'K')" class="filter-az-btn inactive-filter-btn">K</button>
+                        <button type="button" data-az="L" onclick="selectAZFilter(this, 'L')" class="filter-az-btn inactive-filter-btn">L</button>
+                        <button type="button" data-az="M" onclick="selectAZFilter(this, 'M')" class="filter-az-btn inactive-filter-btn">M</button>
+                        <button type="button" data-az="N" onclick="selectAZFilter(this, 'N')" class="filter-az-btn inactive-filter-btn">N</button>
+                        <button type="button" data-az="O" onclick="selectAZFilter(this, 'O')" class="filter-az-btn inactive-filter-btn">O</button>
+                        <button type="button" data-az="P" onclick="selectAZFilter(this, 'P')" class="filter-az-btn inactive-filter-btn">P</button>
+                        <button type="button" data-az="Q" onclick="selectAZFilter(this, 'Q')" class="filter-az-btn inactive-filter-btn">Q</button>
+                        <button type="button" data-az="R" onclick="selectAZFilter(this, 'R')" class="filter-az-btn inactive-filter-btn">R</button>
+                        <button type="button" data-az="S" onclick="selectAZFilter(this, 'S')" class="filter-az-btn inactive-filter-btn">S</button>
+                        <button type="button" data-az="T" onclick="selectAZFilter(this, 'T')" class="filter-az-btn inactive-filter-btn">T</button>
+                        <button type="button" data-az="U" onclick="selectAZFilter(this, 'U')" class="filter-az-btn inactive-filter-btn">U</button>
+                        <button type="button" data-az="V" onclick="selectAZFilter(this, 'V')" class="filter-az-btn inactive-filter-btn">V</button>
+                        <button type="button" data-az="W" onclick="selectAZFilter(this, 'W')" class="filter-az-btn inactive-filter-btn">W</button>
+                        <button type="button" data-az="X" onclick="selectAZFilter(this, 'X')" class="filter-az-btn inactive-filter-btn">X</button>
+                        <button type="button" data-az="Y" onclick="selectAZFilter(this, 'Y')" class="filter-az-btn inactive-filter-btn">Y</button>
+                        <button type="button" data-az="Z" onclick="selectAZFilter(this, 'Z')" class="filter-az-btn inactive-filter-btn">Z</button>
+                    </div>
+                </div>
+
+                <!-- Section 3: Action Footer Buttons -->
+                <div class="mt-6 pt-2 flex items-center gap-3">
+                    <button type="button" onclick="applyFilterPanel()" class="px-7 py-2.5 rounded-xl bg-[#fcd576] hover:bg-[#fce08b] text-black font-extrabold text-xs sm:text-sm transition-all cursor-pointer shadow-lg shadow-[#fcd576]/10">
+                        Tìm Kiếm
+                    </button>
+                    <button type="button" onclick="resetFilterPanel()" class="px-6 py-2.5 rounded-xl bg-[#222432] hover:bg-[#2c2f42] border border-white/5 text-gray-300 font-bold text-xs sm:text-sm transition-all cursor-pointer">
+                        Xóa
+                    </button>
                 </div>
             </div>
+        </div>
 
-            <!-- Bottom half: Links, text, copyright -->
-            <div class="mt-8">
-                <!-- Links -->
-                <div
-                    class="flex flex-wrap text-center justify-center md:justify-start gap-3 md:gap-6 mb-6 text-sm font-bold text-white tracking-wide">
-                    <a href="#" class="hover:text-primary transition-colors">Hỏi-Đáp</a>
-                    <a href="#" class="hover:text-primary transition-colors">Chính sách bảo mật</a>
-                    <a href="#" class="hover:text-primary transition-colors">Điều khoản sử dụng</a>
-                    <a href="#" class="hover:text-primary transition-colors">Giới thiệu</a>
-                    <a href="#" class="hover:text-primary transition-colors">Liên hệ</a>
-                </div>
+        <!-- Movie Grid Container (8 Columns Grid) -->
+        <div id="movieGrid" class="grid-8-cols mt-6 sm:mt-8 min-h-[400px]">
+            <!-- Skeleton Loader -->
+            <div class="col-span-full py-16 flex flex-col items-center justify-center text-gray-400">
+                <div class="w-10 h-10 border-4 border-[#ff9900] border-t-transparent rounded-full animate-spin"></div>
+                <span class="mt-3 text-sm font-medium text-gray-300">Đang tải danh sách phim...</span>
+            </div>
+        </div>
 
-                <!-- Text block -->
-                <p class="text-sm text-gray-400 leading-relaxed max-w-5xl mb-6" style="font-size:13px; line-height:1.7; color:#aaaaaa; text-align: justify !important;">
-                    <a href="https://aphim.io.vn" style="color:inherit;text-decoration:underline">A Phim</a> x APhim - Trang <a href="https://aphim.io.vn" style="color:inherit;text-decoration:underline">xem phim online</a> chất lượng cao miễn phí Vietsub, thuyết minh, lồng tiếng full HD. <a href="https://aphim.io.vn/danh-sach.html?list=phim-moi" style="color:inherit;text-decoration:underline">Phim hay mới cập nhật</a> liên tục, phim chiếu rạp, phim bộ, phim lẻ từ nhiều quốc gia như Việt Nam, Hàn Quốc, Trung Quốc, Thái Lan, Nhật Bản, Âu Mỹ... đa dạng thể loại. Khám phá <a href="https://aphim.io.vn" style="color:inherit;text-decoration:underline">kho phim trực tuyến</a> hay nhất chất lượng 4K!
+        <!-- Pagination Section (Refined: Spaced out circular arrow buttons with compact sleek icons) -->
+        <div id="paginationWrap" class="hidden flex items-center justify-center gap-4 sm:gap-6 my-14 text-gray-300 font-medium text-sm">
+            <button id="prevPageBtn" onclick="changePage(-1)" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#252836] hover:bg-[#32364a] border border-white/10 flex items-center justify-center text-gray-300 hover:text-white transition-all cursor-pointer shadow-md disabled:opacity-30 disabled:cursor-not-allowed active:scale-95 flex-shrink-0" aria-label="Trang trước">
+                <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3.75 12m0 0l6.75-6.75M3.75 12h16.5" />
+                </svg>
+            </button>
+
+            <!-- Pill Badge Container for Page Input -->
+            <div class="flex items-center gap-2.5 px-5 sm:px-6 py-1.5 rounded-full bg-[#252836] border border-white/10 shadow-md">
+                <span class="text-gray-300 font-semibold text-sm">Trang</span>
+                <input type="number" id="pageInput" min="1" value="1" onchange="jumpToPage(this.value)" class="w-14 h-8 bg-[#1a1c24] text-white text-center font-bold text-sm rounded-md focus:outline-none focus:border-[#ff9900] transition-colors page-input-dark">
+                <span class="text-gray-400 font-bold">/</span>
+                <span id="totalPagesText" class="font-bold text-gray-300">1</span>
+            </div>
+
+            <button id="nextPageBtn" onclick="changePage(1)" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#252836] hover:bg-[#32364a] border border-white/10 flex items-center justify-center text-gray-300 hover:text-white transition-all cursor-pointer shadow-md disabled:opacity-30 disabled:cursor-not-allowed active:scale-95 flex-shrink-0" aria-label="Trang sau">
+                <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L20.25 12m0 0l-6.75 6.75M20.25 12H3.75" />
+                </svg>
+            </button>
+        </div>
+
+    </main>
+
+    <!-- ── QUẢNG CÁO ĐỐI TÁC (3 BANNER TRƯỚC FOOTER) ── -->
+    <section id="pre-footer-ads" aria-label="Quảng cáo đối tác" style="background: transparent; padding: 10px 0 6px;">
+        <div class="app-container" style="display:flex; gap:10px; align-items:center; justify-content:center; max-width:880px; margin:0 auto; padding:0 12px;">
+            <!-- Banner 1: VSBet -->
+            <a href="https://vsbetnova88.com/p/BSYk" target="_blank" rel="noopener nofollow" aria-label="VSBet — Bảo Hiểm Đơn Thể Thao 100%"
+               style="flex:1; max-width:290px; min-width:0; border-radius:6px; overflow:hidden; display:block; line-height:0; border:1px solid rgba(255,255,255,0.08); box-shadow:0 4px 16px rgba(0,0,0,0.35); transition:transform 0.25s, box-shadow 0.25s;"
+               onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.5)'"
+               onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.35)'">
+                <img src="/quangcao/vsbet + colatv + colascore/vsbet + colatv + colascore/vsbet gif 728x90.gif"
+                     alt="VSBet — Bảo Hiểm Đơn Thể Thao 100%" loading="lazy"
+                     style="width:100%; height:auto; display:block; object-fit:fill;">
+            </a>
+            <!-- Banner 2: ColaTV -->
+            <a href="https://colatv77.live" target="_blank" rel="noopener nofollow" aria-label="ColaTV — Xem Bóng Đá Worldcup 2026 Miễn Phí"
+               style="flex:1; max-width:290px; min-width:0; border-radius:6px; overflow:hidden; display:block; line-height:0; border:1px solid rgba(255,255,255,0.08); box-shadow:0 4px 16px rgba(0,0,0,0.35); transition:transform 0.25s, box-shadow 0.25s;"
+               onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.5)'"
+               onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.35)'">
+                <img src="/quangcao/vsbet + colatv + colascore/vsbet + colatv + colascore/colatv.gif"
+                     alt="ColaTV — Xem Bóng Đá Worldcup 2026 Miễn Phí" loading="lazy"
+                     style="width:100%; height:auto; display:block; object-fit:fill;">
+            </a>
+            <!-- Banner 3: ColaScore -->
+            <a href="https://colascores.com" target="_blank" rel="noopener nofollow" aria-label="ColaScore — Xem TTBĐ Full HD"
+               style="flex:1; max-width:290px; min-width:0; border-radius:6px; overflow:hidden; display:block; line-height:0; border:1px solid rgba(255,255,255,0.08); box-shadow:0 4px 16px rgba(0,0,0,0.35); transition:transform 0.25s, box-shadow 0.25s;"
+               onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.5)'"
+               onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.35)'">
+                <img src="/quangcao/vsbet + colatv + colascore/vsbet + colatv + colascore/colascore-gif-728x90.gif"
+                     alt="ColaScore — Xem TTBĐ Full HD" loading="lazy"
+                     style="width:100%; height:auto; display:block; object-fit:fill;">
+            </a>
+        </div>
+        <p style="text-align:center; font-size:10px; color:rgba(255,255,255,0.3); margin:4px 0 0; letter-spacing:0.08em; text-transform:uppercase; font-family:sans-serif;">QUẢNG CÁO</p>
+    </section>
+    <style>
+        @media (max-width: 640px) {
+            #pre-footer-ads .app-container { flex-direction: column !important; gap: 8px !important; }
+            #pre-footer-ads .app-container > a { flex: none !important; width: 100% !important; max-width: 360px !important; }
+        }
+    </style>
+
+    <!-- Footer Section -->
+    <footer class="aphim-footer w-full bg-[#141621] border-t border-white/10 py-10 px-4 mt-16 text-gray-400 text-xs sm:text-sm">
+        <div class="app-container flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex flex-col items-center md:items-start gap-2">
+                <a href="index.html" class="inline-block">
+                    <img src="/logo-aphim1.png" alt="APhim Logo" class="h-9 w-auto object-contain" />
+                </a>
+                <p class="text-gray-400 text-xs mt-1 text-center md:text-left">
+                    APhim - Trang xem phim trực tuyến miễn phí Full HD Vietsub, Thuyết minh, Lồng tiếng chất lượng cao 2026.
                 </p>
-
-                <!-- Copyright -->
-                <div class="text-xs text-gray-500 font-medium text-center md:text-left">
-                    Copyright ©2026 A Phim
+                <div class="text-gray-400 text-xs mt-1">
+                    Copyright © 2026 A Phim. All rights reserved.
                 </div>
             </div>
-            </div><!-- /col-left -->
-            <!-- COT PHAI -->
-            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-left:3rem;">
-                <h3 style="font-size:clamp(1rem,2.5vw,1.45rem);font-weight:900;color:rgba(255,255,255,0.7);line-height:1.3;letter-spacing:-0.01em;margin:0 0 22px 0;max-width:360px;">
-                    THÊM A PHIM VÀO MÀN HÌNH CHÍNH ĐỂ TRẢI NGHIỆM MƯỢT MÀ HƠN
-                </h3>
-                <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
-                    <!-- App Store -->
-                    <button onclick="aphimOpenGuide()" class="app-btn">
-                        <svg width="28" height="28" viewBox="0 0 814 1000" fill="white"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-38.8-155.5-127.4C46 790.7 0 663 0 541.8c0-207.1 134.6-316.5 266.1-316.5 70.5 0 127.5 46.4 169.3 46.4 40.8 0 106.4-49 185.5-49 29.2 0 131.2 2.6 198.3 99.2zm-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3z"/></svg>
-                        <div>
-                            <div class="app-btn-text-small">Download on the</div>
-                            <div class="app-btn-text-large">App Store</div>
-                        </div>
-                    </button>
-                    <!-- Google Play -->
-                    <button onclick="aphimOpenGuide()" class="app-btn">
-                        <svg width="28" height="28" viewBox="0 0 512 512"><path fill="#34A853" d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1z"/><path fill="#4285F4" d="M47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l232.4-232.4L47 0z"/><path fill="#FBBC04" d="M425.6 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c17.1-9.7 17.1-25.5-.6-59.7l-.6-.1z"/><path fill="#EA4335" d="M104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/></svg>
-                        <div>
-                            <div class="app-btn-text-small">GET IT ON</div>
-                            <div class="app-btn-text-large">Google Play</div>
-                        </div>
-                    </button>
-                </div>
-            </div><!-- /col-right -->
-            </div><!-- /footer-grid -->
+            <div class="flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-gray-300">
+                <a href="danh-sach.html?list=phim-moi-cap-nhat" class="hover:text-[#fcd576] transition-colors">Phim Mới</a>
+                <a href="danh-sach.html?list=phim-bo" class="hover:text-[#fcd576] transition-colors">Phim Bộ</a>
+                <a href="danh-sach.html?list=phim-le" class="hover:text-[#fcd576] transition-colors">Phim Lẻ</a>
+                <a href="categories.html" class="hover:text-[#fcd576] transition-colors">Thể Loại</a>
+                <a href="phim-theo-quoc-gia.html" class="hover:text-[#fcd576] transition-colors">Quốc Gia</a>
+            </div>
         </div>
     </footer>
-    <!-- App Guide Popup -->
-    <div id="aphim-guide-overlay" onclick="if(event.target===this)aphimCloseGuide()" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.88);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:16px;">
-        <div style="position:relative;width:100%;max-width:460px;background:#0d0f1a;border:1px solid rgba(255,255,255,0.1);border-radius:16px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,0.8);">
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.07);background:rgba(0,0,0,0.25);">
-                <span style="font-size:0.82rem;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.06em;">Hướng dẫn cài đặt A Phim</span>
-                <button onclick="aphimCloseGuide()" style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.08);border:none;cursor:pointer;color:#aaa;font-size:1rem;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#aaa'">✕</button>
-            </div>
-            <div style="padding:14px;overflow-y:auto;max-height:78vh;">
-                <img src="/quangcao/HD_cai_app.png" alt="Huong dan cai dat" style="width:100%;height:auto;border-radius:8px;display:block;"/>
-            </div>
-        </div>
-    </div>
-    <script>
-        function aphimOpenGuide(){var e=document.getElementById('aphim-guide-overlay');if(e){e.style.display='flex';document.body.style.overflow='hidden';}}
-        function aphimCloseGuide(){var e=document.getElementById('aphim-guide-overlay');if(e){e.style.display='none';document.body.style.overflow='';}}
-        document.addEventListener('keydown',function(e){if(e.key==='Escape')aphimCloseGuide();});
-    </script>
 
-
-    <script src="js/mobile-menu-modern.js?v=1783519898776"></script>
-    <script src="js/nav-instant-suggest.js?v=5"></script>
-    <!-- <script src="js/navigation-danh-sach.js?v=15"></script> -->
-    <script src="js/config.js?v=15"></script>
-    <script src="js/api.js?v=15"></script>
-    <script src="js/data-cache.js?v=13"></script>
-    <script src="js/api-optimization.js?v=13"></script>
-    <script src="js/image-optimization.js?v=14"></script>
-    <script src="js/auth.js?v=38"></script>
-    <script src="js/premium-ad-blocker.js?v=1"></script>
-    <script src="js/auth-modal.js?v=13"></script>
-    <script src="js/user.js?v=38"></script>
-    <script src="js/user-ui.js?v=37"></script>
-
-    <script>
-        let allCategories = [];
-        let currentCategory = null;
-        let currentPage = 1;
-        let totalPages = 1;
-
-        // Track movie click
-        function trackMovieClick(movieName, movieSlug, categoryName) {
-            if (typeof trackUserAction !== 'undefined') {
-                trackUserAction('movie_click', 'Movie', `${movieName} (${categoryName})`, 1);
-            }
-        }
-
-        const loading = document.getElementById('loading');
-        const categoriesGrid = document.getElementById('categoriesGrid');
-        const moviesSection = document.getElementById('moviesSection');
-        const moviesGrid = document.getElementById('moviesGrid');
-        const pagination = document.getElementById('pagination');
-        const error = document.getElementById('error');
-        const pageTitle = document.getElementById('pageTitle');
-        const pageSubtitle = document.getElementById('pageSubtitle');
-
-        // Mobile menu toggle
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        if (mobileMenuBtn && mobileMenu) {
-            mobileMenuBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
-
-        // Toggle mobile sections
-        function toggleMobileSection(sectionId) {
-            const section = document.getElementById(sectionId);
-            const icon = document.getElementById(sectionId + 'Icon');
-            if (section && icon) {
-                section.classList.toggle('hidden');
-                icon.style.transform = section.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
-            }
-        }
-
-        // Load categories on page load
-        async function loadCategories() {
-            try {
-                console.log('Fetching categories from API...');
-
-                const response = await movieAPI.fetchWithFallback('/the-loai', {
-                    method: 'GET',
-                    headers: { 'accept': 'application/json' }
-                });
-
-                const data = await response.json();
-                console.log('Categories data:', data);
-
-                if ((data && (data.status === 'success' || data.status === true || data.status)) && data.data) {
-                    // API returns data.data.items as array of categories
-                    if (data.data.items && Array.isArray(data.data.items)) {
-                        allCategories = data.data.items;
-                    } else if (Array.isArray(data.data)) {
-                        allCategories = data.data;
-                    } else if (typeof data.data === 'object') {
-                        // Fallback: Convert object to array
-                        allCategories = Object.entries(data.data).map(([key, value]) => {
-                            if (typeof value === 'object' && value.slug && value.name) {
-                                return value;
-                            } else if (typeof value === 'string') {
-                                return { slug: key, name: value };
-                            }
-                            return { slug: key, name: key };
-                        });
-                    }
-
-                    console.log('Categories array:', allCategories);
-                    console.log('Total categories:', allCategories.length);
-
-                    if (allCategories.length === 0) {
-                        throw new Error('No categories found');
-                    }
-
-                    // Load dropdown
-                    loadCategoriesDropdown();
-                } else {
-                    throw new Error('Invalid data format');
-                }
-            } catch (err) {
-                console.error('Error loading categories:', err);
-                loading.classList.add('hidden');
-                error.classList.remove('hidden');
-            }
-        }
-
-        // Load categories dropdown
-        function loadCategoriesDropdown() {
-            // Desktop dropdown - Grid 4 columns like index.html
-            const dropdown = document.getElementById('categoryDropdown');
-            if (dropdown && allCategories.length > 0) {
-                const gridHTML = '<div class="grid grid-cols-4 gap-0">' +
-                    allCategories.map((cat, index) => {
-                        const isLastRow = index >= allCategories.length - (allCategories.length % 4 || 4);
-                        const isRightEdge = (index + 1) % 4 === 0;
-                        const borderClasses = `${!isRightEdge ? 'border-r' : ''} ${!isLastRow ? 'border-b' : ''} border-white/5`;
-
-                        return `
-                            <a href="categories.html?category=${cat.slug}" 
-                               class="block px-4 py-3 text-gray-300 hover:text-primary hover:bg-white/5 transition-all ${borderClasses}">
-                                ${cat.name}
-                            </a>
-                        `;
-                    }).join('') +
-                    '</div>';
-                dropdown.innerHTML = gridHTML;
-            }
-
-            // Mobile list
-            const mobileList = document.getElementById('mobileCategoryList');
-            if (mobileList && allCategories.length > 0) {
-                mobileList.innerHTML = allCategories.map(cat => `
-                    <a href="categories.html?category=${cat.slug}" 
-                       class="block py-2 text-gray-300 hover:text-primary transition-colors">
-                        ${cat.name}
-                    </a>
-                `).join('');
-            }
-        }
-
-        // Render categories grid with movie images
-        async function renderCategoriesGrid() {
-            loading.classList.add('hidden');
-            categoriesGrid.classList.remove('hidden');
-            moviesSection.classList.add('hidden');
-
-            // Load sample movies for each category to get poster images
-            const categoryPromises = allCategories.map(async (category) => {
-                try {
-                    const response = await movieAPI.fetchWithFallback(`/the-loai/${category.slug}?page=1&limit=1`, {
-                        method: 'GET',
-                        headers: { 'accept': 'application/json' }
-                    });
-                    const data = await response.json();
-
-                    if ((data && (data.status === 'success' || data.status === true || data.status)) && data.data && data.data.items && data.data.items.length > 0) {
-                        const movie = data.data.items[0];
-                        const posterUrl = movie.thumb_url ? `https://phimimg.com/${movie.thumb_url}` : null;
-                        return { ...category, posterUrl };
-                    }
-                    return { ...category, posterUrl: null };
-                } catch (error) {
-                    console.error(`Error loading sample movie for ${category.name}:`, error);
-                    return { ...category, posterUrl: null };
-                }
-            });
-
-            const categoriesWithImages = await Promise.all(categoryPromises);
-
-            categoriesGrid.innerHTML = categoriesWithImages.map((category) => {
-                const backgroundStyle = category.posterUrl
-                    ? `background-image: url('${category.posterUrl}'); background-size: cover; background-position: center;`
-                    : 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);';
-
-                return `
-                    <a href="#" onclick="loadCategoryMovies('${category.slug}', '${category.name}'); return false;" 
-                       class="group relative block rounded-xl overflow-hidden hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl aspect-[3/4]"
-                       style="${backgroundStyle}">
-                        <!-- Dark overlay -->
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent transition-all duration-300"></div>
-                        
-                        <!-- Content -->
-                        <div class="relative z-10 h-full flex flex-col justify-end p-6">
-                            <h3 class="text-white font-bold text-xl mb-2 drop-shadow-lg">${category.name}</h3>
-                            <p class="text-white/90 text-sm drop-shadow-md flex items-center gap-2">
-                                <span class="material-icons-round text-primary text-lg">play_circle</span>
-                                Khám phá ngay
-                            </p>
-                        </div>
-                        
-                        <!-- Hover effect -->
-                        <div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/10 transition-colors duration-300"></div>
-                    </a>
-                `;
-            }).join('');
-
-            console.log(`Rendered ${categoriesWithImages.length} categories with images`);
-        }
-
-        // Load movies by category
-        async function loadCategoryMovies(slug, name, page = 1) {
-            currentCategory = slug;
-            currentPage = page;
-
-            // Track category selection (only on first page)
-            if (page === 1 && typeof trackCategoryClick !== 'undefined') {
-                trackCategoryClick(name, slug);
-            }
-
-            // Update title
-            pageTitle.textContent = name;
-            pageSubtitle.textContent = 'Đang tải...nh sách phim...';
-
-            // Show loading
-            loading.classList.remove('hidden');
-            categoriesGrid.classList.add('hidden');
-            moviesSection.classList.add('hidden');
-            error.classList.add('hidden');
-
-            // Close mobile menu
-            if (mobileMenu) {
-                mobileMenu.classList.add('hidden');
-            }
-
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            try {
-                console.log(`Fetching movies for category: ${slug}, page: ${page}`);
-
-
-                const data = await movieAPI.getMoviesByCategory(slug, page);
-                console.log('Category movies data:', data);
-
-                if ((data && (data.status === 'success' || data.status === true || data.status)) && data.data) {
-                    const movies = data.data.items || [];
-
-                    // Get pagination from params or data
-                    const params = data.data.params || data.params || {};
-                    const pagination_data = params.pagination || data.data.pagination || {};
-
-                    // Calculate pagination info
-                    const totalItems = pagination_data.totalItems || pagination_data.total || movies.length;
-                    const totalPages_api = pagination_data.totalPages || Math.ceil(totalItems / 24) || 1;
-                    totalPages = totalPages_api;
-
-                    // Build complete pagination data
-                    const completePaginationData = {
-                        currentPage: currentPage,
-                        totalPages: totalPages_api,
-                        totalItems: totalItems,
-                        ...pagination_data
-                    };
-
-                    pageSubtitle.textContent = `Trang ${currentPage}/${totalPages} | Tổng ${totalItems.toLocaleString()} kết quả`;
-
-                    // Render movies
-                    if (movies.length > 0) {
-                        renderMovies(movies);
-                        renderPagination(completePaginationData);
-                    } else {
-                        throw new Error('No movies found');
-                    }
-                } else {
-                    throw new Error('Invalid data format');
-                }
-            } catch (err) {
-                console.error('Error loading category movies:', err);
-                loading.classList.add('hidden');
-                error.classList.remove('hidden');
-            }
-        }
-
-        // Render movies
-        function renderMovies(movies) {
-            loading.classList.add('hidden');
-            categoriesGrid.classList.add('hidden');
-            moviesSection.classList.remove('hidden');
-
-            let moviesHTML = '';
-
-            movies.forEach((movie, index) => {
-                // Fix poster URL - API returns 'uploads/movies/filename.jpg' or full URL
-                const rawImg = movie.thumb_url || movie.poster_url || '';
-                let posterUrl;
-                if (!rawImg) {
-                    posterUrl = 'https://via.placeholder.com/300x450?text=No+Image';
-                } else if (rawImg.startsWith('http')) {
-                    posterUrl = rawImg;
-                } else {
-                    const filename = rawImg.replace(/^uploads\/movies\//, '');
-                    posterUrl = `https://phimimg.com/${filename}`;
-                }
-                const year = movie.year || 'N/A';
-                const quality = movie.quality || movie.lang || '';
-                const episodeCurrent = movie.episode_current || '';
-
-                moviesHTML += `
-                    <a href="movie-detail.html?slug=${movie.slug}" 
-                       onclick="trackMovieClick('${movie.name}', '${movie.slug}', '${currentCategory}')"
-                       class="group relative block rounded-xl overflow-hidden bg-surface-dark hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-primary/20">
-                        <div class="relative aspect-[2/3] overflow-hidden">
-                            <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22600%22%3E%3Crect fill=%22%23111%22 width=%22400%22 height=%22600%22/%3E%3Ctext fill=%22%23555%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 alignment-baseline=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22%3ENo Image%3C/text%3E%3C/svg%3E" data-src="${posterUrl}" 
-                                 alt="${movie.name}"
-                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                 onerror="window.autoHealMovieImage ? window.autoHealMovieImage(this, typeof movie !== 'undefined' ? movie.slug : '', typeof movie !== 'undefined' ? (movie.name || movie.title) : '') : null" data-tmdb-slug="${movie.slug}" data-tmdb-type="poster">
-                            
-                            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60"></div>
-                            
-                            ${quality ? `
-                                <div class="absolute top-2 left-2 px-2 py-1 bg-primary text-black text-xs font-bold rounded">
-                                    ${quality}
-                                </div>
-                            ` : ''}
-                            
-                            ${episodeCurrent ? `
-                                <div class="absolute top-2 right-2 px-2 py-1 bg-red-600 text-white text-xs font-bold rounded">
-                                    ${episodeCurrent}
-                                </div>
-                            ` : ''}
-                            
-                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-lg">
-                                    <span class="material-icons-round text-black text-3xl">play_arrow</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="p-3">
-                            <h3 class="text-white font-bold text-sm mb-1 line-clamp-2 group-hover:text-primary transition-colors">
-                                ${movie.name}
-                            </h3>
-                            <p class="text-gray-400 text-xs line-clamp-1">${movie.origin_name || ''}</p>
-                            <div class="flex items-center justify-between mt-1">
-                                <span class="text-gray-500 text-xs">${year}</span>
-                                <div class="flex items-center gap-1 text-primary text-xs">
-                                    <span class="material-icons-round text-sm">star</span>
-                                    <span>8.5</span>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                `;
-
-
-            });
-
-            moviesGrid.innerHTML = moviesHTML;
-
-            console.log(`Rendered ${movies.length} movies`);
-        }
-
-        // Render pagination
-        function renderPagination(paginationData) {
-            if (!paginationData || !paginationData.totalPages || paginationData.totalPages <= 1) {
-                pagination.innerHTML = '';
-                return;
-            }
-
-            const totalPages_api = paginationData.totalPages;
-            const currentPage_api = paginationData.currentPage || currentPage;
-            const totalItems = paginationData.totalItems || paginationData.total || 0;
-
-            const maxPagesToShow = 5;
-            let startPage = Math.max(1, currentPage_api - Math.floor(maxPagesToShow / 2));
-            let endPage = Math.min(totalPages_api, startPage + maxPagesToShow - 1);
-
-            if (endPage - startPage < maxPagesToShow - 1) {
-                startPage = Math.max(1, endPage - maxPagesToShow + 1);
-            }
-
-            let paginationHTML = `
-                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div class="flex items-center gap-2 overflow-x-auto px-2 py-1">
-            `;
-
-            // Previous button
-            if (currentPage_api > 1) {
-                paginationHTML += `
-                    <button onclick="goToPage(${currentPage_api - 1})" 
-                            class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
-                        <span class="material-icons-round text-sm">chevron_left</span>
-                    </button>
-                `;
-            }
-
-            // First page
-            if (startPage > 1) {
-                paginationHTML += `
-                    <button onclick="goToPage(1)" 
-                            class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
-                        1
-                    </button>
-                `;
-                if (startPage > 2) {
-                    paginationHTML += `<span class="text-gray-400 flex-shrink-0">...</span>`;
-                }
-            }
-
-            // Page numbers
-            for (let i = startPage; i <= endPage; i++) {
-                if (i === currentPage_api) {
-                    paginationHTML += `
-                        <button class="px-4 py-2 bg-primary text-black font-bold rounded-lg flex-shrink-0 transition-all duration-300">
-                            ${i}
-                        </button>
-                    `;
-                } else {
-                    paginationHTML += `
-                        <button onclick="goToPage(${i})" 
-                                class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
-                            ${i}
-                        </button>
-                    `;
-                }
-            }
-
-            // Last page
-            if (endPage < totalPages_api) {
-                if (endPage < totalPages_api - 1) {
-                    paginationHTML += `<span class="text-gray-400 flex-shrink-0">...</span>`;
-                }
-                paginationHTML += `
-                    <button onclick="goToPage(${totalPages_api})" 
-                            class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
-                        ${totalPages_api}
-                    </button>
-                `;
-            }
-
-            // Next button
-            if (currentPage_api < totalPages_api) {
-                paginationHTML += `
-                    <button onclick="goToPage(${currentPage_api + 1})" 
-                            class="px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0">
-                        <span class="material-icons-round text-sm">chevron_right</span>
-                    </button>
-                `;
-            }
-
-            paginationHTML += `
-                    </div>
-                    <div class="text-gray-400 text-sm whitespace-nowrap">
-                        Trang ${currentPage_api}/${totalPages_api} | Tổng ${totalItems.toLocaleString()} kết quả
-                    </div>
-                </div>
-            `;
-
-            pagination.innerHTML = paginationHTML;
-            addBottomBanner();
-        }
-
-        // Go to page
-        function goToPage(page) {
-            if (page < 1 || page > totalPages || !currentCategory) return;
-
-            // Update pagination UI immediately for smooth transition
-            const paginationContainer = document.getElementById('pagination');
-            if (paginationContainer && page !== currentPage) {
-                const allButtons = paginationContainer.querySelectorAll('button');
-                allButtons.forEach(btn => {
-                    const btnText = btn.textContent.trim();
-                    if (btnText === page.toString()) {
-                        btn.className = 'px-4 py-2 bg-primary text-black font-bold rounded-lg flex-shrink-0 transition-all duration-300';
-                    } else if (!btn.querySelector('.material-icons-round')) {
-                        btn.className = 'px-4 py-2 bg-surface-dark text-white rounded-lg hover:bg-primary hover:text-black transition-all duration-300 flex-shrink-0';
-                    }
-                });
-            }
-
-            const categoryName = allCategories.find(cat => cat.slug === currentCategory)?.name || currentCategory;
-            loadCategoryMovies(currentCategory, categoryName, page);
-        }
-
-        // Show all categories
-        function showAllCategories() {
-            currentCategory = null;
-            currentPage = 1;
-
-            pageTitle.textContent = 'Thể Loại Phim';
-            pageSubtitle.textContent = 'Khám phá phim theo thể loại yêu thích của bạn';
-
-            categoriesGrid.classList.remove('hidden');
-            moviesSection.classList.add('hidden');
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // Add banner after pagination
-        function addBottomBanner() {
-            // Banner removed for performance optimization
-        }
-
-        // Load categories on page load
-        async function init() {
-            // Check if we have a category parameter
-            const urlParams = new URLSearchParams(window.location.search);
-            const categorySlug = urlParams.get('category');
-            const pageParam = urlParams.get('page');
-            const page = pageParam ? parseInt(pageParam) : 1;
-
-            // Load all categories first
-            await loadCategories();
-
-            // If we have a category parameter, load movies for that category
-            if (categorySlug) {
-                const category = allCategories.find(cat => cat.slug === categorySlug);
-                const categoryName = category ? category.name : categorySlug;
-                await loadCategoryMovies(categorySlug, categoryName, page);
-            } else {
-                // Otherwise, show categories grid
-                await renderCategoriesGrid();
-            }
-        }
-
-        // Initialize on page load
-        init();
-    </script>
-
-    <script src="js/sticky-nav.js?v=1783523710047"></script>
-    <script src="js/dropdown-hover-fix.js?v=13"></script>
-
-
-<!-- ====== Chat Widget A Phim ====== -->
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/chat-room.css?v=65">
-    <link rel="stylesheet" href="css/chat-mobile-fixed.css?v=65">
-    <!-- FAB Button -->
-    <button id="chatFab" class="chat-fab" aria-label="Mở chat cộng đồng" title="Chat Cộng Đồng">
-        <span class="fab-icon material-icons">forum</span>
-        <span class="chat-fab-badge" id="chatFabBadge">0</span>
-    </button>
-    <!-- Chat Window -->
-    <div id="chatWindow" class="chat-window" role="dialog" aria-label="Chat cộng đồng A Phim">
-        <!-- HEADER -->
-        <div class="chat-header" id="chatHeader">
-            <div class="chat-header-info">
-                <div class="chat-header-avatar">
-                    <span class="material-icons">forum</span>
-                </div>
-                <div class="chat-header-text">
-                    <div class="chat-header-title">Cộng Đồng A Phim</div>
-                    <div class="chat-header-status">
-                        <div class="online-dot"></div>
-                        <span class="chat-header-online-text" id="headerOnlineCount">42 người trực tuyến</span>
-                    </div>
-                </div>
-            </div>
-            <div class="chat-header-actions">
-                <button class="chat-header-btn" id="chatMinimizeBtn" title="Thu nhỏ"><span class="material-icons">remove</span></button>
-                <button class="chat-header-btn" id="chatCloseBtn" title="Đóng"><span class="material-icons">close</span></button>
-            </div>
-        </div>
-        <!-- BODY -->
-        <div class="chat-body" id="chatBody">
-            <!-- SCREEN 1: WELCOME -->
-            <div class="chat-screen chat-screen-welcome active" id="screenWelcome">
-                <div class="welcome-glow"><img src="/apple-touch-icon.png" alt="A Phim" style="width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.15));"></div>
-                <div>
-                    <h2 class="welcome-title">Chào mừng đến <span>Kênh A Phim</span></h2>
-                    <p class="welcome-desc" style="margin-top:8px;">Kết nối, thảo luận và tận hưởng điện ảnh cùng hàng ngàn tín đồ phim ảnh.</p>
-                </div>
-                <div class="welcome-stats">
-                    <div class="welcome-stat"><div class="welcome-stat-num" id="welcomeOnline">1,284</div><div class="welcome-stat-label">Trực tuyến</div></div>
-                    <div class="welcome-stat"><div class="welcome-stat-num">50K+</div><div class="welcome-stat-label">Thành viên</div></div>
-                    <div class="welcome-stat"><div class="welcome-stat-num">24/7</div><div class="welcome-stat-label">Hoạt động</div></div>
-                </div>
-                <div class="welcome-features">
-                    <div class="welcome-feature"><span class="material-icons">movie</span><div class="welcome-feature-text"><strong>Thảo luận phim</strong><span>Review, rating và khám phá phim mới</span></div></div>
-                    <div class="welcome-feature"><span class="material-icons">groups</span><div class="welcome-feature-text"><strong>Cộng đồng sôi nổi</strong><span>Kết nối với người xem cùng sở thích</span></div></div>
-                    <div class="welcome-feature"><span class="material-icons">bolt</span><div class="welcome-feature-text"><strong>Chat thời gian thực</strong><span>Nhắn tin ngay lập tức, không độ trễ</span></div></div>
-                </div>
-                <button class="welcome-start-btn" id="welcomeStartBtn">Bắt đầu chat ngay <span class="material-icons">arrow_forward</span></button>
-            </div>
-            <!-- SCREEN 2: ENTER NAME -->
-            <div class="chat-screen chat-screen-name" id="screenEnterName">
-                <div class="enter-name-header">
-                    <button class="enter-name-back-btn" id="enterNameBackBtn"><span class="material-icons">arrow_back</span></button>
-                    <div class="enter-name-title-wrap"><h2>Tạo hồ sơ</h2><p>Chọn biệt danh và màu sắc của bạn</p></div>
-                </div>
-                <div>
-                    <span class="name-color-label">Màu đại diện</span>
-                    <div class="color-picker-row" id="colorPickerRow">
-                        <div class="color-option selected" data-color="#ffd709" style="background:#ffd709"></div>
-                        <div class="color-option" data-color="#22c55e" style="background:#22c55e"></div>
-                        <div class="color-option" data-color="#3b82f6" style="background:#3b82f6"></div>
-                        <div class="color-option" data-color="#ef4444" style="background:#ef4444"></div>
-                        <div class="color-option" data-color="#a855f7" style="background:#a855f7"></div>
-                        <div class="color-option" data-color="#f97316" style="background:#f97316"></div>
-                        <div class="color-option" data-color="#06b6d4" style="background:#06b6d4"></div>
-                        <div class="color-option" data-color="#ec4899" style="background:#ec4899"></div>
-                    </div>
-                </div>
-                <div class="name-input-group">
-                    <div class="name-input-label">
-                        <span>Biệt danh của bạn</span>
-                        <span class="name-char-count" id="nameCharCount">0 / 20</span>
-                    </div>
-                    <div class="name-input-wrapper">
-                        <input type="text" id="chatNameInput" class="name-input" placeholder="VD: MovieLover_99" maxlength="20" autocomplete="off">
-                        <span class="name-input-icon material-icons">person</span>
-                    </div>
-                    <div class="name-error-msg" id="nameErrorMsg">Tên phải từ 3–20 ký tự, không chứa ký tự đặc biệt.</div>
-                </div>
-                <div class="name-preview">
-                    <div class="name-preview-avatar" id="previewAvatar" style="background:#ffd709;">A</div>
-                    <div class="name-preview-info"><strong id="previewName">Biệt danh của bạn</strong><span>Thành viên mới · Hôm nay</span></div>
-                </div>
-                <div class="online-preview">
-                    <div class="online-avatars">
-                        <div class="online-avatar-mini" style="background:#ffd709;color:#1a1200;font-weight:700;">K</div>
-                        <div class="online-avatar-mini" style="background:#22c55e;color:#fff;font-weight:700;">L</div>
-                        <div class="online-avatar-mini" style="background:#3b82f6;color:#fff;font-weight:700;">M</div>
-                        <div class="online-avatar-mini more">+39</div>
-                    </div>
-                    <div class="online-info"><strong><span style="display:inline-block;width:7px;height:7px;background:#22c55e;border-radius:50%;margin-right:5px;vertical-align:middle;"></span>42 trực tuyến</strong><span>Đang thảo luận sôi nổi</span></div>
-                </div>
-                <button class="join-btn" id="chatJoinBtn" disabled><span class="material-icons">login</span>Tham gia phòng chat</button>
-            </div>
-            <!-- SCREEN 3: CHAT ROOM -->
-            <div class="chat-screen chat-screen-room" id="screenRoom">
-                <div class="messages-area" id="messagesArea">
-                    <div class="date-separator"><span>Hôm Nay</span></div>
-                    <div class="sys-msg"><span>🎬 Chào mừng đến với Kênh A Phim!</span></div>
-                    <div class="msg-group">
-                        <div class="msg-avatar" style="background:#3b82f6;color:#fff;">M</div>
-                        <div class="msg-content">
-                            <div class="msg-name">MovieFan</div>
-                            <div class="msg-bubble">Mọi người thấy Dune: Part Two thế nào? Hình ảnh choáng ngợp luôn! 🤩</div>
-                            <div class="msg-meta"><span class="msg-time">20:20</span></div>
-                        </div>
-                    </div>
-                    <div class="msg-group">
-                        <div class="msg-avatar" style="background:#22c55e;color:#fff;">L</div>
-                        <div class="msg-content">
-                            <div class="msg-name">LinhChi</div>
-                            <div class="msg-bubble">Nhạc phim của Hans Zimmer nữa, nghe mà rung động cả phòng chiếu 🎵</div>
-                            <div class="msg-meta"><span class="msg-time">20:21</span></div>
-                        </div>
-                    </div>
-                    <div class="typing-indicator" id="typingIndicator">
-                        <div class="typing-avatar" style="background:#a855f7;border-radius:50%;"></div>
-                        <div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
-                    </div>
-                </div>
-                <div class="quick-reactions" id="quickReactions">
-                    <button class="quick-react-btn" data-text="👍 Tuyệt vời!">👍 Tuyệt vời</button>
-                    <button class="quick-react-btn" data-text="🔥 Quá đỉnh!">🔥 Quá đỉnh</button>
-                    <button class="quick-react-btn" data-text="🍿 Đang xem">🍿 Đang xem</button>
-                    <button class="quick-react-btn" data-text="⭐ 10/10">⭐ 10/10</button>
-                    <button class="quick-react-btn" data-text="🎬 Rất nghệ">🎬 Rất nghệ</button>
-                    <button class="quick-react-btn" data-text="😍 Cực hay!">😍 Cực hay</button>
-                </div>
-            </div>
-            <!-- SCREEN 4: HỖ TRỢ -->
-            <div class="chat-screen chat-screen-support" id="screenSupport">
-                <div class="support-inner">
-                    <div class="support-icon-wrap">
-                        <span class="material-icons">support_agent</span>
-                    </div>
-                    <h3 class="support-title">Hỗ trợ trực tuyến</h3>
-                    <p class="support-desc">Đội ngũ hỗ trợ của A Phim luôn sẵn sàng giải đáp mọi thắc mắc của bạn.</p>
-                    <div class="support-info-cards">
-                        <div class="support-info-card">
-                            <span class="material-icons">schedule</span>
-                            <div><strong>Giờ hoạt động</strong><span>24/7 — Phản hồi nhanh</span></div>
-                        </div>
-                        <div class="support-info-card">
-                            <span class="material-icons">translate</span>
-                            <div><strong>Ngôn ngữ</strong><span>Tiếng Việt — Tiếng Anh</span></div>
-                        </div>
-                        <div class="support-info-card">
-                            <span class="material-icons">verified</span>
-                            <div><strong>Chuyên nghiệp</strong><span>Được đào tạo bài bản</span></div>
-                        </div>
-                    </div>
-                    <button class="support-start-btn" id="supportStartTawk">
-                        <span class="material-icons">chat</span>
-                        Bắt đầu chat hỗ trợ
-                    </button>
-                    <p class="support-note">Nhấn để mở cửa sổ chat với nhân viên hỗ trợ</p>
-                </div>
-            </div>
-        </div>
-        <!-- INPUT AREA -->
-        <div class="chat-input-area" id="chatInputArea">
-            <div class="chat-tabs-bar">
-                <button class="chat-tab active" data-tab="general" id="tabGeneral"><span class="material-icons">public</span>Chung</button>
-                <button class="chat-tab" data-tab="movies" id="tabMovies"><span class="material-icons">movie</span>Phim</button>
-                <button class="chat-tab" data-tab="support" id="tabSupport"><span class="material-icons">help</span>Hỗ trợ</button>
-            </div>
-            <div class="input-row">
-                <button class="input-icon-btn" id="emojiToggleBtn" title="Emoji"><span class="material-icons">mood</span></button>
-                <textarea id="chatMessageInput" placeholder="Viết tin nhắn..." rows="1" maxlength="1000"></textarea>
-                <button class="send-btn" id="chatSendBtn" disabled><span class="material-icons">send</span></button>
-            </div>
-            <div class="input-footer">
-                <div class="current-user-tag">
-                    <div class="current-user-avatar" id="currentUserAvatar" style="background:#ffd709;">A</div>
-                    <span id="currentUserName">Khách</span>
-                </div>
-                <span class="change-name-link" id="changeNameLink">Đổi tên</span>
-            </div>
-        </div>
-        <!-- Emoji picker -->
-        <div class="emoji-picker-panel" id="emojiPickerPanel">
-            <div class="emoji-grid" id="emojiGrid"></div>
-        </div>
-    </div>
-
-    <!-- ====== Firebase SDK (Compat CDN) ====== -->
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script>
-    <!-- Firebase Chat Service -->
-    <script src="js/firebase-chat.js?v=13"></script>
-    <!-- Chat Widget Logic -->
-    <script src="js/chat-room.js?v=65"></script>
-
-    
-    
-
-    
-    <!-- ====== End Chat Widget ====== -->
-<script src="js/nav-active-indicator.js?v=13"></script>
-    <script src="js/countries-dropdown.js?v=13"></script>
-    <script src="js/categories-dropdown.js"></script>
-
-    <!-- ====== APhim Catfish Banner + Popup ====== -->
-    <link rel="stylesheet" href="/css/catfish-banner.css?v=17">
-    <link rel="stylesheet" href="/css/inline-ad.css?v=15">
-    <script src="/js/catfish-banner.js?v=19" defer></script>
-    <!-- ====== End Catfish Banner ====== -->
-
-    <!-- A PHIM Floating Side Dock -->
-<link rel="stylesheet" href="/css/floating-dock.css?v=5">
-
-<div class="floating-dock-container" id="floatingDock">
-    <!-- The Dock -->
-    <div class="fd-dock" id="fdDockGroup">
-        <!-- Collapsed Handle -->
-        <div class="fd-handle" id="fdHandle" title="Mở rộng">
-            <div class="fd-indicator"></div>
-            <span class="material-icons-round">forum</span>
-        </div>
-        
-        <!-- Expanded Menu -->
-        <div class="fd-menu" id="fdMenu">
-            <!-- Nút mở Chat cộng đồng -->
-            <button class="fd-btn fd-btn-chat" id="fdBtnChat" title="Chat Cộng Đồng">
-                <span class="material-icons-round">forum</span>
-            </button>
-            
-            <!-- Nút mở Telegram -->
-            <a href="https://t.me/dautayonly" target="_blank" rel="noopener noreferrer" class="fd-btn fd-btn-telegram" title="Kênh Telegram">
-                <!-- Telegram SVG Icon -->
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.97 1.25-5.56 3.67-.52.36-.99.53-1.41.52-.46-.01-1.34-.26-2.01-.48-.82-.27-1.47-.42-1.42-.88.03-.24.29-.49.79-.75 3.09-1.35 5.16-2.24 6.21-2.68 2.95-1.25 3.56-1.47 3.96-1.47.09 0 .28.02.4.1.11.07.17.16.19.27.01.07.02.16.01.27z"/>
-                </svg>
-            </a>
-            
-            <!-- Nút Đóng -->
-            <button class="fd-btn fd-btn-close" id="fdBtnClose" title="Thu gọn">
-                <span class="material-icons-round">close</span>
-            </button>
-        </div>
-    </div>
-    
-    <!-- Scroll To Top Button (Below Dock) -->
-    <button class="fd-btn-top" id="fdBtnTop" aria-label="Lên đầu trang" title="Lên đầu trang">
-        <span class="material-icons-round">keyboard_arrow_up</span>
-    </button>
-</div>
-
-<script src="/js/floating-dock.js?v=1" defer></script>
-
-
-
-
-<!-- ===== MOBILE SEARCH OVERLAY ===== -->
-<div id="mobileSearchOverlay" style="opacity: 0; visibility: hidden; pointer-events: none;">
-    <div class="mso-header">
-        <div class="mso-input-wrap">
-            <span class="material-icons-round mso-icon-search">search</span>
-            <input type="text" id="msoInput" class="mso-input"
-                placeholder="Tìm kiếm phim, diễn viên..." autocomplete="off" enterkeyhint="search">
-            <button id="msoClearBtn" class="mso-clear-btn" aria-label="Xóa">
-                <span class="material-icons-round" style="font-size:18px;">close</span>
-            </button>
-        </div>
-        <button id="msoCloseBtn" class="mso-close-btn" aria-label="Đóng">
-            <span class="material-icons-round">close</span>
+    <!-- Floating Side Dock & Theme Switcher Widget -->
+    <div class="floating-dock-container" id="floatingDockContainer">
+        <button type="button" id="fdBtnTop" class="fd-btn-top" title="Cuộn lên đầu trang" aria-label="Cuộn lên đầu trang">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="18 15 12 9 6 15"></polyline>
+            </svg>
+        </button>
+
+        <button type="button" id="themeToggleFab" class="theme-toggle-fab" title="Chuyển Chế Độ Sáng / Tối" aria-label="Chuyển Chế Độ Sáng / Tối">
+            <svg class="theme-icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="4.5" fill="currentColor" fill-opacity="0.25"></circle>
+                <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"></path>
+            </svg>
+            <svg class="theme-icon-moon hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor" fill-opacity="0.25"></path>
+            </svg>
         </button>
     </div>
-    
-    <div id="msoResultsArea" class="mso-results-area">
-        <div id="msoResultsHeader" class="mso-results-header">
-            <span>KẾT QUẢ TÌM KIẾM</span>
-            <span id="msoResultsCount">0 phim</span>
-        </div>
-        <div id="msoResultsList" class="mso-results-list">
-            <!-- Search results injected here -->
-        </div>
-        <a href="#" id="msoSeeAll" class="mso-see-all">Xem tất cả kết quả &gt;</a>
-    </div>
-</div>
-<link rel="stylesheet" href="css/mobile-search-overlay.css?v=110">
-<script src="js/mobile-search-overlay.js?v=111" defer></script>
 
-    <script src="js/bottom-nav.js?v=1783518514266" defer></script>
-<script src="js/movie-slider.js"></script>
-    <script src="js/voice-search.js?v=70"></script>
+    <!-- Scripts -->
+    <script src="js/config.js?v=15"></script>
+    <script src="js/aphim-core-api.js?v=10002"></script>
+    <script src="js/floating-dock.js?v=206" defer></script>
+    <script src="js/user-ui.js?v=37" defer></script>
+
+    <!-- Drawer, Header & Filter Interaction Script -->
+    <script>
+        function toggleMobileHeaderMenu() {
+            const drawer = document.getElementById('sofa-mobile-drawer');
+            if (drawer) drawer.classList.toggle('open');
+        }
+        function toggleDrawerAccordion(id) {
+            const item = document.getElementById(id);
+            if (item) item.classList.toggle('active');
+        }
+        function toggleMobileSearchOverlay() {
+            const overlay = document.getElementById('sofa-mobile-search-overlay');
+            if (overlay) {
+                overlay.classList.toggle('open');
+                if (overlay.classList.contains('open')) {
+                    const input = overlay.querySelector('input');
+                    if (input) setTimeout(() => input.focus(), 50);
+                }
+            }
+        }
+        function closeMobileSearchOverlay() {
+            const overlay = document.getElementById('sofa-mobile-search-overlay');
+            if (overlay) overlay.classList.remove('open');
+        }
+
+        // Custom Dropdown for Filter Panel
+        window.toggleCustomDropdown = function(triggerEl) {
+            const wrap = triggerEl.closest('.custom-dropdown-wrap');
+            if (!wrap) return;
+            const menu = wrap.querySelector('.custom-dropdown-menu');
+            const chevron = wrap.querySelector('.dropdown-chevron');
+            const isOpened = !menu.classList.contains('hidden');
+            
+            document.querySelectorAll('.custom-dropdown-menu').forEach(m => m.classList.add('hidden'));
+            document.querySelectorAll('.dropdown-chevron').forEach(c => c.style.transform = 'rotate(0deg)');
+            
+            if (!isOpened) {
+                menu.classList.remove('hidden');
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+            }
+        };
+
+        window.selectCustomOption = function(optionEl, val, labelText) {
+            const wrap = optionEl.closest('.custom-dropdown-wrap');
+            if (!wrap) return;
+            const select = wrap.querySelector('select');
+            if (select) {
+                select.value = val;
+                select.dispatchEvent(new Event('change'));
+            }
+            const labelSpan = wrap.querySelector('[id^="label_"]');
+            if (labelSpan) labelSpan.innerText = labelText;
+            
+            wrap.querySelectorAll('.dropdown-option').forEach(opt => {
+                opt.classList.remove('bg-[#2c3048]', 'text-[#fcd576]', 'font-bold');
+                opt.classList.add('text-gray-200');
+            });
+            optionEl.classList.add('bg-[#2c3048]', 'text-[#fcd576]', 'font-bold');
+            optionEl.classList.remove('text-gray-200');
+            
+            const menu = wrap.querySelector('.custom-dropdown-menu');
+            const chevron = wrap.querySelector('.dropdown-chevron');
+            if (menu) menu.classList.add('hidden');
+            if (chevron) chevron.style.transform = 'rotate(0deg)';
+        };
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.custom-dropdown-wrap')) {
+                document.querySelectorAll('.custom-dropdown-menu').forEach(m => m.classList.add('hidden'));
+                document.querySelectorAll('.dropdown-chevron').forEach(c => c.style.transform = 'rotate(0deg)');
+            }
+        });
+
+        window.updateFilterLabel = function(selectEl) {
+            if (!selectEl) return;
+            const lbl = document.getElementById('label_' + selectEl.id);
+            if (lbl && selectEl.selectedIndex >= 0) {
+                lbl.innerText = selectEl.options[selectEl.selectedIndex].text;
+            }
+        };
+
+        window.selectAZFilter = function(btn, val) {
+            document.querySelectorAll('.filter-az-btn').forEach(b => {
+                b.classList.remove('active-filter-btn');
+                b.classList.add('inactive-filter-btn');
+            });
+            btn.classList.remove('inactive-filter-btn');
+            btn.classList.add('active-filter-btn');
+            window.selectedAZ = val;
+        };
+
+        window.resetFilterPanel = function() {
+            ['filterTopic', 'filterCountry', 'filterYear', 'filterList'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.value = '';
+                    window.updateFilterLabel(el);
+                }
+            });
+            const firstAZ = document.querySelector('.filter-az-btn');
+            if (firstAZ) window.selectAZFilter(firstAZ, '');
+        };
+    </script>
+
+    <!-- Multi-Source API & Universal Card Script -->
+    <script>
+    (function() {
+        const categoryMap = {
+            'hanh-dong': 'Phim Hành Động',
+            'tinh-cam': 'Phim Tình Cảm',
+            'hai-huoc': 'Phim Hài Hước',
+            'co-trang': 'Phim Cổ Trang',
+            'tam-ly': 'Phim Tâm Lý',
+            'hinh-su': 'Phim Hình Sự',
+            'chien-tranh': 'Phim Chiến Tranh',
+            'the-thao': 'Phim Thể Thao',
+            'vo-thuat': 'Phim Võ Thuật',
+            'vien-tuong': 'Phim Viễn Tưởng',
+            'phieu-luu': 'Phim Phiêu Lưu',
+            'khoa-hoc': 'Phim Khoa Học',
+            'kinh-di': 'Phim Kinh Dị',
+            'am-nhac': 'Phim Âm Nhạc',
+            'than-thoai': 'Phim Thần Thoại',
+            'tai-lieu': 'Phim Tài Liệu',
+            'gia-dinh': 'Phim Gia Đình',
+            'chinh-kich': 'Phim Chính Kịch',
+            'bi-an': 'Phim Bí Ẩn',
+            'hoc-duong': 'Phim Học Đường'
+        };
+
+        const urlParams = new URLSearchParams(window.location.search);
+        let categorySlug = urlParams.get('category') || 'hanh-dong';
+        let currentPage = parseInt(urlParams.get('page')) || 1;
+        let totalPages = 1;
+
+        const titleEl = document.getElementById('pageTitle');
+        if (titleEl) {
+            titleEl.textContent = categoryMap[categorySlug] || (categorySlug ? 'Phim ' + categorySlug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : 'Thể Loại Phim');
+        }
+        document.title = (categoryMap[categorySlug] || 'Thể Loại Phim') + ' - A Phim';
+
+        window.toggleFilterPanel = function() {
+            const panel = document.getElementById('filterPanel');
+            if (panel) panel.classList.toggle('hidden');
+        };
+
+        window.applyFilterPanel = function() {
+            const selectedCountry = document.getElementById('filterCountry')?.value;
+            const selectedList = document.getElementById('filterList')?.value;
+
+            if (selectedCountry) {
+                window.location.href = 'phim-theo-quoc-gia.html?country=' + selectedCountry;
+            } else if (selectedList) {
+                window.location.href = 'danh-sach.html?list=' + selectedList;
+            } else {
+                window.location.reload();
+            }
+        };
+
+        async function loadMovies(page) {
+            currentPage = page;
+            const gridEl = document.getElementById('movieGrid');
+            gridEl.innerHTML = `
+                <div class="col-span-full py-16 flex flex-col items-center justify-center text-gray-400">
+                    <div class="w-10 h-10 border-4 border-[#ff9900] border-t-transparent rounded-full animate-spin"></div>
+                    <span class="mt-3 text-sm font-medium text-gray-300">Đang tải thể loại phim...</span>
+                </div>
+            `;
+
+            try {
+                const res = await window.APhimCore.fetchMovieGridData('category', categorySlug, page);
+                totalPages = res.totalPages || 50;
+
+                if (!res.items || !res.items.length) {
+                    gridEl.innerHTML = '<div class="col-span-full text-center py-20 text-gray-400 font-medium text-base">Không tìm thấy phim trong thể loại này.</div>';
+                    return;
+                }
+
+                gridEl.innerHTML = res.items.map(movie => window.APhimCore.createGridCardHTML(movie)).join('');
+                updatePaginationUI(page, totalPages);
+            } catch (err) {
+                console.warn('API error:', err);
+                try {
+                    const fallbackRes = await fetch(`https://phimapi.com/v1/api/the-loai/${categorySlug}?page=${page}`);
+                    if (fallbackRes.ok) {
+                        const fallbackData = await fallbackRes.json();
+                        const items = fallbackData.data?.items || fallbackData.items || [];
+                        totalPages = fallbackData.data?.params?.pagination?.totalPages || 50;
+                        if (items.length) {
+                            gridEl.innerHTML = items.map(movie => window.APhimCore ? window.APhimCore.createGridCardHTML(movie) : '').join('');
+                            updatePaginationUI(page, totalPages);
+                            return;
+                        }
+                    }
+                } catch(e) {}
+                gridEl.innerHTML = '<div class="col-span-full text-center py-16 text-red-400 font-medium">Có lỗi khi kết nối thể loại phim. Vui lòng thử lại sau.</div>';
+            }
+        }
+
+        function updatePaginationUI(page, total) {
+            const paginationWrap = document.getElementById('paginationWrap');
+            const pageInput = document.getElementById('pageInput');
+            const totalPagesText = document.getElementById('totalPagesText');
+            const prevBtn = document.getElementById('prevPageBtn');
+            const nextBtn = document.getElementById('nextPageBtn');
+
+            if (paginationWrap) paginationWrap.classList.remove('hidden');
+            if (pageInput) {
+                pageInput.value = page;
+                pageInput.max = total;
+            }
+            if (totalPagesText) totalPagesText.textContent = total;
+
+            if (prevBtn) prevBtn.disabled = page <= 1;
+            if (nextBtn) nextBtn.disabled = page >= total;
+
+            // Top Quick Pagination sync
+            const topCur = document.getElementById('topCurrentPage');
+            const topTot = document.getElementById('topTotalPages');
+            const topPrev = document.getElementById('topPrevPageBtn');
+            const topNext = document.getElementById('topNextPageBtn');
+            if (topCur) topCur.textContent = page;
+            if (topTot) topTot.textContent = total;
+            if (topPrev) topPrev.disabled = page <= 1;
+            if (topNext) topNext.disabled = page >= total;
+        }
+
+        window.changePage = function(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 1 && newPage <= totalPages) {
+                const newUrl = new URL(window.location.href);
+                newUrl.searchParams.set('page', newPage);
+                window.history.pushState({}, '', newUrl.toString());
+                loadMovies(newPage);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        };
+
+        window.jumpToPage = function(val) {
+            let p = parseInt(val) || 1;
+            if (p < 1) p = 1;
+            if (p > totalPages) p = totalPages;
+            const newUrl = new URL(window.location.href);
+            newUrl.searchParams.set('page', p);
+            window.history.pushState({}, '', newUrl.toString());
+            loadMovies(p);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => loadMovies(currentPage));
+        } else {
+            loadMovies(currentPage);
+        }
+    })();
+    </script>
+    <!-- ====== APhim Catfish Banner + Popup ====== -->
+    <link rel="stylesheet" href="/css/catfish-banner.css?v=20">
+    <script src="/js/catfish-banner.js?v=20" defer></script>
+    <!-- ====== End Catfish Banner ====== -->
 </body>
-
 </html>
-
-
-

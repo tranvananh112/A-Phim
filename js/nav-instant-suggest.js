@@ -1,34 +1,36 @@
 /**
- * APhim — Nav Instant Search Suggestion Module v3.2
+ * APhim — Nav Instant Search Suggestion Module v4.0
  * ─────────────────────────────────────────────────────────────
  * • Gợi ý phim realtime theo từng chữ cái trực tiếp khi người dùng gõ
  * • Tự động căn chỉnh 1:1 chuẩn xác cả mép Trái & mép Phải khớp 100% với khung thanh tìm kiếm
- * • Tự động chuyển hướng chuẩn: movie-detail.html (Web tĩnh) hoặc /phim/slug (Node SSR)
+ * • Thiết kế khung gợi ý chuẩn theo Hình 1 (Bo góc 16px, viền vàng ánh kim, badge FHD, năm, số tập)
+ * • Chuyển hướng chuẩn: /watch/slug & /search?keyword=
  */
 (function () {
     'use strict';
 
     const STYLE = `
-        /* ── Suggestion Panel Container ── */
+        /* ── Suggestion Panel Container (Matching Image 1) ── */
         .ap-suggest-panel {
             position: fixed;
             z-index: 999999;
-            background: rgba(15, 17, 26, 0.98);
-            border: 1px solid rgba(252, 213, 118, 0.35);
+            background: #141721;
+            border: 1px solid rgba(212, 175, 55, 0.45);
             border-radius: 16px;
             overflow: hidden;
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 25px rgba(252, 213, 118, 0.2);
-            transform: translateY(-8px) scale(0.98);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 25px rgba(212, 175, 55, 0.2);
+            transform: translateY(4px) scale(0.99);
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.2s cubic-bezier(.4,0,.2,1), transform 0.2s cubic-bezier(.4,0,.2,1);
+            transition: opacity 0.18s cubic-bezier(.4,0,.2,1), transform 0.18s cubic-bezier(.4,0,.2,1);
             max-height: 80vh;
             overflow-y: auto;
             scrollbar-width: thin;
-            scrollbar-color: rgba(252, 213, 118, 0.3) transparent;
+            scrollbar-color: rgba(212, 175, 55, 0.3) transparent;
             box-sizing: border-box !important;
+            font-family: 'Inter', 'Be Vietnam Pro', system-ui, -apple-system, sans-serif !important;
         }
         .ap-suggest-panel.visible {
             opacity: 1;
@@ -40,42 +42,42 @@
         .ap-suggest-row {
             display: flex !important;
             align-items: center !important;
-            gap: 10px !important;
-            padding: 9px 12px !important;
+            gap: 12px !important;
+            padding: 10px 14px !important;
             text-decoration: none !important;
             cursor: pointer !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-            transition: background 0.2s ease, border-color 0.2s ease !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+            transition: background 0.18s ease, border-color 0.18s ease !important;
             background: transparent !important;
             width: 100% !important;
             box-sizing: border-box !important;
         }
-        .ap-suggest-row:last-child {
+        .ap-suggest-row:last-of-type {
             border-bottom: none !important;
         }
         .ap-suggest-row:hover,
         .ap-suggest-row:focus {
-            background: rgba(252, 213, 118, 0.12) !important;
+            background: rgba(255, 255, 255, 0.05) !important;
             outline: none !important;
         }
         .ap-suggest-row:hover .ap-suggest-title {
-            color: #fcd576 !important;
+            color: #facc15 !important;
         }
 
-        /* ── Thumbnail Image ── */
+        /* ── Thumbnail Image (Image 1 Specs: ~48x68px, Radius 8px) ── */
         .ap-suggest-thumb-box {
-            width: 40px !important;
-            min-width: 40px !important;
-            max-width: 40px !important;
-            height: 56px !important;
-            min-height: 56px !important;
-            max-height: 56px !important;
-            border-radius: 7px !important;
+            width: 48px !important;
+            min-width: 48px !important;
+            max-width: 48px !important;
+            height: 68px !important;
+            min-height: 68px !important;
+            max-height: 68px !important;
+            border-radius: 8px !important;
             overflow: hidden !important;
             flex-shrink: 0 !important;
             background: #0d0f1a !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5) !important;
         }
         .ap-suggest-thumb {
             width: 100% !important;
@@ -93,51 +95,55 @@
             gap: 3px !important;
         }
         .ap-suggest-title {
-            font-size: 13.5px !important;
+            font-size: 14.5px !important;
             font-weight: 700 !important;
             color: #ffffff !important;
             white-space: nowrap !important;
             overflow: hidden !important;
             text-overflow: ellipsis !important;
             transition: color 0.15s ease !important;
-            line-height: 1.25 !important;
+            line-height: 1.3 !important;
         }
         .ap-suggest-en {
-            font-size: 11px !important;
-            color: rgba(255, 255, 255, 0.5) !important;
+            font-size: 12px !important;
+            color: #94a3b8 !important;
             white-space: nowrap !important;
             overflow: hidden !important;
             text-overflow: ellipsis !important;
+            font-weight: 400 !important;
         }
         .ap-suggest-meta-row {
             display: flex !important;
             align-items: center !important;
-            gap: 5px !important;
-            font-size: 10.5px !important;
-            color: #9ca3af !important;
+            gap: 6px !important;
+            font-size: 11.5px !important;
+            color: #94a3b8 !important;
+            margin-top: 2px !important;
+            font-weight: 500 !important;
         }
         .ap-suggest-badge {
-            font-size: 9.5px !important;
+            font-size: 10px !important;
             font-weight: 800 !important;
-            padding: 1px 5px !important;
+            padding: 1px 6px !important;
             border-radius: 4px !important;
-            background: rgba(252, 213, 118, 0.15) !important;
-            color: #fcd576 !important;
-            border: 1px solid rgba(252, 213, 118, 0.3) !important;
+            background: rgba(234, 179, 8, 0.15) !important;
+            color: #facc15 !important;
+            border: 1px solid rgba(234, 179, 8, 0.35) !important;
             text-transform: uppercase !important;
+            line-height: 1.3 !important;
         }
 
-        /* ── "View All Results" Footer Row ── */
+        /* ── "View All Results" Footer Row (Matching Image 1) ── */
         .ap-suggest-footer {
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            gap: 6px !important;
-            padding: 10px 12px !important;
-            font-size: 12px !important;
-            font-weight: 800 !important;
-            color: #fcd576 !important;
-            background: rgba(252, 213, 118, 0.06) !important;
+            gap: 8px !important;
+            padding: 12px 14px !important;
+            font-size: 13.5px !important;
+            font-weight: 700 !important;
+            color: #facc15 !important;
+            background: rgba(0, 0, 0, 0.25) !important;
             border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
             text-decoration: none !important;
             cursor: pointer !important;
@@ -145,16 +151,8 @@
             text-align: center !important;
         }
         .ap-suggest-footer:hover {
-            background: rgba(252, 213, 118, 0.18) !important;
+            background: rgba(234, 179, 8, 0.15) !important;
             color: #ffffff !important;
-        }
-
-        /* ── Top Glow Accent Line ── */
-        .ap-suggest-panel::before {
-            content: '';
-            display: block;
-            height: 2px;
-            background: linear-gradient(90deg, transparent 5%, #fcd576 50%, transparent 95%);
         }
 
         /* ── Backdrop ── */
@@ -234,7 +232,7 @@
         return rawImg;
     }
 
-    function buildRow(movie, isNodeSSR) {
+    function buildRow(movie) {
         const thumb = buildImgSrc(movie);
         const title = (movie.name || movie.title || '').replace(/</g, '&lt;').replace(/"/g, '&quot;');
         const enTitle = (movie.origin_name || '').replace(/</g, '&lt;').replace(/"/g, '&quot;');
@@ -243,7 +241,7 @@
         const ep = movie.episode_current || '';
         const slug = movie.slug || '';
         
-        const detailUrl = isNodeSSR ? `/phim/${slug}` : `movie-detail.html?slug=${slug}`;
+        const detailUrl = `/phim/${slug}`;
 
         return `
             <a class="ap-suggest-row" href="${detailUrl}">
@@ -268,8 +266,6 @@
         if (!input || input.dataset.apSuggestAttached) return;
         input.dataset.apSuggestAttached = 'true';
 
-        const isNodeSSR = (typeof window !== 'undefined' && window.__IS_NODE_SERVER__ === true);
-
         // Tạo Panel & Backdrop
         const panel = document.createElement('div');
         const backdrop = document.createElement('div');
@@ -283,7 +279,8 @@
         document.body.appendChild(panel);
 
         function getSearchContainer() {
-            return input.closest('.nav-search-v2') ||
+            return input.closest('.sofa-search-form') ||
+                   input.closest('.nav-search-v2') ||
                    input.closest('.mobile-inline-search') ||
                    input.closest('.mobile-search-overlay') ||
                    input.closest('form') ||
@@ -319,13 +316,15 @@
                 return;
             }
 
-            let html = movies.map(m => buildRow(m, isNodeSSR)).join('');
+            let html = movies.map(m => buildRow(m)).join('');
 
-            const searchPageUrl = isNodeSSR ? `/search?q=${encodeURIComponent(keyword)}` : `search.html?q=${encodeURIComponent(keyword)}`;
+            const searchPageUrl = `/search?keyword=${encodeURIComponent(keyword)}`;
 
             html += `
                 <a class="ap-suggest-footer" href="${searchPageUrl}">
-                    <span class="material-icons-round" style="font-size:15px;">search</span>
+                    <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
                     Xem tất cả cho "${keyword.length > 20 ? keyword.slice(0, 20) + '…' : keyword}"
                 </a>
             `;
@@ -351,7 +350,7 @@
                     panel.style.display = 'none';
                     backdrop.style.display = 'none';
                 }
-            }, 200);
+            }, 180);
         }
 
         async function onKeyword(kw) {
@@ -370,7 +369,8 @@
             }
         }
 
-        input.addEventListener('input', () => {
+        input.addEventListener('input', (e) => {
+            if (e && e.isComposing) return;
             clearTimeout(debounceTimer);
             const v = input.value.trim();
             if (!v || v.length < 2) {
@@ -378,7 +378,11 @@
                 lastKeyword = '';
                 return;
             }
-            debounceTimer = setTimeout(() => onKeyword(v), 150);
+            debounceTimer = setTimeout(() => onKeyword(v), 120);
+        });
+
+        input.addEventListener('compositionend', () => {
+            input.dispatchEvent(new Event('input'));
         });
 
         input.addEventListener('focus', () => {
@@ -417,6 +421,8 @@
         injectCSS();
 
         const selectors = [
+            '.sofa-search-input',
+            'input[name="keyword"]',
             '.nav-search-v2 input',
             '.nav-search-v2 input[type="text"]',
             'form[action*="search"] input',
@@ -438,8 +444,8 @@
     }
 
     window.addEventListener('load', () => {
-        setTimeout(init, 500);
+        setTimeout(init, 300);
     });
 
     window.initNavInstantSuggest = init;
-})();
+})();

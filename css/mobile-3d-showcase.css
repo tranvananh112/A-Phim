@@ -1,0 +1,624 @@
+/**
+ * APHIM SUPER - MOBILE 3D COVERFLOW SHOWCASE
+ * Chuẩn 3D hiện đại Top 1 dành riêng cho giao diện Mobile Trang Chủ
+ * Ánh sáng hào quang (Ambient Glow / Ánh xạ) CHỈ dành riêng cho ảnh phim 3D phía trên
+ * Các mục thông tin bên dưới (Nút Xem Phim, Thông Tin, Badges, Tóm tắt, Dots) giữ màu chuẩn, không bị ánh xạ
+ */
+
+/* 1. Chỉ hiển thị trên Mobile (< 769px), Desktop ẩn hoàn toàn */
+#mobile3DShowcaseSection {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    #mobile3DShowcaseSection {
+        display: block !important;
+        position: relative;
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        margin-top: 2px;
+        margin-bottom: 24px;
+        overflow-x: clip;
+        user-select: none;
+        -webkit-user-select: none;
+        padding-bottom: 6px;
+        box-sizing: border-box;
+        --showcase-glow-color: rgba(245, 158, 11, 0.55);
+        --showcase-ambient-color: rgba(245, 158, 11, 0.35);
+        --showcase-ambient-sub: rgba(217, 119, 6, 0.15);
+        --showcase-border-color: rgba(255, 255, 255, 0.95);
+    }
+
+    /* Topbar with "Đề xuất" Capsule Pill */
+    .showcase-3d-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 4px;
+        margin-top: 4px;
+        margin-bottom: 18px;
+        position: relative;
+        z-index: 10;
+        height: 32px;
+        box-sizing: border-box;
+    }
+
+    .showcase-top-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px 16px;
+        border-radius: 9999px;
+        font-size: 13.5px;
+        font-weight: 800;
+        letter-spacing: -0.2px;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        color: #f1f5f9;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        cursor: pointer;
+        transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .showcase-top-pill:active {
+        transform: scale(0.95);
+    }
+
+    /* 3D Viewport Stage (Perfect Center Balance & Cinematic Proportions) */
+    .showcase-3d-stage {
+        position: relative;
+        width: 100%;
+        height: clamp(320px, 86vw, 368px);
+        perspective: 800px;
+        -webkit-perspective: 800px;
+        perspective-origin: 50% 50%;
+        -webkit-perspective-origin: 50% 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        touch-action: pan-y pinch-zoom;
+        z-index: 2;
+        overflow: visible;
+        margin: 0 auto 16px auto;
+    }
+
+    /* Ambient Spotlight Background BÊN TRONG STAGE (Chỉ phủ quanh poster phim bên trên) */
+    .showcase-3d-ambient-light {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 340px;
+        height: 340px;
+        max-height: 340px;
+        background: radial-gradient(circle, var(--showcase-ambient-color, rgba(245, 158, 11, 0.45)) 0%, var(--showcase-ambient-sub, rgba(217, 119, 6, 0.15)) 45%, transparent 72%);
+        filter: blur(48px);
+        pointer-events: none;
+        z-index: 0;
+        transition: background 0.75s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: background;
+        opacity: 0.95;
+    }
+
+    .showcase-3d-card-track {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform-style: preserve-3d;
+        -webkit-transform-style: preserve-3d;
+        z-index: 2;
+    }
+
+    /* Individual 3D Poster Card (Hình to rõ, viền mỏng trắng tinh tế + 100% Bleed in all 4 rounded corners) */
+    .showcase-3d-card {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform-origin: center center;
+        -webkit-transform-origin: center center;
+        width: clamp(190px, 51vw, 218px);
+        height: clamp(298px, 80vw, 340px);
+        border-radius: 22px;
+        overflow: hidden;
+        -webkit-mask-image: -webkit-radial-gradient(white, black);
+        mask-image: -webkit-radial-gradient(white, black);
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        transform-style: preserve-3d;
+        -webkit-transform-style: preserve-3d;
+        cursor: pointer;
+        transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), 
+                    opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), 
+                    box-shadow 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                    border-color 0.45s ease;
+        will-change: transform, opacity, box-shadow;
+        background: #0d0f18;
+        box-sizing: border-box;
+        border: 1.8px solid rgba(255, 255, 255, 0.65);
+        isolation: isolate;
+    }
+
+    .showcase-3d-card img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        object-position: center top !important;
+        display: block !important;
+        border-radius: inherit !important;
+        -webkit-border-radius: inherit !important;
+        -webkit-mask-image: -webkit-radial-gradient(white, black);
+        mask-image: -webkit-radial-gradient(white, black);
+        transform: scale(1.02); /* Micro-scale to bleed perfectly into all 4 rounded corners */
+        pointer-events: none;
+    }
+
+    /* State 0: Active / Center Card (Hình lớn nổi bật + Bọc viền mỏng trắng sắc nét + Ánh xạ hào quang) */
+    .showcase-3d-card.is-center {
+        transform: translate3d(-50%, -50%, 75px) scale(1.04);
+        opacity: 1;
+        z-index: 30;
+        border: 2px solid #ffffff !important;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55), 
+                    0 0 35px var(--showcase-glow-color, rgba(245, 158, 11, 0.65)),
+                    0 0 70px var(--showcase-ambient-color, rgba(245, 158, 11, 0.35));
+    }
+
+    /* State -1: Left Card (Cân đều mép lề trái đối xứng hoàn hảo + Viền mỏng trắng) */
+    .showcase-3d-card.is-left {
+        transform: translate3d(calc(-50% - clamp(96px, 26vw, 108px)), -50%, -42px) scale(0.85) rotateY(18deg);
+        opacity: 0.85;
+        z-index: 20;
+        border: 1.8px solid rgba(255, 255, 255, 0.7) !important;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+    }
+
+    /* State +1: Right Card (Cân đều mép lề phải đối xứng hoàn hảo + Viền mỏng trắng) */
+    .showcase-3d-card.is-right {
+        transform: translate3d(calc(-50% + clamp(96px, 26vw, 108px)), -50%, -42px) scale(0.85) rotateY(-18deg);
+        opacity: 0.85;
+        z-index: 20;
+        border: 1.8px solid rgba(255, 255, 255, 0.7) !important;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+    }
+
+    /* State -2: Far Left */
+    .showcase-3d-card.is-far-left {
+        transform: translate3d(calc(-50% - 220px), -50%, -120px) scale(0.62) rotateY(28deg);
+        opacity: 0;
+        z-index: 10;
+        pointer-events: none;
+    }
+
+    /* State +2: Far Right */
+    .showcase-3d-card.is-far-right {
+        transform: translate3d(calc(-50% + 220px), -50%, -120px) scale(0.62) rotateY(-28deg);
+        opacity: 0;
+        z-index: 10;
+        pointer-events: none;
+    }
+
+    /* Responsive fine-tuning for standard mobile (390px - 430px: iPhone 13/14/15/16 Pro Max, Plus, Standard) */
+    @media (max-width: 430px) {
+        .showcase-3d-stage {
+            height: 326px;
+        }
+        .showcase-3d-card {
+            width: 196px;
+            height: 304px;
+            border-radius: 21px;
+        }
+        .showcase-3d-card.is-left {
+            transform: translate3d(calc(-50% - 100px), -50%, -40px) scale(0.85) rotateY(18deg);
+        }
+        .showcase-3d-card.is-right {
+            transform: translate3d(calc(-50% + 100px), -50%, -40px) scale(0.85) rotateY(-18deg);
+        }
+    }
+
+    /* Responsive fine-tuning for compact mobile (<= 380px: iPhone SE / 12 Mini / Galaxy A) */
+    @media (max-width: 380px) {
+        .showcase-3d-stage {
+            height: 305px;
+        }
+        .showcase-3d-card {
+            width: 182px;
+            height: 284px;
+            border-radius: 19px;
+        }
+        .showcase-3d-card.is-left {
+            transform: translate3d(calc(-50% - 92px), -50%, -38px) scale(0.84) rotateY(16deg);
+        }
+        .showcase-3d-card.is-right {
+            transform: translate3d(calc(-50% + 92px), -50%, -38px) scale(0.84) rotateY(-16deg);
+        }
+    }
+
+    /* Responsive fine-tuning for ultra-compact mobile (<= 340px) */
+    @media (max-width: 340px) {
+        .showcase-3d-stage {
+            height: 280px;
+        }
+        .showcase-3d-card {
+            width: 165px;
+            height: 260px;
+            border-radius: 17px;
+        }
+        .showcase-3d-card.is-left {
+            transform: translate3d(calc(-50% - 82px), -50%, -34px) scale(0.82) rotateY(14deg);
+        }
+        .showcase-3d-card.is-right {
+            transform: translate3d(calc(-50% + 82px), -50%, -34px) scale(0.82) rotateY(-14deg);
+        }
+    }
+
+    .showcase-3d-card.is-hidden {
+        opacity: 0;
+        transform: translate3d(-50%, -50%, -220px) scale(0.5);
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    /* ─── MOVIE INFORMATION PANEL (KHÔNG ÁNH XẠ, GIỮ BỐ CỤC SẠCH ĐẸP) ─── */
+    .showcase-3d-info-box {
+        position: relative;
+        z-index: 10;
+        text-align: center;
+        padding: 0 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        box-sizing: border-box;
+        background: transparent;
+    }
+
+    /* Khung chứa Tiêu Đề cố định chiều cao (Khóa cứng 72px để không bị nhảy layout) */
+    .showcase-3d-title-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        width: 100%;
+        height: 72px;
+        min-height: 72px;
+        max-height: 72px;
+        box-sizing: border-box;
+    }
+
+    .showcase-3d-title {
+        font-size: 18px;
+        font-weight: 800;
+        color: #ffffff;
+        line-height: 1.25;
+        margin: 0;
+        padding: 0 8px;
+        letter-spacing: -0.3px;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+        max-height: 46px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    .showcase-3d-origin-title {
+        font-size: 12.5px;
+        color: #94a3b8;
+        font-weight: 600;
+        height: 18px;
+        min-height: 18px;
+        line-height: 18px;
+        margin: 0;
+        padding: 0 12px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 90%;
+        box-sizing: border-box;
+    }
+
+    /* ─── DUAL ACTION CTA BUTTONS ─── */
+    .showcase-3d-actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
+        max-width: 350px;
+        height: 44px;
+        min-height: 44px;
+        margin-top: 2px;
+    }
+
+    /* DARK MODE: Nút Xem Phim (Hòa trộn Trắng & Vàng rực rỡ trên nền tối - Chữ Đen Rõ Rệt Không Chói Lóa) */
+    .btn-3d-watch,
+    .btn-3d-watch:link,
+    .btn-3d-watch:visited,
+    .btn-3d-watch:hover,
+    .btn-3d-watch:focus,
+    .btn-3d-watch:active {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        height: 44px !important;
+        background: linear-gradient(135deg, #ffffff 0%, #fffbeb 25%, #fef08a 60%, #fbbf24 100%) !important;
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+        font-size: 14.5px !important;
+        font-weight: 800 !important;
+        letter-spacing: -0.2px;
+        padding: 0 16px !important;
+        border-radius: 14px !important;
+        border: none !important;
+        text-decoration: none !important;
+        box-shadow: 0 4px 18px rgba(251, 191, 36, 0.45), 0 2px 6px rgba(0, 0, 0, 0.35) !important;
+        text-shadow: none !important;
+        transition: transform 0.2s ease, filter 0.2s ease !important;
+    }
+
+    .btn-3d-watch span,
+    .btn-3d-watch * {
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+        text-shadow: none !important;
+        font-weight: 800 !important;
+    }
+
+    .btn-3d-watch svg,
+    .btn-3d-watch svg path {
+        fill: #000000 !important;
+        color: #000000 !important;
+        filter: none !important;
+    }
+
+    .btn-3d-watch:active {
+        transform: scale(0.96);
+        filter: brightness(0.95);
+    }
+
+    /* DARK MODE: Nút Thông Tin */
+    .btn-3d-info {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        height: 44px !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+        font-size: 14.5px !important;
+        font-weight: 700 !important;
+        padding: 0 16px !important;
+        border-radius: 14px !important;
+        border: 1px solid rgba(255, 255, 255, 0.16) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        text-decoration: none !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+        transition: transform 0.2s ease !important;
+    }
+
+    .btn-3d-info svg {
+        fill: #ffffff;
+    }
+
+    .btn-3d-info:active {
+        transform: scale(0.96);
+    }
+
+    /* ─── BADGES ─── */
+    .showcase-3d-badges {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: nowrap;
+        height: 28px;
+        min-height: 28px;
+        margin-top: 2px;
+        overflow: hidden;
+    }
+
+    .showcase-badge-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px 11px;
+        border-radius: 8px;
+        font-size: 11.5px;
+        font-weight: 700;
+        background: #1e2433;
+        color: #cbd5e1;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        white-space: nowrap;
+    }
+
+    /* DARK MODE: Nhãn FHD Hòa trộn Trắng & Vàng không viền */
+    .showcase-badge-quality {
+        background: linear-gradient(135deg, #ffffff 0%, #fffbeb 30%, #fef08a 65%, #fcd34d 100%) !important;
+        color: #000000 !important;
+        border: none !important;
+        box-shadow: 0 2px 10px rgba(253, 224, 71, 0.45) !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.2px;
+        text-shadow: none !important;
+    }
+
+    /* ─── TÓM TẮT PHIM ─── */
+    .showcase-3d-desc {
+        font-size: 12px;
+        line-height: 1.55;
+        color: #94a3b8;
+        max-width: 340px;
+        margin: 0 auto;
+        padding: 0 6px;
+        height: 38px;
+        min-height: 38px;
+        max-height: 38px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    /* ─── PAGINATION DOTS ─── */
+    .showcase-3d-pagination {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 8px;
+        height: 14px;
+        min-height: 14px;
+    }
+
+    .showcase-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.24);
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+    }
+
+    .showcase-dot.active {
+        width: 24px;
+        border-radius: 12px;
+        background: #f59e0b !important;
+        box-shadow: 0 0 8px rgba(245, 158, 11, 0.4) !important;
+    }
+}
+
+/* =================================================================
+   LIGHT MODE ADAPTATION (RIÊNG BIỆT CHO NỀN SÁNG / KEM)
+   ================================================================= */
+html.light-mode #mobile3DShowcaseSection {
+    background: transparent;
+}
+
+html.light-mode .showcase-top-pill {
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    color: #1c1917 !important;
+    box-shadow: 0 2px 8px rgba(78, 64, 45, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(215, 202, 183, 0.75) !important;
+}
+
+html.light-mode .showcase-3d-ambient-light {
+    background: radial-gradient(circle, var(--showcase-ambient-color, rgba(245, 158, 11, 0.18)) 0%, var(--showcase-ambient-sub, rgba(252, 213, 118, 0.06)) 45%, transparent 75%) !important;
+    filter: blur(35px) !important;
+}
+
+html.light-mode .showcase-3d-card.is-center {
+    border: 2px solid #ffffff !important;
+    box-shadow: 0 16px 36px rgba(78, 64, 45, 0.22), 
+                0 0 32px var(--showcase-glow-color, rgba(245, 158, 11, 0.5)), 
+                0 0 60px var(--showcase-ambient-color, rgba(245, 158, 11, 0.28)) !important;
+}
+
+html.light-mode .showcase-3d-card.is-left,
+html.light-mode .showcase-3d-card.is-right {
+    border: 1.8px solid #ffffff !important;
+    box-shadow: 0 10px 24px rgba(78, 64, 45, 0.16) !important;
+    opacity: 0.88 !important;
+}
+
+html.light-mode .showcase-3d-title {
+    color: #1c1917 !important;
+    text-shadow: none !important;
+}
+
+html.light-mode .showcase-3d-origin-title {
+    color: #78716c !important;
+}
+
+/* LIGHT MODE: Nút Xem Phim (Màu Vàng Mật Ong Hoàng Gia êm dịu, không chói) */
+html.light-mode .btn-3d-watch,
+html.light-mode .btn-3d-watch:link,
+html.light-mode .btn-3d-watch:visited,
+html.light-mode .btn-3d-watch:hover,
+html.light-mode .btn-3d-watch:focus,
+html.light-mode .btn-3d-watch:active {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 35%, #f59e0b 75%, #d97706 100%) !important;
+    color: #1c1917 !important;
+    -webkit-text-fill-color: #1c1917 !important;
+    border: none !important;
+    box-shadow: 0 4px 14px rgba(217, 119, 6, 0.22), 0 1px 3px rgba(78, 64, 45, 0.1) !important;
+    text-shadow: none !important;
+}
+
+html.light-mode .btn-3d-watch span,
+html.light-mode .btn-3d-watch * {
+    color: #1c1917 !important;
+    -webkit-text-fill-color: #1c1917 !important;
+    text-shadow: none !important;
+    font-weight: 800 !important;
+}
+
+html.light-mode .btn-3d-watch svg,
+html.light-mode .btn-3d-watch svg path {
+    fill: #1c1917 !important;
+    color: #1c1917 !important;
+    filter: none !important;
+}
+
+/* LIGHT MODE: Nút Thông Tin */
+html.light-mode .btn-3d-info {
+    background: #ffffff !important;
+    color: #1c1917 !important;
+    border: 1.5px solid rgba(215, 202, 183, 0.85) !important;
+    box-shadow: 0 2px 8px rgba(78, 64, 45, 0.08) !important;
+    font-weight: 700 !important;
+}
+
+html.light-mode .btn-3d-info svg {
+    fill: #1c1917 !important;
+}
+
+/* LIGHT MODE: Badges thông số */
+html.light-mode .showcase-badge-pill {
+    background: #ffffff !important;
+    color: #44403c !important;
+    border: 1px solid rgba(215, 202, 183, 0.85) !important;
+    box-shadow: 0 1px 3px rgba(78, 64, 45, 0.06) !important;
+    font-weight: 700 !important;
+}
+
+/* LIGHT MODE: Nhãn FHD (Vàng hổ phách êm dịu, hài hòa nền kem) */
+html.light-mode .showcase-badge-quality {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 60%, #fcd34d 100%) !important;
+    color: #78350f !important;
+    border: 1px solid rgba(245, 158, 11, 0.28) !important;
+    box-shadow: 0 1px 3px rgba(217, 119, 6, 0.1) !important;
+    font-weight: 800 !important;
+    text-shadow: none !important;
+}
+
+html.light-mode .showcase-3d-desc {
+    color: #57534e !important;
+}
+
+html.light-mode .showcase-dot {
+    background: rgba(78, 64, 45, 0.22) !important;
+}
+
+html.light-mode .showcase-dot.active {
+    background: #f59e0b !important;
+    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.35) !important;
+}

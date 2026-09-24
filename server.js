@@ -7,6 +7,9 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+process.on('uncaughtException', err => console.error('⚠️ UncaughtException:', err.message));
+process.on('unhandledRejection', reason => console.error('⚠️ UnhandledRejection:', reason));
+
 // ===== VIEW ENGINE: EJS =====
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -17,7 +20,25 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ===== STATIC FILES: Serve từ thư mục gốc =====
-app.use(express.static(__dirname));
+// No-cache middleware for HTML files to avoid stale UI
+app.use((req, res, next) => {
+    if (req.path.endsWith('.html') || req.path === '/' || req.path.startsWith('/watch') || req.path.startsWith('/xem-phim')) {
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+    }
+    next();
+});
+
+app.use(express.static(__dirname, {
+    setHeaders: (res, p) => {
+        if (p.endsWith('.html')) {
+            res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+            res.setHeader('Pragma', 'no-cache');
+            res.setHeader('Expires', '0');
+        }
+    }
+}));
 
 // ===== STATIC: Serve icons/ ra đường dẫn root (để Lottie load /icon-*.json) =====
 // VD: GET /icon-phim-bo.json → f:\Wesite Xem Phim Node\icons\icon-phim-bo.json
@@ -43,319 +64,36 @@ function queuedFetch(url, options) {
 }
 
 // ==========================================
-// ROUTES: PAGES (SSR với EJS)
+// ROUTES: PAGES (Phục vụ file HTML trực tiếp theo kiến trúc Static HTML)
 // ==========================================
 
 // Trang chủ
-app.get('/', async (req, res) => {
-    let movies = [];
-    try {
-        const response = await axios.get('https://ophim1.com/danh-sach/phim-moi-cap-nhat?page=1', { timeout: 5000 });
-        movies = response.data && response.data.items ? response.data.items : (response.data && response.data.data ? response.data.data.items || [] : []);
-    } catch (e) {
-        try {
-            const response2 = await axios.get('https://ophim1.com/danh-sach/phim-moi-cap-nhat?page=1', { timeout: 5000 });
-            movies = response2.data && response2.data.items ? response2.data.items : (response2.data && response2.data.data ? response2.data.data.items || [] : []);
-        } catch (err) {
-            console.error('Lỗi lấy dữ liệu trang chủ:', err.message);
-        }
-    }
-    res.render('index', {
-        title: 'APhim | Xem Phim Mới 2026 | Phim Hay Vietsub | Phim Full HD Miễn Phí',
-        currentPage: 'home',
-        movies: movies,
-        metaDescription: 'APhim - Website xem phim trực tuyến chất lượng Full HD miễn phí. Kho phim mới khổng lồ, phim chiếu rạp, phim lẻ, phim bộ được cập nhật thường xuyên 2026.',
-        canonicalUrl: 'https://aphim.top/',
-        ogTitle: 'APhim | Xem Phim Mới 2026 | Phim Hay Vietsub',
-        ogImage: 'https://aphim.top/android-chrome-512x512.png',
-        ogUrl: 'https://aphim.top/'
-    });
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+
+// Trang chi tiết phim (Hỗ trợ cả /phim/:slug và /movie-detail)
+app.get(['/phim/:slug', '/movie-detail', '/movie-detail.html', '/phim.html'], (req, res) => {
+    res.sendFile(path.join(__dirname, 'movie-detail.html'));
 });
 
-// Trang chi tiết phim (SEO-friendly URL: /phim/:slug)
-app.get('/phim/:slug', async (req, res) => {
-    const slug = req.params.slug;
-    if (slug.endsWith('.html') || slug.includes('.')) {
-        const cleanUrl = req.url.replace('/phim/', '/').replace('.html', '');
-        return res.redirect(301, cleanUrl);
-    }
-    try {
-        const response = await axios.get(`https://ophim1.com/phim/${slug}`, { timeout: 5000 });
-        const data = response.data;
-
-        if (data && data.status && data.movie) {
-            const movie = data.movie;
-            const episodes = data.episodes || [];
-            const name = movie.name || movie.title || '';
-            const originName = movie.origin_name || '';
-            const year = movie.year || new Date().getFullYear();
-            const genre = (movie.category && movie.category[0]) ? movie.category[0].name : 'Phim mới';
-            const country = (movie.country && movie.country[0]) ? movie.country[0].name : '';
-            const eps = movie.episode_total || '?';
-            const rawContent = movie.content ? movie.content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim() : '';
-            const content = rawContent.substring(0, 100);
-
-            // Chuẩn SEO Title: "Xem Phim [Tên Phim] Tập Mới Nhất - Vietsub Thuyết Minh HD [Năm]"
-            const seoEps = movie.episode_current && movie.episode_current.toLowerCase() !== 'full' ? `Tập ${movie.episode_current}` : 'Full HD';
-            const title = `Xem Phim ${name} ${seoEps} - Vietsub Thuyết Minh HD ${year}`;
-            
-            const isSeries = movie.type === 'series';
-            let desc;
-            if (isSeries) {
-                desc = `Xem phim ${name} (${originName}) ${year} Vietsub Thuyết Minh Full HD. Bộ phim ${genre} ${country} siêu hay gồm ${eps} tập. ${content}... Xem phim online chất lượng cao, không quảng cáo tại APhim.`;
-            } else {
-                desc = `Xem phim ${name} (${originName}) ${year} Vietsub Thuyết Minh Full HD. Phim chiếu rạp ${genre} ${country} cực đỉnh. ${content}... Xem phim online chất lượng cao, không quảng cáo tại APhim.`;
-            }
-            desc = desc.substring(0, 155);
-
-            const img = movie.thumb_url
-                ? (movie.thumb_url.startsWith('http') ? movie.thumb_url : 'https://phimimg.com/' + (movie.thumb_url.startsWith('uploads/') ? '' : 'uploads/movies/') + movie.thumb_url)
-                : 'https://aphim.top/android-chrome-512x512.png';
-            const pageUrl = `https://aphim.top/phim/${slug}`;
-
-            res.render('detail', {
-                title: title,
-                currentPage: 'detail',
-                movie: movie,
-                episodes: episodes,
-                metaDescription: desc,
-                canonicalUrl: pageUrl,
-                ogUrl: pageUrl,
-                ogTitle: title,
-                ogImage: img
-            });
-        } else {
-            res.status(404).render('404', { title: '404 - Không tìm thấy trang' });
-        }
-    } catch (error) {
-        console.error('Lỗi lấy chi tiết phim:', error.message);
-        res.status(404).send('Không tìm thấy phim yêu cầu');
-    }
+// Trang xem phim: /xem-phim, /xem-phim/*, /watch, /watch.html
+app.get(['/xem-phim', '/xem-phim/*', '/watch', '/watch.html'], (req, res) => {
+    res.sendFile(path.join(__dirname, 'watch.html'));
 });
 
-// Render trang xem phim mặc định khi không có slug
-app.get('/xem-phim', (req, res) => {
-    res.render('watch', {
-        title: 'Xem Phim - APhim',
-        currentPage: 'watch',
-        movie: null,
-        episodes: [],
-        episode: 'tap-1',
-        metaDescription: 'Xem phim online chất lượng cao, miễn phí tại APhim. Cập nhật phim mới mỗi ngày.',
-        canonicalUrl: 'https://aphim.top/xem-phim'
-    });
-});
+// Các trang danh sách, thể loại, quốc gia, tìm kiếm
+app.get(['/danh-sach', '/danh-sach.html'], (req, res) => res.sendFile(path.join(__dirname, 'danh-sach.html')));
+app.get(['/categories', '/categories.html', '/the-loai', '/the-loai/*'], (req, res) => res.sendFile(path.join(__dirname, 'categories.html')));
+app.get(['/phim-theo-quoc-gia', '/phim-theo-quoc-gia.html', '/countries', '/countries.html', '/quoc-gia', '/quoc-gia/*'], (req, res) => res.sendFile(path.join(__dirname, 'phim-theo-quoc-gia.html')));
+app.get(['/search', '/search.html', '/tim-kiem'], (req, res) => res.sendFile(path.join(__dirname, 'search.html')));
+app.get(['/pricing', '/pricing.html', '/vip'], (req, res) => res.sendFile(path.join(__dirname, 'pricing.html')));
+app.get(['/login', '/login.html'], (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
+app.get(['/register', '/register.html'], (req, res) => res.sendFile(path.join(__dirname, 'register.html')));
+app.get(['/profile', '/profile.html', '/thanh-vien'], (req, res) => res.sendFile(path.join(__dirname, 'profile.html')));
+app.get(['/filter', '/filter.html'], (req, res) => res.sendFile(path.join(__dirname, 'filter.html')));
+app.get(['/support', '/support.html'], (req, res) => res.sendFile(path.join(__dirname, 'support.html')));
+app.get(['/partner', '/partner.html'], (req, res) => res.sendFile(path.join(__dirname, 'partner.html')));
+app.get(['/payment', '/payment.html'], (req, res) => res.sendFile(path.join(__dirname, 'payment.html')));
 
-// Trang xem phim: /xem-phim/:slug/:episode
-app.get('/xem-phim/:slug/:episode?', async (req, res) => {
-    let { slug, episode } = req.params;
-    if (slug.endsWith('.html') || slug.includes('.')) {
-        const realSlug = req.query.slug;
-        const realEp = req.query.episode || req.query.ep || '1';
-        if (realSlug) {
-            return res.redirect(301, `/xem-phim/${realSlug}/tap-${realEp}`);
-        } else {
-            return res.redirect(301, '/');
-        }
-    }
-
-    // Handle malformed URL containing query symbols in slug (e.g. tieu-dao-tu-cong-tu&episode=1)
-    if (slug.includes('&') || slug.includes('?') || slug.includes('=')) {
-        const cleanSlug = slug.split(/[&?=]/)[0];
-        let ep = req.query.episode || req.query.ep || '1';
-        const match = slug.match(/episode=([^&]+)/) || slug.match(/ep=([^&]+)/);
-        if (match) {
-            ep = match[1];
-        }
-        return res.redirect(301, `/xem-phim/${cleanSlug}/tap-${ep}`);
-    }
-
-    // Redirect to clean path if queried with ?episode=... instead of path segment
-    if (!episode && (req.query.episode || req.query.ep)) {
-        const ep = req.query.episode || req.query.ep;
-        return res.redirect(301, `/xem-phim/${slug}/tap-${ep}`);
-    }
-    try {
-        const response = await axios.get(`https://ophim1.com/phim/${slug}`, { timeout: 5000 });
-        const data = response.data;
-        const movie = data && data.movie ? data.movie : null;
-        const episodes = data && data.episodes ? data.episodes : [];
-
-        let title = 'Xem Phim - APhim';
-        let metaDescription = 'Xem phim online chất lượng cao, miễn phí tại APhim. Cập nhật phim mới mỗi ngày.';
-        let ogImage = 'https://aphim.top/android-chrome-512x512.png';
-        
-        if (movie) {
-            const name = movie.name || movie.title || '';
-            const year = movie.year || '';
-            let currentEpStr = episode ? episode.replace('-', ' ') : 'tập mới nhất';
-            currentEpStr = currentEpStr.replace(/\b\w/g, l => l.toUpperCase()); // Tap 1
-            
-            title = `Xem Phim ${name} ${currentEpStr} - Vietsub Thuyết Minh HD ${year}`;
-            metaDescription = `Xem phim ${name} ${currentEpStr} Vietsub Thuyết Minh Full HD trực tuyến. Xem ngay không quảng cáo, tải trang siêu tốc tại APhim.`;
-            ogImage = movie.thumb_url ? (movie.thumb_url.startsWith('http') ? movie.thumb_url : 'https://phimimg.com/' + (movie.thumb_url.startsWith('uploads/') ? '' : 'uploads/movies/') + movie.thumb_url) : ogImage;
-        }
-
-        res.render('watch', {
-            title: title,
-            metaDescription: metaDescription,
-            canonicalUrl: `https://aphim.top/xem-phim/${slug}/${episode || 'tap-1'}`,
-            ogTitle: title,
-            ogImage: ogImage,
-            currentPage: 'watch',
-            movie: movie,
-            episodes: episodes,
-            episode: episode || 'tap-1'
-        });
-    } catch (error) {
-        console.error('Lỗi lấy thông tin phim để xem:', error.message);
-        res.render('watch', {
-            title: 'Xem Phim - APhim',
-            currentPage: 'watch',
-            movie: null,
-            episodes: [],
-            episode: 'tap-1'
-        });
-    }
-});
-
-// Trang tìm kiếm
-app.get('/search', (req, res) => {
-    const keyword = req.query.q || '';
-    res.render('search', {
-        title: 'Tìm Kiếm Phim - APhim',
-        currentPage: 'search',
-        keyword: keyword
-    });
-});
-
-// Trang gói cước
-app.get('/pricing', (req, res) => {
-    res.render('pricing', {
-        title: 'Gói Cước - APhim',
-        currentPage: 'pricing'
-    });
-});
-
-// Trang danh sách phim
-app.get('/danh-sach', (req, res) => {
-    res.render('danh-sach', {
-        title: 'Danh Sách Phim - APhim',
-        currentPage: 'danh-sach'
-    });
-});
-
-// Trang đăng nhập
-app.get('/login', (req, res) => {
-    res.render('login', {
-        title: 'Đăng Nhập - APhim',
-        currentPage: 'login'
-    });
-});
-
-// Legacy redirects (giữ tương thích với URL cũ)
-app.get('/index.html', (req, res) => {
-    res.redirect(301, '/');
-});
-
-app.get(['/movie-detail', '/movie-detail.html'], (req, res) => {
-    const slug = req.query.slug;
-    if (slug) {
-        res.redirect(301, `/phim/${slug}`);
-    } else {
-        res.redirect(301, '/');
-    }
-});
-
-app.get(['/watch', '/watch.html'], (req, res) => {
-    const slug = req.query.slug;
-    const ep = req.query.episode || req.query.ep || '1';
-    if (slug) {
-        res.redirect(301, `/xem-phim/${slug}/tap-${ep}`);
-    } else {
-        res.redirect(301, '/');
-    }
-});
-
-app.get('/search.html', (req, res) => {
-    const q = req.query.q || '';
-    res.redirect(301, q ? `/search?q=${encodeURIComponent(q)}` : '/search');
-});
-
-app.get('/pricing.html', (req, res) => {
-    res.redirect(301, '/pricing');
-});
-
-app.get('/danh-sach.html', (req, res) => {
-    const list = req.query.list || '';
-    res.redirect(301, list ? `/danh-sach?list=${encodeURIComponent(list)}` : '/danh-sach');
-});
-
-app.get('/login.html', (req, res) => {
-    res.redirect(301, '/login');
-});
-
-app.get('/categories', (req, res) => {
-    res.render('categories', { title: 'Thể Loại - APhim', currentPage: 'categories' });
-});
-
-app.get('/filter', (req, res) => {
-    res.render('filter', { title: 'Lọc Phim - APhim', currentPage: 'filter' });
-});
-
-app.get('/hanh-dong', (req, res) => {
-    res.render('hanh-dong', { title: 'Phim Hành Động - APhim', currentPage: 'hanh-dong' });
-});
-
-app.get('/linh-mieu', (req, res) => {
-    res.render('linh-mieu', { title: 'Linh Miêu - APhim', currentPage: 'linh-mieu' });
-});
-
-app.get('/partner', (req, res) => {
-    res.render('partner', { title: 'Đối Tác - APhim', currentPage: 'partner' });
-});
-
-app.get('/payment', (req, res) => {
-    res.render('payment', { title: 'Thanh Toán - APhim', currentPage: 'payment' });
-});
-
-app.get('/phim-theo-quoc-gia', (req, res) => {
-    res.render('phim-theo-quoc-gia', { title: 'Phim Theo Quốc Gia - APhim', currentPage: 'phim-theo-quoc-gia' });
-});
-
-app.get('/phim-x-watch', (req, res) => {
-    res.render('phim-x-watch', { title: 'Xem Phim X - APhim', currentPage: 'phim-x-watch' });
-});
-
-app.get('/phim-x', (req, res) => {
-    res.render('phim-x', { title: 'Phim X - APhim', currentPage: 'phim-x' });
-});
-
-app.get('/profile', (req, res) => {
-    res.render('profile', { title: 'Hồ Sơ - APhim', currentPage: 'profile' });
-});
-
-app.get('/register', (req, res) => {
-    res.render('register', { title: 'Đăng Ký - APhim', currentPage: 'register' });
-});
-
-app.get('/support', (req, res) => {
-    res.render('support', { title: 'Hỗ Trợ - APhim', currentPage: 'support' });
-});
-
-// Legacy redirects for new pages
-app.get('/categories.html', (req, res) => res.redirect(301, req.url.replace('.html', '')));
-app.get('/filter.html', (req, res) => res.redirect(301, req.url.replace('.html', '')));
-app.get('/hanh-dong.html', (req, res) => res.redirect(301, req.url.replace('.html', '')));
-app.get('/linh-mieu.html', (req, res) => res.redirect(301, req.url.replace('.html', '')));
-app.get('/partner.html', (req, res) => res.redirect(301, req.url.replace('.html', '')));
-app.get('/payment.html', (req, res) => res.redirect(301, req.url.replace('.html', '')));
-app.get('/phim-theo-quoc-gia.html', (req, res) => res.redirect(301, req.url.replace('.html', '')));
-app.get('/phim-x-watch.html', (req, res) => res.redirect(301, req.url.replace('.html', '')));
-app.get('/phim-x.html', (req, res) => res.redirect(301, req.url.replace('.html', '')));
-app.get('/profile.html', (req, res) => res.redirect(301, req.url.replace('.html', '')));
-app.get('/register.html', (req, res) => res.redirect(301, req.url.replace('.html', '')));
-app.get('/support.html', (req, res) => res.redirect(301, req.url.replace('.html', '')));
 
 app.get('/tiktok5pgXUVWzUxAifGnSg4nsTciyOtz2bvpK.txt', (req, res) => {
     res.send('tiktok-developers-site-verification=5pgXUVWzUxAifGnSg4nsTciyOtz2bvpK');
@@ -465,16 +203,15 @@ app.use('/v1/api', async (req, res) => {
     if (!cleanPath.startsWith('/')) cleanPath = '/' + cleanPath;
     
     const targets = [
+        `https://phimapi.com/v1/api${cleanPath}`,
+        `https://phimapi.com${cleanPath}`,
         `https://ophim1.com/v1/api${cleanPath}`,
-        `https://ophim1.com/v1/api${cleanPath}`,
-        `https://ophim1.com${cleanPath}`,
-        `https://ophim1.com/v1/api${cleanPath}`,
-        `https://ophim1.com/v1/api${cleanPath}`
+        `https://ophim1.com${cleanPath}`
     ];
 
     if (cleanPath.includes('phim-moi-cap-nhat')) {
-        targets.unshift(`https://ophim1.com/danh-sach/phim-moi-cap-nhat`);
-        targets.unshift(`https://ophim1.com/danh-sach/phim-moi-cap-nhat`);
+        targets.unshift(`https://phimapi.com/danh-sach/phim-moi-cap-nhat`);
+        targets.unshift(`https://phimapi.com/v1/api/danh-sach/phim-moi-cap-nhat`);
     }
 
     for (const targetUrl of targets) {

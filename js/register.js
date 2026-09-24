@@ -1,4 +1,4 @@
-﻿// Register Page Script
+// Register Page Script
 
 // Check if redirected from login page with highlight parameter
 document.addEventListener('DOMContentLoaded', function () {
@@ -21,8 +21,8 @@ function setupAuthLeftPanel() {
     if (!panel) return;
 
     // Default fallback
-    let bgUrl = 'https://image.tmdb.org/t/p/w780/8b8R8l88Qje9dn9OE8Ez05N5cKk.jpg';
-    panel.style.background = `linear-gradient(to bottom, rgba(15,15,30,0.15) 0%, rgba(15,15,30,0.95) 100%), url('${bgUrl}') center / cover no-repeat`;
+    let bgUrl = 'https://beam-images.warnermediacdn.com/2024-03/leadimage_background_hotd_eng_0.jpg?host=wbd-dotcom-drupal-prd-us-east-1.s3.amazonaws.com&w=1200';
+    panel.style.background = `linear-gradient(180deg, rgba(15,15,30,0.1) 0%, rgba(15,15,30,0.5) 55%, rgba(15,15,30,0.95) 100%), url('${bgUrl}') center top / cover no-repeat`;
 
     // Fetch dynamic
     setTimeout(async () => {
@@ -31,8 +31,9 @@ function setupAuthLeftPanel() {
             const data = await res.json();
             if (data?.data?.items?.length > 0) {
                 const latestMovie = data.data.items[0];
-                const url = `https://phimimg.com/${latestMovie.thumb_url || latestMovie.poster_url.startsWith('uploads/') ? '' : 'uploads/movies/'}${latestMovie.thumb_url || latestMovie.poster_url}`;
-                panel.style.background = `linear-gradient(to bottom, rgba(15,15,30,0.15) 0%, rgba(15,15,30,0.95) 100%), url('${url}') center / cover no-repeat`;
+                const rawUrl = latestMovie.thumb_url || latestMovie.poster_url;
+                const url = rawUrl.startsWith('http') ? rawUrl : `https://phimimg.com/uploads/movies/${rawUrl}`;
+                panel.style.background = `linear-gradient(180deg, rgba(15,15,30,0.1) 0%, rgba(15,15,30,0.5) 55%, rgba(15,15,30,0.95) 100%), url('${url}') center top / cover no-repeat`;
             }
         } catch (e) {
             console.warn('Could not load dynamic auth background');

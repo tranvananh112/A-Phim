@@ -65,9 +65,9 @@
         flex-wrap: nowrap !important;
         align-items: center !important;
         justify-content: center !important;
-        gap: 8px !important;
+        gap: 10px !important;
         width: 100% !important;
-        max-width: 100% !important;
+        max-width: 880px !important;
         margin: 0 auto !important;
         padding-top: 14px !important;
         box-sizing: border-box !important;
@@ -76,10 +76,11 @@
     .aphim-inline-ad-item {
         display: block !important;
         flex: 1 1 0% !important;
+        max-width: 290px !important;
         min-width: 0 !important;
-        height: 60px !important;
+        height: 46px !important;
         overflow: hidden !important;
-        border-radius: 8px !important;
+        border-radius: 6px !important;
         line-height: 0 !important;
         text-decoration: none !important;
         border: 1px solid rgba(255, 255, 255, 0.15) !important;
@@ -97,7 +98,7 @@
     .aphim-inline-ad-item video {
         width: 100% !important;
         height: 100% !important;
-        max-height: 60px !important;
+        max-height: 46px !important;
         object-fit: fill !important;
         object-position: center !important;
         display: block !important;

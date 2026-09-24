@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html class="dark" lang="vi">
 
 <head>
@@ -391,7 +391,7 @@
             <a href="index.html" class="page-close-btn" title="Quay lại"
                 onclick="if(window.history.length > 1 && document.referrer.includes(window.location.host)) { window.history.back(); return false; }">&times;</a>
             <!-- Left Panel -->
-            <div id="auth-left-panel" class="hidden sm:flex flex-col items-center justify-end w-[280px] shrink-0 p-8 pt-10 rounded-l-[20px] relative overflow-hidden transition-all duration-500 ease-in-out" style="background: linear-gradient(to right, rgba(15,15,30,1) 0%, rgba(15,15,30,0) 100%), url('https://image.tmdb.org/t/p/original/8b8R8l88Qje9dn9OE8Ez05N5cKk.jpg') center / cover no-repeat;">
+            <div id="auth-left-panel" class="hidden sm:flex flex-col items-center justify-end w-[280px] shrink-0 p-8 pt-10 rounded-l-[20px] relative overflow-hidden transition-all duration-500 ease-in-out" style="background: linear-gradient(180deg, rgba(15,15,30,0.1) 0%, rgba(15,15,30,0.5) 55%, rgba(15,15,30,0.95) 100%), url('https://beam-images.warnermediacdn.com/2024-03/leadimage_background_hotd_eng_0.jpg?host=wbd-dotcom-drupal-prd-us-east-1.s3.amazonaws.com&w=1200') center top / cover no-repeat; border-right: 1px solid rgba(255,255,255,0.06);">
                 <div class="relative z-10 flex flex-col items-center gap-2.5">
                     <div
                         class="w-[52px] h-[52px] rounded-full border-2 border-primary overflow-hidden bg-black flex items-center justify-center shadow-lg">
@@ -755,9 +755,9 @@
     <script src="js/nav-active-indicator.js?v=13"></script>
 
     <!-- ====== APhim Catfish Banner + Popup ====== -->
-    <link rel="stylesheet" href="/css/catfish-banner.css?v=17">
+    <link rel="stylesheet" href="/css/catfish-banner.css?v=20">
     <link rel="stylesheet" href="/css/inline-ad.css?v=15">
-    <script src="/js/catfish-banner.js?v=19" defer></script>
+    <script src="/js/catfish-banner.js?v=20" defer></script>
     <!-- ====== End Catfish Banner ====== -->
 
 <!-- A PHIM Floating Side Dock -->
@@ -852,15 +852,15 @@
                         }
                     }
                     const imgPath = bestMovie.poster_url || bestMovie.thumb_url;
-                    let url = 'https://image.tmdb.org/t/p/w780/8b8R8l88Qje9dn9OE8Ez05N5cKk.jpg';
+                    let url = 'https://beam-images.warnermediacdn.com/2024-03/leadimage_background_hotd_eng_0.jpg?host=wbd-dotcom-drupal-prd-us-east-1.s3.amazonaws.com&w=1200';
                     if (imgPath) {
-                        url = `https://phimimg.com/uploads/movies/${imgPath}`;
+                        url = imgPath.startsWith('http') ? imgPath : `https://phimimg.com/uploads/movies/${imgPath}`;
                     }
                     if (url) {
                         const bgEl = document.getElementById('auth-left-panel') || document.getElementById('dynamic-auth-bg');
                         if (bgEl) {
-                            bgEl.style.backgroundImage = `linear-gradient(to bottom, rgba(15,15,30,0.15) 0%, rgba(15,15,30,0.95) 100%), url('${url}')`;
-                            bgEl.style.backgroundPosition = 'center';
+                            bgEl.style.backgroundImage = `linear-gradient(180deg, rgba(15,15,30,0.1) 0%, rgba(15,15,30,0.5) 55%, rgba(15,15,30,0.95) 100%), url('${url}')`;
+                            bgEl.style.backgroundPosition = 'center top';
                             bgEl.style.backgroundSize = 'cover';
                             bgEl.style.backgroundRepeat = 'no-repeat';
                         }

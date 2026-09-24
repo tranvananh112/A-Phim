@@ -1,19 +1,29 @@
-﻿/**
+/**
  * Dynamic Interests Section — Static HTML Version with Admin Configuration Support
  * 
  * Luồng đồng bộ từ backend qua:
- *  - Gọi API backend /api/settings/public trước để lấy custom category backgrounds do Admin cấu hình.
+ *  - Đọc cache localStorage cinestream_category_backgrounds để hiển thị tức thì.
+ *  - Gọi API backend /api/settings/public để cập nhật ảnh mới nhất do Admin cấu hình.
  *  - Nếu có cấu hình, sử dụng ảnh của Admin.
  *  - Nếu không có cấu hình hoặc ảnh lỗi, fallback tự động lấy ảnh ngẫu nhiên từ Ophim API.
  */
-(async function loadDynamicInterests() {
+async function loadDynamicInterests() {
     const cards = document.querySelectorAll('.interest-card[data-api]');
     if (!cards.length) return;
 
     const usedImages = new Set();
     let customBgs = {};
 
-    // 1. Tải cấu hình từ Backend Admin
+    // 1. INSTANT: Đọc cache LocalStorage để đổi ngay lập tức
+    try {
+        const cached = localStorage.getItem('cinestream_category_backgrounds');
+        if (cached) {
+            customBgs = JSON.parse(cached) || {};
+            applyCustomBackgroundsToDOM(cards, customBgs);
+        }
+    } catch (e) {}
+
+    // 2. BACKGROUND: Tải cấu hình mới nhất từ Backend Admin
     try {
         const apiUrl = typeof window.getBackendBaseURL === 'function' ? window.getBackendBaseURL() : '';
         if (apiUrl) {
@@ -21,6 +31,8 @@
             const data = await res.json();
             if (data.success && data.data?.content?.categoryBackgrounds) {
                 customBgs = data.data.content.categoryBackgrounds;
+                localStorage.setItem('cinestream_category_backgrounds', JSON.stringify(customBgs));
+                applyCustomBackgroundsToDOM(cards, customBgs);
             }
         }
     } catch (e) {
@@ -32,6 +44,7 @@
      */
     const fetchImageFromOphim = async (apiPath, page = 1) => {
         try {
+            if (typeof movieAPI === 'undefined') return null;
             const response = await movieAPI.fetchWithFallback(`/${apiPath}?page=${page}`);
             const rawData = await response.json();
             const data = movieAPI.normalizeResponse(rawData);
@@ -39,7 +52,6 @@
             const items = data?.data?.items || [];
             if (!items.length) return null;
 
-            // Chọn phim đầu tiên chưa dùng ảnh
             for (const movie of items) {
                 const thumbUrl = movie.thumb_url || movie.poster_url;
                 if (thumbUrl && !usedImages.has(thumbUrl)) {
@@ -47,66 +59,14 @@
                 }
             }
 
-            // Nếu tất cả đã dùng, trả về ảnh đầu tiên
             return items[0]?.thumb_url || items[0]?.poster_url || null;
         } catch (e) {
-            console.warn(`[Interests] Fetch from Ophim error for ${apiPath}:`, e);
             return null;
         }
     };
 
     /**
-     * Tạo URL ảnh đã được tối ưu
-     */
-    const buildFinalUrl = (thumbUrl) => {
-        if (!thumbUrl) return '';
-
-        const rawUrl = thumbUrl.startsWith('http')
-            ? thumbUrl
-            : `https://phimimg.com/${thumbUrl.startsWith('uploads/') ? '' : 'uploads/movies/'}${thumbUrl}`;
-
-        if (typeof imageOptimizer !== 'undefined' && imageOptimizer.optimizeImageUrl) {
-            return imageOptimizer.optimizeImageUrl(thumbUrl, 400, 70);
-        }
-
-        // Dùng wsrv.nl để resize + convert sang webp
-        try {
-            const encoded = encodeURIComponent(rawUrl);
-            return imgUrl;
-        } catch {
-            return rawUrl;
-        }
-    };
-
-    /**
-     * Áp dụng ảnh nền cho một card, kèm hiệu ứng fade-in
-     */
-    const applyBackground = (bgImgEl, thumbUrl) => {
-        const finalUrl = buildFinalUrl(thumbUrl);
-        if (!finalUrl) return;
-
-        bgImgEl.style.opacity = '0';
-        bgImgEl.style.transition = 'opacity 1s ease';
-
-        const img = new Image();
-        img.onload = () => {
-            bgImgEl.style.backgroundImage = `url('${finalUrl}')`;
-            bgImgEl.style.opacity = '1';
-        };
-        img.onerror = () => {
-            const rawUrl = thumbUrl.startsWith('http')
-                ? thumbUrl
-                : `https://phimimg.com/${thumbUrl.startsWith('uploads/') ? '' : 'uploads/movies/'}${thumbUrl}`;
-            bgImgEl.style.backgroundImage = `url('${rawUrl}')`;
-            bgImgEl.style.opacity = '0.85';
-        };
-        img.src = finalUrl;
-
-        usedImages.add(thumbUrl);
-    };
-
-    /**
-     * Tự động tải từ Ophim API (Fallback)
+     * Tự động tải từ Ophim API (Fallback khi admin chưa cấu hình)
      */
     const loadAutoFromOphim = async (apiPath, bgImgEl, index) => {
         const page = (index % 3) + 1;
@@ -118,38 +78,59 @@
         }
 
         if (thumbUrl) {
-            applyBackground(bgImgEl, thumbUrl);
+            const finalUrl = thumbUrl.startsWith('http')
+                ? thumbUrl
+                : `https://phimimg.com/${thumbUrl.startsWith('uploads/') ? '' : 'uploads/movies/'}${thumbUrl}`;
+            
+            bgImgEl.style.backgroundImage = `url('${finalUrl}')`;
+            bgImgEl.style.opacity = '1';
+            usedImages.add(thumbUrl);
         }
     };
 
-    // Xử lý từng card
-    const fetchPromises = Array.from(cards).map(async (card, index) => {
+    // Xử lý fallback cho các card chưa có ảnh admin
+    cards.forEach((card, index) => {
         const apiPath = card.getAttribute('data-api');
         const bgImgEl = card.querySelector('.interest-bg-img');
         if (!apiPath || !bgImgEl) return;
 
-        // Ưu tiên 1: Lấy ảnh tùy chỉnh từ Backend Admin cấu hình
-        if (customBgs[apiPath] && customBgs[apiPath].trim() !== '') {
-            const finalUrl = customBgs[apiPath].trim();
-            bgImgEl.style.opacity = '0';
-            bgImgEl.style.transition = 'opacity 1s ease';
-
-            const img = new Image();
-            img.onload = () => {
-                bgImgEl.style.backgroundImage = `url('${finalUrl}')`;
-                bgImgEl.style.opacity = '1';
-            };
-            img.onerror = async () => {
-                console.warn(`[Interests] Custom bg error for ${apiPath}, fallback to Ophim.`);
-                await loadAutoFromOphim(apiPath, bgImgEl, index);
-            };
-            img.src = finalUrl;
-        } else {
-            // Ưu tiên 2: Fallback tự động lấy từ Ophim API
-            await loadAutoFromOphim(apiPath, bgImgEl, index);
+        if (!customBgs[apiPath] || customBgs[apiPath].trim() === '') {
+            loadAutoFromOphim(apiPath, bgImgEl, index);
         }
     });
+}
 
-    await Promise.all(fetchPromises);
-})();
+function applyCustomBackgroundsToDOM(cards, customBgs) {
+    if (!cards || !customBgs) return;
+    cards.forEach(card => {
+        const apiPath = card.getAttribute('data-api');
+        const bgImgEl = card.querySelector('.interest-bg-img');
+        if (!apiPath || !bgImgEl) return;
+
+        const customUrl = customBgs[apiPath];
+        if (customUrl && customUrl.trim() !== '') {
+            const finalUrl = customUrl.trim().startsWith('http')
+                ? customUrl.trim()
+                : `https://phimimg.com/${customUrl.trim().startsWith('uploads/') ? '' : 'uploads/movies/'}${customUrl.trim()}`;
+            
+            bgImgEl.style.backgroundImage = `url('${finalUrl}')`;
+            bgImgEl.style.opacity = '1';
+        }
+    });
+}
+
+// -- Boot & Real-time cross-tab Sync --
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadDynamicInterests);
+} else {
+    loadDynamicInterests();
+}
+
+window.addEventListener('storage', (e) => {
+    if (e.key === 'cinestream_category_backgrounds') {
+        loadDynamicInterests();
+    }
+});
+
+window.loadDynamicInterests = loadDynamicInterests;
 

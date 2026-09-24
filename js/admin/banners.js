@@ -654,6 +654,9 @@ async function activateBanner(id) {
         const data = await response.json();
 
         if (data.success) {
+            if (data.data) {
+                localStorage.setItem('cinestream_active_banner', JSON.stringify(data.data));
+            }
             alert('Đã kích hoạt banner!');
             fetchBannersFromAPI(); // Refresh
         } else {
@@ -727,6 +730,19 @@ async function updateDesktopImage(id, url) {
         const data = await response.json();
 
         if (data.success) {
+            // Update localStorage immediately if active banner is updated
+            try {
+                const cachedBanner = localStorage.getItem('cinestream_active_banner');
+                if (cachedBanner) {
+                    const parsed = JSON.parse(cachedBanner);
+                    if (parsed._id === id || parsed.id === id) {
+                        parsed.thumbUrl = url;
+                        parsed.imageUrl = url;
+                        localStorage.setItem('cinestream_active_banner', JSON.stringify(parsed));
+                    }
+                }
+            } catch(e) {}
+
             alert('Đã cập nhật ảnh nền Desktop thành công! Vui lòng tải lại trang Xem Phim để xem thay đổi.');
             fetchBannersFromAPI(); // Refresh
         } else {
@@ -998,6 +1014,8 @@ async function saveThumbnailOrder() {
         if (data.success) {
             thumbnailDirty = false;
             updateSaveBtn();
+            // Sync to localStorage
+            localStorage.setItem('cinestream_thumbnail_movies', JSON.stringify(data.data || thumbnailList));
             // Toast
             showThumbToast('Đã lưu thứ tự thumbnail!', 'success');
         } else {
@@ -1258,6 +1276,7 @@ async function saveCategoryBackgrounds() {
         const data = await res.json();
 
         if (data.success) {
+            localStorage.setItem('cinestream_category_backgrounds', JSON.stringify(bg));
             showThumbToast('Đã lưu hình nền chuyên mục!', 'success');
         } else {
             showThumbToast(data.message || 'Lỗi lưu cài đặt', 'error');

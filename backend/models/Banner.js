@@ -43,6 +43,7 @@ const BannerSchema = new mongoose.Schema({
         type: Number,
         default: 0 // Higher number = higher priority
     },
+    logoUrl: String,
 
     // Source info
     sourceApi: {

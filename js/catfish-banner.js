@@ -16,7 +16,7 @@
 
         catfish: {
             enabled: true,
-            sessionKey: 'aphim_catfish_closed_v4'  // per-page sessionStorage key
+            sessionKey: 'aphim_catfish_closed_v5'  // per-page sessionStorage key
         },
         popup: {
             enabled: false, // Đã tắt theo yêu cầu để tránh gây khó chịu

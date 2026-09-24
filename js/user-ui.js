@@ -156,10 +156,12 @@ function updateUserUI() {
     } else {
         // CHƯA ĐĂNG NHẬP: Tự động tiêm nút Đăng nhập chuẩn vào container để đồng bộ giao diện Mobile
         const loginBtnHtml = `
-            <div class="flex items-center">
-                <div class="relative flex items-center" style="cursor:pointer; z-index: 60; margin-right: 12px;" onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');}else{alert('Vui lòng đăng nhập để xem thông báo!');}">
-                    <div class="rounded-full hover:bg-white/10 transition-all active:scale-90 relative" style="width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; background: transparent; border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(8px);">
-                        <span class="material-icons-round text-white text-[20px]">notifications</span>
+            <div class="flex items-center" style="align-items: center; gap: 10px;">
+                <div class="relative flex items-center" title="Thông báo" aria-label="Thông báo" style="cursor:pointer; z-index: 60;" onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');}else{alert('Vui lòng đăng nhập để xem thông báo!');}">
+                    <div class="sofa-icon-circle-btn sofa-bell-circle" style="width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; backdrop-filter: blur(8px); transition: all 0.2s ease;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                        </svg>
                     </div>
                 </div>
                 <a href="/login"
