@@ -167,8 +167,8 @@ function updateUserUI() {
                 <a href="/login"
                    onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');return false;}"
                    class="nav-auth-btn" 
-                   style="display: inline-flex !important; align-items: center !important; justify-content: center !important; gap: 6px;">
-                    <dotlottie-player src="/icons/panda.lottie" background="transparent" speed="1" style="width: 40px; height: 40px; transform: scale(2.2); margin: 0; padding: 0;" loop autoplay></dotlottie-player>
+                   style="display: inline-flex !important; align-items: center !important; justify-content: center !important; gap: 6px; overflow: hidden !important;">
+                    <dotlottie-player src="/icons/panda.lottie" background="transparent" speed="1" style="width: 40px; height: 40px; transform: scale(1.95); transform-origin: center center; margin: 0; padding: 0; pointer-events: none;" loop autoplay></dotlottie-player>
                     <span class="auth-btn-text">Đăng Nhập</span>
                 </a>
             </div>
@@ -398,7 +398,7 @@ const TOAST_ICONS = {
             }
         }
 
-        /* ── MOBILE: Ẩn chữ "Đăng Nhập", chỉ hiện icon → tiết kiệm diện tích ── */
+        /* ── MOBILE: Ẩn chữ "Đăng Nhập", chỉ hiện icon → tiết kiệm diện tích và luôn căn giữa ô tròn ── */
         @media (max-width: 768px) {
             .auth-btn-text {
                 display: none !important;
@@ -410,23 +410,23 @@ const TOAST_ICONS = {
                 padding: 0 !important;
                 width: 40px !important;
                 height: 40px !important;
-                min-width: unset !important;
+                min-width: 40px !important;
+                max-width: 40px !important;
                 gap: 0 !important;
                 position: relative !important;
-                background: transparent !important;
-                border: 1px solid rgba(255, 255, 255, 0.15) !important;
                 border-radius: 50% !important;
-                backdrop-filter: blur(8px) !important;
-                box-shadow: none !important;
+                overflow: hidden !important;
                 box-sizing: border-box !important;
             }
-            .nav-auth-btn .material-icons-round,
             .nav-auth-btn dotlottie-player {
                 position: absolute !important;
                 top: 50% !important;
                 left: 50% !important;
-                transform: translate(-50%, -50%) scale(1.85) !important;
+                transform: translate(-50%, -52%) scale(1.95) !important;
                 margin: 0 !important;
+                width: 40px !important;
+                height: 40px !important;
+                display: block !important;
             }
             .nav-auth-btn .material-icons-round {
                 font-size: 1.25rem !important;

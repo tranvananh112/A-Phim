@@ -29,7 +29,7 @@
         banners: [
             {
                 img: '/quangcao/stake/Dice VN.gif',
-                url: 'https://stake.com/?offer=stakethuongnap&c=aphim',
+                url: 'https://stake.com/pages/200depositvn',
                 label: 'Stake — Dice VN Đăng Ký Nhận 364,000 VNĐ',
                 isVideo: false
             },

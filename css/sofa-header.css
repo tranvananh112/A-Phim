@@ -764,15 +764,48 @@
     -webkit-text-fill-color: #000000 !important;
 }
 
+.nav-auth-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
 .nav-auth-btn dotlottie-player {
     width: 40px !important;
     height: 40px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    flex-shrink: 0 !important;
-    transform: scale(2.2) !important;
+    transform: scale(1.95) !important;
     transform-origin: center center !important;
     pointer-events: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+}
+
+@media (max-width: 768px) {
+    .nav-auth-btn {
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px !important;
+        max-width: 40px !important;
+        padding: 0 !important;
+        border-radius: 50% !important;
+        overflow: hidden !important;
+        position: relative !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    .nav-auth-btn dotlottie-player {
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -52%) scale(1.95) !important;
+        margin: 0 !important;
+        width: 40px !important;
+        height: 40px !important;
+    }
 }
 
 .nav-auth-btn .auth-btn-text {
