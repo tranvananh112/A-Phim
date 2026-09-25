@@ -2010,7 +2010,7 @@ html.light-mode .player-ctrl-bar,
     }
 }
 
-@media (max-width: 639px) {
+@media (max-width: 768px) {
     html.light-mode .player-ctrl-bar-container,
     .player-ctrl-bar-container {
         display: flex !important;
@@ -2019,7 +2019,7 @@ html.light-mode .player-ctrl-bar,
         justify-content: space-between !important;
         flex-wrap: nowrap !important;
         width: 100% !important;
-        padding: 4px 2px !important;
+        padding: 2px 0 !important;
         gap: 0 !important;
     }
 
@@ -2027,7 +2027,7 @@ html.light-mode .player-ctrl-bar,
     .player-ctrl-bar-actions-row {
         display: flex !important;
         align-items: center !important;
-        gap: 6px !important;
+        gap: 16px !important;
         flex-shrink: 0 !important;
         width: auto !important;
     }
@@ -2036,7 +2036,7 @@ html.light-mode .player-ctrl-bar,
     .player-ctrl-bar-toggles-row {
         display: flex !important;
         align-items: center !important;
-        gap: 6px !important;
+        gap: 12px !important;
         flex-shrink: 0 !important;
         width: auto !important;
     }
@@ -2067,7 +2067,10 @@ html.light-mode .player-ctrl-bar,
     html.light-mode .badge-status-on,
     html.light-mode .badge-status-off,
     .badge-status-on,
-    .badge-status-off {
+    .badge-status-off,
+    #badgeAutoNext,
+    #badgeAutoSkip,
+    #badgeCinema {
         display: none !important;
     }
 }

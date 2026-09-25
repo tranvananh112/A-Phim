@@ -53,17 +53,21 @@
                         const badge = document.getElementById('badgeAutoNext');
                         const btn = document.getElementById('btnAutoNext') || (badge ? badge.closest('.player-ctrl-item') : null);
                         const checkbox = document.getElementById('toggleAutoNext');
-                        let isON = badge.classList.contains('badge-status-on');
+                        let isON = badge ? badge.classList.contains('badge-status-on') : false;
                         isON = !isON;
                         if (isON) {
-                            badge.className = 'badge-status-on';
-                            badge.textContent = 'ON';
+                            if (badge) {
+                                badge.className = 'badge-status-on hidden sm:inline-flex';
+                                badge.textContent = 'ON';
+                            }
                             if (btn) btn.classList.add('is-active');
                             if (checkbox) checkbox.checked = true;
                             localStorage.setItem('autoNext', 'true');
                         } else {
-                            badge.className = 'badge-status-off';
-                            badge.textContent = 'OFF';
+                            if (badge) {
+                                badge.className = 'badge-status-off hidden sm:inline-flex';
+                                badge.textContent = 'OFF';
+                            }
                             if (btn) btn.classList.remove('is-active');
                             if (checkbox) checkbox.checked = false;
                             localStorage.setItem('autoNext', 'false');
@@ -74,17 +78,21 @@
                         const badge = document.getElementById('badgeAutoSkip');
                         const btn = document.getElementById('btnAutoSkip') || (badge ? badge.closest('.player-ctrl-item') : null);
                         const checkbox = document.getElementById('toggleAutoSkip');
-                        let isON = badge.classList.contains('badge-status-on');
+                        let isON = badge ? badge.classList.contains('badge-status-on') : false;
                         isON = !isON;
                         if (isON) {
-                            badge.className = 'badge-status-on';
-                            badge.textContent = 'ON';
+                            if (badge) {
+                                badge.className = 'badge-status-on hidden sm:inline-flex';
+                                badge.textContent = 'ON';
+                            }
                             if (btn) btn.classList.add('is-active');
                             if (checkbox) checkbox.checked = true;
                             localStorage.setItem('autoSkip', 'true');
                         } else {
-                            badge.className = 'badge-status-off';
-                            badge.textContent = 'OFF';
+                            if (badge) {
+                                badge.className = 'badge-status-off hidden sm:inline-flex';
+                                badge.textContent = 'OFF';
+                            }
                             if (btn) btn.classList.remove('is-active');
                             if (checkbox) checkbox.checked = false;
                             localStorage.setItem('autoSkip', 'false');
@@ -99,11 +107,11 @@
                         const btn = document.getElementById('cinemaModeBtn') || (badge ? badge.closest('.player-ctrl-item') : null);
                         if (badge) {
                             if (window.isCinemaModeActive) {
-                                badge.className = 'badge-status-on';
+                                badge.className = 'badge-status-on hidden sm:inline-flex';
                                 badge.textContent = 'ON';
                                 if (btn) btn.classList.add('is-active');
                             } else {
-                                badge.className = 'badge-status-off';
+                                badge.className = 'badge-status-off hidden sm:inline-flex';
                                 badge.textContent = 'OFF';
                                 if (btn) btn.classList.remove('is-active');
                             }
@@ -117,7 +125,7 @@
                         const btnNext = document.getElementById('btnAutoNext') || (badgeNext ? badgeNext.closest('.player-ctrl-item') : null);
                         const chkNext = document.getElementById('toggleAutoNext');
                         if (badgeNext) {
-                            badgeNext.className = autoNextSaved ? 'badge-status-on' : 'badge-status-off';
+                            badgeNext.className = (autoNextSaved ? 'badge-status-on' : 'badge-status-off') + ' hidden sm:inline-flex';
                             badgeNext.textContent = autoNextSaved ? 'ON' : 'OFF';
                             if (btnNext) {
                                 if (autoNextSaved) btnNext.classList.add('is-active');
@@ -131,7 +139,7 @@
                         const btnSkip = document.getElementById('btnAutoSkip') || (badgeSkip ? badgeSkip.closest('.player-ctrl-item') : null);
                         const chkSkip = document.getElementById('toggleAutoSkip');
                         if (badgeSkip) {
-                            badgeSkip.className = autoSkipSaved ? 'badge-status-on' : 'badge-status-off';
+                            badgeSkip.className = (autoSkipSaved ? 'badge-status-on' : 'badge-status-off') + ' hidden sm:inline-flex';
                             badgeSkip.textContent = autoSkipSaved ? 'ON' : 'OFF';
                             if (btnSkip) {
                                 if (autoSkipSaved) btnSkip.classList.add('is-active');
