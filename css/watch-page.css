@@ -68,14 +68,16 @@
                 transition: all 0.3s ease;
             }
 
-            /* Player Control Bar Styling (Dính liền khung chiếu phim, Nền đen Tuyệt #000000, Không Viền Tròn) */
+            /* Player Control Bar Styling (Trong suốt, không có lớp nền) */
             .player-ctrl-bar {
-                background: #000000 !important;
+                background: transparent !important;
+                background-color: transparent !important;
                 border: none !important;
                 border-top: none !important;
-                border-radius: 0 0 16px 16px;
-                padding: 10px 16px;
-                margin-top: 0 !important;
+                border-radius: 0 !important;
+                padding: 4px 0 !important;
+                margin-top: 8px !important;
+                margin-bottom: 8px !important;
                 box-shadow: none !important;
             }
 
@@ -548,9 +550,12 @@
                     display: block !important;
                     visibility: visible !important;
                     opacity: 1 !important;
-                    padding: 6px 12px 8px 12px !important;
-                    border-radius: 0 0 14px 14px !important;
-                    background: #090a10 !important;
+                    padding: 4px 0 !important;
+                    border-radius: 0 !important;
+                    background: transparent !important;
+                    background-color: transparent !important;
+                    border: none !important;
+                    box-shadow: none !important;
                     margin-top: 4px !important;
                     margin-bottom: 6px !important;
                     width: 100% !important;

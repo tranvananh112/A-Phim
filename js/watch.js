@@ -4179,9 +4179,10 @@ window.isCinemaModeActive = false;
 
 window.toggleCinemaMode = function (forcedState) {
     const body = document.body;
-    const mainPlayerBox = document.getElementById('main-player-box') || document.getElementById('player-and-controls');
     const badgeCinema = document.getElementById('badgeCinema');
     const cinemaBtn = document.getElementById('cinemaModeBtn');
+    const overlay = document.getElementById('cinemaOverlay');
+    const exitHint = document.getElementById('cinemaExitHint');
 
     if (typeof forcedState === 'boolean') {
         window.isCinemaModeActive = forcedState;
@@ -4194,17 +4195,22 @@ window.toggleCinemaMode = function (forcedState) {
 
         // Update badge to ON (Green active badge)
         if (badgeCinema) {
-            badgeCinema.className = 'badge-status-on';
+            badgeCinema.className = 'badge-status-on hidden sm:inline-flex';
             badgeCinema.textContent = 'ON';
         }
         if (cinemaBtn) {
-            cinemaBtn.classList.add('text-amber-400');
+            cinemaBtn.classList.add('is-active', 'text-amber-400');
+        }
+        if (exitHint) {
+            exitHint.style.visibility = 'visible';
+            exitHint.style.opacity = '1';
         }
 
-        // On Desktop, smooth scroll to top where player is centered in Cinema Mode. On Mobile, stay in place.
+        // On Desktop, smooth scroll so player is well-framed in Cinema Mode.
         try {
-            if (window.innerWidth >= 1024) {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+            const playerBox = document.getElementById('main-player-box') || document.querySelector('.aspect-video');
+            if (playerBox && window.innerWidth >= 1024) {
+                playerBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         } catch (e) { }
     } else {
@@ -4212,11 +4218,15 @@ window.toggleCinemaMode = function (forcedState) {
 
         // Update badge to OFF
         if (badgeCinema) {
-            badgeCinema.className = 'badge-status-off';
+            badgeCinema.className = 'badge-status-off hidden sm:inline-flex';
             badgeCinema.textContent = 'OFF';
         }
         if (cinemaBtn) {
-            cinemaBtn.classList.remove('text-amber-400');
+            cinemaBtn.classList.remove('is-active', 'text-amber-400');
+        }
+        if (exitHint) {
+            exitHint.style.visibility = 'hidden';
+            exitHint.style.opacity = '0';
         }
     }
 };

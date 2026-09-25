@@ -3,7 +3,7 @@
 
 <head>
     <%- include('partials/head') %>
-        <link rel="stylesheet" href="/css/watch-page.css?v=342" />
+        <link rel="stylesheet" href="/css/watch-page.css?v=345" />
 </head>
 
 <body class="bg-[#1f2331] text-gray-100 font-display min-h-screen overflow-x-hidden w-full">
@@ -86,12 +86,10 @@
                 <!-- ================================================================= -->
                 <div class="lg:col-span-8 space-y-6" id="player-and-controls">
 
-                    <!-- 2. Khung Player + Thanh điều khiển (Card dính liền hoà trộn hoàn toàn) -->
+                    <!-- 2. Khung Player Aspect 16:9 -->
                     <div id="main-player-box"
-                        class="relative w-full bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10 z-[9990] group">
-                        <!-- Aspect 16:9 Video Player Box -->
-                        <div class="relative w-full aspect-video bg-black overflow-hidden">
-                            <div id="playerPlaceholder"
+                        class="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10 z-[9990] group">
+                        <div id="playerPlaceholder"
                                 class="absolute inset-0 w-full h-full flex flex-col items-center justify-center cursor-pointer overflow-hidden group/overlay"
                                 onclick="window.startActualPlayback && window.startActualPlayback()">
 
@@ -391,7 +389,6 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
 
                     <!-- 4. Khối "DANH SÁCH TẬP" (Giữ nguyên luồng Image 2, trang trí đẹp chuẩn Image 1) -->
                     <div class="w-full space-y-5">
@@ -724,9 +721,9 @@
             <script src="/js/playlist-service.js?v=100" defer></script>
             <script src="/js/playlist-modal.js?v=210" defer></script>
             <script src="/js/top-weekly-sidebar.js?v=100" defer></script>
-            <script src="/js/watch.js?v=10091" defer></script>
+            <script src="/js/watch.js?v=345" defer></script>
             <script src="/js/firebase-comments.js?v=20025" defer></script>
-            <script src="/js/watch-ui-init.js?v=218" defer></script>
+            <script src="/js/watch-ui-init.js?v=345" defer></script>
     <!-- 🐞 Modal Báo Lỗi Phim (High-end Glassmorphic, Fixed Viewport Stacking Context) -->
     <div id="reportMovieModal" style="display: none; position: fixed !important; inset: 0 !important; z-index: 999999 !important; background: rgba(0, 0, 0, 0.8) !important; backdrop-filter: blur(8px) !important; -webkit-backdrop-filter: blur(8px) !important; align-items: center !important; justify-content: center !important; padding: 16px !important;" class="opacity-0 transition-opacity duration-300" onclick="if(event.target===this)closeReportModal()">
         <div class="relative w-full max-w-md bg-[#161822] border border-white/15 rounded-2xl p-6 shadow-2xl space-y-4 transform scale-95 transition-transform duration-300" id="reportMovieModalCard" onclick="event.stopPropagation()">

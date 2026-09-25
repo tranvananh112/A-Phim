@@ -1541,6 +1541,12 @@
 
 <body
     class="bg-background-dark text-gray-100 font-display min-h-screen flex flex-col watch-page overflow-x-hidden w-full">
+    <!-- Cinema Dimmer Overlay & Exit Indicator -->
+    <div id="cinemaOverlay" onclick="toggleCinemaMode()" title="Nhấn vào đây để bật lại đèn"></div>
+    <div id="cinemaExitHint" onclick="toggleCinemaMode()" style="visibility: hidden; opacity: 0; cursor: pointer;" title="Bấm để bật lại đèn">
+        <span class="material-icons-round text-sm text-amber-400">theater_comedy</span>
+        <span>Chế độ Rạp phim • Chạm bất kỳ đâu hoặc bấm phím <b>ESC / T</b> để bật đèn</span>
+    </div>
     <!-- Ambient Background (7 Orbs for Full Coverage) -->
     <div class="ambient-bg">
         <div class="ambient-orb ambient-orb-1"></div>
@@ -1851,12 +1857,10 @@
                 <!-- ================================================================= -->
                 <div class="lg:col-span-8 space-y-6" id="player-and-controls">
 
-                    <!-- 2. Khung Player + Thanh điều khiển (Card dính liền hoà trộn hoàn toàn) -->
+                    <!-- 2. Khung Player Aspect 16:9 -->
                     <div id="main-player-box"
-                        class="relative w-full bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10 z-[9990] group">
-                        <!-- Aspect 16:9 Video Player Box -->
-                        <div class="relative w-full aspect-video bg-black overflow-hidden">
-                            <div id="playerPlaceholder"
+                        class="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10 z-[9990] group">
+                        <div id="playerPlaceholder"
                                 class="absolute inset-0 w-full h-full flex flex-col items-center justify-center cursor-pointer overflow-hidden group/overlay"
                                 onclick="window.startActualPlayback && window.startActualPlayback()">
 
@@ -2156,7 +2160,6 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
 
                     <!-- 4. Khối "DANH SÁCH TẬP" (Giữ nguyên luồng Image 2, trang trí đẹp chuẩn Image 1) -->
                     <div id="episodes-section" class="w-full space-y-5" style="margin-top: 32px;">
@@ -2685,7 +2688,7 @@
     <script src="js/playlist-modal.js"></script>
     <script src="js/top-weekly-sidebar.js?v=100" defer></script>
     <script src="js/tmdb-api.js?v=15"></script>
-    <script src="js/watch.js?v=55"></script>
+    <script src="js/watch.js?v=345"></script>
     <script src="js/categories-dropdown.js?v=13"></script>
     <script src="js/countries-dropdown.js?v=13"></script>
 
@@ -3173,7 +3176,7 @@
     </script>
 
     <!-- Watch UI Init: toggle badges, shortcuts guide, cinema mode -->
-    <script src="js/watch-ui-init.js?v=218" defer></script>
+    <script src="js/watch-ui-init.js?v=345" defer></script>
 
 </body>
 

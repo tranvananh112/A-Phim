@@ -1910,8 +1910,8 @@ html.light-mode #sidebarSaveMovieBtn {
 /* Watch Page Player Control Bar Below Video (Match Image 3) */
 html.light-mode .player-ctrl-bar,
 .player-ctrl-bar {
-    background: #090a0f !important;
-    background-color: #090a0f !important;
+    background: transparent !important;
+    background-color: transparent !important;
     color: #ffffff !important;
 }
 
@@ -1936,7 +1936,8 @@ html.light-mode .player-ctrl-item svg,
 /* Player Control Bar (Toolbar directly under video player on /xem-phim) - Borderless & Single Row Alignment */
 html.light-mode .player-ctrl-bar,
 .player-ctrl-bar {
-    background: #090a0f !important;
+    background: transparent !important;
+    background-color: transparent !important;
     border: none !important;
     box-shadow: none !important;
 }
