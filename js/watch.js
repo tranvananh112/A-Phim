@@ -798,7 +798,7 @@ function renderMovieInfo(movie, episode) {
 
     const sidebarInfoLink = document.getElementById('sidebar-info-link');
     if (sidebarInfoLink && movie && movie.slug) {
-        sidebarInfoLink.href = `/phim/${movie.slug}`;
+        sidebarInfoLink.href = `movie-detail.html?slug=${encodeURIComponent(movie.slug)}`;
     }
 
     const sidebarQuality = document.getElementById('sidebar-quality');
