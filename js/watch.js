@@ -1901,10 +1901,10 @@ function initializePlayer(episode) {
             </div>
 
             <!-- Bottom Floating Control Bar (Original Layout, Pure White Visibility) -->
-            <div id="aphim-controls" class="absolute bottom-0 left-0 right-0 z-20 flex flex-col justify-end px-3.5 sm:px-6 pb-4 sm:pb-6 pt-16 bg-gradient-to-t from-black/95 via-black/60 to-transparent transition-opacity duration-300 opacity-100">
+            <div id="aphim-controls" class="absolute bottom-0 left-0 right-0 z-20 flex flex-col justify-end px-3.5 sm:px-6 pb-2.5 sm:pb-3 pt-12 bg-gradient-to-t from-black/95 via-black/60 to-transparent transition-opacity duration-150 opacity-100">
                 
                 <!-- Row 1: Full-Width Interactive Scrubbing Timeline -->
-                <div id="aphim-timeline-container" class="relative w-full h-5 flex items-center cursor-pointer group/timeline py-1 mb-2.5 sm:mb-3 select-none">
+                <div id="aphim-timeline-container" class="relative w-full h-5 flex items-center cursor-pointer group/timeline py-1 mb-1 sm:mb-1.5 select-none">
                     <!-- Background Rail -->
                     <div id="aphim-timeline-rail" class="relative w-full h-[4px] group-hover/timeline:h-[6px] bg-white/30 rounded-full overflow-hidden transition-all duration-150">
                         <!-- Buffer Bar -->
@@ -2868,11 +2868,11 @@ function initializePlayer(episode) {
         });
     }
 
-    // Controls Auto-Hide & Mouse Hover Visibility Logic (Professional Cinema Standard)
+    // Controls Auto-Hide & Interaction Visibility Logic (YouTube/Netflix Cinema Standard)
     let hideTimeout = null;
     let isHoveringControls = false;
 
-    function showControls() {
+    function showControls(delay = 3500) {
         if (!controls) return;
         controls.classList.remove('aphim-controls-hidden');
         controls.style.opacity = '1';
@@ -2883,7 +2883,7 @@ function initializePlayer(episode) {
             wrapper.style.cursor = 'default';
         }
 
-        scheduleHideControls(2500);
+        scheduleHideControls(delay);
     }
 
     function hideControls() {
@@ -2902,7 +2902,7 @@ function initializePlayer(episode) {
         if (settingsMenu) settingsMenu.classList.add('hidden');
     }
 
-    function scheduleHideControls(delay = 2500) {
+    function scheduleHideControls(delay = 3500) {
         if (hideTimeout) clearTimeout(hideTimeout);
         if (!player || player.paused || isDraggingTimeline || isHoveringControls) return;
         if (settingsMenu && !settingsMenu.classList.contains('hidden')) return;
@@ -2916,12 +2916,18 @@ function initializePlayer(episode) {
         controls.addEventListener('mouseenter', () => {
             isHoveringControls = true;
             if (hideTimeout) clearTimeout(hideTimeout);
-            showControls();
+            showControls(4000);
         });
         controls.addEventListener('mouseleave', () => {
             isHoveringControls = false;
-            scheduleHideControls(1200);
+            scheduleHideControls(1500);
         });
+        // On mobile touch inside controls: keep controls active
+        controls.addEventListener('touchstart', (e) => {
+            isHoveringControls = false;
+            if (hideTimeout) clearTimeout(hideTimeout);
+            showControls(4000);
+        }, { passive: true });
     }
 
     if (settingsMenu) {
@@ -2931,31 +2937,36 @@ function initializePlayer(episode) {
         });
         settingsMenu.addEventListener('mouseleave', () => {
             isHoveringControls = false;
-            scheduleHideControls(1200);
+            scheduleHideControls(1500);
         });
+        settingsMenu.addEventListener('touchstart', (e) => {
+            if (hideTimeout) clearTimeout(hideTimeout);
+        }, { passive: true });
     }
 
     if (wrapper) {
-        wrapper.addEventListener('mousemove', () => {
-            showControls();
-        });
-        wrapper.addEventListener('mouseenter', () => {
-            showControls();
-        });
-        wrapper.addEventListener('mouseleave', () => {
-            isHoveringControls = false;
-            if (hideTimeout) clearTimeout(hideTimeout);
-            if (wrapper) wrapper.style.cursor = 'default';
-            if (player && !player.paused && !isDraggingTimeline) {
-                // Di chuột ra khỏi player -> Lập tức ẩn thanh điều khiển sau 300ms mượt mà
-                hideTimeout = setTimeout(() => {
-                    hideControls();
-                }, 300);
+        wrapper.addEventListener('mousemove', (e) => {
+            if (!('ontouchstart' in window) || (e.sourceCapabilities && !e.sourceCapabilities.firesTouchEvents)) {
+                showControls(3000);
             }
         });
-        wrapper.addEventListener('touchstart', () => {
-            showControls();
-        }, { passive: true });
+        wrapper.addEventListener('mouseenter', (e) => {
+            if (!('ontouchstart' in window) || (e.sourceCapabilities && !e.sourceCapabilities.firesTouchEvents)) {
+                showControls(3000);
+            }
+        });
+        wrapper.addEventListener('mouseleave', () => {
+            if (!('ontouchstart' in window)) {
+                isHoveringControls = false;
+                if (hideTimeout) clearTimeout(hideTimeout);
+                if (wrapper) wrapper.style.cursor = 'default';
+                if (player && !player.paused && !isDraggingTimeline) {
+                    hideTimeout = setTimeout(() => {
+                        hideControls();
+                    }, 500);
+                }
+            }
+        });
     }
 
     // Global listener for Fullscreen mode
@@ -3121,8 +3132,8 @@ function initializePlayer(episode) {
         if (typeof autoPlayNext === 'function') autoPlayNext();
     });
 
-    // Mobile Gestures (Ảnh số 2):
-    // 1. Chạm một lần để hiện / ẩn thanh điều khiển
+    // Mobile Gestures (YouTube / Netflix UX Standard):
+    // 1. Chạm một lần vào màn hình để Bật/Tắt thanh điều khiển (Giữ 4 giây)
     // 2. Chạm đúp bên trái / phải để tua 10 giây
     // 3. Nhấn giữ trên video để tua nhanh 2x, thả tay để trở lại tốc độ cũ
     let lastTap = 0;
@@ -3130,10 +3141,15 @@ function initializePlayer(episode) {
     let longPressTimer = null;
     let isLongPressActive = false;
     let preSpeed = 1.0;
+    let wasControlsHiddenBeforeTouch = true;
 
     if (clickzone) {
         clickzone.addEventListener('touchstart', (e) => {
             if (e.touches.length !== 1) return;
+
+            // Ghi nhận trạng thái thanh điều khiển TRƯỚC KHI chạm
+            wasControlsHiddenBeforeTouch = !controls || controls.classList.contains('aphim-controls-hidden') || controls.style.opacity === '0' || controls.style.visibility === 'hidden';
+
             isLongPressActive = false;
             longPressTimer = setTimeout(() => {
                 isLongPressActive = true;
@@ -3172,6 +3188,7 @@ function initializePlayer(episode) {
             const now = Date.now();
             const DOUBLE_TAP_DELAY = 280;
             if (now - lastTap < DOUBLE_TAP_DELAY) {
+                // Double tap: Seek 10s & cancel any single tap state
                 if (singleTapTimeout) clearTimeout(singleTapTimeout);
                 e.preventDefault();
                 const rect = clickzone.getBoundingClientRect();
@@ -3187,18 +3204,18 @@ function initializePlayer(episode) {
                     }
                 }
                 lastTap = 0;
+                showControls(3500);
             } else {
+                // Single tap: Phản hồi NGAY LẬP TỨC REALTIME không có độ trễ
                 lastTap = now;
-                if (window.innerWidth <= 768) {
-                    singleTapTimeout = setTimeout(() => {
-                        if (controls) {
-                            if (controls.classList.contains('aphim-controls-hidden') || controls.style.opacity === '0') {
-                                showControls();
-                            } else {
-                                hideControls();
-                            }
-                        }
-                    }, DOUBLE_TAP_DELAY);
+                if (controls) {
+                    if (wasControlsHiddenBeforeTouch) {
+                        // Hiện ngay lập tức và giữ trong 4s
+                        showControls(4000);
+                    } else {
+                        // Ẩn ngay lập tức
+                        hideControls();
+                    }
                 }
             }
         });

@@ -1343,10 +1343,10 @@
                 justify-content: flex-end !important;
                 padding-left: 20px !important;
                 padding-right: 20px !important;
-                padding-bottom: 24px !important;
-                padding-top: 60px !important;
+                padding-bottom: 12px !important;
+                padding-top: 50px !important;
                 background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.65) 45%, rgba(0, 0, 0, 0.2) 80%, transparent 100%) !important;
-                transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.32s cubic-bezier(0.16, 1, 0.3, 1) !important;
+                transition: opacity 0.15s ease-out, visibility 0.15s ease-out !important;
                 pointer-events: auto;
                 will-change: opacity;
             }
@@ -1354,10 +1354,10 @@
             :fullscreen #aphim-controls,
             :-webkit-full-screen #aphim-controls,
             .aphim-web-fullscreen #aphim-controls {
-                padding-left: 36px !important;
-                padding-right: 36px !important;
-                padding-bottom: 30px !important;
-                padding-top: 80px !important;
+                padding-left: 32px !important;
+                padding-right: 32px !important;
+                padding-bottom: 16px !important;
+                padding-top: 70px !important;
             }
 
             #aphim-controls.aphim-controls-hidden {
@@ -1370,8 +1370,8 @@
                 #aphim-controls {
                     padding-left: 8px !important;
                     padding-right: 8px !important;
-                    padding-bottom: 6px !important;
-                    padding-top: 30px !important;
+                    padding-bottom: 3px !important;
+                    padding-top: 22px !important;
                 }
             }
 
@@ -1383,7 +1383,7 @@
                 display: flex !important;
                 align-items: center !important;
                 cursor: pointer !important;
-                margin-bottom: 10px !important;
+                margin-bottom: 6px !important;
                 user-select: none !important;
                 -webkit-user-select: none !important;
                 touch-action: none !important;
@@ -1904,14 +1904,18 @@
 
                 /* High contrast dark gradient behind controls */
                 #aphim-controls {
+                    padding-left: 8px !important;
+                    padding-right: 8px !important;
+                    padding-bottom: 3px !important;
+                    padding-top: 22px !important;
                     background: linear-gradient(to top, rgba(0, 0, 0, 0.96) 0%, rgba(0, 0, 0, 0.72) 48%, rgba(0, 0, 0, 0.25) 85%, transparent 100%) !important;
                 }
 
                 /* Scrubber rail and thumb */
                 #aphim-timeline-container {
-                    height: 16px !important;
-                    margin-bottom: 4px !important;
-                    padding: 4px 0 !important;
+                    height: 14px !important;
+                    margin-bottom: 2px !important;
+                    padding: 2px 0 !important;
                 }
                 #aphim-timeline-rail {
                     height: 3.5px !important;
@@ -1940,6 +1944,8 @@
                     display: flex !important;
                     align-items: center !important;
                     justify-content: space-between !important;
+                    transform: translateY(2px) !important;
+                    margin-bottom: 1px !important;
                 }
                 #aphim-left-group {
                     display: flex !important;
@@ -2039,7 +2045,10 @@
                 #aphim-controls {
                     padding-left: 6px !important;
                     padding-right: 6px !important;
-                    padding-bottom: 5px !important;
+                    padding-bottom: 2px !important;
+                }
+                #aphim-row-bottom {
+                    transform: translateY(2.5px) !important;
                 }
                 #aphim-controls button,
                 .aphim-ctrl-btn {
