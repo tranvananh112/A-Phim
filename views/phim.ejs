@@ -445,7 +445,7 @@
                             class="movie-actions-container flex flex-wrap items-center justify-between gap-3 sm:gap-4 mt-4 md:mt-6 lg:mt-7 mb-4 md:mb-6 lg:mb-7 w-full">
                             <!-- Nhóm các nút hành động bên trái (Xem ngay, Yêu thích, Thêm vào, Chia sẻ, Bình luận) -->
                             <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-                                <a href="/xem-phim/<%= typeof slug !== 'undefined' ? slug : '' %>" id="watchNowBtn"
+                                <a href="watch.html<%= typeof slug !== 'undefined' && slug ? '?slug=' + encodeURIComponent(slug) : '' %>" id="watchNowBtn"
                                     class="group relative px-6 h-11 sm:h-12 lg:px-7 rounded-full transition-all duration-300 flex items-center justify-center gap-2 flex-shrink-0 cinematic-gold-btn shadow-xl hover:scale-105 active:scale-95">
                                     <svg class="w-4 h-4 sm:w-5 sm:h-5 fill-white flex-shrink-0"
                                         style="fill: #ffffff !important;" viewBox="0 0 24 24">

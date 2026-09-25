@@ -137,7 +137,8 @@ function updateWatchUrlState(movie, episode, serverIndex) {
         urlParams.set('episode', `tap-${cleanEp}${catSlug}`);
         if (serverIndex > 0) urlParams.set('server', serverIndex);
         else urlParams.delete('server');
-        window.history.pushState({}, '', 'watch.html?' + urlParams.toString());
+        const currentPath = window.location.pathname.endsWith('.html') ? 'watch.html' : (window.location.pathname.startsWith('/watch') ? '/watch' : 'watch.html');
+        window.history.pushState({}, '', currentPath + '?' + urlParams.toString());
     }
 
     // Cập nhật Title trang động theo đúng phiên bản đang xem

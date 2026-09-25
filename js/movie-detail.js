@@ -130,6 +130,12 @@ document.addEventListener('DOMContentLoaded', async function () {
         sessionStorage.setItem('aphim_last_viewed_slug', slug);
     } catch (e) { }
 
+    // ⚡ Gán ngay link Xem Ngay trỏ thẳng watch.html?slug=... để không bao giờ bị delay/lỗi
+    const immediateWatchBtn = document.getElementById('watchNowBtn');
+    if (immediateWatchBtn) {
+        immediateWatchBtn.href = `watch.html?slug=${encodeURIComponent(slug)}`;
+    }
+
     await loadMovieDetail(slug);
 
     // 🎬 Initialize Lottie for Watch Now button
