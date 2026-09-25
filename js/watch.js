@@ -137,7 +137,7 @@ function updateWatchUrlState(movie, episode, serverIndex) {
         urlParams.set('episode', `tap-${cleanEp}${catSlug}`);
         if (serverIndex > 0) urlParams.set('server', serverIndex);
         else urlParams.delete('server');
-        const currentPath = window.location.pathname.endsWith('.html') ? 'watch.html' : (window.location.pathname.startsWith('/watch') ? '/watch' : 'watch.html');
+        const currentPath = window.location.pathname.endsWith('.html') ? window.location.pathname : '/watch.html';
         window.history.pushState({}, '', currentPath + '?' + urlParams.toString());
     }
 
@@ -3121,10 +3121,24 @@ function initializePlayer(episode) {
                 bufferBar.style.width = `${bufPct}%`;
             } catch (e) { }
         }
+
+        // Netflix-style Smart Auto Next Trigger (khi video còn <= 12s)
+        const remaining = dur - cur;
+        if (dur > 30 && remaining <= 12 && remaining > 0 && !window._hasAutoNextTriggeredForThisEp) {
+            const autoNextBtn = document.getElementById('btnAutoNext');
+            const autoNextEnabled = autoNextBtn ? autoNextBtn.classList.contains('is-active') : true;
+            if (autoNextEnabled) {
+                window._hasAutoNextTriggeredForThisEp = true;
+                if (typeof autoPlayNext === 'function') autoPlayNext();
+            }
+        }
     });
 
     player.addEventListener('seeked', () => {
         doSaveProgress();
+        if (player.duration && player.currentTime < (player.duration - 20)) {
+            window._hasAutoNextTriggeredForThisEp = false;
+        }
     });
 
     player.addEventListener('ended', () => {
@@ -3438,23 +3452,6 @@ function addFullscreenButton() {
 }
 
 // Change episode is defined globally as an instant transition helper below
-
-// Auto play next episode
-function autoPlayNext() {
-    if (!currentMovie.episodes || currentMovie.episodes.length === 0) return;
-
-    const serverData = currentMovie.episodes[currentServerIndex]?.server_data || currentMovie.episodes[0].server_data;
-    const currentIndex = serverData.findIndex(ep => ep.slug.replace(/^tap-/, '') === currentEpisode.slug.replace(/^tap-/, ''));
-
-    if (currentIndex < serverData.length - 1) {
-        const nextEpisode = serverData[currentIndex + 1];
-        setTimeout(() => {
-            if (confirm(`Tự động phát ${nextEpisode.name}?`)) {
-                changeEpisode(nextEpisode.slug);
-            }
-        }, 3000);
-    }
-}
 
 // Load recommendations
 async function loadRecommendations() {
@@ -4014,6 +4011,7 @@ function showSeekOverlay(text, isRight) {
 }
 
 // Global changeEpisode helper to update query string parameters and transition instantly
+// Global changeEpisode helper to update query string parameters and transition instantly
 window.changeEpisode = function (episodeSlug) {
     if (!currentMovie || !currentMovie.episodes || currentMovie.episodes.length === 0) return;
 
@@ -4021,11 +4019,24 @@ window.changeEpisode = function (episodeSlug) {
     const foundEp = serverData.find(ep => ep.slug.replace(/^tap-/, '') === episodeSlug.replace(/^tap-/, ''));
     if (!foundEp) return;
 
+    // Reset any existing next episode countdown interval & overlay
+    if (window._nextEpisodeInterval) {
+        clearInterval(window._nextEpisodeInterval);
+        window._nextEpisodeInterval = null;
+    }
+    const existingOverlay = document.getElementById('netflix-next-countdown');
+    if (existingOverlay) {
+        existingOverlay.remove();
+    }
+
     // 1. Update active state variables
     currentEpisode = foundEp;
 
     // 2. Update URL query parameter cleanly without page reload
     updateWatchUrlState(currentMovie, currentEpisode, currentServerIndex);
+
+    // 3. Reset initialization lock to ensure smooth immediate transition
+    _isInitializingPlayer = false;
 
     // 4. Update play stream (Re-initialize player or switch stream)
     const videoPlayer = document.getElementById('videoPlayer');
@@ -4089,14 +4100,18 @@ function playPreviousEpisode() {
 
 function playNextEpisode() {
     if (!currentMovie || !currentMovie.episodes || currentMovie.episodes.length === 0 || !currentEpisode) return;
-    const serverData = currentMovie.episodes[currentServerIndex]?.server_data || currentMovie.episodes[0].server_data;
-    const currentIndex = serverData.findIndex(ep => ep.slug.replace(/^tap-/, '') === currentEpisode.slug.replace(/^tap-/, ''));
-    if (currentIndex < serverData.length - 1) {
-        window.changeEpisode(serverData[currentIndex + 1].slug);
+    if (typeof autoPlayNext === 'function') {
+        autoPlayNext();
+    } else {
+        const serverData = currentMovie.episodes[currentServerIndex]?.server_data || currentMovie.episodes[0].server_data;
+        const currentIndex = serverData.findIndex(ep => ep.slug.replace(/^tap-/, '') === currentEpisode.slug.replace(/^tap-/, ''));
+        if (currentIndex < serverData.length - 1) {
+            window.changeEpisode(serverData[currentIndex + 1].slug);
+        }
     }
 }
 
-// Autoplay next episode with a gorgeous Netflix-style countdown overlay
+// Autoplay next episode with a gorgeous Netflix / Disney+ style cinema card overlay
 function autoPlayNext() {
     if (!currentMovie || !currentMovie.episodes || currentMovie.episodes.length === 0 || !currentEpisode) return;
     const serverData = currentMovie.episodes[currentServerIndex]?.server_data || currentMovie.episodes[0].server_data;
@@ -4106,88 +4121,245 @@ function autoPlayNext() {
     if (currentIndex >= serverData.length - 1) return;
 
     const nextEpisode = serverData[currentIndex + 1];
-    const playerContainer = document.querySelector('.aspect-video');
+    // Ưu tiên #main-player-box để overlay nổi trên cả ArtPlayer / iframe embed
+    const playerContainer = document.getElementById('main-player-box') || document.getElementById('aphim-player-wrapper') || document.querySelector('.aspect-video');
     if (!playerContainer) return;
+    // Đảm bảo container có position relative để absolute overlay hiển thị đúng
+    if (getComputedStyle(playerContainer).position === 'static') {
+        playerContainer.style.position = 'relative';
+    }
 
-    // Create the overlay container
+    if (window._nextEpisodeInterval) {
+        clearInterval(window._nextEpisodeInterval);
+        window._nextEpisodeInterval = null;
+    }
+    const existingOverlay = document.getElementById('netflix-next-countdown');
+    if (existingOverlay) existingOverlay.remove();
+
+    // Determine poster image
+    let posterImg = '';
+    if (currentMovie) {
+        posterImg = currentMovie.poster_url || currentMovie.thumb_url || '';
+        if (posterImg && !posterImg.startsWith('http') && !posterImg.startsWith('//') && !posterImg.startsWith('data:')) {
+            posterImg = `https://img.ophim.live/uploads/movies/${posterImg}`;
+        }
+    }
+    if (!posterImg) {
+        const pagePoster = document.querySelector('#sidebar-poster, .movie-poster img, #movie-poster-img');
+        if (pagePoster && pagePoster.src) posterImg = pagePoster.src;
+    }
+
+    // Format episode title cleanly (e.g. "Tập 04")
+    let epTitle = nextEpisode.name || 'Tập tiếp theo';
+    const epMatch = epTitle.match(/(?:tập\s*)?(\d+)/i);
+    if (epMatch) {
+        const num = parseInt(epMatch[1], 10);
+        epTitle = `Tập ${num < 10 ? '0' + num : num}`;
+    } else if (!epTitle.toLowerCase().startsWith('tập') && !epTitle.toLowerCase().startsWith('full')) {
+        epTitle = 'Tập ' + epTitle;
+    }
+
+    // Movie subtitle
+    const movieSubtitle = [currentMovie?.name, currentMovie?.origin_name].filter(Boolean).join(' / ');
+    const langBadge = currentMovie?.lang || 'Vietsub';
+
+    // Create the overlay container — dùng inline style để đảm bảo hiển thị bất kể Tailwind có purge hay không
     const overlay = document.createElement('div');
     overlay.id = 'netflix-next-countdown';
-    overlay.className = 'absolute inset-0 bg-black/85 flex flex-col items-center justify-center text-white z-[99] transition-opacity duration-300 opacity-0';
-    overlay.style.borderRadius = '12px';
+    Object.assign(overlay.style, {
+        position: 'absolute',
+        inset: '0',
+        top: '0', left: '0', right: '0', bottom: '0',
+        zIndex: '9999',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '16px',
+        background: 'rgba(0,0,0,0.88)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+        borderRadius: '12px',
+        opacity: '0',
+        transition: 'opacity 0.3s ease',
+        userSelect: 'none',
+        overflow: 'hidden',
+    });
 
-    let countdownVal = 10;
+    const totalSeconds = 5;
+    let countdownVal = totalSeconds;
+
+    const thumbW = Math.min(playerContainer.clientWidth * 0.32, 190);
+    const isMobile = playerContainer.clientWidth < 540;
 
     overlay.innerHTML = `
-        <div class="text-center p-6 space-y-4 max-w-sm select-none">
-            <p class="text-gray-400 font-bold uppercase tracking-widest text-[10px] md:text-xs">TẬP TIẾP THEO</p>
-            <h4 class="text-lg md:text-2xl font-black text-[#fcd576] truncate max-w-[280px] md:max-w-xs mx-auto">${nextEpisode.name}</h4>
-            
-            <div class="relative w-16 h-16 md:w-20 md:h-20 mx-auto flex items-center justify-center">
-                <!-- Circular SVG Countdown Progress Bar -->
-                <svg class="w-full h-full transform -rotate-90">
-                    <circle cx="40" cy="40" r="34" stroke="rgba(255,255,255,0.1)" stroke-width="4" fill="transparent" />
-                    <circle id="countdown-progress-bar" cx="40" cy="40" r="34" stroke="#fcd576" stroke-width="4" fill="transparent" 
-                            stroke-dasharray="213.6" stroke-dashoffset="0" style="transition: stroke-dashoffset 1s linear;" />
-                </svg>
-                <span id="countdown-number" class="absolute text-xl md:text-2xl font-black text-white">${countdownVal}</span>
+        <!-- Ambient glow -->
+        <div style="position:absolute;width:360px;height:220px;background:radial-gradient(ellipse,rgba(245,158,11,0.18) 0%,transparent 70%);border-radius:50%;pointer-events:none;"></div>
+
+        <!-- Card -->
+        <div id="next-ep-card" style="
+            position:relative;z-index:10;
+            width:100%;max-width:${isMobile ? '340px' : '560px'};
+            background:rgba(17,23,38,0.97);
+            backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+            border:1px solid rgba(251,191,36,0.38);
+            border-radius:${isMobile ? '18px' : '24px'};
+            box-shadow:0 0 50px -5px rgba(245,158,11,0.28),0 24px 48px -10px rgba(0,0,0,0.95);
+            padding:${isMobile ? '14px' : '20px'};
+            overflow:hidden;
+            transform:scale(0.93);
+            transition:transform 0.3s cubic-bezier(0.16,1,0.3,1);
+            font-family:system-ui,-apple-system,sans-serif;
+        ">
+            <!-- Content row -->
+            <div style="display:flex;flex-direction:${isMobile ? 'column' : 'row'};gap:${isMobile ? '12px' : '18px'};align-items:${isMobile ? 'stretch' : 'center'};">
+
+                <!-- Thumbnail -->
+                <div style="position:relative;width:${isMobile ? '100%' : thumbW + 'px'};${isMobile ? '' : 'flex-shrink:0;'}border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.1);background:#0c0f1a;aspect-ratio:16/10;">
+                    <img src="${posterImg || ''}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;"
+                        onerror="this.style.display='none'" />
+                    <!-- Center play button -->
+                    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.35);">
+                        <div style="width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,0.75);border:1.5px solid #fbbf24;display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(245,158,11,0.5);">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="#fbbf24"><path d="M8 5v14l11-7z"/></svg>
+                        </div>
+                    </div>
+                    <!-- Badge -->
+                    <span style="position:absolute;bottom:8px;left:8px;padding:2px 8px;border-radius:6px;background:rgba(0,0,0,0.85);color:#fff;font-size:10px;font-weight:700;border:1px solid rgba(255,255,255,0.12);">HD • ${langBadge}</span>
+                </div>
+
+                <!-- Right info -->
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;">
+                    <!-- Badge row -->
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                        <div style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;background:rgba(245,158,11,0.1);border:1px solid rgba(251,191,36,0.5);color:#fcd576;font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="#fcd576"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+                            TẬP TIẾP THEO
+                        </div>
+                        <span style="font-size:11px;color:#94a3b8;font-weight:500;">Sẵn sàng phát</span>
+                    </div>
+
+                    <!-- Episode title -->
+                    <h4 style="margin:0;font-size:${isMobile ? '20px' : '24px'};font-weight:900;color:#fff;letter-spacing:-0.3px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${epTitle}</h4>
+
+                    <!-- Subtitle -->
+                    <p style="margin:0;font-size:11px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${movieSubtitle || ''}</p>
+
+                    <!-- Buttons -->
+                    <div style="display:flex;gap:8px;margin-top:4px;">
+                        <button id="play-now-countdown-btn" style="
+                            flex:1;height:38px;padding:0 14px;
+                            background:linear-gradient(135deg,#fbbf24,#f59e0b);
+                            color:#0a0c10;font-weight:800;font-size:13px;
+                            border:none;border-radius:12px;cursor:pointer;
+                            display:flex;align-items:center;justify-content:center;gap:6px;
+                            box-shadow:0 4px 14px rgba(245,158,11,0.4);
+                            transition:all 0.15s;
+                        ">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="#0a0c10"><path d="M8 5v14l11-7z"/></svg>
+                            Phát ngay
+                            <span id="btn-countdown-sec" style="opacity:0.8;font-weight:600;">(${countdownVal}s)</span>
+                        </button>
+                        <button id="cancel-countdown-btn" style="
+                            flex:1;height:38px;padding:0 14px;
+                            background:#1e2536;color:#cbd5e1;
+                            font-weight:700;font-size:13px;
+                            border:1px solid rgba(255,255,255,0.15);
+                            border-radius:12px;cursor:pointer;
+                            display:flex;align-items:center;justify-content:center;gap:6px;
+                            transition:all 0.15s;
+                        ">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            Ở lại
+                        </button>
+                    </div>
+
+                    <!-- Keyboard hints -->
+                    <div style="display:flex;align-items:center;gap:5px;margin-top:4px;font-size:10.5px;color:#64748b;">
+                        <kbd style="padding:1px 5px;background:#1a2233;border:1px solid rgba(255,255,255,0.18);border-radius:4px;color:#cbd5e1;font-family:monospace;font-size:9px;">Enter</kbd>
+                        <span>Phát ngay</span>
+                        <span style="color:#334155;margin:0 2px;">•</span>
+                        <kbd style="padding:1px 5px;background:#1a2233;border:1px solid rgba(255,255,255,0.18);border-radius:4px;color:#cbd5e1;font-family:monospace;font-size:9px;">Esc</kbd>
+                        <span>Ở lại</span>
+                    </div>
+                </div>
             </div>
-            
-            <div class="flex items-center justify-center gap-3 pt-2">
-                <button id="cancel-countdown-btn" class="px-4 py-1.5 bg-white/10 hover:bg-white/20 border border-white/10 text-white rounded-lg font-bold text-xs transition-colors cursor-pointer active:scale-95">
-                    Hủy
-                </button>
-                <button id="play-now-countdown-btn" class="px-4 py-1.5 bg-[#fcd576] hover:bg-white hover:text-black text-black rounded-lg font-bold text-xs transition-colors cursor-pointer active:scale-95">
-                    Phát ngay
-                </button>
+
+            <!-- Progress bar at bottom of card -->
+            <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,0.08);">
+                <div id="countdown-linear-bar" style="height:100%;width:100%;background:linear-gradient(90deg,#fbbf24,#f59e0b,#fcd34d);box-shadow:0 0 8px #fcd576;transition:width 1s linear;"></div>
             </div>
         </div>
     `;
 
     playerContainer.appendChild(overlay);
 
-    // Force reflow and fade in
+    // Force reflow and smooth entry using inline styles
     requestAnimationFrame(() => {
-        overlay.classList.remove('opacity-0');
-        overlay.classList.add('opacity-100');
+        requestAnimationFrame(() => {
+            overlay.style.opacity = '1';
+            const card = overlay.querySelector('#next-ep-card');
+            if (card) card.style.transform = 'scale(1)';
+        });
     });
 
-    const progressCircle = document.getElementById('countdown-progress-bar');
-    const countdownNumber = document.getElementById('countdown-number');
-    const maxOffset = 213.6;
+    const btnCountdownSec = document.getElementById('btn-countdown-sec');
+    const linearBar = document.getElementById('countdown-linear-bar');
 
-    // Set initial stroke-dashoffset logic
-    if (progressCircle) {
-        progressCircle.setAttribute('cx', playerContainer.clientWidth > 640 ? '40' : '32');
-        progressCircle.setAttribute('cy', playerContainer.clientWidth > 640 ? '40' : '32');
-    }
-
-    const intervalId = setInterval(() => {
-        countdownVal--;
-        if (countdownNumber) countdownNumber.textContent = countdownVal;
-        if (progressCircle) {
-            const offset = maxOffset - (maxOffset * (10 - countdownVal) / 10);
-            progressCircle.style.strokeDashoffset = offset;
+    const handleKeydown = (e) => {
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            dismissOverlay();
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            triggerPlayNext();
         }
+    };
 
-        if (countdownVal <= 0) {
-            clearInterval(intervalId);
-            window.changeEpisode(nextEpisode.slug);
+    const dismissOverlay = () => {
+        if (window._nextEpisodeInterval) {
+            clearInterval(window._nextEpisodeInterval);
+            window._nextEpisodeInterval = null;
         }
-    }, 1000);
-
-    // Wire up events
-    document.getElementById('cancel-countdown-btn').onclick = () => {
-        clearInterval(intervalId);
-        overlay.classList.remove('opacity-100');
-        overlay.classList.add('opacity-0');
+        window.removeEventListener('keydown', handleKeydown);
+        overlay.style.opacity = '0';
+        const card = overlay.querySelector('#next-ep-card');
+        if (card) card.style.transform = 'scale(0.93)';
         setTimeout(() => overlay.remove(), 300);
     };
 
-    document.getElementById('play-now-countdown-btn').onclick = () => {
-        clearInterval(intervalId);
+    const triggerPlayNext = () => {
+        if (window._nextEpisodeInterval) {
+            clearInterval(window._nextEpisodeInterval);
+            window._nextEpisodeInterval = null;
+        }
+        window.removeEventListener('keydown', handleKeydown);
+        dismissOverlay();
         window.changeEpisode(nextEpisode.slug);
     };
+
+    window.addEventListener('keydown', handleKeydown);
+
+    window._nextEpisodeInterval = setInterval(() => {
+        countdownVal--;
+        if (btnCountdownSec) btnCountdownSec.textContent = `(${countdownVal}s)`;
+        if (linearBar) {
+            const percent = Math.max(0, (countdownVal / totalSeconds) * 100);
+            linearBar.style.width = percent + '%';
+        }
+
+        if (countdownVal <= 0) {
+            triggerPlayNext();
+        }
+    }, 1000);
+
+    // Wire up button events
+    const cancelBtn = document.getElementById('cancel-countdown-btn');
+    if (cancelBtn) cancelBtn.onclick = dismissOverlay;
+
+    const playNowBtn = document.getElementById('play-now-countdown-btn');
+    if (playNowBtn) playNowBtn.onclick = triggerPlayNext;
 }
+window.autoPlayNext = autoPlayNext;
 
 // =========================================================================
 // 🎬 CINEMA / THEATER MODE (Rạp phim / Tắt đèn) - World-Class Standard

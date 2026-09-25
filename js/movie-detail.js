@@ -130,10 +130,10 @@ document.addEventListener('DOMContentLoaded', async function () {
         sessionStorage.setItem('aphim_last_viewed_slug', slug);
     } catch (e) { }
 
-    // ⚡ Gán ngay link Xem Ngay trỏ thẳng watch.html?slug=... để không bao giờ bị delay/lỗi
+    // ⚡ Gán ngay link Xem Ngay trỏ thẳng /watch.html?slug=... để không bao giờ bị delay/lỗi
     const immediateWatchBtn = document.getElementById('watchNowBtn');
     if (immediateWatchBtn) {
-        immediateWatchBtn.href = `watch.html?slug=${encodeURIComponent(slug)}`;
+        immediateWatchBtn.href = `/watch.html?slug=${encodeURIComponent(slug)}`;
     }
 
     await loadMovieDetail(slug);
@@ -669,7 +669,7 @@ function renderMovieDetail(movie) {
         const customLink = movieLinks[movie.slug];
 
         if (customLink) {
-            watchBtn.href = `watch.html?slug=${encodeURIComponent(movie.slug)}`;
+            watchBtn.href = `/watch.html?slug=${encodeURIComponent(movie.slug)}`;
             watchBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             console.log('✅ Custom link found for movie:', movie.slug);
         } else if (movie.episodes && movie.episodes.length > 0) {
@@ -688,7 +688,7 @@ function renderMovieDetail(movie) {
                 else if (sName.includes('lồng tiếng') || sName.includes('long tieng')) catSlug = '-long-tieng';
             }
 
-            watchBtn.href = `watch.html?slug=${encodeURIComponent(movie.slug)}&episode=tap-${cleanSlug}${catSlug}&server=${serverIndex}`;
+            watchBtn.href = `/watch.html?slug=${encodeURIComponent(movie.slug)}&episode=tap-${cleanSlug}${catSlug}&server=${serverIndex}`;
             watchBtn.classList.remove('opacity-50', 'cursor-not-allowed');
 
             const syncPreload = () => { if (typeof savePreloadedMovieData === 'function') savePreloadedMovieData(currentMovie || movie); };
@@ -696,7 +696,7 @@ function renderMovieDetail(movie) {
             watchBtn.addEventListener('mouseenter', syncPreload, { passive: true });
             watchBtn.addEventListener('touchstart', syncPreload, { passive: true });
         } else {
-            watchBtn.href = `watch.html?slug=${encodeURIComponent(movie.slug)}&episode=tap-1`;
+            watchBtn.href = `/watch.html?slug=${encodeURIComponent(movie.slug)}&episode=tap-1`;
             watchBtn.classList.remove('opacity-50', 'cursor-not-allowed');
         }
     }
@@ -1445,7 +1445,7 @@ window.changeServerDetail = function (index) {
         }
         const sParam = (index > 0 && !catSlug) ? `?server=${index}` : '';
 
-        watchBtn.href = `watch.html?slug=${encodeURIComponent(currentMovie.slug)}&episode=tap-${cleanSlug}${catSlug}&server=${index}`;
+        watchBtn.href = `/watch.html?slug=${encodeURIComponent(currentMovie.slug)}&episode=tap-${cleanSlug}${catSlug}&server=${index}`;
     }
 };
 

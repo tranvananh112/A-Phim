@@ -1,14 +1,32 @@
 # Cloudflare Pages URL Rewrites for APhim Static Engine
-/phim/:slug                      /movie-detail.html?slug=:slug                200
-/movie-detail/:slug              /movie-detail.html?slug=:slug                200
-/xem-phim/:slug/:episode         /watch.html?slug=:slug&episode=:episode      200
-/xem-phim/:slug                  /watch.html?slug=:slug                       200
-/xem-phim                        /watch.html                                  200
-/xem-phim/*                      /watch.html                                  200
-/the-loai/:slug                  /categories.html?category=:slug              200
-/quoc-gia/:slug                  /countries.html?country=:slug                200
-/tim-kiem                        /search.html                                 200
-/thanh-vien                      /profile.html                                200
-/vip                             /pricing.html                                200
-/phim-hot                        /index.html                                  200
-/phim-moi                        /index.html                                  200
+# Friendly/SEO Route Rewrites
+/phim/:slug                         /movie-detail.html?slug=:slug                   200
+/phim                               /movie-detail.html                              200
+/phim/*                             /movie-detail.html                              200
+
+/movie-detail/:slug                 /movie-detail.html?slug=:slug                   200
+
+/xem-phim/:slug/:episode            /watch.html?slug=:slug&episode=:episode         200
+/xem-phim/:slug                     /watch.html?slug=:slug                          200
+/xem-phim                           /watch.html                                     200
+/xem-phim/*                         /watch.html                                     200
+
+/watch/:slug/:episode               /watch.html?slug=:slug&episode=:episode         200
+/watch/:slug                        /watch.html?slug=:slug                          200
+
+/the-loai/:slug                     /categories.html?category=:slug                 200
+/the-loai                           /categories.html                                200
+/the-loai/*                         /categories.html                                200
+
+/quoc-gia/:slug                     /countries.html?country=:slug                   200
+/quoc-gia                           /countries.html                                 200
+/quoc-gia/*                         /countries.html                                 200
+
+/tim-kiem                           /search.html                                    200
+/tim-kiem/*                         /search.html                                    200
+
+/thanh-vien                         /profile.html                                   200
+/vip                                /pricing.html                                   200
+
+/phim-hot                           /index.html                                     200
+/phim-moi                           /index.html                                     200

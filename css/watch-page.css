@@ -2413,3 +2413,167 @@
     box-shadow: none !important;
     border-radius: 0 !important;
 }
+
+/* =========================================================================
+   🎬 NETFLIX-STYLE NEXT EPISODE COUNTDOWN OVERLAY (Exact Center Modal)
+   ========================================================================= */
+.aphim-next-overlay {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 100 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(0, 0, 0, 0.92) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    padding: 20px !important;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.96);
+    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s !important;
+    border-radius: 12px;
+    overflow: hidden;
+    user-select: none;
+    text-align: center;
+}
+
+.aphim-next-overlay.is-active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: scale(1) !important;
+}
+
+.aphim-next-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 380px;
+    width: 100%;
+}
+
+.aphim-next-badge-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.aphim-next-ep-title {
+    font-size: 30px;
+    font-weight: 800;
+    color: #fcd576;
+    margin: 0 0 20px 0;
+    line-height: 1.2;
+    text-shadow: 0 0 20px rgba(252, 213, 118, 0.35);
+}
+
+.aphim-next-timer-wrap {
+    position: relative;
+    width: 76px;
+    height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.aphim-next-timer-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.aphim-next-number {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 800;
+    color: #ffffff;
+    font-family: system-ui, -apple-system, sans-serif;
+    pointer-events: none;
+}
+
+.aphim-next-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.aphim-next-btn-cancel {
+    padding: 9px 24px;
+    border-radius: 10px;
+    background: #1e2330;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #e2e8f0;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.aphim-next-btn-cancel:hover {
+    background: #2a2f42;
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.aphim-next-btn-cancel:active {
+    transform: scale(0.96);
+}
+
+.aphim-next-btn-play {
+    padding: 9px 24px;
+    border-radius: 10px;
+    background: #fcd576;
+    border: none;
+    color: #0b0f19;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(252, 213, 118, 0.4);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.aphim-next-btn-play:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 6px 20px rgba(252, 213, 118, 0.6);
+    transform: translateY(-1px);
+}
+
+.aphim-next-btn-play:active {
+    transform: scale(0.96);
+}
+
+@media (max-width: 640px) {
+    .aphim-next-badge-label {
+        font-size: 11.5px;
+    }
+    .aphim-next-ep-title {
+        font-size: 24px;
+        margin-bottom: 14px;
+    }
+    .aphim-next-timer-wrap {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 18px;
+    }
+    .aphim-next-number {
+        font-size: 20px;
+    }
+    .aphim-next-btn-cancel,
+    .aphim-next-btn-play {
+        padding: 8px 18px;
+        font-size: 13px;
+    }
+}
+

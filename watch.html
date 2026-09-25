@@ -45,19 +45,6 @@
         content="APhim - Website xem phim online Full HD miễn phí, cập nhật phim mới nhất 2026, Phim Vietsub, Thuyết Minh, Phim Lồng Tiếng chất lượng cao." />
     <meta property="twitter:description"
         content="APhim - Website xem phim online Full HD miễn phí, cập nhật phim mới nhất 2026, Phim Vietsub, Thuyết Minh, Phim Lồng Tiếng chất lượng cao." />
-    <!-- ✅ SEO: Canonical tự động — trỏ về movie-detail.html để tránh duplicate content -->
-    <script>
-        (function () {
-            var p = new URLSearchParams(window.location.search);
-            var slug = p.get('slug');
-            if (slug) {
-                var link = document.createElement('link');
-                link.rel = 'canonical';
-                link.href = 'https://aphim.io.vn/movie-detail.html?slug=' + encodeURIComponent(slug);
-                document.head.appendChild(link);
-            }
-        })();
-    </script>
 
     <script src="js/chat-init-guard.js?v=37"></script>
 
@@ -108,7 +95,7 @@
     <link rel="stylesheet" href="css/tailwind.min.css?v=13">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-    <link rel="stylesheet" href="css/watch-page.css?v=342">
+    <link rel="stylesheet" href="css/watch-page.css?v=343">
     <link rel="stylesheet" href="css/light-mode.css?v=342">
     <link rel="stylesheet" href="css/chat-room.css?v=65">
     <link rel="stylesheet" href="css/chat-mobile-fixed.css?v=65">
@@ -2688,7 +2675,7 @@
     <script src="js/playlist-modal.js"></script>
     <script src="js/top-weekly-sidebar.js?v=100" defer></script>
     <script src="js/tmdb-api.js?v=15"></script>
-    <script src="js/watch.js?v=345"></script>
+    <script src="js/watch.js?v=349"></script>
     <script src="js/categories-dropdown.js?v=13"></script>
     <script src="js/countries-dropdown.js?v=13"></script>
 
@@ -3100,39 +3087,7 @@
     <script src="/js/bottom-nav.js?v=225" defer></script>
     <script src="js/movie-slider.js"></script>
     <script src="js/voice-search.js?v=70"></script>
-    <script>
-        (function () {
-            var urlParams = new URLSearchParams(window.location.search);
-            var slug = urlParams.get('slug') || '';
-            var episode = urlParams.get('episode') || 'tap-1';
 
-            if (slug && typeof userService !== 'undefined') {
-                var movieTitleEl = document.querySelector('.movie-title, h1, [data-movie-title], #breadcrumb-movie-name');
-                var name = movieTitleEl ? movieTitleEl.textContent.trim() : slug;
-                var posterImg = document.querySelector('#sidebar-poster, .movie-poster img');
-                var thumb = posterImg ? posterImg.src : '';
-
-                var movieInfo = {
-                    slug: slug,
-                    name: name,
-                    thumb_url: thumb,
-                    poster_url: thumb,
-                    year: new Date().getFullYear()
-                };
-
-                var resumeTime = parseFloat(urlParams.get('t')) || 0;
-                userService.saveWatchProgress(slug, resumeTime || 30, 100, episode, movieInfo);
-
-                window.addEventListener('message', function (e) {
-                    if (e.data && (e.data.currentTime || e.data.time)) {
-                        var cTime = e.data.currentTime || e.data.time;
-                        var dur = e.data.duration || 100;
-                        userService.saveWatchProgress(slug, cTime, dur, episode, movieInfo);
-                    }
-                });
-            }
-        })();
-    </script>
 
     <!-- Drawer & Header Interaction Script -->
     <script>

@@ -138,13 +138,14 @@
         bar.setAttribute('aria-label', 'Quảng cáo đối tác');
         bar.innerHTML =
             '<div class="catfish-inner">' +
-                '<!-- Row 0: Dice VN (Stake) - Full width trên cùng -->' +
+                '<!-- Row 0: Stake (Dice VN) - Nằm 1 bên phải (50% kích thước như VSBet), bên trái chừa trống -->' +
                 '<div class="catfish-row catfish-row-0">' +
-                    '<a class="catfish-item" href="' + b[0].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[0].label + '" style="width:100%;">' +
+                    '<div class="catfish-item catfish-spacer" aria-hidden="true" style="visibility:hidden;pointer-events:none;border:none!important;background:transparent!important;"></div>' +
+                    '<a class="catfish-item catfish-item-stake" href="' + b[0].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[0].label + '">' +
                         renderMedia(b[0]) +
                     '</a>' +
                 '</div>' +
-                '<!-- Row 1: Desktop (8SVui + VSBet) / Mobile (Slot xoay mượt VSBet <-> 8SVui) -->' +
+                '<!-- Row 1: Desktop (8SVui bên trái + VSBet bên phải) / Mobile (Slot xoay mượt VSBet <-> Stake <-> 8SVui) -->' +
                 '<div class="catfish-row catfish-row-1">' +
                     '<a class="catfish-item catfish-item-desktop-only" href="' + b[1].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[1].label + '">' +
                         renderMedia(b[1]) +
@@ -152,6 +153,9 @@
                     '<div class="catfish-rotate-slot">' +
                         '<a class="catfish-item catfish-slide slide-active" href="' + b[2].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[2].label + '">' +
                             renderMedia(b[2]) +
+                        '</a>' +
+                        '<a class="catfish-item catfish-slide" href="' + b[0].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[0].label + '">' +
+                            renderMedia(b[0]) +
                         '</a>' +
                         '<a class="catfish-item catfish-slide" href="' + b[1].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[1].label + '">' +
                             renderMedia(b[1]) +
@@ -173,14 +177,14 @@
         document.body.appendChild(bar);
         document.body.classList.add('aphim-has-catfish');
 
-        // Tự động xoay mượt giữa VSBet và 8SVui ở slot Row 1 (mỗi 3.5s - CHỈ TRÊN MOBILE)
+        // Tự động xoay mượt giữa VSBet, Stake và 8SVui ở slot Row 1 (mỗi 3.5s - CHỈ TRÊN MOBILE)
         var rotateSlot = bar.querySelector('.catfish-rotate-slot');
         if (rotateSlot) {
             var slides = rotateSlot.querySelectorAll('.catfish-slide');
             if (slides.length >= 2) {
                 var currentIdx = 0;
                 setInterval(function () {
-                    // Trên Desktop (> 768px) giữ cố định duy nhất banner VSBet (slide 0), không xoay sang 8SVui
+                    // Trên Desktop (> 768px) giữ cố định duy nhất banner VSBet (slide 0 bên phải hàng 1), không xoay
                     if (window.innerWidth > 768) {
                         if (currentIdx !== 0) {
                             slides[currentIdx].classList.remove('slide-active');

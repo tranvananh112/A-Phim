@@ -105,13 +105,50 @@ class UserService {
         }
     }
 
-    // Get watch progress for a movie
+    // Get watch progress for a movie (Isolates per-episode progress & prevents cross-episode time leakage)
     getWatchProgress(slug, episode = null) {
+        if (!slug) return { currentTime: 0, duration: 0 };
         const progressStr = localStorage.getItem(STORAGE_KEYS.WATCH_PROGRESS);
         const allProgress = progressStr ? JSON.parse(progressStr) : {};
 
-        const key = episode ? `${slug}_${episode}` : slug;
-        return allProgress[key] || allProgress[slug] || { currentTime: 0, duration: 0 };
+        if (episode) {
+            const cleanEp = String(episode).replace(/^tap-/, '').toLowerCase();
+            const directKey = `${slug}_${episode}`;
+            const altKey1 = `${slug}_tap-${cleanEp}`;
+            const altKey2 = `${slug}_${cleanEp}`;
+
+            const foundProg = allProgress[directKey] || allProgress[altKey1] || allProgress[altKey2];
+            if (foundProg && typeof foundProg.currentTime === 'number') {
+                // Nếu tập này đã xem xong (>= 95% thời lượng hoặc còn dưới 15s), bắt đầu lại từ 00:00
+                if (foundProg.duration > 0 && (foundProg.currentTime >= foundProg.duration - 15 || (foundProg.currentTime / foundProg.duration) >= 0.95)) {
+                    return { currentTime: 0, duration: foundProg.duration, completed: true };
+                }
+                return foundProg;
+            }
+
+            // Tuyệt đối KHÔNG fallback sang allProgress[slug] nếu allProgress[slug] là của tập khác!
+            const movieProg = allProgress[slug];
+            if (movieProg && movieProg.episode) {
+                const progEpClean = String(movieProg.episode).replace(/^tap-/, '').toLowerCase();
+                if (progEpClean === cleanEp) {
+                    if (movieProg.duration > 0 && (movieProg.currentTime >= movieProg.duration - 15 || (movieProg.currentTime / movieProg.duration) >= 0.95)) {
+                        return { currentTime: 0, duration: movieProg.duration, completed: true };
+                    }
+                    return movieProg;
+                }
+            }
+            return { currentTime: 0, duration: 0 };
+        }
+
+        // Trường hợp không truyền episode (phim lẻ hoặc lấy tiến trình chung)
+        const prog = allProgress[slug];
+        if (prog && typeof prog.currentTime === 'number') {
+            if (prog.duration > 0 && (prog.currentTime >= prog.duration - 15 || (prog.currentTime / prog.duration) >= 0.95)) {
+                return { currentTime: 0, duration: prog.duration, completed: true };
+            }
+            return prog;
+        }
+        return { currentTime: 0, duration: 0 };
     }
 
     // Save watch progress (Hỗ trợ cả Khách & Thành viên)
@@ -121,12 +158,15 @@ class UserService {
         const progressStr = localStorage.getItem(STORAGE_KEYS.WATCH_PROGRESS);
         const allProgress = progressStr ? JSON.parse(progressStr) : {};
 
+        const isCompleted = duration > 0 && (currentTime >= duration - 15 || (currentTime / duration) >= 0.95);
         const key = episode ? `${slug}_${episode}` : slug;
         const progressData = {
             slug,
             episode,
-            currentTime,
+            currentTime: isCompleted ? 0 : currentTime, // Khi đã kết thúc tập, mở lại sẽ phát từ 00:00
+            lastPosition: currentTime,
             duration,
+            completed: isCompleted,
             percentage: duration > 0 ? (currentTime / duration) * 100 : 0,
             updatedAt: new Date().toISOString()
         };
@@ -142,7 +182,7 @@ class UserService {
         } catch(e) {}
 
         if (movieInfo) {
-            this.addToHistory(movieInfo, episode, { currentTime, duration, episodeSlug: episode });
+            this.addToHistory(movieInfo, episode, { currentTime: progressData.currentTime, duration, episodeSlug: episode });
         }
 
         // 2. Đồng bộ lên Server nếu đã đăng nhập
