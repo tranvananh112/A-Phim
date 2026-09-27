@@ -1,4 +1,4 @@
-/**
+﻿/**
  * APhim — Catfish Banner + Welcome Popup Slideshow
  * Version: 4.0 | 2026-05-18
  *
@@ -41,7 +41,7 @@
             },
             {
                 img: '/ads/catfish/animation.mp4', isVideo: true,
-                url: 'https://vsbetnova88.com/p/BSYk',
+                url: 'http://lacampina.mx/',
                 label: 'VSBet — Nạp Đầu Nhận 68,888,000đ'
             },
             {
@@ -153,12 +153,6 @@
                     '<div class="catfish-rotate-slot">' +
                         '<a class="catfish-item catfish-slide slide-active" href="' + b[2].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[2].label + '">' +
                             renderMedia(b[2]) +
-                        '</a>' +
-                        '<a class="catfish-item catfish-slide" href="' + b[0].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[0].label + '">' +
-                            renderMedia(b[0]) +
-                        '</a>' +
-                        '<a class="catfish-item catfish-slide" href="' + b[1].url + '" target="_blank" rel="noopener nofollow" aria-label="' + b[1].label + '">' +
-                            renderMedia(b[1]) +
                         '</a>' +
                     '</div>' +
                 '</div>' +
