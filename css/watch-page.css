@@ -2577,3 +2577,32 @@
     }
 }
 
+/* ── Banner Quảng Cáo i9 trên mục Danh Sách Tập ── */
+#watch-episodes-ad {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    margin: 16px auto 14px auto;
+    z-index: 10;
+}
+#watch-episodes-ad img {
+    width: 100%;
+    height: 68px;
+    max-height: 68px;
+    object-fit: fill;
+    display: block;
+    border-radius: 8px;
+}
+@media (max-width: 768px) {
+    #watch-episodes-ad {
+        max-width: 100% !important;
+        margin: 12px auto 10px auto !important;
+    }
+    #watch-episodes-ad img {
+        height: 48px !important;
+        max-height: 48px !important;
+        border-radius: 6px !important;
+    }
+}
+
+
