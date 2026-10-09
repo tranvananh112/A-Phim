@@ -51,7 +51,7 @@
                 label: 'VSBet — Nạp Đầu Nhận 68,888,000đ'
             },
             {
-                img: '/ads/catfish/colatv.gif',
+                img: '/ads/catfish/colatv.gif?v=2',
                 url: 'https://colatv66.live',
                 label: 'ColaTV — Xem Phim HD Miễn Phí'
             },
