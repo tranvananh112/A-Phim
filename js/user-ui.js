@@ -166,11 +166,7 @@ function updateUserUI() {
                 </div>
                 <a href="/login"
                    onclick="if(window.showAuthModal){event.preventDefault();event.stopImmediatePropagation();window.showAuthModal('login');return false;}"
-                   class="nav-auth-btn" 
-                   style="display: inline-flex !important; align-items: center !important; justify-content: center !important; gap: 6px; overflow: hidden !important;">
-                    <dotlottie-player src="/icons/panda.lottie" background="transparent" speed="1" style="width: 40px; height: 40px; transform: scale(1.95); transform-origin: center center; margin: 0; padding: 0; pointer-events: none;" loop autoplay></dotlottie-player>
-                    <span class="auth-btn-text">Đăng Nhập</span>
-                </a>
+                   class="sofa-login-rect-btn">Đăng nhập</a>
             </div>
         `;
         const containers = document.querySelectorAll('#authContainer');

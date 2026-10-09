@@ -1,9 +1,28 @@
 
+#desktopHeroShowcase .hero-bg-layer,
 #desktopHeroShowcase #heroImage,
 #desktopHeroShowcase .hero-placeholder-mask {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover !important;
+    object-position: center 20% !important;
     -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 62%, rgba(0,0,0,0.45) 82%, transparent 96%) !important;
     mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 62%, rgba(0,0,0,0.45) 82%, transparent 96%) !important;
     filter: brightness(1.06) contrast(1.02) saturate(1.02) !important;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+.hero-info-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    max-width: 620px;
+    z-index: 5;
+    will-change: transform, opacity;
 }
 /* ================================================================
    A PHIM — Hero Banner — Midnight Cinema v2
@@ -726,3 +745,173 @@ html.light-mode .desktop-hero-showcase #heroSubtitle {
     text-shadow: none !important;
     font-weight: 700 !important;
 }
+
+/* ════════════════════════════════════════════════════════════════
+   HERO BADGES & MULTI-COLOR SEGMENTED RIBBON (PHOTO 3 REPLICA)
+   ════════════════════════════════════════════════════════════════ */
+#heroBadges {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 7px !important;
+    margin-bottom: 6px !important;
+}
+
+/* 1. Episode (Tập) & Year (Năm) Capsule Badges */
+.hero-badge-ep,
+.hero-badge-year {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    font-size: 11.5px !important;
+    padding: 4px 9px !important;
+    height: 25px !important;
+    box-sizing: border-box !important;
+    border-radius: 6px !important;
+    border: 1px solid rgba(255, 255, 255, 0.55) !important;
+    box-shadow: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    line-height: 1 !important;
+    letter-spacing: 0.1px !important;
+    user-select: none !important;
+}
+.hero-badge-ep svg,
+.hero-badge-year svg {
+    flex-shrink: 0 !important;
+    color: #ffffff !important;
+}
+
+/* 2. IMDb Badge: Viền vàng kim tinh tế */
+.hero-badge-imdb {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 1px solid #facc15 !important;
+    color: #ffffff !important;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    padding: 4px 9px !important;
+    height: 25px !important;
+    box-sizing: border-box !important;
+    border-radius: 6px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    box-shadow: none !important;
+    line-height: 1 !important;
+    user-select: none !important;
+}
+.hero-badge-imdb .hero-badge-imdb-label {
+    color: #facc15 !important;
+    font-weight: 800 !important;
+    font-size: 11px !important;
+    letter-spacing: 0.2px !important;
+}
+.hero-badge-imdb .hero-badge-imdb-val {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 11.5px !important;
+}
+
+/* 3. Segmented Multi-Color Ribbon: VS Mint | T13 Pink | TM Purple | FHD Gold */
+.hero-feature-ribbon {
+    display: inline-flex !important;
+    align-items: stretch !important;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+    height: 25px !important;
+    box-sizing: border-box !important;
+}
+
+.hero-ribbon-seg {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    padding: 0 8.5px !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.2px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    user-select: none !important;
+    border: none !important;
+}
+.hero-ribbon-seg svg {
+    flex-shrink: 0 !important;
+    width: 12px !important;
+    height: 12px !important;
+    fill: currentColor !important;
+}
+
+/* Segment 1: Vietsub (VS) - Mint Green Pastel */
+.hero-seg-vs {
+    background: #86efac !important;
+    color: #064e3b !important;
+}
+
+/* Segment 2: Age / Song Ngữ (T13 / T16 / T18) - Rose Pink Pastel */
+.hero-seg-age,
+.hero-seg-sn {
+    background: #fbcfe8 !important;
+    color: #831843 !important;
+}
+
+/* Segment 3: Thuyết Minh (TM) - Lavender Purple Pastel */
+.hero-seg-tm {
+    background: #c4b5fd !important;
+    color: #4c1d95 !important;
+}
+
+/* Segment 4: Chất Lượng Video (FHD / 4K) - Warm Amber Gold Pastel */
+.hero-seg-fhd,
+.hero-seg-quality {
+    background: #fde047 !important;
+    color: #78350f !important;
+}
+
+/* Row 2: Genre Pills */
+#heroGenres {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 7px !important;
+    margin-top: 5px !important;
+    padding-top: 0 !important;
+}
+
+.hero-genre-pill {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 5.5px 14px !important;
+    border-radius: 6px !important;
+    font-size: 12px !important;
+    font-weight: 450 !important;
+    background: rgba(0, 0, 0, 0.18) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    color: rgba(255, 255, 255, 0.92) !important;
+    cursor: pointer !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    text-decoration: none !important;
+    user-select: none !important;
+    box-shadow: none !important;
+    line-height: 1.25 !important;
+}
+
+.hero-genre-pill:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+    transform: translateY(-1px) !important;
+}
+

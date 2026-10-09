@@ -1,0 +1,988 @@
+/**
+ * APHIM SUPER - MOBILE 3D SHOWCASE ADMIN CONTROLLER
+ * Quản lý danh sách phim hiển thị trên khối 3D Coverflow Mobile Trang chủ
+ * Tích hợp gợi ý nhanh 1-click, Live Search Debounce & Tự động điền đầy đủ
+ */
+(function() {
+    'use strict';
+
+    let showcaseItems = [];
+    let isSaving = false;
+    let searchDebounceTimer = null;
+    let cachedTrendingList = [];
+    let draggedShowcaseIndex = null;
+
+    function getAdminToken() {
+        try {
+            return sessionStorage.getItem('cinestream_admin_token') || 
+                   sessionStorage.getItem('aphim_admin_token') ||
+                   sessionStorage.getItem('adminToken') ||
+                   sessionStorage.getItem('token') ||
+                   localStorage.getItem('cinestream_admin_token') || 
+                   localStorage.getItem('aphim_admin_token') || 
+                   localStorage.getItem('adminToken') || 
+                   localStorage.getItem('token') ||
+                   (document.cookie.match(/adminToken=([^;]+)/) || [])[1] || 
+                   (document.cookie.match(/cinestream_admin_token=([^;]+)/) || [])[1] ||
+                   (document.cookie.match(/aphim_admin_token=([^;]+)/) || [])[1] ||
+                   (document.cookie.match(/token=([^;]+)/) || [])[1] ||
+                   (document.cookie.match(/sb-access-token=([^;]+)/) || [])[1] || '';
+        } catch (e) {
+            return '';
+        }
+    }
+
+    function showNotice(msg, type = 'success') {
+        if (window.AdminCore && typeof window.AdminCore.showToast === 'function') {
+            window.AdminCore.showToast(msg, type);
+        } else {
+            const existingToast = document.getElementById('showcaseAdminToast');
+            if (existingToast) existingToast.remove();
+
+            const toast = document.createElement('div');
+            toast.id = 'showcaseAdminToast';
+            toast.style.cssText = `position:fixed;bottom:24px;right:24px;z-index:9999999;padding:12px 20px;border-radius:12px;background:${type === 'error' ? '#ef4444' : '#0284c7'};color:#fff;font-weight:700;font-size:13.5px;box-shadow:0 10px 30px rgba(0,0,0,0.5);display:flex;align-items:center;gap:10px;`;
+            toast.innerHTML = `<span>${msg}</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 3500);
+        }
+    }
+
+    const MobileShowcaseAdmin = {
+        async init() {
+            if (!document.getElementById('mobileShowcaseList')) return;
+            if (showcaseItems && showcaseItems.length > 0) {
+                this.renderList();
+            }
+            this.bindEvents();
+            await this.loadData();
+            if (!cachedTrendingList || cachedTrendingList.length === 0) {
+                if (window.requestIdleCallback) {
+                    window.requestIdleCallback(() => this.preloadTrending());
+                } else {
+                    setTimeout(() => this.preloadTrending(), 1000);
+                }
+            }
+        },
+
+        bindEvents() {
+            if (this._eventsBound) return;
+            this._eventsBound = true;
+
+            const openBtn = document.getElementById('btnOpenAddShowcase3D');
+            if (openBtn) {
+                openBtn.onclick = (e) => {
+                    e.preventDefault();
+                    this.openAddModal();
+                };
+            }
+
+            if (!this._escapeBound) {
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        const modal = document.getElementById('modalAddShowcase3D');
+                        if (modal && modal.style.display === 'flex') {
+                            this.closeModal();
+                        }
+                    }
+                });
+                this._escapeBound = true;
+            }
+
+            // Live poster input change listener
+            const posterInput = document.getElementById('scPoster');
+            if (posterInput) {
+                posterInput.oninput = (e) => {
+                    const url = e.target.value.trim();
+                    const name = document.getElementById('scName')?.value || 'Phim mới';
+                    const year = document.getElementById('scYear')?.value || '';
+                    this.updatePosterPreview(url, name, year);
+                };
+            }
+        },
+
+        async preloadTrending() {
+            if (cachedTrendingList && cachedTrendingList.length > 0) return;
+            try {
+                const res = await fetch('https://phimapi.com/danh-sach/phim-moi-cap-nhat?page=1');
+                const data = await res.json();
+                if (data.status === true && data.items?.length) {
+                    cachedTrendingList = data.items;
+                }
+            } catch (e) {}
+        },
+
+        async loadData() {
+            const container = document.getElementById('mobileShowcaseList');
+            if (!container) return;
+
+            try {
+                const apiUrl = (typeof window.getBackendBaseURL === 'function') ? window.getBackendBaseURL() : '';
+                const res = await fetch(`${apiUrl}/api/settings/mobile-3d-showcase?t=` + Date.now());
+                const data = await res.json();
+                if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+                    showcaseItems = data.data;
+                    localStorage.setItem('aphim_mobile_showcase_config', JSON.stringify(showcaseItems));
+                } else {
+                    const localData = localStorage.getItem('aphim_mobile_showcase_config');
+                    if (localData) {
+                        showcaseItems = JSON.parse(localData);
+                    } else {
+                        showcaseItems = [
+                            { name: "Một Bộ Phim Minecraft", origin_name: "A Minecraft Movie", slug: "mot-bo-phim-minecraft", poster_url: "https://phimimg.com/upload/vod/20250404-1/fc7d1887e221379baea9242d593f4124.jpg", quality: "FHD", year: "2025", lang: "Vietsub + Thuyết Minh" },
+                            { name: "Hope: Vùng Đất Chết", origin_name: "Hope", slug: "hope-vung-dat-chet", poster_url: "https://phimimg.com/upload/vod/20260312-1/04581f185c7a40c9db6ad5d82fe1a8a9.jpg", quality: "FHD", year: "2026", lang: "Vietsub Full" },
+                            { name: "Đế Chế Đại Hàn", origin_name: "Made In Korea", slug: "de-che-dai-han", poster_url: "https://phimimg.com/upload/vod/20260215-1/97d264562095f9c41d11f26a7985aa08.jpg", quality: "FHD", year: "2026", lang: "Vietsub Full" },
+                            { name: "Đấu Xuân Tương Kiến", origin_name: "Spring Of The Blade", slug: "dau-xuan-tuong-kien", poster_url: "https://phimimg.com/upload/vod/20260220-1/a242c161a00a294b0d0c3eb146743ab9.jpg", quality: "FHD", year: "2026", lang: "Vietsub Full" },
+                            { name: "Bạn Gái Thiên Tài Của Tôi", origin_name: "My Brilliant Friend", slug: "ban-gai-thien-tai-cua-toi", poster_url: "https://phimimg.com/upload/vod/20260110-1/ffc1724a7364ca9ca223405e6ae22ea7.jpg", quality: "FHD", year: "2026", lang: "Vietsub Full" },
+                            { name: "Kẹo Ngọt Tình Yêu", origin_name: "Sweet Candy Love", slug: "keo-ngot-tinh-yeu", poster_url: "https://phimimg.com/upload/vod/20260105-1/6ee9ee1fbe4fe57bcf6bf2a64c51e360.jpg", quality: "FHD", year: "2026", lang: "Vietsub Full" },
+                            { name: "Sếp Chính Là Bạn Trai Tôi", origin_name: "My Boss My Boyfriend", slug: "sep-chinh-la-ban-trai-toi", poster_url: "https://phimimg.com/upload/vod/20260101-1/bdfb9aa9b48f9ae7c8d9fb8562d98aa8.jpg", quality: "FHD", year: "2026", lang: "Vietsub Full" }
+                        ];
+                    }
+                }
+                this.renderList();
+            } catch (e) {
+                const localData = localStorage.getItem('aphim_mobile_showcase_config');
+                if (localData) {
+                    showcaseItems = JSON.parse(localData);
+                }
+                this.renderList();
+            }
+        },
+
+        renderList() {
+            const container = document.getElementById('mobileShowcaseList');
+            if (!container) return;
+
+            if (!showcaseItems.length) {
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; background: rgba(255,255,255,0.02); border-radius: 14px; border: 1px dashed rgba(255,255,255,0.15);">
+                        <i data-lucide="film" style="width: 38px; height: 38px; color: #64748b; margin: 0 auto 10px auto;"></i>
+                        <p style="color: #94a3b8; font-size: 13.5px; margin: 0 0 12px 0;">Chưa có phim nào trong danh sách 3D Showcase Mobile.</p>
+                        <button class="btn btn-outline" onclick="MobileShowcaseAdmin.openAddModal()" style="border-color:#38bdf8;color:#38bdf8;">
+                            <i data-lucide="plus"></i> Thêm Phim Đầu Tiên
+                        </button>
+                    </div>
+                `;
+                if (window.lucide) window.lucide.createIcons();
+                return;
+            }
+
+            container.innerHTML = showcaseItems.map((item, idx) => `
+                <div class="mobile-card-v2" 
+                     draggable="true"
+                     data-index="${idx}"
+                     ondragstart="MobileShowcaseAdmin.handleDragStart(event, ${idx})"
+                     ondragover="MobileShowcaseAdmin.handleDragOver(event, ${idx})"
+                     ondragleave="MobileShowcaseAdmin.handleDragLeave(event)"
+                     ondrop="MobileShowcaseAdmin.handleDrop(event, ${idx})"
+                     ondragend="MobileShowcaseAdmin.handleDragEnd(event)"
+                     style="display: flex; gap: 14px; padding: 14px; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; background: linear-gradient(180deg, rgba(20, 27, 45, 0.95) 0%, rgba(10, 14, 25, 0.98) 100%); position: relative; box-shadow: 0 8px 24px rgba(0,0,0,0.45); transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease, opacity 0.2s ease; cursor: grab; user-select: none;">
+                    <!-- Badge Order Number + Drag indicator -->
+                    <div style="position: absolute; top: 10px; left: 10px; z-index: 5; display: inline-flex; align-items: center; gap: 4px; background: rgba(14, 165, 233, 0.2); border: 1px solid rgba(14, 165, 233, 0.45); color: #38bdf8; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.4); pointer-events: none;">
+                        <i data-lucide="grip-vertical" style="width: 10px; height: 10px; opacity: 0.85;"></i>
+                        <span>#${idx + 1}</span>
+                    </div>
+
+                    <!-- Poster -->
+                    <div style="width: 80px; height: 115px; flex-shrink: 0; border-radius: 10px; overflow: hidden; background: #000; border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 12px rgba(0,0,0,0.5); pointer-events: none;">
+                        <img src="${item.poster_url || item.thumb_url || ''}" alt="${item.name || ''}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://phimimg.com/upload/vod/20240506-1/3ea3a7267104b2bfe6f481c4e72750db.jpg'">
+                    </div>
+
+                    <!-- Info -->
+                    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h4 style="color: #ffffff; font-size: 13.5px; font-weight: 700; margin: 0 0 2px 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${item.name || ''}">
+                                ${item.name || 'Chưa đặt tên'}
+                            </h4>
+                            <div style="color: #64748b; font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 8px;">
+                                ${item.origin_name || item.slug || ''}
+                            </div>
+                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                <span style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.3);">${item.quality || 'FHD'}</span>
+                                <span style="background: rgba(255, 255, 255, 0.06); color: #cbd5e1; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.08);">${item.year || '2026'}</span>
+                                <span style="background: rgba(255, 255, 255, 0.06); color: #cbd5e1; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.08);">${item.lang || 'Vietsub'}</span>
+                            </div>
+                        </div>
+
+                        <!-- Actions Toolbar (Unified Symmetrical Buttons) -->
+                        <div class="unified-action-bar" style="cursor: default;" onmousedown="event.stopPropagation()">
+                            <div class="u-btn-group">
+                                <button type="button" class="u-btn u-btn-icon" onclick="MobileShowcaseAdmin.moveItem(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} title="Đưa lên trên">
+                                    <i data-lucide="chevron-up" style="width:13px;height:13px;"></i>
+                                </button>
+                                <button type="button" class="u-btn u-btn-icon" onclick="MobileShowcaseAdmin.moveItem(${idx}, 1)" ${idx === showcaseItems.length - 1 ? 'disabled' : ''} title="Đưa xuống dưới">
+                                    <i data-lucide="chevron-down" style="width:13px;height:13px;"></i>
+                                </button>
+                            </div>
+                            <div class="u-btn-group">
+                                <button type="button" class="u-btn u-btn-amber" onclick="MobileShowcaseAdmin.editItem(${idx})" title="Chỉnh sửa">
+                                    <i data-lucide="edit" style="width:12px;height:12px;"></i> Sửa
+                                </button>
+                                <button type="button" class="u-btn u-btn-rose u-btn-icon" onclick="MobileShowcaseAdmin.removeItem(${idx})" title="Xóa khỏi 3D Showcase">
+                                    <i data-lucide="trash-2" style="width:12px;height:12px;"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            if (window.lucide) window.lucide.createIcons();
+        },
+
+        // ================================================================
+        // DRAG AND DROP HANDLERS (KÉO THẢ ĐỔI THỨ TỰ BẰNG CHUỘT)
+        // ================================================================
+        handleDragStart(e, index) {
+            draggedShowcaseIndex = index;
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', index);
+            if (e.currentTarget) {
+                e.currentTarget.style.opacity = '0.45';
+                e.currentTarget.style.transform = 'scale(0.97)';
+                e.currentTarget.style.cursor = 'grabbing';
+            }
+        },
+
+        handleDragOver(e, index) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            const targetCard = e.currentTarget;
+            if (targetCard && draggedShowcaseIndex !== null && draggedShowcaseIndex !== index) {
+                targetCard.style.borderColor = '#38bdf8';
+                targetCard.style.boxShadow = '0 0 20px rgba(56, 189, 248, 0.5)';
+                targetCard.style.transform = 'scale(1.02)';
+            }
+        },
+
+        handleDragLeave(e) {
+            const targetCard = e.currentTarget;
+            if (targetCard) {
+                targetCard.style.borderColor = 'rgba(255,255,255,0.08)';
+                targetCard.style.boxShadow = '0 8px 24px rgba(0,0,0,0.45)';
+                targetCard.style.transform = 'scale(1)';
+            }
+        },
+
+        async handleDrop(e, targetIndex) {
+            e.preventDefault();
+            const targetCard = e.currentTarget;
+            if (targetCard) {
+                targetCard.style.borderColor = 'rgba(255,255,255,0.08)';
+                targetCard.style.boxShadow = '0 8px 24px rgba(0,0,0,0.45)';
+                targetCard.style.transform = 'scale(1)';
+            }
+
+            if (draggedShowcaseIndex === null || draggedShowcaseIndex === targetIndex) return;
+
+            const fromIndex = draggedShowcaseIndex;
+            const draggedItem = showcaseItems.splice(fromIndex, 1)[0];
+            showcaseItems.splice(targetIndex, 0, draggedItem);
+            draggedShowcaseIndex = null;
+
+            this.renderList();
+            await this.saveConfig(true);
+            const msg = `Đã chuyển phim "${draggedItem.name}" (#${fromIndex + 1} ➔ #${targetIndex + 1})!`;
+            if (window.AdminNotice) {
+                AdminNotice.toast(msg, 'success');
+            } else {
+                showNotice(msg, 'success');
+            }
+        },
+
+        handleDragEnd(e) {
+            if (e.currentTarget) {
+                e.currentTarget.style.opacity = '1';
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.cursor = 'grab';
+            }
+            draggedShowcaseIndex = null;
+            document.querySelectorAll('.mobile-card-v2').forEach(card => {
+                card.style.borderColor = 'rgba(255,255,255,0.08)';
+                card.style.boxShadow = '0 8px 24px rgba(0,0,0,0.45)';
+                card.style.opacity = '1';
+                card.style.transform = 'scale(1)';
+                card.style.cursor = 'grab';
+            });
+        },
+
+        async moveItem(index, direction) {
+            const targetIndex = index + direction;
+            if (targetIndex < 0 || targetIndex >= showcaseItems.length) return;
+
+            const temp = showcaseItems[index];
+            showcaseItems[index] = showcaseItems[targetIndex];
+            showcaseItems[targetIndex] = temp;
+
+            this.renderList();
+            await this.saveConfig(true);
+        },
+
+        async removeItem(index) {
+            const item = showcaseItems[index];
+            if (!item) return;
+            
+            const doRemove = async () => {
+                showcaseItems.splice(index, 1);
+                this.renderList();
+                await this.saveConfig(true);
+                if (window.AdminNotice) {
+                    AdminNotice.toast(`Đã xóa phim "${item.name}" khỏi 3D Showcase`, 'info');
+                }
+            };
+
+            if (window.AdminNotice) {
+                AdminNotice.confirm('Xóa Phim 3D Showcase', `Bạn có chắc muốn xóa phim "${item.name}" khỏi danh sách Showcase 3D Mobile?`, doRemove);
+            } else {
+                if (confirm(`Bạn có chắc muốn xóa phim "${item.name}" khỏi 3D Showcase Mobile?`)) {
+                    await doRemove();
+                }
+            }
+        },
+
+        editItem(index) {
+            const item = showcaseItems[index];
+            if (!item) return;
+            this.openAddModal(item, index);
+        },
+
+        openAddModal(existingItem = null, editIndex = -1) {
+            const modal = document.getElementById('modalAddShowcase3D');
+            if (!modal) return;
+
+            const titleEl = document.getElementById('modalShowcase3DTitle');
+            if (titleEl) {
+                titleEl.textContent = editIndex >= 0 ? '✏️ Chỉnh Sửa Phim 3D Showcase' : '✨ Thêm Phim Mới Vào 3D Showcase Mobile';
+            }
+
+            const editIndexInput = document.getElementById('scEditIndex');
+            if (editIndexInput) editIndexInput.value = editIndex;
+
+            if (document.getElementById('scName')) document.getElementById('scName').value = existingItem?.name || '';
+            if (document.getElementById('scOriginName')) document.getElementById('scOriginName').value = existingItem?.origin_name || '';
+            if (document.getElementById('scSlug')) document.getElementById('scSlug').value = existingItem?.slug || '';
+            if (document.getElementById('scPoster')) document.getElementById('scPoster').value = existingItem?.poster_url || existingItem?.thumb_url || '';
+            if (document.getElementById('scQuality')) document.getElementById('scQuality').value = existingItem?.quality || 'FHD';
+            if (document.getElementById('scYear')) document.getElementById('scYear').value = existingItem?.year || '2026';
+            if (document.getElementById('scLang')) document.getElementById('scLang').value = existingItem?.lang || 'Vietsub Full';
+            if (document.getElementById('scContent')) document.getElementById('scContent').value = existingItem?.content || '';
+
+            const posterUrl = existingItem?.poster_url || existingItem?.thumb_url || '';
+            if (posterUrl) {
+                this.updatePosterPreview(posterUrl, existingItem?.name || '', existingItem?.year || '');
+            } else {
+                const previewWrap = document.getElementById('scPosterPreviewWrap');
+                if (previewWrap) previewWrap.style.display = 'none';
+            }
+
+            const searchInput = document.getElementById('inputSearchMovieAPI');
+            if (searchInput) searchInput.value = '';
+
+            modal.style.display = 'flex';
+            if (window.lucide) window.lucide.createIcons();
+
+            // Load TMDB Poster gallery if movie info is present
+            if (existingItem?.name || existingItem?.slug) {
+                this.loadPostersForMovie(existingItem.name, existingItem.origin_name, existingItem.slug);
+            } else {
+                const gallery = document.getElementById('scPosterGallery');
+                if (gallery) {
+                    gallery.innerHTML = '<div style="color:#64748b;font-size:11.5px;text-align:center;padding:12px;grid-column:1/-1;">Tìm kiếm hoặc chọn phim bên trên để tải bộ sưu tập Poster HD/4K...</div>';
+                }
+            }
+
+            // Hiển thị danh sách phim hot gợi ý ngay khi mở modal nếu chưa gõ gì
+            if (editIndex === -1) {
+                this.renderTrendingSuggestions();
+            } else {
+                const resultsBox = document.getElementById('apiSearchResults');
+                if (resultsBox) resultsBox.style.display = 'none';
+            }
+
+            if (searchInput) setTimeout(() => searchInput.focus(), 150);
+        },
+
+        closeModal() {
+            const modal = document.getElementById('modalAddShowcase3D');
+            if (modal) modal.style.display = 'none';
+        },
+
+        async loadPostersForMovie(name, originName = '', slug = '', tmdbId = '') {
+            const gallery = document.getElementById('scPosterGallery');
+            const loading = document.getElementById('scPosterGalleryLoading');
+            if (!gallery) return;
+
+            if (loading) loading.style.display = 'inline';
+            gallery.innerHTML = '<div style="color:#38bdf8;font-size:11.5px;text-align:center;padding:12px;grid-column:1/-1;">⏳ Đang tải bộ sưu tập Poster từ TMDB & PhimAPI...</div>';
+
+            try {
+                let posterList = [];
+                let backdropList = [];
+
+                // 1. Try server endpoint first
+                try {
+                    const queryParams = new URLSearchParams({
+                        name: name || '',
+                        origin_name: originName || '',
+                        slug: slug || ''
+                    });
+                    if (tmdbId) queryParams.set('tmdbId', tmdbId);
+
+                    const res = await fetch(`/api/settings/movie-backdrops?${queryParams.toString()}`);
+                    const contentType = res.headers.get('content-type') || '';
+                    if (res.ok && contentType.includes('application/json')) {
+                        const data = await res.json();
+                        if (data.success) {
+                            if (Array.isArray(data.posters)) posterList = data.posters;
+                            if (Array.isArray(data.backdrops)) backdropList = data.backdrops;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Backend movie-backdrops fetch skipped, trying direct TMDB & PhimAPI fallback:', e);
+                }
+
+                // 2. Direct fallback to PhimAPI / TMDB if server returned nothing
+                if (posterList.length === 0 && backdropList.length === 0) {
+                    if (slug) {
+                        try {
+                            const pRes = await fetch(`https://phimapi.com/phim/${encodeURIComponent(slug)}`);
+                            const pData = await pRes.json();
+                            if (pData.status === true && pData.movie) {
+                                const m = pData.movie;
+                                if (m.poster_url) {
+                                    const fullP = m.poster_url.startsWith('http') ? m.poster_url : `https://phimimg.com/${m.poster_url.replace(/^\//, '')}`;
+                                    posterList.push({ url: fullP, previewUrl: fullP, width: 800, height: 1200 });
+                                }
+                                if (m.thumb_url) {
+                                    const fullT = m.thumb_url.startsWith('http') ? m.thumb_url : `https://phimimg.com/${m.thumb_url.replace(/^\//, '')}`;
+                                    backdropList.push({ url: fullT, previewUrl: fullT, width: 1920, height: 1080 });
+                                }
+
+                                const directTmdbId = m.tmdb?.id || tmdbId;
+                                const directTmdbType = m.tmdb?.type || (m.type === 'series' || m.type === 'hoathinh' || m.type === 'tvshows' ? 'tv' : 'movie');
+                                if (directTmdbId) {
+                                    const TMDB_KEY = '5fb3c8d9ad2ca4cd2029836befcc3ab5';
+                                    const tmdbRes = await fetch(`https://api.tmdb.org/3/${directTmdbType}/${directTmdbId}/images?api_key=${TMDB_KEY}&include_image_language=vi,en,zh,ja,ko,null`);
+                                    const tmdbData = await tmdbRes.json();
+                                    if (Array.isArray(tmdbData.posters)) {
+                                        tmdbData.posters.slice(0, 24).forEach(p => {
+                                            posterList.push({
+                                                url: `https://image.tmdb.org/t/p/original${p.file_path}`,
+                                                previewUrl: `https://image.tmdb.org/t/p/w500${p.file_path}`,
+                                                width: p.width,
+                                                height: p.height
+                                            });
+                                        });
+                                    }
+                                }
+                            }
+                        } catch (e) {}
+                    }
+                }
+
+                const currentPoster = document.getElementById('scPoster')?.value || '';
+
+                if (posterList.length > 0) {
+                    gallery.innerHTML = posterList.map(p => {
+                        const isSelected = currentPoster === p.url || currentPoster === p.previewUrl;
+                        return `
+                            <div onclick="MobileShowcaseAdmin.selectPoster('${p.url}')" class="sc-poster-item" style="aspect-ratio:2/3;border-radius:8px;overflow:hidden;background:#000;position:relative;cursor:pointer;border:2px solid ${isSelected ? '#38bdf8' : 'rgba(255,255,255,0.15)'};transition:all 0.2s;box-shadow:${isSelected ? '0 0 12px rgba(56,189,248,0.5)' : 'none'};" onmouseover="this.style.borderColor='#38bdf8';this.style.transform='scale(1.04)';" onmouseout="this.style.borderColor='${isSelected ? '#38bdf8' : 'rgba(255,255,255,0.15)'}';this.style.transform='scale(1)';">
+                                <img src="${p.previewUrl || p.url}" alt="Poster" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='https://phimimg.com/upload/vod/20240506-1/3ea3a7267104b2bfe6f481c4e72750db.jpg'">
+                                <div style="position:absolute;bottom:3px;left:3px;background:rgba(0,0,0,0.8);color:#fff;font-size:8.5px;font-weight:700;padding:1px 4px;border-radius:4px;backdrop-filter:blur(4px);">
+                                    ${p.height ? `${p.height}p` : (p.width ? `${p.width}w` : 'HD')}
+                                </div>
+                                <div style="position:absolute;top:3px;right:3px;background:${isSelected ? '#0284c7' : 'rgba(56,189,248,0.9)'};color:#fff;font-size:8.5px;font-weight:800;padding:1px 5px;border-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,0.5);">
+                                    ${isSelected ? '✓ Đang dùng' : 'Chọn'}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else if (backdropList.length > 0) {
+                    gallery.innerHTML = backdropList.map(b => {
+                        const isSelected = currentPoster === b.url || currentPoster === b.previewUrl;
+                        return `
+                            <div onclick="MobileShowcaseAdmin.selectPoster('${b.url}')" class="sc-poster-item" style="aspect-ratio:2/3;border-radius:8px;overflow:hidden;background:#000;position:relative;cursor:pointer;border:2px solid ${isSelected ? '#38bdf8' : 'rgba(255,255,255,0.15)'};transition:all 0.2s;" onmouseover="this.style.borderColor='#38bdf8';this.style.transform='scale(1.04)';" onmouseout="this.style.borderColor='${isSelected ? '#38bdf8' : 'rgba(255,255,255,0.15)'}';this.style.transform='scale(1)';">
+                                <img src="${b.previewUrl || b.url}" alt="Backdrop" style="width:100%;height:100%;object-fit:cover;">
+                                <div style="position:absolute;bottom:3px;left:3px;background:rgba(0,0,0,0.8);color:#fff;font-size:8.5px;font-weight:700;padding:1px 4px;border-radius:4px;">
+                                    ${b.width ? `${b.width}p` : 'HD'}
+                                </div>
+                                <div style="position:absolute;top:3px;right:3px;background:#38bdf8;color:#000;font-size:8.5px;font-weight:800;padding:1px 5px;border-radius:4px;">
+                                    Chọn
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    gallery.innerHTML = '<div style="color:#94a3b8;font-size:11.5px;text-align:center;padding:12px;grid-column:1/-1;">Không tìm thấy thêm ảnh TMDB. Bạn có thể dán link ảnh trực tiếp vào ô URL bên dưới.</div>';
+                }
+            } catch (err) {
+                gallery.innerHTML = `<div style="color:#ef4444;font-size:11.5px;padding:8px;text-align:center;grid-column:1/-1;">Lỗi tải ảnh: ${err.message}</div>`;
+            } finally {
+                if (loading) loading.style.display = 'none';
+            }
+        },
+
+        selectPoster(url) {
+            if (!url) return;
+            const posterInput = document.getElementById('scPoster');
+            if (posterInput) posterInput.value = url;
+
+            const name = document.getElementById('scName')?.value || 'Phim mới';
+            const year = document.getElementById('scYear')?.value || '';
+            this.updatePosterPreview(url, name, year);
+
+            // Re-render gallery items borders to highlight the newly selected poster
+            const gallery = document.getElementById('scPosterGallery');
+            if (gallery) {
+                const items = gallery.querySelectorAll('.sc-poster-item');
+                items.forEach(item => {
+                    const img = item.querySelector('img');
+                    const badge = item.querySelectorAll('div')[1];
+                    if (img && (img.src === url || url.includes(img.src.split('?')[0]))) {
+                        item.style.borderColor = '#38bdf8';
+                        item.style.boxShadow = '0 0 12px rgba(56,189,248,0.5)';
+                        if (badge) {
+                            badge.textContent = '✓ Đang dùng';
+                            badge.style.background = '#0284c7';
+                            badge.style.color = '#fff';
+                        }
+                    } else {
+                        item.style.borderColor = 'rgba(255,255,255,0.15)';
+                        item.style.boxShadow = 'none';
+                        if (badge) {
+                            badge.textContent = 'Chọn';
+                            badge.style.background = 'rgba(56,189,248,0.9)';
+                            badge.style.color = '#fff';
+                        }
+                    }
+                });
+            }
+
+            if (window.AdminNotice) {
+                AdminNotice.toast('✨ Đã chọn ảnh Poster cho 3D Showcase Mobile!', 'success');
+            } else {
+                showNotice('✨ Đã chọn ảnh Poster cho 3D Showcase Mobile!', 'success');
+            }
+        },
+
+        quickSearch(keyword) {
+            const searchInput = document.getElementById('inputSearchMovieAPI');
+            if (searchInput) {
+                searchInput.value = keyword;
+                this.searchMovieFromAPI(keyword);
+            }
+        },
+
+        handleSearchInput(val) {
+            clearTimeout(searchDebounceTimer);
+            const query = (val || '').trim();
+            if (!query) {
+                this.renderTrendingSuggestions();
+                return;
+            }
+            if (query.length < 2) return;
+
+            const indicator = document.getElementById('searchLoadingIndicator');
+            if (indicator) indicator.style.display = 'inline';
+
+            searchDebounceTimer = setTimeout(() => {
+                this.searchMovieFromAPI(query);
+            }, 300);
+        },
+
+        renderTrendingSuggestions() {
+            const resultsBox = document.getElementById('apiSearchResults');
+            if (!resultsBox) return;
+
+            if (cachedTrendingList.length > 0) {
+                resultsBox.style.display = 'flex';
+                resultsBox.innerHTML = `
+                    <div style="font-size:11.5px;color:#38bdf8;font-weight:700;padding:2px 4px;display:flex;align-items:center;gap:6px;">
+                        <span>🔥 Phim Mới Cập Nhật / Đề Cử Nhanh:</span>
+                    </div>
+                ` + cachedTrendingList.slice(0, 6).map(m => {
+                    const poster = m.poster_url || m.thumb_url || '';
+                    const fullPoster = poster.startsWith('http') ? poster : `https://phimimg.com/${poster.replace(/^\//, '')}`;
+                    const jsonStr = JSON.stringify({
+                        name: m.name || '',
+                        origin_name: m.origin_name || '',
+                        slug: m.slug || '',
+                        poster_url: fullPoster,
+                        year: String(m.year || '2026'),
+                        quality: m.quality || 'FHD',
+                        lang: m.lang || 'Vietsub Full',
+                        content: m.content ? m.content.replace(/<[^>]*>/g, '').trim() : ''
+                    }).replace(/"/g, '&quot;');
+
+                    return `
+                        <div onclick="MobileShowcaseAdmin.selectSearchMovie('${jsonStr}')" style="display:flex;align-items:center;gap:10px;padding:7px 10px;background:rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background='rgba(56,189,248,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
+                            <img src="${fullPoster}" style="width:34px;height:48px;border-radius:6px;object-fit:cover;background:#000;flex-shrink:0;" onerror="this.src='https://phimimg.com/upload/vod/20240506-1/3ea3a7267104b2bfe6f481c4e72750db.jpg'">
+                            <div style="flex:1;min-width:0;">
+                                <div style="color:#ffffff;font-size:12.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.name}</div>
+                                <div style="color:#94a3b8;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.origin_name || ''} • <span style="color:#38bdf8;font-weight:700;">${m.year || ''}</span></div>
+                            </div>
+                            <span style="color:#38bdf8;font-size:11.5px;font-weight:800;background:rgba(56,189,248,0.18);padding:3px 8px;border-radius:5px;flex-shrink:0;">Chọn ➔</span>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                resultsBox.style.display = 'none';
+            }
+        },
+
+        async searchMovieFromAPI(manualQuery = '') {
+            const query = manualQuery || document.getElementById('inputSearchMovieAPI')?.value.trim();
+            const resultsBox = document.getElementById('apiSearchResults');
+            const indicator = document.getElementById('searchLoadingIndicator');
+            if (!query || !resultsBox) return;
+
+            resultsBox.style.display = 'flex';
+            resultsBox.innerHTML = '<div style="color:#38bdf8;font-size:12px;padding:8px;text-align:center;">⏳ Đang tìm kiếm phim...</div>';
+            if (indicator) indicator.style.display = 'inline';
+
+            try {
+                let list = [];
+                // 1. PhimAPI search
+                try {
+                    const res1 = await fetch(`https://phimapi.com/v1/api/tim-kiem?keyword=${encodeURIComponent(query)}&limit=10&page=1`);
+                    const data1 = await res1.json();
+                    if (data1.status === 'success' && data1.data?.items?.length) {
+                        list = data1.data.items;
+                    }
+                } catch(e) {}
+
+                // 2. Ophim fallback
+                if (!list.length) {
+                    try {
+                        const res2 = await fetch(`https://ophim1.com/v1/api/tim-kiem?keyword=${encodeURIComponent(query)}`);
+                        const data2 = await res2.json();
+                        if (data2.data?.items?.length) {
+                            list = data2.data.items;
+                        }
+                    } catch(e) {}
+                }
+
+                // 3. NguonC fallback
+                if (!list.length) {
+                    try {
+                        const res3 = await fetch(`https://phim.nguonc.com/api/films/search?name=${encodeURIComponent(query)}`);
+                        const data3 = await res3.json();
+                        if (data3.items && Array.isArray(data3.items)) {
+                            list = data3.items.map(it => ({
+                                name: it.name,
+                                origin_name: it.original_name,
+                                slug: it.slug,
+                                poster_url: it.poster_url || it.thumb_url,
+                                year: it.year,
+                                quality: it.quality,
+                                lang: it.language,
+                                content: it.description
+                            }));
+                        }
+                    } catch(e) {}
+                }
+
+                if (!list.length) {
+                    resultsBox.innerHTML = '<div style="color:#94a3b8;font-size:12px;padding:8px;text-align:center;">Không tìm thấy phim phù hợp với từ khóa "' + query + '". Bạn có thể tự điền vào form bên dưới.</div>';
+                    return;
+                }
+
+                resultsBox.innerHTML = `
+                    <div style="font-size:11.5px;color:#38bdf8;font-weight:700;padding:2px 4px;">
+                        ✨ Kết quả tìm kiếm (${list.length} phim):
+                    </div>
+                ` + list.slice(0, 8).map(m => {
+                    const poster = m.poster_url || m.thumb_url || '';
+                    const fullPoster = poster.startsWith('http') ? poster : `https://phimimg.com/${poster.replace(/^\//, '')}`;
+                    const jsonStr = JSON.stringify({
+                        name: m.name || '',
+                        origin_name: m.origin_name || '',
+                        slug: m.slug || '',
+                        poster_url: fullPoster,
+                        year: String(m.year || '2026'),
+                        quality: m.quality || 'FHD',
+                        lang: m.lang || 'Vietsub Full',
+                        content: m.content ? m.content.replace(/<[^>]*>/g, '').trim() : ''
+                    }).replace(/"/g, '&quot;');
+
+                    return `
+                        <div onclick="MobileShowcaseAdmin.selectSearchMovie('${jsonStr}')" style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background='rgba(56,189,248,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
+                            <img src="${fullPoster}" style="width:34px;height:48px;border-radius:6px;object-fit:cover;background:#000;flex-shrink:0;" onerror="this.src='https://phimimg.com/upload/vod/20240506-1/3ea3a7267104b2bfe6f481c4e72750db.jpg'">
+                            <div style="flex:1;min-width:0;">
+                                <div style="color:#ffffff;font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.name}</div>
+                                <div style="color:#94a3b8;font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.origin_name || ''} • <span style="color:#38bdf8;font-weight:700;">${m.year || ''}</span> • ${m.lang || 'Vietsub'}</div>
+                            </div>
+                            <span style="color:#38bdf8;font-size:12px;font-weight:800;background:rgba(56,189,248,0.18);padding:4px 10px;border-radius:6px;flex-shrink:0;">Chọn ➔</span>
+                        </div>
+                    `;
+                }).join('');
+            } catch (err) {
+                resultsBox.innerHTML = `<div style="color:#ef4444;font-size:12px;padding:6px;">Lỗi tìm kiếm: ${err.message}</div>`;
+            } finally {
+                if (indicator) indicator.style.display = 'none';
+            }
+        },
+
+        async selectSearchMovie(jsonStr) {
+            try {
+                const m = JSON.parse(jsonStr.replace(/&quot;/g, '"'));
+                if (document.getElementById('scName')) document.getElementById('scName').value = m.name || '';
+                if (document.getElementById('scOriginName')) document.getElementById('scOriginName').value = m.origin_name || '';
+                if (document.getElementById('scSlug')) document.getElementById('scSlug').value = m.slug || '';
+                if (document.getElementById('scPoster')) document.getElementById('scPoster').value = m.poster_url || '';
+                if (document.getElementById('scQuality')) document.getElementById('scQuality').value = m.quality || 'FHD';
+                if (document.getElementById('scYear')) document.getElementById('scYear').value = m.year || '2026';
+                if (document.getElementById('scLang')) document.getElementById('scLang').value = m.lang || 'Vietsub Full';
+
+                const contentEl = document.getElementById('scContent');
+                if (contentEl) {
+                    contentEl.value = m.content || '';
+                    if (!m.content) {
+                        contentEl.placeholder = '⏳ Đang tự động lấy tóm tắt nội dung phim...';
+                    }
+                }
+
+                this.updatePosterPreview(m.poster_url, m.name, m.year);
+
+                const resultsBox = document.getElementById('apiSearchResults');
+                if (resultsBox) resultsBox.style.display = 'none';
+
+                showNotice(`Đã chọn phim "${m.name}". Đang tải poster & nội dung...`, 'info');
+
+                // Load kho ảnh Poster TMDB ngay lập tức
+                this.loadPostersForMovie(m.name, m.origin_name, m.slug);
+
+                // Tự động fetch nội dung chi tiết từ API nếu chưa có hoặc cập nhật đầy đủ nhất
+                if (m.slug) {
+                    await this.fetchAndFillMovieDetails(m.slug);
+                }
+            } catch (e) {
+                console.error('Lỗi parse movie json:', e);
+            }
+        },
+
+        async fetchAndFillMovieDetails(slug) {
+            if (!slug) return;
+            const contentEl = document.getElementById('scContent');
+
+            try {
+                let detail = null;
+
+                // 1. PhimAPI detail
+                try {
+                    const res = await fetch(`https://phimapi.com/phim/${encodeURIComponent(slug)}`);
+                    const data = await res.json();
+                    if (data.status === true && data.movie) {
+                        detail = data.movie;
+                    }
+                } catch(e) {}
+
+                // 2. Ophim detail fallback
+                if (!detail) {
+                    try {
+                        const res2 = await fetch(`https://ophim1.com/phim/${encodeURIComponent(slug)}`);
+                        const data2 = await res2.json();
+                        if (data2.status === 'success' && data2.data?.item) {
+                            detail = data2.data.item;
+                        }
+                    } catch(e) {}
+                }
+
+                // 3. NguonC detail fallback
+                if (!detail) {
+                    try {
+                        const res3 = await fetch(`https://phim.nguonc.com/api/film/${encodeURIComponent(slug)}`);
+                        const data3 = await res3.json();
+                        if (data3.movie) {
+                            detail = data3.movie;
+                        }
+                    } catch(e) {}
+                }
+
+                if (detail) {
+                    // Clean HTML tags and entities
+                    let rawContent = detail.content || detail.description || '';
+                    let cleanContent = rawContent
+                        .replace(/<[^>]*>/g, '')
+                        .replace(/&nbsp;/g, ' ')
+                        .replace(/&amp;/g, '&')
+                        .replace(/&quot;/g, '"')
+                        .replace(/&#39;/g, "'")
+                        .replace(/\s+/g, ' ')
+                        .trim();
+
+                    if (cleanContent && contentEl) {
+                        contentEl.value = cleanContent;
+                        contentEl.placeholder = 'Nội dung ngắn của phim...';
+                    }
+
+                    // Update extra info if available
+                    if (detail.quality && document.getElementById('scQuality')) {
+                        document.getElementById('scQuality').value = detail.quality;
+                    }
+                    if (detail.year && document.getElementById('scYear')) {
+                        document.getElementById('scYear').value = String(detail.year);
+                    }
+                    if (detail.lang && document.getElementById('scLang')) {
+                        document.getElementById('scLang').value = detail.lang;
+                    }
+
+                    // High res poster fallback
+                    const fullPoster = detail.poster_url || detail.thumb_url;
+                    if (fullPoster && document.getElementById('scPoster')) {
+                        const resolvedPoster = fullPoster.startsWith('http') ? fullPoster : `https://phimimg.com/${fullPoster.replace(/^\//, '')}`;
+                        document.getElementById('scPoster').value = resolvedPoster;
+                        this.updatePosterPreview(resolvedPoster, detail.name, detail.year);
+                    }
+
+                    showNotice('✅ Đã tự động lấy trọn vẹn tóm tắt nội dung phim!', 'success');
+                }
+            } catch (err) {
+                console.warn('Không thể tự động tải chi tiết phim:', err);
+                if (contentEl) contentEl.placeholder = 'Nội dung ngắn của phim...';
+            }
+        },
+
+        updatePosterPreview(url, name = '', year = '') {
+            const wrap = document.getElementById('scPosterPreviewWrap');
+            const img = document.getElementById('scPosterPreviewImg');
+            const title = document.getElementById('scPosterPreviewTitle');
+            const meta = document.getElementById('scPosterPreviewMeta');
+
+            if (!wrap || !img) return;
+            if (!url) {
+                wrap.style.display = 'none';
+                return;
+            }
+
+            img.src = url;
+            if (title) title.textContent = name || 'Chưa đặt tên phim';
+            if (meta) meta.textContent = `Năm: ${year || '2026'} • Đã sẵn sàng lưu`;
+            wrap.style.display = 'flex';
+        },
+
+        async submitForm(e) {
+            if (e) e.preventDefault();
+            const editIndex = parseInt(document.getElementById('scEditIndex')?.value || '-1', 10);
+            const name = document.getElementById('scName')?.value.trim();
+            const origin_name = document.getElementById('scOriginName')?.value.trim();
+            const slug = document.getElementById('scSlug')?.value.trim();
+            const poster_url = document.getElementById('scPoster')?.value.trim();
+            const quality = document.getElementById('scQuality')?.value.trim() || 'FHD';
+            const year = document.getElementById('scYear')?.value.trim() || '2026';
+            const lang = document.getElementById('scLang')?.value.trim() || 'Vietsub Full';
+            const content = document.getElementById('scContent')?.value.trim() || '';
+
+            if (!name || !slug || !poster_url) {
+                if (window.AdminNotice) {
+                    AdminNotice.toast('Vui lòng điền đầy đủ Tên phim, Slug và Link Poster!', 'error');
+                } else {
+                    alert('Vui lòng điền đầy đủ Tên phim, Slug và Link Poster!');
+                }
+                return;
+            }
+
+            const item = {
+                name,
+                origin_name,
+                slug,
+                poster_url,
+                thumb_url: poster_url,
+                quality,
+                year,
+                lang,
+                content
+            };
+
+            if (editIndex >= 0 && editIndex < showcaseItems.length) {
+                showcaseItems[editIndex] = item;
+            } else {
+                showcaseItems.push(item);
+            }
+
+            this.closeModal();
+            this.renderList();
+
+            // Auto-save immediately
+            const ok = await this.saveConfig(false);
+            if (ok) {
+                if (window.AdminNotice) {
+                    AdminNotice.toast(`🎉 Đã thêm/cập nhật phim "${name}" thành công!`, 'success');
+                } else {
+                    showNotice(`🎉 Đã thêm/cập nhật phim "${name}" thành công!`, 'success');
+                }
+            }
+        },
+
+        async saveConfig(isSilent = false) {
+            if (isSaving) return false;
+            const btn = document.getElementById('btnSave3DShowcase');
+            const token = getAdminToken();
+
+            try {
+                isSaving = true;
+                if (btn && !isSilent) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin"></i> Đang lưu...';
+                }
+
+                // Sync to LocalStorage immediately
+                try {
+                    localStorage.setItem('aphim_mobile_showcase_config', JSON.stringify(showcaseItems));
+                    window.dispatchEvent(new Event('storage'));
+                    window.dispatchEvent(new CustomEvent('aphim:mobile_showcase_updated'));
+                } catch(e) {}
+
+                const apiUrl = (typeof window.getBackendBaseURL === 'function') ? window.getBackendBaseURL() : '';
+                try {
+                    const res = await fetch(`${apiUrl}/api/settings/mobile-3d-showcase`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ items: showcaseItems })
+                    });
+                    const data = await res.json();
+                } catch(apiErr) {
+                    // API optional in static mode
+                }
+
+                if (window.AdminNotice) {
+                    AdminNotice.toast(isSilent ? 'Đã lưu thay đổi vào hệ thống' : '🎉 Đã lưu cấu hình Showcase 3D Mobile thành công!', 'success');
+                } else {
+                    showNotice(isSilent ? 'Đã lưu thay đổi vào hệ thống' : '🎉 Đã lưu cấu hình Showcase 3D Mobile thành công!', 'success');
+                }
+                return true;
+            } catch (err) {
+                if (window.AdminNotice) {
+                    AdminNotice.toast('❌ Lỗi khi lưu: ' + err.message, 'error');
+                } else {
+                    showNotice('❌ Lỗi khi lưu: ' + err.message, 'error');
+                }
+                return false;
+            } finally {
+                isSaving = false;
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i data-lucide="save"></i> Lưu Cấu Hình 3D Mobile';
+                    if (window.lucide) window.lucide.createIcons();
+                }
+            }
+        }
+    };
+
+    window.MobileShowcaseAdmin = MobileShowcaseAdmin;
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            if (document.getElementById('mobileShowcaseList')) {
+                MobileShowcaseAdmin.init();
+            }
+        });
+    } else {
+        if (document.getElementById('mobileShowcaseList')) {
+            MobileShowcaseAdmin.init();
+        }
+    }
+})();

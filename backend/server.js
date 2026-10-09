@@ -94,6 +94,7 @@ app.use('/api/partner', require('./routes/partner')); // Partner DT99 session tr
 app.use('/api/settings', require('./routes/settings')); // System settings
 app.use('/api/notifications', require('./routes/notifications')); // Persistent notifications
 app.use('/api/chat', require('./routes/chat')); // Chat history & moderation
+app.use('/api/gamification', require('./routes/gamification')); // Gamification leaderboard & rewards
 
 // Health check
 app.get('/health', (req, res) => {

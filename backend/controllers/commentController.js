@@ -205,3 +205,84 @@ exports.deleteComment = async (req, res) => {
         res.status(500).json({ success: false, message: 'Lỗi server' });
     }
 };
+
+// @desc    Get showcase comments for homepage
+// @route   GET /api/comments/home-showcase
+// @access  Public
+exports.getHomeShowcaseComments = async (req, res) => {
+    try {
+        const comments = await Comment.find({ isApproved: true })
+            .populate('user', 'name email avatar avatarUrl equippedFrameClass equippedFrameUrl badge isVip role')
+            .sort({ createdAt: -1 })
+            .limit(20);
+
+        const data = comments.map(c => {
+            const u = c.user || {};
+            return {
+                id: c._id,
+                userName: u.name || 'Thành viên',
+                userAvatar: u.avatarUrl || u.avatar || ('https://api.dicebear.com/7.x/bottts/svg?seed=' + encodeURIComponent(u.name || 'User')),
+                equippedFrameUrl: u.equippedFrameUrl || '',
+                badge: u.badge || (u.role === 'admin' ? 'ADMIN TOP 1' : (u.isVip ? 'VIP PRO' : '')),
+                isAdmin: u.role === 'admin',
+                isVip: !!u.isVip,
+                content: c.content,
+                movieSlug: c.movieSlug,
+                movieName: c.movieName || c.movieSlug,
+                timeAgo: 'Vừa xong'
+            };
+        });
+
+        if (!data.length) {
+            return res.json({
+                success: true,
+                data: [
+                    {
+                        userName: 'Admin APhim',
+                        userAvatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=AdminAPhim',
+                        badge: 'ADMIN TOP 1',
+                        isAdmin: true,
+                        isVip: true,
+                        content: 'Chào mừng các bạn đến với APhim Cinema! Chúc các bạn xem phim vui vẻ.',
+                        movieSlug: 'trung-so-doc-dac-van-phai-di-lam',
+                        movieName: 'Trúng Số Độc Đắc Vẫn Phải Đi Làm',
+                        timeAgo: 'Vừa xong'
+                    },
+                    {
+                        userName: 'Minh Hoàng',
+                        userAvatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=MinhHoang',
+                        badge: 'VIP PRO',
+                        isVip: true,
+                        content: 'Phim âm thanh đỉnh cao luôn, xem mượt mà không bị giật lag chút nào!',
+                        movieSlug: 'van-tu-hanh',
+                        movieName: 'Vân Tú Hành',
+                        timeAgo: '15 phút trước'
+                    },
+                    {
+                        userName: 'Thu Trang',
+                        userAvatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=ThuTrang',
+                        badge: 'CÀY PHIM',
+                        content: 'Kid và Hattori ngầu dã man, đồ họa sắc nét quá chừng.',
+                        movieSlug: 'conan-ngoi-sao-5-canh-1-trieu-do',
+                        movieName: 'Thám Tử Lừng Danh Conan',
+                        timeAgo: '1 giờ trước'
+                    },
+                    {
+                        userName: 'Gia Bảo',
+                        userAvatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=GiaBao',
+                        badge: 'FAN CỨNG',
+                        content: 'Đoạn combat cuối phim nhạc dính ghê, xem cuốn từ đầu tới cuối.',
+                        movieSlug: 'deadpool-va-wolverine',
+                        movieName: 'Deadpool & Wolverine',
+                        timeAgo: '2 giờ trước'
+                    }
+                ]
+            });
+        }
+
+        res.json({ success: true, data });
+    } catch (error) {
+        console.error('Error fetching home showcase comments:', error);
+        res.status(500).json({ success: false, message: 'Lỗi server' });
+    }
+};

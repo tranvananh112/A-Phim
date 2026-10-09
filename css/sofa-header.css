@@ -48,7 +48,7 @@
     .sofa-header-left-group {
         display: flex !important;
         align-items: center !important;
-        gap: 32px !important;
+        gap: 18px !important;
         flex-shrink: 0 !important;
         overflow: visible !important;
     }
@@ -88,6 +88,7 @@
         display: flex !important;
         align-items: center !important;
         text-decoration: none !important;
+        flex-shrink: 0 !important;
     }
 
     .sofa-logo-img {
@@ -100,8 +101,8 @@
     .sofa-nav-links {
         display: flex !important;
         align-items: center !important;
-        gap: 20px !important;
-        margin-left: 10px !important;
+        gap: 12px !important;
+        margin-left: 4px !important;
         flex-shrink: 0 !important;
     }
 
@@ -117,8 +118,10 @@
         white-space: nowrap !important;
         height: 64px !important;
         line-height: 64px !important;
+        padding: 0 !important;
         transition: color 0.18s ease !important;
         text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+        flex-shrink: 0 !important;
     }
 
     .sofa-nav-item:hover,
@@ -134,6 +137,7 @@
         filter: none !important;
         transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), fill 0.18s ease, opacity 0.18s ease !important;
         transform-origin: center !important;
+        flex-shrink: 0 !important;
     }
 
     .sofa-nav-item:hover .sofa-dropdown-arrow,
@@ -339,7 +343,7 @@
         display: none !important;
     }
 
-    /* Rounded Rectangle Login Button (Matching Image 2: border-radius 8px, height 40px) */
+    /* Rounded Rectangle Login Button (Matching Image 1: border-radius 8px, height 40px) */
     .sofa-login-rect-btn {
         background: #fcd576 !important;
         color: #0d0f1a !important;
@@ -367,6 +371,167 @@
         -webkit-text-fill-color: #000000 !important;
         transform: translateY(-1px) !important;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    /* 4. Reels Pill Button (Matching Image 1 Glowing Pill) */
+    .sofa-nav-item.reels-nav-pill,
+    .reels-nav-pill {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 5px !important;
+        height: 30px !important;
+        padding: 0 11px 0 9px !important;
+        border-radius: 9999px !important;
+        border: 1.5px solid #f59e0b !important;
+        border-color: #f59e0b !important;
+        background: #fffbeb !important;
+        background-color: #fffbeb !important;
+        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25) !important;
+        margin: auto 4px !important;
+        flex-shrink: 0 !important;
+        text-decoration: none !important;
+        cursor: pointer !important;
+        color: #e11d48 !important;
+        -webkit-text-fill-color: #e11d48 !important;
+        font-weight: 700 !important;
+        transition: all 0.2s ease !important;
+    }
+
+    html:not(.light-mode) .sofa-nav-item.reels-nav-pill,
+    html:not(.light-mode) .reels-nav-pill {
+        background: rgba(255, 43, 84, 0.12) !important;
+        background-color: rgba(255, 43, 84, 0.12) !important;
+        border: 1.5px solid rgba(255, 43, 84, 0.5) !important;
+        border-color: rgba(255, 43, 84, 0.5) !important;
+        box-shadow: 0 2px 8px rgba(255, 43, 84, 0.18) !important;
+        color: #ff2b54 !important;
+        -webkit-text-fill-color: #ff2b54 !important;
+    }
+
+    .reels-flame-icon {
+        width: 15px !important;
+        height: 15px !important;
+        min-width: 15px !important;
+        vertical-align: middle !important;
+        display: inline-block !important;
+        flex-shrink: 0 !important;
+    }
+
+    .reels-shimmer-text {
+        display: inline-flex !important;
+        align-items: center !important;
+        font-weight: 850 !important;
+        font-size: 13.5px !important;
+        letter-spacing: 0.02em !important;
+        line-height: 1 !important;
+    }
+
+    .reels-shimmer-text .reels-char {
+        display: inline-block !important;
+        color: #ff2b54 !important;
+    }
+
+    html.light-mode .reels-shimmer-text .reels-char,
+    .light-mode .reels-shimmer-text .reels-char {
+        color: #e11d48 !important;
+    }
+
+    /* ── Light Mode Header Styles (Matching Image 1) ── */
+    html.light-mode #sofa-header,
+    html.light-mode header,
+    .light-mode #sofa-header,
+    .light-mode header {
+        background: #faf7f2 !important;
+        background-color: #faf7f2 !important;
+        border-bottom: 1px solid rgba(220, 205, 185, 0.6) !important;
+        box-shadow: 0 4px 20px rgba(78, 64, 45, 0.08) !important;
+    }
+
+    html.light-mode .sofa-nav-item,
+    .light-mode .sofa-nav-item {
+        color: #1c1917 !important;
+        text-shadow: none !important;
+        font-weight: 600 !important;
+    }
+
+    html.light-mode .sofa-nav-item:hover,
+    html.light-mode .sofa-dropdown:hover .sofa-nav-item,
+    .light-mode .sofa-nav-item:hover,
+    .light-mode .sofa-dropdown:hover .sofa-nav-item {
+        color: #d97706 !important;
+    }
+
+    html.light-mode .sofa-dropdown-arrow,
+    .light-mode .sofa-dropdown-arrow {
+        fill: #44403c !important;
+    }
+
+    html.light-mode .sofa-nav-item:hover .sofa-dropdown-arrow,
+    html.light-mode .sofa-dropdown:hover .sofa-dropdown-arrow,
+    .light-mode .sofa-nav-item:hover .sofa-dropdown-arrow,
+    .light-mode .sofa-dropdown:hover .sofa-dropdown-arrow {
+        fill: #d97706 !important;
+    }
+
+    html.light-mode .sofa-menu-btn,
+    .light-mode .sofa-menu-btn {
+        color: #1c1917 !important;
+    }
+
+    html.light-mode .sofa-desktop-search-form,
+    .light-mode .sofa-desktop-search-form {
+        background: rgba(0, 0, 0, 0.05) !important;
+        border-color: rgba(0, 0, 0, 0.12) !important;
+    }
+
+    html.light-mode .sofa-desktop-search-form:focus-within,
+    .light-mode .sofa-desktop-search-form:focus-within {
+        background: #ffffff !important;
+        border-color: #d97706 !important;
+        box-shadow: 0 0 14px rgba(217, 119, 6, 0.25) !important;
+    }
+
+    html.light-mode .sofa-desktop-search-input,
+    .light-mode .sofa-desktop-search-input {
+        color: #1c1917 !important;
+    }
+
+    html.light-mode .sofa-desktop-search-input::placeholder,
+    .light-mode .sofa-desktop-search-input::placeholder {
+        color: #78716c !important;
+    }
+
+    html.light-mode .sofa-desktop-search-icon,
+    .light-mode .sofa-desktop-search-icon {
+        color: #78716c !important;
+    }
+
+    html.light-mode .sofa-inner-filter-btn,
+    .light-mode .sofa-inner-filter-btn {
+        background: rgba(0, 0, 0, 0.06) !important;
+        border-color: rgba(0, 0, 0, 0.12) !important;
+        color: #44403c !important;
+    }
+
+    html.light-mode .sofa-inner-filter-btn:hover,
+    .light-mode .sofa-inner-filter-btn:hover {
+        background: #fcd576 !important;
+        color: #0d0f1a !important;
+        border-color: #fcd576 !important;
+    }
+
+    html.light-mode .sofa-icon-circle-btn,
+    .light-mode .sofa-icon-circle-btn {
+        background-color: rgba(0, 0, 0, 0.05) !important;
+        border-color: rgba(0, 0, 0, 0.1) !important;
+        color: #1c1917 !important;
+    }
+
+    html.light-mode .sofa-icon-circle-btn svg,
+    .light-mode .sofa-icon-circle-btn svg {
+        color: #1c1917 !important;
+        stroke: #1c1917 !important;
     }
 
     /* Mobile / Desktop Search Overlay Dropdown */
@@ -732,14 +897,31 @@
 /* ========================================================
    Golden Pill Login Button with Panda (Screenshot Master)
    ======================================================== */
+.sofa-right-section {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+}
+
+#authContainer {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    min-width: max-content !important;
+}
+
 .nav-auth-btn {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 6px !important;
-    padding: 0 16px 0 10px !important;
-    height: 40px !important;
-    font-size: 14px !important;
+    gap: 4px !important;
+    padding: 0 14px 0 8px !important;
+    height: 38px !important;
+    font-size: 13.5px !important;
     font-weight: 800 !important;
     letter-spacing: 0.02em !important;
     color: #0d0f1a !important;
@@ -753,42 +935,38 @@
     text-decoration: none !important;
     white-space: nowrap !important;
     flex-shrink: 0 !important;
+    min-width: max-content !important;
     box-sizing: border-box !important;
+    position: relative !important;
+    overflow: hidden !important;
 }
 
 .nav-auth-btn:hover {
     background: linear-gradient(135deg, #FFFFFF 0%, #FFE18D 40%, #F2BA29 78%, #D69708 100%) !important;
-    transform: translateY(-1.5px) scale(1.02) !important;
+    transform: translateY(-1px) scale(1.02) !important;
     box-shadow: 0 6px 24px rgba(230, 168, 23, 0.7), inset 0 2px 4px rgba(255, 255, 255, 1) !important;
     color: #000000 !important;
     -webkit-text-fill-color: #000000 !important;
 }
 
-.nav-auth-btn {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    position: relative !important;
-    overflow: hidden !important;
-}
-
 .nav-auth-btn dotlottie-player {
-    width: 40px !important;
-    height: 40px !important;
-    transform: scale(1.95) !important;
+    width: 36px !important;
+    height: 36px !important;
+    transform: scale(1.85) !important;
     transform-origin: center center !important;
     pointer-events: none !important;
     margin: 0 !important;
     padding: 0 !important;
     display: block !important;
+    flex-shrink: 0 !important;
 }
 
 @media (max-width: 768px) {
     .nav-auth-btn {
-        width: 40px !important;
-        height: 40px !important;
-        min-width: 40px !important;
-        max-width: 40px !important;
+        width: 38px !important;
+        height: 38px !important;
+        min-width: 38px !important;
+        max-width: 38px !important;
         padding: 0 !important;
         border-radius: 50% !important;
         overflow: hidden !important;
@@ -801,17 +979,24 @@
         position: absolute !important;
         top: 50% !important;
         left: 50% !important;
-        transform: translate(-50%, -52%) scale(1.95) !important;
+        transform: translate(-50%, -52%) scale(1.85) !important;
         margin: 0 !important;
-        width: 40px !important;
-        height: 40px !important;
+        width: 36px !important;
+        height: 36px !important;
+    }
+    .nav-auth-btn .auth-btn-text {
+        display: none !important;
     }
 }
 
 .nav-auth-btn .auth-btn-text {
-    font-size: 14px !important;
+    font-size: 13.5px !important;
     font-weight: 800 !important;
     letter-spacing: 0.02em !important;
     color: #0d0f1a !important;
     -webkit-text-fill-color: #0d0f1a !important;
+    white-space: nowrap !important;
+    display: inline-block !important;
+    line-height: 1 !important;
+    flex-shrink: 0 !important;
 }

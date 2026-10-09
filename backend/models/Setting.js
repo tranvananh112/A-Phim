@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const SettingSchema = new mongoose.Schema({
     general: {
         siteName: { type: String, default: 'A Phim' },
-        siteDesc: { type: String, default: 'N?n t?ng xem phim tr?c tuy?n h�ng d?u Vi?t Nam' },
+        siteDesc: { type: String, default: 'Nền tảng xem phim trực tuyến hàng đầu Việt Nam' },
         siteDomain: { type: String, default: 'APhim.vn' },
         siteEmail: { type: String, default: 'admin@APhim.vn' },
         logoUrl: { type: String, default: '../apple-touch-icon.png' },
@@ -28,7 +28,7 @@ const SettingSchema = new mongoose.Schema({
         enablePhimX: { type: Boolean, default: false },
         enableWatermark: { type: Boolean, default: true },
         watermarkUrl: { type: String, default: 'https://phimapi.com/logo.png' },
-        autoplayDelay: { type: String, default: '5 gi�y' },
+        autoplayDelay: { type: String, default: '5 giây' },
         defaultServer: { type: String, default: 'Server #1 (OPhim)' },
         proxyUrl: { type: String, default: '' },
         apiBase: { type: String, default: 'https://phimapi.com/v1/api' },
@@ -47,6 +47,17 @@ const SettingSchema = new mongoose.Schema({
             }
         }
     },
+    desktop_interests: { type: [Object], default: [] },
+    desktop_hero_showcase: { type: [Object], default: [] },
+    desktop_hero_autoslide: {
+        type: Object,
+        default: {
+            enabled: true,
+            interval: 6,
+            pauseOnHover: true
+        }
+    },
+    mobile_3d_showcase: { type: [Object], default: [] },
     security: {
         enable2FA: { type: Boolean, default: false },
         ipWhitelistEnabled: { type: Boolean, default: false },
@@ -68,4 +79,3 @@ const SettingSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('Setting', SettingSchema);
-
