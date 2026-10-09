@@ -56,8 +56,8 @@
                 label: 'ColaTV — Xem Phim HD Miễn Phí'
             },
             {
-                img: '/ads/catfish/colascore.gif',
-                url: 'https://colascores.fan',
+                img: '/ads/catfish/colascore.gif?v=2',
+                url: 'https://colascores.info/',
                 label: 'ColaScore — Tỷ Số Bóng Đá Trực Tiếp'
             }
         ]
