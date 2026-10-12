@@ -756,6 +756,253 @@ app.get('/api/settings/desktop-interests', async (req, res) => {
     return res.json({ success: true, data: defaultInterests });
 });
 
+// Fallback endpoint cho desktop hero showcase khi backend expired
+app.get('/api/settings/desktop-hero-showcase', async (req, res) => {
+    try {
+        const response = await axios.get(`${BACKEND_URL}/api/settings/desktop-hero-showcase`, { timeout: 1500 });
+        if (response.data && response.data.success && Array.isArray(response.data.data) && response.data.data.length > 0) {
+            return res.json(response.data);
+        }
+    } catch (e) {}
+
+    const defaultHeroSlides = [
+        {
+            slug: 'van-tu-hanh',
+            name: 'The Legend of Rosy Clouds',
+            origin_name: 'The Legend Of Rosy Clouds',
+            year: '2026',
+            quality: 'FHD',
+            age: 'T13',
+            episode_current: 'Tập 30',
+            content: '"Vân Tú Hành" là một bộ phim cổ trang do Chu Thiếu Kiệt đạo diễn, Lý Nhất Đồng, Tăng Thuấn Hy, Đặng Vi đóng chính...',
+            thumb_url: 'https://phimimg.com/upload/vod/20260620-1/00083387b890aaac69f0490b3fda8c13.jpg',
+            poster_url: 'https://phimimg.com/upload/vod/20260620-1/6b7cf552ac9b66e18a5382c922d2bd0d.jpg',
+            category: [{ name: 'Chính Kịch', slug: 'chinh-kich' }, { name: 'Cổ Trang', slug: 'co-trang' }],
+            tmdb: { id: 239901, type: 'tv', vote_average: 9.5 },
+            imdb: { id: 'tt29489359', vote_average: 9.5 },
+            logoUrl: 'https://image.tmdb.org/t/p/w500/avDr4GzFYFAS9yNiXEZbYbnPjeO.png'
+        },
+        {
+            slug: 'quat-mo-trung-ma',
+            name: 'Quật Mộ Trùng Ma',
+            origin_name: 'Exhuma',
+            year: '2024',
+            quality: 'FHD',
+            age: 'T18',
+            episode_current: 'Full',
+            content: 'Hai pháp sư, một thầy phong thuỷ và một chuyên gia khâm liệm cùng hợp lực khai quật ngôi mộ bị nguyền rủa...',
+            thumb_url: 'https://phimimg.com/upload/vod/20250530-1/fdf11774cff47f0ffc9c2dbe2e02d0ca.jpg',
+            poster_url: 'https://phimimg.com/upload/vod/20250530-1/759df554cc21bf9d6805966dc3fe2b67.jpg',
+            category: [{ name: 'Bí Ẩn', slug: 'bi-an' }, { name: 'Kinh Dị', slug: 'kinh-di' }],
+            tmdb: { id: 838209, type: 'movie', vote_average: 7.6 },
+            imdb: { id: 'tt27802490', vote_average: 6.9 },
+            logoUrl: 'https://image.tmdb.org/t/p/w500/zzeosUcmoNVZyTUteGFsD5kdSga.png'
+        },
+        {
+            slug: 'tham-tu-lung-danh-conan',
+            name: 'Thám Tử Lừng Danh Conan: Ngôi Sao 5 Cánh 1 Triệu Đô',
+            origin_name: 'Detective Conan: The Million-Dollar Pentagram',
+            year: '2024',
+            quality: 'FHD',
+            age: 'T13',
+            episode_current: 'Full',
+            content: 'Tại Hakodate, một thông báo từ Siêu trộm Kid xuất hiện. Mục tiêu lần này của hắn không phải là đá quý...',
+            thumb_url: 'https://phimimg.com/upload/vod/20241229-1/309e1f1623755fa993140a83167f577b.jpg',
+            poster_url: 'https://phimimg.com/upload/vod/20240310-1/025424cf62248b9a7b54279ef5416e26.jpg',
+            category: [{ name: 'Hoạt Hình', slug: 'hoat-hinh' }, { name: 'Bí Ẩn', slug: 'bi-an' }],
+            tmdb: { id: 1198595, type: 'movie', vote_average: 8.2 },
+            imdb: { id: 'tt30030588', vote_average: 8.0 },
+            logoUrl: 'https://image.tmdb.org/t/p/w500/vX0VEwZViadujTUGcL0EU5orV8p.png'
+        },
+        {
+            slug: 'deadpool-va-wolverine',
+            name: 'Deadpool & Wolverine',
+            origin_name: 'Deadpool & Wolverine',
+            year: '2024',
+            quality: 'FHD',
+            age: 'T18',
+            episode_current: 'Full',
+            content: 'Wade Wilson đang cố gắng sống cuộc đời bình thường sau những ngày làm lính đánh thuê...',
+            thumb_url: 'https://phimimg.com/upload/vod/20250821-1/1ec414f82adc729512410edd1b083996.jpg',
+            poster_url: 'https://phimimg.com/upload/vod/20250821-1/45b6b9aad03ae0aa2aceb5d73419831a.jpg',
+            category: [{ name: 'Hành Động', slug: 'hanh-dong' }, { name: 'Hài Hước', slug: 'hai-huoc' }],
+            tmdb: { id: 533535, type: 'movie', vote_average: 7.6 },
+            imdb: { id: 'tt6263850', vote_average: 7.5 },
+            logoUrl: 'https://image.tmdb.org/t/p/w500/2o48U3kMXGIqRAkKZQ3n5OTWSBy.png'
+        },
+        {
+            slug: 'do-anh-cong-duoc-toi',
+            name: 'Đố Anh Còng Được Tôi',
+            origin_name: 'I, the Executioner',
+            year: '2024',
+            quality: 'FHD',
+            age: 'T16',
+            episode_current: 'Full',
+            content: 'Thám tử kỳ cựu Seo Do-cheol và Đội Điều tra Tội phạm Bạo lực đối mặt với một kẻ giết người hàng loạt...',
+            thumb_url: 'https://phimimg.com/upload/vod/20241118-1/3b9d2f3c9a5cf65d15a23db8d0c870ac.jpg',
+            poster_url: 'https://phimimg.com/upload/vod/20241118-1/9f929fc12384573847849f8786f16ae2.jpg',
+            category: [{ name: 'Hành Động', slug: 'hanh-dong' }, { name: 'Hình Sự', slug: 'hinh-su' }],
+            tmdb: { id: 995926, type: 'movie', vote_average: 7.0 },
+            imdb: { id: 'tt30287778', vote_average: 6.3 },
+            logoUrl: 'https://image.tmdb.org/t/p/w500/qdDvXw018inT0E08ZfPGEFs68nL.png'
+        }
+    ];
+    return res.json({ success: true, data: defaultHeroSlides });
+});
+
+// Fallback endpoint cho mobile 3D showcase
+app.get('/api/settings/mobile-3d-showcase', async (req, res) => {
+    try {
+        const response = await axios.get(`${BACKEND_URL}/api/settings/mobile-3d-showcase`, { timeout: 1500 });
+        if (response.data && response.data.success && Array.isArray(response.data.data) && response.data.data.length > 0) {
+            return res.json(response.data);
+        }
+    } catch (e) {}
+
+    const defaultMobileShowcase = [
+        {
+            slug: 'van-tu-hanh',
+            name: 'Vân Tú Hành',
+            origin_name: 'The Legend of Rosy Clouds (2026)',
+            poster_url: 'https://phimimg.com/upload/vod/20260620-1/6b7cf552ac9b66e18a5382c922d2bd0d.jpg',
+            thumb_url: 'https://phimimg.com/upload/vod/20260620-1/00083387b890aaac69f0490b3fda8c13.jpg',
+            quality: 'FHD',
+            year: '2026',
+            lang: 'Vietsub Full',
+            content: '"Vân Tú Hành" là một bộ phim cổ trang do Chu Thiếu Kiệt đạo diễn, Lý Nhất Đồng, Tăng Thuấn Hy đóng chính.'
+        },
+        {
+            slug: 'quat-mo-trung-ma',
+            name: 'Quật Mộ Trùng Ma',
+            origin_name: 'Exhuma (2024)',
+            poster_url: 'https://phimimg.com/upload/vod/20250530-1/759df554cc21bf9d6805966dc3fe2b67.jpg',
+            thumb_url: 'https://phimimg.com/upload/vod/20250530-1/fdf11774cff47f0ffc9c2dbe2e02d0ca.jpg',
+            quality: 'FHD',
+            year: '2024',
+            lang: 'Vietsub Full',
+            content: 'Hai pháp sư trừ tà trẻ tuổi cùng thầy phong thuỷ và chuyên gia khâm liệm khai quật ngôi mộ bí ẩn.'
+        },
+        {
+            slug: 'tham-tu-lung-danh-conan-ngoi-sao-5-canh-1-trieu-do',
+            name: 'Thám Tử Lừng Danh Conan: Ngôi Sao 5 Cánh 1 Triệu Đô',
+            origin_name: 'Detective Conan: The Million-dollar Pentagram',
+            poster_url: 'https://phimimg.com/upload/vod/20241229-1/01a129f40195c588ebc3d00c225fa33c.jpg',
+            thumb_url: 'https://phimimg.com/upload/vod/20241229-1/309e1f1623755fa993140a83167f577b.jpg',
+            quality: 'FHD',
+            year: '2024',
+            lang: 'Vietsub + Lồng Tiếng',
+            content: 'Cuộc đối đầu kịch tính giữa Siêu trộm Kaito Kid, Thám tử miền Tây Hattori Heiji và Conan tại Hakodate.'
+        },
+        {
+            slug: 'deadpool-va-wolverine',
+            name: 'Deadpool & Wolverine',
+            origin_name: 'Deadpool Và Wolverine (2024)',
+            poster_url: 'https://phimimg.com/upload/vod/20250821-1/45b6b9aad03ae0aa2aceb5d73419831a.jpg',
+            thumb_url: 'https://phimimg.com/upload/vod/20250821-1/1ec414f82adc729512410edd1b083996.jpg',
+            quality: 'FHD',
+            year: '2024',
+            lang: 'Vietsub Full',
+            content: 'Cơ quan Quản lý Phương sai Thời gian lôi kéo Wade Wilson thực hiện một sứ mệnh sống còn bảo vệ vũ trụ.'
+        },
+        {
+            slug: 'do-anh-cong-duoc-toi',
+            name: 'Đố Anh Còng Được Tôi',
+            origin_name: 'I, the Executioner (Veteran 2)',
+            poster_url: 'https://phimimg.com/upload/vod/20241118-1/9f929fc12384573847849f8786f16ae2.jpg',
+            thumb_url: 'https://phimimg.com/upload/vod/20241118-1/3b9d2f3c9a5cf65d15a23db8d0c870ac.jpg',
+            quality: 'FHD',
+            year: '2024',
+            lang: 'Vietsub Full',
+            content: 'Thanh tra kỳ cựu Seo Do Cheol cùng tân binh nhiệt huyết Park Sun Woo ngày đêm truy đuổi kẻ giết người.'
+        }
+    ];
+    return res.json({ success: true, data: defaultMobileShowcase });
+});
+
+// Fallback endpoint cho public settings
+app.get('/api/settings/public', async (req, res) => {
+    try {
+        const response = await axios.get(`${BACKEND_URL}/api/settings/public`, { timeout: 1500 });
+        if (response.data && response.data.success && response.data.data) {
+            return res.json(response.data);
+        }
+    } catch (e) {}
+
+    return res.json({
+        success: true,
+        data: {
+            general: {
+                siteName: "A Phim",
+                siteDesc: "Nền tảng xem phim trực tuyến hàng đầu Việt Nam",
+                siteDomain: "APhim.vn",
+                logoUrl: "../favicon.png",
+                faviconUrl: "../favicon.png",
+                maintenanceMode: false,
+                allowRegister: true,
+                allowComments: true
+            },
+            content: {
+                enablePhimX: false,
+                enableWatermark: false,
+                apiBase: "https://ophim1.com/v1/api",
+                apiSecondary: "https://ophim1.com",
+                enableMultipleSources: false,
+                defaultServer: "Server #1 (OPhim)",
+                categoryBackgrounds: {
+                    "danh-sach/phim-bo": "https://phimimg.com/upload/vod/20260620-1/00083387b890aaac69f0490b3fda8c13.jpg",
+                    "danh-sach/phim-moi-cap-nhat": "https://phimimg.com/upload/vod/20250530-1/fdf11774cff47f0ffc9c2dbe2e02d0ca.jpg",
+                    "the-loai/hanh-dong": "https://phimimg.com/upload/vod/20250821-1/1ec414f82adc729512410edd1b083996.jpg",
+                    "the-loai/tinh-cam": "https://phimimg.com/uploads/movies/20260810/co-nang-manh-me-do-bong-soon-thumb.webp",
+                    "the-loai/hai-huoc": "https://phimimg.com/upload/vod/20241118-1/3b9d2f3c9a5cf65d15a23db8d0c870ac.jpg",
+                    "danh-sach/hoat-hinh": "https://phimimg.com/upload/vod/20241229-1/309e1f1623755fa993140a83167f577b.jpg"
+                },
+                heroThumbnails: [
+                    {
+                        movieSlug: "van-tu-hanh",
+                        name: "The Legend of Rosy Clouds",
+                        originName: "The Legend Of Rosy Clouds",
+                        thumbUrl: "https://phimimg.com/upload/vod/20260620-1/00083387b890aaac69f0490b3fda8c13.jpg",
+                        posterUrl: "https://phimimg.com/upload/vod/20260620-1/6b7cf552ac9b66e18a5382c922d2bd0d.jpg",
+                        year: 2026
+                    },
+                    {
+                        movieSlug: "quat-mo-trung-ma",
+                        name: "Quật Mộ Trùng Ma",
+                        originName: "Exhuma",
+                        thumbUrl: "https://phimimg.com/upload/vod/20250530-1/fdf11774cff47f0ffc9c2dbe2e02d0ca.jpg",
+                        posterUrl: "https://phimimg.com/upload/vod/20250530-1/759df554cc21bf9d6805966dc3fe2b67.jpg",
+                        year: 2024
+                    },
+                    {
+                        movieSlug: "tham-tu-lung-danh-conan",
+                        name: "Thám Tử Lừng Danh Conan: Ngôi Sao 5 Cánh 1 Triệu Đô",
+                        originName: "Detective Conan: The Million-Dollar Pentagram",
+                        thumbUrl: "https://phimimg.com/upload/vod/20241229-1/309e1f1623755fa993140a83167f577b.jpg",
+                        posterUrl: "https://phimimg.com/upload/vod/20240310-1/025424cf62248b9a7b54279ef5416e26.jpg",
+                        year: 2024
+                    },
+                    {
+                        movieSlug: "deadpool-va-wolverine",
+                        name: "Deadpool & Wolverine",
+                        originName: "Deadpool & Wolverine",
+                        thumbUrl: "https://phimimg.com/upload/vod/20250821-1/1ec414f82adc729512410edd1b083996.jpg",
+                        posterUrl: "https://phimimg.com/upload/vod/20250821-1/45b6b9aad03ae0aa2aceb5d73419831a.jpg",
+                        year: 2024
+                    },
+                    {
+                        movieSlug: "do-anh-cong-duoc-toi",
+                        name: "Đố Anh Còng Được Tôi",
+                        originName: "I, the Executioner",
+                        thumbUrl: "https://phimimg.com/upload/vod/20241118-1/3b9d2f3c9a5cf65d15a23db8d0c870ac.jpg",
+                        posterUrl: "https://phimimg.com/upload/vod/20241118-1/9f929fc12384573847849f8786f16ae2.jpg",
+                        year: 2024
+                    }
+                ]
+            }
+        }
+    });
+});
+
 // General proxy for all other /api/* routes
 app.use('/api', async (req, res, next) => {
     try {

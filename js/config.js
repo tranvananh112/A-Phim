@@ -68,9 +68,57 @@ const API_CONFIG = {
     USE_BACKEND_FOR_MOVIES: false,
     USE_BACKEND_FOR_AUTH: true,
     USE_MULTIPLE_SOURCES: false,
-    // Custom UI settings
-    CATEGORY_BACKGROUNDS: {},
-    HERO_THUMBNAILS: []
+    // Custom UI settings — Pre-configured robust hardcoded fallbacks
+    CATEGORY_BACKGROUNDS: {
+        "danh-sach/phim-bo": "https://phimimg.com/upload/vod/20260620-1/00083387b890aaac69f0490b3fda8c13.jpg",
+        "danh-sach/phim-moi-cap-nhat": "https://phimimg.com/upload/vod/20250530-1/fdf11774cff47f0ffc9c2dbe2e02d0ca.jpg",
+        "the-loai/hanh-dong": "https://phimimg.com/upload/vod/20250821-1/1ec414f82adc729512410edd1b083996.jpg",
+        "the-loai/tinh-cam": "https://phimimg.com/uploads/movies/20260810/co-nang-manh-me-do-bong-soon-thumb.webp",
+        "the-loai/hai-huoc": "https://phimimg.com/upload/vod/20241118-1/3b9d2f3c9a5cf65d15a23db8d0c870ac.jpg",
+        "danh-sach/hoat-hinh": "https://phimimg.com/upload/vod/20241229-1/309e1f1623755fa993140a83167f577b.jpg"
+    },
+    HERO_THUMBNAILS: [
+        {
+            movieSlug: "van-tu-hanh",
+            name: "The Legend of Rosy Clouds",
+            originName: "The Legend Of Rosy Clouds",
+            thumbUrl: "https://phimimg.com/upload/vod/20260620-1/00083387b890aaac69f0490b3fda8c13.jpg",
+            posterUrl: "https://phimimg.com/upload/vod/20260620-1/6b7cf552ac9b66e18a5382c922d2bd0d.jpg",
+            year: "2026"
+        },
+        {
+            movieSlug: "quat-mo-trung-ma",
+            name: "Quật Mộ Trùng Ma",
+            originName: "Exhuma",
+            thumbUrl: "https://phimimg.com/upload/vod/20250530-1/fdf11774cff47f0ffc9c2dbe2e02d0ca.jpg",
+            posterUrl: "https://phimimg.com/upload/vod/20250530-1/759df554cc21bf9d6805966dc3fe2b67.jpg",
+            year: "2024"
+        },
+        {
+            movieSlug: "tham-tu-lung-danh-conan",
+            name: "Thám Tử Lừng Danh Conan: Ngôi Sao 5 Cánh 1 Triệu Đô",
+            originName: "Detective Conan: The Million-Dollar Pentagram",
+            thumbUrl: "https://phimimg.com/upload/vod/20241229-1/309e1f1623755fa993140a83167f577b.jpg",
+            posterUrl: "https://phimimg.com/upload/vod/20240310-1/025424cf62248b9a7b54279ef5416e26.jpg",
+            year: "2024"
+        },
+        {
+            movieSlug: "deadpool-va-wolverine",
+            name: "Deadpool & Wolverine",
+            originName: "Deadpool & Wolverine",
+            thumbUrl: "https://phimimg.com/upload/vod/20250821-1/1ec414f82adc729512410edd1b083996.jpg",
+            posterUrl: "https://phimimg.com/upload/vod/20250821-1/45b6b9aad03ae0aa2aceb5d73419831a.jpg",
+            year: "2024"
+        },
+        {
+            movieSlug: "do-anh-cong-duoc-toi",
+            name: "Đố Anh Còng Được Tôi",
+            originName: "I, the Executioner",
+            thumbUrl: "https://phimimg.com/upload/vod/20241118-1/3b9d2f3c9a5cf65d15a23db8d0c870ac.jpg",
+            posterUrl: "https://phimimg.com/upload/vod/20241118-1/9f929fc12384573847849f8786f16ae2.jpg",
+            year: "2024"
+        }
+    ]
 };
 
 // ─ ─Dynamic Configuration Override ─ 
@@ -99,15 +147,22 @@ try {
         if (typeof cachedContent.maintenanceMode === 'boolean') API_CONFIG.MAINTENANCE_MODE = cachedContent.maintenanceMode;
         if (typeof cachedContent.allowRegister === 'boolean') API_CONFIG.ALLOW_REGISTER = cachedContent.allowRegister;
         if (typeof cachedContent.allowComments === 'boolean') API_CONFIG.ALLOW_COMMENTS = cachedContent.allowComments;
-        if (cachedContent.categoryBackgrounds) API_CONFIG.CATEGORY_BACKGROUNDS = cachedContent.categoryBackgrounds;
-        if (cachedContent.heroThumbnails) API_CONFIG.HERO_THUMBNAILS = cachedContent.heroThumbnails;
+        if (cachedContent.categoryBackgrounds && Object.keys(cachedContent.categoryBackgrounds).length > 0) {
+            API_CONFIG.CATEGORY_BACKGROUNDS = Object.assign({}, API_CONFIG.CATEGORY_BACKGROUNDS, cachedContent.categoryBackgrounds);
+        }
+        if (cachedContent.heroThumbnails && cachedContent.heroThumbnails.length > 0) {
+            API_CONFIG.HERO_THUMBNAILS = cachedContent.heroThumbnails;
+        }
     }
 } catch (e) { console.error('Cache config read error:', e); }
 
 // Fetch fresh config in background
 (async function syncServerConfig() {
     try {
-        const res = await fetch(`${API_CONFIG.BACKEND_URL}/settings/public`);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 1500);
+        const res = await fetch(`${API_CONFIG.BACKEND_URL}/settings/public`, { signal: controller.signal });
+        clearTimeout(timeoutId);
         const data = await res.json();
         if (data && data.success && data.data) {
             const { content, general } = data.data;
@@ -153,7 +208,7 @@ try {
             }
         }
     } catch (e) {
-        console.warn('Silent fail: could not load public settings', e);
+        // Silent fail: backend offline / expired
     }
 })();
 
@@ -211,7 +266,10 @@ window.is_hidden_movies_synced = false;
 
 (async function syncHiddenMovies() {
     try {
-        const res = await fetch(`${API_CONFIG.BACKEND_URL}/movies/hidden/list`);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 1500);
+        const res = await fetch(`${API_CONFIG.BACKEND_URL}/movies/hidden/list`, { signal: controller.signal });
+        clearTimeout(timeoutId);
         const data = await res.json();
         if (data && data.success) {
             localStorage.setItem('cinestream_hidden_movies', JSON.stringify(data.data));
@@ -219,8 +277,6 @@ window.is_hidden_movies_synced = false;
             window.dispatchEvent(new CustomEvent('hiddenMoviesSynced', { detail: data.data }));
         }
     } catch (e) {
-        console.warn('Could not connect to backend for hidden movies sync:', e);
-        // Ensure flag is set even on failure to avoid infinite waiting
         window.is_hidden_movies_synced = true;
     }
 })();
@@ -231,7 +287,10 @@ setInterval(async () => {
     if (document.hidden) return;
     
     try {
-        const res = await fetch(`${API_CONFIG.BACKEND_URL}/movies/hidden/list`);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 1500);
+        const res = await fetch(`${API_CONFIG.BACKEND_URL}/movies/hidden/list`, { signal: controller.signal });
+        clearTimeout(timeoutId);
         const data = await res.json();
         if (data && data.success) {
             const currentDataStr = localStorage.getItem('cinestream_hidden_movies');

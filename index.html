@@ -5829,21 +5829,23 @@ function toggleFaqCard(btnEl) {
         }
 
         async function loadHomeCommentsShowcase() {
+            // Render static hardcoded comments immediately (0ms)
+            allHomeComments = DEFAULT_STATIC_COMMENTS;
+            renderHomeComments();
+
             try {
-                const res = await fetch('/api/comments/home-showcase');
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 1500);
+                const res = await fetch('/api/comments/home-showcase', { signal: controller.signal });
+                clearTimeout(timeoutId);
                 if (res.ok) {
                     const data = await res.json();
                     if (data.success && Array.isArray(data.data) && data.data.length > 0) {
                         allHomeComments = data.data;
                         renderHomeComments();
-                        return;
                     }
                 }
             } catch (err) {}
-
-            // Static fallback
-            allHomeComments = DEFAULT_STATIC_COMMENTS;
-            renderHomeComments();
         }
 
         function loadWhenNearViewport(containerId, loadSection) {
@@ -6007,19 +6009,25 @@ function toggleFaqCard(btnEl) {
             const section = document.getElementById('mobile3DShowcaseSection');
             if (!section) return;
 
-            // 1. INSTANT: Đọc cache LocalStorage để render tức thì
+            // 0. INSTANT HARDCODED RENDER: Đảm bảo mobile showcase hiển thị ngay 0ms không đợi API
+            if (!showcase3DItems.length) {
+                showcase3DItems = DEFAULT_STATIC_3D_SHOWCASE;
+                initMobile3DShowcase();
+            }
+
+            // 1. INSTANT: Đọc cache LocalStorage nếu có
             try {
                 const cached = localStorage.getItem('aphim_mobile_showcase_config');
                 if (cached) {
                     const parsed = JSON.parse(cached);
-                    if (Array.isArray(parsed) && parsed.length > 0) {
+                    if (Array.isArray(parsed) && parsed.length > 0 && parsed[0]?.slug) {
                         showcase3DItems = parsed;
                         initMobile3DShowcase();
                     }
                 }
             } catch(e) {}
 
-            // 2. BACKGROUND: Lấy dữ liệu mới nhất từ Backend API
+            // 2. BACKGROUND: Lấy dữ liệu mới nhất từ Backend API nếu online (timeout 1.5s)
             try {
                 const baseUrls = [];
                 if (typeof window.getBackendBaseURL === 'function') {
@@ -6035,7 +6043,10 @@ function toggleFaqCard(btnEl) {
 
                 for (const base of baseUrls) {
                     try {
-                        const res = await fetch(`${base}/api/settings/mobile-3d-showcase?t=` + Date.now());
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 1500);
+                        const res = await fetch(`${base}/api/settings/mobile-3d-showcase?t=` + Date.now(), { signal: controller.signal });
+                        clearTimeout(timeoutId);
                         if (res.ok) {
                             const data = await res.json();
                             if (data.success && Array.isArray(data.data) && data.data.length > 0) {
@@ -6048,11 +6059,6 @@ function toggleFaqCard(btnEl) {
                     } catch (err) {}
                 }
             } catch (err) {}
-
-            if (!showcase3DItems.length) {
-                showcase3DItems = DEFAULT_STATIC_3D_SHOWCASE;
-                initMobile3DShowcase();
-            }
         }
 
         window.addEventListener('storage', (e) => {

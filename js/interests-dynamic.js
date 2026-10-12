@@ -110,15 +110,63 @@ function applyCustomBackgroundsToDOM(cards, customBgs) {
     });
 }
 
+const DEFAULT_HARDCODED_INTERESTS = [
+    {
+        id: 'phim-bo',
+        title: 'Phim Bộ',
+        link: 'danh-sach.html?list=phim-bo',
+        color: '#8b5cf6',
+        imageUrl: 'https://phimimg.com/upload/vod/20260620-1/00083387b890aaac69f0490b3fda8c13.jpg'
+    },
+    {
+        id: 'phim-moi',
+        title: 'Phim Mới',
+        link: 'danh-sach.html?list=phim-moi-cap-nhat',
+        color: '#ef4444',
+        imageUrl: 'https://phimimg.com/upload/vod/20250530-1/fdf11774cff47f0ffc9c2dbe2e02d0ca.jpg'
+    },
+    {
+        id: 'hanh-dong',
+        title: 'Hành Động',
+        link: 'categories.html?category=hanh-dong',
+        color: '#f97316',
+        imageUrl: 'https://phimimg.com/upload/vod/20250821-1/1ec414f82adc729512410edd1b083996.jpg'
+    },
+    {
+        id: 'tinh-cam',
+        title: 'Tình Cảm',
+        link: 'categories.html?category=tinh-cam',
+        color: '#ec4899',
+        imageUrl: 'https://phimimg.com/uploads/movies/20260810/co-nang-manh-me-do-bong-soon-thumb.webp'
+    },
+    {
+        id: 'hai-huoc',
+        title: 'Hài Hước',
+        link: 'categories.html?category=hai-huoc',
+        color: '#eab308',
+        imageUrl: 'https://phimimg.com/upload/vod/20241118-1/3b9d2f3c9a5cf65d15a23db8d0c870ac.jpg'
+    },
+    {
+        id: 'hoat-hinh',
+        title: 'Hoạt Hình',
+        link: 'danh-sach.html?list=hoat-hinh',
+        color: '#10b981',
+        imageUrl: 'https://phimimg.com/upload/vod/20241229-1/309e1f1623755fa993140a83167f577b.jpg'
+    }
+];
+
 async function loadDynamicInterests() {
     const cards = document.querySelectorAll('.interest-card');
     if (!cards.length) return;
+
+    // 0. INSTANT HARDCODED RENDER: Đảm bảo 6 thẻ có ảnh nền và màu sắc đẹp ngay lập tức 0ms
+    applyFullInterestsConfigToDOM(cards, DEFAULT_HARDCODED_INTERESTS);
 
     const usedImages = new Set();
     let fullInterestsConfig = null;
     let customBgs = {};
 
-    // 1. INSTANT: Đọc cache LocalStorage để hiển thị ngay lập tức
+    // 1. INSTANT: Đọc cache LocalStorage nếu có
     try {
         const cachedInterests = localStorage.getItem('aphim_interests_config');
         if (cachedInterests) {
@@ -140,7 +188,7 @@ async function loadDynamicInterests() {
         console.warn('[Interests] LocalStorage error:', e);
     }
 
-    // 2. BACKGROUND: Tải cấu hình mới nhất từ Backend API
+    // 2. BACKGROUND: Tải cấu hình mới nhất từ Backend API (timeout ngắn 1.5s không chặn UI)
     try {
         const baseUrls = [];
         if (typeof window.getBackendBaseURL === 'function') {
@@ -158,7 +206,10 @@ async function loadDynamicInterests() {
         for (const base of baseUrls) {
             try {
                 const endpoint = `${base}/api/settings/desktop-interests?t=` + Date.now();
-                const res = await fetch(endpoint).then(r => r.json()).catch(() => null);
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 1500);
+                const res = await fetch(endpoint, { signal: controller.signal }).then(r => r.json()).catch(() => null);
+                clearTimeout(timeoutId);
                 if (res && res.success && Array.isArray(res.data) && res.data.length > 0) {
                     fullInterestsConfig = res.data;
                     localStorage.setItem('aphim_interests_config', JSON.stringify(fullInterestsConfig));
@@ -173,7 +224,10 @@ async function loadDynamicInterests() {
         if (!loadedFromApi && (!fullInterestsConfig || !fullInterestsConfig.length)) {
             for (const base of baseUrls) {
                 try {
-                    const pubRes = await fetch(`${base}/api/settings/public?t=` + Date.now()).then(r => r.json()).catch(() => null);
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 1500);
+                    const pubRes = await fetch(`${base}/api/settings/public?t=` + Date.now(), { signal: controller.signal }).then(r => r.json()).catch(() => null);
+                    clearTimeout(timeoutId);
                     if (pubRes && pubRes.success && pubRes.data?.content?.categoryBackgrounds) {
                         customBgs = pubRes.data.content.categoryBackgrounds;
                         localStorage.setItem('cinestream_category_backgrounds', JSON.stringify(customBgs));

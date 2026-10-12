@@ -2438,17 +2438,85 @@
             }).join('');
         }
 
+        const DEFAULT_STATIC_COMMENTS = [
+            {
+                userName: 'Admin APhim',
+                userAvatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=AdminAPhim',
+                equippedFrameUrl: 'https://cdn.discordapp.com/avatar-decoration-presets/a_0c0eeb351ae2cf48c6e1eee2cae49d40.png?size=240&passthrough=true',
+                badge: 'ADMIN TOP 1',
+                nameColor: 'color_gold',
+                isAdmin: true,
+                isVip: true,
+                level: 99,
+                reactionsCount: 88,
+                timeAgo: 'Vừa xong',
+                movieSlug: 'doraemon-nobita-va-lau-dai-duoi-day-bien-phien-ban-moi',
+                movieName: 'Doraemon: Lâu Đài Đáy Biển',
+                content: 'Chào mừng tất cả các bạn đến với phiên bản APhim siêu mượt và không quảng cáo!'
+            },
+            {
+                userName: 'Minh Hoàng',
+                userAvatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=MinhHoang',
+                equippedFrameUrl: 'https://cdn.discordapp.com/avatar-decoration-presets/a_0e839cd79500e7b68e2bbbed54790c28.png?size=240&passthrough=true',
+                badge: 'VIP PRO',
+                nameColor: 'color_cyan',
+                isAdmin: false,
+                isVip: true,
+                level: 45,
+                reactionsCount: 42,
+                timeAgo: '15 phút trước',
+                movieSlug: 'quat-mo-trung-ma',
+                movieName: 'Quật Mộ Trùng Ma',
+                content: 'Phim âm thanh đỉnh cao luôn, xem ban đêm sởn gai ốc thật sự!'
+            },
+            {
+                userName: 'Thu Trang',
+                userAvatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=ThuTrang',
+                equippedFrameUrl: 'https://cdn.discordapp.com/avatar-decoration-presets/a_001e956faa73bd0410c455234c62818f.png?size=240&passthrough=true',
+                badge: 'CÀY PHIM',
+                nameColor: 'color_pink',
+                isAdmin: false,
+                isVip: false,
+                level: 28,
+                reactionsCount: 19,
+                timeAgo: '1 giờ trước',
+                movieSlug: 'tham-tu-lung-danh-conan-ngoi-sao-5-canh-1-trieu-do',
+                movieName: 'Conan: Ngôi Sao 5 Cánh',
+                content: 'Kid và Hattori ngầu dã man, đồ họa phần này làm chi tiết quá chừng.'
+            },
+            {
+                userName: 'Gia Bảo',
+                userAvatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=GiaBao',
+                equippedFrameUrl: 'https://cdn.discordapp.com/avatar-decoration-presets/a_1acbe609daec21fa5b866df9e5a42cb7.png?size=240&passthrough=true',
+                badge: 'FAN CỨNG',
+                nameColor: 'color_green',
+                isAdmin: false,
+                isVip: false,
+                level: 16,
+                reactionsCount: 11,
+                timeAgo: '2 giờ trước',
+                movieSlug: 'deadpool-va-wolverine',
+                movieName: 'Deadpool & Wolverine',
+                content: 'Đoạn combat cuối phim nhạc đỉnh chóp luôn, xem lại lần thứ 3 vẫn mê!'
+            }
+        ];
+
         async function loadHomeCommentsShowcase() {
+            // Render static hardcoded comments immediately (0ms)
+            allHomeComments = DEFAULT_STATIC_COMMENTS;
+            renderHomeComments();
+
             try {
-                const res = await fetch('/api/comments/home-showcase');
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 1500);
+                const res = await fetch('/api/comments/home-showcase', { signal: controller.signal });
+                clearTimeout(timeoutId);
                 const data = await res.json();
-                if (data.success && Array.isArray(data.data)) {
+                if (data.success && Array.isArray(data.data) && data.data.length > 0) {
                     allHomeComments = data.data;
                     renderHomeComments();
                 }
-            } catch (err) {
-                console.warn('Lỗi tải bình luận trang chủ:', err);
-            }
+            } catch (err) {}
         }
 
         function loadWhenNearViewport(containerId, loadSection) {
@@ -2547,8 +2615,17 @@
             const section = document.getElementById('mobile3DShowcaseSection');
             if (!section) return;
 
+            // 0. Render static 3D showcase immediately (0ms)
+            if (!showcase3DItems.length) {
+                showcase3DItems = DEFAULT_STATIC_3D_SHOWCASE;
+                initMobile3DShowcase();
+            }
+
             try {
-                const res = await fetch('/api/settings/mobile-3d-showcase');
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 1500);
+                const res = await fetch('/api/settings/mobile-3d-showcase', { signal: controller.signal });
+                clearTimeout(timeoutId);
                 if (res.ok) {
                     const data = await res.json();
                     if (data.success && Array.isArray(data.data) && data.data.length > 0) {
@@ -2558,10 +2635,6 @@
                     }
                 }
             } catch (err) {}
-
-            // Static fallback
-            showcase3DItems = DEFAULT_STATIC_3D_SHOWCASE;
-            initMobile3DShowcase();
         }
 
         function initMobile3DShowcase() {

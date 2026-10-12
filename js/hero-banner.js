@@ -20,7 +20,7 @@ const DEFAULT_HERO_SLIDES = [
         category: [{ name: 'Chính Kịch', slug: 'chinh-kich' }, { name: 'Cổ Trang', slug: 'co-trang' }],
         tmdb: { id: 239901, type: 'tv', vote_average: 9.5 },
         imdb: { id: 'tt29489359', vote_average: 9.5 },
-        logoUrl: ''
+        logoUrl: 'https://image.tmdb.org/t/p/w500/avDr4GzFYFAS9yNiXEZbYbnPjeO.png'
     },
     {
         slug: 'quat-mo-trung-ma',
@@ -107,40 +107,41 @@ let lastAutoSlideConfigHash = '';
 async function loadHeroBanner() {
     if (window.innerWidth < 1024) return;
 
-    // 1. INSTANT: Đọc cấu hình Admin từ localStorage (Desktop Hero Showcase)
+    // 1. INSTANT: Render dữ liệu set cứng mẫu ngay lập tức (0ms) - không phụ thuộc backend
+    renderHeroBannerContent(currentAdminBanner, true);
+    renderThumbnails(heroSlides);
+    updateThumbnailActive(0);
+    initHeroAutoSlide();
+    attachSwipeHandler();
+    preloadSlideImages(heroSlides);
+
+    // 2. Kiểm tra cache LocalStorage nếu có cấu hình Admin tùy chỉnh hợp lệ
     try {
         const desktopHeroConfig = localStorage.getItem('aphim_hero_desktop_config');
         if (desktopHeroConfig) {
             const parsedList = JSON.parse(desktopHeroConfig);
-            if (Array.isArray(parsedList) && parsedList.length > 0) {
+            if (Array.isArray(parsedList) && parsedList.length > 0 && parsedList[0]?.slug) {
                 heroSlides = parsedList.map(convertBannerToMovie);
                 currentAdminBanner = heroSlides[0];
                 renderHeroBannerContent(currentAdminBanner, true);
                 renderThumbnails(heroSlides);
                 updateThumbnailActive(0);
-                initHeroAutoSlide();
-                attachSwipeHandler();
                 preloadSlideImages(heroSlides);
-                return;
-            }
-        }
-
-        const cachedBanner = localStorage.getItem('cinestream_active_banner');
-        if (cachedBanner) {
-            const cached = JSON.parse(cachedBanner);
-            const converted = convertBannerToMovie(cached);
-            if (converted && converted.slug) {
-                currentAdminBanner = converted;
-                heroSlides[0] = currentAdminBanner;
             }
         }
     } catch (e) { console.warn('Hero cache read error:', e); }
 
-    // 2. BACKGROUND: Gọi API nếu backend đang chạy
+    // 3. BACKGROUND (NON-BLOCKING): Chỉ cập nhật ngầm nếu backend online, timeout cực nhanh 1.5s
     try {
         const apiUrl = (typeof getBackendBaseURL === 'function') ? window.getBackendBaseURL() : '';
         if (apiUrl) {
-            const res = await fetch(`${apiUrl}/api/settings/desktop-hero-showcase?t=` + Date.now()).then(r => r.json()).catch(() => null);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 1500);
+            const res = await fetch(`${apiUrl}/api/settings/desktop-hero-showcase?t=` + Date.now(), {
+                signal: controller.signal
+            }).then(r => r.json()).catch(() => null);
+            clearTimeout(timeoutId);
+
             if (res && res.success && Array.isArray(res.data) && res.data.length > 0) {
                 localStorage.setItem('aphim_hero_desktop_config', JSON.stringify(res.data));
                 heroSlides = res.data.map(convertBannerToMovie);
@@ -148,23 +149,12 @@ async function loadHeroBanner() {
                 renderHeroBannerContent(currentAdminBanner, false);
                 renderThumbnails(heroSlides);
                 updateThumbnailActive(0);
-                initHeroAutoSlide();
-                attachSwipeHandler();
                 preloadSlideImages(heroSlides);
-                return;
             }
         }
     } catch (err) {
-        console.warn('Hero API error:', err);
+        // Silent fail - đã có dữ liệu set cứng hoạt động độc lập
     }
-
-    // 3. Fallback: Sử dụng danh sách mẫu mặc định
-    renderHeroBannerContent(currentAdminBanner, true);
-    renderThumbnails(heroSlides);
-    updateThumbnailActive(0);
-    initHeroAutoSlide();
-    attachSwipeHandler();
-    preloadSlideImages(heroSlides);
 }
 
 // -- Convert Banner API / Storage format -> Standard Movie format -
