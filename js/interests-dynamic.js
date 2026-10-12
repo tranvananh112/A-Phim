@@ -116,21 +116,21 @@ const DEFAULT_HARDCODED_INTERESTS = [
         title: 'Phim Bộ',
         link: 'danh-sach.html?list=phim-bo',
         color: '#8b5cf6',
-        imageUrl: 'https://phimimg.com/upload/vod/20260620-1/00083387b890aaac69f0490b3fda8c13.jpg'
+        imageUrl: 'https://phimimg.com/upload/vod/20260515-1/57f28e5e6d6399e53687174216c67bf6.jpg'
     },
     {
         id: 'phim-moi',
         title: 'Phim Mới',
         link: 'danh-sach.html?list=phim-moi-cap-nhat',
         color: '#ef4444',
-        imageUrl: 'https://phimimg.com/upload/vod/20250530-1/fdf11774cff47f0ffc9c2dbe2e02d0ca.jpg'
+        imageUrl: 'https://phimimg.com/uploads/movies/20260923/cong-tu-nguoi-phuc-chua-cong-tu-chang-da-phuc-chua-thumb.webp'
     },
     {
         id: 'hanh-dong',
         title: 'Hành Động',
         link: 'categories.html?category=hanh-dong',
         color: '#f97316',
-        imageUrl: 'https://phimimg.com/upload/vod/20250821-1/1ec414f82adc729512410edd1b083996.jpg'
+        imageUrl: 'https://phimimg.com/uploads/movies/20260905/seoul-unnie-thumb.webp'
     },
     {
         id: 'tinh-cam',
@@ -144,14 +144,14 @@ const DEFAULT_HARDCODED_INTERESTS = [
         title: 'Hài Hước',
         link: 'categories.html?category=hai-huoc',
         color: '#eab308',
-        imageUrl: 'https://phimimg.com/upload/vod/20241118-1/3b9d2f3c9a5cf65d15a23db8d0c870ac.jpg'
+        imageUrl: 'https://phimimg.com/upload/vod/20260515-1/085e2fde72531db8a9cadea7a1c95c65.jpg'
     },
     {
         id: 'hoat-hinh',
         title: 'Hoạt Hình',
         link: 'danh-sach.html?list=hoat-hinh',
         color: '#10b981',
-        imageUrl: 'https://phimimg.com/upload/vod/20241229-1/309e1f1623755fa993140a83167f577b.jpg'
+        imageUrl: 'https://phimimg.com/uploads/movies/20260818/cau-chuyen-do-choi-5-thumb.webp'
     }
 ];
 
