@@ -12,6 +12,11 @@ const connectDB = async () => {
             throw new Error('MongoDB URI is not defined. Please check your Environment Variables (MONGO_URI, MONGODB_URI, etc.)');
         }
 
+        // Auto-fix if '?' was missed before retryWrites (e.g. /cinestreamretryWrites=)
+        if (mongoUri.includes('/cinestreamretryWrites=')) {
+            mongoUri = mongoUri.replace('/cinestreamretryWrites=', '/cinestream?retryWrites=');
+        }
+
         const conn = await mongoose.connect(mongoUri, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
