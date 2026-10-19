@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const connectDB = async () => {
     try {
         // Support multiple environment variable names for flexibility across different hosting platforms (Railway, Heroku, etc.)
-        const mongoUri = process.env.MONGO_URI || 
+        let mongoUri = process.env.MONGO_URI || 
                          process.env.MONGODB_URI || 
                          process.env.DATABASE_URL || 
                          process.env.MONGODB_URL;
