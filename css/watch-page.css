@@ -2652,13 +2652,12 @@
         animation-play-state: paused !important;
     }
 
-    /* Hiệu ứng chớp qua lại luân phiên giữa 2 banner (chu kỳ 6 giây: mỗi banner 3 giây) */
-    #watch-episodes-ad .watch-ad-i9 {
-        animation: watchAdBlinkA 6s infinite ease-in-out !important;
-    }
-
     #watch-episodes-ad .watch-ad-stake {
-        animation: watchAdBlinkB 6s infinite ease-in-out !important;
+        animation: none !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+        position: relative !important;
     }
 }
 

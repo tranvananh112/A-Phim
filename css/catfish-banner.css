@@ -173,7 +173,6 @@
     transition: transform 0.2s;
 }
 
-.catfish-item[aria-label*="i9"]::after,
 .catfish-item[aria-label*="Stake"]::after,
 .catfish-item[aria-label*="Dice"]::after,
 .catfish-item[aria-label*="VSBet"]::after {
@@ -263,7 +262,7 @@ body.aphim-has-catfish { /* card dưới không cần push body */ }
         width: 100% !important;
     }
 
-    /* Row 0: i9 (bên trái, trên đầu 8SVui) + Stake (bên phải, trên đầu VSBet) */
+    /* Row 0: Stake - Đúng kích thước 50% nằm bên phải trên đầu VSBet, bên trái chừa trống */
     .catfish-row-0 {
         display: flex !important;
         flex-direction: row !important;
@@ -274,20 +273,16 @@ body.aphim-has-catfish { /* card dưới không cần push body */ }
         background: transparent !important;
     }
 
-    .catfish-row-0 .catfish-item-i9 {
+    .catfish-row-0 .catfish-spacer {
         display: block !important;
         flex: 1 1 50% !important;
         width: 50% !important;
         max-width: 50% !important;
-        background: rgba(6, 6, 10, 0.97) !important;
-        border-top: 1px solid rgba(252, 211, 77, 0.25) !important;
-        border-left: 1px solid rgba(252, 211, 77, 0.15) !important;
-        border-right: 1px solid rgba(252, 211, 77, 0.25) !important;
-        border-top-left-radius: 8px !important;
-        border-top-right-radius: 0 !important;
-        border-bottom: none !important;
-        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5) !important;
-        overflow: hidden !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
     }
 
     .catfish-row-0 .catfish-item-stake {
@@ -299,9 +294,7 @@ body.aphim-has-catfish { /* card dưới không cần push body */ }
         border-top: 1px solid rgba(252, 211, 77, 0.25) !important;
         border-left: 1px solid rgba(252, 211, 77, 0.25) !important;
         border-right: 1px solid rgba(252, 211, 77, 0.15) !important;
-        border-top-right-radius: 8px !important;
-        border-top-left-radius: 0 !important;
-        border-bottom: none !important;
+        border-radius: 8px 8px 0 0 !important;
         box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5) !important;
         overflow: hidden !important;
     }
@@ -312,10 +305,10 @@ body.aphim-has-catfish { /* card dưới không cần push body */ }
         align-items: stretch !important;
         width: 100% !important;
         background: rgba(6, 6, 10, 0.97) !important;
-        border-top: 1px solid rgba(252, 211, 77, 0.15) !important;
+        border-top: 1px solid rgba(252, 211, 77, 0.25) !important;
         border-left: 1px solid rgba(252, 211, 77, 0.15) !important;
         border-right: 1px solid rgba(252, 211, 77, 0.15) !important;
-        border-radius: 0 !important;
+        border-top-left-radius: 8px !important;
         box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5) !important;
     }
 
