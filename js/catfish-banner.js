@@ -50,7 +50,7 @@
                 label: 'ColaTV — Xem Phim HD Miễn Phí'
             },
             {
-                img: '/ads/catfish/colascore.gif?v=2',
+                img: '/quangcao/728x90-AFF-Cup/ColaScore.gif?v=3',
                 url: 'https://colacaibua.com/',
                 label: 'ColaScore — Tỷ Số Bóng Đá Trực Tiếp'
             }
