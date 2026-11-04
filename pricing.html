@@ -2071,7 +2071,7 @@
                                      alt="${movie.name}" 
                                      class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                      onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'"
-                                     loading="lazy"
+                                     loading="eager"
                                      decoding="async" />
                                 
                                 <div class="portrait-badge">${movie.lang || 'Vietsub'}</div>
@@ -2144,7 +2144,7 @@
                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${hiddenUI.imgClass}"
                                 src="${typeof imageOptimizer !== 'undefined' ? imageOptimizer.optimizeImageUrl(movie.thumb_url, 350, 70) : `https://phimimg.com/${movie.thumb_url}`}"
                                 onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'"
-                                loading="lazy"
+                                loading="eager"
                                 decoding="async" />
                             
                             ${hiddenUI.badge}
@@ -2394,7 +2394,7 @@
                             <div class="anime-card group">
                                 <a href="movie-detail.html?slug=${movie.slug}" class="block">
                                     <div class="anime-poster-wrapper group-hover:scale-[1.03] transition-transform duration-500">
-                                        <img src="${finalImg}" alt="${movie.name}" class="w-full h-full object-cover" loading="lazy" onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
+                                        <img src="${finalImg}" alt="${movie.name}" class="w-full h-full object-cover" loading="eager" onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
                                         
                                         <!-- Badges exactly like the image -->
                                         <div class="anime-badge-container">
@@ -2445,7 +2445,7 @@
                             <div class="anime-card group">
                                 <a href="movie-detail.html?slug=${movie.slug}" class="block">
                                     <div class="anime-poster-wrapper group-hover:scale-[1.03] transition-transform duration-500">
-                                        <img src="${finalImg}" alt="${movie.name}" class="w-full h-full object-cover" loading="lazy" onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
+                                        <img src="${finalImg}" alt="${movie.name}" class="w-full h-full object-cover" loading="eager" onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'" />
                                         
                                         <div class="anime-badge-container">
                                             <div class="anime-pill anime-pill-dark">PĐ. ${movie.lang || 'VS'}</div>
@@ -2495,7 +2495,7 @@
                             <div class="ranking-item group" data-rank="${rank}">
                                 <a href="movie-detail.html?slug=${movie.slug}">
                                     <div class="ranking-poster-w">
-                                        <img src="${finalImg}" alt="${movie.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
+                                        <img src="${finalImg}" alt="${movie.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="eager" />
                                         <div class="ranking-badges-bottom">
                                             <span class="badge-pd">PĐ. ${movie.lang || 'HD'}</span>
                                             <span class="badge-lt">LT. 4K</span>
@@ -2547,7 +2547,7 @@
                             <div class="ranking-item group" data-rank="${rank}">
                                 <a href="movie-detail.html?slug=${movie.slug}">
                                     <div class="ranking-poster-w">
-                                        <img src="${finalImg}" alt="${movie.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
+                                        <img src="${finalImg}" alt="${movie.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="eager" />
                                         <div class="ranking-badges-bottom">
                                             <span class="badge-pd">PĐ. ${movie.lang || 'HD'}</span>
                                             <span class="badge-lt">LT. Thần Thoại</span>
@@ -3152,6 +3152,7 @@
 </body>
 
 </html>
+
 
 
 
