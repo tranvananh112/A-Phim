@@ -46,13 +46,14 @@
             },
             {
                 img: '/ads/catfish/colatv.gif?v=2',
-                url: 'https://colacaica.com/',
+                url: 'http://178.128.49.112/colatv.html',
                 label: 'ColaTV — Xem Phim HD Miễn Phí'
             },
             {
-                img: '/quangcao/728x90-AFF-Cup/ColaScore.gif?v=3',
-                url: 'https://colacaibua.com/',
-                label: 'ColaScore — Tỷ Số Bóng Đá Trực Tiếp'
+                img: '/quangcao/728x90-AFF-Cup/ColaScore.mp4?v=1',
+                url: 'http://178.128.49.112/colaapp.html',
+                label: 'ColaScore — Tỷ Số Bóng Đá Trực Tiếp',
+                isVideo: true
             }
         ]
     };
@@ -256,7 +257,7 @@
                 '<div class="aph-slide' + (i === 0 ? ' active' : '') + '" data-index="' + i + '">' +
                     '<a href="' + banners[i].url + '" target="_blank" rel="noopener nofollow" ' +
                        'class="aph-slide-link" aria-label="' + banners[i].label + '">' +
-                        '<img src="' + banners[i].img + '" alt="' + banners[i].label + '" loading="eager">' +
+                        renderMedia(banners[i]) +
                     '</a>' +
                 '</div>';
         }

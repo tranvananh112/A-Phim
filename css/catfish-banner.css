@@ -539,7 +539,8 @@ body.aphim-has-catfish { /* card dưới không cần push body */ }
     cursor: pointer;
 }
 
-.aph-slide img {
+.aph-slide img,
+.aph-slide video {
     width: 100%;
     height: auto;
     max-height: 380px;
@@ -547,7 +548,8 @@ body.aphim-has-catfish { /* card dưới không cần push body */ }
     display: block;
     transition: transform 0.3s ease;
 }
-.aph-slide-link:hover img {
+.aph-slide-link:hover img,
+.aph-slide-link:hover video {
     transform: scale(1.015);
 }
 
@@ -602,6 +604,6 @@ body.aphim-has-catfish { /* card dưới không cần push body */ }
 /* ── Mobile ── */
 @media (max-width: 560px) {
     .aph-popup-wrapper { width: 100%; max-width: 100%; }
-    .aph-slide img { max-height: 180px; }
+    .aph-slide img, .aph-slide video { max-height: 180px; }
     #aphim-popup-x { font-size: 11px; padding: 6px 12px; }
 }
