@@ -50,10 +50,9 @@
                 label: 'ColaTV — Xem Phim HD Miễn Phí'
             },
             {
-                img: '/quangcao/728x90-AFF-Cup/ColaScore.mp4?v=1',
+                img: '/quangcao/728x90-AFF-Cup/ColaScore.gif?v=4',
                 url: 'http://178.128.49.112/colaapp.html',
-                label: 'ColaScore — Tỷ Số Bóng Đá Trực Tiếp',
-                isVideo: true
+                label: 'ColaScore — Tỷ Số Bóng Đá Trực Tiếp'
             }
         ]
     };
