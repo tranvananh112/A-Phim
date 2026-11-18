@@ -5075,7 +5075,7 @@ function toggleFaqCard(btnEl) {
         const PLAY_SVG_HTML = `<svg viewBox="0 0 24 24"><polygon points="7,4 19,12 7,20"/></svg>`;
 
         // Helper to format language badges matching Photo 2
-        function formatLangBadges(lang) {
+        function formatLangBadges(lang, maxBadges = 99) {
             if (!lang) return `<span class="badge-tag badge-tag-pd">Vietsub</span>`;
             const str = lang.toLowerCase();
             let badges = [];
@@ -5102,6 +5102,10 @@ function toggleFaqCard(btnEl) {
                 badges.push(`<span class="badge-tag badge-tag-pd">${lang}</span>`);
             }
 
+            if (maxBadges && badges.length > maxBadges) {
+                badges = badges.slice(0, maxBadges);
+            }
+
             return badges.join('');
         }
 
@@ -5117,9 +5121,10 @@ function toggleFaqCard(btnEl) {
         // 1. Render Vertical 2:3 Movie Card (For PHIM MỚI ĐỀ CỬ Slider Only)
         function createDeCuCardHTML(movie) {
             const watchUrl = window.APhimCore ? window.APhimCore.getMovieDetailUrl(movie.slug) : ('movie-detail.html?slug=' + encodeURIComponent(movie.slug));
-            const img = getImgUrl(movie.thumb_url || movie.poster_url);
+            // 🎯 Use POSTER_URL FIRST for strict vertical 2:3 card (thumb_url is 16:9 landscape)
+            const img = getImgUrl(movie.poster_url || movie.thumb_url);
             const epText = movie.episode_current || 'Tập 1';
-            const langBadges = formatLangBadges(movie.lang || 'Vietsub');
+            const langBadges = formatLangBadges(movie.lang || 'Vietsub', 2);
             const isFull = epText.toLowerCase().includes('full') || epText.toLowerCase().includes('hoàn tất');
 
             return `
