@@ -243,11 +243,11 @@
                 async loadData() {
             try {
                 // Auto-clear stale cache from older versions
-                if (localStorage.getItem('aphim_admin_sync_version') !== 'v20261118_v5') {
+                if (localStorage.getItem('aphim_admin_sync_version') !== 'v20261118_super_v1') {
                     localStorage.removeItem('aphim_hero_desktop_config');
                     localStorage.removeItem('aphim_interests_config');
                     localStorage.removeItem('aphim_hero_autoslide_config');
-                    localStorage.setItem('aphim_admin_sync_version', 'v20261118_v5');
+                    localStorage.setItem('aphim_admin_sync_version', 'v20261118_super_v1');
                 }
 
                 const apiUrl = (typeof window.getBackendBaseURL === 'function') ? window.getBackendBaseURL() : '';
