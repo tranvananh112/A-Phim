@@ -240,13 +240,40 @@
             pauseOnHover: true
         },
 
-        async loadData() {
+                async loadData() {
             try {
+                // Auto-clear stale cache from older versions
+                if (localStorage.getItem('aphim_admin_sync_version') !== 'v20261118_v5') {
+                    localStorage.removeItem('aphim_hero_desktop_config');
+                    localStorage.removeItem('aphim_interests_config');
+                    localStorage.removeItem('aphim_hero_autoslide_config');
+                    localStorage.setItem('aphim_admin_sync_version', 'v20261118_v5');
+                }
+
                 const apiUrl = (typeof window.getBackendBaseURL === 'function') ? window.getBackendBaseURL() : '';
+                async function fetchWithFallback(urlPath) {
+                    const endpoints = [];
+                    if (apiUrl) endpoints.push(`${apiUrl}${urlPath}`);
+                    if (!endpoints.includes(urlPath)) endpoints.push(urlPath);
+                    if (!endpoints.includes(`http://localhost:3000${urlPath}`)) endpoints.push(`http://localhost:3000${urlPath}`);
+
+                    for (const ep of endpoints) {
+                        try {
+                            const res = await fetch(ep + (ep.includes('?') ? '&' : '?') + 't=' + Date.now(), { signal: AbortSignal.timeout(2000) });
+                            if (res.ok) {
+                                const json = await res.json();
+                                if (json && json.success && Array.isArray(json.data) && json.data.length > 0) return json;
+                                if (json && json.success && json.data && !Array.isArray(json.data)) return json;
+                            }
+                        } catch(e) {}
+                    }
+                    return { success: false };
+                }
+
                 const [heroRes, intRes, autoRes] = await Promise.all([
-                    fetch(`${apiUrl}/api/settings/desktop-hero-showcase?t=` + Date.now()).then(r => r.json()).catch(() => ({ success: false })),
-                    fetch(`${apiUrl}/api/settings/desktop-interests?t=` + Date.now()).then(r => r.json()).catch(() => ({ success: false })),
-                    fetch(`${apiUrl}/api/settings/desktop-hero-autoslide?t=` + Date.now()).then(r => r.json()).catch(() => ({ success: false }))
+                    fetchWithFallback('/api/settings/desktop-hero-showcase'),
+                    fetchWithFallback('/api/settings/desktop-interests'),
+                    fetchWithFallback('/api/settings/desktop-hero-autoslide')
                 ]);
 
                 if (heroRes && heroRes.success && Array.isArray(heroRes.data) && heroRes.data.length > 0) {
@@ -2077,7 +2104,7 @@
             const apiUrl = (typeof window.getBackendBaseURL === 'function') ? window.getBackendBaseURL() : '';
             const token = getAdminToken();
             try {
-                const res = await fetch(`${apiUrl}/api/settings/desktop-interests`, {
+                const res = await fetch('/api/settings/desktop-interests', {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${token}`,

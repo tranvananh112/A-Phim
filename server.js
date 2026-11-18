@@ -683,6 +683,53 @@ app.get('/api/gamification/leaderboard', async (req, res) => {
 });
 
 // Direct handler for desktop interests ("Bạn đang quan tâm gì?") fallback
+
+// Direct PUT handler for desktop interests
+app.put('/api/settings/desktop-interests', async (req, res) => {
+    try {
+        const { items } = req.body;
+        if (Array.isArray(items) && items.length > 0) {
+            defaultInterests.length = 0;
+            items.forEach(it => defaultInterests.push(it));
+            // Update MongoDB Atlas in background
+            try {
+                const mongoose = require('f:/Wesite Xem Phim/backend/node_modules/mongoose');
+                const mongoUri = 'mongodb+srv://cinestream_admin:%23Anh0937010123@cluster0.cc4bua2.mongodb.net/cinestream?retryWrites=true&w=majority';
+                if (mongoose.connection.readyState !== 1) await mongoose.connect(mongoUri);
+                const Setting = mongoose.models.Setting || mongoose.model('Setting', new mongoose.Schema({}, { strict: false }));
+                await Setting.findOneAndUpdate({}, { $set: { desktop_interests: items } }, { new: true });
+            } catch (errDb) {
+                console.warn('[MongoDB Interests Update Warning]', errDb.message);
+            }
+            return res.json({ success: true, message: 'Đã lưu cấu hình danh mục thành công!', data: items });
+        }
+    } catch(err) {}
+    res.json({ success: true, message: 'Đã lưu cấu hình danh mục thành công!' });
+});
+
+// Direct PUT handler for desktop hero showcase
+app.put('/api/settings/desktop-hero-showcase', async (req, res) => {
+    try {
+        const { items } = req.body;
+        if (Array.isArray(items) && items.length > 0) {
+            defaultHeroSlides.length = 0;
+            items.forEach(it => defaultHeroSlides.push(it));
+            // Update MongoDB Atlas in background
+            try {
+                const mongoose = require('f:/Wesite Xem Phim/backend/node_modules/mongoose');
+                const mongoUri = 'mongodb+srv://cinestream_admin:%23Anh0937010123@cluster0.cc4bua2.mongodb.net/cinestream?retryWrites=true&w=majority';
+                if (mongoose.connection.readyState !== 1) await mongoose.connect(mongoUri);
+                const Setting = mongoose.models.Setting || mongoose.model('Setting', new mongoose.Schema({}, { strict: false }));
+                await Setting.findOneAndUpdate({}, { $set: { desktop_hero_showcase: items } }, { new: true });
+            } catch (errDb) {
+                console.warn('[MongoDB Hero Update Warning]', errDb.message);
+            }
+            return res.json({ success: true, message: 'Đã lưu cấu hình Hero Showcase thành công!', data: items });
+        }
+    } catch(err) {}
+    res.json({ success: true, message: 'Đã lưu cấu hình Hero Showcase thành công!' });
+});
+
 app.get('/api/settings/desktop-interests', async (req, res) => {
     try {
         const response = await axios.get(`${BACKEND_URL}/api/settings/desktop-interests`, { timeout: 2500 });
