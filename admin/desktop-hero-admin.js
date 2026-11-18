@@ -235,8 +235,8 @@
         },
 
         autoSlideState: {
-            enabled: true,
-            interval: 6,
+            enabled: false,
+            interval: 10,
             pauseOnHover: true
         },
 

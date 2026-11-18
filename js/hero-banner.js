@@ -273,9 +273,10 @@ async function loadHeroBanner() {
     // 2. Kiểm tra cache LocalStorage nếu có cấu hình Admin tùy chỉnh hợp lệ
     try {
         const cacheVersion = localStorage.getItem('aphim_hero_version');
-        if (cacheVersion !== 'v20261118_v3') {
+        if (cacheVersion !== 'v20261118_v4') {
+            localStorage.removeItem('aphim_hero_autoslide_config');
             localStorage.removeItem('aphim_hero_desktop_config');
-            localStorage.setItem('aphim_hero_version', 'v20261118_v3');
+            localStorage.setItem('aphim_hero_version', 'v20261118_v4');
         }
         const desktopHeroConfig = localStorage.getItem('aphim_hero_desktop_config');
         if (desktopHeroConfig) {
@@ -861,7 +862,7 @@ function startHeroAutoSlide() {
 
 function applyAutoSlideConfig(cfg, forceRestart = false) {
     if (!cfg || typeof cfg !== 'object') return;
-    const isEnabled = typeof cfg.enabled === 'boolean' ? cfg.enabled : true;
+    const isEnabled = typeof cfg.enabled === 'boolean' ? cfg.enabled : false;
     const intervalSec = parseInt(cfg.interval, 10);
     const cleanInterval = Math.min(10, Math.max(3, !isNaN(intervalSec) ? intervalSec : 6));
 

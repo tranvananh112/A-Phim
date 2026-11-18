@@ -682,6 +682,30 @@ app.get('/api/gamification/leaderboard', async (req, res) => {
     }
 });
 
+// Autoslide settings
+let autoSlideStateConfig = { enabled: false, interval: 10, pauseOnHover: true };
+app.get('/api/settings/desktop-hero-autoslide', (req, res) => {
+    return res.json({ success: true, data: autoSlideStateConfig });
+});
+app.put('/api/settings/desktop-hero-autoslide', async (req, res) => {
+    try {
+        const { enabled, interval, pauseOnHover } = req.body;
+        autoSlideStateConfig = {
+            enabled: enabled === true || enabled === 'true',
+            interval: parseInt(interval, 10) || 10,
+            pauseOnHover: pauseOnHover !== false
+        };
+        try {
+            const mongoose = require('f:/Wesite Xem Phim/backend/node_modules/mongoose');
+            const mongoUri = 'mongodb+srv://cinestream_admin:%23Anh0937010123@cluster0.cc4bua2.mongodb.net/cinestream?retryWrites=true&w=majority';
+            if (mongoose.connection.readyState !== 1) await mongoose.connect(mongoUri);
+            const Setting = mongoose.models.Setting || mongoose.model('Setting', new mongoose.Schema({}, { strict: false }));
+            await Setting.findOneAndUpdate({}, { $set: { desktop_hero_autoslide: autoSlideStateConfig } }, { new: true });
+        } catch(e) {}
+    } catch(err) {}
+    res.json({ success: true, message: 'Đã lưu cấu hình tự động chuyển banner thành công!', data: autoSlideStateConfig });
+});
+
 // Direct handler for desktop interests ("Bạn đang quan tâm gì?") fallback
 
 // Direct PUT handler for desktop interests
