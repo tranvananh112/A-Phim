@@ -8,124 +8,238 @@
 // SET CỨNG (2026-11-18): 8 phim Hero Showcase mới nhất do Admin cấu hình
 const DEFAULT_HERO_SLIDES = [
     {
-        slug: 'lan-huong-nhu-co',
-        name: "Lan Hương Như Cố",
-        origin_name: "Against The Current",
-        year: '2026',
-        quality: 'FHD',
-        episode_current: 'Tập 41',
-        content: "Thẩm Gia Lan, trưởng tôn nữ của Thẩm đại học sĩ, đã đính hôn với Lâm Cẩm Kỳ, trưởng tôn của Lại bộ Thượng thư Lâm gia. Nhưng triều đình bất ngờ nổi sóng gió, ông nội cô là Thẩm đại học sĩ bị kết tội mưu phản, khiến cả Thẩm gia rơi vào thảm họa diệt môn. Nhà họ Lâm liền hủy hôn với nhà họ Thẩm để tự bảo vệ mình, quay ra kết thông gia với nhà họ Triệu là ngự tiền mới bổ nhiệm. Vợ chồng Hứa Vạn Toàn là tôi tớ của nhà họ Lâm, từng được mẹ Thẩm Gia Lan cứu giúp, đã che giấu Gia Lan bằng cách để cô thế chỗ đứa con gái Hứa Lan Hương vừa mất vì bệnh. Từ đó Gia Lan mang thân phận Hứa Lan Hương, trở thành nha hoàn hạng ba ở Lâm phủ. Khó khăn bủa vây, Lan Hương vẫn không cúi đầu trước số phận, luôn nỗ lực tìm kiếm hạnh phúc cho cuộc sống của bản thân và gia đình, chống lại mọi bất công và áp bức. Cuối cùng, bằng lòng tốt và sự thông minh, Lan Hương đã vượt lên trên ràng buộc của địa vị giai cấp, chiếm được tình cảm của Lâm Cẩm Kỳ, đồng thời giành được sự tin tưởng và tôn trọng của toàn bộ nhà họ Lâm. Cô trở thành người nắm quyền nhà họ Lâm, tự nắm chắc vận mệnh trong tay, và rửa sạch oan khuất, đòi lại công bằng cho Thẩm gia.",
-        thumb_url: 'https://image.tmdb.org/t/p/original/eikGebrQFtx6IraG70Y9oHTuau8.jpg',
-        poster_url: 'https://phimimg.com/uploads/movies/20260912/lan-huong-nhu-co-poster.webp',
-        category: [{"name":"Chính Kịch","slug":"chinh-kich"},{"name":"Tình Cảm","slug":"tinh-cam"}],
-        tmdb: {"vote_average":9.2},
-        imdb: {"vote_average":9.2},
-        logoUrl: 'https://image.tmdb.org/t/p/w500/m2GrQoVjirBhoLETdpOEf14siTJ.png'
+        "imdb": {
+            "vote_average": 9
+        },
+        "lang": "Vietsub + Thuyết Minh",
+        "name": "Thập Vạn Cuồng Hoa Nhập Mộng Lai",
+        "slug": "thap-van-cuong-hoa-nhap-mong-lai",
+        "tmdb": {
+            "vote_average": 9
+        },
+        "year": "2026",
+        "content": "Ma đầu Kỳ Phượng Ân \"nguồn gốc vạn điều ác\" tình cờ gặp cô gái Áp Mao mang thể chất \"thịt Đường Tăng\", hai con người bị cưỡng ép ràng buộc này vừa chán ghét nhau mà cũng cứu rỗi lẫn nhau. Trải qua sáu vụ án kì quái: bộ xương khô tóc dài, sáng làm người tối làm yêu, thuồng luồng hóa rồng, bể máu trả hồn, hồng nhan moi tim và pháo hoa cá vàng, họ phá giải các âm mưu phía sau, cuối cùng giúp nhau rửa sạch tiếng xấu, trả lại tự do cho thế gian, giúp những người có tình được về bên nhau.",
+        "logoUrl": "/images/logos/thap-van-cuong-hoa-nhap-mong-lai.png",
+        "quality": "FHD",
+        "category": [],
+        "imageUrl": "https://image.tmdb.org/t/p/original/8nqLbfvduuLQtzALe3ZjxiHtgLt.jpg",
+        "thumbUrl": "https://image.tmdb.org/t/p/original/8nqLbfvduuLQtzALe3ZjxiHtgLt.jpg",
+        "movieSlug": "thap-van-cuong-hoa-nhap-mong-lai",
+        "posterUrl": "https://phimimg.com/uploads/movies/20261117/thap-van-cuong-hoa-nhap-mong-lai-poster.webp",
+        "thumb_url": "https://image.tmdb.org/t/p/original/8nqLbfvduuLQtzALe3ZjxiHtgLt.jpg",
+        "originName": "Blossom in Darkness",
+        "poster_url": "https://phimimg.com/uploads/movies/20261117/thap-van-cuong-hoa-nhap-mong-lai-poster.webp",
+        "origin_name": "Blossom in Darkness",
+        "episodeCurrent": "Tập 9",
+        "episode_current": "Tập 9"
     },
     {
-        slug: 'tuoc-cot',
-        name: "Tước Cốt",
-        origin_name: "Key To The Phoenix Heart",
-        year: '2026',
-        quality: 'FHD',
-        episode_current: 'Hoàn Tất (28/28)',
-        content: "Giữa thời loạn, thế tử Tiêu Vô Y của phủ Tĩnh An Vương vì đại cục mà cưới Tạ Gia Ngư, cô con gái giả của Thái phó, đồng thời cũng là một thiên tài cơ quan thuật. Từ một cuộc hôn nhân sắp đặt đầy toan tính, cả hai dần nảy sinh tình cảm khi cùng nhau vạch trần bí mật về thân thế, phá giải những âm mưu tranh đoạt quyền lực và bảo vệ giang sơn.",
-        thumb_url: 'https://image.tmdb.org/t/p/original/xaqXQwcyO19G36SWIaYJmiNcX4a.jpg',
-        poster_url: 'https://phimimg.com/uploads/movies/20260711/tuoc-cot-poster.webp',
-        category: [{"name":"Chính Kịch","slug":"chinh-kich"},{"name":"Tình Cảm","slug":"tinh-cam"}],
-        tmdb: {"vote_average":9.1},
-        imdb: {"vote_average":9.1},
-        logoUrl: 'https://image.tmdb.org/t/p/w500/vxcgzAvVpcK6c1nwZ5jZq6ex95j.png'
+        "imdb": {
+            "vote_average": 8.1
+        },
+        "lang": "Vietsub + Thuyết Minh",
+        "name": "Cẩm Nguyệt Như Ca",
+        "slug": "cam-nguyet-nhu-ca",
+        "tmdb": {
+            "vote_average": 8.1
+        },
+        "year": "2025",
+        "content": "Phim được chuyển thể từ tiểu thuyết nổi tiếng \"Trùng Sinh: Nữ Tướng Tinh\". Để bảo vệ tước vị gia tộc, trưởng nữ Hà gia là Hà Yến buộc phải đeo mặt nạ, giả làm đích trưởng tử Hà gia - Hà Như Phi. Thời thiếu niên, Hà Yến lần đầu gặp công tử cao quý Tiêu Giác ở Hiền Xương Quán. Sau này, để thoát khỏi vận mệnh gia tộc, cô kiên quyết rời học quán, ra sa trường. Nhiều năm sau, Hà Yến vinh quang trở về quê nhà, nhưng lại bị gia tộc hãm hại vì huynh trưởng Hà Như Phi quay về. Sau khi thoát chết, Hà Yến đổi thân phận, hóa thân thành Hòa Yến, con gái của thành môn hiệu úy. Cô giả nam, đến Dịch Châu tòng quân, quyết tâm lấy lại tất cả những gì thuộc về mình. Hòa Yến kết giao với Sở Chiêu hòa nhã dịu dàng, cũng một lần nữa gặp lại Tiêu Giác. Nhưng Tiêu Giác nghi ngờ Hòa Yến là gian tế, liên tục thăm dò, làm khó đủ đường. Hòa Yến bám chặt lấy Tiêu Giác, đồng thời dùng thành tích đứng đầu Dịch Châu Vệ để chứng minh năng lực của mình. Hai người cùng trải qua sự kiện Tôn gia, sự kiện vương nữ Quý Dương, trận chiến bảo vệ thành Nhuận Đô, nhiều lần đối mặt sinh tử, dần dần nảy sinh tình cảm với nhau.",
+        "logoUrl": "https://image.tmdb.org/t/p/w500/tBrO0gV9yWqEVzm8CidpxnQTKlj.png",
+        "quality": "FHD",
+        "category": [],
+        "imageUrl": "https://image.tmdb.org/t/p/original/mwiG510fVcOrzWUSDSV7B5tRMrb.jpg",
+        "thumbUrl": "https://image.tmdb.org/t/p/original/mwiG510fVcOrzWUSDSV7B5tRMrb.jpg",
+        "movieSlug": "cam-nguyet-nhu-ca",
+        "posterUrl": "https://phimimg.com/upload/vod/20250806-1/eaa856bf1bf6e28c17ebafdc2283f8ad.jpg",
+        "thumb_url": "https://image.tmdb.org/t/p/original/mwiG510fVcOrzWUSDSV7B5tRMrb.jpg",
+        "originName": "Legend Of The Female General",
+        "poster_url": "https://phimimg.com/upload/vod/20250806-1/eaa856bf1bf6e28c17ebafdc2283f8ad.jpg",
+        "origin_name": "Legend Of The Female General",
+        "episodeCurrent": "Hoàn Tất (36/36)",
+        "episode_current": "Hoàn Tất (36/36)"
     },
     {
-        slug: 'tieng-yeu-nay-anh-dich-duoc-khong',
-        name: "Tiếng Yêu Này, Anh Dịch Được Không?",
-        origin_name: "Can This Love Be Translated?",
-        year: '2026',
-        quality: 'FHD',
-        episode_current: 'Hoàn Tất (12/12)',
-        content: "Đi khắp thế giới để quay chương trình truyền hình, cảm xúc của một người nổi tiếng và phiên dịch viên của cô lại chẳng thể nào thông dịch. Liệu tình yêu có tìm được ngôn ngữ riêng?",
-        thumb_url: 'https://image.tmdb.org/t/p/original/nDn8zhaV61cOmUE0dCGD6W94oxB.jpg',
-        poster_url: 'https://phimimg.com/upload/vod/20260116-1/8b1201713adc08736e33e45ab1c1f2e4.jpg',
-        category: [{"name":"Chính Kịch","slug":"chinh-kich"},{"name":"Tình Cảm","slug":"tinh-cam"}],
-        tmdb: {"vote_average":9},
-        imdb: {"vote_average":9},
-        logoUrl: 'https://image.tmdb.org/t/p/w500/rvOcj4iGF5aMfvNVwQTtWN6rGuU.png'
+        "imdb": {
+            "vote_average": 9
+        },
+        "lang": "Vietsub",
+        "name": "Bác Sĩ X",
+        "slug": "bac-si-x",
+        "tmdb": {
+            "vote_average": 9
+        },
+        "year": "2026",
+        "content": "Ở một bệnh viện nơi cái tôi và tham nhũng lộng hành, một bác sĩ phẫu thuật bí ẩn nhưng tài năng xuất hiện – nhận những ca tưởng chừng bất khả thi bất chấp sự phản đối quyết liệt.",
+        "logoUrl": "https://image.tmdb.org/t/p/w500/x8Xw8Wa0HUlRySJjYn8udIy7Mun.png",
+        "quality": "FHD",
+        "category": [],
+        "imageUrl": "https://image.tmdb.org/t/p/original/f0JkNBCO5WuCI63F0iM0Xs32k9C.jpg",
+        "thumbUrl": "https://image.tmdb.org/t/p/original/f0JkNBCO5WuCI63F0iM0Xs32k9C.jpg",
+        "movieSlug": "bac-si-x",
+        "posterUrl": "https://phimimg.com/uploads/movies/20261010/bac-si-x-poster.webp",
+        "thumb_url": "https://image.tmdb.org/t/p/original/f0JkNBCO5WuCI63F0iM0Xs32k9C.jpg",
+        "originName": "Doctor X: Mafia in White",
+        "poster_url": "https://phimimg.com/uploads/movies/20261010/bac-si-x-poster.webp",
+        "origin_name": "Doctor X: Mafia in White",
+        "episodeCurrent": "Tập 1",
+        "episode_current": "Tập 1"
     },
     {
-        slug: 'yeu-duoc-khong',
-        name: "Yêu Được Không",
-        origin_name: "Pls Love",
-        year: '2026',
-        quality: 'FHD',
-        episode_current: 'Tập 4',
-        content: "Cô tiểu thư lạnh lùng, cao ngạo của một đế chế kinh doanh bất ngờ sa vào lưới tình với một cô gái trẻ tình cờ gặp bên bờ biển. Nhưng trớ trêu thay, định mệnh lại giáng một đòn cay nghiệt khi người khiến tim cô đập rộn ràng ấy hóa ra lại là một \"thiên thần\" tại một câu lạc bộ độc quyền—sống trong chính thế giới mà cô căm ghét nhất. Dù yêu nhau sâu đậm đến đâu, mối quan hệ của họ vẫn bị xé nát hết lần này đến lần khác bởi định kiến, sự hiểu lầm, những bí mật và rào cản giai cấp xã hội. Mỗi lần trái tim họ dần xích lại gần nhau, lại có thứ gì đó buộc họ phải đẩy nhau ra xa. Câu hỏi giờ đây không chỉ đơn giản là \"Liệu họ có thể yêu nhau?\", mà là \"Liệu họ có đủ dũng khí để yêu mà không phán xét lẫn nhau?\"",
-        thumb_url: 'https://image.tmdb.org/t/p/original/j8Yt8qL5qw60Gp3kq26OuUWMWSj.jpg',
-        poster_url: 'https://phimimg.com/uploads/movies/20260914/yeu-duoc-khong-poster.webp',
-        category: [{"name":"Chính Kịch","slug":"chinh-kich"},{"name":"Tình Cảm","slug":"tinh-cam"}],
-        tmdb: {"vote_average":9.4},
-        imdb: {"vote_average":9.4},
-        logoUrl: 'https://image.tmdb.org/t/p/w500/7SRjpPdwv7DqZN1Ss3xJ2pD9wRK.png'
+        "imdb": {
+            "vote_average": 9.5
+        },
+        "lang": "Vietsub",
+        "name": "100 Ngày Lừa Dối",
+        "slug": "100-ngay-lua-doi",
+        "tmdb": {
+            "vote_average": 9.5
+        },
+        "year": "2026",
+        "content": "Khao khát tự do, cô nàng móc túi số một của Gyeongseong thâm nhập vào chính quyền thực dân Nhật để đánh cắp bí mật, nhưng lại phải lòng con trai của mục tiêu.",
+        "logoUrl": "https://image.tmdb.org/t/p/w500/hP32NrFGeACEoXkZn1MzB13UHKG.png",
+        "quality": "FHD",
+        "category": [],
+        "imageUrl": "https://image.tmdb.org/t/p/original/3SvKCITqMtjgPIhFBjRc4yTAc4H.jpg",
+        "thumbUrl": "https://image.tmdb.org/t/p/original/3SvKCITqMtjgPIhFBjRc4yTAc4H.jpg",
+        "movieSlug": "100-ngay-lua-doi",
+        "posterUrl": "https://phimimg.com/uploads/movies/20261011/100-ngay-lua-doi-poster.webp",
+        "thumb_url": "https://image.tmdb.org/t/p/original/3SvKCITqMtjgPIhFBjRc4yTAc4H.jpg",
+        "originName": "100 Days Of Deception",
+        "poster_url": "https://phimimg.com/uploads/movies/20261011/100-ngay-lua-doi-poster.webp",
+        "origin_name": "100 Days Of Deception",
+        "episodeCurrent": "Tập 2",
+        "episode_current": "Tập 2"
     },
     {
-        slug: 'trung-so-doc-dac-van-phai-di-lam',
-        name: "Trúng Số Độc Đắc Vẫn Phải Đi Làm",
-        origin_name: "The Ordinary Jackpot",
-        year: '2026',
-        quality: 'FHD',
-        episode_current: 'Tập 6',
-        content: "Coi tấm séc trúng thưởng như một dạng \"bảo hiểm tinh thần\", Eun-tae mang theo một thái độ tự tin, thoải mái và không còn sợ sệt bất cứ điều gì tại công sở. Sự thay đổi ngầm này vô tình tạo ra hàng loạt tình huống dở khóc dở cười, làm đảo lộn trật tự phân cấp công sở và thay đổi cách nhìn của các đồng nghiệp cũng như cấp trên đối với anh.",
-        thumb_url: 'https://image.tmdb.org/t/p/original/aUbhyOcLmIE9LLH0WdfJyvGtYOH.jpg',
-        poster_url: 'https://phimimg.com/uploads/movies/20260910/trung-so-doc-dac-van-phai-di-lam-poster.webp',
-        category: [{"name":"Chính Kịch","slug":"chinh-kich"},{"name":"Tình Cảm","slug":"tinh-cam"}],
-        tmdb: {"vote_average":9.3},
-        imdb: {"vote_average":9.3},
-        logoUrl: 'https://image.tmdb.org/t/p/w500/yWZRNPyrQyN7ErctpmsL1NM3IiF.png'
+        "imdb": {
+            "vote_average": 9.5
+        },
+        "lang": "Vietsub + Thuyết Minh",
+        "name": "Tình Yêu Độc Nhất",
+        "slug": "tinh-yeu-doc-nhat",
+        "tmdb": {
+            "vote_average": 9.5
+        },
+        "year": "2026",
+        "content": "Giữa cuộc sống chật vật và những giấc mơ dang dở, Gong Yu Il bất ngờ bước vào thế giới của ngôi sao Tak Mu I – người đang sống trong nỗi sợ hãi vì bị bám đuôi. Khi trở thành quản lý của anh, Yu Il phát hiện cuốn tiểu thuyết mình từng viết chính là ánh sáng đã nâng đỡ Mu I trong những ngày tăm tối. Từ những tổn thương giấu kín, hai trái tim dần tìm thấy nhau, viết nên một tình yêu vừa mong manh, vừa duy nhất.",
+        "logoUrl": "https://image.tmdb.org/t/p/w500/flSN0asy52nuiG04Lo8AuwME7tU.png",
+        "quality": "FHD",
+        "category": [],
+        "imageUrl": "https://image.tmdb.org/t/p/original/v6OPylktx8YY8uF0AWCK9LyAUSr.jpg",
+        "thumbUrl": "https://image.tmdb.org/t/p/original/v6OPylktx8YY8uF0AWCK9LyAUSr.jpg",
+        "movieSlug": "tinh-yeu-doc-nhat",
+        "posterUrl": "https://phimimg.com/uploads/movies/20261111/tinh-yeu-doc-nhat-poster.webp",
+        "thumb_url": "https://image.tmdb.org/t/p/original/v6OPylktx8YY8uF0AWCK9LyAUSr.jpg",
+        "originName": "One Of A Kind Romance",
+        "poster_url": "https://phimimg.com/uploads/movies/20261111/tinh-yeu-doc-nhat-poster.webp",
+        "origin_name": "One Of A Kind Romance",
+        "episodeCurrent": "Tập 2",
+        "episode_current": "Tập 2"
     },
     {
-        slug: 'sep-chinh-la-than-tuong-bias-toi-sep-cua-toi',
-        name: "Sếp Chính Là Thần Tượng (Bias tôi, sếp của tôi)",
-        origin_name: "My Bias, My Boss",
-        year: '2026',
-        quality: 'FHD',
-        episode_current: 'Hoàn Tất (12/12)',
-        content: "Nam Da Reum (Kim Hye Joon) là một fan cuồng đã theo đuổi thần tượng Lee Chan suốt 11 năm. Cô từ chối một công việc tốt để gia nhập công ty thời trang Appello, nơi Lee Chan hiện làm giám đốc sáng tạo, với hy vọng được làm việc gần thần tượng. Tuy nhiên, ngay trong ngày đầu tiên, Da Reum lại liên tục chạm mặt Kang Ha Gi (Kang Hoon) – vị CEO lạnh lùng nhưng tốt bụng của công ty. Những hiểu lầm và tình huống dở khóc dở cười khiến mối quan hệ giữa hai người ngày càng phát triển, trong khi Da Reum vẫn phải đối diện với tình cảm dành cho thần tượng Lee Chan.",
-        thumb_url: 'https://image.tmdb.org/t/p/original/vQDDZzuoc4BEgAfnQ9ebogjHc7j.jpg',
-        poster_url: 'https://phimimg.com/uploads/movies/20260806/sep-chinh-la-than-tuong-bias-toi-sep-cua-toi-poster.webp',
-        category: [{"name":"Chính Kịch","slug":"chinh-kich"},{"name":"Tình Cảm","slug":"tinh-cam"}],
-        tmdb: {"vote_average":9},
-        imdb: {"vote_average":9},
-        logoUrl: 'https://image.tmdb.org/t/p/w500/1WVmJ0A0eyGYr5oTQrNYZ7PpI32.png'
+        "imdb": {
+            "vote_average": 1
+        },
+        "lang": "Vietsub",
+        "name": "Tình Yêu Trong Vỏ Bọc / Tình Yêu Ngụy Trang",
+        "slug": "tinh-yeu-trong-vo-boc-tinh-yeu-nguy-trang",
+        "tmdb": {
+            "vote_average": 1
+        },
+        "year": "2026",
+        "content": "Tình Yêu Trong Vỏ Bọc (Love in Disguise) là một bộ phim truyền hình hài lãng mạn công sở của Hàn Quốc, với sự tham gia của các diễn viên Yim Si-wan, Seol In-ah, Kim Jung-hyun và Yeonwoo. Dựa trên tiểu thuyết mạng \"Tại Sao Bạn Không Biết Đó Là Con Gái?\"",
+        "logoUrl": "https://image.tmdb.org/t/p/w500/e4PFz0r4GlFX4WOhFm0RpI9CgdM.png",
+        "quality": "FHD",
+        "category": [],
+        "imageUrl": "https://image.tmdb.org/t/p/original/32g5MD6eHPAZ5NAgkNAURb4eupm.jpg",
+        "thumbUrl": "https://image.tmdb.org/t/p/original/32g5MD6eHPAZ5NAgkNAURb4eupm.jpg",
+        "movieSlug": "tinh-yeu-trong-vo-boc-tinh-yeu-nguy-trang",
+        "posterUrl": "https://phimimg.com/uploads/movies/20261020/tinh-yeu-trong-vo-boc-tinh-yeu-nguy-trang-poster.webp",
+        "thumb_url": "https://image.tmdb.org/t/p/original/32g5MD6eHPAZ5NAgkNAURb4eupm.jpg",
+        "originName": "Love in Disguise",
+        "poster_url": "https://phimimg.com/uploads/movies/20261020/tinh-yeu-trong-vo-boc-tinh-yeu-nguy-trang-poster.webp",
+        "origin_name": "Love in Disguise",
+        "episodeCurrent": "Tập 7",
+        "episode_current": "Tập 7"
     },
     {
-        slug: 'vu-be-boi-thoi-joseon-be-boi-trieu-dai',
-        name: "Vụ Bê Bối Thời Joseon / Bê Bối Triều Đại",
-        origin_name: "The Scandal",
-        year: '2026',
-        quality: 'FHD',
-        episode_current: 'Hoàn Tất (8/8)',
-        content: "Thời Joseon, một đề nghị bí mật thổi bùng khát khao thầm kín, kéo một nữ quý tộc tài hoa, một tay phong tình nổi tiếng và một quý cô chẳng mảy may nghi ngờ vào cuộc chơi nguy hiểm.",
-        thumb_url: 'https://image.tmdb.org/t/p/original/mbJu1nCIr3mejUXd6EpprOD8Rm0.jpg',
-        poster_url: 'https://phimimg.com/uploads/movies/20260918/vu-be-boi-poster.webp',
-        category: [{"name":"Chính Kịch","slug":"chinh-kich"},{"name":"Tình Cảm","slug":"tinh-cam"}],
-        tmdb: {"vote_average":9.5},
-        imdb: {"vote_average":9.5},
-        logoUrl: 'https://image.tmdb.org/t/p/w500/i8NWMINx7uTJJlsKZvgPwP9dQll.png'
+        "imdb": {
+            "vote_average": 9
+        },
+        "lang": "Vietsub + Thuyết Minh",
+        "name": "Gấp Ánh Trăng",
+        "slug": "gap-anh-trang",
+        "tmdb": {
+            "vote_average": 9
+        },
+        "year": "2026",
+        "content": "Vân Li, cô gái mắc chứng sợ giao tiếp nghiêm trọng, đến Nam Vu học cao học để chứng minh mình có thể sống tự lập và tình cờ gặp lại Phó Thức Tắc, chàng trai cô thầm mến từ thời trung học.",
+        "logoUrl": "https://image.tmdb.org/t/p/w500/2V8taZ4kwRbcOb6dlAQqViXeki8.png",
+        "quality": "FHD",
+        "category": [],
+        "imageUrl": "https://image.tmdb.org/t/p/original/Al5cft7sYLo46rhSKc9VUm125md.jpg",
+        "thumbUrl": "https://image.tmdb.org/t/p/original/Al5cft7sYLo46rhSKc9VUm125md.jpg",
+        "movieSlug": "gap-anh-trang",
+        "posterUrl": "https://phimimg.com/uploads/movies/20261105/gap-anh-trang-poster.webp",
+        "thumb_url": "https://image.tmdb.org/t/p/original/Al5cft7sYLo46rhSKc9VUm125md.jpg",
+        "originName": "When I Meet The Moon",
+        "poster_url": "https://phimimg.com/uploads/movies/20261105/gap-anh-trang-poster.webp",
+        "origin_name": "When I Meet The Moon",
+        "episodeCurrent": "Tập 8",
+        "episode_current": "Tập 8"
     },
     {
-        slug: 'dau-xuan-tuoi-sang',
-        name: "Đầu Xuân Tươi Sáng",
-        origin_name: "The Early Spring",
-        year: '2026',
-        quality: 'FHD',
-        episode_current: 'Hoàn Tất (24/24)',
-        content: "Thượng Chi Đào chân ướt chân ráo tới Bắc Kinh, đụng độ phải oan gia là \"thiên tài ma quỷ\" xuất chúng Loan Niệm. Thượng Chi Đào sôi nổi, dũng cảm từng bước trưởng thành, phá vỡ tuyến phòng thủ tâm lý kiên cố, khôn khéo của Loan Niệm. Hai người thu hút nhau, dây dưa vờn qua vờn lại giữa chốn đô thị ngột ngạt, hết tan lại hợp. Yêu là phải dùng hết lòng dũng cảm, không để lại nuối tiếc. Yêu là hàn gắn cho nhau và cùng trưởng thành. Nhưng đứng trước tình yêu, cô lại lựa chọn sinh tồn. Khi cô có thể một mình đứng vững, anh thu lại sự sắc bén, họ sẽ viết nên cái kết mới cho nhau trong tâm thế ngang hàng bình đẳng…",
-        thumb_url: 'https://image.tmdb.org/t/p/original/zitBqhMHmQOZUSydZDJRAtsD3BH.jpg',
-        poster_url: 'https://phimimg.com/uploads/movies/20260826/dau-xuan-tuoi-sang-poster.webp',
-        category: [{"name":"Chính Kịch","slug":"chinh-kich"},{"name":"Tình Cảm","slug":"tinh-cam"}],
-        tmdb: {"vote_average":9.5},
-        imdb: {"vote_average":9.5},
-        logoUrl: 'https://image.tmdb.org/t/p/w500/9oO4ovVx0NbmrqNdKVK2OOHKxar.png'
+        "imdb": {
+            "vote_average": 8.3
+        },
+        "lang": "Vietsub",
+        "name": "Hoàng Hậu Tái Hôn",
+        "slug": "hoang-hau-tai-hon",
+        "tmdb": {
+            "vote_average": 8.3
+        },
+        "year": "2026",
+        "content": "Hoàng hậu Navier là người đứng đầu hoàn hảo của Đông Đế Quốc, cai trị đất nước cùng chồng là Hoàng đế Sovieshu. Tuy nhiên, cuộc sống và ngai vị của cô đảo lộn khi Sovieshu mang về cô hầu gái trốn chạy tên Rashta và sủng ái cô ta đến mức đòi ly hôn Navier. Thay vì gục ngã hay bi lụy, Navier đồng ý ly hôn với một điều kiện: cô được phép tái hôn với Hoàng tử Heinrey quyền lực của Tây Vương Quốc, từ đó bắt đầu hành động lật ngược thế cờ và làm chủ vận mệnh mới của mình.",
+        "logoUrl": "https://image.tmdb.org/t/p/w500/tfsYQser4eLq4npTdf6tHNKet5q.png",
+        "quality": "FHD",
+        "category": [],
+        "imageUrl": "https://image.tmdb.org/t/p/original/fNcpHmuZLKoyhNMBEzdqzX8iIvg.jpg",
+        "thumbUrl": "https://image.tmdb.org/t/p/original/fNcpHmuZLKoyhNMBEzdqzX8iIvg.jpg",
+        "movieSlug": "hoang-hau-tai-hon",
+        "posterUrl": "https://phimimg.com/uploads/movies/20261105/hoang-hau-tai-hon-poster.webp",
+        "thumb_url": "https://image.tmdb.org/t/p/original/fNcpHmuZLKoyhNMBEzdqzX8iIvg.jpg",
+        "originName": "The Remarried Empress",
+        "poster_url": "https://phimimg.com/uploads/movies/20261105/hoang-hau-tai-hon-poster.webp",
+        "origin_name": "The Remarried Empress",
+        "episodeCurrent": "Tập 4",
+        "episode_current": "Tập 4"
+    },
+    {
+        "imdb": {
+            "vote_average": 7.6
+        },
+        "lang": "Vietsub",
+        "name": "Việc Ma, Lương Quái",
+        "slug": "viec-ma-luong-quai",
+        "tmdb": {
+            "vote_average": 7.6
+        },
+        "year": "2026",
+        "content": "Chìm trong nợ nần, chàng trai trẻ nhận những công việc làm thêm béo bở từ một công ty môi giới việc làm bí ẩn – nhưng rồi nhận ra cuộc sống mưu sinh dần biến thành ác mộng.",
+        "logoUrl": "https://image.tmdb.org/t/p/w500/xurPYmj6xwd09XSceRIDRXYfYvc.png",
+        "quality": "FHD",
+        "category": [],
+        "imageUrl": "https://image.tmdb.org/t/p/original/thJ4Pu7Nrvpj1ZInP8rZtNEFU6D.jpg",
+        "thumbUrl": "https://image.tmdb.org/t/p/original/thJ4Pu7Nrvpj1ZInP8rZtNEFU6D.jpg",
+        "movieSlug": "viec-ma-luong-quai",
+        "posterUrl": "https://phimimg.com/uploads/movies/20261031/viec-ma-luong-quai-poster.webp",
+        "thumb_url": "https://image.tmdb.org/t/p/original/thJ4Pu7Nrvpj1ZInP8rZtNEFU6D.jpg",
+        "originName": "Dead-End Job",
+        "poster_url": "https://phimimg.com/uploads/movies/20261031/viec-ma-luong-quai-poster.webp",
+        "origin_name": "Dead-End Job",
+        "episodeCurrent": "Hoàn Tất (8/8)",
+        "episode_current": "Hoàn Tất (8/8)"
     }
 ];
 
@@ -158,6 +272,11 @@ async function loadHeroBanner() {
 
     // 2. Kiểm tra cache LocalStorage nếu có cấu hình Admin tùy chỉnh hợp lệ
     try {
+        const cacheVersion = localStorage.getItem('aphim_hero_version');
+        if (cacheVersion !== 'v20261118_v1') {
+            localStorage.removeItem('aphim_hero_desktop_config');
+            localStorage.setItem('aphim_hero_version', 'v20261118_v1');
+        }
         const desktopHeroConfig = localStorage.getItem('aphim_hero_desktop_config');
         if (desktopHeroConfig) {
             const parsedList = JSON.parse(desktopHeroConfig);

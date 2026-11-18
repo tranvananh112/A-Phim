@@ -5941,84 +5941,117 @@ function toggleFaqCard(btnEl) {
         
                 // Static Fallback Data for Cloudflare Pages / GitHub Pages
         const DEFAULT_STATIC_3D_SHOWCASE = [
-            {
-                slug: 'tinh-yeu-trong-vo-boc-tinh-yeu-nguy-trang',
-                name: "Tình Yêu Trong Vỏ Bọc / Tình Yêu Ngụy Trang",
-                origin_name: "Love in Disguise",
-                poster_url: 'https://image.tmdb.org/t/p/original/c9DEtqCDZBPL9i06WmbDrcndrBy.jpg',
-                thumb_url: 'https://image.tmdb.org/t/p/original/c9DEtqCDZBPL9i06WmbDrcndrBy.jpg',
-                quality: 'FHD',
-                year: '2026',
-                lang: 'Vietsub',
-                content: "Tình Yêu Trong Vỏ Bọc (Love in Disguise) là một bộ phim truyền hình hài lãng mạn công sở của Hàn Quốc, với sự tham gia của các diễn viên Yim Si-wan, Seol In-ah, Kim Jung-hyun và Yeonwoo. Dựa trên tiểu thuyết mạng \"Tại Sao Bạn Không Biết Đó Là Con Gái?\""
-            },
-            {
-                slug: 'viec-ma-luong-quai',
-                name: "Việc Ma, Lương Quái",
-                origin_name: "Dead-End Job",
-                poster_url: 'https://image.tmdb.org/t/p/original/7T2OOuoxdW1sxfSjvg7ezueaFin.jpg',
-                thumb_url: 'https://image.tmdb.org/t/p/original/7T2OOuoxdW1sxfSjvg7ezueaFin.jpg',
-                quality: 'FHD',
-                year: '2026',
-                lang: 'Vietsub',
-                content: "Chìm trong nợ nần, chàng trai trẻ nhận những công việc làm thêm béo bở từ một công ty môi giới việc làm bí ẩn – nhưng rồi nhận ra cuộc sống mưu sinh dần biến thành ác mộng."
-            },
-            {
-                slug: 'vung-dat-quy-du-2026',
-                name: "Vùng Đất Quỷ Dữ",
-                origin_name: "Resident Evil",
-                poster_url: 'https://image.tmdb.org/t/p/original/6fUVZ6ptZKxQ9yTLvInpmgnhJLo.jpg',
-                thumb_url: 'https://image.tmdb.org/t/p/original/6fUVZ6ptZKxQ9yTLvInpmgnhJLo.jpg',
-                quality: 'FHD',
-                year: '2026',
-                lang: 'Vietsub',
-                content: "Một phiên bản Resident Evil mới trở lại đầy kịch tính và kinh hoàng từ bộ óc quái kiệt của đạo diễn Zach Cregger đứng sau “Weapons” & “Barbarian”."
-            },
-            {
-                slug: 'bac-si-x',
-                name: "Bác Sĩ X",
-                origin_name: "Doctor X: Mafia in White",
-                poster_url: 'https://image.tmdb.org/t/p/original/1R1fjtoNFylF4JpJE3ThCIbepvf.jpg',
-                thumb_url: 'https://image.tmdb.org/t/p/original/1R1fjtoNFylF4JpJE3ThCIbepvf.jpg',
-                quality: 'FHD',
-                year: '2026',
-                lang: 'Vietsub',
-                content: "Ở một bệnh viện nơi cái tôi và tham nhũng lộng hành, một bác sĩ phẫu thuật bí ẩn nhưng tài năng xuất hiện – nhận những ca tưởng chừng bất khả thi bất chấp sự phản đối quyết liệt."
-            },
-            {
-                slug: 'ngoc-diem-thu',
-                name: "Ngọc Điệm Thu",
-                origin_name: "The Lament Of Autumn",
-                poster_url: 'https://image.tmdb.org/t/p/original/s2auJlrN7dVcl1bMqi2UlJJBY8O.jpg',
-                thumb_url: 'https://image.tmdb.org/t/p/original/s2auJlrN7dVcl1bMqi2UlJJBY8O.jpg',
-                quality: 'FHD',
-                year: '2026',
-                lang: 'Vietsub + Thuyết Minh',
-                content: "Ngọc Điệm Thu lấy bối cảnh đầu thế kỷ 20, giữa thời loạn lạc ở Nam Hoài. Nữ sinh nghèo Diệp Bình Quân vô tình vướng vào một vụ ám sát và gặp gỡ Ngu Sưởng Hiên, ngũ thiếu gia nhà họ Ngu. Sau giai đoạn đầu đầy toan tính và nghi kỵ, cả hai dần nảy sinh tình cảm sâu đậm. Nhưng rồi hàng loạt biến cố và bi kịch đẩy Bình Quân đến bờ vực tuyệt vọng, khiến cô phải rời xa Sưởng Hiên. Trải qua nhiều năm đau khổ và dằn vặt, họ gặp lại nhau, từng bước hóa giải hiểu lầm và đối mặt với những bí mật trong quá khứ."
-            },
-            {
-                slug: '100-ngay-lua-doi',
-                name: "100 Ngày Lừa Dối",
-                origin_name: "100 Days Of Deception",
-                poster_url: 'https://image.tmdb.org/t/p/original/yukp2lBvw4ENQvdLN1slneX6jxN.jpg',
-                thumb_url: 'https://image.tmdb.org/t/p/original/yukp2lBvw4ENQvdLN1slneX6jxN.jpg',
-                quality: 'FHD',
-                year: '2026',
-                lang: 'Vietsub',
-                content: "Khao khát tự do, cô nàng móc túi số một của Gyeongseong thâm nhập vào chính quyền thực dân Nhật để đánh cắp bí mật, nhưng lại phải lòng con trai của mục tiêu."
-            },
-            {
-                slug: 'ga-kim-thoa-ga-tram-vang',
-                name: "Gả Kim Thoa / Gả trâm vàng",
-                origin_name: "Where The Mask Ends",
-                poster_url: 'https://phimimg.com/uploads/movies/20261016/ga-kim-thoa-ga-tram-vang-poster.webp',
-                thumb_url: 'https://phimimg.com/uploads/movies/20261016/ga-kim-thoa-ga-tram-vang-poster.webp',
-                quality: 'FHD',
-                year: '2026',
-                lang: 'Vietsub + Thuyết Minh',
-                content: "A Sửu vốn là thiếu nữ đổ phân ban đêm trên phố có thân phận thấp hèn, bị mọi người chà đạp và bắt nạt. Chỉ vì có khuôn mặt giống hệt tiểu thư Ngụy Nhiêu của Hầu Phủ, cô bất ngờ trở thành tân nương xung hỷ cho thế tử Lục Trạc của Quốc Công Phủ. A Sửu ôm đầy tham vọng, một lòng tranh thủ cơ hội để leo cao, nhưng phu quân mới cưới đang gần đất xa trời đột nhiên tỉnh lại, âm mưu tu hú chiếm tổ dẫn đến nhiều tai họa liên tiếp. Ngụy Nhiêu hận cô chiếm chỗ của mình, nôn nóng muốn trừ khử cô; Lục Trạc coi cô là người phụ nữ độc địa, tìm mọi cách phòng bị trước các toan tính. Quốc Công Phủ bề ngoài trông hòa thuận êm ấm, thực ra đầy rẫy cạm bẫy, nguy hiểm bủa vây. A Sửu nỗ lực xoay sở giữa cơn sóng ngầm, mưu tính con đường phía trước, vùng vẫy thoát khỏi xiềng xích của số phận, hơn nữa còn điều tra ra bí mật về thân thế của mình, cuối cùng cũng được đoàn tụ với người thân yêu nhất, đang từ cô gái đổ phân thấp hèn lội ngược dòng vươn lên cao, sống cuộc đời gấm hoa rực rỡ."
-            }
-        ];
+    {
+        "lang": "Vietsub + Thuyết Minh",
+        "name": "Cẩm Nguyệt Như Ca",
+        "slug": "cam-nguyet-nhu-ca",
+        "year": "2025",
+        "content": "Phim được chuyển thể từ tiểu thuyết nổi tiếng \"Trùng Sinh: Nữ Tướng Tinh\". Để bảo vệ tước vị gia tộc, trưởng nữ Hà gia là Hà Yến buộc phải đeo mặt nạ, giả làm đích trưởng tử Hà gia - Hà Như Phi. Thời thiếu niên, Hà Yến lần đầu gặp công tử cao quý Tiêu Giác ở Hiền Xương Quán. Sau này, để thoát khỏi vận mệnh gia tộc, cô kiên quyết rời học quán, ra sa trường. Nhiều năm sau, Hà Yến vinh quang trở về quê nhà, nhưng lại bị gia tộc hãm hại vì huynh trưởng Hà Như Phi quay về. Sau khi thoát chết, Hà Yến đổi thân phận, hóa thân thành Hòa Yến, con gái của thành môn hiệu úy. Cô giả nam, đến Dịch Châu tòng quân, quyết tâm lấy lại tất cả những gì thuộc về mình. Hòa Yến kết giao với Sở Chiêu hòa nhã dịu dàng, cũng một lần nữa gặp lại Tiêu Giác. Nhưng Tiêu Giác nghi ngờ Hòa Yến là gian tế, liên tục thăm dò, làm khó đủ đường. Hòa Yến bám chặt lấy Tiêu Giác, đồng thời dùng thành tích đứng đầu Dịch Châu Vệ để chứng minh năng lực của mình. Hai người cùng trải qua sự kiện Tôn gia, sự kiện vương nữ Quý Dương, trận chiến bảo vệ thành Nhuận Đô, nhiều lần đối mặt sinh tử, dần dần nảy sinh tình cảm với nhau.",
+        "quality": "FHD",
+        "thumb_url": "https://image.tmdb.org/t/p/original/2mX9UXEX2icbNfXbf3fWqvQXcdc.jpg",
+        "poster_url": "https://image.tmdb.org/t/p/original/2mX9UXEX2icbNfXbf3fWqvQXcdc.jpg",
+        "origin_name": "Legend Of The Female General"
+    },
+    {
+        "lang": "Vietsub + Thuyết Minh",
+        "name": "Thập Vạn Cuồng Hoa Nhập Mộng Lai",
+        "slug": "thap-van-cuong-hoa-nhap-mong-lai",
+        "year": "2026",
+        "content": "Ma đầu Kỳ Phượng Ân \"nguồn gốc vạn điều ác\" tình cờ gặp cô gái Áp Mao mang thể chất \"thịt Đường Tăng\", hai con người bị cưỡng ép ràng buộc này vừa chán ghét nhau mà cũng cứu rỗi lẫn nhau. Trải qua sáu vụ án kì quái: bộ xương khô tóc dài, sáng làm người tối làm yêu, thuồng luồng hóa rồng, bể máu trả hồn, hồng nhan moi tim và pháo hoa cá vàng, họ phá giải các âm mưu phía sau, cuối cùng giúp nhau rửa sạch tiếng xấu, trả lại tự do cho thế gian, giúp những người có tình được về bên nhau.",
+        "quality": "FHD",
+        "thumb_url": "https://image.tmdb.org/t/p/original/vElJ9ZIr0DAJ7liAW81HByGBA5u.jpg",
+        "poster_url": "https://image.tmdb.org/t/p/original/vElJ9ZIr0DAJ7liAW81HByGBA5u.jpg",
+        "origin_name": "Blossom in Darkness"
+    },
+    {
+        "lang": "Vietsub",
+        "name": "Tình Yêu Trong Vỏ Bọc / Tình Yêu Ngụy Trang",
+        "slug": "tinh-yeu-trong-vo-boc-tinh-yeu-nguy-trang",
+        "year": "2026",
+        "content": "Tình Yêu Trong Vỏ Bọc (Love in Disguise) là một bộ phim truyền hình hài lãng mạn công sở của Hàn Quốc, với sự tham gia của các diễn viên Yim Si-wan, Seol In-ah, Kim Jung-hyun và Yeonwoo. Dựa trên tiểu thuyết mạng \"Tại Sao Bạn Không Biết Đó Là Con Gái?\"",
+        "quality": "FHD",
+        "thumb_url": "https://image.tmdb.org/t/p/original/c9DEtqCDZBPL9i06WmbDrcndrBy.jpg",
+        "poster_url": "https://image.tmdb.org/t/p/original/c9DEtqCDZBPL9i06WmbDrcndrBy.jpg",
+        "origin_name": "Love in Disguise"
+    },
+    {
+        "lang": "Vietsub + Thuyết Minh",
+        "name": "Tình Yêu Độc Nhất",
+        "slug": "tinh-yeu-doc-nhat",
+        "year": "2026",
+        "content": "Giữa cuộc sống chật vật và những giấc mơ dang dở, Gong Yu Il bất ngờ bước vào thế giới của ngôi sao Tak Mu I – người đang sống trong nỗi sợ hãi vì bị bám đuôi. Khi trở thành quản lý của anh, Yu Il phát hiện cuốn tiểu thuyết mình từng viết chính là ánh sáng đã nâng đỡ Mu I trong những ngày tăm tối. Từ những tổn thương giấu kín, hai trái tim dần tìm thấy nhau, viết nên một tình yêu vừa mong manh, vừa duy nhất.",
+        "quality": "FHD",
+        "thumb_url": "https://image.tmdb.org/t/p/original/i4dsGTeyt0p6aEdxKEMslpMJrOE.jpg",
+        "poster_url": "https://image.tmdb.org/t/p/original/i4dsGTeyt0p6aEdxKEMslpMJrOE.jpg",
+        "origin_name": "One Of A Kind Romance"
+    },
+    {
+        "lang": "Vietsub",
+        "name": "Chào Mẹ, Tạm Biệt!",
+        "slug": "chao-me-tam-biet",
+        "year": "2020",
+        "content": "Chào Mẹ, Tạm Biệt là bộ phim kể về cuộc đời của Cha Yoo Ri (Kim Tae Hee), một người phụ nữ hóa thành hồn ma sau khi qua đời 5 năm trước. Cô ra đi đột ngột, để lại nỗi xót thương trong lòng Jo Kang Hwa (Lee Kyu Hyung) và đứa con. Để có thể hồi sinh, Cha Yoo Ri phải thực hiện các thử thách trong vòng 49 ngày.",
+        "quality": "FHD",
+        "thumb_url": "https://image.tmdb.org/t/p/original/hrYPAnRJx8NlhweFSzRhrYDGqA6.jpg",
+        "poster_url": "https://image.tmdb.org/t/p/original/hrYPAnRJx8NlhweFSzRhrYDGqA6.jpg",
+        "origin_name": "Hi Bye, Mama!"
+    },
+    {
+        "lang": "Vietsub",
+        "name": "100 Ngày Lừa Dối",
+        "slug": "100-ngay-lua-doi",
+        "year": "2026",
+        "content": "Khao khát tự do, cô nàng móc túi số một của Gyeongseong thâm nhập vào chính quyền thực dân Nhật để đánh cắp bí mật, nhưng lại phải lòng con trai của mục tiêu.",
+        "quality": "FHD",
+        "thumb_url": "https://image.tmdb.org/t/p/original/yukp2lBvw4ENQvdLN1slneX6jxN.jpg",
+        "poster_url": "https://image.tmdb.org/t/p/original/yukp2lBvw4ENQvdLN1slneX6jxN.jpg",
+        "origin_name": "100 Days Of Deception"
+    },
+    {
+        "lang": "Vietsub + Thuyết Minh",
+        "name": "Gấp Ánh Trăng",
+        "slug": "gap-anh-trang",
+        "year": "2026",
+        "content": "Vân Li, cô gái mắc chứng sợ giao tiếp nghiêm trọng, đến Nam Vu học cao học để chứng minh mình có thể sống tự lập và tình cờ gặp lại Phó Thức Tắc, chàng trai cô thầm mến từ thời trung học.",
+        "quality": "FHD",
+        "thumb_url": "https://image.tmdb.org/t/p/original/3RrrTbz5zYmv8nZEj4PDXX47axi.jpg",
+        "poster_url": "https://image.tmdb.org/t/p/original/3RrrTbz5zYmv8nZEj4PDXX47axi.jpg",
+        "origin_name": "When I Meet The Moon"
+    },
+    {
+        "lang": "Vietsub",
+        "name": "Hoàng Hậu Tái Hôn",
+        "slug": "hoang-hau-tai-hon",
+        "year": "2026",
+        "content": "Hoàng hậu Navier là người đứng đầu hoàn hảo của Đông Đế Quốc, cai trị đất nước cùng chồng là Hoàng đế Sovieshu. Tuy nhiên, cuộc sống và ngai vị của cô đảo lộn khi Sovieshu mang về cô hầu gái trốn chạy tên Rashta và sủng ái cô ta đến mức đòi ly hôn Navier. Thay vì gục ngã hay bi lụy, Navier đồng ý ly hôn với một điều kiện: cô được phép tái hôn với Hoàng tử Heinrey quyền lực của Tây Vương Quốc, từ đó bắt đầu hành động lật ngược thế cờ và làm chủ vận mệnh mới của mình.",
+        "quality": "FHD",
+        "thumb_url": "https://image.tmdb.org/t/p/original/nWuOUzOHrn4VB7zRrrcZQHcB5Vx.jpg",
+        "poster_url": "https://image.tmdb.org/t/p/original/nWuOUzOHrn4VB7zRrrcZQHcB5Vx.jpg",
+        "origin_name": "The Remarried Empress"
+    },
+    {
+        "lang": "Vietsub",
+        "name": "Bác Sĩ X",
+        "slug": "bac-si-x",
+        "year": "2026",
+        "content": "Ở một bệnh viện nơi cái tôi và tham nhũng lộng hành, một bác sĩ phẫu thuật bí ẩn nhưng tài năng xuất hiện – nhận những ca tưởng chừng bất khả thi bất chấp sự phản đối quyết liệt.",
+        "quality": "FHD",
+        "thumb_url": "https://image.tmdb.org/t/p/original/1R1fjtoNFylF4JpJE3ThCIbepvf.jpg",
+        "poster_url": "https://image.tmdb.org/t/p/original/1R1fjtoNFylF4JpJE3ThCIbepvf.jpg",
+        "origin_name": "Doctor X: Mafia in White"
+    },
+    {
+        "lang": "Vietsub",
+        "name": "Việc Ma, Lương Quái",
+        "slug": "viec-ma-luong-quai",
+        "year": "2026",
+        "content": "Chìm trong nợ nần, chàng trai trẻ nhận những công việc làm thêm béo bở từ một công ty môi giới việc làm bí ẩn – nhưng rồi nhận ra cuộc sống mưu sinh dần biến thành ác mộng.",
+        "quality": "FHD",
+        "thumb_url": "https://phimimg.com/uploads/movies/20261031/viec-ma-luong-quai-poster.webp",
+        "poster_url": "https://phimimg.com/uploads/movies/20261031/viec-ma-luong-quai-poster.webp",
+        "origin_name": "Dead-End Job"
+    }
+];
 
         const DEFAULT_STATIC_COMMENTS = [
             {
@@ -6101,6 +6134,14 @@ function toggleFaqCard(btnEl) {
 
             // 1. INSTANT: Đọc cache LocalStorage nếu có
             try {
+                if (localStorage.getItem('aphim_mobile_version') !== 'v20261118_v1') {
+                    localStorage.removeItem('aphim_mobile_showcase_config');
+                    localStorage.setItem('aphim_mobile_version', 'v20261118_v1');
+                }
+                if (localStorage.getItem('aphim_mobile_version') !== 'v20261118_v1') {
+                    localStorage.removeItem('aphim_mobile_showcase_config');
+                    localStorage.setItem('aphim_mobile_version', 'v20261118_v1');
+                }
                 const cached = localStorage.getItem('aphim_mobile_showcase_config');
                 if (cached) {
                     const parsed = JSON.parse(cached);
