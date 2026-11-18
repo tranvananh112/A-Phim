@@ -804,32 +804,6 @@ app.get('/api/settings/desktop-hero-showcase', async (req, res) => {
     const defaultHeroSlides = [
     {
         "imdb": {
-            "vote_average": 9
-        },
-        "lang": "Vietsub + Thuyết Minh",
-        "name": "Thập Vạn Cuồng Hoa Nhập Mộng Lai",
-        "slug": "thap-van-cuong-hoa-nhap-mong-lai",
-        "tmdb": {
-            "vote_average": 9
-        },
-        "year": "2026",
-        "content": "Ma đầu Kỳ Phượng Ân \"nguồn gốc vạn điều ác\" tình cờ gặp cô gái Áp Mao mang thể chất \"thịt Đường Tăng\", hai con người bị cưỡng ép ràng buộc này vừa chán ghét nhau mà cũng cứu rỗi lẫn nhau. Trải qua sáu vụ án kì quái: bộ xương khô tóc dài, sáng làm người tối làm yêu, thuồng luồng hóa rồng, bể máu trả hồn, hồng nhan moi tim và pháo hoa cá vàng, họ phá giải các âm mưu phía sau, cuối cùng giúp nhau rửa sạch tiếng xấu, trả lại tự do cho thế gian, giúp những người có tình được về bên nhau.",
-        "logoUrl": "/images/logos/thap-van-cuong-hoa-nhap-mong-lai.png",
-        "quality": "FHD",
-        "category": [],
-        "imageUrl": "https://image.tmdb.org/t/p/original/8nqLbfvduuLQtzALe3ZjxiHtgLt.jpg",
-        "thumbUrl": "https://image.tmdb.org/t/p/original/8nqLbfvduuLQtzALe3ZjxiHtgLt.jpg",
-        "movieSlug": "thap-van-cuong-hoa-nhap-mong-lai",
-        "posterUrl": "https://phimimg.com/uploads/movies/20261117/thap-van-cuong-hoa-nhap-mong-lai-poster.webp",
-        "thumb_url": "https://image.tmdb.org/t/p/original/8nqLbfvduuLQtzALe3ZjxiHtgLt.jpg",
-        "originName": "Blossom in Darkness",
-        "poster_url": "https://phimimg.com/uploads/movies/20261117/thap-van-cuong-hoa-nhap-mong-lai-poster.webp",
-        "origin_name": "Blossom in Darkness",
-        "episodeCurrent": "Tập 9",
-        "episode_current": "Tập 9"
-    },
-    {
-        "imdb": {
             "vote_average": 8.1
         },
         "lang": "Vietsub + Thuyết Minh",
@@ -853,6 +827,32 @@ app.get('/api/settings/desktop-hero-showcase', async (req, res) => {
         "origin_name": "Legend Of The Female General",
         "episodeCurrent": "Hoàn Tất (36/36)",
         "episode_current": "Hoàn Tất (36/36)"
+    },
+    {
+        "imdb": {
+            "vote_average": 9
+        },
+        "lang": "Vietsub + Thuyết Minh",
+        "name": "Thập Vạn Cuồng Hoa Nhập Mộng Lai",
+        "slug": "thap-van-cuong-hoa-nhap-mong-lai",
+        "tmdb": {
+            "vote_average": 9
+        },
+        "year": "2026",
+        "content": "Ma đầu Kỳ Phượng Ân \"nguồn gốc vạn điều ác\" tình cờ gặp cô gái Áp Mao mang thể chất \"thịt Đường Tăng\", hai con người bị cưỡng ép ràng buộc này vừa chán ghét nhau mà cũng cứu rỗi lẫn nhau. Trải qua sáu vụ án kì quái: bộ xương khô tóc dài, sáng làm người tối làm yêu, thuồng luồng hóa rồng, bể máu trả hồn, hồng nhan moi tim và pháo hoa cá vàng, họ phá giải các âm mưu phía sau, cuối cùng giúp nhau rửa sạch tiếng xấu, trả lại tự do cho thế gian, giúp những người có tình được về bên nhau.",
+        "logoUrl": "/images/logos/thap-van-cuong-hoa-nhap-mong-lai.png",
+        "quality": "FHD",
+        "category": [],
+        "imageUrl": "https://image.tmdb.org/t/p/original/8nqLbfvduuLQtzALe3ZjxiHtgLt.jpg",
+        "thumbUrl": "https://image.tmdb.org/t/p/original/8nqLbfvduuLQtzALe3ZjxiHtgLt.jpg",
+        "movieSlug": "thap-van-cuong-hoa-nhap-mong-lai",
+        "posterUrl": "https://phimimg.com/uploads/movies/20261117/thap-van-cuong-hoa-nhap-mong-lai-poster.webp",
+        "thumb_url": "https://image.tmdb.org/t/p/original/8nqLbfvduuLQtzALe3ZjxiHtgLt.jpg",
+        "originName": "Blossom in Darkness",
+        "poster_url": "https://phimimg.com/uploads/movies/20261117/thap-van-cuong-hoa-nhap-mong-lai-poster.webp",
+        "origin_name": "Blossom in Darkness",
+        "episodeCurrent": "Tập 9",
+        "episode_current": "Tập 9"
     },
     {
         "imdb": {
