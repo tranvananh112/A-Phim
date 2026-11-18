@@ -70,53 +70,77 @@ const API_CONFIG = {
     USE_MULTIPLE_SOURCES: false,
     // Custom UI settings — Pre-configured robust hardcoded fallbacks
     CATEGORY_BACKGROUNDS: {
-        "danh-sach/phim-bo": "https://phimimg.com/upload/vod/20260620-1/00083387b890aaac69f0490b3fda8c13.jpg",
-        "danh-sach/phim-moi-cap-nhat": "https://phimimg.com/upload/vod/20250530-1/fdf11774cff47f0ffc9c2dbe2e02d0ca.jpg",
-        "the-loai/hanh-dong": "https://phimimg.com/upload/vod/20250821-1/1ec414f82adc729512410edd1b083996.jpg",
+        "danh-sach/phim-bo": "https://phimimg.com/upload/vod/20260515-1/57f28e5e6d6399e53687174216c67bf6.jpg",
+        "danh-sach/phim-moi-cap-nhat": "https://phimimg.com/uploads/movies/20260923/cong-tu-nguoi-phuc-chua-cong-tu-chang-da-phuc-chua-thumb.webp",
+        "the-loai/hanh-dong": "https://phimimg.com/uploads/movies/20260905/seoul-unnie-thumb.webp",
         "the-loai/tinh-cam": "https://phimimg.com/uploads/movies/20260810/co-nang-manh-me-do-bong-soon-thumb.webp",
-        "the-loai/hai-huoc": "https://phimimg.com/upload/vod/20241118-1/3b9d2f3c9a5cf65d15a23db8d0c870ac.jpg",
-        "danh-sach/hoat-hinh": "https://phimimg.com/upload/vod/20241229-1/309e1f1623755fa993140a83167f577b.jpg"
-    },
+        "the-loai/hai-huoc": "https://phimimg.com/upload/vod/20260515-1/085e2fde72531db8a9cadea7a1c95c65.jpg",
+        "danh-sach/hoat-hinh": "https://phimimg.com/uploads/movies/20260818/cau-chuyen-do-choi-5-thumb.webp"
+},
     HERO_THUMBNAILS: [
         {
-            movieSlug: "van-tu-hanh",
-            name: "The Legend of Rosy Clouds",
-            originName: "The Legend Of Rosy Clouds",
-            thumbUrl: "https://phimimg.com/upload/vod/20260620-1/00083387b890aaac69f0490b3fda8c13.jpg",
-            posterUrl: "https://phimimg.com/upload/vod/20260620-1/6b7cf552ac9b66e18a5382c922d2bd0d.jpg",
+            movieSlug: "lan-huong-nhu-co",
+            name: "Lan Hương Như Cố",
+            originName: "Against The Current",
+            thumbUrl: "https://image.tmdb.org/t/p/original/eikGebrQFtx6IraG70Y9oHTuau8.jpg",
+            posterUrl: "https://phimimg.com/uploads/movies/20260912/lan-huong-nhu-co-poster.webp",
             year: "2026"
         },
         {
-            movieSlug: "quat-mo-trung-ma",
-            name: "Quật Mộ Trùng Ma",
-            originName: "Exhuma",
-            thumbUrl: "https://phimimg.com/upload/vod/20250530-1/fdf11774cff47f0ffc9c2dbe2e02d0ca.jpg",
-            posterUrl: "https://phimimg.com/upload/vod/20250530-1/759df554cc21bf9d6805966dc3fe2b67.jpg",
-            year: "2024"
+            movieSlug: "tuoc-cot",
+            name: "Tước Cốt",
+            originName: "Key To The Phoenix Heart",
+            thumbUrl: "https://image.tmdb.org/t/p/original/xaqXQwcyO19G36SWIaYJmiNcX4a.jpg",
+            posterUrl: "https://phimimg.com/uploads/movies/20260711/tuoc-cot-poster.webp",
+            year: "2026"
         },
         {
-            movieSlug: "tham-tu-lung-danh-conan",
-            name: "Thám Tử Lừng Danh Conan: Ngôi Sao 5 Cánh 1 Triệu Đô",
-            originName: "Detective Conan: The Million-Dollar Pentagram",
-            thumbUrl: "https://phimimg.com/upload/vod/20241229-1/309e1f1623755fa993140a83167f577b.jpg",
-            posterUrl: "https://phimimg.com/upload/vod/20240310-1/025424cf62248b9a7b54279ef5416e26.jpg",
-            year: "2024"
+            movieSlug: "tieng-yeu-nay-anh-dich-duoc-khong",
+            name: "Tiếng Yêu Này, Anh Dịch Được Không?",
+            originName: "Can This Love Be Translated?",
+            thumbUrl: "https://image.tmdb.org/t/p/original/nDn8zhaV61cOmUE0dCGD6W94oxB.jpg",
+            posterUrl: "https://phimimg.com/upload/vod/20260116-1/8b1201713adc08736e33e45ab1c1f2e4.jpg",
+            year: "2026"
         },
         {
-            movieSlug: "deadpool-va-wolverine",
-            name: "Deadpool & Wolverine",
-            originName: "Deadpool & Wolverine",
-            thumbUrl: "https://phimimg.com/upload/vod/20250821-1/1ec414f82adc729512410edd1b083996.jpg",
-            posterUrl: "https://phimimg.com/upload/vod/20250821-1/45b6b9aad03ae0aa2aceb5d73419831a.jpg",
-            year: "2024"
+            movieSlug: "yeu-duoc-khong",
+            name: "Yêu Được Không",
+            originName: "Pls Love",
+            thumbUrl: "https://image.tmdb.org/t/p/original/j8Yt8qL5qw60Gp3kq26OuUWMWSj.jpg",
+            posterUrl: "https://phimimg.com/uploads/movies/20260914/yeu-duoc-khong-poster.webp",
+            year: "2026"
         },
         {
-            movieSlug: "do-anh-cong-duoc-toi",
-            name: "Đố Anh Còng Được Tôi",
-            originName: "I, the Executioner",
-            thumbUrl: "https://phimimg.com/upload/vod/20241118-1/3b9d2f3c9a5cf65d15a23db8d0c870ac.jpg",
-            posterUrl: "https://phimimg.com/upload/vod/20241118-1/9f929fc12384573847849f8786f16ae2.jpg",
-            year: "2024"
+            movieSlug: "trung-so-doc-dac-van-phai-di-lam",
+            name: "Trúng Số Độc Đắc Vẫn Phải Đi Làm",
+            originName: "The Ordinary Jackpot",
+            thumbUrl: "https://image.tmdb.org/t/p/original/aUbhyOcLmIE9LLH0WdfJyvGtYOH.jpg",
+            posterUrl: "https://phimimg.com/uploads/movies/20260910/trung-so-doc-dac-van-phai-di-lam-poster.webp",
+            year: "2026"
+        },
+        {
+            movieSlug: "sep-chinh-la-than-tuong-bias-toi-sep-cua-toi",
+            name: "Sếp Chính Là Thần Tượng (Bias tôi, sếp của tôi)",
+            originName: "My Bias, My Boss",
+            thumbUrl: "https://image.tmdb.org/t/p/original/vQDDZzuoc4BEgAfnQ9ebogjHc7j.jpg",
+            posterUrl: "https://phimimg.com/uploads/movies/20260806/sep-chinh-la-than-tuong-bias-toi-sep-cua-toi-poster.webp",
+            year: "2026"
+        },
+        {
+            movieSlug: "vu-be-boi-thoi-joseon-be-boi-trieu-dai",
+            name: "Vụ Bê Bối Thời Joseon / Bê Bối Triều Đại",
+            originName: "The Scandal",
+            thumbUrl: "https://image.tmdb.org/t/p/original/mbJu1nCIr3mejUXd6EpprOD8Rm0.jpg",
+            posterUrl: "https://phimimg.com/uploads/movies/20260918/vu-be-boi-poster.webp",
+            year: "2026"
+        },
+        {
+            movieSlug: "dau-xuan-tuoi-sang",
+            name: "Đầu Xuân Tươi Sáng",
+            originName: "The Early Spring",
+            thumbUrl: "https://image.tmdb.org/t/p/original/zitBqhMHmQOZUSydZDJRAtsD3BH.jpg",
+            posterUrl: "https://phimimg.com/uploads/movies/20260826/dau-xuan-tuoi-sang-poster.webp",
+            year: "2026"
         }
     ]
 };

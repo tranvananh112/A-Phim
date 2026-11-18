@@ -113,45 +113,99 @@ function applyCustomBackgroundsToDOM(cards, customBgs) {
 const DEFAULT_HARDCODED_INTERESTS = [
     {
         id: 'phim-bo',
-        title: 'Phim Bộ',
+        title: "Phim Bộ",
+        actionText: "XEM NGAY",
         link: 'danh-sach.html?list=phim-bo',
-        color: '#8b5cf6',
-        imageUrl: 'https://phimimg.com/upload/vod/20260515-1/57f28e5e6d6399e53687174216c67bf6.jpg'
+        color: '#a49eb3',
+        gradient: '#a49eb3',
+        imageUrl: 'https://image.tmdb.org/t/p/original/ftbq28ZOEwJX4sJVEQmqA2tSkhR.jpg',
+        iconSvg: "<svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect width=\"20\" height=\"15\" x=\"2\" y=\"7\" rx=\"3\"></rect><polyline points=\"17 2 12 7 7 2\"></polyline></svg>",
+        noAura: false,
+        themeColor: '#a49eb3',
+        colorRgb: '164, 158, 179',
+        iconName: 'tv',
+        iconColor: '#ffffff',
+        textColor: '#ffffff'
     },
     {
         id: 'phim-moi',
-        title: 'Phim Mới',
+        title: "Phim Mới",
+        actionText: "XEM NGAY",
         link: 'danh-sach.html?list=phim-moi-cap-nhat',
-        color: '#ef4444',
-        imageUrl: 'https://phimimg.com/uploads/movies/20260923/cong-tu-nguoi-phuc-chua-cong-tu-chang-da-phuc-chua-thumb.webp'
+        color: '#864b4b',
+        gradient: '#864b4b',
+        imageUrl: 'https://image.tmdb.org/t/p/original/xaqXQwcyO19G36SWIaYJmiNcX4a.jpg',
+        iconSvg: "<svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z\"></path></svg>",
+        noAura: false,
+        themeColor: '#864b4b',
+        colorRgb: '134, 75, 75',
+        iconName: 'flame',
+        iconColor: '#ffffff',
+        textColor: '#ffffff'
     },
     {
         id: 'hanh-dong',
-        title: 'Hành Động',
+        title: "Hành Động",
+        actionText: "XEM NGAY",
         link: 'categories.html?category=hanh-dong',
-        color: '#f97316',
-        imageUrl: 'https://phimimg.com/uploads/movies/20260905/seoul-unnie-thumb.webp'
+        color: '#c49cc9',
+        gradient: '#c49cc9',
+        imageUrl: 'https://image.tmdb.org/t/p/original/nDn8zhaV61cOmUE0dCGD6W94oxB.jpg',
+        iconSvg: "<svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"13 2 3 14 12 14 11 22 21 10 12 10 13 2\"></polygon></svg>",
+        noAura: false,
+        themeColor: '#c49cc9',
+        colorRgb: '196, 156, 201',
+        iconName: 'zap',
+        iconColor: '#ffffff',
+        textColor: '#ffffff'
     },
     {
         id: 'tinh-cam',
-        title: 'Tình Cảm',
+        title: "Tình Cảm",
+        actionText: "XEM NGAY",
         link: 'categories.html?category=tinh-cam',
-        color: '#ec4899',
-        imageUrl: 'https://phimimg.com/uploads/movies/20260810/co-nang-manh-me-do-bong-soon-thumb.webp'
+        color: '#d0c2c9',
+        gradient: '#d0c2c9',
+        imageUrl: 'https://image.tmdb.org/t/p/original/n0CpkAG2IqoYh4ZziJKpCoH11xD.jpg',
+        iconSvg: "<svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z\"></path></svg>",
+        noAura: false,
+        themeColor: '#d0c2c9',
+        colorRgb: '208, 194, 201',
+        iconName: 'heart',
+        iconColor: '#ffffff',
+        textColor: '#ffffff'
     },
     {
         id: 'hai-huoc',
-        title: 'Hài Hước',
+        title: "Hài Hước",
+        actionText: "XEM NGAY",
         link: 'categories.html?category=hai-huoc',
-        color: '#eab308',
-        imageUrl: 'https://phimimg.com/upload/vod/20260515-1/085e2fde72531db8a9cadea7a1c95c65.jpg'
+        color: '#908564',
+        gradient: '#908564',
+        imageUrl: 'https://image.tmdb.org/t/p/original/bTjuiUy3h8sUuouNWGvgDpAaACF.jpg',
+        iconSvg: "<svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><path d=\"M8 14c1.5 2 6.5 2 8 0\"></path><line x1=\"9\" y1=\"9\" x2=\"9.01\" y2=\"9\"></line><line x1=\"15\" y1=\"9\" x2=\"15.01\" y2=\"9\"></line></svg>",
+        noAura: false,
+        themeColor: '#908564',
+        colorRgb: '144, 133, 100',
+        iconName: 'smile',
+        iconColor: '#ffffff',
+        textColor: '#ffffff'
     },
     {
         id: 'hoat-hinh',
-        title: 'Hoạt Hình',
+        title: "Hoạt Hình",
+        actionText: "XEM NGAY",
         link: 'danh-sach.html?list=hoat-hinh',
-        color: '#10b981',
-        imageUrl: 'https://phimimg.com/uploads/movies/20260818/cau-chuyen-do-choi-5-thumb.webp'
+        color: '#c499c7',
+        gradient: '#c499c7',
+        imageUrl: 'https://image.tmdb.org/t/p/original/sNkIXZ4vakrkrLPZF2HD8UAvcFm.jpg',
+        iconSvg: "<svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z\"></path></svg>",
+        noAura: false,
+        themeColor: '#c499c7',
+        colorRgb: '196, 153, 199',
+        iconName: 'sparkles',
+        iconColor: '#ffffff',
+        textColor: '#ffffff'
     }
 ];
 
