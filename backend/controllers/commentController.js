@@ -221,7 +221,7 @@ exports.getHomeShowcaseComments = async (req, res) => {
             return {
                 id: c._id,
                 userName: u.name || 'Thành viên',
-                userAvatar: u.avatarUrl || u.avatar || ('https://api.dicebear.com/7.x/bottts/svg?seed=' + encodeURIComponent(u.name || 'User')),
+                userAvatar: u.avatarUrl || u.avatar || ('https://ui-avatars.com/api/?name=' + encodeURIComponent(u.name || 'User') + '&background=random&color=fff'),
                 equippedFrameUrl: u.equippedFrameUrl || '',
                 badge: u.badge || (u.role === 'admin' ? 'ADMIN TOP 1' : (u.isVip ? 'VIP PRO' : '')),
                 isAdmin: u.role === 'admin',
@@ -234,49 +234,160 @@ exports.getHomeShowcaseComments = async (req, res) => {
         });
 
         if (!data.length) {
-            return res.json({
+                                    return res.json({
                 success: true,
                 data: [
-                    {
-                        userName: 'Admin APhim',
-                        userAvatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=AdminAPhim',
-                        badge: 'ADMIN TOP 1',
-                        isAdmin: true,
-                        isVip: true,
-                        content: 'Chào mừng các bạn đến với APhim Cinema! Chúc các bạn xem phim vui vẻ.',
-                        movieSlug: 'trung-so-doc-dac-van-phai-di-lam',
-                        movieName: 'Trúng Số Độc Đắc Vẫn Phải Đi Làm',
-                        timeAgo: 'Vừa xong'
-                    },
-                    {
-                        userName: 'Minh Hoàng',
-                        userAvatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=MinhHoang',
-                        badge: 'VIP PRO',
-                        isVip: true,
-                        content: 'Phim âm thanh đỉnh cao luôn, xem mượt mà không bị giật lag chút nào!',
-                        movieSlug: 'van-tu-hanh',
-                        movieName: 'Vân Tú Hành',
-                        timeAgo: '15 phút trước'
-                    },
-                    {
-                        userName: 'Thu Trang',
-                        userAvatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=ThuTrang',
-                        badge: 'CÀY PHIM',
-                        content: 'Kid và Hattori ngầu dã man, đồ họa sắc nét quá chừng.',
-                        movieSlug: 'conan-ngoi-sao-5-canh-1-trieu-do',
-                        movieName: 'Thám Tử Lừng Danh Conan',
-                        timeAgo: '1 giờ trước'
-                    },
-                    {
-                        userName: 'Gia Bảo',
-                        userAvatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=GiaBao',
-                        badge: 'FAN CỨNG',
-                        content: 'Đoạn combat cuối phim nhạc dính ghê, xem cuốn từ đầu tới cuối.',
-                        movieSlug: 'deadpool-va-wolverine',
-                        movieName: 'Deadpool & Wolverine',
-                        timeAgo: '2 giờ trước'
-                    }
-                ]
+          {
+                    "userName": "Admin APhim",
+                    "userAvatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+                    "equippedFrameUrl": "https://cdn.discordapp.com/avatar-decoration-presets/a_0c0eeb351ae2cf48c6e1eee2cae49d40.png?size=240&passthrough=true",
+                    "badge": "ADMIN TOP 1",
+                    "nameColor": "color_gold",
+                    "isAdmin": true,
+                    "isVip": true,
+                    "level": 99,
+                    "reactionsCount": 188,
+                    "timeAgo": "Vừa xong",
+                    "movieSlug": "thap-van-cuong-hoa-nhap-mong-lai",
+                    "movieName": "Thập Vạn Cuồng Hoa Nhập Mộng Lai",
+                    "content": "Đã lên sóng full Vietsub & Thuyết Minh tập mới nhất rồi nha mn! Tối nay chúc cả nhà cày phim vui vẻ 🍿✨"
+          },
+          {
+                    "userName": "Thảo My 🌸",
+                    "userAvatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+                    "equippedFrameUrl": "https://cdn.discordapp.com/avatar-decoration-presets/a_0e839cd79500e7b68e2bbbed54790c28.png?size=240&passthrough=true",
+                    "badge": "CÀY PHIM",
+                    "nameColor": "color_pink",
+                    "isAdmin": false,
+                    "isVip": false,
+                    "level": 28,
+                    "reactionsCount": 64,
+                    "timeAgo": "12 phút trước",
+                    "movieSlug": "cam-nguyet-nhu-ca",
+                    "movieName": "Cẩm Nguyệt Như Ca",
+                    "content": "Hà Yến với Tiêu Giác chemistry đỉnh xỉu luôn á chùi ui, đoạn gặp lại nhau ở Dịch Châu coi mà rung rinh tim 🥺💖"
+          },
+          {
+                    "userName": "Quang Huy ⚡",
+                    "userAvatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+                    "equippedFrameUrl": "https://cdn.discordapp.com/avatar-decoration-presets/a_001e956faa73bd0410c455234c62818f.png?size=240&passthrough=true",
+                    "badge": "VIP PRO",
+                    "nameColor": "color_cyan",
+                    "isAdmin": false,
+                    "isVip": true,
+                    "level": 52,
+                    "reactionsCount": 89,
+                    "timeAgo": "28 phút trước",
+                    "movieSlug": "thap-van-cuong-hoa-nhap-mong-lai",
+                    "movieName": "Thập Vạn Cuồng Hoa Nhập Mộng Lai",
+                    "content": "Vụ án bể máu trả hồn cuốn dã man, tạo hình ma đầu Kỳ Phượng Ân ngầu đét, nhạc nền nghe sởn gai ốc thật sự 🔥"
+          },
+          {
+                    "userName": "Ngọc Huyền 🎀",
+                    "userAvatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
+                    "equippedFrameUrl": "https://cdn.discordapp.com/avatar-decoration-presets/a_1acbe609daec21fa5b866df9e5a42cb7.png?size=240&passthrough=true",
+                    "badge": "FAN CỨNG",
+                    "nameColor": "color_pink",
+                    "isAdmin": false,
+                    "isVip": false,
+                    "level": 34,
+                    "reactionsCount": 47,
+                    "timeAgo": "45 phút trước",
+                    "movieSlug": "100-ngay-lua-doi",
+                    "movieName": "100 Ngày Lừa Dối",
+                    "content": "Plot twist mấy tập gần đây quay xe khét lẹt luôn mn ơi, không ngờ ông viện trưởng lại là trùm cuối 😱"
+          },
+          {
+                    "userName": "Hoàng Nam 🩺",
+                    "userAvatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+                    "equippedFrameUrl": "https://cdn.discordapp.com/avatar-decoration-presets/a_3c97a2d37f433a7913a1c7b7a735d000.png?size=240&passthrough=true",
+                    "badge": "VIP PRO",
+                    "nameColor": "color_green",
+                    "isAdmin": false,
+                    "isVip": true,
+                    "level": 46,
+                    "reactionsCount": 53,
+                    "timeAgo": "1 giờ trước",
+                    "movieSlug": "bac-si-x",
+                    "movieName": "Bác Sĩ X",
+                    "content": "Pha mổ tim ở cuối tập căng như dây đàn, bác sĩ Daimon ra tay dứt khoát đỉnh nóc kịch trần luôn 💯"
+          },
+          {
+                    "userName": "Khánh Linh ✨",
+                    "userAvatar": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80",
+                    "equippedFrameUrl": "https://cdn.discordapp.com/avatar-decoration-presets/a_777b7aa8e77a569766e4a2e2bf656f4e.png?size=240&passthrough=true",
+                    "badge": "CÀY PHIM",
+                    "nameColor": "color_pink",
+                    "isAdmin": false,
+                    "isVip": false,
+                    "level": 22,
+                    "reactionsCount": 38,
+                    "timeAgo": "2 giờ trước",
+                    "movieSlug": "tinh-yeu-doc-nhat",
+                    "movieName": "Tình Yêu Độc Nhất",
+                    "content": "Cặp đôi chính dễ thương xỉu, coi cảnh hậu trường với cảnh tỏ tình mà cười tủm tỉm quắn quéo cả người 🙈❤️"
+          },
+          {
+                    "userName": "Tuấn Kiệt 🎬",
+                    "userAvatar": "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&auto=format&fit=crop&q=80",
+                    "equippedFrameUrl": "https://cdn.discordapp.com/avatar-decoration-presets/a_0c0eeb351ae2cf48c6e1eee2cae49d40.png?size=240&passthrough=true",
+                    "badge": "FAN CỨNG",
+                    "nameColor": "color_cyan",
+                    "isAdmin": false,
+                    "isVip": false,
+                    "level": 39,
+                    "reactionsCount": 71,
+                    "timeAgo": "3 giờ trước",
+                    "movieSlug": "deadpool-va-wolverine",
+                    "movieName": "Deadpool & Wolverine",
+                    "content": "Xem lại lần 3 vẫn cười sặc sụa với mấy quả cameo chất chơi người dơi, quả nhạc Madonna đánh combat thì đỉnh nóc luôn!"
+          },
+          {
+                    "userName": "Bảo Trâm 🌸",
+                    "userAvatar": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150&auto=format&fit=crop&q=80",
+                    "equippedFrameUrl": "https://cdn.discordapp.com/avatar-decoration-presets/a_0e839cd79500e7b68e2bbbed54790c28.png?size=240&passthrough=true",
+                    "badge": "VIP PRO",
+                    "nameColor": "color_gold",
+                    "isAdmin": false,
+                    "isVip": true,
+                    "level": 60,
+                    "reactionsCount": 95,
+                    "timeAgo": "4 giờ trước",
+                    "movieSlug": "tham-tu-lung-danh-conan-ngoi-sao-5-canh-1-trieu-do",
+                    "movieName": "Thám Tử Lừng Danh Conan",
+                    "content": "Kid với Heiji phối hợp out trình phản diện, khúc cuối lộ thân phận họ hàng của Kid với Shinichi sốc ngang ngửa =)))"
+          },
+          {
+                    "userName": "Minh Đức ☕",
+                    "userAvatar": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80",
+                    "equippedFrameUrl": "https://cdn.discordapp.com/avatar-decoration-presets/a_001e956faa73bd0410c455234c62818f.png?size=240&passthrough=true",
+                    "badge": "THÀNH VIÊN",
+                    "nameColor": "color_default",
+                    "isAdmin": false,
+                    "isVip": false,
+                    "level": 15,
+                    "reactionsCount": 19,
+                    "timeAgo": "5 giờ trước",
+                    "movieSlug": "tinh-yeu-trong-vo-boc-tinh-yeu-nguy-trang",
+                    "movieName": "Tình Yêu Trong Vỏ Bọc",
+                    "content": "Phim hài công sở nhẹ nhàng xả stress cực tốt, nữ chính giả trai đáng yêu ghê á!"
+          },
+          {
+                    "userName": "Admin APhim",
+                    "userAvatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+                    "equippedFrameUrl": "https://cdn.discordapp.com/avatar-decoration-presets/a_0c0eeb351ae2cf48c6e1eee2cae49d40.png?size=240&passthrough=true",
+                    "badge": "ADMIN TOP 1",
+                    "nameColor": "color_gold",
+                    "isAdmin": true,
+                    "isVip": true,
+                    "level": 99,
+                    "reactionsCount": 142,
+                    "timeAgo": "7 giờ trước",
+                    "movieSlug": "cam-nguyet-nhu-ca",
+                    "movieName": "Cẩm Nguyệt Như Ca",
+                    "content": "Ad vừa tối ưu xong máy chủ VIP tốc độ cao cho tập mới rồi nhé, mn vào xem mượt mà không lo nghẽn mạng nha 🚀"
+          }
+]
             });
         }
 
