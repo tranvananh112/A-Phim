@@ -85,6 +85,7 @@
     <!-- Preload critical resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://pub-8f3b918d77aa4174a8b7af09fda29a8a.r2.dev" crossorigin>
     <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="dns-prefetch" href="https://www.highperformanceformat.com">
@@ -2148,12 +2149,38 @@
                             </div>
                         </div>
 
-                    <!-- BANNER QUẢNG CÁO STAKE -->
-                    <div id="watch-episodes-ad" class="watch-dual-banners">
-                        <!-- Banner: Stake -->
-                        <a href="https://stake.com/pages/200depositvn" target="_blank" rel="noopener nofollow" class="watch-ad-item watch-ad-stake" aria-label="Stake — Khuyến Mãi Thưởng Nạp Đầu">
-                            <img src="/quangcao/stake/Dice%20VN.gif" alt="Stake Quảng Cáo">
-                        </a>
+                    <!-- BANNER QUẢNG CÁO UNDER PLAYER (DESKTOP: 4 CỘT, MOBILE: GỘP 4 VÀO 1 CHUYỂN XOAY VÒNG) -->
+                    <div id="watch-episodes-ad">
+                        <div class="watch-ad-responsive-container">
+                            <div class="watch-ad-desktop-row">
+                                <a href="https://stake.com/pages/200depositvn" target="_blank" rel="noopener nofollow" class="watch-ad-col-item" aria-label="Stake — Khuyến Mãi Thưởng Nạp Đầu">
+                                    <img src="/quangcao/stake/Dice%20VN.gif" alt="Stake Quảng Cáo" loading="eager">
+                                </a>
+                                <a href="https://bit.ly/SC88sex104a" target="_blank" rel="noopener nofollow" class="watch-ad-col-item" aria-label="SC88 — Thể Thao & Casino Trực Tuyến">
+                                    <img src="/quangcao/sc88/728x90.gif" alt="SC88 Quảng Cáo" loading="eager">
+                                </a>
+                                <a href="https://bit.ly/78win106" target="_blank" rel="noopener nofollow" class="watch-ad-col-item" aria-label="78w — Nhà Cái Uy Tín Châu Á">
+                                    <img src="/quangcao/78w/728x90.gif" alt="78w Quảng Cáo" loading="eager">
+                                </a>
+                                <a href="https://bit.ly/BOOKING1A119-aphim-taydau" target="_blank" rel="noopener nofollow" class="watch-ad-col-item" aria-label="F8 — Tặng Thưởng Nạp Đầu">
+                                    <img src="/quangcao/f8/728x90.gif" alt="F8 Quảng Cáo" loading="eager">
+                                </a>
+                            </div>
+                            <div class="watch-ad-mobile-slider">
+                                <div class="watch-ad-mobile-slide active">
+                                    <a href="https://stake.com/pages/200depositvn" target="_blank" rel="noopener nofollow"><img src="/quangcao/stake/Dice%20VN.gif" alt="Stake" loading="eager"></a>
+                                </div>
+                                <div class="watch-ad-mobile-slide">
+                                    <a href="https://bit.ly/SC88sex104a" target="_blank" rel="noopener nofollow"><img src="/quangcao/sc88/728x90.gif" alt="SC88" loading="eager"></a>
+                                </div>
+                                <div class="watch-ad-mobile-slide">
+                                    <a href="https://bit.ly/78win106" target="_blank" rel="noopener nofollow"><img src="/quangcao/78w/728x90.gif" alt="78w" loading="eager"></a>
+                                </div>
+                                <div class="watch-ad-mobile-slide">
+                                    <a href="https://bit.ly/BOOKING1A119-aphim-taydau" target="_blank" rel="noopener nofollow"><img src="/quangcao/f8/728x90.gif" alt="F8" loading="eager"></a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- 4. Khối "DANH SÁCH TẬP" (Giữ nguyên luồng Image 2, trang trí đẹp chuẩn Image 1) -->
@@ -2683,7 +2710,7 @@
     <script src="js/playlist-modal.js"></script>
     <script src="js/top-weekly-sidebar.js?v=100" defer></script>
     <script src="js/tmdb-api.js?v=15"></script>
-    <script src="js/watch.js?v=349"></script>
+    <script src="js/watch.js?v=352"></script>
     <script src="js/categories-dropdown.js?v=13"></script>
     <script src="js/countries-dropdown.js?v=13"></script>
 
@@ -2715,9 +2742,9 @@
     <script src="js/realtime-sync.js"></script>
 
     <!-- ====== APhim Catfish Banner + Popup ====== -->
-    <link rel="stylesheet" href="/css/catfish-banner.css?v=21">
+    <link rel="stylesheet" href="/css/catfish-banner.css?v=32">
     <link rel="stylesheet" href="/css/inline-ad.css?v=15">
-    <script src="/js/catfish-banner.js?v=22" defer></script>
+    <script src="/js/catfish-banner.js?v=32" defer></script>
     <!-- ====== End Catfish Banner ====== -->
 
     <!-- ====== Mobile Action Bar JS (standalone, no strict mode) ====== -->
