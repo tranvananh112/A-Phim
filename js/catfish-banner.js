@@ -27,7 +27,7 @@
             banners: [
                 {
                     img: '/quangcao/catfish/vsbet.gif',
-                    url: 'http://lacampina.mx/',
+                    url: 'http://178.128.49.112/vsthethao.html',
                     label: 'VSBet — Bảo Hiểm Đơn Thể Thao 100%'
                 },
                 {
