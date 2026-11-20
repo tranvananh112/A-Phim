@@ -7,6 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
 <script>
     (function() {
+        if (window.location.hostname === 'aphim.io.vn' || window.location.hostname === 'www.aphim.io.vn') {
+            window.location.replace('https://aphim1.io.vn' + window.location.pathname + window.location.search + window.location.hash);
+            return;
+        }
         try {
             var savedTheme = localStorage.getItem('aphim_theme') || localStorage.getItem('cinestream_theme');
             if (!savedTheme) {

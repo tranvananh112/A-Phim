@@ -42,6 +42,9 @@ self.addEventListener('fetch', event => {
     const { request } = event;
     const url = new URL(request.url);
 
+    // Không intercept aphim.io.vn để Cloudflare Redirect sang aphim1.io.vn
+    if (url.hostname === 'aphim.io.vn' || url.hostname === 'www.aphim.io.vn') return;
+
     // Bỏ qua non-GET
     if (request.method !== 'GET') return;
 

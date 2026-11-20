@@ -4,6 +4,13 @@
  */
 
 (function() {
+    if (typeof window !== 'undefined' && window.location) {
+        var h = window.location.hostname;
+        if (h === 'aphim.io.vn' || h === 'www.aphim.io.vn') {
+            window.location.replace('https://aphim1.io.vn' + window.location.pathname + window.location.search + window.location.hash);
+            return;
+        }
+    }
     window.APhimCore = window.APhimCore || {};
     window.APhimCore.imageCache = window.APhimCore.imageCache || new Set();
 
