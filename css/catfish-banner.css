@@ -304,18 +304,18 @@
 }
 
 
-/* ─── 3. POPUP (3 TRONG 1 KHUNG — CHUYỂN 1S 1 CÁI) ─────────── */
+/* ─── 3. POPUP MODAL (3 BANNER VUÔNG TRẢI NGANG CHUẨN MẪU) ─── */
 #aphim-popup-overlay {
     position: fixed;
     inset: 0;
     z-index: 99998;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.78);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 16px;
+    padding: 12px;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
@@ -326,86 +326,132 @@
     pointer-events: all;
 }
 
-.aph-popup-wrapper.aph-popup-frame-mode {
+.aph-popup-wrapper.aph-popup-triple-mode {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 8px;
-    width: 500px;
-    max-width: 92vw;
-}
-
-#aphim-popup-x {
-    display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
-    background: rgba(220, 38, 38, 0.95);
-    color: #ffffff;
-    font-size: 13px;
-    font-weight: 700;
-    font-family: system-ui, -apple-system, sans-serif;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 20px;
-    cursor: pointer;
-    box-shadow: 0 4px 16px rgba(220, 38, 38, 0.5);
-    transition: background 0.2s, transform 0.2s;
+    justify-content: center;
+    width: 640px;
+    max-width: 96vw;
 }
 
-#aphim-popup-x:hover {
-    background: #ef4444;
-    transform: scale(1.05);
-}
-
-/* 1 khung duy nhất chứa các slide */
-.aph-popup-single-frame {
-    width: 100%;
+/* Hộp Popup nền trắng viền mỏng thanh thoát y hệt ảnh mẫu */
+.aph-popup-card {
     position: relative;
-    border-radius: 12px;
+    width: 100%;
+    background: #ffffff;
+    padding: 3.5px;
+    border-radius: 6px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Nút tắt đỏ tròn góc trên bên phải y hệt ảnh mẫu */
+#aphim-popup-close-btn {
+    position: absolute;
+    top: -9px;
+    right: -9px;
+    background: #ffffff;
+    color: #ef4444;
+    border: 1.5px solid #ef4444;
+    width: 23px;
+    height: 23px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 900;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+    z-index: 10;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+#aphim-popup-close-btn:hover {
+    background: #ef4444;
+    color: #ffffff;
+    transform: scale(1.15) rotate(90deg);
+}
+
+/* 3 banner nằm ngang cạnh nhau (cả Mobile và Desktop đều 3 cái ngang) */
+.aph-popup-triple-row {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+}
+
+.aph-popup-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 0%;
+    min-width: 0;
+    aspect-ratio: 1 / 1;
+    border-radius: 4px;
     overflow: hidden;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 180px;
-}
-
-.aph-popup-single-slide {
-    display: none;
-    width: 100%;
-    text-align: center;
-}
-
-.aph-popup-single-slide.active {
-    display: block;
-    animation: aphFadeQuick 0.25s ease-in-out;
-}
-
-.aph-popup-slide-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
+    background: #061126;
+    border: 1px solid rgba(0, 0, 0, 0.12);
     text-decoration: none;
     line-height: 0;
+    transition: transform 0.2s ease, filter 0.2s ease;
 }
 
-.aph-popup-single-slide img,
-.aph-popup-single-slide video {
-    max-width: 100%;
-    max-height: 380px;
-    width: auto;
-    height: auto;
-    object-fit: contain;
+.aph-popup-box:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.08);
+}
+
+/* Cả 3 ô banner tràn đầy khung to rõ đẹp */
+.aph-popup-box img,
+.aph-popup-box video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     display: block;
-    margin: 0 auto;
-    border-radius: 10px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.85);
 }
 
-@keyframes aphFadeQuick {
-    from { opacity: 0.3; transform: scale(0.98); }
-    to { opacity: 1; transform: scale(1); }
+/* Riêng ô số 1 (78WIN): phóng to đầy khung và canh từ mép trái để thấy rõ trọn vẹn chữ 78WIN */
+.aph-popup-box:first-child img,
+.aph-popup-box:first-child video {
+    object-fit: cover !important;
+    object-position: left center !important;
+}
+
+/* Với ảnh vuông 1:1 (F8 & SC88) tràn kín tâm ô vuông cực đẹp */
+.aph-popup-box img[src*="300x300"],
+.aph-popup-box img[src*="400x400"] {
+    object-fit: cover !important;
+    object-position: center center !important;
+}
+
+@media (max-width: 768px) {
+    .aph-popup-wrapper.aph-popup-triple-mode {
+        width: calc(100vw - 16px);
+        max-width: calc(100vw - 16px);
+    }
+    .aph-popup-card {
+        padding: 3px;
+        border-radius: 6px;
+    }
+    .aph-popup-triple-row {
+        gap: 3px;
+    }
+    .aph-popup-box {
+        border-radius: 3px;
+    }
+    #aphim-popup-close-btn {
+        top: -8px;
+        right: -8px;
+        width: 22px;
+        height: 22px;
+        font-size: 12px;
+    }
 }
 
 

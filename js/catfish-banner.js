@@ -43,19 +43,13 @@
             ]
         },
 
-        // 2. 3 POPUP (3 TRONG 1 KHUNG, CHUYỂN 1S 1 CÁI)
+        // 2. 3 POPUP (TRẢI NGANG 3 BANNER VUÔNG CHUẨN MẪU)
         popup: {
             enabled: true,
             showAfterMs: 400,
-            slideIntervalMs: 1000, // 1 giây chuyển 1 cái theo yêu cầu
-            sessionKey: 'aphim_popup_closed_v11',
+            sessionKey: 'aphim_popup_closed_v15',
             excludePaths: ['/admin'],
             banners: [
-                {
-                    img: '/quangcao/sc88/400x400.gif',
-                    url: 'https://bit.ly/SC88sex104a',
-                    label: 'SC88 — Tặng Thưởng Cực Khủng'
-                },
                 {
                     img: '/quangcao/78w/728x180.gif',
                     url: 'https://bit.ly/78win106',
@@ -65,6 +59,11 @@
                     img: '/quangcao/f8/300x300.gif?v=3',
                     url: 'https://bit.ly/BOOKING1A119-aphim-taydau',
                     label: 'F8 — Hoàn Trả Không Giới Hạn'
+                },
+                {
+                    img: '/quangcao/sc88/400x400.gif',
+                    url: 'https://bit.ly/SC88sex104a',
+                    label: 'SC88 — Tặng Thưởng Cực Khủng'
                 }
             ]
         },
@@ -340,7 +339,7 @@
     }
 
     /* ─────────────────────────────────────────────────────────
-       3. 3 POPUP (3 TRONG 1 KHUNG — CHUYỂN 1S 1 CÁI)
+       3. 3 POPUP (TRẢI NGANG 3 BANNER VUÔNG CHUẨN MẪU)
     ───────────────────────────────────────────────────────── */
     function shouldShowPopup() {
         if (!CONFIG.popup.enabled) return false;
@@ -352,16 +351,13 @@
         if (!shouldShowPopup()) return;
 
         var banners = CONFIG.popup.banners;
-        var n = banners.length;
-
-        var slidesHTML = '';
-        for (var i = 0; i < n; i++) {
-            slidesHTML +=
-                '<div class="aph-popup-single-slide' + (i === 0 ? ' active' : '') + '" data-index="' + i + '">' +
-                    '<a href="' + banners[i].url + '" target="_blank" rel="noopener nofollow" class="aph-popup-slide-link" aria-label="' + banners[i].label + '">' +
-                        renderMedia(banners[i]) +
-                    '</a>' +
-                '</div>';
+        var colsHTML = '';
+        for (var i = 0; i < banners.length; i++) {
+            var b = banners[i];
+            colsHTML +=
+                '<a class="aph-popup-box" href="' + b.url + '" target="_blank" rel="noopener nofollow" aria-label="' + b.label + '">' +
+                    renderMedia(b) +
+                '</a>';
         }
 
         var overlay = document.createElement('div');
@@ -371,41 +367,23 @@
         overlay.setAttribute('aria-label', 'Quảng cáo đối tác');
 
         overlay.innerHTML =
-            '<div class="aph-popup-wrapper aph-popup-frame-mode">' +
-                '<button id="aphim-popup-x" aria-label="Bỏ qua quảng cáo">' +
-                    'Nh\u1ea5n b\u1ea5t k\u1ef3 \u0111\u00e2u \u0111\u1ec3 b\u1ecf qua &#10005;' +
-                '</button>' +
-                '<div id="aphim-popup" class="aph-popup-single-frame">' +
-                    slidesHTML +
+            '<div class="aph-popup-wrapper aph-popup-triple-mode">' +
+                '<div id="aphim-popup" class="aph-popup-card">' +
+                    '<button id="aphim-popup-close-btn" title="Đóng quảng cáo" aria-label="Đóng">&#10005;</button>' +
+                    '<div class="aph-popup-triple-row">' +
+                        colsHTML +
+                    '</div>' +
                 '</div>' +
             '</div>';
 
         document.body.appendChild(overlay);
 
-        var currentIdx = 0;
-        var slideTimer = null;
-        var closed = false;
-
-        function nextSlide() {
-            if (closed) return;
-            var slides = overlay.querySelectorAll('.aph-popup-single-slide');
-            if (!slides || !slides.length) return;
-
-            slides[currentIdx].classList.remove('active');
-            currentIdx = (currentIdx + 1) % slides.length;
-            slides[currentIdx].classList.add('active');
-        }
-
         var showTimer = setTimeout(function () {
             requestAnimationFrame(function () { overlay.classList.add('visible'); });
-            slideTimer = setInterval(nextSlide, CONFIG.popup.slideIntervalMs); // Chuyển mỗi 1s
         }, CONFIG.popup.showAfterMs);
 
         function closePopup() {
-            if (closed) return;
-            closed = true;
             clearTimeout(showTimer);
-            clearInterval(slideTimer);
             registerBannerClose(CONFIG.popup.sessionKey, false);
             overlay.classList.remove('visible');
             setTimeout(function () {
@@ -413,12 +391,15 @@
             }, 360);
         }
 
-        document.getElementById('aphim-popup-x').addEventListener('click', function (e) {
-            e.stopPropagation();
-            closePopup();
-        });
+        var closeBtn = document.getElementById('aphim-popup-close-btn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                closePopup();
+            });
+        }
         overlay.addEventListener('click', function (e) {
-            if (e.target.closest('#aphim-popup') && e.target.closest('a')) {
+            if (e.target.closest('.aph-popup-box')) {
                 return;
             }
             closePopup();
