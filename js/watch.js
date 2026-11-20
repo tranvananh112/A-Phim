@@ -1515,7 +1515,7 @@ function renderPlayerPlaceholder(episode) {
 
 // ── 🎬 PRE-ROLL TVC VIDEO CONTROLLER (PARTNER SC88 SPONSOR - INSTANT 0MS PRELOAD) ─
 const TVC_VIDEO_URL = 'https://pub-8f3b918d77aa4174a8b7af09fda29a8a.r2.dev/tvc/tvc-sc88-5s.mp4';
-const TVC_TARGET_URL = 'https://sc88.com';
+const TVC_TARGET_URL = 'https://bit.ly/SC88sex104a';
 let _tvcPreloadedVideo = null;
 window._isTvcActive = false;
 
