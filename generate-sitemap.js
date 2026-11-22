@@ -5,7 +5,7 @@
 
 const fs = require('fs');
 
-const DOMAINS = ['https://aphim.io.vn', 'https://aphim1.io.vn'];
+const DOMAINS = ['https://aphim1.io.vn'];
 const TODAY = new Date().toISOString().split('T')[0];
 
 function escapeXml(unsafe) {
@@ -165,9 +165,8 @@ async function processInBatches(items, batchSize, fn) {
 
     // --- GENERATE SITEMAPS FOR EACH DOMAIN ---
     DOMAINS.forEach(domain => {
-        const isAphim1 = domain.includes('aphim1.io.vn');
-        const sitemapFilename = isAphim1 ? 'sitemap_aphim1.xml' : 'sitemap.xml';
-        const imagesFilename = isAphim1 ? 'sitemap-images_aphim1.xml' : 'sitemap-images.xml';
+        const sitemapFilename = 'sitemap.xml';
+        const imagesFilename = 'sitemap-images.xml';
 
         const sitemapStream = fs.createWriteStream(sitemapFilename, { encoding: 'utf-8' });
         sitemapStream.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n');

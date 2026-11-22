@@ -171,7 +171,7 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
             
             const name = mDetail.name || mDetail.origin_name;
             const year = mDetail.year ? ` (${mDetail.year})` : '';
-            const url = `https://aphim.io.vn/movie-detail.html?slug=${slug}`;
+            const url = `https://aphim1.io.vn/movie-detail.html?slug=${slug}`;
             const urlBackup = `https://aphim1.io.vn/movie-detail.html?slug=${slug}`;
             
             // Generate clean description snippet (max 300 chars)

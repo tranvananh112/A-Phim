@@ -283,7 +283,7 @@ const stripHtml = (html) => html ? html.replace(/<[^>]*>?/gm, '').trim() : '';
         const slug = movie.slug;
         const name = movie.name;
         const year = movie.year ? ` (${movie.year})` : '';
-        const webUrl = `https://aphim.io.vn/movie-detail.html?slug=${slug}`;
+        const webUrl = `https://aphim1.io.vn/movie-detail.html?slug=${slug}`;
         const webUrlBackup = `https://aphim1.io.vn/movie-detail.html?slug=${slug}`;
         const desc = movie.content.substring(0, 300) + '...';
         

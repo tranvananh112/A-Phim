@@ -67,6 +67,5 @@ Disallow: /api/
 Disallow: /quangcao/
 Allow: /
 
-Sitemap: https://aphim.io.vn/sitemap.xml
-Sitemap: https://aphim.io.vn/sitemap-images.xml
 Sitemap: https://aphim1.io.vn/sitemap.xml
+Sitemap: https://aphim1.io.vn/sitemap-images.xml

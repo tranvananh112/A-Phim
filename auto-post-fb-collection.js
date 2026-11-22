@@ -16,7 +16,7 @@ const FormData = require('form-data');
 // ── Config ──────────────────────────────────────────────────────
 const FB_PAGE_TOKEN   = process.env.FB_PAGE_TOKEN;
 const COMPOSIO_API_KEY = process.env.COMPOSIO_API_KEY;
-const SITE_URL        = 'https://aphim.io.vn';
+const SITE_URL        = 'https://aphim1.io.vn';
 const SITE_URL_BACKUP = 'https://aphim1.io.vn';
 const HISTORY_FILE    = 'posted-collections.json';
 const TEMP_IMAGE      = '/tmp/aphim-collage.jpg';

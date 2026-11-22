@@ -118,7 +118,7 @@ async function getMovieInfo(slug) {
             }
 
             // Kiểm tra trang aphim.io.vn có tồn tại không
-            const pageUrl = `https://aphim.io.vn/movie-detail.html?slug=${slug}`;
+            const pageUrl = `https://aphim1.io.vn/movie-detail.html?slug=${slug}`;
             const pageCheck = await axios.head(pageUrl, { timeout: 5000 });
 
             if (pageCheck.status === 200) {
@@ -130,7 +130,7 @@ async function getMovieInfo(slug) {
         }
 
         // Nếu không tìm thấy phim, kiểm tra trang có tồn tại không
-        const pageUrl = `https://aphim.io.vn/movie-detail.html?slug=${slug}`;
+        const pageUrl = `https://aphim1.io.vn/movie-detail.html?slug=${slug}`;
         const pageCheck = await axios.head(pageUrl, { timeout: 5000 });
 
         if (pageCheck.status === 200) {
@@ -145,7 +145,7 @@ async function getMovieInfo(slug) {
         console.log(`⚠️ Lỗi API: ${error.message}`);
         // Nếu API lỗi, thử kiểm tra trang có tồn tại không
         try {
-            const pageUrl = `https://aphim.io.vn/movie-detail.html?slug=${slug}`;
+            const pageUrl = `https://aphim1.io.vn/movie-detail.html?slug=${slug}`;
             const pageCheck = await axios.head(pageUrl, { timeout: 5000 });
 
             if (pageCheck.status === 200) {
@@ -203,7 +203,7 @@ bot.on('message', async (msg) => {
         const buttons = limitedResults.map(movie => {
             const movieName = movie.name || movie.origin_name;
             const year = movie.year ? ` (${movie.year})` : '';
-            const movieUrl = `https://aphim.io.vn/movie-detail.html?slug=${movie.slug}`;
+            const movieUrl = `https://aphim1.io.vn/movie-detail.html?slug=${movie.slug}`;
 
             return [{
                 text: `${movieName}${year}`,
@@ -231,7 +231,7 @@ bot.on('message', async (msg) => {
     const movieInfo = await getMovieInfo(slug);
 
     if (movieInfo.exists) {
-        const movieUrl = `https://aphim.io.vn/movie-detail.html?slug=${slug}`;
+        const movieUrl = `https://aphim1.io.vn/movie-detail.html?slug=${slug}`;
 
         // Tạo inline keyboard với button
         const keyboard = {
@@ -300,7 +300,7 @@ bot.on('new_chat_members', (msg) => {
 🎬 Gõ "phim [tên phim]" vào nhóm, bot sẽ tự động gửi link cho bạn!
 Ví dụ: phim Thỏ Ơi
 
-🔗 Website: https://aphim.io.vn
+🔗 Website: https://aphim1.io.vn
 Chúc bạn xem phim vui vẻ! 🍿`.trim();
 
         bot.sendMessage(chatId, welcomeMessage);

@@ -160,7 +160,7 @@ const SEO = {
         if (oldSchema) oldSchema.remove();
 
         const name = movie.name || movie.title;
-        const img = movie.thumb_url ? (movie.thumb_url.startsWith('http') ? movie.thumb_url : `https://phimimg.com/${movie.thumb_url.startsWith('uploads/') ? '' : 'uploads/movies/'}${movie.thumb_url}`) : 'https://aphim.io.vn/apple-touch-icon.png';
+        const img = movie.thumb_url ? (movie.thumb_url.startsWith('http') ? movie.thumb_url : `https://phimimg.com/${movie.thumb_url.startsWith('uploads/') ? '' : 'uploads/movies/'}${movie.thumb_url}`) : 'https://aphim1.io.vn/apple-touch-icon.png';
         
         const schemaType = (movie.type === 'series') ? 'TVSeries' : 'Movie';
         const schemaData = {
@@ -306,10 +306,10 @@ const SEO = {
             "@type": "WebSite",
             "name": "APhim",
             "alternateName": ["A Phim", "Aphim.io.vn", "Xem Phim APhim"],
-            "url": "https://aphim.io.vn/",
+            "url": "https://aphim1.io.vn/",
             "potentialAction": {
                 "@type": "SearchAction",
-                "target": "https://aphim.io.vn/tim-kiem?q={search_term_string}",
+                "target": "https://aphim1.io.vn/tim-kiem?q={search_term_string}",
                 "query-input": "required name=search_term_string"
             }
         };
@@ -319,8 +319,8 @@ const SEO = {
             "@context": "https://schema.org",
             "@type": "Organization",
             "name": "APhim",
-            "url": "https://aphim.io.vn/",
-            "logo": "https://aphim.io.vn/apple-touch-icon.png",
+            "url": "https://aphim1.io.vn/",
+            "logo": "https://aphim1.io.vn/apple-touch-icon.png",
             "sameAs": [
                 "https://t.me/+VsCfrulXuXw1NTE9" // Telegram Group Link
             ],

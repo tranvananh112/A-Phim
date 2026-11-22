@@ -25,6 +25,8 @@ const allowedOrigins = [
     'https://aphim.ddns.net',
     'https://aphim.io.vn', // Production domain
     'http://aphim.io.vn',  // HTTP version
+    'https://aphim1.io.vn', // New production domain
+    'http://aphim1.io.vn',
     process.env.CLIENT_URL,
     process.env.CORS_ORIGIN
 ].filter(Boolean);
