@@ -28,9 +28,13 @@
     };
 
     // 🎯 1. SAFE IMAGE URL CLEANER & CDN REWRITE WITH MIRROR SUPPORT
-    window.APhimCore.getImgUrl = function(rawUrl) {
+    window.APhimCore.getImgUrl = function(rawUrl, isThumb = false) {
         if (!rawUrl) return '/images/no-poster.jpg';
         let url = String(rawUrl).trim();
+        // Tối ưu ảnh TMDB: Giảm từ original (2.7MB) xuống w780 (120KB) hoặc w500 (60KB)
+        if (url.includes('image.tmdb.org/t/p/original/')) {
+            return url.replace('/t/p/original/', isThumb ? '/t/p/w500/' : '/t/p/w780/');
+        }
         if (url.startsWith('http://') || url.startsWith('https://')) {
             return url.replace('img.ophimimg.com', 'phimimg.com')
                       .replace('ophim1.com/uploads', 'phimimg.com/uploads');
