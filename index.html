@@ -130,6 +130,8 @@
 <link rel="stylesheet" href="/css/hero-banner.css?v=99">
 <link rel="stylesheet" href="/css/interests-section.css?v=108">
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<!-- Preload High Quality First Hero Slide for Crisp Instant Display -->
+<link rel="preload" as="image" href="https://image.tmdb.org/t/p/original/eikGebrQFtx6IraG70Y9oHTuau8.jpg" fetchpriority="high">
 
 <style>
     /* Super Motchill Carbon Cinematic Styling */
@@ -3407,17 +3409,17 @@ html.light-mode .home-comment-toggle-wrap:hover {
             <!-- Background Image with Loading State & Gradients -->
             <div class="absolute inset-0 z-0 bg-[#1f2331] overflow-hidden hero-bg-holder" style="background-color: #1f2331 !important;">
                 <!-- Dual Layer Hero Images for Flawless Cinematic Crossfade & Slide Transitions -->
-                <img id="heroImageLayerA" class="hero-bg-layer is-active absolute inset-0 w-full h-full object-cover object-top scale-105 opacity-100 z-10" alt="Hero Background A" src="https://image.tmdb.org/t/p/w1280/eikGebrQFtx6IraG70Y9oHTuau8.jpg" style="-webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 62%, rgba(0,0,0,0.45) 82%, transparent 100%); mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 62%, rgba(0,0,0,0.45) 82%, transparent 100%); will-change: transform, opacity;" />
+                <img id="heroImageLayerA" class="hero-bg-layer is-active absolute inset-0 w-full h-full object-cover object-top scale-105 opacity-100 z-10" alt="Hero Background A" src="https://image.tmdb.org/t/p/original/eikGebrQFtx6IraG70Y9oHTuau8.jpg" fetchpriority="high" decoding="sync" style="-webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 62%, rgba(0,0,0,0.45) 82%, transparent 100%); mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 62%, rgba(0,0,0,0.45) 82%, transparent 100%); will-change: transform, opacity;" />
                 <img id="heroImageLayerB" class="hero-bg-layer absolute inset-0 w-full h-full object-cover object-top scale-105 opacity-0 z-10" alt="Hero Background B" src="" style="-webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 62%, rgba(0,0,0,0.45) 82%, transparent 100%); mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 62%, rgba(0,0,0,0.45) 82%, transparent 100%); opacity: 0; will-change: transform, opacity;" />
                 
                 <!-- Dedicated Blurred Placeholder -->
                 <div class="absolute inset-0 w-full h-full bg-cover bg-top scale-105 opacity-35 blur-sm z-0 hero-placeholder-mask" 
-                     style="background-image: url('https://image.tmdb.org/t/p/w1280/eikGebrQFtx6IraG70Y9oHTuau8.jpg'); -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 62%, rgba(0,0,0,0.45) 82%, transparent 100%); mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 62%, rgba(0,0,0,0.45) 82%, transparent 100%);"></div>
+                     style="background-image: url('https://image.tmdb.org/t/p/original/eikGebrQFtx6IraG70Y9oHTuau8.jpg'); -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 62%, rgba(0,0,0,0.45) 82%, transparent 100%); mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 62%, rgba(0,0,0,0.45) 82%, transparent 100%);"></div>
                 
                 <!-- Fallback element for compatibility -->
                 <img id="heroImage" alt="Lan Hương Như Cố"
                     class="hidden"
-                    src="https://image.tmdb.org/t/p/w1280/eikGebrQFtx6IraG70Y9oHTuau8.jpg" />
+                    src="https://image.tmdb.org/t/p/original/eikGebrQFtx6IraG70Y9oHTuau8.jpg" />
 
                 <!-- Left Gradient: Gentle cinematic shadow keeping the banner bright, vibrant and luminous -->
                 <div class="hero-left-blend pointer-events-none" style="position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10,12,20,0.38) 0%, rgba(10,12,20,0.22) 28%, rgba(10,12,20,0.06) 48%, transparent 68%); z-index: 12;"></div>
@@ -3531,28 +3533,28 @@ html.light-mode .home-comment-toggle-wrap:hover {
                         <div class="hero-thumbnails-card-wrapper pointer-events-auto">
                             <div id="heroThumbnails" class="flex items-center gap-2">
                                 <div class="hero-thumb-item hero-thumb-active" onclick="selectHeroThumbnail(0)" title="Lan Hương Như Cố (Against The Current)">
-                                    <img src="https://image.tmdb.org/t/p/w1280/eikGebrQFtx6IraG70Y9oHTuau8.jpg" class="w-full h-full object-cover" alt="Lan Hương Như Cố">
+                                    <img src="https://image.tmdb.org/t/p/original/eikGebrQFtx6IraG70Y9oHTuau8.jpg" class="w-full h-full object-cover" alt="Lan Hương Như Cố">
                                 </div>
                                 <div class="hero-thumb-item" onclick="selectHeroThumbnail(1)" title="Tước Cốt (Key To The Phoenix Heart)">
-                                    <img src="https://image.tmdb.org/t/p/w1280/xaqXQwcyO19G36SWIaYJmiNcX4a.jpg" class="w-full h-full object-cover" alt="Tước Cốt">
+                                    <img src="https://image.tmdb.org/t/p/original/xaqXQwcyO19G36SWIaYJmiNcX4a.jpg" class="w-full h-full object-cover" alt="Tước Cốt">
                                 </div>
                                 <div class="hero-thumb-item" onclick="selectHeroThumbnail(2)" title="Tiếng Yêu Này, Anh Dịch Được Không? (Can This Love Be Translated?)">
-                                    <img src="https://image.tmdb.org/t/p/w1280/nDn8zhaV61cOmUE0dCGD6W94oxB.jpg" class="w-full h-full object-cover" alt="Tiếng Yêu Này, Anh Dịch Được Không?">
+                                    <img src="https://image.tmdb.org/t/p/original/nDn8zhaV61cOmUE0dCGD6W94oxB.jpg" class="w-full h-full object-cover" alt="Tiếng Yêu Này, Anh Dịch Được Không?">
                                 </div>
                                 <div class="hero-thumb-item" onclick="selectHeroThumbnail(3)" title="Yêu Được Không (Pls Love)">
-                                    <img src="https://image.tmdb.org/t/p/w1280/j8Yt8qL5qw60Gp3kq26OuUWMWSj.jpg" class="w-full h-full object-cover" alt="Yêu Được Không">
+                                    <img src="https://image.tmdb.org/t/p/original/j8Yt8qL5qw60Gp3kq26OuUWMWSj.jpg" class="w-full h-full object-cover" alt="Yêu Được Không">
                                 </div>
                                 <div class="hero-thumb-item" onclick="selectHeroThumbnail(4)" title="Trúng Số Độc Đắc Vẫn Phải Đi Làm (The Ordinary Jackpot)">
-                                    <img src="https://image.tmdb.org/t/p/w1280/aUbhyOcLmIE9LLH0WdfJyvGtYOH.jpg" class="w-full h-full object-cover" alt="Trúng Số Độc Đắc Vẫn Phải Đi Làm">
+                                    <img src="https://image.tmdb.org/t/p/original/aUbhyOcLmIE9LLH0WdfJyvGtYOH.jpg" class="w-full h-full object-cover" alt="Trúng Số Độc Đắc Vẫn Phải Đi Làm">
                                 </div>
                                 <div class="hero-thumb-item" onclick="selectHeroThumbnail(5)" title="Sếp Chính Là Thần Tượng (Bias tôi, sếp của tôi) (My Bias, My Boss)">
-                                    <img src="https://image.tmdb.org/t/p/w1280/vQDDZzuoc4BEgAfnQ9ebogjHc7j.jpg" class="w-full h-full object-cover" alt="Sếp Chính Là Thần Tượng (Bias tôi, sếp của tôi)">
+                                    <img src="https://image.tmdb.org/t/p/original/vQDDZzuoc4BEgAfnQ9ebogjHc7j.jpg" class="w-full h-full object-cover" alt="Sếp Chính Là Thần Tượng (Bias tôi, sếp của tôi)">
                                 </div>
                                 <div class="hero-thumb-item" onclick="selectHeroThumbnail(6)" title="Vụ Bê Bối Thời Joseon / Bê Bối Triều Đại (The Scandal)">
-                                    <img src="https://image.tmdb.org/t/p/w1280/mbJu1nCIr3mejUXd6EpprOD8Rm0.jpg" class="w-full h-full object-cover" alt="Vụ Bê Bối Thời Joseon / Bê Bối Triều Đại">
+                                    <img src="https://image.tmdb.org/t/p/original/mbJu1nCIr3mejUXd6EpprOD8Rm0.jpg" class="w-full h-full object-cover" alt="Vụ Bê Bối Thời Joseon / Bê Bối Triều Đại">
                                 </div>
                                 <div class="hero-thumb-item" onclick="selectHeroThumbnail(7)" title="Đầu Xuân Tươi Sáng (The Early Spring)">
-                                    <img src="https://image.tmdb.org/t/p/w1280/zitBqhMHmQOZUSydZDJRAtsD3BH.jpg" class="w-full h-full object-cover" alt="Đầu Xuân Tươi Sáng">
+                                    <img src="https://image.tmdb.org/t/p/original/zitBqhMHmQOZUSydZDJRAtsD3BH.jpg" class="w-full h-full object-cover" alt="Đầu Xuân Tươi Sáng">
                                 </div>
                             </div>
                         </div>
@@ -4850,7 +4852,7 @@ function toggleFaqCard(btnEl) {
                 slug: 'lan-huong-nhu-co',
                 name: "Lan Hương Như Cố",
                 origin_name: "Against The Current",
-                image: 'https://image.tmdb.org/t/p/w1280/eikGebrQFtx6IraG70Y9oHTuau8.jpg',
+                image: 'https://image.tmdb.org/t/p/original/eikGebrQFtx6IraG70Y9oHTuau8.jpg',
                 quality: 'FHD',
                 year: '2026',
                 episode: 'Tập 41',
@@ -4864,7 +4866,7 @@ function toggleFaqCard(btnEl) {
                 slug: 'tuoc-cot',
                 name: "Tước Cốt",
                 origin_name: "Key To The Phoenix Heart",
-                image: 'https://image.tmdb.org/t/p/w1280/xaqXQwcyO19G36SWIaYJmiNcX4a.jpg',
+                image: 'https://image.tmdb.org/t/p/original/xaqXQwcyO19G36SWIaYJmiNcX4a.jpg',
                 quality: 'FHD',
                 year: '2026',
                 episode: 'Hoàn Tất (28/28)',
@@ -4878,7 +4880,7 @@ function toggleFaqCard(btnEl) {
                 slug: 'tieng-yeu-nay-anh-dich-duoc-khong',
                 name: "Tiếng Yêu Này, Anh Dịch Được Không?",
                 origin_name: "Can This Love Be Translated?",
-                image: 'https://image.tmdb.org/t/p/w1280/nDn8zhaV61cOmUE0dCGD6W94oxB.jpg',
+                image: 'https://image.tmdb.org/t/p/original/nDn8zhaV61cOmUE0dCGD6W94oxB.jpg',
                 quality: 'FHD',
                 year: '2026',
                 episode: 'Hoàn Tất (12/12)',
@@ -4892,7 +4894,7 @@ function toggleFaqCard(btnEl) {
                 slug: 'yeu-duoc-khong',
                 name: "Yêu Được Không",
                 origin_name: "Pls Love",
-                image: 'https://image.tmdb.org/t/p/w1280/j8Yt8qL5qw60Gp3kq26OuUWMWSj.jpg',
+                image: 'https://image.tmdb.org/t/p/original/j8Yt8qL5qw60Gp3kq26OuUWMWSj.jpg',
                 quality: 'FHD',
                 year: '2026',
                 episode: 'Tập 4',
@@ -4906,7 +4908,7 @@ function toggleFaqCard(btnEl) {
                 slug: 'trung-so-doc-dac-van-phai-di-lam',
                 name: "Trúng Số Độc Đắc Vẫn Phải Đi Làm",
                 origin_name: "The Ordinary Jackpot",
-                image: 'https://image.tmdb.org/t/p/w1280/aUbhyOcLmIE9LLH0WdfJyvGtYOH.jpg',
+                image: 'https://image.tmdb.org/t/p/original/aUbhyOcLmIE9LLH0WdfJyvGtYOH.jpg',
                 quality: 'FHD',
                 year: '2026',
                 episode: 'Tập 6',
@@ -4920,7 +4922,7 @@ function toggleFaqCard(btnEl) {
                 slug: 'sep-chinh-la-than-tuong-bias-toi-sep-cua-toi',
                 name: "Sếp Chính Là Thần Tượng (Bias tôi, sếp của tôi)",
                 origin_name: "My Bias, My Boss",
-                image: 'https://image.tmdb.org/t/p/w1280/vQDDZzuoc4BEgAfnQ9ebogjHc7j.jpg',
+                image: 'https://image.tmdb.org/t/p/original/vQDDZzuoc4BEgAfnQ9ebogjHc7j.jpg',
                 quality: 'FHD',
                 year: '2026',
                 episode: 'Hoàn Tất (12/12)',
@@ -4934,7 +4936,7 @@ function toggleFaqCard(btnEl) {
                 slug: 'vu-be-boi-thoi-joseon-be-boi-trieu-dai',
                 name: "Vụ Bê Bối Thời Joseon / Bê Bối Triều Đại",
                 origin_name: "The Scandal",
-                image: 'https://image.tmdb.org/t/p/w1280/mbJu1nCIr3mejUXd6EpprOD8Rm0.jpg',
+                image: 'https://image.tmdb.org/t/p/original/mbJu1nCIr3mejUXd6EpprOD8Rm0.jpg',
                 quality: 'FHD',
                 year: '2026',
                 episode: 'Hoàn Tất (8/8)',
@@ -4948,7 +4950,7 @@ function toggleFaqCard(btnEl) {
                 slug: 'dau-xuan-tuoi-sang',
                 name: "Đầu Xuân Tươi Sáng",
                 origin_name: "The Early Spring",
-                image: 'https://image.tmdb.org/t/p/w1280/zitBqhMHmQOZUSydZDJRAtsD3BH.jpg',
+                image: 'https://image.tmdb.org/t/p/original/zitBqhMHmQOZUSydZDJRAtsD3BH.jpg',
                 quality: 'FHD',
                 year: '2026',
                 episode: 'Hoàn Tất (24/24)',

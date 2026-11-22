@@ -82,7 +82,7 @@ const API_CONFIG = {
             movieSlug: "lan-huong-nhu-co",
             name: "Lan Hương Như Cố",
             originName: "Against The Current",
-            thumbUrl: "https://image.tmdb.org/t/p/w1280/eikGebrQFtx6IraG70Y9oHTuau8.jpg",
+            thumbUrl: "https://image.tmdb.org/t/p/original/eikGebrQFtx6IraG70Y9oHTuau8.jpg",
             posterUrl: "https://phimimg.com/uploads/movies/20260912/lan-huong-nhu-co-poster.webp",
             year: "2026"
         },
@@ -90,7 +90,7 @@ const API_CONFIG = {
             movieSlug: "tuoc-cot",
             name: "Tước Cốt",
             originName: "Key To The Phoenix Heart",
-            thumbUrl: "https://image.tmdb.org/t/p/w1280/xaqXQwcyO19G36SWIaYJmiNcX4a.jpg",
+            thumbUrl: "https://image.tmdb.org/t/p/original/xaqXQwcyO19G36SWIaYJmiNcX4a.jpg",
             posterUrl: "https://phimimg.com/uploads/movies/20260711/tuoc-cot-poster.webp",
             year: "2026"
         },
@@ -98,7 +98,7 @@ const API_CONFIG = {
             movieSlug: "tieng-yeu-nay-anh-dich-duoc-khong",
             name: "Tiếng Yêu Này, Anh Dịch Được Không?",
             originName: "Can This Love Be Translated?",
-            thumbUrl: "https://image.tmdb.org/t/p/w1280/nDn8zhaV61cOmUE0dCGD6W94oxB.jpg",
+            thumbUrl: "https://image.tmdb.org/t/p/original/nDn8zhaV61cOmUE0dCGD6W94oxB.jpg",
             posterUrl: "https://phimimg.com/upload/vod/20260116-1/8b1201713adc08736e33e45ab1c1f2e4.jpg",
             year: "2026"
         },
@@ -106,7 +106,7 @@ const API_CONFIG = {
             movieSlug: "yeu-duoc-khong",
             name: "Yêu Được Không",
             originName: "Pls Love",
-            thumbUrl: "https://image.tmdb.org/t/p/w1280/j8Yt8qL5qw60Gp3kq26OuUWMWSj.jpg",
+            thumbUrl: "https://image.tmdb.org/t/p/original/j8Yt8qL5qw60Gp3kq26OuUWMWSj.jpg",
             posterUrl: "https://phimimg.com/uploads/movies/20260914/yeu-duoc-khong-poster.webp",
             year: "2026"
         },
@@ -114,7 +114,7 @@ const API_CONFIG = {
             movieSlug: "trung-so-doc-dac-van-phai-di-lam",
             name: "Trúng Số Độc Đắc Vẫn Phải Đi Làm",
             originName: "The Ordinary Jackpot",
-            thumbUrl: "https://image.tmdb.org/t/p/w1280/aUbhyOcLmIE9LLH0WdfJyvGtYOH.jpg",
+            thumbUrl: "https://image.tmdb.org/t/p/original/aUbhyOcLmIE9LLH0WdfJyvGtYOH.jpg",
             posterUrl: "https://phimimg.com/uploads/movies/20260910/trung-so-doc-dac-van-phai-di-lam-poster.webp",
             year: "2026"
         },
@@ -122,7 +122,7 @@ const API_CONFIG = {
             movieSlug: "sep-chinh-la-than-tuong-bias-toi-sep-cua-toi",
             name: "Sếp Chính Là Thần Tượng (Bias tôi, sếp của tôi)",
             originName: "My Bias, My Boss",
-            thumbUrl: "https://image.tmdb.org/t/p/w1280/vQDDZzuoc4BEgAfnQ9ebogjHc7j.jpg",
+            thumbUrl: "https://image.tmdb.org/t/p/original/vQDDZzuoc4BEgAfnQ9ebogjHc7j.jpg",
             posterUrl: "https://phimimg.com/uploads/movies/20260806/sep-chinh-la-than-tuong-bias-toi-sep-cua-toi-poster.webp",
             year: "2026"
         },
@@ -130,7 +130,7 @@ const API_CONFIG = {
             movieSlug: "vu-be-boi-thoi-joseon-be-boi-trieu-dai",
             name: "Vụ Bê Bối Thời Joseon / Bê Bối Triều Đại",
             originName: "The Scandal",
-            thumbUrl: "https://image.tmdb.org/t/p/w1280/mbJu1nCIr3mejUXd6EpprOD8Rm0.jpg",
+            thumbUrl: "https://image.tmdb.org/t/p/original/mbJu1nCIr3mejUXd6EpprOD8Rm0.jpg",
             posterUrl: "https://phimimg.com/uploads/movies/20260918/vu-be-boi-poster.webp",
             year: "2026"
         },
@@ -138,7 +138,7 @@ const API_CONFIG = {
             movieSlug: "dau-xuan-tuoi-sang",
             name: "Đầu Xuân Tươi Sáng",
             originName: "The Early Spring",
-            thumbUrl: "https://image.tmdb.org/t/p/w1280/zitBqhMHmQOZUSydZDJRAtsD3BH.jpg",
+            thumbUrl: "https://image.tmdb.org/t/p/original/zitBqhMHmQOZUSydZDJRAtsD3BH.jpg",
             posterUrl: "https://phimimg.com/uploads/movies/20260826/dau-xuan-tuoi-sang-poster.webp",
             year: "2026"
         }
