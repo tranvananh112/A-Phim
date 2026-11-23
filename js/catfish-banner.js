@@ -15,15 +15,11 @@
        CONFIG
     ───────────────────────────────────────────────────────── */
     var CONFIG = {
-        // 1. CATFISH ĐÁY (Stake + 3 banner)
+        // 1. CATFISH ĐÁY (3 banner trải ngang)
         catfish: {
             enabled: true,
             sessionKey: 'aphim_catfish_closed_v8',
-            stake: {
-                img: '/quangcao/stake/Dice%20VN.gif',
-                url: 'https://stake.com/pages/200depositvn',
-                label: 'Stake — Dice VN Đăng Ký Nhận 364,000 VNĐ'
-            },
+            stake: null,
             banners: [
                 {
                     img: '/quangcao/catfish/vsbet.gif',
@@ -92,16 +88,11 @@
             ]
         },
 
-        // 4. UNDER PLAYER (Gộp 4 vào 1 chuyển xoay vòng trên mobile)
+        // 4. UNDER PLAYER (Gộp 3 vào 1 chuyển xoay vòng trên mobile)
         underAds: {
             enabled: true,
             intervalMs: 1400, // Chuyển banner mỗi 1.4s
             banners: [
-                {
-                    img: '/quangcao/stake/Dice%20VN.gif',
-                    url: 'https://stake.com/pages/200depositvn',
-                    label: 'Stake — Nhận Thưởng 364K'
-                },
                 {
                     img: '/quangcao/sc88/728x90.gif',
                     url: 'https://bit.ly/SC88sex104a',
