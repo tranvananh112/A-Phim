@@ -407,27 +407,14 @@
     filter: brightness(1.08);
 }
 
-/* Cả 3 ô banner tràn đầy khung to rõ đẹp */
+/* Cả 3 ô banner vuông 1:1 (78WIN 500x500, F8 300x300, SC88 400x400) tràn đầy khung tâm ô vuông cực đẹp */
 .aph-popup-box img,
 .aph-popup-box video {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-/* Riêng ô số 1 (78WIN): phóng to đầy khung và canh từ mép trái để thấy rõ trọn vẹn chữ 78WIN */
-.aph-popup-box:first-child img,
-.aph-popup-box:first-child video {
-    object-fit: cover !important;
-    object-position: left center !important;
-}
-
-/* Với ảnh vuông 1:1 (F8 & SC88) tràn kín tâm ô vuông cực đẹp */
-.aph-popup-box img[src*="300x300"],
-.aph-popup-box img[src*="400x400"] {
     object-fit: cover !important;
     object-position: center center !important;
+    display: block;
 }
 
 @media (max-width: 768px) {

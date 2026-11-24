@@ -43,11 +43,11 @@
         popup: {
             enabled: true,
             showAfterMs: 400,
-            sessionKey: 'aphim_popup_closed_v15',
+            sessionKey: 'aphim_popup_closed_v16',
             excludePaths: ['/admin'],
             banners: [
                 {
-                    img: '/quangcao/78w/728x180.gif',
+                    img: '/quangcao/78w/banner_gif_78win_2307_B.gif',
                     url: 'https://bit.ly/78win106',
                     label: '78w — Nhà Cái Uy Tín Châu Á'
                 },
